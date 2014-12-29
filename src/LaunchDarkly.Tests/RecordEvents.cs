@@ -3,16 +3,25 @@ using System.Threading;
 using Moq;
 using NUnit.Framework;
 using LaunchDarkly.Client;
+using LaunchDarkly.Client.Logging;
+using NLog;
+using NLog.Targets;
 
 namespace LaunchDarkly.Tests
 {
     public class RecordEvents
     {
+
+
+
+
         [Test]
         public void EventQueueGetsCleared()
         {
+            var target = CreateInMemoryTarget();
+
             var config = Configuration.Default()
-                                      .WithEventQueueCapacity(3)
+                                      .WithEventQueueCapacity(5)
                                       .WithEventQueueFrequency(TimeSpan.FromSeconds(1));
 
             var client = new LdClient(config);
@@ -24,6 +33,9 @@ namespace LaunchDarkly.Tests
             client.GetFlag("new.dashboard.enable3", user);
             client.GetFlag("new.dashboard.enable4", user);
             client.GetFlag("new.dashboard.enable5", user);
+
+            Assert.AreEqual(5, target.Logs.Count);
+
             Thread.Sleep(1500);
             client.GetFlag("new.dashboard.enable6", user);
             client.GetFlag("new.dashboard.enable7", user);
@@ -58,6 +70,15 @@ namespace LaunchDarkly.Tests
             client.SendEvent("AnyEventName", user, "AnyJson");
 
             eventStore.Verify(s => s.Add(It.IsAny<CustomEvent>()));
+        }
+
+
+        private MemoryTarget CreateInMemoryTarget()
+        {
+            var target = new MemoryTarget { Layout = "${message}" };
+            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Debug);
+
+            return target;
         }
     }
 }

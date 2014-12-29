@@ -65,7 +65,6 @@ local.properties
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 src/packages/
-
 src/LaunchDarkly.Tests/App.config
 
 # Visual C++ cache files
