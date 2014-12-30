@@ -4,13 +4,15 @@ namespace LaunchDarkly.Client
 {
     public abstract class Event
     {
-        private long timeStamp;
-        public string Key { get; private set; }
+        public string Kind { get; private set; }
         public User User { get; private set; }
+        public long CreationDate { get; private set; }
+        public string Key { get; private set; }
 
-        protected Event(string key, User user)
+        protected Event(string kind, string key, User user)
         {
-            timeStamp = ToUnixTime(DateTime.Now);
+            Kind = kind;
+            CreationDate = ToUnixTime(DateTime.Now);
             Key = key;
             User = user;
         }
@@ -23,21 +25,23 @@ namespace LaunchDarkly.Client
 
     public class FeatureRequestEvent<T> : Event
     {
-        private T _value;
+        public T Value { get; private set; }
+        public Boolean Default { get; private set; }
 
-        public FeatureRequestEvent(String key, User user, T value) : base(key, user)
+        public FeatureRequestEvent(String key, User user, T value, Boolean defaultValueUsed) : base("feature", key, user)
         {
-            _value = value;
+            Value = value;
+            Default = defaultValueUsed;
         }
     }
 
     public class CustomEvent: Event
     {
-        private string _data;
+        public string Data { get; private set; }
 
-        public CustomEvent(String key, User user, string data) : base(key, user)
+        public CustomEvent(String key, User user, string data) : base("custom", key, user)
         {
-            _data = data;
+            Data = data;
         }
     }
 }

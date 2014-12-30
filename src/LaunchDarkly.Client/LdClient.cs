@@ -67,12 +67,12 @@ namespace LaunchDarkly.Client
                         {
                             Logger.Error("Unexpected status code: " + response.StatusDescription);
                         }
-                        sendFlagRequestEvent(key, user, defaultValue);
+                        sendFlagRequestEvent(key, user, defaultValue, true);
                         return defaultValue;
                     }
 
                     var value = feature.Evaluate(user, defaultValue);
-                    sendFlagRequestEvent(key, user, value);
+                    sendFlagRequestEvent(key, user, value, false);
                     return value;
                 }
             }
@@ -80,7 +80,7 @@ namespace LaunchDarkly.Client
             catch (Exception ex)
             {
                 Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-                sendFlagRequestEvent(key, user, defaultValue);
+                sendFlagRequestEvent(key, user, defaultValue, true);
                 return defaultValue;
             }
         }
@@ -91,9 +91,9 @@ namespace LaunchDarkly.Client
             _eventStore.Add(new CustomEvent(name, user, data));
         }
 
-        private void sendFlagRequestEvent(string key, User user, Boolean value)
+        private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean usedDefaultValue)
         {
-            _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value));
+            _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, usedDefaultValue));
         }
     }
 }
