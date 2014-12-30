@@ -22,7 +22,7 @@ namespace LaunchDarkly.Client
         public LdClient(Configuration config)
         {
             _configuration = config;
-            _eventStore = new EventProcessor(_configuration.EventQueueCapacity, _configuration.EventQueueFrequency);
+            _eventStore = new EventProcessor(_configuration);
         }
 
         HttpWebRequest CreateRequest(string key)
