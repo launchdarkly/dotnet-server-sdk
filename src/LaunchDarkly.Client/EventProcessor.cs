@@ -50,7 +50,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        private void BulkSubmit(string eventsJson)
+        private async void BulkSubmit(string eventsJson)
         {
             try
             {

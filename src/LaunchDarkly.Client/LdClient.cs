@@ -3,6 +3,9 @@ using System.IO;
 using System.Net;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
@@ -10,6 +13,7 @@ namespace LaunchDarkly.Client
     {
         private static ILog Logger = LogProvider.For<LdClient>();
 
+        private readonly HttpClient _httpClient;
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
 
@@ -17,6 +21,8 @@ namespace LaunchDarkly.Client
         {
             _configuration = config;
             _eventStore = eventStore;
+            _httpClient = new HttpClient { BaseAddress = _configuration.BaseUri };
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", _configuration.ApiKey);
         }
 
         public LdClient(Configuration config)
@@ -43,38 +49,35 @@ namespace LaunchDarkly.Client
             }
         }
 
-        public bool GetFlag(string key, User user, bool defaultValue = false)
+        public async Task<bool> GetFlag(string key, User user, bool defaultValue = false)
         {
             try
             {
-                var request = CreateRequest(key);
 
-                using (var response = request.GetResponse() as HttpWebResponse)
+                var response = await _httpClient.GetAsync(string.Format("api/eval/features/{0}", key));
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    var feature = GetFeature(response);
-
-                    if (response.StatusCode != HttpStatusCode.OK)
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            Logger.Error("Invalid API key");
-                        }
-                        else if (response.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            Logger.Error("Unknown feature key: " + key);
-                        }
-                        else
-                        {
-                            Logger.Error("Unexpected status code: " + response.StatusDescription);
-                        }
-                        sendFlagRequestEvent(key, user, defaultValue, true);
-                        return defaultValue;
+                        Logger.Error("Invalid API key");
                     }
-
-                    var value = feature.Evaluate(user, defaultValue);
-                    sendFlagRequestEvent(key, user, value, false);
-                    return value;
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        Logger.Error("Unknown feature key: " + key);
+                    }
+                    else
+                    {
+                        Logger.Error("Unexpected status code: " + response.ReasonPhrase);
+                    }
+                    sendFlagRequestEvent(key, user, defaultValue, true);
+                    return defaultValue;
                 }
+
+                var feature = await response.Content.ReadAsAsync<Feature>();
+                var value = feature.Evaluate(user, defaultValue);
+                sendFlagRequestEvent(key, user, value, false);
+                return value;
             }
 
             catch (Exception ex)
