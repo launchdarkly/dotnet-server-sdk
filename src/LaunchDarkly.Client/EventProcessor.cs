@@ -8,7 +8,7 @@ using System.Net;
 
 namespace LaunchDarkly.Client
 {
-    public class EventProcessor : IDisposable, IStoreEvents
+    public sealed class EventProcessor : IDisposable, IStoreEvents
     {
         private static readonly ILog Logger = LogProvider.For<EventProcessor>();
 
@@ -45,6 +45,8 @@ namespace LaunchDarkly.Client
         public void Dispose()
         {
             _queue.CompleteAdding();
+            _timer.Dispose();
+            _queue.Dispose();
         }
 
 
@@ -63,7 +65,6 @@ namespace LaunchDarkly.Client
                 {
                     streamWriter.Write(eventsJson);
                     streamWriter.Flush();
-                    streamWriter.Close();
 
                     var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
 

@@ -6,10 +6,10 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
-    public class LdClient
+    public class LdClient : IDisposable
     {
         private static ILog Logger = LogProvider.For<LdClient>();
-        
+
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
 
@@ -76,7 +76,7 @@ namespace LaunchDarkly.Client
                     return value;
                 }
             }
-            
+
             catch (Exception ex)
             {
                 Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
@@ -94,6 +94,20 @@ namespace LaunchDarkly.Client
         private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean usedDefaultValue)
         {
             _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, usedDefaultValue));
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            //We do not have native resource, so the boolean parameter can be ignored.
+            if (_eventStore is EventProcessor)
+                ((_eventStore) as IDisposable).Dispose();
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
         }
     }
 }
