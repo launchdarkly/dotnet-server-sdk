@@ -5,6 +5,9 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace LaunchDarkly.Client
 {
@@ -13,6 +16,7 @@ namespace LaunchDarkly.Client
         private static readonly ILog Logger = LogProvider.For<EventProcessor>();
 
         private readonly Configuration _configuration;
+        private readonly HttpClient _httpClient;
         private BlockingCollection<Event> _queue;
         private System.Threading.Timer _timer;
 
@@ -21,6 +25,7 @@ namespace LaunchDarkly.Client
             _configuration = configuration;
             _queue = new BlockingCollection<Event>(_configuration.EventQueueCapacity);
             _timer = new System.Threading.Timer(SubmitEvents, null, _configuration.EventQueueFrequency, _configuration.EventQueueFrequency);
+            _httpClient = new HttpClient { BaseAddress = _configuration.BaseUri };
         }
 
         public void Add(Event eventToLog)
@@ -34,11 +39,9 @@ namespace LaunchDarkly.Client
             var comsumer = _queue.GetConsumingEnumerable();
             var taken = comsumer.Take<Event>(_queue.BoundedCapacity);
 
-            string json;
             if (taken.Any())
             {
-                json = JsonConvert.SerializeObject(taken);
-                BulkSubmit(json);
+                BulkSubmit(taken);
             }
         }
 
@@ -47,30 +50,17 @@ namespace LaunchDarkly.Client
             _queue.CompleteAdding();
             _timer.Dispose();
             _queue.Dispose();
+            _httpClient.Dispose();
         }
 
 
-        private async void BulkSubmit(string eventsJson)
+        private async void BulkSubmit(IEnumerable<Event> events)
         {
+            var response = await _httpClient.PostAsJsonAsync("/api/events/bulk", events);
+            
             try
             {
-                var url = new Uri(_configuration.BaseUri + "/api/events/bulk");
-
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-                httpWebRequest.ContentType = "text/json";
-                httpWebRequest.Method = "POST";
-                httpWebRequest.Headers.Add(HttpRequestHeader.Authorization, "api_key " + _configuration.ApiKey);
-
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-                {
-                    streamWriter.Write(eventsJson);
-                    streamWriter.Flush();
-
-                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-
-                    if (httpResponse.StatusCode != HttpStatusCode.OK)
-                        Logger.Error(string.Format("Error Submitting Events: '{0}'", httpResponse.StatusDescription));
-                }
+                response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
