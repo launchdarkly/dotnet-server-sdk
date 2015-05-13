@@ -3,13 +3,17 @@ using System.IO;
 using System.Net;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
-    public class LdClient
+    public class LdClient : IDisposable
     {
         private static ILog Logger = LogProvider.For<LdClient>();
-        
+
+        private readonly HttpClient _httpClient;
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
 
@@ -17,6 +21,8 @@ namespace LaunchDarkly.Client
         {
             _configuration = config;
             _eventStore = eventStore;
+            _httpClient = new HttpClient { BaseAddress = _configuration.BaseUri };
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", _configuration.ApiKey);
         }
 
         public LdClient(Configuration config)
@@ -25,34 +31,13 @@ namespace LaunchDarkly.Client
             _eventStore = new EventProcessor(_configuration);
         }
 
-        HttpWebRequest CreateRequest(string key)
-        {
-            var url = new Uri(_configuration.BaseUri + string.Format("api/eval/features/{0}", key));
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            request.Headers.Add(HttpRequestHeader.Authorization, "api_key " + _configuration.ApiKey);
-
-            return request;
-        }
-
-        Feature GetFeature(HttpWebResponse response)
-        {
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                var json = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<Feature>(json);
-            }
-        }
-
-        public bool GetFlag(string key, User user, bool defaultValue = false)
+        public async Task<bool> GetFlag(string key, User user, bool defaultValue = false)
         {
             try
             {
-                var request = CreateRequest(key);
 
-                using (var response = request.GetResponse() as HttpWebResponse)
+                using (var response = await _httpClient.GetAsync(string.Format("api/eval/features/{0}", key)))
                 {
-                    var feature = GetFeature(response);
-
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
                         if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -65,18 +50,19 @@ namespace LaunchDarkly.Client
                         }
                         else
                         {
-                            Logger.Error("Unexpected status code: " + response.StatusDescription);
+                            Logger.Error("Unexpected status code: " + response.ReasonPhrase);
                         }
                         sendFlagRequestEvent(key, user, defaultValue, true);
                         return defaultValue;
                     }
 
+                    var feature = await response.Content.ReadAsAsync<Feature>();
                     var value = feature.Evaluate(user, defaultValue);
                     sendFlagRequestEvent(key, user, value, false);
                     return value;
                 }
             }
-            
+
             catch (Exception ex)
             {
                 Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
@@ -84,7 +70,6 @@ namespace LaunchDarkly.Client
                 return defaultValue;
             }
         }
-
 
         public void SendEvent(string name, User user, string data)
         {
@@ -94,6 +79,21 @@ namespace LaunchDarkly.Client
         private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean usedDefaultValue)
         {
             _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, usedDefaultValue));
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            //We do not have native resource, so the boolean parameter can be ignored.
+            if (_eventStore is EventProcessor)
+                ((_eventStore) as IDisposable).Dispose();
+
+            _httpClient.Dispose();
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
         }
     }
 }
