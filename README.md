@@ -1,6 +1,7 @@
 LaunchDarkly SDK for .NET (Alpha)
 ===========================
 
+[![Build status](https://ci.appveyor.com/api/projects/status/wjj4xipn4xpniu8c?svg=true)](https://ci.appveyor.com/project/jkodumal/net-client)
 
 Warning
 -------
