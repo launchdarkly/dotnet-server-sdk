@@ -21,11 +21,11 @@ namespace LaunchDarkly.Tests
 
             var data = JsonConvert.SerializeObject(customData);
 
-            client.SendEvent("CustomEvent001", user, "data");
+            client.Track("CustomEvent001", user, "data");
 //            Thread.Sleep(1500);
-            client.SendEvent("CustomEvent002", user, "data");
+            client.Track("CustomEvent002", user, "data");
 //            Thread.Sleep(1500);
-            client.SendEvent("CustomEvent003", user, "data");
+            client.Track("CustomEvent003", user, "data");
 //            Thread.Sleep(1500);
         }
 

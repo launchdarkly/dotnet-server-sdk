@@ -17,21 +17,27 @@ namespace LaunchDarkly.Client
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
 
-        public LdClient(Configuration config, IStoreEvents eventStore)
+        public LdClient(Configuration config, HttpClient client, IStoreEvents eventStore)
         {
+            var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
+            client.BaseAddress = config.BaseUri;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", config.ApiKey);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
             _configuration = config;
             _eventStore = eventStore;
-            _httpClient = new HttpClient { BaseAddress = _configuration.BaseUri };
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", _configuration.ApiKey);
+            _httpClient = client;
         }
 
-        public LdClient(Configuration config)
+        public LdClient(Configuration config) : this(config, new HttpClient(), new EventProcessor(config))
         {
-            _configuration = config;
-            _eventStore = new EventProcessor(_configuration);
         }
 
-        public async Task<bool> GetFlag(string key, User user, bool defaultValue = false)
+        public LdClient(String apiKey) : this(Configuration.Default().WithApiKey(apiKey))
+        {
+
+        }
+
+        public async Task<bool> Toggle(string key, User user, bool defaultValue = false)
         {
             try
             {
@@ -71,7 +77,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        public void SendEvent(string name, User user, string data)
+        public void Track(string name, User user, string data)
         {
             _eventStore.Add(new CustomEvent(name, user, data));
         }
@@ -94,6 +100,11 @@ namespace LaunchDarkly.Client
             Dispose(true);
 
             GC.SuppressFinalize(this);
+        }
+
+        public void Flush()
+        {
+            _eventStore.Flush();
         }
     }
 }

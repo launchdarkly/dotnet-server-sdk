@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
@@ -36,13 +37,7 @@ namespace LaunchDarkly.Client
 
         public void SubmitEvents(object StateInfo)
         {
-            var comsumer = _queue.GetConsumingEnumerable();
-            var taken = comsumer.Take<Event>(_queue.BoundedCapacity);
-
-            if (taken.Any())
-            {
-                BulkSubmit(taken);
-            }
+            Flush();
         }
 
         public void Dispose()
@@ -53,11 +48,23 @@ namespace LaunchDarkly.Client
             _httpClient.Dispose();
         }
 
-
-        private async void BulkSubmit(IEnumerable<Event> events)
+        public void Flush()
         {
+            var comsumer = _queue.GetConsumingEnumerable();
+            var taken = comsumer.Take<Event>(_queue.BoundedCapacity);
+
+            if (taken.Any())
+            {
+                var task = Task.Run(async () => { await BulkSubmit(taken); });
+                task.Wait();
+            }
+        }
+
+        private async Task BulkSubmit(IEnumerable<Event> events)
+        {
+            Console.Write("Flushing");
             var response = await _httpClient.PostAsJsonAsync("/api/events/bulk", events);
-            
+
             try
             {
                 response.EnsureSuccessStatusCode();
@@ -66,6 +73,8 @@ namespace LaunchDarkly.Client
             {
                 Logger.Error(string.Format("Error Submitting Events: '{0}'", ex.Message));
             }
+
+            Console.Write("Flushed everything");
         }
     }
 }

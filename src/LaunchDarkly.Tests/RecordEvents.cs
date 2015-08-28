@@ -6,17 +6,14 @@ using LaunchDarkly.Client;
 using LaunchDarkly.Client.Logging;
 using NLog;
 using NLog.Targets;
+using System.Net.Http;
 
 namespace LaunchDarkly.Tests
 {
     public class RecordEvents
     {
-
-
-
-
         [Test]
-        public void EventQueueGetsCleared()
+        public async void EventQueueGetsCleared()
         {
             var target = CreateInMemoryTarget();
 
@@ -28,33 +25,34 @@ namespace LaunchDarkly.Tests
 
             var user = User.WithKey("user@test.com");
 
-            client.GetFlag("new.dashboard.enable1", user);
-            client.GetFlag("new.dashboard.enable2", user);
-            client.GetFlag("new.dashboard.enable3", user);
-            client.GetFlag("new.dashboard.enable4", user);
-            client.GetFlag("new.dashboard.enable5", user);
+            await client.Toggle("new.dashboard.enable1", user);
+            await client.Toggle("new.dashboard.enable2", user);
+            await client.Toggle("new.dashboard.enable3", user);
+            await client.Toggle("new.dashboard.enable4", user);
+            await client.Toggle("new.dashboard.enable5", user);
 
             Assert.AreEqual(5, target.Logs.Count);
 
             Thread.Sleep(1500);
-            client.GetFlag("new.dashboard.enable6", user);
-            client.GetFlag("new.dashboard.enable7", user);
-            client.GetFlag("new.dashboard.enable8", user);
-            client.GetFlag("new.dashboard.enable9", user);
-            client.GetFlag("new.dashboard.enable10", user);
+            await client.Toggle("new.dashboard.enable6", user);
+            await client.Toggle("new.dashboard.enable7", user);
+            await client.Toggle("new.dashboard.enable8", user);
+            await client.Toggle("new.dashboard.enable9", user);
+            await client.Toggle("new.dashboard.enable10", user);
 
         }
 
 
         [Test]
-        public void CheckingAFeatureFlag_RaisesAFeatureEvent()
+        public async void CheckingAFeatureFlag_RaisesAFeatureEvent()
         {
             var config = Configuration.Default();
             var eventStore = new Mock<IStoreEvents>();
-            var client = new LdClient(config, eventStore.Object);
+            var mockHttp = new Mock<HttpClient>();
+            var client = new LdClient(config, mockHttp.Object, eventStore.Object);
             var user = User.WithKey("user@test.com");
 
-            client.GetFlag("new.dashboard.enable", user);
+            await client.Toggle("new.dashboard.enable", user);
 
             eventStore.Verify(s=>s.Add(It.IsAny<FeatureRequestEvent<Boolean>>()));
         }
@@ -64,10 +62,11 @@ namespace LaunchDarkly.Tests
         {
             var config = Configuration.Default();
             var eventStore = new Mock<IStoreEvents>();
-            var client = new LdClient(config, eventStore.Object);
+            var mockHttp = new Mock<HttpClient>();
+            var client = new LdClient(config, mockHttp.Object, eventStore.Object);
             var user = User.WithKey("user@test.com");
 
-            client.SendEvent("AnyEventName", user, "AnyJson");
+            client.Track("AnyEventName", user, "AnyJson");
 
             eventStore.Verify(s => s.Add(It.IsAny<CustomEvent>()));
         }
