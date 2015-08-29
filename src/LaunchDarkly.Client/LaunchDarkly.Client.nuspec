@@ -11,7 +11,7 @@
     <iconUrl>https://avatars0.githubusercontent.com/u/8039656</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial Release of NuGet Package</releaseNotes>
+    <releaseNotes>Switch to asynchronous HTTP client</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>Feature Configuration</tags>
   </metadata>

@@ -27,7 +27,7 @@ namespace LaunchDarkly.Client
                                     EventQueueFrequency = DefaultEventQueueFrequency
                                 };
 
-            return OverwriteFromFile(defaultConfiguration);
+            return defaultConfiguration;
         }
 
         private static Configuration OverwriteFromFile(Configuration defaultConfiguration)
