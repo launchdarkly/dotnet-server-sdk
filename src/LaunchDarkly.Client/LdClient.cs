@@ -28,7 +28,7 @@ namespace LaunchDarkly.Client
             _httpClient = client;
         }
 
-        public LdClient(Configuration config) : this(config, new HttpClient(), new EventProcessor(config))
+        public LdClient(Configuration config) : this(config, new HttpClient(new WebRequestHandler() {CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Default) }), new EventProcessor(config))
         {
         }
 
@@ -42,7 +42,7 @@ namespace LaunchDarkly.Client
             try
             {
 
-                using (var response = await _httpClient.GetAsync(string.Format("api/eval/features/{0}", key)))
+                using (var response = await _httpClient.GetAsync(string.Format("api/eval/features/{0}", key)).ConfigureAwait(false))
                 {
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Client
                         return defaultValue;
                     }
 
-                    var feature = await response.Content.ReadAsAsync<Feature>();
+                    var feature = await response.Content.ReadAsAsync<Feature>().ConfigureAwait(false);
                     var value = feature.Evaluate(user, defaultValue);
                     sendFlagRequestEvent(key, user, value, false);
                     return value;

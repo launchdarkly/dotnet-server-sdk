@@ -15,10 +15,4 @@
     <copyright>$copyright$</copyright>
     <tags>Feature Configuration</tags>
   </metadata>
-  <files>
-    <file src="NuGet\config.install.xdt" target="content\App.config.install.xdt" /> 
-    <file src="NuGet\config.uninstall.xdt" target="content\App.config.uninstall.xdt" /> 
-    <file src="NuGet\config.install.xdt" target="content\Web.config.install.xdt" /> 
-    <file src="NuGet\config.uninstall.xdt" target="content\Web.config.uninstall.xdt" /> 
-  </files>
 </package>

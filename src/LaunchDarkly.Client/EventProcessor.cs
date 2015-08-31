@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace LaunchDarkly.Client
 {
@@ -24,9 +25,12 @@ namespace LaunchDarkly.Client
         public EventProcessor(Configuration configuration)
         {
             _configuration = configuration;
+            var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
+            var client = new HttpClient { BaseAddress = _configuration.BaseUri };
             _queue = new BlockingCollection<Event>(_configuration.EventQueueCapacity);
             _timer = new System.Threading.Timer(SubmitEvents, null, _configuration.EventQueueFrequency, _configuration.EventQueueFrequency);
-            _httpClient = new HttpClient { BaseAddress = _configuration.BaseUri };
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
+            _httpClient = client;
         }
 
         public void Add(Event eventToLog)
@@ -63,7 +67,7 @@ namespace LaunchDarkly.Client
         private async Task BulkSubmit(IEnumerable<Event> events)
         {
             Console.Write("Flushing");
-            var response = await _httpClient.PostAsJsonAsync("/api/events/bulk", events);
+            var response = await _httpClient.PostAsJsonAsync("/api/events/bulk", events).ConfigureAwait(false);
 
             try
             {
