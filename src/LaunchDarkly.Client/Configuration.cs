@@ -14,7 +14,7 @@ namespace LaunchDarkly.Client
 
         private static Uri DefaultUri = new Uri("https://app.launchdarkly.com");
         private static int DefaultEventQueueCapacity = 500;
-        private static TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(30); // In Seconds
+        private static TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(2); // In Seconds
 
         private Configuration() { }
 
