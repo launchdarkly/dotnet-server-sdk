@@ -153,7 +153,7 @@ namespace LaunchDarkly.Client
             return _attributes.ContainsKey(attribute);
         }
 
-        internal CustomUserAttributes()
+        public CustomUserAttributes()
         {
             _attributes = new Dictionary<string, List<string>>();
         }

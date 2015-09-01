@@ -3,29 +3,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Client.Logging;
+using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
     public class Feature
     {
         private static readonly ILog Logger = LogProvider.For<Feature>();
-        
+        [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get; set; }
+        [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; set; }
+        [JsonProperty(PropertyName = "kind", NullValueHandling = NullValueHandling.Ignore)]
         public string Kind { get; set; }
+        [JsonProperty(PropertyName = "salt", NullValueHandling = NullValueHandling.Ignore)]
         public string Salt { get; set; }
+        [JsonProperty(PropertyName = "on", NullValueHandling = NullValueHandling.Ignore)]
         public bool On { get; set; }
+        [JsonProperty(PropertyName = "variations", NullValueHandling = NullValueHandling.Ignore)]
         public List<Variation> Variations { get; set; }
-        public int Ttl { get; set; }
-        public bool IncludeInSnippet { get; set; }
-        public string CommitDate { get; set; }
-        public string CreationDate { get; set; }
+        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
         public int Version { get; set; }
-        public string Sel { get; set; }
 
         public bool Evaluate(User user, bool defaultValue)
         {
-            if (!On) return defaultValue;
+            if (!On || user == null) return defaultValue;
+
+            if (Variations.Any(v => v.MatchesUserTarget(user)))
+                return Variations.First(v => v.MatchesUserTarget(user)).Value;
 
             if(Variations.Any(v=>v.Matches(user)))
                 return Variations.First(v => v.Matches(user)).Value;
@@ -49,20 +54,36 @@ namespace LaunchDarkly.Client
     {
         public bool Value { get; set; }
         public int Weight { get; set; }
+        public TargetRule UserTarget { get; set; }
         public List<TargetRule> Targets { get; set; }
 
         public bool Matches(User user)
         {
             return Targets.Any(t => t.Matches(user));
         }
+        
+        public bool MatchesUserTarget(User user)
+        {
+           if (UserTarget != null && UserTarget.Matches(user))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
 
     public class TargetRule
     {
+        [JsonProperty(PropertyName = "attribute", NullValueHandling = NullValueHandling.Ignore)]
         public string Attribute { get; set; }
+        [JsonProperty(PropertyName = "op", NullValueHandling = NullValueHandling.Ignore)]
         public string Op { get; set; }
-        public List<string> Values { get; set; }
+        [JsonProperty(PropertyName = "values", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Object> Values { get; set; }
 
         public bool Matches(User user)
         {
@@ -70,7 +91,7 @@ namespace LaunchDarkly.Client
             return Values.Contains(userValue);
         }
 
-        private string GetUserValue(User user)
+        private Object GetUserValue(User user)
         {
             switch (Attribute)
             {
@@ -80,6 +101,18 @@ namespace LaunchDarkly.Client
                     return user.IpAddress;
                 case "country":
                     return user.Country;
+                case "firstName":
+                    return user.FirstName;
+                case "lastName":
+                    return user.LastName;
+                case "avatar":
+                    return user.Avatar;
+                case "anonymous":
+                    return user.Anonymous;
+                case "name":
+                    return user.Name;
+                case "email":
+                    return user.Email;
                 case "custom":
                     throw new NotImplementedException("Custom Attributes");
                 default:
