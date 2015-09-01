@@ -20,6 +20,18 @@ namespace LaunchDarkly.Client
         public string Country { get; set; }
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public CustomUserAttributes Custom { get; set; }
+        [JsonProperty(PropertyName = "firstName", NullValueHandling = NullValueHandling.Ignore)]
+        public string FirstName { get; set; }
+        [JsonProperty(PropertyName = "lastName", NullValueHandling = NullValueHandling.Ignore)]
+        public string LastName { get; set; }
+        [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]
+        public string Name { get; set; }
+        [JsonProperty(PropertyName = "avatar", NullValueHandling = NullValueHandling.Ignore)]
+        public string Avatar { get; set; }
+        [JsonProperty(PropertyName = "email", NullValueHandling = NullValueHandling.Ignore)]
+        public string Email { get; set; }
+        [JsonProperty(PropertyName ="anonymous", NullValueHandling = NullValueHandling.Ignore)]
+        public bool Anonymous { get; set; }
 
         public User(string key)
         {
@@ -72,6 +84,42 @@ namespace LaunchDarkly.Client
             return user;
         }
 
+        public static User AndFirstName(this User user, string firstName)
+        {
+            user.FirstName = firstName;
+            return user;
+        }
+
+        public static User AndLastName(this User user, string lastName)
+        {
+            user.LastName = lastName;
+            return user;
+        }
+
+        public static User AndName(this User user, string name)
+        {
+            user.LastName = name;
+            return user;
+        }
+
+        public static User AndEmail(this User user, string email)
+        {
+            user.Email = email;
+            return user;
+        }
+
+        public static User AndAnonymous(this User user, bool anonymous)
+        {
+            user.Anonymous = anonymous;
+            return user;
+        }
+
+        public static User AndAvatar(this User user, string avatar)
+        {
+            user.Avatar = avatar;
+            return user;
+        }
+
         public static User AndCustomAttribute(this User user, string attribute, string value)
         {
             if (attribute == string.Empty)
@@ -105,7 +153,7 @@ namespace LaunchDarkly.Client
             return _attributes.ContainsKey(attribute);
         }
 
-        internal CustomUserAttributes()
+        public CustomUserAttributes()
         {
             _attributes = new Dictionary<string, List<string>>();
         }

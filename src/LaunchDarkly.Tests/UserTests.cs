@@ -22,6 +22,17 @@ namespace LaunchDarkly.Tests
             Assert.AreEqual("user@test.com", user.Key);
         }
 
+        /*
+        TODO: finish support for custom
+        [Test]
+        public void DeserializeUserWithCustomAsJson()
+        {
+            var json = "{\"key\":\"user@test.com\", \"custom\": {\"bizzle\":\"cripps\"}}";
+            var user = JsonConvert.DeserializeObject<User>(json);
+            Assert.AreEqual("cripps", user.Custom["bizzle"]);
+        }
+        */
+
         [Test]
         public void WhenCreatingAUser_AnOptionalSecondaryKeyCanBeProvided()
         {
