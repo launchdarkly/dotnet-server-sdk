@@ -52,4 +52,9 @@ namespace LaunchDarkly.Client
             Data = data;
         }
     }
+
+    public class IdentifyEvent: Event
+    {
+        public IdentifyEvent(User user) : base("identify", user.Key, user) { }
+    }
 }

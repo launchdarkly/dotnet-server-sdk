@@ -82,6 +82,11 @@ namespace LaunchDarkly.Client
             _eventStore.Add(new CustomEvent(name, user, data));
         }
 
+        public void Identify(User user)
+        {
+            _eventStore.Add(new IdentifyEvent(user));
+        }
+
         private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean usedDefaultValue)
         {
             _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, usedDefaultValue));
