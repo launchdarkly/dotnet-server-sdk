@@ -18,7 +18,6 @@ namespace LaunchDarkly.Client
         private static readonly ILog Logger = LogProvider.For<EventProcessor>();
 
         private readonly Configuration _configuration;
-        private readonly HttpClient _httpClient;
         private BlockingCollection<Event> _queue;
         private System.Threading.Timer _timer;
 
@@ -26,11 +25,8 @@ namespace LaunchDarkly.Client
         {
             _configuration = configuration;
             var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
-            var client = new HttpClient { BaseAddress = _configuration.BaseUri };
             _queue = new BlockingCollection<Event>(_configuration.EventQueueCapacity);
             _timer = new System.Threading.Timer(SubmitEvents, null, _configuration.EventQueueFrequency, _configuration.EventQueueFrequency);
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
-            _httpClient = client;
         }
 
         public void Add(Event eventToLog)
@@ -49,36 +45,55 @@ namespace LaunchDarkly.Client
             _queue.CompleteAdding();
             _timer.Dispose();
             _queue.Dispose();
-            _httpClient.Dispose();
         }
 
         public void Flush()
         {
-            var comsumer = _queue.GetConsumingEnumerable();
-            var taken = comsumer.Take<Event>(_queue.BoundedCapacity);
-
-            if (taken.Any())
+            Event e;
+            List<Event> events = new List<Event>();
+            while (_queue.TryTake(out e))
             {
-                var task = Task.Run(async () => { await BulkSubmit(taken); });
-                task.Wait();
+                events.Add(e);
+            }
+
+            if (events.Any())
+            {
+                BulkSubmit(events);
             }
         }
 
-        private async Task BulkSubmit(IEnumerable<Event> events)
+        private void BulkSubmit(IEnumerable<Event> events)
         {
-            Console.Write("Flushing");
-            var response = await _httpClient.PostAsJsonAsync("/api/events/bulk", events).ConfigureAwait(false);
-
             try
             {
-                response.EnsureSuccessStatusCode();
+                var url = new Uri(_configuration.BaseUri + "api/events/bulk");
+
+                var json = JsonConvert.SerializeObject(events.ToList());
+
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+                httpWebRequest.Headers.Add(HttpRequestHeader.Authorization, "api_key " + _configuration.ApiKey);
+                var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
+
+                httpWebRequest.UserAgent = "DotNetClient/" + version;
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+
+                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+
+                    if (httpResponse.StatusCode != HttpStatusCode.OK)
+                       Logger.Error(string.Format("Error Submitting Events: '{0}'", httpResponse.StatusDescription));
+                }
             }
             catch (Exception ex)
             {
                 Logger.Error(string.Format("Error Submitting Events: '{0}'", ex.Message));
             }
-
-            Console.Write("Flushed everything");
         }
     }
 }
