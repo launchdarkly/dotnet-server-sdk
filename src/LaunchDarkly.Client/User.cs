@@ -11,17 +11,17 @@ namespace LaunchDarkly.Client
         private static readonly ILog Logger = LogProvider.For<User>();
 
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
-        public string Key { get; private set; }
+        public string Key { get; set; }
         [JsonProperty(PropertyName = "secondary", NullValueHandling = NullValueHandling.Ignore)]
-        public string SecondaryKey { get; internal set; }
+        public string SecondaryKey { get; set; }
         [JsonProperty(PropertyName = "ip", NullValueHandling = NullValueHandling.Ignore)]
-        public string IpAddress { get; internal set; }
+        public string IpAddress { get; set; }
         [JsonProperty(PropertyName = "country", NullValueHandling = NullValueHandling.Ignore)]
-        public string Country { get; internal set; }
+        public string Country { get; set; }
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
-        public CustomUserAttributes Custom { get; internal set; }
+        public CustomUserAttributes Custom { get; set; }
 
-        private User(string key)
+        public User(string key)
         {
             Key = key;
             Custom = new CustomUserAttributes();

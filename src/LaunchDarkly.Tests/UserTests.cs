@@ -1,7 +1,7 @@
 ﻿using System;
 using LaunchDarkly.Client;
 using NUnit.Framework;
-
+using Newtonsoft.Json;
 
 namespace LaunchDarkly.Tests
 {
@@ -12,6 +12,14 @@ namespace LaunchDarkly.Tests
         {
             var user = User.WithKey("AnyUniqueKey");
             Assert.AreEqual("AnyUniqueKey", user.Key);
+        }
+
+        [Test]
+        public void DeserializeBasicUserAsJson()
+        {
+            var json = "{\"key\":\"user@test.com\"}";
+            var user = JsonConvert.DeserializeObject<User>(json);
+            Assert.AreEqual("user@test.com", user.Key);
         }
 
         [Test]
