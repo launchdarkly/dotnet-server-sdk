@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using System.Globalization;
 using LaunchDarkly.Client.Logging;
+using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
     public class User
     {
         private static readonly ILog Logger = LogProvider.For<User>();
-        
+
+        [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; private set; }
+        [JsonProperty(PropertyName = "secondary", NullValueHandling = NullValueHandling.Ignore)]
         public string SecondaryKey { get; internal set; }
+        [JsonProperty(PropertyName = "ip", NullValueHandling = NullValueHandling.Ignore)]
         public string IpAddress { get; internal set; }
+        [JsonProperty(PropertyName = "country", NullValueHandling = NullValueHandling.Ignore)]
         public string Country { get; internal set; }
+        [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public CustomUserAttributes Custom { get; internal set; }
 
         private User(string key)
