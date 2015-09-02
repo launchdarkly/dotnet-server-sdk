@@ -6,7 +6,7 @@ LaunchDarkly SDK for .NET
 Quick setup
 -----------
 
-0. Use [NuGet](http://docs.nuget.org/docs/start-here/using-the-package-manager-console) to add thet .NET SDK to your project
+0. Use [NuGet](http://docs.nuget.org/docs/start-here/using-the-package-manager-console) to add the .NET SDK to your project:
 
         Install-Package LaunchDarkly.Client
 
@@ -21,7 +21,7 @@ Quick setup
 Your first feature flag
 -----------------------
 
-1. Create a new feature flag on your [dashboard](https://app.launchdarkly.com)
+1. Create a new feature flag on your [dashboard](https://app.launchdarkly.com).
 2. In your application code, use the feature's key to check whether the flag is on for each user:
 
         User user = User.WithKey(username);
@@ -36,7 +36,7 @@ Your first feature flag
 Learn more
 -----------
 
-Check out our [documentation](http://docs.launchdarkly.com) for in-depth instructions on configuring and using LaunchDarkly. You can also head straight to the [complete reference guide for this SDK](http://docs.launchdarkly.com/v1.0/docs/dotnet-sdk-reference).
+Check out our [documentation](http://docs.launchdarkly.com) for in-depth instructions on configuring and using LaunchDarkly. You can also head straight to the [complete reference guide for this SDK](http://docs.launchdarkly.com/docs/dotnet-sdk-reference).
 
 Contributing
 ------------
