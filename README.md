@@ -1,4 +1,4 @@
-LaunchDarkly SDK for .NET (Alpha)
+LaunchDarkly SDK for .NET
 ===========================
 
 [![Build status](https://ci.appveyor.com/api/projects/status/wjj4xipn4xpniu8c?svg=true)](https://ci.appveyor.com/project/jkodumal/net-client)
