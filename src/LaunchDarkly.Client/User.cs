@@ -45,14 +45,14 @@ namespace LaunchDarkly.Client
             return new User(key);
         }
 
-        public float GetParam(string salt)
+        public float GetParam(string featureKey, string salt)
         {
             var idHash = Key;
 
             if (!string.IsNullOrEmpty(SecondaryKey))
                 idHash += "." + SecondaryKey; 
 
-            var hash = ShaHex.Hash(string.Format("{0}.{1}.{2}", Key, salt, idHash)).Substring(0, 15);
+            var hash = ShaHex.Hash(string.Format("{0}.{1}.{2}", featureKey, salt, idHash)).Substring(0, 15);
 
             var longValue = long.Parse(hash, NumberStyles.HexNumber);
             const float longScale = 0xFFFFFFFFFFFFFFFL;
