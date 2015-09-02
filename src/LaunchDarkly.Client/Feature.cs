@@ -122,7 +122,7 @@ namespace LaunchDarkly.Client
                     return user.Name;
                 case "email":
                     return user.Email;
-                case "custom":
+                default:
                     var token = user.Custom[Attribute];
                     if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
                     {
@@ -138,8 +138,6 @@ namespace LaunchDarkly.Client
                         var val = (JValue)token;
                         return val.Value;                        
                     }
-                default:
-                    throw new ArgumentException(string.Format("Rule uses unknown Attribute '{0}'", Attribute));
             }
         }
     }

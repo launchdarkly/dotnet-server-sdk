@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 
@@ -58,6 +59,58 @@ namespace LaunchDarkly.Tests
             var result = await client.Toggle("a.non.feature", user, true);
 
             Assert.AreEqual(true, result);
-        }       
+        } 
+        
+        [Test]
+        public void IfAUserHasStringCustomAttributes_TargetRulesMatch()
+        {
+            var user = User.WithKey("anyUser").AndCustomAttribute("bizzle", "cripps");
+            var target = new TargetRule();
+
+            target.Attribute = "bizzle";
+            target.Op = "in";
+            target.Values = new List<object>() { "cripps" };
+
+            Assert.AreEqual(true, target.Matches(user));
+        }      
+
+        [Test]
+        public void IfAUserHasCustomListAttributes_TargetRulesMatch()
+        {
+            var user = User.WithKey("anyUser").AndCustomAttribute("bizzle", new List<string>() { "cripps", "crupps" });
+            var target = new TargetRule();
+
+            target.Attribute = "bizzle";
+            target.Op = "in";
+            target.Values = new List<object>() { "cripps" };
+
+            Assert.AreEqual(true, target.Matches(user));
+        }
+
+        [Test]
+        public void IfAUserHasNonMatchingCustomListAttributes_TargetRulesDoNotMatch()
+        {
+            var user = User.WithKey("anyUser").AndCustomAttribute("bizzle", new List<string>() { "cruupps", "crupps" });
+            var target = new TargetRule();
+
+            target.Attribute = "bizzle";
+            target.Op = "in";
+            target.Values = new List<object>() { "cripps" };
+
+            Assert.AreEqual(false, target.Matches(user));
+        }
+
+        [Test]
+        public void IfAListHasCustomBoolAttributes_Target_rulesMatch()
+        {
+            var user = User.WithKey("anyUser").AndCustomAttribute("bizzle", true);
+            var target = new TargetRule();
+
+            target.Attribute = "bizzle";
+            target.Op = "in";
+            target.Values = new List<object>() { true};
+
+            Assert.AreEqual(true, target.Matches(user));
+        }
     }
 }
