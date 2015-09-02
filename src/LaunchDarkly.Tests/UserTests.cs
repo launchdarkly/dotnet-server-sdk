@@ -31,6 +31,16 @@ namespace LaunchDarkly.Tests
         }
 
         [Test]
+        public void SerializingAndDeserializingAUserWithCustomAttributesIsIdempotent()
+        {
+            var user = User.WithKey("foo@bar.com").AndCustomAttribute("bizzle", "cripps");
+            var json = JsonConvert.SerializeObject(user);
+            var newUser = JsonConvert.DeserializeObject<User>(json);
+            Assert.AreEqual("cripps", (string)user.Custom["bizzle"]);
+            Assert.AreEqual("foo@bar.com", user.Key);
+        }
+
+        [Test]
         public void WhenCreatingAUser_AnOptionalSecondaryKeyCanBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey")
