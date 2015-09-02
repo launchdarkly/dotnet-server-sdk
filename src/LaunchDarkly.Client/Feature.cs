@@ -37,7 +37,7 @@ namespace LaunchDarkly.Client
             if(Variations.Any(v=>v.Matches(user)))
                 return Variations.First(v => v.Matches(user)).Value;
 
-            var param = user.GetParam(Salt);
+            var param = user.GetParam(Key, Salt);
             float sum = 0;
             foreach (var variation in Variations)
             {

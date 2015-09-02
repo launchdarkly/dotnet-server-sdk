@@ -30,7 +30,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "email", NullValueHandling = NullValueHandling.Ignore)]
         public string Email { get; set; }
         [JsonProperty(PropertyName ="anonymous", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Anonymous { get; set; }
+        public  bool? Anonymous { get; set; }
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 
@@ -45,14 +45,14 @@ namespace LaunchDarkly.Client
             return new User(key);
         }
 
-        public float GetParam(string salt)
+        public float GetParam(string featureKey, string salt)
         {
             var idHash = Key;
 
             if (!string.IsNullOrEmpty(SecondaryKey))
                 idHash += "." + SecondaryKey; 
 
-            var hash = ShaHex.Hash(string.Format("{0}.{1}.{2}", Key, salt, idHash)).Substring(0, 15);
+            var hash = ShaHex.Hash(string.Format("{0}.{1}.{2}", featureKey, salt, idHash)).Substring(0, 15);
 
             var longValue = long.Parse(hash, NumberStyles.HexNumber);
             const float longScale = 0xFFFFFFFFFFFFFFFL;

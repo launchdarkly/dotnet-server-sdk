@@ -41,6 +41,14 @@ namespace LaunchDarkly.Tests
         }
 
         [Test]
+        public void SerializingAUserWithNoAnonymousSetYieldsNoAnonymous()
+        {
+            var user = User.WithKey("foo@bar.com");
+            var json = JsonConvert.SerializeObject(user);
+            Assert.IsFalse(json.Contains("anonymous"));
+        }
+
+        [Test]
         public void WhenCreatingAUser_AnOptionalSecondaryKeyCanBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey")
@@ -143,7 +151,7 @@ namespace LaunchDarkly.Tests
                            .AndSecondaryKey("1.2.3.4");
 
             var salt = Guid.NewGuid().ToString();
-            var hash = user.GetParam(salt);
+            var hash = user.GetParam("featureKey", salt);
 
             Assert.That(hash, Is.GreaterThan(0));
             Assert.That(hash, Is.LessThan(1));
@@ -157,12 +165,21 @@ namespace LaunchDarkly.Tests
 
             var salt = Guid.NewGuid().ToString();
 
-            var hash1 = user.GetParam(salt);
-            var hash2 = user.GetParam(salt);
+            var hash1 = user.GetParam("featureKey", salt);
+            var hash2 = user.GetParam("featureKey", salt);
 
             Assert.AreEqual(hash1, hash2);
         }
 
+        [Test]
+        public void TestApproximateUserParam()
+        {
+            var user = User.WithKey("test@test.com");
+            var featureKey = "test";
+            var salt = "abc";
 
+            var param = user.GetParam(featureKey, salt);
+            Assert.AreEqual(param, 0.6480837447865612, .01);
+        }
     }
 }
