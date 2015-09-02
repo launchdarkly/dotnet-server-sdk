@@ -30,7 +30,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "email", NullValueHandling = NullValueHandling.Ignore)]
         public string Email { get; set; }
         [JsonProperty(PropertyName ="anonymous", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Anonymous { get; set; }
+        public  bool? Anonymous { get; set; }
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 

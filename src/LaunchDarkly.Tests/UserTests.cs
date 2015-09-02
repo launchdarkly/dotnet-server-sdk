@@ -41,6 +41,14 @@ namespace LaunchDarkly.Tests
         }
 
         [Test]
+        public void SerializingAUserWithNoAnonymousSetYieldsNoAnonymous()
+        {
+            var user = User.WithKey("foo@bar.com");
+            var json = JsonConvert.SerializeObject(user);
+            Assert.IsFalse(json.Contains("anonymous"));
+        }
+
+        [Test]
         public void WhenCreatingAUser_AnOptionalSecondaryKeyCanBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey")
