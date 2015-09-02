@@ -28,7 +28,7 @@ namespace LaunchDarkly.Client
             _httpClient = client;
         }
 
-        public LdClient(Configuration config) : this(config, new HttpClient(new WebRequestHandler() {CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Default) }), new EventProcessor(config))
+        public LdClient(Configuration config) : this(config, new HttpClient(new WebRequestHandler() {CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.CacheIfAvailable) }), new EventProcessor(config))
         {
         }
 
