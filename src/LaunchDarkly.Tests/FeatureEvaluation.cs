@@ -58,8 +58,6 @@ namespace LaunchDarkly.Tests
             var result = await client.Toggle("a.non.feature", user, true);
 
             Assert.AreEqual(true, result);
-        }
-
-
+        }       
     }
 }

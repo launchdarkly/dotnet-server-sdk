@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections;
 
 namespace LaunchDarkly.Client
 {
@@ -88,6 +90,13 @@ namespace LaunchDarkly.Client
         public bool Matches(User user)
         {
             var userValue = GetUserValue(user);
+
+            if (!(userValue is string) && typeof(IEnumerable).IsAssignableFrom(userValue.GetType()))
+            {
+                var uvs = (IEnumerable<object>)userValue;
+                return Values.Intersect<object>(uvs).Any();
+            }
+
             return Values.Contains(userValue);
         }
 
@@ -114,7 +123,21 @@ namespace LaunchDarkly.Client
                 case "email":
                     return user.Email;
                 case "custom":
-                    throw new NotImplementedException("Custom Attributes");
+                    var token = user.Custom[Attribute];
+                    if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
+                    {
+                        var arr = (JArray)token;
+                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);                    
+                    }
+                    else if (token.Type == JTokenType.Object)
+                    {
+                        throw new ArgumentException(string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
+                    }
+                    else
+                    {
+                        var val = (JValue)token;
+                        return val.Value;                        
+                    }
                 default:
                     throw new ArgumentException(string.Format("Rule uses unknown Attribute '{0}'", Attribute));
             }

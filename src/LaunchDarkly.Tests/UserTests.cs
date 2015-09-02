@@ -22,16 +22,13 @@ namespace LaunchDarkly.Tests
             Assert.AreEqual("user@test.com", user.Key);
         }
 
-        /*
-        TODO: finish support for custom
         [Test]
         public void DeserializeUserWithCustomAsJson()
         {
             var json = "{\"key\":\"user@test.com\", \"custom\": {\"bizzle\":\"cripps\"}}";
             var user = JsonConvert.DeserializeObject<User>(json);
-            Assert.AreEqual("cripps", user.Custom["bizzle"]);
+            Assert.AreEqual("cripps", (string)user.Custom["bizzle"]);
         }
-        */
 
         [Test]
         public void WhenCreatingAUser_AnOptionalSecondaryKeyCanBeProvided()
@@ -80,7 +77,7 @@ namespace LaunchDarkly.Tests
                            .AndCustomAttribute("AnyAttributeName", "AnyValue");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
-            Assert.AreEqual("AnyValue", user.Custom["AnyAttributeName"]);
+            Assert.AreEqual("AnyValue", (string)user.Custom["AnyAttributeName"]);
         }
 
         [Test]
@@ -107,8 +104,8 @@ namespace LaunchDarkly.Tests
                            .AndCustomAttribute("AnyOtherAttributeName", "AnyOtherValue");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
-            Assert.AreEqual("AnyValue", user.Custom["AnyAttributeName"]);
-            Assert.AreEqual("AnyOtherValue", user.Custom["AnyOtherAttributeName"]);
+            Assert.AreEqual("AnyValue", (string)user.Custom["AnyAttributeName"]);
+            Assert.AreEqual("AnyOtherValue", (string)user.Custom["AnyOtherAttributeName"]);
         }
 
 
@@ -124,8 +121,8 @@ namespace LaunchDarkly.Tests
             Assert.AreEqual("AnyUniqueKey", user.Key);
             Assert.AreEqual("1.2.3.4", user.IpAddress);
             Assert.AreEqual("US", user.Country);
-            Assert.AreEqual("AnyValue", user.Custom["AnyAttributeName"]);
-            Assert.AreEqual("AnyOtherValue", user.Custom["AnyOtherAttributeName"]);
+            Assert.AreEqual("AnyValue", (string)user.Custom["AnyAttributeName"]);
+            Assert.AreEqual("AnyOtherValue", (string)user.Custom["AnyOtherAttributeName"]);
         }
 
 

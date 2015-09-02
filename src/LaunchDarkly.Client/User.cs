@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
@@ -18,8 +19,6 @@ namespace LaunchDarkly.Client
         public string IpAddress { get; set; }
         [JsonProperty(PropertyName = "country", NullValueHandling = NullValueHandling.Ignore)]
         public string Country { get; set; }
-        [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
-        public CustomUserAttributes Custom { get; set; }
         [JsonProperty(PropertyName = "firstName", NullValueHandling = NullValueHandling.Ignore)]
         public string FirstName { get; set; }
         [JsonProperty(PropertyName = "lastName", NullValueHandling = NullValueHandling.Ignore)]
@@ -32,11 +31,13 @@ namespace LaunchDarkly.Client
         public string Email { get; set; }
         [JsonProperty(PropertyName ="anonymous", NullValueHandling = NullValueHandling.Ignore)]
         public bool Anonymous { get; set; }
+        [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, JToken> Custom { get; set; }
 
         public User(string key)
         {
             Key = key;
-            Custom = new CustomUserAttributes();
+            Custom = new Dictionary<string, JToken>();
         }
 
         public static User WithKey(string key)
@@ -57,6 +58,11 @@ namespace LaunchDarkly.Client
             const float longScale = 0xFFFFFFFFFFFFFFFL;
 
             return longValue/longScale;
+        }
+
+        public JToken GetCustom(string attribute)
+        {
+            return Custom[attribute];
         }
 
     }
@@ -125,37 +131,49 @@ namespace LaunchDarkly.Client
             if (attribute == string.Empty)
                 throw new ArgumentException("Attribute Name can not be empty");
 
-            if (user.Custom.Contains(attribute))
-                throw new ArgumentException("Attribute Name must be unique");
+            user.Custom.Add(attribute, new JValue(value));
 
-            user.Custom.Add(attribute, new List<string> { value });
             return user;
         }
-    }
 
-
-    public class CustomUserAttributes
-    {
-        private readonly Dictionary<string, List<string>> _attributes;
-
-        public string this[string attribute]
+        public static User AndCustomAttribute(this User user, string attribute, bool value)
         {
-            get { return _attributes[attribute][0]; }
+            if (attribute == string.Empty)
+                throw new ArgumentException("Attribute Name can not be empty");
+
+            user.Custom.Add(attribute, new JValue(value));
+
+            return user;
         }
 
-        public void Add(string attribute, List<string> value)
+        public static User AndCustomAttribute(this User user, string attribute, int value)
         {
-            _attributes.Add(attribute, value);
+            if (attribute == string.Empty)
+                throw new ArgumentException("Attribute Name can not be empty");
+
+            user.Custom.Add(attribute, new JValue(value));
+
+            return user;
         }
 
-        public bool Contains(string attribute)
+        public static User AndCustomAttribute(this User user, string attribute, float value)
         {
-            return _attributes.ContainsKey(attribute);
+            if (attribute == string.Empty)
+                throw new ArgumentException("Attribute Name can not be empty");
+
+            user.Custom.Add(attribute, new JValue(value));
+
+            return user;
         }
 
-        public CustomUserAttributes()
+        public static User AndCustomAttribute(this User user, string attribute, List<string> value)
         {
-            _attributes = new Dictionary<string, List<string>>();
+            if (attribute == string.Empty)
+                throw new ArgumentException("Attribute Name can not be empty");
+
+            user.Custom.Add(attribute, new JArray(value.ToArray()));
+
+            return user;
         }
     }
 }
