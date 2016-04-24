@@ -5,11 +5,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Net;
-using System.Net.Http;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
 
 namespace LaunchDarkly.Client
 {
@@ -17,16 +13,15 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Logger = LogProvider.For<EventProcessor>();
 
-        private readonly Configuration _configuration;
+        private readonly Configuration _config;
         private BlockingCollection<Event> _queue;
         private System.Threading.Timer _timer;
 
-        public EventProcessor(Configuration configuration)
+        public EventProcessor(Configuration config)
         {
-            _configuration = configuration;
-            var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
-            _queue = new BlockingCollection<Event>(_configuration.EventQueueCapacity);
-            _timer = new System.Threading.Timer(SubmitEvents, null, _configuration.EventQueueFrequency, _configuration.EventQueueFrequency);
+            _config = config;
+            _queue = new BlockingCollection<Event>(_config.EventQueueCapacity);
+            _timer = new System.Threading.Timer(SubmitEvents, null, _config.EventQueueFrequency, _config.EventQueueFrequency);
         }
 
         public void Add(Event eventToLog)
@@ -66,14 +61,15 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var url = new Uri(_configuration.BaseUri + "api/events/bulk");
+                var url = new Uri(_config.BaseUri + "api/events/bulk");
 
-                var json = JsonConvert.SerializeObject(events.ToList());
+                string json = JsonConvert.SerializeObject(events.ToList());
+                Logger.Debug("Submitting " + events.Count() + " events to " + url.AbsoluteUri + " with json: " + json);
 
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
-                httpWebRequest.Headers.Add(HttpRequestHeader.Authorization, "api_key " + _configuration.ApiKey);
+                httpWebRequest.Headers.Add(HttpRequestHeader.Authorization, "api_key " + _config.ApiKey);
                 var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
 
                 httpWebRequest.UserAgent = "DotNetClient/" + version;

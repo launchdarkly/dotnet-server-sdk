@@ -35,10 +35,10 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "default", NullValueHandling = NullValueHandling.Ignore)]
         public Boolean Default { get; private set; }
 
-        public FeatureRequestEvent(String key, User user, T value, Boolean defaultValueUsed) : base("feature", key, user)
+        public FeatureRequestEvent(String key, User user, T value, Boolean defaultValue) : base("feature", key, user)
         {
             Value = value;
-            Default = defaultValueUsed;
+            Default = defaultValue;
         }
     }
 

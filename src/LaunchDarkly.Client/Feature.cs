@@ -22,6 +22,8 @@ namespace LaunchDarkly.Client
         public string Salt { get; set; }
         [JsonProperty(PropertyName = "on", NullValueHandling = NullValueHandling.Ignore)]
         public bool On { get; set; }
+        [JsonProperty(PropertyName = "deleted", NullValueHandling = NullValueHandling.Ignore)]
+        public bool Deleted { get; set; }
         [JsonProperty(PropertyName = "variations", NullValueHandling = NullValueHandling.Ignore)]
         public List<Variation> Variations { get; set; }
         [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]

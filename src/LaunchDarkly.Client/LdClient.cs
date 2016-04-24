@@ -1,11 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Net;
 using LaunchDarkly.Client.Logging;
-using Newtonsoft.Json;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
@@ -13,68 +7,68 @@ namespace LaunchDarkly.Client
     {
         private static ILog Logger = LogProvider.For<LdClient>();
 
-        private readonly HttpClient _httpClient;
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
+        private readonly IFeatureStore _featureStore;
+        private readonly FeatureRequestor _featureRequestor;
+        private readonly IUpdateProcessor _updateProcessor;
 
-        public LdClient(Configuration config, HttpClient client, IStoreEvents eventStore)
+        public LdClient(Configuration config, IStoreEvents eventStore)
         {
-            var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
-            client.BaseAddress = config.BaseUri;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", config.ApiKey);
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
+            Logger.Info("Starting LaunchDarkly Client..");
             _configuration = config;
             _eventStore = eventStore;
-            _httpClient = client;
+            _featureStore = new InMemoryFeatureStore();
+            _featureRequestor = new FeatureRequestor(config);
+            _updateProcessor = new PollingProcessor(config, _featureRequestor, _featureStore);
+            var initTask = _updateProcessor.Start();
+            //TODO: move startWait to config
+            var unused = initTask.Task.Wait(TimeSpan.FromMilliseconds(5000));
         }
 
-        public LdClient(Configuration config) : this(config, new HttpClient(new WebRequestHandler() {CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.CacheIfAvailable) }), new EventProcessor(config))
+        public LdClient(Configuration config) : this(config, new EventProcessor(config))
         {
         }
 
         public LdClient(String apiKey) : this(Configuration.Default().WithApiKey(apiKey))
         {
-
         }
 
-        public async Task<bool> Toggle(string key, User user, bool defaultValue = false)
+        public bool Initialized()
         {
-            try
+            return _updateProcessor.Initialized();
+        }
+
+        public bool Toggle(string key, User user, bool defaultValue = false)
+        {
+            if (!_updateProcessor.Initialized())
             {
-
-                using (var response = await _httpClient.GetAsync(string.Format("api/eval/features/{0}", key)).ConfigureAwait(false))
-                {
-                    if (response.StatusCode != HttpStatusCode.OK)
-                    {
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            Logger.Error("Invalid API key");
-                        }
-                        else if (response.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            Logger.Error("Unknown feature key: " + key);
-                        }
-                        else
-                        {
-                            Logger.Error("Unexpected status code: " + response.ReasonPhrase);
-                        }
-                        sendFlagRequestEvent(key, user, defaultValue, true);
-                        return defaultValue;
-                    }
-
-                    var feature = await response.Content.ReadAsAsync<Feature>().ConfigureAwait(false);
-                    var value = feature.Evaluate(user, defaultValue);
-                    sendFlagRequestEvent(key, user, value, false);
-                    return value;
-                }
+                return defaultValue;
             }
 
+            try
+            {
+                bool value = evaluate(key, user, defaultValue);
+                sendFlagRequestEvent(key, user, value, defaultValue);
+                return value;
+            }
             catch (Exception ex)
             {
                 Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-                sendFlagRequestEvent(key, user, defaultValue, true);
+                sendFlagRequestEvent(key, user, defaultValue, defaultValue);
                 return defaultValue;
             }
+        }
+
+        private bool evaluate(string key, User user, bool defaultValue)
+        {
+            Feature result = _featureStore.Get(key);
+            if (result == null)
+            {
+                Logger.Warn("Unknown feature flag: " + key + "; returning default value: " + defaultValue);
+                return defaultValue;
+            }
+            return result.Evaluate(user, defaultValue);
         }
 
         public void Track(string name, User user, string data)
@@ -98,7 +92,10 @@ namespace LaunchDarkly.Client
             if (_eventStore is EventProcessor)
                 ((_eventStore) as IDisposable).Dispose();
 
-            _httpClient.Dispose();
+            if (_updateProcessor != null)
+            {
+                _updateProcessor.Dispose();
+            }
         }
         public void Dispose()
         {
