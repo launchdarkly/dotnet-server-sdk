@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Configuration;
+using System.Net;
+using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
@@ -9,28 +11,33 @@ namespace LaunchDarkly.Client
     public class Configuration
     {
         public Uri BaseUri { get; internal set; }
+        public Uri EventsUri { get; internal set; }
         public string ApiKey { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
+        public TimeSpan StartWaitTime { get; internal set; }
         public HttpClient HttpClient
         {
             get
             {
                 var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
-                _httpClient.BaseAddress = BaseUri;
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", ApiKey);
                 return _httpClient;
             }
             internal set { _httpClient = value; }
         }
 
+
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
         private static Uri DefaultUri = new Uri("https://app.launchdarkly.com");
+        private static Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
         private static int DefaultEventQueueCapacity = 500;
         private static TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(2);
+        private static TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(5);
         private HttpClient _httpClient;
+
         private Configuration() { }
 
         public static Configuration Default()
@@ -41,11 +48,14 @@ namespace LaunchDarkly.Client
                 EventQueueCapacity = DefaultEventQueueCapacity,
                 EventQueueFrequency = DefaultEventQueueFrequency,
                 PollingInterval = DefaultPollingInterval,
+                StartWaitTime = DefaultStartWaitTime,
                 _httpClient = new HttpClient(new WebRequestHandler()
                 {
                     // RequestCacheLevel.Revalidate enables proper Etag caching
-                    CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Revalidate)
+                    CachePolicy = new RequestCachePolicy(RequestCacheLevel.Revalidate)
                 })
+
+
             };
             return defaultConfiguration;
         }
@@ -133,6 +143,13 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        public static Configuration WithStartWaitTime(this Configuration configuration, TimeSpan startWaitTime)
+        {
+            if (startWaitTime != null)
+                configuration.StartWaitTime = startWaitTime;
+
+            return configuration;
+        }
         public static Configuration WithHttpClient(this Configuration configuration, HttpClient httpClient)
         {
             if (httpClient != null)
@@ -140,5 +157,6 @@ namespace LaunchDarkly.Client
 
             return configuration;
         }
+
     }
 }

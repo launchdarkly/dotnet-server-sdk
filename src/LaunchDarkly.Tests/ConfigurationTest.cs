@@ -28,7 +28,8 @@ namespace LaunchDarkly.Tests
             var config = Configuration.Default()
                           .WithPollingInterval(TimeSpan.FromMilliseconds(100));
 
-            Assert.AreEqual(TimeSpan.FromSeconds(1), config.PollingInterval, "Polling Interval");
+            var expected = TimeSpan.FromSeconds(1);
+            Assert.AreEqual(expected, config.PollingInterval, "Polling Interval");
         }
     }
 }

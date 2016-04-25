@@ -20,6 +20,7 @@ namespace LaunchDarkly.Tests
             client.Track("AnyEventName", user, "AnyJson");
 
             eventStore.Verify(s => s.Add(It.IsAny<CustomEvent>()));
+            client.Dispose();
         }
     }
 }

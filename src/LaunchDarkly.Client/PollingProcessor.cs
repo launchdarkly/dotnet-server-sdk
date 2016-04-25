@@ -39,17 +39,24 @@ namespace LaunchDarkly.Client
             return _initTask;
         }
 
-        private void UpdateTask(object StateObj)
+        private void UpdateTask(object ignored)
         {
-            var allFeatures = _featureRequestor.MakeAllRequest(true).Result;
-            Logger.Debug("Retrieved " + allFeatures.Count + " features");
-            _featureStore.Init(allFeatures);
-
-            //We can't use bool in CompareExchange because it is not a reference type.
-            if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+            try
             {
-                _initTask.SetResult(true);
-                Logger.Info("Initialized LaunchDarkly Polling Processor.");
+                var allFeatures = _featureRequestor.MakeAllRequest(true);
+                Logger.Debug("Retrieved " + allFeatures.Count + " features");
+                _featureStore.Init(allFeatures);
+
+                //We can't use bool in CompareExchange because it is not a reference type.
+                if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                {
+                    _initTask.SetResult(true);
+                    Logger.Info("Initialized LaunchDarkly Polling Processor.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(string.Format("Error Updating features: '{0}'", ex.Message));
             }
         }
 

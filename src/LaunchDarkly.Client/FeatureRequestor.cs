@@ -19,18 +19,23 @@ namespace LaunchDarkly.Client
             _configuration = config;
         }
 
-        public async Task<IDictionary<string, Feature>> MakeAllRequest(bool latest)
+        public IDictionary<string, Feature> MakeAllRequest(bool latest)
         {
-            string resource = latest ? "/api/eval/latest-features" : "/api/eval/features";
-           // do this instead: https://msdn.microsoft.com/en-us/library/system.net.cache.requestcachepolicy(v=vs.110).aspx
-            using (var response = await _httpClient.GetAsync(resource).ConfigureAwait(false))
+            string resource = latest ? "api/eval/latest-features" : "api/eval/features";
+            var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
+            Logger.Debug("Getting all features with uri: " + uri.AbsoluteUri);
+            using (var responseTask = _httpClient.GetAsync(uri))
             {
-                handleResponseStatus(response.StatusCode, null);
-                return await response.Content.ReadAsAsync<IDictionary<string, Feature>>().ConfigureAwait(false);
+                responseTask.ConfigureAwait(false);
+                var response = responseTask.Result;
+                handleResponseStatus(response.StatusCode);
+                var contentTask = response.Content.ReadAsAsync<IDictionary<string, Feature>>();
+                contentTask.ConfigureAwait(false);
+                return contentTask.Result;
             }
         }
 
-        private void handleResponseStatus(HttpStatusCode status, string featureKey)
+        private void handleResponseStatus(HttpStatusCode status)
         {
             if (status != HttpStatusCode.OK)
             {
@@ -40,21 +45,13 @@ namespace LaunchDarkly.Client
                 }
                 else if (status == HttpStatusCode.NotFound)
                 {
-                    if (featureKey != null)
-                    {
-                        Logger.Error("Unknown feature key: " + featureKey);
-                    }
-                    else
-                    {
-                        Logger.Error("Resource not found");
-                    }
+                    Logger.Error("Resource not found");
                 }
                 else
                 {
                     Logger.Error("Unexpected status code: " + status);
                 }
-                //TODO: probably not exactly this:
-                throw new Exception("Failed to fetch flag(s) with status code: " + status);
+                throw new Exception("Failed to fetch feature flags with status code: " + status);
             }
         }
     }

@@ -22,8 +22,8 @@ namespace LaunchDarkly.Client
             _featureRequestor = new FeatureRequestor(config);
             _updateProcessor = new PollingProcessor(config, _featureRequestor, _featureStore);
             var initTask = _updateProcessor.Start();
-            //TODO: move startWait to config
-            var unused = initTask.Task.Wait(TimeSpan.FromMilliseconds(5000));
+            Logger.Info("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds + " milliseconds for LaunchDarkly client to start..");
+            var unused = initTask.Task.Wait(_configuration.StartWaitTime);
         }
 
         public LdClient(Configuration config) : this(config, new EventProcessor(config))
@@ -88,6 +88,7 @@ namespace LaunchDarkly.Client
 
         protected virtual void Dispose(bool disposing)
         {
+            Logger.Info("Closing LaunchDarkly client.");
             //We do not have native resource, so the boolean parameter can be ignored.
             if (_eventStore is EventProcessor)
                 ((_eventStore) as IDisposable).Dispose();
