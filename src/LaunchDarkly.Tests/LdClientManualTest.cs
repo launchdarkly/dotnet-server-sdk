@@ -1,6 +1,5 @@
 ﻿using LaunchDarkly.Client;
 using NUnit.Framework;
-using System.Threading.Tasks;
 
 namespace LaunchDarkly.Tests
 {

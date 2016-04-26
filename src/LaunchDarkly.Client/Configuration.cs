@@ -92,6 +92,22 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        public static Configuration WithEventsUri(this Configuration configuration, string uri)
+        {
+            if (uri != null)
+                configuration.EventsUri = new Uri(uri);
+
+            return configuration;
+        }
+
+        public static Configuration WithEventsUri(this Configuration configuration, Uri uri)
+        {
+            if (uri != null)
+                configuration.EventsUri = uri;
+
+            return configuration;
+        }
+
         public static Configuration WithApiKey(this Configuration configuration, string apiKey)
         {
             if (apiKey != null)
