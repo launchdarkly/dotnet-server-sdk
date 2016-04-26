@@ -45,6 +45,7 @@ namespace LaunchDarkly.Client
             var defaultConfiguration = new Configuration
             {
                 BaseUri = DefaultUri,
+                EventsUri = DefaultEventsUri,
                 EventQueueCapacity = DefaultEventQueueCapacity,
                 EventQueueFrequency = DefaultEventQueueFrequency,
                 PollingInterval = DefaultPollingInterval,

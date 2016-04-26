@@ -62,11 +62,12 @@ namespace LaunchDarkly.Client
 
         private void BulkSubmit(IEnumerable<Event> events)
         {
-            var uri = new Uri(_config.BaseUri + "api/events/bulk");
+            var uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             try
             {
                 string json = JsonConvert.SerializeObject(events.ToList());
-                Logger.Debug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri);
+                Logger.Debug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
+             
                 using (var responseTask = _httpClient.PostAsJsonAsync(uri, events))
                 {
                     responseTask.ConfigureAwait(false);

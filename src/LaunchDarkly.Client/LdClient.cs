@@ -43,6 +43,7 @@ namespace LaunchDarkly.Client
         {
             if (!_updateProcessor.Initialized())
             {
+                Logger.Warn("LaunchDarkly client was not initialized. Returning default value. See previous log statements for more info");
                 return defaultValue;
             }
 
@@ -81,9 +82,9 @@ namespace LaunchDarkly.Client
             _eventStore.Add(new IdentifyEvent(user));
         }
 
-        private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean usedDefaultValue)
+        private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean defaultValue)
         {
-            _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, usedDefaultValue));
+            _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, defaultValue));
         }
 
         protected virtual void Dispose(bool disposing)

@@ -6,7 +6,7 @@ namespace LaunchDarkly.Tests
 {
     class LdClientManualTest
     {
-        private static string API_KEY = "sdk-707fa2a8-f3be-4f14-a122-946ab580a648";
+        private static string API_KEY = "YOUR_API_KEY";
         private static string FEATURE_KEY = "YOUR_FEATURE_KEY";
 
         [Ignore("Manual")]
@@ -20,7 +20,6 @@ namespace LaunchDarkly.Tests
 
             var user = User.WithKey("user@test.com");
             bool actual = client.Toggle(FEATURE_KEY, user, false);
-            System.Threading.Thread.Sleep(10000);
 
             Assert.IsTrue(actual);
             client.Flush();

@@ -5,6 +5,7 @@ namespace LaunchDarkly.Client
 {
     public abstract class Event
     {
+        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         [JsonProperty(PropertyName = "kind", NullValueHandling = NullValueHandling.Ignore)]
         public string Kind { get; private set; }
         [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
@@ -17,14 +18,14 @@ namespace LaunchDarkly.Client
         protected Event(string kind, string key, User user)
         {
             Kind = kind;
-            CreationDate = ToUnixTime(DateTime.Now);
+            CreationDate = GetUnixTimestampMillis(DateTime.UtcNow);
             Key = key;
             User = user;
         }
 
-        private static long ToUnixTime(DateTime date)
+        public static long GetUnixTimestampMillis(DateTime dateTime)
         {
-            return (date.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
+            return (long)(dateTime - UnixEpoch).TotalMilliseconds;
         }
     }
 

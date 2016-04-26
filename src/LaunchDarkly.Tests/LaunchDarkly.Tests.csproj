@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventTest.cs" />
     <Compile Include="ConfigurationTest.cs" />
     <Compile Include="FeatureRequestorTest.cs" />
     <Compile Include="LdClientManualTest.cs" />
