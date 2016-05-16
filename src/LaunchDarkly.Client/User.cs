@@ -151,7 +151,7 @@ namespace LaunchDarkly.Client
             if (attribute == string.Empty)
                 throw new ArgumentException("Attribute Name can not be empty");
 
-            user.Custom.Add(attribute, new JValue(value));
+            user.Custom.Add(attribute, new JValue((double)value));
 
             return user;
         }
@@ -167,6 +167,16 @@ namespace LaunchDarkly.Client
         }
 
         public static User AndCustomAttribute(this User user, string attribute, List<string> value)
+        {
+            if (attribute == string.Empty)
+                throw new ArgumentException("Attribute Name can not be empty");
+
+            user.Custom.Add(attribute, new JArray(value.ToArray()));
+
+            return user;
+        }
+
+        public static User AndCustomAttribute(this User user, string attribute, List<int> value)
         {
             if (attribute == string.Empty)
                 throw new ArgumentException("Attribute Name can not be empty");
