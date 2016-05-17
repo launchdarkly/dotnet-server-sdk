@@ -36,7 +36,7 @@ namespace LaunchDarkly.Client
             if (Variations.Any(v => v.MatchesUserTarget(user)))
                 return Variations.First(v => v.MatchesUserTarget(user)).Value;
 
-            if(Variations.Any(v=>v.Matches(user)))
+            if (Variations.Any(v => v.Matches(user)))
                 return Variations.First(v => v.Matches(user)).Value;
 
             var param = user.GetParam(Key, Salt);
@@ -65,10 +65,10 @@ namespace LaunchDarkly.Client
         {
             return Targets.Any(t => t.Matches(user));
         }
-        
+
         public bool MatchesUserTarget(User user)
         {
-           if (UserTarget != null && UserTarget.Matches(user))
+            if (UserTarget != null && UserTarget.Matches(user))
             {
                 return true;
             }
@@ -98,7 +98,6 @@ namespace LaunchDarkly.Client
                 var uvs = (IEnumerable<object>)userValue;
                 return Values.Intersect<object>(uvs).Any();
             }
-
             return Values.Contains(userValue);
         }
 
@@ -129,7 +128,7 @@ namespace LaunchDarkly.Client
                     if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
                     {
                         var arr = (JArray)token;
-                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);                    
+                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);
                     }
                     else if (token.Type == JTokenType.Object)
                     {
@@ -138,7 +137,7 @@ namespace LaunchDarkly.Client
                     else
                     {
                         var val = (JValue)token;
-                        return val.Value;                        
+                        return val.Value;
                     }
             }
         }
