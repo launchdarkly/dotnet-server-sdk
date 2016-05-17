@@ -73,7 +73,7 @@ namespace LaunchDarkly.Client
                     responseTask.ConfigureAwait(false);
                     HttpResponseMessage response = responseTask.Result;
 
-                    if (response.StatusCode != HttpStatusCode.OK)
+                    if (!response.IsSuccessStatusCode)
                         Logger.Error(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
                             uri.AbsoluteUri, response.StatusCode));
                 }
