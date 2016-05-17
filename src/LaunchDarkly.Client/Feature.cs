@@ -98,12 +98,7 @@ namespace LaunchDarkly.Client
                 var uvs = (IEnumerable<object>)userValue;
                 return Values.Intersect<object>(uvs).Any();
             }
-            foreach (object value in Values)
-            {
-                if (value.Equals(userValue))
-                    return true;
-            }
-            return false;
+            return Values.Contains(userValue);
         }
 
         private Object GetUserValue(User user)
