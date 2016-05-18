@@ -151,7 +151,7 @@ namespace LaunchDarkly.Client
             if (attribute == string.Empty)
                 throw new ArgumentException("Attribute Name can not be empty");
 
-            user.Custom.Add(attribute, new JValue((double)value));
+            user.Custom.Add(attribute, new JValue(value));
 
             return user;
         }

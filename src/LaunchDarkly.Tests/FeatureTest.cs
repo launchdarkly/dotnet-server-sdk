@@ -101,26 +101,34 @@ namespace LaunchDarkly.Tests
         [Test]
         public void IfAUserHasCustomAttributeAsInteger_TargetRulesMatch()
         {
-            var user = User.WithKey("anyUser").AndCustomAttribute("numbers", 1362823);
             var target = new TargetRule();
-
-            target.Attribute = "numbers";
+            target.Attribute = "Org";
             target.Op = "in";
-            target.Values = new List<object>() { 1362823.0 };
+            target.Values = new List<object>() { 9, 55, 1362823, 292};
 
-            Assert.AreEqual(true, target.Matches(user));
+            var user = User.WithKey("anyUser").AndCustomAttribute("Org", 1362823);
+            Assert.IsTrue(target.Matches(user));
+
+            user = User.WithKey("anyUser").AndCustomAttribute("Org", 55);
+            Assert.IsTrue(target.Matches(user));
+
+            user = User.WithKey("anyUser").AndCustomAttribute("Org", 292);
+            Assert.IsTrue(target.Matches(user));
         }
 
         [Test]
         public void IfAUserHasCustomListAttributeAsIntegers_TargetRulesMatch()
         {
-            var user = User.WithKey("anyUser").AndCustomAttribute("numbers", new List<int>() { 1362823 });
+          
             var target = new TargetRule();
-
-            target.Attribute = "numbers";
+            target.Attribute = "Org";
             target.Op = "in";
             target.Values = new List<object>() { 55, 1362823 };
 
+            var user = User.WithKey("anyUser").AndCustomAttribute("Org", new List<int>() { 1362823 });
+            Assert.AreEqual(true, target.Matches(user));
+
+            user = User.WithKey("anyUser").AndCustomAttribute("Org", new List<int>() { 55 });
             Assert.AreEqual(true, target.Matches(user));
         }
 
