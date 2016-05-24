@@ -40,6 +40,7 @@ namespace LaunchDarkly.Client
 
         public void Dispose()
         {
+            Flush();
             _queue.CompleteAdding();
             _timer.Dispose();
             _queue.Dispose();
