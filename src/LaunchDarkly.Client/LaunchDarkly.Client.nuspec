@@ -14,5 +14,8 @@
     <releaseNotes>Switch to asynchronous HTTP client</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>Feature Configuration</tags>
+     <dependencies>
+      <dependency id="Newtonsoft.Json" version="8.0.3" />
+    </dependencies> 
   </metadata>
 </package>
