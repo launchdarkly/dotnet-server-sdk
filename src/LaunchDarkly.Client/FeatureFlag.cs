@@ -9,15 +9,11 @@ using System.Collections;
 
 namespace LaunchDarkly.Client
 {
-    public class Feature
+    public class FeatureFlag
     {
-        private static readonly ILog Logger = LogProvider.For<Feature>();
-        [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        private static readonly ILog Logger = LogProvider.For<FeatureFlag>();
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; set; }
-        [JsonProperty(PropertyName = "kind", NullValueHandling = NullValueHandling.Ignore)]
-        public string Kind { get; set; }
         [JsonProperty(PropertyName = "salt", NullValueHandling = NullValueHandling.Ignore)]
         public string Salt { get; set; }
         [JsonProperty(PropertyName = "on", NullValueHandling = NullValueHandling.Ignore)]

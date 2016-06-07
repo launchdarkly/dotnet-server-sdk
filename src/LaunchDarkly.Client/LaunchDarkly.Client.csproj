@@ -73,7 +73,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShaHex.cs" />
     <Compile Include="User.cs" />
-    <Compile Include="Feature.cs" />
+    <Compile Include="FeatureFlag.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
