@@ -4,11 +4,11 @@ namespace LaunchDarkly.Client
 {
     public interface IFeatureStore
     {
-        Feature Get(string key);
-        IDictionary<string, Feature> All();
-        void Init(IDictionary<string, Feature> features);
+        FeatureFlag Get(string key);
+        IDictionary<string, FeatureFlag> All();
+        void Init(IDictionary<string, FeatureFlag> features);
         void Delete(string key, int version);
-        void Upsert(string key, Feature feature);
+        void Upsert(string key, FeatureFlag featureFlag);
         bool Initialized();
     }
 }

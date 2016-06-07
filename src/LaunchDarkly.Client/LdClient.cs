@@ -63,7 +63,7 @@ namespace LaunchDarkly.Client
 
         private bool evaluate(string key, User user, bool defaultValue)
         {
-            Feature result = _featureStore.Get(key);
+            FeatureFlag result = _featureStore.Get(key);
             if (result == null)
             {
                 Logger.Warn("Unknown feature flag: " + key + "; returning default value: " + defaultValue);

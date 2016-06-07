@@ -23,7 +23,7 @@ namespace LaunchDarkly.Tests
             config.WithHttpClient(new HttpClient(mockHttp));
             FeatureRequestor featureRequestor = new FeatureRequestor(config);
          
-            IDictionary<string, Feature> actual = featureRequestor.MakeAllRequest(true);
+            IDictionary<string, FeatureFlag> actual = featureRequestor.MakeAllRequest(true);
             Assert.AreEqual(2, actual.Count);
             Assert.IsTrue(actual.ContainsKey("engine.enable"));
             Assert.IsTrue(actual.ContainsKey("zentasks.gravatar"));

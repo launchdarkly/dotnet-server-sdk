@@ -7,15 +7,15 @@ namespace LaunchDarkly.Client
     {
         private static readonly int RwLockMaxWaitMillis = 1000;
         private readonly ReaderWriterLock RwLock = new ReaderWriterLock();
-        private readonly IDictionary<string, Feature> Features = new Dictionary<string, Feature>();
+        private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();
         private bool _initialized = false;
 
-        Feature IFeatureStore.Get(string key)
+        FeatureFlag IFeatureStore.Get(string key)
         {
             try
             {
                 RwLock.AcquireReaderLock(RwLockMaxWaitMillis);
-                Feature f;
+                FeatureFlag f;
                 if (!Features.TryGetValue(key, out f) || f.Deleted)
                 {
                     return null;
@@ -28,12 +28,12 @@ namespace LaunchDarkly.Client
             }
         }
 
-        IDictionary<string, Feature> IFeatureStore.All()
+        IDictionary<string, FeatureFlag> IFeatureStore.All()
         {
             try
             {
                 RwLock.AcquireReaderLock(RwLockMaxWaitMillis);
-                IDictionary<string, Feature> fs = new Dictionary<string, Feature>();
+                IDictionary<string, FeatureFlag> fs = new Dictionary<string, FeatureFlag>();
                 foreach (var feature in Features)
                 {
                     if (!feature.Value.Deleted)
@@ -49,7 +49,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Init(IDictionary<string, Feature> features)
+        void IFeatureStore.Init(IDictionary<string, FeatureFlag> features)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace LaunchDarkly.Client
             try
             {
                 RwLock.AcquireWriterLock(RwLockMaxWaitMillis);
-                Feature f;
+                FeatureFlag f;
                 if (Features.TryGetValue(key, out f) && f.Version < version)
                 {
                     f.Deleted = true;
@@ -81,7 +81,7 @@ namespace LaunchDarkly.Client
                 }
                 else if (f == null)
                 {
-                    f = new Feature();
+                    f = new FeatureFlag();
                     f.Deleted = true;
                     f.Version = version;
                     Features[key] = f;
@@ -93,15 +93,15 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Upsert(string key, Feature feature)
+        void IFeatureStore.Upsert(string key, FeatureFlag featureFlag)
         {
             try
             {
                 RwLock.AcquireWriterLock(RwLockMaxWaitMillis);
-                Feature old;
-                if (!Features.TryGetValue(key, out old) || old.Version < feature.Version)
+                FeatureFlag old;
+                if (!Features.TryGetValue(key, out old) || old.Version < featureFlag.Version)
                 {
-                    Features[key] = feature;
+                    Features[key] = featureFlag;
                 }
             }
             finally

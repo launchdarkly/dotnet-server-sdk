@@ -19,7 +19,7 @@ namespace LaunchDarkly.Client
             _configuration = config;
         }
 
-        public IDictionary<string, Feature> MakeAllRequest(bool latest)
+        public IDictionary<string, FeatureFlag> MakeAllRequest(bool latest)
         {
             string resource = latest ? "api/eval/latest-features" : "api/eval/features";
             var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
@@ -29,7 +29,7 @@ namespace LaunchDarkly.Client
                 responseTask.ConfigureAwait(false);
                 var response = responseTask.Result;
                 handleResponseStatus(response.StatusCode);
-                var contentTask = response.Content.ReadAsAsync<IDictionary<string, Feature>>();
+                var contentTask = response.Content.ReadAsAsync<IDictionary<string, FeatureFlag>>();
                 contentTask.ConfigureAwait(false);
                 return contentTask.Result;
             }
