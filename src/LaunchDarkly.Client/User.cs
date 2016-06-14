@@ -61,8 +61,10 @@ namespace LaunchDarkly.Client
                 case "anonymous":
                     return new JValue(Anonymous);
                 default:
-                    return Custom[attribute];
-                   /* if (token.Type == JTokenType.Array)
+                    JToken customValue;
+                    Custom.TryGetValue(attribute, out customValue);
+                    return customValue;
+                /* if (token.Type == JTokenType.Array)
                     {
                         var arr = (JArray)token;
                         return arr.Values<JToken>().Select(i => ((JValue)i).Value);

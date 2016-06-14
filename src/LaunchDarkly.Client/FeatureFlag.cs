@@ -7,6 +7,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Converters;
+using static System.Double;
+using static LaunchDarkly.Client.Event;
+using System.Xml;
 
 namespace LaunchDarkly.Client
 {
@@ -50,17 +55,14 @@ namespace LaunchDarkly.Client
         internal struct EvalResult
         {
             internal JToken value;
-            internal List<FeatureRequestEvent> prerequisiteEvents;
-            internal ISet<string> visitedFeatureKeys;
-            private object p;
-            private IList<FeatureRequestEvent> events;
-            private ISet<string> visited;
+            internal readonly IList<FeatureRequestEvent> prerequisiteEvents;
+            internal readonly ISet<string> visitedFeatureKeys;
 
-            public EvalResult(object p, IList<FeatureRequestEvent> events, ISet<string> visited) : this()
+            public EvalResult(JValue value, IList<FeatureRequestEvent> events, ISet<string> visited) : this()
             {
-                this.p = p;
-                this.events = events;
-                this.visited = visited;
+                this.value = value;
+                this.prerequisiteEvents = events;
+                this.visitedFeatureKeys = visited;
             }
         }
 
@@ -122,9 +124,9 @@ namespace LaunchDarkly.Client
         private int? evaluateIndex(User user)
         {
             // Check to see if targets match
-            foreach (Target target in Targets)
+            foreach (var target in Targets)
             {
-                foreach (string v in target.Values)
+                foreach (var v in target.Values)
                 {
                     if (v.Equals(user.Key))
                     {
@@ -276,7 +278,7 @@ namespace LaunchDarkly.Client
         public String Op { get; set; }
 
         [JsonProperty(PropertyName = "values", NullValueHandling = NullValueHandling.Ignore)]
-        public List<JToken> Values { get; set; }
+        public List<JValue> Values { get; set; }
 
         [JsonProperty(PropertyName = "negate", NullValueHandling = NullValueHandling.Ignore)]
         public Boolean Negate { get; set; }
@@ -317,7 +319,7 @@ namespace LaunchDarkly.Client
 
         private bool matchAny(JValue userValue)
         {
-            foreach (JValue v in Values)
+            foreach (var v in Values)
             {
                 if (Operator.apply(Op, userValue, v))
                 {
@@ -343,30 +345,149 @@ namespace LaunchDarkly.Client
 
     public class Operator
     {
-        internal static bool apply(string op, Object uValue, Object cValue)
+        private static readonly ILog Logger = LogProvider.For<Operator>();
+        internal static bool apply(string op, JValue uValue, JValue cValue)
         {
-            switch (op)
+            try
             {
-                case "in":
-                    if (uValue.Equals(cValue))
-                        return true;
-                    break;
-                case "endsWith":
-                case "startsWith":
-                case "matches":
-                case "contains":
-                case "lessThan":
-                case "lessThanOrEqual":
-                case "greaterThan":
-                case "greaterThanOrEqual":
-                case "before":
-                case "after":
-                default: return false;
-            }
+                if (uValue == null || cValue == null)
+                    return false;
 
+                double uValueDouble;
+                double cValueDouble;
+                DateTime? uDateTime;
+                switch (op)
+                {
+                    case "in":
+                        if (uValue.Equals(cValue))
+                        {
+                            return true;
+                        }
+
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            return uValue.Value<string>().Equals(cValue.Value<string>());
+                        }
+
+                        //TODO: less hacky number extraction
+                        if (TryParse(uValue.ToString(), out uValueDouble) &&
+                            TryParse(cValue.ToString(), out cValueDouble))
+                        {
+                            if (uValueDouble.Equals(cValueDouble)) return true;
+                        }
+
+                        uDateTime = JsonValueToDateTime(uValue);
+                        if (uDateTime.HasValue)
+                        {
+                            var cDateTime = JsonValueToDateTime(cValue);
+                            if (cDateTime.HasValue)
+                            {
+                                return DateTime.Compare(cDateTime.Value, uDateTime.Value) == 0;
+                            }
+                        }
+                        break;
+                    case "endsWith":
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            return uValue.Value<string>().EndsWith(cValue.Value<string>());
+                        }
+                        break;
+                    case "startsWith":
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            return uValue.Value<string>().StartsWith(cValue.Value<string>());
+                        }
+                        break;
+                    case "matches":
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            var regex = new Regex(cValue.Value<string>());
+                            return regex.IsMatch(uValue.Value<string>());
+                        }
+                        break;
+                    case "contains":
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            return uValue.Value<string>().Contains(cValue.Value<string>());
+                        }
+                        break;
+                    case "lessThan":
+                        //TODO: less hacky number extraction
+                        if (TryParse(uValue.ToString(), out uValueDouble) &&
+                            TryParse(cValue.ToString(), out cValueDouble))
+                            return uValueDouble < cValueDouble;
+                        break;
+                    case "lessThanOrEqual":
+                        //TODO: less hacky number extraction
+                        if (TryParse(uValue.ToString(), out uValueDouble) &&
+                            TryParse(cValue.ToString(), out cValueDouble))
+                            return uValueDouble <= cValueDouble;
+                        break;
+                    case "greaterThan":
+                        //TODO: less hacky number extraction
+                        if (TryParse(uValue.ToString(), out uValueDouble) &&
+                            TryParse(cValue.ToString(), out cValueDouble))
+                            return uValueDouble > cValueDouble;
+                        break;
+                    case "greaterThanOrEqual":
+                        //TODO: less hacky number extraction
+                        if (TryParse(uValue.ToString(), out uValueDouble) &&
+                            TryParse(cValue.ToString(), out cValueDouble))
+                            return uValueDouble >= cValueDouble;
+                        break;
+                    case "before":
+                        uDateTime = JsonValueToDateTime(uValue);
+                        if (uDateTime.HasValue)
+                        {
+                            var cDateTime = JsonValueToDateTime(cValue);
+                            if (cDateTime.HasValue)
+                            {
+                                return DateTime.Compare(uDateTime.Value, cDateTime.Value) < 0;
+                            }
+                        }
+                        break;
+                    case "after":
+                        uDateTime = JsonValueToDateTime(uValue);
+                        if (uDateTime.HasValue)
+                        {
+                            var cDateTime = JsonValueToDateTime(cValue);
+                            if (cDateTime.HasValue)
+                            {
+                                return DateTime.Compare(uDateTime.Value, cDateTime.Value) > 0;
+
+                            }
+                        }
+                        break;
+                    default:
+                        return false;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Debug($"Got a possibly expected exception when applying operator: {op} to user Value: {uValue} and feature flag value: {cValue}. Exception message: {e.Message}");
+            }
             return false;
         }
 
+        private static DateTime? JsonValueToDateTime(JValue jvalue)
+        {
+            switch (jvalue.Type)
+            {
+                case JTokenType.Date:
+                    return jvalue.Value<DateTime>();
+                case JTokenType.String:
+                    return XmlConvert.ToDateTime(jvalue.Value<string>(), XmlDateTimeSerializationMode.Utc);
+                default:
+                    double jvalueDouble;
+                    if (TryParse(jvalue.ToString(), out jvalueDouble))
+                    {
+                        return new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(jvalueDouble);
+
+                    }
+                    break;
+            }
+            return null;
+        }
     }
 
     public class Target
@@ -385,86 +506,5 @@ namespace LaunchDarkly.Client
 
         [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
         public Int32 Variation { get; set; }
-    }
-
-
-
-    public class TargetRule
-    {
-        [JsonProperty(PropertyName = "attribute", NullValueHandling = NullValueHandling.Ignore)]
-        public string Attribute { get; set; }
-        [JsonProperty(PropertyName = "op", NullValueHandling = NullValueHandling.Ignore)]
-        public string Op { get; set; }
-        [JsonProperty(PropertyName = "values", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Object> Values { get; set; }
-
-        public bool Matches(User user)
-        {
-            var userValue = GetUserValue(user);
-
-            if (!(userValue is string) && typeof(IEnumerable).IsAssignableFrom(userValue.GetType()))
-            {
-                var uvs = (IEnumerable<object>)userValue;
-                return Values.Intersect<object>(uvs).Any();
-            }
-            foreach (object value in Values)
-            {
-                if (value == null || userValue == null)
-                {
-                    return false;
-                }
-                if (value.Equals(userValue))
-                    return true;
-                else
-                {
-                    double userValueDouble;
-                    double valueDouble;
-                    if (Double.TryParse(userValue.ToString(), out userValueDouble) && Double.TryParse(value.ToString(), out valueDouble))
-                        if (userValueDouble.Equals(valueDouble)) return true;
-                }
-            }
-            return false;
-        }
-
-        private Object GetUserValue(User user)
-        {
-            switch (Attribute)
-            {
-                case "key":
-                    return user.Key;
-                case "ip":
-                    return user.IpAddress;
-                case "country":
-                    return user.Country;
-                case "firstName":
-                    return user.FirstName;
-                case "lastName":
-                    return user.LastName;
-                case "avatar":
-                    return user.Avatar;
-                case "anonymous":
-                    return user.Anonymous;
-                case "name":
-                    return user.Name;
-                case "email":
-                    return user.Email;
-                default:
-                    var token = user.Custom[Attribute];
-                    if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
-                    {
-                        var arr = (JArray)token;
-                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);
-                    }
-                    else if (token.Type == JTokenType.Object)
-                    {
-                        throw new ArgumentException(string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
-                    }
-                    else
-                    {
-                        var val = (JValue)token;
-                        return val.Value;
-                    }
-            }
-        }
     }
 }
