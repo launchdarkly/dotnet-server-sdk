@@ -21,7 +21,7 @@ namespace LaunchDarkly.Client
 
         public IDictionary<string, FeatureFlag> MakeAllRequest(bool latest)
         {
-            string resource = latest ? "api/eval/latest-features" : "api/eval/features";
+            string resource = latest ? "sdk/latest-flags" : "sdk/flags";
             var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
             Logger.Debug("Getting all features with uri: " + uri.AbsoluteUri);
             using (var responseTask = _httpClient.GetAsync(uri))

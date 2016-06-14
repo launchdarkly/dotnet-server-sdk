@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static Newtonsoft.Json.Linq.JTokenType;
 
 namespace LaunchDarkly.Client
 {
@@ -34,6 +36,47 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 
+        internal JToken getValueForEvaluation(String attribute)
+        {
+            switch (attribute)
+            {
+                case "key":
+                    return new JValue(Key);
+                case "secondary":
+                    return null;
+                case "ip":
+                    return new JValue(IpAddress);
+                case "email":
+                    return new JValue(Email);
+                case "avatar":
+                    return new JValue(Avatar);
+                case "firstName":
+                    return new JValue(FirstName);
+                case "lastName":
+                    return new JValue(LastName);
+                case "name":
+                    return new JValue(Name);
+                case "country":
+                    return new JValue(Country);
+                case "anonymous":
+                    return new JValue(Anonymous);
+                default:
+                    return Custom[attribute];
+                   /* if (token.Type == JTokenType.Array)
+                    {
+                        var arr = (JArray)token;
+                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);
+                    }
+                    if (token.Type == JTokenType.Object)
+                    {
+                        throw new ArgumentException(string.Format("Rule contains nested custom object for attribute '{0}'"), attribute);
+                    }
+                    var val = (JValue)token;
+                    return val.Value;
+                    */
+            }
+        }  
+        
         public User(string key)
         {
             Key = key;
