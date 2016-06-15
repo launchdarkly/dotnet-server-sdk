@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="Clause.cs" />
     <Compile Include="FeatureRequestor.cs" />
     <Compile Include="InMemoryFeatureStore.cs" />
     <Compile Include="Event.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="User.cs" />
     <Compile Include="FeatureFlag.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="VariationOrRollout.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

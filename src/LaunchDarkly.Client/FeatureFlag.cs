@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Globalization;
 
 namespace LaunchDarkly.Client
 {
@@ -188,59 +187,6 @@ namespace LaunchDarkly.Client
 
     }
 
-    public class VariationOrRollout
-    {
-        private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
-
-        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
-        public int? Variation { get; set; }
-
-        [JsonProperty(PropertyName = "rollout", NullValueHandling = NullValueHandling.Ignore)]
-        public Rollout Rollout { get; set; }
-
-
-        internal int? VariationIndexForUser(User user, String key, String salt)
-        {
-            if (Variation.HasValue)
-            {
-                return Variation.Value;
-            }
-
-            if (Rollout != null)
-            {
-                string bucketBy = Rollout.BucketBy == null ? "key" : Rollout.BucketBy;
-                float bucket = BucketUser(user, key, bucketBy, salt);
-                float sum = 0F;
-                foreach (WeightedVariation wv in Rollout.Variations)
-                {
-                    sum += (float)wv.Weight / 100000F;
-                    if (bucket < sum)
-                    {
-                        return wv.Variation;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private float BucketUser(User user, String featureKey, String attr, String salt)
-        {
-            var userValue = user.getValueForEvaluation(attr);
-            if (userValue != null && userValue.Type.Equals(JTokenType.String))
-            {
-                var idHash = userValue.Value<string>();
-                if (!string.IsNullOrEmpty(user.SecondaryKey))
-                    idHash += "." + user.SecondaryKey;
-
-                var hash = ShaHex.Hash($"{featureKey}.{salt}.{idHash}").Substring(0, 15);
-                var longValue = long.Parse(hash, NumberStyles.HexNumber);
-                return longValue / longScale;
-            }
-
-            return 0F;
-        }
-    }
-
     public class Rule : VariationOrRollout
     {
         [JsonProperty(PropertyName = "clauses", NullValueHandling = NullValueHandling.Ignore)]
@@ -258,82 +204,6 @@ namespace LaunchDarkly.Client
             }
             return true;
         }
-    }
-
-    public class Clause
-    {
-        private static readonly ILog Logger = LogProvider.For<Clause>();
-
-        [JsonProperty(PropertyName = "attribute", NullValueHandling = NullValueHandling.Ignore)]
-        public String Attribute { get; set; }
-
-        [JsonProperty(PropertyName = "op", NullValueHandling = NullValueHandling.Ignore)]
-        public String Op { get; set; }
-
-        [JsonProperty(PropertyName = "values", NullValueHandling = NullValueHandling.Ignore)]
-        public List<JValue> Values { get; set; }
-
-        [JsonProperty(PropertyName = "negate", NullValueHandling = NullValueHandling.Ignore)]
-        public Boolean Negate { get; set; }
-
-
-        internal bool MatchesUser(User user)
-        {
-            var userValue = user.getValueForEvaluation(Attribute);
-            if (userValue == null)
-            {
-                return false;
-            }
-
-            if (userValue is JArray)
-            {
-                var array = userValue as JArray;
-                foreach (var element in array)
-                {
-                    if (!(element is JValue))
-                    {
-                        Logger.Error("Invalid custom attribute value in user object: " + element);
-                        return false;
-                    }
-                    if (MatchAny(element as JValue))
-                    {
-                        return MaybeNegate(true);
-                    }
-                }
-                return MaybeNegate(false);
-            }
-            else if (userValue is JValue)
-            {
-                return MaybeNegate(MatchAny(userValue as JValue));
-            }
-            Logger.Warn("Got unexpected user attribute type: " + userValue.Type + " for user key: " + user.Key + " and attribute: " + Attribute);
-            return false;
-        }
-
-        private bool MatchAny(JValue userValue)
-        {
-            foreach (var v in Values)
-            {
-                if (Operator.Apply(Op, userValue, v))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool MaybeNegate(bool b)
-        {
-            if (Negate)
-            {
-                return !b;
-            }
-            else
-            {
-                return b;
-            }
-        }
-
     }
 
     public class Target
