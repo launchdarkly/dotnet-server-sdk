@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class LdClient : IDisposable
+    public class LdClient : IDisposable, ILdClient
     {
         private static ILog Logger = LogProvider.For<LdClient>();
 
@@ -60,7 +60,7 @@ namespace LaunchDarkly.Client
             return defaultValue;
         }
 
-        public int intVariation(string key, User user, int defaultValue)
+        public int IntVariation(string key, User user, int defaultValue)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        public float floatVariation(string key, User user, float defaultValue)
+        public float FloatVariation(string key, User user, float defaultValue)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        public string stringVariation(string key, User user, string defaultValue)
+        public string StringVariation(string key, User user, string defaultValue)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        public JToken jsonVariation(string key, User user, JToken defaultValue)
+        public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
             try
             {

@@ -72,18 +72,6 @@ namespace LaunchDarkly.Client
                     JToken customValue;
                     Custom.TryGetValue(attribute, out customValue);
                     return customValue;
-                /* if (token.Type == JTokenType.Array)
-                    {
-                        var arr = (JArray)token;
-                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);
-                    }
-                    if (token.Type == JTokenType.Object)
-                    {
-                        throw new ArgumentException(string.Format("Rule contains nested custom object for attribute '{0}'"), attribute);
-                    }
-                    var val = (JValue)token;
-                    return val.Value;
-                    */
             }
         }
 
