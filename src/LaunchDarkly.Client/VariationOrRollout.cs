@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -53,7 +54,7 @@ namespace LaunchDarkly.Client
                 if (!string.IsNullOrEmpty(user.SecondaryKey))
                     idHash += "." + user.SecondaryKey;
 
-                var hash = Hash($"{featureKey}.{salt}.{idHash}").Substring(0, 15);
+                var hash = Hash(String.Format("{0}.{1}.{2}", featureKey, salt, idHash)).Substring(0, 15);
                 var longValue = long.Parse(hash, NumberStyles.HexNumber);
                 return longValue / longScale;
             }

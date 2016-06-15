@@ -180,7 +180,10 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.Error($"Encountered exception in LaunchDarkly client: {e.Message} when evaluating feature key: {featureKey} for user key: {user?.Key}");
+                Logger.Error(
+                    String.Format(
+                        "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
+                        e.Message, featureKey, user?.Key));
                 Logger.Debug(e.ToString());
             }
             return defaultValue;
