@@ -1,10 +1,8 @@
-﻿using System.IO;
-using LaunchDarkly.Client.Logging;
+﻿using LaunchDarkly.Client.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using Newtonsoft.Json;
-using System.Net;
 using System.Collections.Generic;
 using System.Net.Http;
 

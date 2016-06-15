@@ -1,17 +1,10 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json.Converters;
-using static System.Double;
-using static LaunchDarkly.Client.Event;
-using System.Xml;
 
 namespace LaunchDarkly.Client
 {
@@ -342,8 +335,6 @@ namespace LaunchDarkly.Client
         }
 
     }
-
-
 
     public class Target
     {

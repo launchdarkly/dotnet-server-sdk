@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Configuration;
-using System.Net;
 using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;

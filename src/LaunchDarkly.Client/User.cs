@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static Newtonsoft.Json.Linq.JTokenType;
 
 namespace LaunchDarkly.Client
 {
