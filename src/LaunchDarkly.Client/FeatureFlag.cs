@@ -166,27 +166,39 @@ namespace LaunchDarkly.Client
 
     public class Rollout
     {
-        [JsonProperty(PropertyName = "variations", NullValueHandling = NullValueHandling.Ignore)]
-        public List<WeightedVariation> Variations { get; set; }
+        internal List<WeightedVariation> Variations { get; }
+        internal string BucketBy { get; }
 
-        [JsonProperty(PropertyName = "bucketBy", NullValueHandling = NullValueHandling.Ignore)]
-        public string BucketBy { get; set; }
+        [JsonConstructor]
+        public Rollout(List<WeightedVariation> variations, string bucketBy)
+        {
+            Variations = variations;
+            BucketBy = bucketBy;
+        }
     }
 
     public class WeightedVariation
     {
-        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
-        public int Variation { get; set; }
+        internal int Variation { get; }
+        internal int Weight { get; }
 
-        [JsonProperty(PropertyName = "weight", NullValueHandling = NullValueHandling.Ignore)]
-        public int Weight { get; set; }
-
+        [JsonConstructor]
+        public WeightedVariation(int variation, int weight)
+        {
+            Variation = variation;
+            Weight = weight;
+        }
     }
 
     public class Rule : VariationOrRollout
     {
-        [JsonProperty(PropertyName = "clauses", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Clause> Clauses { get; set; }
+        internal List<Clause> Clauses { get; }
+
+        [JsonConstructor]
+        public Rule(int? variation, Rollout rollout, List<Clause> clauses) : base(variation, rollout)
+        {
+            Clauses = clauses;
+        }
 
         internal bool MatchesUser(User user)
         {
@@ -204,19 +216,27 @@ namespace LaunchDarkly.Client
 
     public class Target
     {
-        [JsonProperty(PropertyName = "values", NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Values { get; set; }
+        internal List<string> Values { get; }
+        internal int Variation { get; }
 
-        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
-        public int Variation { get; set; }
+        [JsonConstructor]
+        public Target(List<string> values, int variation)
+        {
+            Values = values;
+            Variation = variation;
+        }
     }
 
     public class Prerequisite
     {
-        [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
-        public string Key { get; set; }
+        internal string Key { get; }
+        internal int Variation { get; }
 
-        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
-        public int Variation { get; set; }
+        [JsonConstructor]
+        public Prerequisite(string key, int variation)
+        {
+            Key = key;
+            Variation = variation;
+        }
     }
 }
