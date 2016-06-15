@@ -11,16 +11,16 @@ namespace LaunchDarkly.Client
         private static readonly ILog Logger = LogProvider.For<Clause>();
 
         [JsonProperty(PropertyName = "attribute", NullValueHandling = NullValueHandling.Ignore)]
-        public String Attribute { get; set; }
+        public string Attribute { get; set; }
 
         [JsonProperty(PropertyName = "op", NullValueHandling = NullValueHandling.Ignore)]
-        public String Op { get; set; }
+        public string Op { get; set; }
 
         [JsonProperty(PropertyName = "values", NullValueHandling = NullValueHandling.Ignore)]
         public List<JValue> Values { get; set; }
 
         [JsonProperty(PropertyName = "negate", NullValueHandling = NullValueHandling.Ignore)]
-        public Boolean Negate { get; set; }
+        public bool Negate { get; set; }
 
 
         internal bool MatchesUser(User user)

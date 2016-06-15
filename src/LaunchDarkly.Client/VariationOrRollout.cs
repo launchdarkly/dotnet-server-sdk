@@ -16,7 +16,7 @@ namespace LaunchDarkly.Client
         public Rollout Rollout { get; set; }
 
 
-        internal int? VariationIndexForUser(User user, String key, String salt)
+        internal int? VariationIndexForUser(User user, string key, string salt)
         {
             if (Variation.HasValue)
             {
@@ -40,7 +40,7 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        private float BucketUser(User user, String featureKey, String attr, String salt)
+        private float BucketUser(User user, string featureKey, string attr, string salt)
         {
             var userValue = user.getValueForEvaluation(attr);
             if (userValue != null && userValue.Type.Equals(JTokenType.String))

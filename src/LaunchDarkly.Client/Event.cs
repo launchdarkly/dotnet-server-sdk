@@ -37,7 +37,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "default", NullValueHandling = NullValueHandling.Ignore)]
         public JToken Default { get; private set; }
 
-        public FeatureRequestEvent(String key, User user, JToken value, JToken defaultValue) : base("feature", key, user)
+        public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue) : base("feature", key, user)
         {
             Value = value;
             Default = defaultValue;
@@ -49,7 +49,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
         public string Data { get; private set; }
 
-        public CustomEvent(String key, User user, string data) : base("custom", key, user)
+        public CustomEvent(string key, User user, string data) : base("custom", key, user)
         {
             Data = data;
         }

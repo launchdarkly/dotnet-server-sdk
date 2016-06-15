@@ -34,7 +34,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 
-        internal JToken getValueForEvaluation(String attribute)
+        internal JToken getValueForEvaluation(string attribute)
         {
             switch (attribute)
             {

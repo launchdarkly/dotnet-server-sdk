@@ -31,7 +31,7 @@ namespace LaunchDarkly.Client
         {
         }
 
-        public LdClient(String apiKey) : this(Configuration.Default().WithApiKey(apiKey))
+        public LdClient(string apiKey) : this(Configuration.Default().WithApiKey(apiKey))
         {
         }
 
@@ -140,7 +140,7 @@ namespace LaunchDarkly.Client
             return defaultValue;
         }
 
-        private JToken evaluate(String featureKey, User user, JToken defaultValue)
+        private JToken evaluate(string featureKey, User user, JToken defaultValue)
         {
             if (!Initialized())
             {

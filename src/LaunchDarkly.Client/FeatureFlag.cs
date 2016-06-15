@@ -165,25 +165,22 @@ namespace LaunchDarkly.Client
         }
     }
 
-
-
-
     public class Rollout
     {
         [JsonProperty(PropertyName = "variations", NullValueHandling = NullValueHandling.Ignore)]
         public List<WeightedVariation> Variations { get; set; }
 
         [JsonProperty(PropertyName = "bucketBy", NullValueHandling = NullValueHandling.Ignore)]
-        public String BucketBy { get; set; }
+        public string BucketBy { get; set; }
     }
 
     public class WeightedVariation
     {
         [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
-        public Int32 Variation { get; set; }
+        public int Variation { get; set; }
 
         [JsonProperty(PropertyName = "weight", NullValueHandling = NullValueHandling.Ignore)]
-        public Int32 Weight { get; set; }
+        public int Weight { get; set; }
 
     }
 
@@ -209,18 +206,18 @@ namespace LaunchDarkly.Client
     public class Target
     {
         [JsonProperty(PropertyName = "values", NullValueHandling = NullValueHandling.Ignore)]
-        public List<String> Values { get; set; }
+        public List<string> Values { get; set; }
 
         [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
-        public Int32 Variation { get; set; }
+        public int Variation { get; set; }
     }
 
     public class Prerequisite
     {
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
-        public String Key { get; set; }
+        public string Key { get; set; }
 
         [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
-        public Int32 Variation { get; set; }
+        public int Variation { get; set; }
     }
 }
