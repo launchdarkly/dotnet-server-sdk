@@ -6,9 +6,9 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    class Operator
+    static class Operator
     {
-        private static readonly ILog Logger = LogProvider.For<Operator>();
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
 
         internal static bool Apply(string op, JValue uValue, JValue cValue)
         {

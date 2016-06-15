@@ -1,5 +1,6 @@
-using System;
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -49,12 +50,24 @@ namespace LaunchDarkly.Client
                 if (!string.IsNullOrEmpty(user.SecondaryKey))
                     idHash += "." + user.SecondaryKey;
 
-                var hash = ShaHex.Hash($"{featureKey}.{salt}.{idHash}").Substring(0, 15);
+                var hash = Hash($"{featureKey}.{salt}.{idHash}").Substring(0, 15);
                 var longValue = long.Parse(hash, NumberStyles.HexNumber);
                 return longValue / longScale;
             }
 
             return 0F;
+        }
+
+        private static string Hash(string s)
+        {
+            var sha = SHA1.Create();
+            byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(s));
+
+            var sb = new StringBuilder();
+            foreach (byte t in data)
+                sb.Append(t.ToString("x2"));
+
+            return sb.ToString();
         }
     }
 }
