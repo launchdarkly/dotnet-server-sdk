@@ -11,38 +11,37 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Logger = LogProvider.For<FeatureFlag>();
 
-        [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
-        public string Key { get; set; }
+        internal string Key { get; }
+        internal int Version { get; set; }
+        internal bool On { get; }
+        internal List<Prerequisite> Prerequisites { get; }
+        internal string Salt { get; }
+        internal List<Target> Targets { get; }
+        internal List<Rule> Rules { get; }
+        internal VariationOrRollout Fallthrough { get; }
+        internal int? OffVariation { get; }
+        internal List<JToken> Variations { get; }
+        internal bool Deleted { get; set; }
 
-        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
-        public int Version { get; set; }
+        [JsonConstructor]
+        public FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt, List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation, List<JToken> variations, bool deleted)
+        {
+            Key = key;
+            Version = version;
+            On = on;
+            Prerequisites = prerequisites;
+            Salt = salt;
+            Targets = targets;
+            Rules = rules;
+            Fallthrough = fallthrough;
+            OffVariation = offVariation;
+            Variations = variations;
+            Deleted = deleted;
+        }
 
-        [JsonProperty(PropertyName = "on", NullValueHandling = NullValueHandling.Ignore)]
-        public bool On { get; set; }
-
-        [JsonProperty(PropertyName = "prerequisites", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Prerequisite> Prerequisites { get; set; }
-
-        [JsonProperty(PropertyName = "salt", NullValueHandling = NullValueHandling.Ignore)]
-        public string Salt { get; set; }
-
-        [JsonProperty(PropertyName = "targets", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Target> Targets { get; set; }
-
-        [JsonProperty(PropertyName = "rules", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Rule> Rules { get; set; }
-
-        [JsonProperty(PropertyName = "fallthrough", NullValueHandling = NullValueHandling.Ignore)]
-        public VariationOrRollout Fallthrough { get; set; }
-
-        [JsonProperty(PropertyName = "offVariation", NullValueHandling = NullValueHandling.Ignore)]
-        public int? OffVariation { get; set; }
-
-        [JsonProperty(PropertyName = "variations", NullValueHandling = NullValueHandling.Ignore)]
-        public List<JToken> Variations { get; set; }
-
-        [JsonProperty(PropertyName = "deleted", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Deleted { get; set; }
+        public FeatureFlag()
+        {
+        }
 
         internal struct EvalResult
         {
