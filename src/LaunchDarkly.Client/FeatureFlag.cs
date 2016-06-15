@@ -47,15 +47,15 @@ namespace LaunchDarkly.Client
 
         internal struct EvalResult
         {
-            internal JToken value;
-            internal readonly IList<FeatureRequestEvent> prerequisiteEvents;
-            internal readonly ISet<string> visitedFeatureKeys;
+            internal JToken Value;
+            internal readonly IList<FeatureRequestEvent> PrerequisiteEvents;
+            internal readonly ISet<string> VisitedFeatureKeys;
 
             public EvalResult(JValue value, IList<FeatureRequestEvent> events, ISet<string> visited) : this()
             {
-                this.value = value;
-                this.prerequisiteEvents = events;
-                this.visitedFeatureKeys = visited;
+                Value = value;
+                PrerequisiteEvents = events;
+                VisitedFeatureKeys = visited;
             }
         }
 
@@ -68,18 +68,18 @@ namespace LaunchDarkly.Client
             }
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
             ISet<string> visited = new HashSet<string>();
-            return evaluate(user, featureStore, prereqEvents, visited);
+            return Evaluate(user, featureStore, prereqEvents, visited);
         }
 
         // Returning either a nil EvalResult or EvalResult.value indicates prereq failure/error.
-        private EvalResult? evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events, ISet<string> visited)
+        private EvalResult? Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events, ISet<string> visited)
         {
             var prereqOk = true;
             var evalResult = new EvalResult(null, events, visited);
             foreach (var prereq in Prerequisites)
             {
-                evalResult.visitedFeatureKeys.Add(Key);
-                if (evalResult.visitedFeatureKeys.Contains(prereq.Key))
+                evalResult.VisitedFeatureKeys.Add(Key);
+                if (evalResult.VisitedFeatureKeys.Contains(prereq.Key))
                 {
                     Logger.Error("Prerequisite cycle detected when evaluating feature flag: " + Key);
                     return null;
@@ -93,28 +93,28 @@ namespace LaunchDarkly.Client
                 }
                 else if (prereqFeatureFlag.On)
                 {
-                    var prereqEvalResult = prereqFeatureFlag.evaluate(user, featureStore, evalResult.prerequisiteEvents, evalResult.visitedFeatureKeys);
-                    if (!prereqEvalResult.HasValue || prereqEvalResult.Value.value == null || !prereqEvalResult.Value.value.Equals(prereqFeatureFlag.getVariation(prereq.Variation)))
+                    var prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, evalResult.PrerequisiteEvents, evalResult.VisitedFeatureKeys);
+                    if (!prereqEvalResult.HasValue || prereqEvalResult.Value.Value == null || !prereqEvalResult.Value.Value.Equals(prereqFeatureFlag.GetVariation(prereq.Variation)))
                     {
                         prereqOk = false;
                     }
-                    prereqEvalResultValue = prereqEvalResult?.value;
+                    prereqEvalResultValue = prereqEvalResult?.Value;
                 }
                 else
                 {
                     prereqOk = false;
                 }
                 //We don't short circuit and also send events for each prereq.
-                evalResult.prerequisiteEvents.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResultValue, null));
+                evalResult.PrerequisiteEvents.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResultValue, null));
             }
             if (prereqOk)
             {
-                evalResult.value = getVariation(evaluateIndex(user));
+                evalResult.Value = GetVariation(EvaluateIndex(user));
             }
             return evalResult;
         }
 
-        private int? evaluateIndex(User user)
+        private int? EvaluateIndex(User user)
         {
             // Check to see if targets match
             foreach (var target in Targets)
@@ -131,17 +131,17 @@ namespace LaunchDarkly.Client
             // Now walk through the rules and see if any match
             foreach (Rule rule in Rules)
             {
-                if (rule.matchesUser(user))
+                if (rule.MatchesUser(user))
                 {
-                    return rule.variationIndexForUser(user, Key, Salt);
+                    return rule.VariationIndexForUser(user, Key, Salt);
                 }
             }
 
             // Walk through the fallthrough and see if it matches
-            return Fallthrough.variationIndexForUser(user, Key, Salt);
+            return Fallthrough.VariationIndexForUser(user, Key, Salt);
         }
 
-        private JToken getVariation(int? index)
+        private JToken GetVariation(int? index)
         {
             if (index == null || index >= Variations.Count)
             {
@@ -175,7 +175,7 @@ namespace LaunchDarkly.Client
         public List<WeightedVariation> Variations { get; set; }
 
         [JsonProperty(PropertyName = "bucketBy", NullValueHandling = NullValueHandling.Ignore)]
-        public String bucketBy { get; set; }
+        public String BucketBy { get; set; }
     }
 
     public class WeightedVariation
@@ -196,22 +196,22 @@ namespace LaunchDarkly.Client
         public int? Variation { get; set; }
 
         [JsonProperty(PropertyName = "rollout", NullValueHandling = NullValueHandling.Ignore)]
-        public Rollout rollout { get; set; }
+        public Rollout Rollout { get; set; }
 
 
-        internal int? variationIndexForUser(User user, String key, String salt)
+        internal int? VariationIndexForUser(User user, String key, String salt)
         {
             if (Variation.HasValue)
             {
                 return Variation.Value;
             }
 
-            if (rollout != null)
+            if (Rollout != null)
             {
-                string bucketBy = rollout.bucketBy == null ? "key" : rollout.bucketBy;
-                float bucket = bucketUser(user, key, bucketBy, salt);
+                string bucketBy = Rollout.BucketBy == null ? "key" : Rollout.BucketBy;
+                float bucket = BucketUser(user, key, bucketBy, salt);
                 float sum = 0F;
-                foreach (WeightedVariation wv in rollout.Variations)
+                foreach (WeightedVariation wv in Rollout.Variations)
                 {
                     sum += (float)wv.Weight / 100000F;
                     if (bucket < sum)
@@ -223,7 +223,7 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        private float bucketUser(User user, String featureKey, String attr, String salt)
+        private float BucketUser(User user, String featureKey, String attr, String salt)
         {
             var userValue = user.getValueForEvaluation(attr);
             if (userValue != null && userValue.Type.Equals(JTokenType.String))
@@ -246,11 +246,11 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "clauses", NullValueHandling = NullValueHandling.Ignore)]
         public List<Clause> Clauses { get; set; }
 
-        internal bool matchesUser(User user)
+        internal bool MatchesUser(User user)
         {
             foreach (var c in Clauses)
             {
-                if (!c.matchesUser(user))
+                if (!c.MatchesUser(user))
                 {
                     return false;
                 }
@@ -277,7 +277,7 @@ namespace LaunchDarkly.Client
         public Boolean Negate { get; set; }
 
 
-        internal bool matchesUser(User user)
+        internal bool MatchesUser(User user)
         {
             var userValue = user.getValueForEvaluation(Attribute);
             if (userValue == null)
@@ -295,22 +295,22 @@ namespace LaunchDarkly.Client
                         Logger.Error("Invalid custom attribute value in user object: " + element);
                         return false;
                     }
-                    if (matchAny(element as JValue))
+                    if (MatchAny(element as JValue))
                     {
-                        return maybeNegate(true);
+                        return MaybeNegate(true);
                     }
                 }
-                return maybeNegate(false);
+                return MaybeNegate(false);
             }
             else if (userValue is JValue)
             {
-                return maybeNegate(matchAny(userValue as JValue));
+                return MaybeNegate(MatchAny(userValue as JValue));
             }
             Logger.Warn("Got unexpected user attribute type: " + userValue.Type + " for user key: " + user.Key + " and attribute: " + Attribute);
             return false;
         }
 
-        private bool matchAny(JValue userValue)
+        private bool MatchAny(JValue userValue)
         {
             foreach (var v in Values)
             {
@@ -322,7 +322,7 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        private bool maybeNegate(bool b)
+        private bool MaybeNegate(bool b)
         {
             if (Negate)
             {

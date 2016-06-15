@@ -161,12 +161,12 @@ namespace LaunchDarkly.Client
                     var evalResult = featureFlag.Evaluate(user, _featureStore);
                     if (evalResult.HasValue)
                     {
-                        foreach (var prereqEvent in evalResult.Value.prerequisiteEvents)
+                        foreach (var prereqEvent in evalResult.Value.PrerequisiteEvents)
                         {
                             _eventStore.Add(prereqEvent);
 
                         }
-                        return evalResult.Value.value ?? defaultValue;
+                        return evalResult.Value.Value ?? defaultValue;
                     }
                 }
                 else
