@@ -44,7 +44,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var value = evaluate(key, user, defaultValue);
+                var value = Evaluate(key, user, defaultValue);
                 sendFlagRequestEvent(key, user, value, defaultValue);
                 if (value.Type.Equals(JTokenType.Boolean))
                 {
@@ -64,7 +64,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var value = evaluate(key, user, defaultValue);
+                var value = Evaluate(key, user, defaultValue);
                 sendFlagRequestEvent(key, user, value, defaultValue);
                 if (value.Type.Equals(JTokenType.Integer))
                 {
@@ -85,7 +85,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var value = evaluate(key, user, defaultValue);
+                var value = Evaluate(key, user, defaultValue);
                 sendFlagRequestEvent(key, user, value, defaultValue);
                 if (value.Type.Equals(JTokenType.Float))
                 {
@@ -106,7 +106,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var value = evaluate(key, user, defaultValue);
+                var value = Evaluate(key, user, defaultValue);
                 sendFlagRequestEvent(key, user, value, defaultValue);
                 if (value.Type.Equals(JTokenType.String))
                 {
@@ -127,7 +127,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var value = evaluate(key, user, defaultValue);
+                var value = Evaluate(key, user, defaultValue);
                 sendFlagRequestEvent(key, user, value, defaultValue);
                 return value;
 
@@ -140,7 +140,7 @@ namespace LaunchDarkly.Client
             return defaultValue;
         }
 
-        private JToken evaluate(string featureKey, User user, JToken defaultValue)
+        private JToken Evaluate(string featureKey, User user, JToken defaultValue)
         {
             if (!Initialized())
             {
@@ -166,7 +166,7 @@ namespace LaunchDarkly.Client
                             _eventStore.Add(prereqEvent);
 
                         }
-                        return evalResult.Value.Value ?? defaultValue;
+                        return evalResult.Value.Result ?? defaultValue;
                     }
                 }
                 else
@@ -183,7 +183,7 @@ namespace LaunchDarkly.Client
                 Logger.Error(
                     String.Format(
                         "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
-                        e.Message, featureKey, user?.Key));
+                        e.Message, featureKey, user.Key));
                 Logger.Debug(e.ToString());
             }
             return defaultValue;

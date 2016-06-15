@@ -9,10 +9,10 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Logger = LogProvider.For<Clause>();
 
-        internal string Attribute { get; }
-        internal string Op { get;}
-        internal List<JValue> Values { get; }
-        internal bool Negate { get; }
+        internal string Attribute { get; private set; }
+        internal string Op { get; private set; }
+        internal List<JValue> Values { get; private set; }
+        internal bool Negate { get; private set; }
 
         [JsonConstructor]
         public Clause(string attribute, string op, List<JValue> values, bool negate)

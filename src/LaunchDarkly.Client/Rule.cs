@@ -5,7 +5,7 @@ namespace LaunchDarkly.Client
 {
     public class Rule : VariationOrRollout
     {
-        internal List<Clause> Clauses { get; }
+        internal List<Clause> Clauses { get; private set; }
 
         [JsonConstructor]
         public Rule(int? variation, Rollout rollout, List<Clause> clauses) : base(variation, rollout)

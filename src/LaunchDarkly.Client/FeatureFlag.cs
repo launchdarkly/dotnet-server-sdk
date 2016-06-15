@@ -9,17 +9,17 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Logger = LogProvider.For<FeatureFlag>();
 
-        internal string Key { get; }
+        internal string Key { get; private set; }
         internal int Version { get; set; }
-        internal bool On { get; }
-        internal List<Prerequisite> Prerequisites { get; }
-        internal string Salt { get; }
-        internal List<Target> Targets { get; }
-        internal List<Rule> Rules { get; }
-        internal VariationOrRollout Fallthrough { get; }
-        internal int? OffVariation { get; }
-        internal List<JToken> Variations { get; }
-        internal bool Deleted { get; set; }
+        internal bool On { get; private set; }
+        internal List<Prerequisite> Prerequisites { get; private set; }
+        internal string Salt { get; private set; }
+        internal List<Target> Targets { get; private set; }
+        internal List<Rule> Rules { get; private set; }
+        internal VariationOrRollout Fallthrough { get; private set; }
+        internal int? OffVariation { get; private set; }
+        internal List<JToken> Variations { get; private set; }
+        internal bool Deleted { get;  set; }
 
         [JsonConstructor]
         public FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt, List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation, List<JToken> variations, bool deleted)
@@ -44,13 +44,13 @@ namespace LaunchDarkly.Client
 
         internal struct EvalResult
         {
-            internal JToken Value;
+            internal JToken Result;
             internal readonly IList<FeatureRequestEvent> PrerequisiteEvents;
             internal readonly ISet<string> VisitedFeatureKeys;
 
-            public EvalResult(JValue value, IList<FeatureRequestEvent> events, ISet<string> visited) : this()
+            public EvalResult(JValue result, IList<FeatureRequestEvent> events, ISet<string> visited) : this()
             {
-                Value = value;
+                Result = result;
                 PrerequisiteEvents = events;
                 VisitedFeatureKeys = visited;
             }
@@ -91,11 +91,14 @@ namespace LaunchDarkly.Client
                 else if (prereqFeatureFlag.On)
                 {
                     var prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, evalResult.PrerequisiteEvents, evalResult.VisitedFeatureKeys);
-                    if (!prereqEvalResult.HasValue || prereqEvalResult.Value.Value == null || !prereqEvalResult.Value.Value.Equals(prereqFeatureFlag.GetVariation(prereq.Variation)))
+                    if (!prereqEvalResult.HasValue || prereqEvalResult.Value.Result == null || !prereqEvalResult.Value.Result.Equals(prereqFeatureFlag.GetVariation(prereq.Variation)))
                     {
                         prereqOk = false;
                     }
-                    prereqEvalResultValue = prereqEvalResult?.Value;
+                    if (prereqEvalResult.HasValue)
+                    {
+                        prereqEvalResultValue = prereqEvalResult.Value.Result;
+                    }
                 }
                 else
                 {
@@ -106,7 +109,7 @@ namespace LaunchDarkly.Client
             }
             if (prereqOk)
             {
-                evalResult.Value = GetVariation(EvaluateIndex(user));
+                evalResult.Result = GetVariation(EvaluateIndex(user));
             }
             return evalResult;
         }
@@ -165,8 +168,8 @@ namespace LaunchDarkly.Client
 
     public class Rollout
     {
-        internal List<WeightedVariation> Variations { get; }
-        internal string BucketBy { get; }
+        internal List<WeightedVariation> Variations { get; private set; }
+        internal string BucketBy { get; private set; }
 
         [JsonConstructor]
         public Rollout(List<WeightedVariation> variations, string bucketBy)
@@ -178,8 +181,8 @@ namespace LaunchDarkly.Client
 
     public class WeightedVariation
     {
-        internal int Variation { get; }
-        internal int Weight { get; }
+        internal int Variation { get; private set; }
+        internal int Weight { get; private set; }
 
         [JsonConstructor]
         public WeightedVariation(int variation, int weight)
@@ -191,8 +194,8 @@ namespace LaunchDarkly.Client
 
     public class Target
     {
-        internal List<string> Values { get; }
-        internal int Variation { get; }
+        internal List<string> Values { get; private set; }
+        internal int Variation { get; private set; }
 
         [JsonConstructor]
         public Target(List<string> values, int variation)
@@ -204,8 +207,8 @@ namespace LaunchDarkly.Client
 
     public class Prerequisite
     {
-        internal string Key { get; }
-        internal int Variation { get; }
+        internal string Key { get; private set; }
+        internal int Variation { get; private set; }
 
         [JsonConstructor]
         public Prerequisite(string key, int variation)
