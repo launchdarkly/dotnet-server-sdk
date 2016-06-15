@@ -46,7 +46,7 @@ namespace LaunchDarkly.Client
 
         private float BucketUser(User user, string featureKey, string attr, string salt)
         {
-            var userValue = user.getValueForEvaluation(attr);
+            var userValue = user.GetValueForEvaluation(attr);
             if (userValue != null && userValue.Type.Equals(JTokenType.String))
             {
                 var idHash = userValue.Value<string>();

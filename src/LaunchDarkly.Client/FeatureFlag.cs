@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

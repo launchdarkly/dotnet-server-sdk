@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
@@ -26,7 +25,7 @@ namespace LaunchDarkly.Client
 
         internal bool MatchesUser(User user)
         {
-            var userValue = user.getValueForEvaluation(Attribute);
+            var userValue = user.GetValueForEvaluation(Attribute);
             if (userValue == null)
             {
                 return false;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -44,7 +43,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 
-        internal JToken getValueForEvaluation(string attribute)
+        internal JToken GetValueForEvaluation(string attribute)
         {
             switch (attribute)
             {
