@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
@@ -28,9 +29,9 @@ namespace LaunchDarkly.Client
                 responseTask.ConfigureAwait(false);
                 var response = responseTask.Result;
                 handleResponseStatus(response.StatusCode);
-                var contentTask = response.Content.ReadAsAsync<IDictionary<string, FeatureFlag>>();
+                var contentTask = response.Content.ReadAsStringAsync();
                 contentTask.ConfigureAwait(false);
-                return contentTask.Result;
+                return JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(contentTask.Result);
             }
         }
 

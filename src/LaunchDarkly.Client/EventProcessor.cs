@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 
 namespace LaunchDarkly.Client
 {
@@ -64,10 +65,10 @@ namespace LaunchDarkly.Client
             var uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             try
             {
-                string json = JsonConvert.SerializeObject(events.ToList());
+                string json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
                 Logger.Debug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
-             
-                using (var responseTask = _httpClient.PostAsJsonAsync(uri, events))
+
+                using (var responseTask = _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
                     responseTask.ConfigureAwait(false);
                     HttpResponseMessage response = responseTask.Result;
