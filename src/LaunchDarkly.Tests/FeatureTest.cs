@@ -1,6 +1,5 @@
 ﻿using LaunchDarkly.Client;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using System.Collections.Generic;
@@ -104,7 +103,7 @@ namespace LaunchDarkly.Tests
             var target = new TargetRule();
             target.Attribute = "Org";
             target.Op = "in";
-            target.Values = new List<object>() { 9, 55, 1362823, 292};
+            target.Values = new List<object>() { 9, 55, 1362823, 292 };
 
             var user = User.WithKey("anyUser").AndCustomAttribute("Org", 1362823);
             Assert.IsTrue(target.Matches(user));
@@ -119,7 +118,7 @@ namespace LaunchDarkly.Tests
         [Test]
         public void IfAUserHasCustomListAttributeAsIntegers_TargetRulesMatch()
         {
-          
+
             var target = new TargetRule();
             target.Attribute = "Org";
             target.Op = "in";
@@ -156,6 +155,55 @@ namespace LaunchDarkly.Tests
             target.Values = new List<object>() { true };
 
             Assert.AreEqual(true, target.Matches(user));
+        }
+
+        [Test]
+        public void UserDoesNotHaveCustomAttributeSpecifiedInRule()
+        {
+            var target1 = new TargetRule();
+            target1.Attribute = "Org";
+            target1.Op = "in";
+            target1.Values = new List<object>() { "100", 100.0, 100 };
+
+            var target2 = new TargetRule();
+            target2.Attribute = "";
+            target2.Op = "in";
+            target2.Values = new List<object>();
+
+            var variation1 = new Variation();
+            variation1.Value = true;
+            variation1.Weight = 100;
+            variation1.UserTarget = new TargetRule();
+            variation1.UserTarget.Attribute = "key";
+            variation1.UserTarget.Op = "in";
+            variation1.UserTarget.Values = new List<object>();
+
+            variation1.Targets = new List<TargetRule>();
+            variation1.Targets.Add(target1);
+            variation1.Targets.Add(target2);
+
+
+            var variation2 = new Variation();
+            variation2.Value = false;
+            variation2.Weight = 0;
+            variation2.UserTarget = new TargetRule();
+            variation2.UserTarget.Attribute = "key";
+            variation2.UserTarget.Op = "in";
+            variation2.UserTarget.Values = new List<object>();
+
+            var feature = new Feature();
+            feature.Deleted = false;
+            feature.On = true;
+            feature.Variations = new List<Variation>();
+            feature.Variations.Add(variation1);
+
+            //Happy path- user has the targeted custom attribute
+            var user = User.WithKey("anyUser").AndCustomAttribute("bizzle", 101);
+            Assert.AreEqual(true, feature.Evaluate(user, false));
+
+            //Test case: User does not have the targeted custom attribute
+            user = User.WithKey("anyUser");
+            Assert.AreEqual(true, feature.Evaluate(user, false));
         }
     }
 }

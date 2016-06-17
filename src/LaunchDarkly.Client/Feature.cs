@@ -92,7 +92,10 @@ namespace LaunchDarkly.Client
         public bool Matches(User user)
         {
             var userValue = GetUserValue(user);
-
+            if (userValue == null)
+            {
+                return false;
+            }
             if (!(userValue is string) && typeof(IEnumerable).IsAssignableFrom(userValue.GetType()))
             {
                 var uvs = (IEnumerable<object>)userValue;
@@ -100,7 +103,7 @@ namespace LaunchDarkly.Client
             }
             foreach (object value in Values)
             {
-                if (value == null || userValue == null)
+                if (value == null)
                 {
                     return false;
                 }
@@ -119,6 +122,10 @@ namespace LaunchDarkly.Client
 
         private Object GetUserValue(User user)
         {
+            if (string.IsNullOrEmpty(Attribute))
+            {
+                return null;
+            }
             switch (Attribute)
             {
                 case "key":
@@ -140,22 +147,28 @@ namespace LaunchDarkly.Client
                 case "email":
                     return user.Email;
                 default:
-                    var token = user.Custom[Attribute];
-                    if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
+                    if (user.Custom.ContainsKey(Attribute))
                     {
-                        var arr = (JArray)token;
-                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);
+                        var token = user.Custom[Attribute];
+                        if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
+                        {
+                            var arr = (JArray)token;
+                            return arr.Values<JToken>().Select(i => ((JValue)i).Value);
+                        }
+                        else if (token.Type == JTokenType.Object)
+                        {
+                            throw new ArgumentException(
+                                string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
+                        }
+                        else
+                        {
+                            var val = (JValue)token;
+                            return val.Value;
+                        }
                     }
-                    else if (token.Type == JTokenType.Object)
-                    {
-                        throw new ArgumentException(string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
-                    }
-                    else
-                    {
-                        var val = (JValue)token;
-                        return val.Value;
-                    }
+                    break;
             }
+            return null;
         }
     }
 }
