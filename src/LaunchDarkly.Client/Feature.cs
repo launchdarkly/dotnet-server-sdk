@@ -122,50 +122,51 @@ namespace LaunchDarkly.Client
 
         private Object GetUserValue(User user)
         {
-            if (!string.IsNullOrEmpty(Attribute))
+            if (string.IsNullOrEmpty(Attribute))
             {
-                switch (Attribute)
-                {
-                    case "key":
-                        return user.Key;
-                    case "ip":
-                        return user.IpAddress;
-                    case "country":
-                        return user.Country;
-                    case "firstName":
-                        return user.FirstName;
-                    case "lastName":
-                        return user.LastName;
-                    case "avatar":
-                        return user.Avatar;
-                    case "anonymous":
-                        return user.Anonymous;
-                    case "name":
-                        return user.Name;
-                    case "email":
-                        return user.Email;
-                    default:
-                        if (user.Custom.ContainsKey(Attribute))
+                return null;
+            }
+            switch (Attribute)
+            {
+                case "key":
+                    return user.Key;
+                case "ip":
+                    return user.IpAddress;
+                case "country":
+                    return user.Country;
+                case "firstName":
+                    return user.FirstName;
+                case "lastName":
+                    return user.LastName;
+                case "avatar":
+                    return user.Avatar;
+                case "anonymous":
+                    return user.Anonymous;
+                case "name":
+                    return user.Name;
+                case "email":
+                    return user.Email;
+                default:
+                    if (user.Custom.ContainsKey(Attribute))
+                    {
+                        var token = user.Custom[Attribute];
+                        if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
                         {
-                            var token = user.Custom[Attribute];
-                            if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
-                            {
-                                var arr = (JArray) token;
-                                return arr.Values<JToken>().Select(i => ((JValue) i).Value);
-                            }
-                            else if (token.Type == JTokenType.Object)
-                            {
-                                throw new ArgumentException(
-                                    string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
-                            }
-                            else
-                            {
-                                var val = (JValue) token;
-                                return val.Value;
-                            }
+                            var arr = (JArray)token;
+                            return arr.Values<JToken>().Select(i => ((JValue)i).Value);
                         }
-                        break;
-                }
+                        else if (token.Type == JTokenType.Object)
+                        {
+                            throw new ArgumentException(
+                                string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
+                        }
+                        else
+                        {
+                            var val = (JValue)token;
+                            return val.Value;
+                        }
+                    }
+                    break;
             }
             return null;
         }
