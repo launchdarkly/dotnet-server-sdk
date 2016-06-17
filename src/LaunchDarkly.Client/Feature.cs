@@ -92,7 +92,10 @@ namespace LaunchDarkly.Client
         public bool Matches(User user)
         {
             var userValue = GetUserValue(user);
-
+            if (userValue == null)
+            {
+                return false;
+            }
             if (!(userValue is string) && typeof(IEnumerable).IsAssignableFrom(userValue.GetType()))
             {
                 var uvs = (IEnumerable<object>)userValue;
@@ -100,7 +103,7 @@ namespace LaunchDarkly.Client
             }
             foreach (object value in Values)
             {
-                if (value == null || userValue == null)
+                if (value == null)
                 {
                     return false;
                 }
@@ -119,43 +122,52 @@ namespace LaunchDarkly.Client
 
         private Object GetUserValue(User user)
         {
-            switch (Attribute)
+            if (!string.IsNullOrEmpty(Attribute))
             {
-                case "key":
-                    return user.Key;
-                case "ip":
-                    return user.IpAddress;
-                case "country":
-                    return user.Country;
-                case "firstName":
-                    return user.FirstName;
-                case "lastName":
-                    return user.LastName;
-                case "avatar":
-                    return user.Avatar;
-                case "anonymous":
-                    return user.Anonymous;
-                case "name":
-                    return user.Name;
-                case "email":
-                    return user.Email;
-                default:
-                    var token = user.Custom[Attribute];
-                    if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
-                    {
-                        var arr = (JArray)token;
-                        return arr.Values<JToken>().Select(i => ((JValue)i).Value);
-                    }
-                    else if (token.Type == JTokenType.Object)
-                    {
-                        throw new ArgumentException(string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
-                    }
-                    else
-                    {
-                        var val = (JValue)token;
-                        return val.Value;
-                    }
+                switch (Attribute)
+                {
+                    case "key":
+                        return user.Key;
+                    case "ip":
+                        return user.IpAddress;
+                    case "country":
+                        return user.Country;
+                    case "firstName":
+                        return user.FirstName;
+                    case "lastName":
+                        return user.LastName;
+                    case "avatar":
+                        return user.Avatar;
+                    case "anonymous":
+                        return user.Anonymous;
+                    case "name":
+                        return user.Name;
+                    case "email":
+                        return user.Email;
+                    default:
+                        if (user.Custom.ContainsKey(Attribute))
+                        {
+                            var token = user.Custom[Attribute];
+                            if (token.Type == Newtonsoft.Json.Linq.JTokenType.Array)
+                            {
+                                var arr = (JArray) token;
+                                return arr.Values<JToken>().Select(i => ((JValue) i).Value);
+                            }
+                            else if (token.Type == JTokenType.Object)
+                            {
+                                throw new ArgumentException(
+                                    string.Format("Rule contains nested custom object for attribute '{0}'"), Attribute);
+                            }
+                            else
+                            {
+                                var val = (JValue) token;
+                                return val.Value;
+                            }
+                        }
+                        break;
+                }
             }
+            return null;
         }
     }
 }
