@@ -168,3 +168,5 @@ pip-log.txt
 
 # Ignore built nupkgs
 *.nupkg
+PortabilityAnalysis.html
+nuget.exe

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
-    public class PollingProcessor : IUpdateProcessor
+    class PollingProcessor : IUpdateProcessor
     {
         private static ILog Logger = LogProvider.For<PollingProcessor>();
         private static int UNINITIALIZED = 0;
@@ -18,7 +18,7 @@ namespace LaunchDarkly.Client
         private readonly TaskCompletionSource<bool> _initTask;
 
 
-        public PollingProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
+        internal PollingProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
         {
             _config = config;
             _featureRequestor = featureRequestor;
@@ -26,12 +26,12 @@ namespace LaunchDarkly.Client
             _initTask = new TaskCompletionSource<bool>();
         }
 
-        public bool Initialized()
+        bool IUpdateProcessor.Initialized()
         {
            return _initialized == INITIALIZED;
         }
 
-        public TaskCompletionSource<bool> Start()
+        TaskCompletionSource<bool> IUpdateProcessor.Start()
         {
             Logger.Info("Starting LaunchDarkly PollingProcessor with interval: " + (int)_config.PollingInterval.TotalMilliseconds + " milliseconds");
             TimerCallback TimerDelegate = new TimerCallback(UpdateTask);
@@ -60,7 +60,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             Logger.Info("Stopping LaunchDarkly PollingProcessor");
             _timer.Dispose();

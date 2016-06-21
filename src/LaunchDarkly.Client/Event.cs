@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
@@ -29,14 +30,14 @@ namespace LaunchDarkly.Client
         }
     }
 
-    public class FeatureRequestEvent<T> : Event
+    public class FeatureRequestEvent : Event
     {
         [JsonProperty(PropertyName = "value", NullValueHandling = NullValueHandling.Ignore)]
-        public T Value { get; private set; }
+        public JToken Value { get; private set; }
         [JsonProperty(PropertyName = "default", NullValueHandling = NullValueHandling.Ignore)]
-        public Boolean Default { get; private set; }
+        public JToken Default { get; private set; }
 
-        public FeatureRequestEvent(String key, User user, T value, Boolean defaultValue) : base("feature", key, user)
+        public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue) : base("feature", key, user)
         {
             Value = value;
             Default = defaultValue;
@@ -48,7 +49,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
         public string Data { get; private set; }
 
-        public CustomEvent(String key, User user, string data) : base("custom", key, user)
+        public CustomEvent(string key, User user, string data) : base("custom", key, user)
         {
             Data = data;
         }

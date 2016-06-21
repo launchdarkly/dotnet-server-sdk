@@ -1,9 +1,10 @@
 ﻿using System;
 using LaunchDarkly.Client.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class LdClient : IDisposable
+    public class LdClient : IDisposable, ILdClient
     {
         private static ILog Logger = LogProvider.For<LdClient>();
 
@@ -30,7 +31,7 @@ namespace LaunchDarkly.Client
         {
         }
 
-        public LdClient(String apiKey) : this(Configuration.Default().WithApiKey(apiKey))
+        public LdClient(string apiKey) : this(Configuration.Default().WithApiKey(apiKey))
         {
         }
 
@@ -41,35 +42,151 @@ namespace LaunchDarkly.Client
 
         public bool Toggle(string key, User user, bool defaultValue = false)
         {
-            if (!_updateProcessor.Initialized())
-            {
-                Logger.Warn("LaunchDarkly client was not initialized. Returning default value. See previous log statements for more info");
-                return defaultValue;
-            }
-
             try
             {
-                bool value = evaluate(key, user, defaultValue);
+                var value = Evaluate(key, user, defaultValue);
                 sendFlagRequestEvent(key, user, value, defaultValue);
-                return value;
+                if (value.Type.Equals(JTokenType.Boolean))
+                {
+                    return value.Value<bool>();
+                }
+
             }
             catch (Exception ex)
             {
                 Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-                sendFlagRequestEvent(key, user, defaultValue, defaultValue);
-                return defaultValue;
             }
+            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
+            return defaultValue;
         }
 
-        private bool evaluate(string key, User user, bool defaultValue)
+        public int IntVariation(string key, User user, int defaultValue)
         {
-            Feature result = _featureStore.Get(key);
-            if (result == null)
+            try
             {
-                Logger.Warn("Unknown feature flag: " + key + "; returning default value: " + defaultValue);
+                var value = Evaluate(key, user, defaultValue);
+                sendFlagRequestEvent(key, user, value, defaultValue);
+                if (value.Type.Equals(JTokenType.Integer))
+                {
+                    return value.Value<int>();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
+            }
+            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
+            return defaultValue;
+        }
+
+
+        public float FloatVariation(string key, User user, float defaultValue)
+        {
+            try
+            {
+                var value = Evaluate(key, user, defaultValue);
+                sendFlagRequestEvent(key, user, value, defaultValue);
+                if (value.Type.Equals(JTokenType.Float))
+                {
+                    return value.Value<float>();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
+            }
+            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
+            return defaultValue;
+        }
+
+
+        public string StringVariation(string key, User user, string defaultValue)
+        {
+            try
+            {
+                var value = Evaluate(key, user, defaultValue);
+                sendFlagRequestEvent(key, user, value, defaultValue);
+                if (value.Type.Equals(JTokenType.String))
+                {
+                    return value.Value<string>();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
+            }
+            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
+            return defaultValue;
+        }
+
+
+        public JToken JsonVariation(string key, User user, JToken defaultValue)
+        {
+            try
+            {
+                var value = Evaluate(key, user, defaultValue);
+                sendFlagRequestEvent(key, user, value, defaultValue);
+                return value;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
+            }
+            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
+            return defaultValue;
+        }
+
+        private JToken Evaluate(string featureKey, User user, JToken defaultValue)
+        {
+            if (!Initialized())
+            {
+                Logger.Warn("LaunchDarkly client was not initialized. Returning default value. See previous log statements for more info");
                 return defaultValue;
             }
-            return result.Evaluate(user, defaultValue);
+            try
+            {
+                var featureFlag = _featureStore.Get(featureKey);
+                if (featureFlag == null)
+                {
+                    Logger.Warn("Unknown feature flag " + featureKey + "; returning default value: ");
+                    return defaultValue;
+                }
+
+                if (featureFlag.On)
+                {
+                    var evalResult = featureFlag.Evaluate(user, _featureStore);
+                    if (evalResult.HasValue)
+                    {
+                        foreach (var prereqEvent in evalResult.Value.PrerequisiteEvents)
+                        {
+                            _eventStore.Add(prereqEvent);
+
+                        }
+                        return evalResult.Value.Result ?? defaultValue;
+                    }
+                }
+                else
+                {
+                    var offVariation = featureFlag.OffVariationValue;
+                    if (offVariation != null)
+                    {
+                        return offVariation;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(
+                    String.Format(
+                        "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
+                        e.Message, featureKey, user.Key));
+                Logger.Debug(e.ToString());
+            }
+            return defaultValue;
         }
 
         public void Track(string name, User user, string data)
@@ -82,9 +199,9 @@ namespace LaunchDarkly.Client
             _eventStore.Add(new IdentifyEvent(user));
         }
 
-        private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean defaultValue)
+        private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue)
         {
-            _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, defaultValue));
+            _eventStore.Add(new FeatureRequestEvent(key, user, value, defaultValue));
         }
 
         protected virtual void Dispose(bool disposing)

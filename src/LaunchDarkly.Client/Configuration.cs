@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Configuration;
-using System.Net;
 using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -125,7 +124,7 @@ namespace LaunchDarkly.Client
         internal static Configuration WithEventQueueCapacity(this Configuration configuration, string eventQueueCapacity)
         {
             if (eventQueueCapacity != null)
-                return WithEventQueueCapacity(configuration, Int32.Parse(eventQueueCapacity));
+                return WithEventQueueCapacity(configuration, int.Parse(eventQueueCapacity));
 
             return configuration;
         }
@@ -141,7 +140,7 @@ namespace LaunchDarkly.Client
         internal static Configuration WithEventQueueFrequency(this Configuration configuration, string frequency)
         {
             if (frequency != null)
-                return WithEventQueueFrequency(configuration, TimeSpan.FromSeconds(Int32.Parse(frequency)));
+                return WithEventQueueFrequency(configuration, TimeSpan.FromSeconds(int.Parse(frequency)));
 
             return configuration;
         }

@@ -1,16 +1,15 @@
-﻿using System.IO;
-using LaunchDarkly.Client.Logging;
+﻿using LaunchDarkly.Client.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using Newtonsoft.Json;
-using System.Net;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 
 namespace LaunchDarkly.Client
 {
-    public sealed class EventProcessor : IDisposable, IStoreEvents
+    sealed class EventProcessor : IDisposable, IStoreEvents
     {
         private static readonly ILog Logger = LogProvider.For<EventProcessor>();
 
@@ -19,7 +18,7 @@ namespace LaunchDarkly.Client
         private System.Threading.Timer _timer;
         private readonly HttpClient _httpClient;
 
-        public EventProcessor(Configuration config)
+        internal EventProcessor(Configuration config)
         {
             _config = config;
             _queue = new BlockingCollection<Event>(_config.EventQueueCapacity);
@@ -27,26 +26,26 @@ namespace LaunchDarkly.Client
             _httpClient = config.HttpClient;
         }
 
-        public void Add(Event eventToLog)
+        private void SubmitEvents(object StateInfo)
+        {
+            ((IStoreEvents)this).Flush();
+        }
+
+        void IStoreEvents.Add(Event eventToLog)
         {
             if (!_queue.TryAdd(eventToLog))
                 Logger.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
         }
 
-        public void SubmitEvents(object StateInfo)
+        void IDisposable.Dispose()
         {
-            Flush();
-        }
-
-        public void Dispose()
-        {
-            Flush();
+            ((IStoreEvents) this).Flush();
             _queue.CompleteAdding();
             _timer.Dispose();
             _queue.Dispose();
         }
 
-        public void Flush()
+        void IStoreEvents.Flush()
         {
             Event e;
             List<Event> events = new List<Event>();
@@ -66,10 +65,10 @@ namespace LaunchDarkly.Client
             var uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             try
             {
-                string json = JsonConvert.SerializeObject(events.ToList());
+                string json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
                 Logger.Debug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
-             
-                using (var responseTask = _httpClient.PostAsJsonAsync(uri, events))
+
+                using (var responseTask = _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
                     responseTask.ConfigureAwait(false);
                     HttpResponseMessage response = responseTask.Result;
