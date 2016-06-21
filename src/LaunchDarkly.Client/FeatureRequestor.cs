@@ -7,19 +7,19 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
-    public class FeatureRequestor
+    class FeatureRequestor
     {
         private static ILog Logger = LogProvider.For<FeatureRequestor>();
         private Configuration _configuration;
         private readonly HttpClient _httpClient;
 
-        public FeatureRequestor(Configuration config)
+        internal FeatureRequestor(Configuration config)
         {
             _httpClient = config.HttpClient;
             _configuration = config;
         }
 
-        public IDictionary<string, FeatureFlag> MakeAllRequest(bool latest)
+        internal IDictionary<string, FeatureFlag> MakeAllRequest(bool latest)
         {
             string resource = latest ? "sdk/latest-flags" : "sdk/flags";
             var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);

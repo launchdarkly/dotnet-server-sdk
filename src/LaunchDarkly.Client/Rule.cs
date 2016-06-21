@@ -3,12 +3,12 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
-    public class Rule : VariationOrRollout
+    class Rule : VariationOrRollout
     {
         internal List<Clause> Clauses { get; private set; }
 
         [JsonConstructor]
-        public Rule(int? variation, Rollout rollout, List<Clause> clauses) : base(variation, rollout)
+        internal Rule(int? variation, Rollout rollout, List<Clause> clauses) : base(variation, rollout)
         {
             Clauses = clauses;
         }

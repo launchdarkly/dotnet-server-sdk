@@ -9,7 +9,7 @@ using System.Text;
 
 namespace LaunchDarkly.Client
 {
-    public sealed class EventProcessor : IDisposable, IStoreEvents
+    sealed class EventProcessor : IDisposable, IStoreEvents
     {
         private static readonly ILog Logger = LogProvider.For<EventProcessor>();
 
@@ -18,7 +18,7 @@ namespace LaunchDarkly.Client
         private System.Threading.Timer _timer;
         private readonly HttpClient _httpClient;
 
-        public EventProcessor(Configuration config)
+        internal EventProcessor(Configuration config)
         {
             _config = config;
             _queue = new BlockingCollection<Event>(_config.EventQueueCapacity);
@@ -26,26 +26,26 @@ namespace LaunchDarkly.Client
             _httpClient = config.HttpClient;
         }
 
-        public void Add(Event eventToLog)
+        private void SubmitEvents(object StateInfo)
+        {
+            ((IStoreEvents)this).Flush();
+        }
+
+        void IStoreEvents.Add(Event eventToLog)
         {
             if (!_queue.TryAdd(eventToLog))
                 Logger.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
         }
 
-        public void SubmitEvents(object StateInfo)
+        void IDisposable.Dispose()
         {
-            Flush();
-        }
-
-        public void Dispose()
-        {
-            Flush();
+            ((IStoreEvents) this).Flush();
             _queue.CompleteAdding();
             _timer.Dispose();
             _queue.Dispose();
         }
 
-        public void Flush()
+        void IStoreEvents.Flush()
         {
             Event e;
             List<Event> events = new List<Event>();

@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class FeatureFlag
+    class FeatureFlag
     {
         private static readonly ILog Logger = LogProvider.For<FeatureFlag>();
 
@@ -22,7 +22,7 @@ namespace LaunchDarkly.Client
         internal bool Deleted { get;  set; }
 
         [JsonConstructor]
-        public FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt, List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation, List<JToken> variations, bool deleted)
+        internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt, List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation, List<JToken> variations, bool deleted)
         {
             Key = key;
             Version = version;
@@ -38,7 +38,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        public FeatureFlag()
+        internal FeatureFlag()
         {
         }
 
@@ -48,7 +48,7 @@ namespace LaunchDarkly.Client
             internal readonly IList<FeatureRequestEvent> PrerequisiteEvents;
             internal readonly ISet<string> VisitedFeatureKeys;
 
-            public EvalResult(JValue result, IList<FeatureRequestEvent> events, ISet<string> visited) : this()
+            internal EvalResult(JValue result, IList<FeatureRequestEvent> events, ISet<string> visited) : this()
             {
                 Result = result;
                 PrerequisiteEvents = events;
@@ -166,52 +166,52 @@ namespace LaunchDarkly.Client
         }
     }
 
-    public class Rollout
+    class Rollout
     {
         internal List<WeightedVariation> Variations { get; private set; }
         internal string BucketBy { get; private set; }
 
         [JsonConstructor]
-        public Rollout(List<WeightedVariation> variations, string bucketBy)
+        internal Rollout(List<WeightedVariation> variations, string bucketBy)
         {
             Variations = variations;
             BucketBy = bucketBy;
         }
     }
 
-    public class WeightedVariation
+    class WeightedVariation
     {
         internal int Variation { get; private set; }
         internal int Weight { get; private set; }
 
         [JsonConstructor]
-        public WeightedVariation(int variation, int weight)
+        internal WeightedVariation(int variation, int weight)
         {
             Variation = variation;
             Weight = weight;
         }
     }
 
-    public class Target
+    class Target
     {
         internal List<string> Values { get; private set; }
         internal int Variation { get; private set; }
 
         [JsonConstructor]
-        public Target(List<string> values, int variation)
+        internal Target(List<string> values, int variation)
         {
             Values = values;
             Variation = variation;
         }
     }
 
-    public class Prerequisite
+    class Prerequisite
     {
         internal string Key { get; private set; }
         internal int Variation { get; private set; }
 
         [JsonConstructor]
-        public Prerequisite(string key, int variation)
+        internal Prerequisite(string key, int variation)
         {
             Key = key;
             Variation = variation;

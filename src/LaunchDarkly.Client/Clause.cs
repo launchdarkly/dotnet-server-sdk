@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class Clause
+    class Clause
     {
         private static readonly ILog Logger = LogProvider.For<Clause>();
 
@@ -15,7 +15,7 @@ namespace LaunchDarkly.Client
         internal bool Negate { get; private set; }
 
         [JsonConstructor]
-        public Clause(string attribute, string op, List<JValue> values, bool negate)
+        internal Clause(string attribute, string op, List<JValue> values, bool negate)
         {
             Attribute = attribute;
             Op = op;

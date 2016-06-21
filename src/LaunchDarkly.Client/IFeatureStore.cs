@@ -2,7 +2,7 @@
 
 namespace LaunchDarkly.Client
 {
-    public interface IFeatureStore
+    interface IFeatureStore
     {
         FeatureFlag Get(string key);
         IDictionary<string, FeatureFlag> All();
