@@ -20,6 +20,13 @@ namespace LaunchDarkly.Client
             _configuration = config;
             _eventStore = eventStore;
             _featureStore = new InMemoryFeatureStore();
+
+          if (_configuration.Offline)
+          {
+              Logger.Info("Starting Launchdarkly client in offline mode.");
+              return;
+          }
+
             _featureRequestor = new FeatureRequestor(config);
             _updateProcessor = new PollingProcessor(config, _featureRequestor, _featureStore);
             var initTask = _updateProcessor.Start();
@@ -37,7 +44,12 @@ namespace LaunchDarkly.Client
 
         public bool Initialized()
         {
-            return _updateProcessor.Initialized();
+            return IsOffline() || _updateProcessor.Initialized();
+        }
+
+        public bool IsOffline()
+        {
+            return _configuration.Offline;
         }
 
         public bool Toggle(string key, User user, bool defaultValue = false)
@@ -159,23 +171,22 @@ namespace LaunchDarkly.Client
                 if (featureFlag.On)
                 {
                     var evalResult = featureFlag.Evaluate(user, _featureStore);
-                    if (evalResult.HasValue)
+                    if (!IsOffline())
                     {
-                        foreach (var prereqEvent in evalResult.Value.PrerequisiteEvents)
+                        foreach (var prereqEvent in evalResult.PrerequisiteEvents)
                         {
                             _eventStore.Add(prereqEvent);
-
                         }
-                        return evalResult.Value.Result ?? defaultValue;
                     }
+                  if (evalResult.Result != null)
+                  {
+                    return evalResult.Result;
+                  }
                 }
-                else
+                var offVariation = featureFlag.OffVariationValue;
+                if (offVariation != null)
                 {
-                    var offVariation = featureFlag.OffVariationValue;
-                    if (offVariation != null)
-                    {
-                        return offVariation;
-                    }
+                    return offVariation;
                 }
             }
             catch (Exception e)

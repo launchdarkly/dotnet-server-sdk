@@ -58,7 +58,7 @@ namespace LaunchDarkly.Client
     }
 
 
-    internal EvalResult? Evaluate(User user, IFeatureStore featureStore)
+    internal EvalResult Evaluate(User user, IFeatureStore featureStore)
     {
       if (user == null || user.Key == null)
       {
@@ -75,8 +75,8 @@ namespace LaunchDarkly.Client
       var prereqOk = true;
       foreach (var prereq in Prerequisites)
       {
-        JToken prereqEvalResult = null;
         var prereqFeatureFlag = featureStore.Get(prereq.Key);
+        JToken prereqEvalResult = null;
         if (prereqFeatureFlag == null)
         {
           Logger.Error("Could not retrieve prerequisite flag: " + prereq.Key + " when evaluating: " + Key);
@@ -98,9 +98,13 @@ namespace LaunchDarkly.Client
             Logger.Warn("Error evaluating prerequisites: " + e.Message);
             prereqOk = false;
           }
-          //We don't short circuit and also send events for each prereq.
-          events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResult, null));
         }
+        else
+        {
+          prereqOk = false;
+        }
+        //We don't short circuit and also send events for each prereq.
+        events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResult, null));
       }
       if (prereqOk)
       {
