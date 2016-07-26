@@ -16,6 +16,7 @@ namespace LaunchDarkly.Client
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
+        public bool Offline { get; internal set; }
         public HttpClient HttpClient
         {
             get
@@ -49,6 +50,7 @@ namespace LaunchDarkly.Client
                 EventQueueFrequency = DefaultEventQueueFrequency,
                 PollingInterval = DefaultPollingInterval,
                 StartWaitTime = DefaultStartWaitTime,
+                Offline = false,
                 _httpClient = new HttpClient(new WebRequestHandler()
                 {
                     // RequestCacheLevel.Revalidate enables proper Etag caching
@@ -166,6 +168,13 @@ namespace LaunchDarkly.Client
 
             return configuration;
         }
+
+        public static Configuration WithOffline(this Configuration configuration, bool offline)
+        {
+            configuration.Offline = offline;
+            return configuration;
+        }
+
         public static Configuration WithHttpClient(this Configuration configuration, HttpClient httpClient)
         {
             if (httpClient != null)

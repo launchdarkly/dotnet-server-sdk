@@ -43,16 +43,6 @@ namespace LaunchDarkly.Client
                                 }
                             }
                         }
-
-                        uDateTime = JValueToDateTime(uValue);
-                        if (uDateTime.HasValue)
-                        {
-                            var cDateTime = JValueToDateTime(cValue);
-                            if (cDateTime.HasValue)
-                            {
-                                return DateTime.Compare(cDateTime.Value, uDateTime.Value) == 0;
-                            }
-                        }
                         break;
                     case "endsWith":
                         if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
