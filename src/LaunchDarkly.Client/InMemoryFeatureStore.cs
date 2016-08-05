@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using LaunchDarkly.Client.Logging;
 
 namespace LaunchDarkly.Client
 {
     public class InMemoryFeatureStore : IFeatureStore
     {
+        private static ILog Logger = LogProvider.For<InMemoryFeatureStore>();
         private static readonly int RwLockMaxWaitMillis = 1000;
         private readonly ReaderWriterLock RwLock = new ReaderWriterLock();
         private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();
@@ -16,11 +18,17 @@ namespace LaunchDarkly.Client
             {
                 RwLock.AcquireReaderLock(RwLockMaxWaitMillis);
                 FeatureFlag f;
-                if (!Features.TryGetValue(key, out f) || f.Deleted)
+                if (!Features.TryGetValue(key, out f))
                 {
+                    Logger.Warn("Attempted to get feature with key: " + key + " not found in feature store. Returning null.");
                     return null;
                 }
-                return f;
+                if (f.Deleted)
+                {
+                    Logger.Warn("Attempted to get deleted feature with key: " + key + " from feature store. Returning null.");
+                    return null;
+                }
+                    return f;
             }
             finally
             {

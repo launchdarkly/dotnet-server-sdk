@@ -41,7 +41,7 @@ namespace LaunchDarkly.Client
             {
                 if (status == HttpStatusCode.Unauthorized)
                 {
-                    Logger.Error("Invalid API key");
+                    Logger.Error("Invalid SDK key");
                 }
                 else if (status == HttpStatusCode.NotFound)
                 {

@@ -36,11 +36,17 @@ namespace LaunchDarkly.Client
         public JToken Value { get; private set; }
         [JsonProperty(PropertyName = "default", NullValueHandling = NullValueHandling.Ignore)]
         public JToken Default { get; private set; }
+        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
+        public JToken Version { get; private set; }
+        [JsonProperty(PropertyName = "prereqOf", NullValueHandling = NullValueHandling.Ignore)]
+        public JToken PrereqOf { get; private set; }
 
-        public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue) : base("feature", key, user)
+        public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version, JToken prereqOf) : base("feature", key, user)
         {
             Value = value;
             Default = defaultValue;
+            Version = version;
+            PrereqOf = prereqOf;
         }
     }
 

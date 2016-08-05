@@ -67,6 +67,7 @@ namespace LaunchDarkly.Tests
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("https://app.launchdarkly.com/sdk/latest-flags").Respond("application/json", feature_json);
             config.WithHttpClient(new HttpClient(mockHttp));
+            config.WithSdkKey("SDK_KEY");
             FeatureRequestor featureRequestor = new FeatureRequestor(config);
 
             IDictionary<string, FeatureFlag> actual = featureRequestor.MakeAllRequest(true);
