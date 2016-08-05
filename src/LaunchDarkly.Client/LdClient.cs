@@ -40,7 +40,7 @@ namespace LaunchDarkly.Client
         {
         }
 
-        public LdClient(string apiKey) : this(Configuration.Default().WithApiKey(apiKey))
+        public LdClient(string sdkKey) : this(Configuration.Default().WithSdkKey(sdkKey))
         {
         }
 
@@ -90,7 +90,7 @@ namespace LaunchDarkly.Client
 
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.Raw);
+            var value = Evaluate(key, user, defaultValue, null);
             return value;
         }
 
@@ -106,9 +106,9 @@ namespace LaunchDarkly.Client
           Logger.Warn("AllFlags() was called before client has finished initializing. Returning null.");
           return null;
         }
-        if (user == null || string.IsNullOrEmpty(user.Key))
+        if (user == null || user.Key == null)
         {
-          Logger.Warn("AllFlags() called with null user or null/empty user key. Returning null");
+          Logger.Warn("AllFlags() called with null user or null user key. Returning null");
           return null;
         }
 
@@ -129,16 +129,17 @@ namespace LaunchDarkly.Client
         return results;
       }
 
-      private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType expectedType)
+      private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType)
         {
             if (!Initialized())
             {
                 Logger.Warn("LaunchDarkly client has not yet been initialized. Returning default");
                 return defaultValue;
             }
-            if (user == null || string.IsNullOrEmpty(user.Key))
+            if (user == null || user.Key == null)
             {
-                Logger.Warn("Feature flag evaluation called with null user or null/empty user key. Returning default");
+                Logger.Warn("Feature flag evaluation called with null user or null user key. Returning default");
+                sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
                 return defaultValue;
             }
 
@@ -148,6 +149,7 @@ namespace LaunchDarkly.Client
                 if (featureFlag == null)
                 {
                     Logger.Warn("Unknown feature flag " + featureKey + "; returning default value: ");
+                    sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
                     return defaultValue;
                 }
 
@@ -161,7 +163,7 @@ namespace LaunchDarkly.Client
               }
               if (evalResult.Result != null)
               {
-                if (!evalResult.Result.Type.Equals(expectedType))
+                if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
                 {
                   Logger.Error("Expected type: " + expectedType + " but got " + evalResult.GetType() +
                                " when evaluating FeatureFlag: " + featureKey + ". Returning default");
@@ -191,7 +193,7 @@ namespace LaunchDarkly.Client
             return null;
           }
           System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
-          byte[] keyBytes = encoding.GetBytes(_configuration.ApiKey);
+          byte[] keyBytes = encoding.GetBytes(_configuration.SdkKey);
 
           HMACSHA256 hmacSha256 = new HMACSHA256(keyBytes);
           byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(user.Key));
@@ -200,18 +202,18 @@ namespace LaunchDarkly.Client
 
         public void Track(string name, User user, string data)
         {
-          if (user == null || string.IsNullOrEmpty(user.Key))
+          if (user == null || user.Key == null)
           {
-            Logger.Warn("Track called with null user or null/empty user key");
+            Logger.Warn("Track called with null user or null user key");
           }
           _eventStore.Add(new CustomEvent(name, user, data));
         }
 
         public void Identify(User user)
         {
-          if (user == null || string.IsNullOrEmpty(user.Key))
+          if (user == null || user.Key == null)
           {
-            Logger.Warn("Identify called with null user or null/empty user key");
+            Logger.Warn("Identify called with null user or null user key");
           }
           _eventStore.Add(new IdentifyEvent(user));
         }

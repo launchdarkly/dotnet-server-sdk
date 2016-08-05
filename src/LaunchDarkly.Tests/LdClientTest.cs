@@ -11,7 +11,7 @@ namespace LaunchDarkly.Tests
     {
       Configuration config = Configuration.Default();
       config.WithOffline(true);
-      config.WithApiKey("secret");
+      config.WithSdkKey("secret");
       LdClient client = new LdClient(config);
 
       var user = User.WithKey("Message");

@@ -11,7 +11,7 @@ namespace LaunchDarkly.Client
     {
         public Uri BaseUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
-        public string ApiKey { get; internal set; }
+        public string SdkKey { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
@@ -23,7 +23,7 @@ namespace LaunchDarkly.Client
             {
                 var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", ApiKey);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(SdkKey);
                 return _httpClient;
             }
             internal set { _httpClient = value; }
@@ -69,7 +69,7 @@ namespace LaunchDarkly.Client
 
             return defaultConfiguration
                                     .WithUri((string)configSection["BaseUri"])
-                                    .WithApiKey((string)configSection["ApiKey"])
+                                    .WithSdkKey((string)configSection["SdkKey"])
                                     .WithEventQueueCapacity((string)configSection["EventQueueCapacity"])
                                     .WithEventQueueFrequency((string)configSection["EventQueueFrequency"]);
         }
@@ -109,10 +109,10 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithApiKey(this Configuration configuration, string apiKey)
+        public static Configuration WithSdkKey(this Configuration configuration, string sdkKey)
         {
-            if (apiKey != null)
-                configuration.ApiKey = apiKey;
+            if (sdkKey != null)
+                configuration.SdkKey = sdkKey;
 
             return configuration;
         }

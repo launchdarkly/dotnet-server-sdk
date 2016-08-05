@@ -62,16 +62,19 @@ namespace LaunchDarkly.Client
     {
       IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
       EvalResult evalResult  = new EvalResult(null, prereqEvents);
-      if (user == null || string.IsNullOrEmpty(user.Key))
+      if (user == null || user.Key == null)
       {
-        Logger.Warn("User or user key is null/empty whene evaluating flag: " + Key + " returning null");
+        Logger.Warn("User or user key is null when evaluating flag: " + Key + " returning null");
         return evalResult;
       }
 
       if (On)
       {
         evalResult.Result = Evaluate(user, featureStore, prereqEvents);
-        return evalResult;
+          if (evalResult.Result != null)
+          {
+              return evalResult;
+          }
       }
       evalResult.Result = OffVariationValue;
       return evalResult;
@@ -81,44 +84,48 @@ namespace LaunchDarkly.Client
     private JToken Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events)
     {
       var prereqOk = true;
-      foreach (var prereq in Prerequisites)
-      {
-        var prereqFeatureFlag = featureStore.Get(prereq.Key);
-        JToken prereqEvalResult = null;
-        if (prereqFeatureFlag == null)
+        if (Prerequisites != null)
         {
-          Logger.Error("Could not retrieve prerequisite flag: " + prereq.Key + " when evaluating: " + Key);
-          return null;
-        }
-        else if (prereqFeatureFlag.On)
-        {
-          prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events);
-          try
-          {
-            JToken variation = prereqFeatureFlag.GetVariation(prereq.Variation);
-            if (prereqEvalResult == null || variation == null || !prereqEvalResult.Equals(variation))
+            foreach (var prereq in Prerequisites)
             {
-              prereqOk = false;
+                var prereqFeatureFlag = featureStore.Get(prereq.Key);
+                JToken prereqEvalResult = null;
+                if (prereqFeatureFlag == null)
+                {
+                    Logger.Error("Could not retrieve prerequisite flag: " + prereq.Key + " when evaluating: " + Key);
+                    return null;
+                }
+                else if (prereqFeatureFlag.On)
+                {
+                    prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events);
+                    try
+                    {
+                        JToken variation = prereqFeatureFlag.GetVariation(prereq.Variation);
+                        if (prereqEvalResult == null || variation == null || !prereqEvalResult.Equals(variation))
+                        {
+                            prereqOk = false;
+                        }
+                    }
+                    catch (EvaluationException e)
+                    {
+                        Logger.Warn("Error evaluating prerequisites: " + e.Message);
+                        prereqOk = false;
+                    }
+                }
+                else
+                {
+                    prereqOk = false;
+                }
+                //We don't short circuit and also send events for each prereq.
+                events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResult, null,
+                    prereqFeatureFlag.Version, prereq.Key));
             }
-          }
-          catch (EvaluationException e)
-          {
-            Logger.Warn("Error evaluating prerequisites: " + e.Message);
-            prereqOk = false;
-          }
         }
-        else
+        if (prereqOk)
         {
-          prereqOk = false;
+         return GetVariation(EvaluateIndex(user));
         }
-        //We don't short circuit and also send events for each prereq.
-        events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
-      }
-      if (prereqOk)
-      {
-        return GetVariation(EvaluateIndex(user));
-      }
-      return null;
+        return null;
     }
 
 

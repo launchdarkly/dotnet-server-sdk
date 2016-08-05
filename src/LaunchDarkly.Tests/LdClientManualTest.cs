@@ -5,7 +5,7 @@ namespace LaunchDarkly.Tests
 {
     class LdClientManualTest
     {
-        private static string API_KEY = "YOUR_API_KEY";
+        private static string SDK_KEY = "YOUR_SDK_KEY";
         private static string FEATURE_KEY = "YOUR_FEATURE_KEY";
 
         [Ignore("Manual")]
@@ -13,7 +13,7 @@ namespace LaunchDarkly.Tests
         public void ManualTest()
         {
             Configuration config = Configuration.Default();
-            config.WithApiKey(API_KEY);
+            config.WithSdkKey(SDK_KEY);
             FeatureRequestor featureRequestor = new FeatureRequestor(config);
             LdClient client = new LdClient(config);
 
