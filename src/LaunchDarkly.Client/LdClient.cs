@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json.Linq;
 
@@ -52,113 +54,94 @@ namespace LaunchDarkly.Client
             return _configuration.Offline;
         }
 
-        public bool Toggle(string key, User user, bool defaultValue = false)
-        {
-            try
-            {
-                var value = Evaluate(key, user, defaultValue);
-                sendFlagRequestEvent(key, user, value, defaultValue);
-                if (value.Type.Equals(JTokenType.Boolean))
-                {
-                    return value.Value<bool>();
-                }
 
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-            }
-            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
-            return defaultValue;
+      [Obsolete("Please use BoolVariation instead.")]
+      public bool Toggle(string key, User user, bool defaultValue = false)
+      {
+          Logger.Warn("Toggle() method is deprecated. Please use BoolVariation() instead");
+          return BoolVariation(key, user, defaultValue);
+      }
+
+      public bool BoolVariation(string key, User user, bool defaultValue = false)
+        {
+          var value = Evaluate(key, user, defaultValue, JTokenType.Boolean);
+          return value.Value<bool>();
         }
 
         public int IntVariation(string key, User user, int defaultValue)
         {
-            try
-            {
-                var value = Evaluate(key, user, defaultValue);
-                sendFlagRequestEvent(key, user, value, defaultValue);
-                if (value.Type.Equals(JTokenType.Integer))
-                {
-                    return value.Value<int>();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-            }
-            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
-            return defaultValue;
+          var value = Evaluate(key, user, defaultValue, JTokenType.Integer);
+          return value.Value<int>();
         }
 
 
         public float FloatVariation(string key, User user, float defaultValue)
         {
-            try
-            {
-                var value = Evaluate(key, user, defaultValue);
-                sendFlagRequestEvent(key, user, value, defaultValue);
-                if (value.Type.Equals(JTokenType.Float))
-                {
-                    return value.Value<float>();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-            }
-            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
-            return defaultValue;
+            var value = Evaluate(key, user, defaultValue, JTokenType.Float);
+            return value.Value<float>();
         }
 
 
         public string StringVariation(string key, User user, string defaultValue)
         {
-            try
-            {
-                var value = Evaluate(key, user, defaultValue);
-                sendFlagRequestEvent(key, user, value, defaultValue);
-                if (value.Type.Equals(JTokenType.String))
-                {
-                    return value.Value<string>();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-            }
-            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
-            return defaultValue;
+            var value = Evaluate(key, user, defaultValue, JTokenType.String);
+            return value.Value<string>();
         }
-
 
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
-            try
-            {
-                var value = Evaluate(key, user, defaultValue);
-                sendFlagRequestEvent(key, user, value, defaultValue);
-                return value;
-
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-            }
-            sendFlagRequestEvent(key, user, defaultValue, defaultValue);
-            return defaultValue;
+            var value = Evaluate(key, user, defaultValue, JTokenType.Raw);
+            return value;
         }
 
-        private JToken Evaluate(string featureKey, User user, JToken defaultValue)
+      public IDictionary<string, JToken> AllFlags(User user)
+      {
+        if (IsOffline())
+        {
+          Logger.Warn("AllFlags() was called when client is in offline mode. Returning null.");
+          return null;
+        }
+        if (!Initialized())
+        {
+          Logger.Warn("AllFlags() was called before client has finished initializing. Returning null.");
+          return null;
+        }
+        if (user == null || string.IsNullOrEmpty(user.Key))
+        {
+          Logger.Warn("AllFlags() called with null user or null/empty user key. Returning null");
+          return null;
+        }
+
+        IDictionary<string, FeatureFlag> flags = _featureStore.All();
+        IDictionary<string, JToken> results = new Dictionary<string, JToken>();
+        foreach (KeyValuePair<string, FeatureFlag> pair in flags)
+        {
+          try
+          {
+            FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore);
+            results.Add(pair.Key, evalResult.Result);
+          }
+          catch (Exception e)
+          {
+            Logger.Error("Exception caught when evaluating all flags: " + e.Message);
+          }
+        }
+        return results;
+      }
+
+      private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType expectedType)
         {
             if (!Initialized())
             {
-                Logger.Warn("LaunchDarkly client was not initialized. Returning default value. See previous log statements for more info");
+                Logger.Warn("LaunchDarkly client has not yet been initialized. Returning default");
                 return defaultValue;
             }
+            if (user == null || string.IsNullOrEmpty(user.Key))
+            {
+                Logger.Warn("Feature flag evaluation called with null user or null/empty user key. Returning default");
+                return defaultValue;
+            }
+
             try
             {
                 var featureFlag = _featureStore.Get(featureKey);
@@ -168,26 +151,26 @@ namespace LaunchDarkly.Client
                     return defaultValue;
                 }
 
-                if (featureFlag.On)
+              FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore);
+              if (!IsOffline())
+              {
+                foreach (var prereqEvent in evalResult.PrerequisiteEvents)
                 {
-                    var evalResult = featureFlag.Evaluate(user, _featureStore);
-                    if (!IsOffline())
-                    {
-                        foreach (var prereqEvent in evalResult.PrerequisiteEvents)
-                        {
-                            _eventStore.Add(prereqEvent);
-                        }
-                    }
-                  if (evalResult.Result != null)
-                  {
-                    return evalResult.Result;
-                  }
+                  _eventStore.Add(prereqEvent);
                 }
-                var offVariation = featureFlag.OffVariationValue;
-                if (offVariation != null)
+              }
+              if (evalResult.Result != null)
+              {
+                if (!evalResult.Result.Type.Equals(expectedType))
                 {
-                    return offVariation;
+                  Logger.Error("Expected type: " + expectedType + " but got " + evalResult.GetType() +
+                               " when evaluating FeatureFlag: " + featureKey + ". Returning default");
+                  sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, featureFlag.Version);
+                  return defaultValue;
                 }
+                sendFlagRequestEvent(featureKey, user, evalResult.Result, defaultValue, featureFlag.Version);
+                return evalResult.Result;
+              }
             }
             catch (Exception e)
             {
@@ -197,22 +180,45 @@ namespace LaunchDarkly.Client
                         e.Message, featureKey, user.Key));
                 Logger.Debug(e.ToString());
             }
+            sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
             return defaultValue;
+        }
+
+        public string SecureModeHash(User user)
+        {
+          if (user == null || string.IsNullOrEmpty(user.Key))
+          {
+            return null;
+          }
+          System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+          byte[] keyBytes = encoding.GetBytes(_configuration.ApiKey);
+
+          HMACSHA256 hmacSha256 = new HMACSHA256(keyBytes);
+          byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(user.Key));
+          return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
         public void Track(string name, User user, string data)
         {
-            _eventStore.Add(new CustomEvent(name, user, data));
+          if (user == null || string.IsNullOrEmpty(user.Key))
+          {
+            Logger.Warn("Track called with null user or null/empty user key");
+          }
+          _eventStore.Add(new CustomEvent(name, user, data));
         }
 
         public void Identify(User user)
         {
-            _eventStore.Add(new IdentifyEvent(user));
+          if (user == null || string.IsNullOrEmpty(user.Key))
+          {
+            Logger.Warn("Identify called with null user or null/empty user key");
+          }
+          _eventStore.Add(new IdentifyEvent(user));
         }
 
-        private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue)
+        private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)
         {
-            _eventStore.Add(new FeatureRequestEvent(key, user, value, defaultValue));
+            _eventStore.Add(new FeatureRequestEvent(key, user, value, defaultValue, version, null));
         }
 
         protected virtual void Dispose(bool disposing)

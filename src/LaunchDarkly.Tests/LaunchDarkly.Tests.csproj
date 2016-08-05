@@ -80,6 +80,7 @@
     <Compile Include="ConfigurationTest.cs" />
     <Compile Include="FeatureRequestorTest.cs" />
     <Compile Include="LdClientManualTest.cs" />
+    <Compile Include="LdClientTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecordEventsTest.cs" />
     <Compile Include="UserTests.cs" />

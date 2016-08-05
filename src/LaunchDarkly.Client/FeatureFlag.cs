@@ -60,13 +60,21 @@ namespace LaunchDarkly.Client
 
     internal EvalResult Evaluate(User user, IFeatureStore featureStore)
     {
-      if (user == null || user.Key == null)
-      {
-        throw new EvaluationException("User or user key is null");
-      }
       IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
-      var value = Evaluate(user, featureStore, prereqEvents);
-      return new EvalResult(value, prereqEvents);
+      EvalResult evalResult  = new EvalResult(null, prereqEvents);
+      if (user == null || string.IsNullOrEmpty(user.Key))
+      {
+        Logger.Warn("User or user key is null/empty whene evaluating flag: " + Key + " returning null");
+        return evalResult;
+      }
+
+      if (On)
+      {
+        evalResult.Result = Evaluate(user, featureStore, prereqEvents);
+        return evalResult;
+      }
+      evalResult.Result = OffVariationValue;
+      return evalResult;
     }
 
     // Returning either a nil EvalResult or EvalResult.value indicates prereq failure/error.
@@ -104,7 +112,7 @@ namespace LaunchDarkly.Client
           prereqOk = false;
         }
         //We don't short circuit and also send events for each prereq.
-        events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResult, null));
+        events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
       }
       if (prereqOk)
       {

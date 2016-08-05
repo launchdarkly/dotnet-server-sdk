@@ -18,7 +18,7 @@ namespace LaunchDarkly.Tests
             LdClient client = new LdClient(config);
 
             var user = User.WithKey("user@test.com");
-            bool actual = client.Toggle(FEATURE_KEY, user, false);
+            bool actual = client.BoolVariation(FEATURE_KEY, user, false);
 
             Assert.IsTrue(actual);
             client.Flush();
