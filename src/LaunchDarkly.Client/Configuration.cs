@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Configuration;
-using System.Net;
 using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,18 +11,19 @@ namespace LaunchDarkly.Client
     {
         public Uri BaseUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
-        public string ApiKey { get; internal set; }
+        public string SdkKey { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
+        public bool Offline { get; internal set; }
         public HttpClient HttpClient
         {
             get
             {
                 var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", ApiKey);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(SdkKey);
                 return _httpClient;
             }
             internal set { _httpClient = value; }
@@ -50,6 +50,7 @@ namespace LaunchDarkly.Client
                 EventQueueFrequency = DefaultEventQueueFrequency,
                 PollingInterval = DefaultPollingInterval,
                 StartWaitTime = DefaultStartWaitTime,
+                Offline = false,
                 _httpClient = new HttpClient(new WebRequestHandler()
                 {
                     // RequestCacheLevel.Revalidate enables proper Etag caching
@@ -68,7 +69,7 @@ namespace LaunchDarkly.Client
 
             return defaultConfiguration
                                     .WithUri((string)configSection["BaseUri"])
-                                    .WithApiKey((string)configSection["ApiKey"])
+                                    .WithSdkKey((string)configSection["SdkKey"])
                                     .WithEventQueueCapacity((string)configSection["EventQueueCapacity"])
                                     .WithEventQueueFrequency((string)configSection["EventQueueFrequency"]);
         }
@@ -108,10 +109,10 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithApiKey(this Configuration configuration, string apiKey)
+        public static Configuration WithSdkKey(this Configuration configuration, string sdkKey)
         {
-            if (apiKey != null)
-                configuration.ApiKey = apiKey;
+            if (sdkKey != null)
+                configuration.SdkKey = sdkKey;
 
             return configuration;
         }
@@ -125,7 +126,7 @@ namespace LaunchDarkly.Client
         internal static Configuration WithEventQueueCapacity(this Configuration configuration, string eventQueueCapacity)
         {
             if (eventQueueCapacity != null)
-                return WithEventQueueCapacity(configuration, Int32.Parse(eventQueueCapacity));
+                return WithEventQueueCapacity(configuration, int.Parse(eventQueueCapacity));
 
             return configuration;
         }
@@ -141,7 +142,7 @@ namespace LaunchDarkly.Client
         internal static Configuration WithEventQueueFrequency(this Configuration configuration, string frequency)
         {
             if (frequency != null)
-                return WithEventQueueFrequency(configuration, TimeSpan.FromSeconds(Int32.Parse(frequency)));
+                return WithEventQueueFrequency(configuration, TimeSpan.FromSeconds(int.Parse(frequency)));
 
             return configuration;
         }
@@ -167,6 +168,13 @@ namespace LaunchDarkly.Client
 
             return configuration;
         }
+
+        public static Configuration WithOffline(this Configuration configuration, bool offline)
+        {
+            configuration.Offline = offline;
+            return configuration;
+        }
+
         public static Configuration WithHttpClient(this Configuration configuration, HttpClient httpClient)
         {
             if (httpClient != null)

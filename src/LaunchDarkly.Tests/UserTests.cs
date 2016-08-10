@@ -27,7 +27,7 @@ namespace LaunchDarkly.Tests
         {
             var json = "{\"key\":\"user@test.com\", \"custom\": {\"bizzle\":\"cripps\"}}";
             var user = JsonConvert.DeserializeObject<User>(json);
-            Assert.AreEqual("cripps", (string)user.Custom["bizzle"]);
+            Assert.AreEqual("cripps", (string) user.Custom["bizzle"]);
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("foo@bar.com").AndCustomAttribute("bizzle", "cripps");
             var json = JsonConvert.SerializeObject(user);
             var newUser = JsonConvert.DeserializeObject<User>(json);
-            Assert.AreEqual("cripps", (string)user.Custom["bizzle"]);
+            Assert.AreEqual("cripps", (string) user.Custom["bizzle"]);
             Assert.AreEqual("foo@bar.com", user.Key);
         }
 
@@ -52,7 +52,7 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingAUser_AnOptionalSecondaryKeyCanBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey")
-                           .AndSecondaryKey("AnySecondaryKey");
+                .AndSecondaryKey("AnySecondaryKey");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
             Assert.AreEqual("AnySecondaryKey", user.SecondaryKey);
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingAUser_AnOptionalIpAddressCanBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey")
-                           .AndIpAddress("1.2.3.4");
+                .AndIpAddress("1.2.3.4");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
             Assert.AreEqual("1.2.3.4", user.IpAddress);
@@ -72,7 +72,7 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingAUser_AnOptionalCountryAddressCanBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey")
-                           .AndCountry("US");
+                .AndCountry("US");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
             Assert.AreEqual("US", user.Country);
@@ -92,10 +92,10 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingAUser_AnOptionalCustomAttributeCanBeAdded()
         {
             var user = User.WithKey("AnyUniqueKey")
-                           .AndCustomAttribute("AnyAttributeName", "AnyValue");
+                .AndCustomAttribute("AnyAttributeName", "AnyValue");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
-            Assert.AreEqual("AnyValue", (string)user.Custom["AnyAttributeName"]);
+            Assert.AreEqual("AnyValue", (string) user.Custom["AnyAttributeName"]);
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingACustomAttribute_AttributeNameMustBeUnique()
         {
             var user = User.WithKey("AnyUniqueKey")
-                           .AndCustomAttribute("DuplicatedAttributeName", "AnyValue");
+                .AndCustomAttribute("DuplicatedAttributeName", "AnyValue");
 
             Assert.Throws<ArgumentException>(() => user.AndCustomAttribute("DuplicatedAttributeName", "AnyValue"));
         }
@@ -118,12 +118,12 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingAUser_MultipleCustomAttributeCanBeAdded()
         {
             var user = User.WithKey("AnyUniqueKey")
-                           .AndCustomAttribute("AnyAttributeName", "AnyValue")
-                           .AndCustomAttribute("AnyOtherAttributeName", "AnyOtherValue");
+                .AndCustomAttribute("AnyAttributeName", "AnyValue")
+                .AndCustomAttribute("AnyOtherAttributeName", "AnyOtherValue");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
-            Assert.AreEqual("AnyValue", (string)user.Custom["AnyAttributeName"]);
-            Assert.AreEqual("AnyOtherValue", (string)user.Custom["AnyOtherAttributeName"]);
+            Assert.AreEqual("AnyValue", (string) user.Custom["AnyAttributeName"]);
+            Assert.AreEqual("AnyOtherValue", (string) user.Custom["AnyOtherAttributeName"]);
         }
 
 
@@ -131,55 +131,16 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingAUser_AllOptionalPropertiesCanBeSetTogether()
         {
             var user = User.WithKey("AnyUniqueKey")
-                           .AndIpAddress("1.2.3.4")
-                           .AndCountry("US")
-                           .AndCustomAttribute("AnyAttributeName", "AnyValue")
-                           .AndCustomAttribute("AnyOtherAttributeName", "AnyOtherValue");
+                .AndIpAddress("1.2.3.4")
+                .AndCountry("US")
+                .AndCustomAttribute("AnyAttributeName", "AnyValue")
+                .AndCustomAttribute("AnyOtherAttributeName", "AnyOtherValue");
 
             Assert.AreEqual("AnyUniqueKey", user.Key);
             Assert.AreEqual("1.2.3.4", user.IpAddress);
             Assert.AreEqual("US", user.Country);
-            Assert.AreEqual("AnyValue", (string)user.Custom["AnyAttributeName"]);
-            Assert.AreEqual("AnyOtherValue", (string)user.Custom["AnyOtherAttributeName"]);
-        }
-
-
-        [Test]
-        public void WhenGeneratingAUserParam_ItShallBeBetween0and1()
-        {
-            var user = User.WithKey("AnyUniqueKey")
-                           .AndSecondaryKey("1.2.3.4");
-
-            var salt = Guid.NewGuid().ToString();
-            var hash = user.GetParam("featureKey", salt);
-
-            Assert.That(hash, Is.GreaterThan(0));
-            Assert.That(hash, Is.LessThan(1));
-        }
-
-        [Test]
-        public void WhenGeneratingAUserParam_ItShallBeDeterministicBasedOnUserAndFeatureSalt()
-        {
-            var user = User.WithKey("AnyUniqueKey")
-                           .AndSecondaryKey("1.2.3.4");
-
-            var salt = Guid.NewGuid().ToString();
-
-            var hash1 = user.GetParam("featureKey", salt);
-            var hash2 = user.GetParam("featureKey", salt);
-
-            Assert.AreEqual(hash1, hash2);
-        }
-
-        [Test]
-        public void TestApproximateUserParam()
-        {
-            var user = User.WithKey("test@test.com");
-            var featureKey = "test";
-            var salt = "abc";
-
-            var param = user.GetParam(featureKey, salt);
-            Assert.AreEqual(param, 0.6480837447865612, .01);
+            Assert.AreEqual("AnyValue", (string) user.Custom["AnyAttributeName"]);
+            Assert.AreEqual("AnyOtherValue", (string) user.Custom["AnyOtherAttributeName"]);
         }
     }
 }

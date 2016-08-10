@@ -1,32 +1,79 @@
 ﻿using LaunchDarkly.Client;
-using Moq;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
-using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace LaunchDarkly.Tests
 {
     class FeatureRequestorTest
     {
-        private string feature_json = "{\"engine.enable\":{\"name\":\"New recommendations engine\",\"key\":\"engine.enable\",\"kind\":\"flag\",\"salt\":\"ZW5naW5lLmVuYWJsZQ==\",\"on\":true,\"variations\":[{\"value\":true,\"weight\":93,\"targets\":[{\"attribute\":\"key\",\"op\":\"in\",\"values\":[]}],\"userTarget\":{\"attribute\":\"key\",\"op\":\"in\",\"values\":[]}},{\"value\":false,\"weight\":7,\"targets\":[{\"attribute\":\"key\",\"op\":\"in\",\"values\":[]}],\"userTarget\":{\"attribute\":\"key\",\"op\":\"in\",\"values\":[]}}],\"commitDate\":\"2014-09-30T20:00:32.318Z\",\"creationDate\":\"2014-09-02T21:53:23.028Z\",\"version\":2},\"zentasks.gravatar\":{\"name\":\"Gravatar in header\",\"key\":\"zentasks.gravatar\",\"kind\":\"flag\",\"salt\":\"emVudGFza3MuZ3JhdmF0YXI=\",\"on\":true,\"variations\":[{\"value\":true,\"weight\":0,\"targets\":[{\"attribute\":\"key\",\"op\":\"in\",\"values\":[\"justin@persistiq.com\"]},{\"attribute\":\"country\",\"op\":\"in\",\"values\":[\"Canada\"]},{\"attribute\":\"customer_rank\",\"op\":\"in\",\"values\":[]}],\"userTarget\":{\"attribute\":\"key\",\"op\":\"in\",\"values\":[\"justin@persistiq.com\"]}},{\"value\":false,\"weight\":100,\"targets\":[{\"attribute\":\"key\",\"op\":\"in\",\"values\":[]},{\"attribute\":\"groups\",\"op\":\"in\",\"values\":[]}],\"userTarget\":{\"attribute\":\"key\",\"op\":\"in\",\"values\":[]}}],\"commitDate\":\"2014-12-17T19:30:43.872Z\",\"creationDate\":\"2014-09-02T21:53:10.288Z\",\"version\":52}}";
-    
+        private string feature_json = @"{
+              ""abc"": {
+                ""key"": ""abc"",
+                ""version"": 4,
+                ""on"": true,
+                ""prerequisites"": [],
+                ""salt"": ""YWJj"",
+                ""sel"": ""41e72130b42c414bac59fff3cf12a58e"",
+                ""targets"": [
+                  {
+                    ""values"": [],
+                    ""variation"": 0
+                  },
+                  {
+                    ""values"": [],
+                    ""variation"": 1
+                  }
+                ],
+                ""rules"": [],
+                ""fallthrough"": {
+                  ""variation"": 1
+                },
+                ""offVariation"": null,
+                ""variations"": [
+                  true,
+                  false
+                ],
+                ""deleted"": false
+              },
+              ""one-more-flag"": {
+                ""key"": ""one-more-flag"",
+                ""version"": 1,
+                ""on"": false,
+                ""prerequisites"": [],
+                ""salt"": ""a2ee8e2dd521462ca7d60890678a6a5a"",
+                ""sel"": ""8d586841cc6543a1aebd9da2cbd827e5"",
+                ""targets"": [],
+                ""rules"": [],
+                ""fallthrough"": {
+                  ""variation"": 3
+                },
+                ""offVariation"": null,
+                ""variations"": [
+                  ""a"",
+                  ""b"",
+                  ""c"",
+                  ""d""
+                ],
+                ""deleted"": false
+              }
+            }";
+
         [Test]
         public void MakeAllRequestTest()
         {
             var config = Configuration.Default();
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("https://app.launchdarkly.com/api/eval/latest-features").Respond("application/json", feature_json);
+            mockHttp.When("https://app.launchdarkly.com/sdk/latest-flags").Respond("application/json", feature_json);
             config.WithHttpClient(new HttpClient(mockHttp));
+            config.WithSdkKey("SDK_KEY");
             FeatureRequestor featureRequestor = new FeatureRequestor(config);
-         
-            IDictionary<string, Feature> actual = featureRequestor.MakeAllRequest(true);
+
+            IDictionary<string, FeatureFlag> actual = featureRequestor.MakeAllRequest(true);
             Assert.AreEqual(2, actual.Count);
-            Assert.IsTrue(actual.ContainsKey("engine.enable"));
-            Assert.IsTrue(actual.ContainsKey("zentasks.gravatar"));
+            Assert.IsTrue(actual.ContainsKey("abc"));
+            Assert.IsTrue(actual.ContainsKey("one-more-flag"));
         }
     }
 }

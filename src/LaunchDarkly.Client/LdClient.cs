@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 using LaunchDarkly.Client.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class LdClient : IDisposable
+    public class LdClient : IDisposable, ILdClient
     {
         private static ILog Logger = LogProvider.For<LdClient>();
 
@@ -19,6 +22,13 @@ namespace LaunchDarkly.Client
             _configuration = config;
             _eventStore = eventStore;
             _featureStore = new InMemoryFeatureStore();
+
+          if (_configuration.Offline)
+          {
+              Logger.Info("Starting Launchdarkly client in offline mode.");
+              return;
+          }
+
             _featureRequestor = new FeatureRequestor(config);
             _updateProcessor = new PollingProcessor(config, _featureRequestor, _featureStore);
             var initTask = _updateProcessor.Start();
@@ -30,61 +40,187 @@ namespace LaunchDarkly.Client
         {
         }
 
-        public LdClient(String apiKey) : this(Configuration.Default().WithApiKey(apiKey))
+        public LdClient(string sdkKey) : this(Configuration.Default().WithSdkKey(sdkKey))
         {
         }
 
         public bool Initialized()
         {
-            return _updateProcessor.Initialized();
+            return IsOffline() || _updateProcessor.Initialized();
         }
 
-        public bool Toggle(string key, User user, bool defaultValue = false)
+        public bool IsOffline()
         {
-            if (!_updateProcessor.Initialized())
+            return _configuration.Offline;
+        }
+
+
+      [Obsolete("Please use BoolVariation instead.")]
+      public bool Toggle(string key, User user, bool defaultValue = false)
+      {
+          Logger.Warn("Toggle() method is deprecated. Please use BoolVariation() instead");
+          return BoolVariation(key, user, defaultValue);
+      }
+
+      public bool BoolVariation(string key, User user, bool defaultValue = false)
+        {
+          var value = Evaluate(key, user, defaultValue, JTokenType.Boolean);
+          return value.Value<bool>();
+        }
+
+        public int IntVariation(string key, User user, int defaultValue)
+        {
+          var value = Evaluate(key, user, defaultValue, JTokenType.Integer);
+          return value.Value<int>();
+        }
+
+
+        public float FloatVariation(string key, User user, float defaultValue)
+        {
+            var value = Evaluate(key, user, defaultValue, JTokenType.Float);
+            return value.Value<float>();
+        }
+
+
+        public string StringVariation(string key, User user, string defaultValue)
+        {
+            var value = Evaluate(key, user, defaultValue, JTokenType.String);
+            return value.Value<string>();
+        }
+
+        public JToken JsonVariation(string key, User user, JToken defaultValue)
+        {
+            var value = Evaluate(key, user, defaultValue, null);
+            return value;
+        }
+
+      public IDictionary<string, JToken> AllFlags(User user)
+      {
+        if (IsOffline())
+        {
+          Logger.Warn("AllFlags() was called when client is in offline mode. Returning null.");
+          return null;
+        }
+        if (!Initialized())
+        {
+          Logger.Warn("AllFlags() was called before client has finished initializing. Returning null.");
+          return null;
+        }
+        if (user == null || user.Key == null)
+        {
+          Logger.Warn("AllFlags() called with null user or null user key. Returning null");
+          return null;
+        }
+
+        IDictionary<string, FeatureFlag> flags = _featureStore.All();
+        IDictionary<string, JToken> results = new Dictionary<string, JToken>();
+        foreach (KeyValuePair<string, FeatureFlag> pair in flags)
+        {
+          try
+          {
+            FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore);
+            results.Add(pair.Key, evalResult.Result);
+          }
+          catch (Exception e)
+          {
+            Logger.Error("Exception caught when evaluating all flags: " + e.Message);
+          }
+        }
+        return results;
+      }
+
+      private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType)
+        {
+            if (!Initialized())
             {
-                Logger.Warn("LaunchDarkly client was not initialized. Returning default value. See previous log statements for more info");
+                Logger.Warn("LaunchDarkly client has not yet been initialized. Returning default");
+                return defaultValue;
+            }
+            if (user == null || user.Key == null)
+            {
+                Logger.Warn("Feature flag evaluation called with null user or null user key. Returning default");
+                sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
                 return defaultValue;
             }
 
             try
             {
-                bool value = evaluate(key, user, defaultValue);
-                sendFlagRequestEvent(key, user, value, defaultValue);
-                return value;
+                var featureFlag = _featureStore.Get(featureKey);
+                if (featureFlag == null)
+                {
+                    Logger.Warn("Unknown feature flag " + featureKey + "; returning default value: ");
+                    sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
+                    return defaultValue;
+                }
+
+              FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore);
+              if (!IsOffline())
+              {
+                foreach (var prereqEvent in evalResult.PrerequisiteEvents)
+                {
+                  _eventStore.Add(prereqEvent);
+                }
+              }
+              if (evalResult.Result != null)
+              {
+                if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
+                {
+                  Logger.Error("Expected type: " + expectedType + " but got " + evalResult.GetType() +
+                               " when evaluating FeatureFlag: " + featureKey + ". Returning default");
+                  sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, featureFlag.Version);
+                  return defaultValue;
+                }
+                sendFlagRequestEvent(featureKey, user, evalResult.Result, defaultValue, featureFlag.Version);
+                return evalResult.Result;
+              }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Logger.Error("Unhandled exception in LaunchDarkly client" + ex.Message);
-                sendFlagRequestEvent(key, user, defaultValue, defaultValue);
-                return defaultValue;
+                Logger.Error(
+                    String.Format(
+                        "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
+                        e.Message, featureKey, user.Key));
+                Logger.Debug(e.ToString());
             }
+            sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
+            return defaultValue;
         }
 
-        private bool evaluate(string key, User user, bool defaultValue)
+        public string SecureModeHash(User user)
         {
-            Feature result = _featureStore.Get(key);
-            if (result == null)
-            {
-                Logger.Warn("Unknown feature flag: " + key + "; returning default value: " + defaultValue);
-                return defaultValue;
-            }
-            return result.Evaluate(user, defaultValue);
+          if (user == null || string.IsNullOrEmpty(user.Key))
+          {
+            return null;
+          }
+          System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+          byte[] keyBytes = encoding.GetBytes(_configuration.SdkKey);
+
+          HMACSHA256 hmacSha256 = new HMACSHA256(keyBytes);
+          byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(user.Key));
+          return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
         public void Track(string name, User user, string data)
         {
-            _eventStore.Add(new CustomEvent(name, user, data));
+          if (user == null || user.Key == null)
+          {
+            Logger.Warn("Track called with null user or null user key");
+          }
+          _eventStore.Add(new CustomEvent(name, user, data));
         }
 
         public void Identify(User user)
         {
-            _eventStore.Add(new IdentifyEvent(user));
+          if (user == null || user.Key == null)
+          {
+            Logger.Warn("Identify called with null user or null user key");
+          }
+          _eventStore.Add(new IdentifyEvent(user));
         }
 
-        private void sendFlagRequestEvent(string key, User user, Boolean value, Boolean defaultValue)
+        private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)
         {
-            _eventStore.Add(new FeatureRequestEvent<Boolean>(key, user, value, defaultValue));
+            _eventStore.Add(new FeatureRequestEvent(key, user, value, defaultValue, version, null));
         }
 
         protected virtual void Dispose(bool disposing)
