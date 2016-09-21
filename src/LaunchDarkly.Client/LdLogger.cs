@@ -4,7 +4,7 @@ namespace LaunchDarkly.Client
 {
     internal static class LdLogger
     {
-        internal static ILoggerFactory LoggerFactory = new LoggerFactory().;
+        internal static ILoggerFactory LoggerFactory = new LoggerFactory();
 
         internal static ILogger CreateLogger<T>()
         {
