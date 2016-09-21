@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
@@ -179,6 +180,14 @@ namespace LaunchDarkly.Client
         {
             if (httpClient != null)
                 configuration.HttpClient = httpClient;
+
+            return configuration;
+        }
+
+        public static Configuration WithLoggerFactory(this Configuration configuration, ILoggerFactory loggerFactory)
+        {
+            if (loggerFactory != null)
+                LdLogger.LoggerFactory = loggerFactory;
 
             return configuration;
         }

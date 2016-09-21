@@ -1,17 +1,17 @@
-﻿using LaunchDarkly.Client.Logging;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
     sealed class EventProcessor : IDisposable, IStoreEvents
     {
-        private static readonly ILog Logger = LogProvider.For<EventProcessor>();
+        private static readonly ILogger Logger = LdLogger.CreateLogger<EventProcessor>();
 
         private readonly Configuration _config;
         private BlockingCollection<Event> _queue;
@@ -34,7 +34,7 @@ namespace LaunchDarkly.Client
         void IStoreEvents.Add(Event eventToLog)
         {
             if (!_queue.TryAdd(eventToLog))
-                Logger.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                Logger.LogWarning("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
         }
 
         void IDisposable.Dispose()
@@ -66,7 +66,7 @@ namespace LaunchDarkly.Client
             try
             {
                 string json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
-                Logger.Debug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
+                Logger.LogDebug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
 
                 using (var responseTask = _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
@@ -74,13 +74,13 @@ namespace LaunchDarkly.Client
                     HttpResponseMessage response = responseTask.Result;
 
                     if (!response.IsSuccessStatusCode)
-                        Logger.Error(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                        Logger.LogError(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
                             uri.AbsoluteUri, response.StatusCode));
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Error Submitting Events using uri: '{0}' '{1}'", uri.AbsoluteUri, ex.Message));
+                Logger.LogError(string.Format("Error Submitting Events using uri: '{0}' '{1}'", uri.AbsoluteUri, ex.Message), ex);
             }
         }
     }

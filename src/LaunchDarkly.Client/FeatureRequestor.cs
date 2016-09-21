@@ -1,15 +1,15 @@
-﻿using LaunchDarkly.Client.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
     class FeatureRequestor
     {
-        private static ILog Logger = LogProvider.For<FeatureRequestor>();
+        private static ILogger Logger = LdLogger.CreateLogger<FeatureRequestor>();
         private Configuration _configuration;
         private readonly HttpClient _httpClient;
 
@@ -23,7 +23,7 @@ namespace LaunchDarkly.Client
         {
             string resource = latest ? "sdk/latest-flags" : "sdk/flags";
             var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
-            Logger.Debug("Getting all features with uri: " + uri.AbsoluteUri);
+            Logger.LogDebug("Getting all features with uri: " + uri.AbsoluteUri);
             using (var responseTask = _httpClient.GetAsync(uri))
             {
                 responseTask.ConfigureAwait(false);
@@ -41,15 +41,15 @@ namespace LaunchDarkly.Client
             {
                 if (status == HttpStatusCode.Unauthorized)
                 {
-                    Logger.Error("Invalid SDK key");
+                    Logger.LogError("Invalid SDK key");
                 }
                 else if (status == HttpStatusCode.NotFound)
                 {
-                    Logger.Error("Resource not found");
+                    Logger.LogError("Resource not found");
                 }
                 else
                 {
-                    Logger.Error("Unexpected status code: " + status);
+                    Logger.LogError("Unexpected status code: " + status);
                 }
                 throw new Exception("Failed to fetch feature flags with status code: " + status);
             }

@@ -1,13 +1,13 @@
-﻿using LaunchDarkly.Client.Logging;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
     class PollingProcessor : IUpdateProcessor
     {
-        private static ILog Logger = LogProvider.For<PollingProcessor>();
+        private static ILogger Logger = LdLogger.CreateLogger<PollingProcessor>();
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private Configuration _config;
@@ -33,7 +33,7 @@ namespace LaunchDarkly.Client
 
         TaskCompletionSource<bool> IUpdateProcessor.Start()
         {
-            Logger.Info("Starting LaunchDarkly PollingProcessor with interval: " + (int)_config.PollingInterval.TotalMilliseconds + " milliseconds");
+            Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: " + (int)_config.PollingInterval.TotalMilliseconds + " milliseconds");
             TimerCallback TimerDelegate = new TimerCallback(UpdateTask);
             _timer = new Timer(TimerDelegate, null, TimeSpan.Zero, _config.PollingInterval);
             return _initTask;
@@ -44,25 +44,25 @@ namespace LaunchDarkly.Client
             try
             {
                 var allFeatures = _featureRequestor.MakeAllRequest(true);
-                Logger.Debug("Retrieved " + allFeatures.Count + " features");
+                Logger.LogDebug("Retrieved " + allFeatures.Count + " features");
                 _featureStore.Init(allFeatures);
 
                 //We can't use bool in CompareExchange because it is not a reference type.
                 if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
                 {
                     _initTask.SetResult(true);
-                    Logger.Info("Initialized LaunchDarkly Polling Processor.");
+                    Logger.LogInformation("Initialized LaunchDarkly Polling Processor.");
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Error Updating features: '{0}'", ex.Message));
+                Logger.LogError(string.Format("Error Updating features: '{0}'", ex.Message), ex);
             }
         }
 
         void IDisposable.Dispose()
         {
-            Logger.Info("Stopping LaunchDarkly PollingProcessor");
+            Logger.LogInformation("Stopping LaunchDarkly PollingProcessor");
             _timer.Dispose();
         }
     }
