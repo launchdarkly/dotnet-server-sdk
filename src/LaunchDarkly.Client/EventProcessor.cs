@@ -66,16 +66,18 @@ namespace LaunchDarkly.Client
             try
             {
                 string json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
                 Logger.LogDebug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
 
-                using (var responseTask = _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
-                {
-                    responseTask.ConfigureAwait(false);
-                    HttpResponseMessage response = responseTask.Result;
+                var responseTask = _httpClient.PostAsync(uri.ToString(), content);
+                responseTask.ConfigureAwait(false);
+                HttpResponseMessage response = responseTask.Result;
 
-                    if (!response.IsSuccessStatusCode)
-                        Logger.LogError(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
-                            uri.AbsoluteUri, response.StatusCode));
+                if (!response.IsSuccessStatusCode)
+                {
+                    Logger.LogError(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                        uri.AbsoluteUri, response.StatusCode));
                 }
             }
             catch (Exception ex)

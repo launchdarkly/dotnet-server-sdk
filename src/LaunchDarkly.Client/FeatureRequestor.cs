@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
@@ -24,15 +25,17 @@ namespace LaunchDarkly.Client
             string resource = latest ? "sdk/latest-flags" : "sdk/flags";
             var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
             Logger.LogDebug("Getting all features with uri: " + uri.AbsoluteUri);
-            using (var responseTask = _httpClient.GetAsync(uri))
-            {
-                responseTask.ConfigureAwait(false);
-                var response = responseTask.Result;
-                handleResponseStatus(response.StatusCode);
-                var contentTask = response.Content.ReadAsStringAsync();
-                contentTask.ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(contentTask.Result);
-            }
+
+
+            var responseTask = _httpClient.GetAsync(uri);
+            responseTask.ConfigureAwait(false);
+            var response = responseTask.Result;
+            handleResponseStatus(response.StatusCode);
+            var contentTask = response.Content.ReadAsStringAsync();
+            contentTask.ConfigureAwait(false);
+            var deserializeTask = Task.Factory.StartNew(() => JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(contentTask.Result));
+            deserializeTask.ConfigureAwait(false);
+            return deserializeTask.Result;
         }
 
         private void handleResponseStatus(HttpStatusCode status)
