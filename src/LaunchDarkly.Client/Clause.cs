@@ -7,7 +7,7 @@ namespace LaunchDarkly.Client
 {
     class Clause
     {
-        private readonly ILogger Logger = LdLogger.CreateLogger<Clause>();
+        private static readonly ILogger Logger = LdLogger.CreateLogger<Clause>();
 
         internal string Attribute { get; private set; }
         internal string Op { get; private set; }
