@@ -1,5 +1,8 @@
 {
   "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
   "testRunner": "xunit",
   "dependencies": {
     "Moq": "4.6.38-alpha",
@@ -7,10 +10,10 @@
     "xunit": "2.2.0-beta2-build3300",
     "LaunchDarkly.Client": {
       "target": "project",
-      "version": "*"
+      "version": ""
     },
     "RichardSzalay.MockHttp": "3.0.0"
-    },
+  },
   "frameworks": {
     "netcoreapp1.0": {
       "dependencies": {
