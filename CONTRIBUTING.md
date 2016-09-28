@@ -7,3 +7,8 @@ Unit Tests
 ----------
 
 NUnit tests are in the `LaunchDarkly.Tests` project.  You may need to install the [NUnit Test adapter](http://nunit.org/index.php?p=vsTestAdapter&r=2.6) to be able to run them.
+
+
+DotNet Core notes
+-----------------
+http://stackoverflow.com/questions/38670295/brew-refusing-to-link-openssl

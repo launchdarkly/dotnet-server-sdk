@@ -1,34 +1,34 @@
 ﻿using System;
 using LaunchDarkly.Client;
-using NUnit.Framework;
+using Xunit;
 
 namespace LaunchDarkly.Tests
 {
     public class ConfigurationTest
     {
-        [Test]
+        [Fact]
         public void CanOverrideConfiguration()
         {
             var config = Configuration.Default()
                                       .WithUri("https://app.AnyOtherEndpoint.com")
-                                      .WithSdkKey("AnyOtherSdkKey")
+                                      .WithSdkKey("AnyOtherApiKey")
                                       .WithEventQueueCapacity(99)
                                       .WithPollingInterval(TimeSpan.FromSeconds(1.5));
             
-            Assert.AreEqual(new Uri("https://app.AnyOtherEndpoint.com"), config.BaseUri, "Configuration Base Uri");
-            Assert.AreEqual("AnyOtherSdkKey", config.SdkKey, "Configuration Sdk Key");
-            Assert.AreEqual(99, config.EventQueueCapacity, "Event Queue Capacity");
-            Assert.AreEqual(TimeSpan.FromSeconds(1.5), config.PollingInterval, "Polling Interval");
+            Assert.Equal(new Uri("https://app.AnyOtherEndpoint.com"), config.BaseUri);
+            Assert.Equal("AnyOtherApiKey", config.SdkKey);
+            Assert.Equal(99, config.EventQueueCapacity);
+            Assert.Equal(TimeSpan.FromSeconds(1.5), config.PollingInterval);
         }
 
-        [Test]
+        [Fact]
         public void CannotOverrideTooSmallPollingInterval()
         {
             var config = Configuration.Default()
                           .WithPollingInterval(TimeSpan.FromMilliseconds(100));
 
             var expected = TimeSpan.FromSeconds(1);
-            Assert.AreEqual(expected, config.PollingInterval, "Polling Interval");
+            Assert.Equal(expected, config.PollingInterval);
         }
     }
 }

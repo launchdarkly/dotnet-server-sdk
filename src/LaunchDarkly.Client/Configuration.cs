@@ -29,7 +29,7 @@ namespace LaunchDarkly.Client
                 var version = assemblyVersion.InformationalVersion;
 
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(SdkKey);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api_key", SdkKey);
                 return _httpClient;
             }
             internal set { _httpClient = value; }
