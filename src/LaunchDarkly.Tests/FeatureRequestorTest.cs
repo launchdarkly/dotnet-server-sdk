@@ -3,6 +3,7 @@ using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Tests
 {
@@ -61,7 +62,7 @@ namespace LaunchDarkly.Tests
             }";
 
         [Test]
-        public void MakeAllRequestTest()
+        public async Task MakeAllRequestTest()
         {
             var config = Configuration.Default();
             var mockHttp = new MockHttpMessageHandler();
@@ -70,7 +71,7 @@ namespace LaunchDarkly.Tests
             config.WithSdkKey("SDK_KEY");
             FeatureRequestor featureRequestor = new FeatureRequestor(config);
 
-            IDictionary<string, FeatureFlag> actual = featureRequestor.MakeAllRequest(true);
+            IDictionary<string, FeatureFlag> actual = await featureRequestor.MakeAllRequestAsync(true);
             Assert.AreEqual(2, actual.Count);
             Assert.IsTrue(actual.ContainsKey("abc"));
             Assert.IsTrue(actual.ContainsKey("one-more-flag"));

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
@@ -19,19 +20,17 @@ namespace LaunchDarkly.Client
             _configuration = config;
         }
 
-        internal IDictionary<string, FeatureFlag> MakeAllRequest(bool latest)
+        internal async Task<IDictionary<string, FeatureFlag>> MakeAllRequestAsync(bool latest)
         {
             string resource = latest ? "sdk/latest-flags" : "sdk/flags";
             var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
             Logger.Debug("Getting all features with uri: " + uri.AbsoluteUri);
             using (var responseTask = _httpClient.GetAsync(uri))
             {
-                responseTask.ConfigureAwait(false);
-                var response = responseTask.Result;
+                var response = await responseTask.ConfigureAwait(false);
                 handleResponseStatus(response.StatusCode);
-                var contentTask = response.Content.ReadAsStringAsync();
-                contentTask.ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(contentTask.Result);
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
             }
         }
 
