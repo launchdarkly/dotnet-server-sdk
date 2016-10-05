@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
@@ -56,11 +57,11 @@ namespace LaunchDarkly.Client
 
             if (events.Any())
             {
-                BulkSubmit(events);
+                Task.Run(() => BulkSubmit(events)).GetAwaiter().GetResult();
             }
         }
 
-        private void BulkSubmit(IEnumerable<Event> events)
+        private async Task BulkSubmit(IList<Event> events)
         {
             var uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             try
@@ -70,8 +71,7 @@ namespace LaunchDarkly.Client
 
                 using (var responseTask = _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
-                    responseTask.ConfigureAwait(false);
-                    HttpResponseMessage response = responseTask.Result;
+                    HttpResponseMessage response = await responseTask.ConfigureAwait(false);
 
                     if (!response.IsSuccessStatusCode)
                         Logger.Error(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
