@@ -10,5 +10,15 @@ namespace LaunchDarkly.Client
         {
             return (long) (dateTime - UnixEpoch).TotalMilliseconds;
         }
+
+        internal static string ExceptionMessage(Exception e)
+        {
+            var msg = e.Message;
+            if (e.InnerException != null)
+            {
+                return msg + " with inner excpetion: " + e.InnerException.Message;
+            }
+            return msg;
+        }
     }
 }

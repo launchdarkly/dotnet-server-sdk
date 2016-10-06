@@ -51,7 +51,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var allFeatures = await _featureRequestor.MakeAllRequestAsync(true);
+                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
                 Logger.Debug("Retrieved " + allFeatures.Count + " features");
                 _featureStore.Init(allFeatures);
 
@@ -62,14 +62,17 @@ namespace LaunchDarkly.Client
                     Logger.Info("Initialized LaunchDarkly Polling Processor.");
                 }
             }
-            catch ( AggregateException ex ) {
-                Logger.Error( string.Format( "Error Updating features: '{0}'", ex.Flatten().Message ) );
+            catch ( AggregateException ex )
+            {
+                Logger.Error(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex.Flatten())));
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Error Updating features: '{0}'", ex.Message));
+                Logger.Error(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
             }
         }
+
+
 
         void IDisposable.Dispose()
         {

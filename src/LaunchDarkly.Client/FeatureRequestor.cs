@@ -20,37 +20,17 @@ namespace LaunchDarkly.Client
             _configuration = config;
         }
 
-        internal async Task<IDictionary<string, FeatureFlag>> MakeAllRequestAsync(bool latest)
+        internal async Task<IDictionary<string, FeatureFlag>> MakeAllRequestAsync()
         {
-            string resource = latest ? "sdk/latest-flags" : "sdk/flags";
-            var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
+            var uri = new Uri(_configuration.BaseUri.AbsoluteUri + "sdk/latest-flags");
             Logger.Debug("Getting all features with uri: " + uri.AbsoluteUri);
+
             using (var responseTask = _httpClient.GetAsync(uri))
             {
                 var response = await responseTask.ConfigureAwait(false);
-                handleResponseStatus(response.StatusCode);
+                response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
-            }
-        }
-
-        private void handleResponseStatus(HttpStatusCode status)
-        {
-            if (status != HttpStatusCode.OK)
-            {
-                if (status == HttpStatusCode.Unauthorized)
-                {
-                    Logger.Error("Invalid SDK key");
-                }
-                else if (status == HttpStatusCode.NotFound)
-                {
-                    Logger.Error("Resource not found");
-                }
-                else
-                {
-                    Logger.Error("Unexpected status code: " + status);
-                }
-                throw new Exception("Failed to fetch feature flags with status code: " + status);
             }
         }
     }
