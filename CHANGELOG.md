@@ -2,6 +2,11 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.0.2] - 2016-10-06
+### Added
+- Address https://github.com/launchdarkly/.net-client/issues/27
+- Improve error logging- we're now logging messages from inner exceptions.
+
 ## [2.0.1] - 2016-10-05
 ### Changed
 - Async http client code improvements.
