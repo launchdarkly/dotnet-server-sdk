@@ -62,6 +62,9 @@ namespace LaunchDarkly.Client
                     Logger.Info("Initialized LaunchDarkly Polling Processor.");
                 }
             }
+            catch ( AggregateException ex ) {
+                Logger.Error( string.Format( "Error Updating features: '{0}'", ex.Flatten().Message ) );
+            }
             catch (Exception ex)
             {
                 Logger.Error(string.Format("Error Updating features: '{0}'", ex.Message));
