@@ -123,7 +123,7 @@ namespace LaunchDarkly.Client
           }
           catch (Exception e)
           {
-            Logger.Error("Exception caught when evaluating all flags: " + e.Message);
+            Logger.Error("Exception caught when evaluating all flags: " + Util.ExceptionMessage(e));
           }
         }
         return results;
@@ -179,7 +179,7 @@ namespace LaunchDarkly.Client
                 Logger.Error(
                     String.Format(
                         "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
-                        e.Message, featureKey, user.Key));
+                        Util.ExceptionMessage(e), featureKey, user.Key));
                 Logger.Debug(e.ToString());
             }
             sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);

@@ -24,6 +24,7 @@ namespace LaunchDarkly.Client
                 var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(SdkKey);
+                _httpClient.Timeout = TimeSpan.FromSeconds(10);
                 return _httpClient;
             }
             internal set { _httpClient = value; }

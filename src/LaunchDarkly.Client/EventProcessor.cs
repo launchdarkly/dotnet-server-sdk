@@ -80,7 +80,7 @@ namespace LaunchDarkly.Client
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Error Submitting Events using uri: '{0}' '{1}'", uri.AbsoluteUri, ex.Message));
+                Logger.Error(string.Format("Error Submitting Events using uri: '{0}' '{1}'", uri.AbsoluteUri, Util.ExceptionMessage(ex)));
             }
         }
     }

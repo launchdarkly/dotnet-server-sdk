@@ -71,7 +71,7 @@ namespace LaunchDarkly.Tests
             config.WithSdkKey("SDK_KEY");
             FeatureRequestor featureRequestor = new FeatureRequestor(config);
 
-            IDictionary<string, FeatureFlag> actual = await featureRequestor.MakeAllRequestAsync(true);
+            IDictionary<string, FeatureFlag> actual = await featureRequestor.MakeAllRequestAsync();
             Assert.AreEqual(2, actual.Count);
             Assert.IsTrue(actual.ContainsKey("abc"));
             Assert.IsTrue(actual.ContainsKey("one-more-flag"));
