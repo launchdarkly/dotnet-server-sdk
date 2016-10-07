@@ -10,8 +10,8 @@ namespace LaunchDarkly.Client
         private static ILog Logger = LogProvider.For<PollingProcessor>();
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
-        private Configuration _config;
-        private FeatureRequestor _featureRequestor;
+        private readonly Configuration _config;
+        private readonly FeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
