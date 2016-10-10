@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [2.0.3] - 2016-10-10
+### Changed
+- Code cleanup
+
 ## [2.0.2] - 2016-10-06
 ### Added
 - Address https://github.com/launchdarkly/.net-client/issues/27
