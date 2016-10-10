@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 
 namespace LaunchDarkly.Client
 {
@@ -21,8 +22,7 @@ namespace LaunchDarkly.Client
         {
             get
             {
-                var version = System.Reflection.Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
-                _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + version);
+                _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(SdkKey);
                 _httpClient.Timeout = TimeSpan.FromSeconds(10);
                 return _httpClient;
@@ -32,12 +32,13 @@ namespace LaunchDarkly.Client
 
 
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
-        private static Uri DefaultUri = new Uri("https://app.launchdarkly.com");
-        private static Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
-        private static int DefaultEventQueueCapacity = 500;
-        private static TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(2);
-        private static TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(5);
+        private static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
+        private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
+        private static readonly int DefaultEventQueueCapacity = 500;
+        private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(5);
         private HttpClient _httpClient;
+        private static readonly Version Version = Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
 
         private Configuration() { }
 
@@ -134,8 +135,7 @@ namespace LaunchDarkly.Client
 
         public static Configuration WithEventQueueFrequency(this Configuration configuration, TimeSpan frequency)
         {
-            if (frequency != null)
-                configuration.EventQueueFrequency = frequency;
+            configuration.EventQueueFrequency = frequency;
 
             return configuration;
         }
@@ -148,24 +148,22 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithPollingInterval(this Configuration configuration, TimeSpan pollingInterval)
+        public static Configuration WithPollingInterval(this Configuration configuration, TimeSpan pollingInterval) 
         {
-            if (pollingInterval != null)
-                if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
-                {
-                    configuration.PollingInterval = Configuration.DefaultPollingInterval;
-                }
-                else
-                {
-                    configuration.PollingInterval = pollingInterval;
-                }
+            if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
+            {
+                configuration.PollingInterval = Configuration.DefaultPollingInterval;
+            }
+            else
+            {
+                configuration.PollingInterval = pollingInterval;
+            }
             return configuration;
         }
 
         public static Configuration WithStartWaitTime(this Configuration configuration, TimeSpan startWaitTime)
         {
-            if (startWaitTime != null)
-                configuration.StartWaitTime = startWaitTime;
+            configuration.StartWaitTime = startWaitTime;
 
             return configuration;
         }

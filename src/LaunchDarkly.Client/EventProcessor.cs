@@ -15,9 +15,10 @@ namespace LaunchDarkly.Client
         private static readonly ILog Logger = LogProvider.For<EventProcessor>();
 
         private readonly Configuration _config;
-        private BlockingCollection<Event> _queue;
-        private System.Threading.Timer _timer;
+        private readonly BlockingCollection<Event> _queue;
+        private readonly System.Threading.Timer _timer;
         private readonly HttpClient _httpClient;
+        private readonly Uri m_uri;
 
         internal EventProcessor(Configuration config)
         {
@@ -25,6 +26,7 @@ namespace LaunchDarkly.Client
             _queue = new BlockingCollection<Event>(_config.EventQueueCapacity);
             _timer = new System.Threading.Timer(SubmitEvents, null, _config.EventQueueFrequency, _config.EventQueueFrequency);
             _httpClient = config.HttpClient;
+            m_uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
         }
 
         private void SubmitEvents(object StateInfo)
@@ -57,30 +59,29 @@ namespace LaunchDarkly.Client
 
             if (events.Any())
             {
-                Task.Run(() => BulkSubmit(events)).GetAwaiter().GetResult();
+                Task.Run(() => BulkSubmitAsync(events)).GetAwaiter().GetResult();
             }
         }
 
-        private async Task BulkSubmit(IList<Event> events)
+        private async Task BulkSubmitAsync(IList<Event> events)
         {
-            var uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             try
             {
                 string json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
-                Logger.Debug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
+                Logger.Debug("Submitting " + events.Count + " events to " + m_uri.AbsoluteUri + " with json: " + json);
 
-                using (var responseTask = _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                using (var responseTask = _httpClient.PostAsync(m_uri, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
                     HttpResponseMessage response = await responseTask.ConfigureAwait(false);
 
                     if (!response.IsSuccessStatusCode)
                         Logger.Error(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
-                            uri.AbsoluteUri, response.StatusCode));
+                            m_uri.AbsoluteUri, response.StatusCode));
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Error Submitting Events using uri: '{0}' '{1}'", uri.AbsoluteUri, Util.ExceptionMessage(ex)));
+                Logger.Error(string.Format("Error Submitting Events using uri: '{0}' '{1}'", m_uri.AbsoluteUri, Util.ExceptionMessage(ex)));
             }
         }
     }
