@@ -8,17 +8,16 @@ namespace LaunchDarkly.Client
 {
     public class LdClient : IDisposable, ILdClient
     {
-        private ILogger Logger  = LdLogger.CreateLogger<LdClient>();
+        private readonly ILogger Logger  = LdLogger.CreateLogger<LdClient>();
 
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
         private readonly IFeatureStore _featureStore;
-        private readonly FeatureRequestor _featureRequestor;
         private readonly IUpdateProcessor _updateProcessor;
 
         public LdClient(Configuration config, IStoreEvents eventStore)
         {
-            Logger.LogInformation("Starting LaunchDarkly Client..");
+            Logger.LogInformation("Starting LaunchDarkly Client " + Configuration.Version);
             _configuration = config;
             _eventStore = eventStore;
             _featureStore = new InMemoryFeatureStore();
@@ -29,8 +28,8 @@ namespace LaunchDarkly.Client
               return;
           }
 
-            _featureRequestor = new FeatureRequestor(config);
-            _updateProcessor = new PollingProcessor(config, _featureRequestor, _featureStore);
+            var featureRequestor = new FeatureRequestor(config);
+            _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
             var initTask = _updateProcessor.Start();
             Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds + " milliseconds for LaunchDarkly client to start..");
             var unused = initTask.Task.Wait(_configuration.StartWaitTime);
@@ -40,7 +39,7 @@ namespace LaunchDarkly.Client
         {
         }
 
-        public LdClient(string sdkKey) : this(Configuration.Default().WithSdkKey(sdkKey))
+        public LdClient(string sdkKey) : this(Configuration.Default(sdkKey))
         {
         }
 

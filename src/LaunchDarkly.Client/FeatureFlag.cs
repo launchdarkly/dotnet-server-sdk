@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-  class FeatureFlag
+  internal class FeatureFlag
   {
     private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureFlag>();
 

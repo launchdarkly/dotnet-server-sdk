@@ -6,7 +6,7 @@ namespace LaunchDarkly.Client
 {
     public class InMemoryFeatureStore : IFeatureStore
     {
-        private static ILogger Logger = LdLogger.CreateLogger<InMemoryFeatureStore>();
+        private static readonly ILogger Logger = LdLogger.CreateLogger<InMemoryFeatureStore>();
         private static readonly int RwLockMaxWaitMillis = 1000;
         private readonly ReaderWriterLockSlim RwLock = new ReaderWriterLockSlim();
         private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();

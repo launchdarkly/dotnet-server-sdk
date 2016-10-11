@@ -4,31 +4,34 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
-    sealed class EventProcessor : IDisposable, IStoreEvents
+    internal sealed class EventProcessor : IDisposable, IStoreEvents
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<EventProcessor>();
 
         private readonly Configuration _config;
-        private BlockingCollection<Event> _queue;
-        private System.Threading.Timer _timer;
-        private readonly HttpClient _httpClient;
+        private readonly BlockingCollection<Event> _queue;
+        private readonly System.Threading.Timer _timer;
+        private readonly Uri m_uri;
 
         internal EventProcessor(Configuration config)
         {
             _config = config;
             _queue = new BlockingCollection<Event>(_config.EventQueueCapacity);
-            _timer = new System.Threading.Timer(SubmitEvents, null, _config.EventQueueFrequency, _config.EventQueueFrequency);
-            _httpClient = config.HttpClient;
+            _timer = new System.Threading.Timer(SubmitEvents, null, _config.EventQueueFrequency,
+                _config.EventQueueFrequency);
+            m_uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
         }
 
         private void SubmitEvents(object StateInfo)
         {
-            ((IStoreEvents)this).Flush();
+            ((IStoreEvents) this).Flush();
         }
 
         void IStoreEvents.Add(Event eventToLog)
@@ -56,33 +59,31 @@ namespace LaunchDarkly.Client
 
             if (events.Any())
             {
-                BulkSubmit(events);
+                Task.Run(() => BulkSubmitAsync(events)).GetAwaiter().GetResult();
             }
         }
 
-        private void BulkSubmit(IEnumerable<Event> events)
+        private async Task BulkSubmitAsync(IList<Event> events)
         {
-            var uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             try
             {
-                string json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
+                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
-                Logger.LogDebug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
-
-                var responseTask = _httpClient.PostAsync(uri.ToString(), content);
-                responseTask.ConfigureAwait(false);
-                HttpResponseMessage response = responseTask.Result;
-
-                if (!response.IsSuccessStatusCode)
+                using (var client = _config.HttpClient())
+                using (var response = await client.PostAsync(m_uri, stringContent).ConfigureAwait(false))
                 {
-                    Logger.LogError(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
-                        uri.AbsoluteUri, response.StatusCode));
+                    Logger.LogDebug("Submitting " + events.Count + " events to " + m_uri.AbsoluteUri + " with json: " +
+                                    json);
+                    if (!response.IsSuccessStatusCode)
+                        Logger.LogError(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                            m_uri.AbsoluteUri, response.StatusCode));
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError(string.Format("Error Submitting Events using uri: '{0}' '{1}'", uri.AbsoluteUri, ex.Message), ex);
+                Logger.LogError(string.Format("Error Submitting Events using uri: '{0}' '{1}'", m_uri.AbsoluteUri,
+                    Util.ExceptionMessage(ex)));
             }
         }
     }

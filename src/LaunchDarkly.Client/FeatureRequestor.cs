@@ -1,62 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
+using System.Net.Http.Headers;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
-    class FeatureRequestor
+    internal class FeatureRequestor
     {
-        private static ILogger Logger = LdLogger.CreateLogger<FeatureRequestor>();
-        private Configuration _configuration;
-        private readonly HttpClient _httpClient;
+        private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureRequestor>();
+        private readonly Uri _uri;
+        private readonly Configuration _config;
+        private EntityTagHeaderValue _etag;
 
         internal FeatureRequestor(Configuration config)
         {
-            _httpClient = config.HttpClient;
-            _configuration = config;
+            _config = config;
+            _uri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-flags");
         }
 
-        internal IDictionary<string, FeatureFlag> MakeAllRequest(bool latest)
+        // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there
+        // was a problem getting flags.
+        internal async Task<IDictionary<string, FeatureFlag>> MakeAllRequestAsync()
         {
-            string resource = latest ? "sdk/latest-flags" : "sdk/flags";
-            var uri = new Uri(_configuration.BaseUri.AbsoluteUri + resource);
-            Logger.LogDebug("Getting all features with uri: " + uri.AbsoluteUri);
-
-
-            var responseTask = _httpClient.GetAsync(uri);
-            responseTask.ConfigureAwait(false);
-            var response = responseTask.Result;
-            handleResponseStatus(response.StatusCode);
-            var contentTask = response.Content.ReadAsStringAsync();
-            contentTask.ConfigureAwait(false);
-            var deserializeTask = Task.Factory.StartNew(() => JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(contentTask.Result));
-            deserializeTask.ConfigureAwait(false);
-            return deserializeTask.Result;
-        }
-
-        private void handleResponseStatus(HttpStatusCode status)
-        {
-            if (status != HttpStatusCode.OK)
+            using (var httpClient = _config.HttpClient())
             {
-                if (status == HttpStatusCode.Unauthorized)
+                Logger.LogDebug("Getting all flags with uri: " + _uri.AbsoluteUri);
+                if (_etag != null)
                 {
-                    Logger.LogError("Invalid SDK key");
+                    httpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
+                    httpClient.DefaultRequestHeaders.IfNoneMatch.Add(_etag);
                 }
-                else if (status == HttpStatusCode.NotFound)
+                using (var response = await httpClient.GetAsync(_uri).ConfigureAwait(false))
                 {
-                    Logger.LogError("Resource not found");
+                    if (response.StatusCode == HttpStatusCode.NotModified)
+                    {
+                        Logger.LogDebug("Get all flags returned 304: not modified");
+                        return null;
+                    }
+                    _etag = response.Headers.ETag;
+                    //We ensure the status code after checking for 304, because 304 isn't considered success
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
+                    Logger.LogDebug("Get all flags returned " + flags.Keys.Count + " feature flags");
+                    return flags;
                 }
-                else
-                {
-                    Logger.LogError("Unexpected status code: " + status);
-                }
-                throw new Exception("Failed to fetch feature flags with status code: " + status);
             }
         }
     }
-
 }

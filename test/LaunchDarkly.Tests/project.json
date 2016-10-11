@@ -1,8 +1,5 @@
 {
   "version": "1.0.0-*",
-  "buildOptions": {
-    "debugType": "portable"
-  },
   "testRunner": "xunit",
   "dependencies": {
     "Moq": "4.6.38-alpha",

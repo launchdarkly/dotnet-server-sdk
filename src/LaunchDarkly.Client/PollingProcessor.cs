@@ -5,17 +5,17 @@ using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
-    class PollingProcessor : IUpdateProcessor
+    internal class PollingProcessor : IUpdateProcessor
     {
-        private static ILogger Logger = LdLogger.CreateLogger<PollingProcessor>();
+        private static readonly ILogger Logger = LdLogger.CreateLogger<PollingProcessor>();
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
-        private Configuration _config;
-        private FeatureRequestor _featureRequestor;
+        private readonly Configuration _config;
+        private readonly FeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
-        private Timer _timer;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
+        private bool _disposed;
 
 
         internal PollingProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
@@ -34,36 +34,52 @@ namespace LaunchDarkly.Client
         TaskCompletionSource<bool> IUpdateProcessor.Start()
         {
             Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: " + (int)_config.PollingInterval.TotalMilliseconds + " milliseconds");
-            TimerCallback TimerDelegate = new TimerCallback(UpdateTask);
-            _timer = new Timer(TimerDelegate, null, TimeSpan.Zero, _config.PollingInterval);
+            Task.Run(() => UpdateTaskLoopAsync());
             return _initTask;
         }
 
-        private void UpdateTask(object ignored)
+        private async Task UpdateTaskLoopAsync()
+        {
+            while (!_disposed)
+            {
+                await UpdateTaskAsync();
+                await Task.Delay(_config.PollingInterval);
+            }
+        }
+
+        private async Task UpdateTaskAsync()
         {
             try
             {
-                var allFeatures = _featureRequestor.MakeAllRequest(true);
-                Logger.LogDebug("Retrieved " + allFeatures.Count + " features");
-                _featureStore.Init(allFeatures);
-
-                //We can't use bool in CompareExchange because it is not a reference type.
-                if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
+                if (allFeatures != null)
                 {
-                    _initTask.SetResult(true);
-                    Logger.LogInformation("Initialized LaunchDarkly Polling Processor.");
+                    _featureStore.Init(allFeatures);
+
+                    //We can't use bool in CompareExchange because it is not a reference type.
+                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                    {
+                        _initTask.SetResult(true);
+                        Logger.LogInformation("Initialized LaunchDarkly Polling Processor.");
+                    }
                 }
+            }
+            catch ( AggregateException ex )
+            {
+                Logger.LogError(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex.Flatten())));
             }
             catch (Exception ex)
             {
-                Logger.LogError(string.Format("Error Updating features: '{0}'", ex.Message), ex);
+                Logger.LogError(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
             }
         }
+
+
 
         void IDisposable.Dispose()
         {
             Logger.LogInformation("Stopping LaunchDarkly PollingProcessor");
-            _timer.Dispose();
+            _disposed = true;
         }
     }
 }

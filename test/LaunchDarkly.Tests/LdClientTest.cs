@@ -9,9 +9,8 @@ namespace LaunchDarkly.Tests
     [Fact]
     public void SecureModeHashTest()
     {
-      Configuration config = Configuration.Default();
+      Configuration config = Configuration.Default("secret");
       config.WithOffline(true);
-      config.WithSdkKey("secret");
       LdClient client = new LdClient(config);
 
       var user = User.WithKey("Message");
