@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-
 
 namespace LaunchDarkly.Client
 {
@@ -49,21 +46,6 @@ namespace LaunchDarkly.Client
             return defaultConfiguration;
         }
 
-        private static Configuration OverwriteFromFile(Configuration defaultConfiguration)
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-            var configSection = (IDictionary) config.GetSection("LaunchDarkly");
-            if (configSection == null) return defaultConfiguration;
-
-            return defaultConfiguration
-                .WithUri((string) configSection["BaseUri"])
-                .WithSdkKey((string) configSection["SdkKey"])
-                .WithEventQueueCapacity((string) configSection["EventQueueCapacity"])
-                .WithEventQueueFrequency((string) configSection["EventQueueFrequency"]);
-        }
-
         // virtual so we can mock it in tests.
         // Not using singleton client due to: https://github.com/dotnet/corefx/issues/11224
         internal virtual HttpClient HttpClient()
@@ -71,7 +53,6 @@ namespace LaunchDarkly.Client
             var httpClient = new HttpClient(new HttpClientHandler());
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
             httpClient.DefaultRequestHeaders.Add("Authorization", SdkKey);
-            //This is the request timeout
             httpClient.Timeout = TimeSpan.FromSeconds(10);
             return httpClient;
         }
@@ -107,14 +88,6 @@ namespace LaunchDarkly.Client
         {
             if (uri != null)
                 configuration.EventsUri = uri;
-
-            return configuration;
-        }
-
-        internal static Configuration WithSdkKey(this Configuration configuration, string sdkKey)
-        {
-            if (sdkKey != null)
-                configuration.SdkKey = sdkKey;
 
             return configuration;
         }
@@ -163,9 +136,7 @@ namespace LaunchDarkly.Client
 
         public static Configuration WithStartWaitTime(this Configuration configuration, TimeSpan startWaitTime)
         {
-            if (startWaitTime != null)
-                configuration.StartWaitTime = startWaitTime;
-
+            configuration.StartWaitTime = startWaitTime;
             return configuration;
         }
 
