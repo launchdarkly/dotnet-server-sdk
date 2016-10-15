@@ -10,7 +10,7 @@ namespace LaunchDarkly.Tests
         private static string API_KEY = "YOUR_SDK_KEY";
         private static string FLAG_KEY = "YOUR_FLAG_KEY";
 
-        [Fact]
+//        [Fact]
         public void ClientTest()
         {
             Configuration config = Configuration.Default(API_KEY);
