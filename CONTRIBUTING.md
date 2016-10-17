@@ -11,6 +11,7 @@ Mac OS:
 
 1. [Download .net core and follow instructions](https://www.microsoft.com/net/core#macos)
 
+1. Run ```dotnet restore``` to pull in required packages
 1. Make sure you can build and run tests from command line:
 
 ```

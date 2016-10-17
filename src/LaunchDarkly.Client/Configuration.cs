@@ -46,7 +46,6 @@ namespace LaunchDarkly.Client
             return defaultConfiguration;
         }
 
-        // virtual so we can mock it in tests.
         // Not using singleton client due to: https://github.com/dotnet/corefx/issues/11224
         internal virtual HttpClient HttpClient()
         {
