@@ -7,9 +7,9 @@ namespace LaunchDarkly.Client
 {
     public class Configuration
     {
-        public virtual Uri BaseUri { get; internal set; }
+        public Uri BaseUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
-        public virtual string SdkKey { get; internal set; }
+        public string SdkKey { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
@@ -47,7 +47,7 @@ namespace LaunchDarkly.Client
         }
 
         // Not using singleton client due to: https://github.com/dotnet/corefx/issues/11224
-        internal virtual HttpClient HttpClient()
+        internal HttpClient HttpClient()
         {
             var httpClient = new HttpClient(new HttpClientHandler());
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
