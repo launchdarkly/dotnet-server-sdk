@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Client.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -8,8 +7,6 @@ namespace LaunchDarkly.Client
 {
     public class User
     {
-        private static readonly ILog Logger = LogProvider.For<User>();
-
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; set; }
 

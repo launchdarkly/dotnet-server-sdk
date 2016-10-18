@@ -170,3 +170,9 @@ pip-log.txt
 *.nupkg
 PortabilityAnalysis.html
 nuget.exe
+
+########################
+## .NET Core / VS Code
+########################
+
+project.lock.json

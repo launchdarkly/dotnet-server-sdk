@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Net.Cache;
+﻿﻿using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
@@ -18,31 +15,21 @@ namespace LaunchDarkly.Client
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
         public bool Offline { get; internal set; }
-        public HttpClient HttpClient
-        {
-            get
-            {
-                _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(SdkKey);
-                _httpClient.Timeout = TimeSpan.FromSeconds(10);
-                return _httpClient;
-            }
-            internal set { _httpClient = value; }
-        }
-
-
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
-        private static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
+
+        internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
+                .GetTypeInfo()
+                .Assembly
+                .GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)))
+            .InformationalVersion;
+
+        internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
         private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
         private static readonly int DefaultEventQueueCapacity = 500;
         private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(5);
-        private HttpClient _httpClient;
-        private static readonly Version Version = Assembly.GetAssembly(typeof(LdClient)).GetName().Version;
 
-        private Configuration() { }
-
-        public static Configuration Default()
+        public static Configuration Default(string sdkKey)
         {
             var defaultConfiguration = new Configuration
             {
@@ -53,27 +40,20 @@ namespace LaunchDarkly.Client
                 PollingInterval = DefaultPollingInterval,
                 StartWaitTime = DefaultStartWaitTime,
                 Offline = false,
-                _httpClient = new HttpClient(new WebRequestHandler()
-                {
-                    // RequestCacheLevel.Revalidate enables proper Etag caching
-                    CachePolicy = new RequestCachePolicy(RequestCacheLevel.Revalidate)
-                })
-
-
+                SdkKey = sdkKey
             };
+
             return defaultConfiguration;
         }
 
-        private static Configuration OverwriteFromFile(Configuration defaultConfiguration)
+        // Not using singleton client due to: https://github.com/dotnet/corefx/issues/11224
+        internal HttpClient HttpClient()
         {
-            var configSection = (IDictionary)ConfigurationManager.GetSection("LaunchDarkly");
-            if (configSection == null) return defaultConfiguration;
-
-            return defaultConfiguration
-                                    .WithUri((string)configSection["BaseUri"])
-                                    .WithSdkKey((string)configSection["SdkKey"])
-                                    .WithEventQueueCapacity((string)configSection["EventQueueCapacity"])
-                                    .WithEventQueueFrequency((string)configSection["EventQueueFrequency"]);
+            var httpClient = new HttpClient(new HttpClientHandler());
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
+            httpClient.DefaultRequestHeaders.Add("Authorization", SdkKey);
+            httpClient.Timeout = TimeSpan.FromSeconds(10);
+            return httpClient;
         }
     }
 
@@ -111,14 +91,6 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithSdkKey(this Configuration configuration, string sdkKey)
-        {
-            if (sdkKey != null)
-                configuration.SdkKey = sdkKey;
-
-            return configuration;
-        }
-
         public static Configuration WithEventQueueCapacity(this Configuration configuration, int eventQueueCapacity)
         {
             configuration.EventQueueCapacity = eventQueueCapacity;
@@ -148,7 +120,7 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithPollingInterval(this Configuration configuration, TimeSpan pollingInterval) 
+        public static Configuration WithPollingInterval(this Configuration configuration, TimeSpan pollingInterval)
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
             {
@@ -164,7 +136,6 @@ namespace LaunchDarkly.Client
         public static Configuration WithStartWaitTime(this Configuration configuration, TimeSpan startWaitTime)
         {
             configuration.StartWaitTime = startWaitTime;
-
             return configuration;
         }
 
@@ -174,13 +145,12 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithHttpClient(this Configuration configuration, HttpClient httpClient)
+        public static Configuration WithLoggerFactory(this Configuration configuration, ILoggerFactory loggerFactory)
         {
-            if (httpClient != null)
-                configuration.HttpClient = httpClient;
+            if (loggerFactory != null)
+                LdLogger.LoggerFactory = loggerFactory;
 
             return configuration;
         }
-
     }
 }

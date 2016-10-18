@@ -1,13 +1,13 @@
-﻿using LaunchDarkly.Client.Logging;
-using System;
+﻿﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
-    class PollingProcessor : IUpdateProcessor
+    internal class PollingProcessor : IUpdateProcessor
     {
-        private static ILog Logger = LogProvider.For<PollingProcessor>();
+        private static readonly ILogger Logger = LdLogger.CreateLogger<PollingProcessor>();
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
@@ -33,7 +33,7 @@ namespace LaunchDarkly.Client
 
         TaskCompletionSource<bool> IUpdateProcessor.Start()
         {
-            Logger.Info("Starting LaunchDarkly PollingProcessor with interval: " + (int)_config.PollingInterval.TotalMilliseconds + " milliseconds");
+            Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: " + (int)_config.PollingInterval.TotalMilliseconds + " milliseconds");
             Task.Run(() => UpdateTaskLoopAsync());
             return _initTask;
         }
@@ -52,23 +52,25 @@ namespace LaunchDarkly.Client
             try
             {
                 var allFeatures = await _featureRequestor.MakeAllRequestAsync();
-                Logger.Debug("Retrieved " + allFeatures.Count + " features");
-                _featureStore.Init(allFeatures);
-
-                //We can't use bool in CompareExchange because it is not a reference type.
-                if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                if (allFeatures != null)
                 {
-                    _initTask.SetResult(true);
-                    Logger.Info("Initialized LaunchDarkly Polling Processor.");
+                    _featureStore.Init(allFeatures);
+
+                    //We can't use bool in CompareExchange because it is not a reference type.
+                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                    {
+                        _initTask.SetResult(true);
+                        Logger.LogInformation("Initialized LaunchDarkly Polling Processor.");
+                    }
                 }
             }
             catch ( AggregateException ex )
             {
-                Logger.Error(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex.Flatten())));
+                Logger.LogError(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex.Flatten())));
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
+                Logger.LogError(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
             }
         }
 
@@ -76,7 +78,7 @@ namespace LaunchDarkly.Client
 
         void IDisposable.Dispose()
         {
-            Logger.Info("Stopping LaunchDarkly PollingProcessor");
+            Logger.LogInformation("Stopping LaunchDarkly PollingProcessor");
             _disposed = true;
         }
     }

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using System.Xml;
-using LaunchDarkly.Client.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    static class Operator
+    internal static class Operator
     {
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        private static readonly ILogger Logger = LdLogger.CreateLogger("Operator");
 
         internal static bool Apply(string op, JValue uValue, JValue cValue)
         {
@@ -149,7 +148,7 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.Debug(
+                Logger.LogDebug(
                     String.Format(
                         "Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
                         op, uValue, cValue, e.Message));
@@ -166,19 +165,20 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        private static DateTime? JValueToDateTime(JValue jValue)
+        //Visible for testing
+        internal static DateTime? JValueToDateTime(JValue jValue)
         {
             switch (jValue.Type)
             {
                 case JTokenType.Date:
-                    return jValue.Value<DateTime>();
+                    return jValue.Value<DateTime>().ToUniversalTime();
                 case JTokenType.String:
-                    return XmlConvert.ToDateTime(jValue.Value<string>(), XmlDateTimeSerializationMode.Utc);
+                    return DateTime.Parse(jValue.Value<string>()).ToUniversalTime();
                 default:
                     var jvalueDouble = ParseDoubleFromJValue(jValue);
                     if (jvalueDouble.HasValue)
                     {
-                        return new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(jvalueDouble.Value);
+                        return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(jvalueDouble.Value);
                     }
                     break;
             }
