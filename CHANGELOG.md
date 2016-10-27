@@ -2,6 +2,19 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.0.0] - 2016-10-27
+### Changed
+- Addresses Unnecesary Lock contention when polling: https://github.com/launchdarkly/.net-client/issues/18
+- Logging framework: Now using Microsoft.Extensions.Logging
+- No longer depending on ASP.NET: https://github.com/launchdarkly/.net-client/issues/8
+
+### Added
+- Support for .NET core: https://github.com/launchdarkly/.net-client/issues/9
+- Http client now has a request timeout: https://github.com/launchdarkly/.net-client/issues/27
+
+### Deprecated
+- File-based configuration override option has been removed
+
 ## [2.0.3] - 2016-10-10
 ### Changed
 - Code cleanup
