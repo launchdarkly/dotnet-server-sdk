@@ -8,7 +8,7 @@ namespace LaunchDarkly.Client
 {
     public class LdClient : IDisposable, ILdClient
     {
-        private readonly ILogger Logger = LdLogger.CreateLogger<LdClient>();
+        private static readonly ILogger Logger = LdLogger.CreateLogger<LdClient>();
 
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
