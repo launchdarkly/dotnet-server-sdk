@@ -35,7 +35,7 @@ namespace LaunchDarkly.Client
                 float sum = 0F;
                 foreach (WeightedVariation wv in Rollout.Variations)
                 {
-                    sum += (float)wv.Weight / 100000F;
+                    sum += (float) wv.Weight / 100000F;
                     if (bucket < sum)
                     {
                         return wv.Variation;

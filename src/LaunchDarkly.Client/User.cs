@@ -81,7 +81,6 @@ namespace LaunchDarkly.Client
         {
             return new User(key);
         }
-
     }
 
     public static class UserExtensions

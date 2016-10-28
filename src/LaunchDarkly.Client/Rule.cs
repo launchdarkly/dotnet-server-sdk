@@ -21,7 +21,6 @@ namespace LaunchDarkly.Client
                 {
                     return false;
                 }
-
             }
             return true;
         }

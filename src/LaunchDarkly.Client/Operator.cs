@@ -160,7 +160,7 @@ namespace LaunchDarkly.Client
         {
             if (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer))
             {
-                return (double)jValue;
+                return (double) jValue;
             }
             return null;
         }

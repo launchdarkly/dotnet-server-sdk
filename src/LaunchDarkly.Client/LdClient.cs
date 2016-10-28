@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
@@ -8,7 +8,7 @@ namespace LaunchDarkly.Client
 {
     public class LdClient : IDisposable, ILdClient
     {
-        private readonly ILogger Logger  = LdLogger.CreateLogger<LdClient>();
+        private readonly ILogger Logger = LdLogger.CreateLogger<LdClient>();
 
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
@@ -22,16 +22,17 @@ namespace LaunchDarkly.Client
             _eventStore = eventStore;
             _featureStore = new InMemoryFeatureStore();
 
-          if (_configuration.Offline)
-          {
-              Logger.LogInformation("Starting Launchdarkly client in offline mode.");
-              return;
-          }
+            if (_configuration.Offline)
+            {
+                Logger.LogInformation("Starting Launchdarkly client in offline mode.");
+                return;
+            }
 
             var featureRequestor = new FeatureRequestor(config);
             _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
             var initTask = _updateProcessor.Start();
-            Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds + " milliseconds for LaunchDarkly client to start..");
+            Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds +
+                                  " milliseconds for LaunchDarkly client to start..");
             var unused = initTask.Task.Wait(_configuration.StartWaitTime);
         }
 
@@ -54,23 +55,23 @@ namespace LaunchDarkly.Client
         }
 
 
-      [Obsolete("Please use BoolVariation instead.")]
-      public bool Toggle(string key, User user, bool defaultValue = false)
-      {
-          Logger.LogWarning("Toggle() method is deprecated. Please use BoolVariation() instead");
-          return BoolVariation(key, user, defaultValue);
-      }
-
-      public bool BoolVariation(string key, User user, bool defaultValue = false)
+        [Obsolete("Please use BoolVariation instead.")]
+        public bool Toggle(string key, User user, bool defaultValue = false)
         {
-          var value = Evaluate(key, user, defaultValue, JTokenType.Boolean);
-          return value.Value<bool>();
+            Logger.LogWarning("Toggle() method is deprecated. Please use BoolVariation() instead");
+            return BoolVariation(key, user, defaultValue);
+        }
+
+        public bool BoolVariation(string key, User user, bool defaultValue = false)
+        {
+            var value = Evaluate(key, user, defaultValue, JTokenType.Boolean);
+            return value.Value<bool>();
         }
 
         public int IntVariation(string key, User user, int defaultValue)
         {
-          var value = Evaluate(key, user, defaultValue, JTokenType.Integer);
-          return value.Value<int>();
+            var value = Evaluate(key, user, defaultValue, JTokenType.Integer);
+            return value.Value<int>();
         }
 
 
@@ -93,42 +94,42 @@ namespace LaunchDarkly.Client
             return value;
         }
 
-      public IDictionary<string, JToken> AllFlags(User user)
-      {
-        if (IsOffline())
+        public IDictionary<string, JToken> AllFlags(User user)
         {
-          Logger.LogWarning("AllFlags() was called when client is in offline mode. Returning null.");
-          return null;
-        }
-        if (!Initialized())
-        {
-          Logger.LogWarning("AllFlags() was called before client has finished initializing. Returning null.");
-          return null;
-        }
-        if (user == null || user.Key == null)
-        {
-          Logger.LogWarning("AllFlags() called with null user or null user key. Returning null");
-          return null;
+            if (IsOffline())
+            {
+                Logger.LogWarning("AllFlags() was called when client is in offline mode. Returning null.");
+                return null;
+            }
+            if (!Initialized())
+            {
+                Logger.LogWarning("AllFlags() was called before client has finished initializing. Returning null.");
+                return null;
+            }
+            if (user == null || user.Key == null)
+            {
+                Logger.LogWarning("AllFlags() called with null user or null user key. Returning null");
+                return null;
+            }
+
+            IDictionary<string, FeatureFlag> flags = _featureStore.All();
+            IDictionary<string, JToken> results = new Dictionary<string, JToken>();
+            foreach (KeyValuePair<string, FeatureFlag> pair in flags)
+            {
+                try
+                {
+                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore);
+                    results.Add(pair.Key, evalResult.Result);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("Exception caught when evaluating all flags: " + e.Message, e);
+                }
+            }
+            return results;
         }
 
-        IDictionary<string, FeatureFlag> flags = _featureStore.All();
-        IDictionary<string, JToken> results = new Dictionary<string, JToken>();
-        foreach (KeyValuePair<string, FeatureFlag> pair in flags)
-        {
-          try
-          {
-            FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore);
-            results.Add(pair.Key, evalResult.Result);
-          }
-          catch (Exception e)
-          {
-            Logger.LogError("Exception caught when evaluating all flags: " + e.Message, e);
-          }
-        }
-        return results;
-      }
-
-      private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType)
+        private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType)
         {
             if (!Initialized())
             {
@@ -152,26 +153,26 @@ namespace LaunchDarkly.Client
                     return defaultValue;
                 }
 
-              FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore);
-              if (!IsOffline())
-              {
-                foreach (var prereqEvent in evalResult.PrerequisiteEvents)
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore);
+                if (!IsOffline())
                 {
-                  _eventStore.Add(prereqEvent);
+                    foreach (var prereqEvent in evalResult.PrerequisiteEvents)
+                    {
+                        _eventStore.Add(prereqEvent);
+                    }
                 }
-              }
-              if (evalResult.Result != null)
-              {
-                if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
+                if (evalResult.Result != null)
                 {
-                  Logger.LogError("Expected type: " + expectedType + " but got " + evalResult.GetType() +
-                               " when evaluating FeatureFlag: " + featureKey + ". Returning default");
-                  sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, featureFlag.Version);
-                  return defaultValue;
+                    if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
+                    {
+                        Logger.LogError("Expected type: " + expectedType + " but got " + evalResult.GetType() +
+                                        " when evaluating FeatureFlag: " + featureKey + ". Returning default");
+                        sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, featureFlag.Version);
+                        return defaultValue;
+                    }
+                    sendFlagRequestEvent(featureKey, user, evalResult.Result, defaultValue, featureFlag.Version);
+                    return evalResult.Result;
                 }
-                sendFlagRequestEvent(featureKey, user, evalResult.Result, defaultValue, featureFlag.Version);
-                return evalResult.Result;
-              }
             }
             catch (Exception e)
             {
@@ -187,34 +188,34 @@ namespace LaunchDarkly.Client
 
         public string SecureModeHash(User user)
         {
-          if (user == null || string.IsNullOrEmpty(user.Key))
-          {
-            return null;
-          }
-          System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
-          byte[] keyBytes = encoding.GetBytes(_configuration.SdkKey);
+            if (user == null || string.IsNullOrEmpty(user.Key))
+            {
+                return null;
+            }
+            System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+            byte[] keyBytes = encoding.GetBytes(_configuration.SdkKey);
 
-          HMACSHA256 hmacSha256 = new HMACSHA256(keyBytes);
-          byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(user.Key));
-          return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
+            HMACSHA256 hmacSha256 = new HMACSHA256(keyBytes);
+            byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(user.Key));
+            return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
         public void Track(string name, User user, string data)
         {
-          if (user == null || user.Key == null)
-          {
-            Logger.LogWarning("Track called with null user or null user key");
-          }
-          _eventStore.Add(new CustomEvent(name, user, data));
+            if (user == null || user.Key == null)
+            {
+                Logger.LogWarning("Track called with null user or null user key");
+            }
+            _eventStore.Add(new CustomEvent(name, user, data));
         }
 
         public void Identify(User user)
         {
-          if (user == null || user.Key == null)
-          {
-            Logger.LogWarning("Identify called with null user or null user key");
-          }
-          _eventStore.Add(new IdentifyEvent(user));
+            if (user == null || user.Key == null)
+            {
+                Logger.LogWarning("Identify called with null user or null user key");
+            }
+            _eventStore.Add(new IdentifyEvent(user));
         }
 
         private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)
@@ -234,6 +235,7 @@ namespace LaunchDarkly.Client
                 _updateProcessor.Dispose();
             }
         }
+
         public void Dispose()
         {
             Dispose(true);

@@ -20,15 +20,17 @@ namespace LaunchDarkly.Client
                 FeatureFlag f;
                 if (!Features.TryGetValue(key, out f))
                 {
-                    Logger.LogWarning("Attempted to get feature with key: " + key + " not found in feature store. Returning null.");
+                    Logger.LogWarning("Attempted to get feature with key: " + key +
+                                      " not found in feature store. Returning null.");
                     return null;
                 }
                 if (f.Deleted)
                 {
-                    Logger.LogWarning("Attempted to get deleted feature with key: " + key + " from feature store. Returning null.");
+                    Logger.LogWarning("Attempted to get deleted feature with key: " + key +
+                                      " from feature store. Returning null.");
                     return null;
                 }
-                    return f;
+                return f;
             }
             finally
             {

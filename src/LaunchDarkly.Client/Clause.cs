@@ -52,7 +52,8 @@ namespace LaunchDarkly.Client
             {
                 return MaybeNegate(MatchAny(userValue as JValue));
             }
-            Logger.LogWarning("Got unexpected user attribute type: " + userValue.Type + " for user key: " + user.Key + " and attribute: " + Attribute);
+            Logger.LogWarning("Got unexpected user attribute type: " + userValue.Type + " for user key: " + user.Key +
+                              " and attribute: " + Attribute);
             return false;
         }
 
@@ -79,6 +80,5 @@ namespace LaunchDarkly.Client
                 return b;
             }
         }
-
     }
 }

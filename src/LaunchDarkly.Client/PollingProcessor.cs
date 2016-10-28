@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -28,12 +28,13 @@ namespace LaunchDarkly.Client
 
         bool IUpdateProcessor.Initialized()
         {
-           return _initialized == INITIALIZED;
+            return _initialized == INITIALIZED;
         }
 
         TaskCompletionSource<bool> IUpdateProcessor.Start()
         {
-            Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: " + (int)_config.PollingInterval.TotalMilliseconds + " milliseconds");
+            Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: " +
+                                  (int) _config.PollingInterval.TotalMilliseconds + " milliseconds");
             Task.Run(() => UpdateTaskLoopAsync());
             return _initTask;
         }
@@ -64,7 +65,7 @@ namespace LaunchDarkly.Client
                     }
                 }
             }
-            catch ( AggregateException ex )
+            catch (AggregateException ex)
             {
                 Logger.LogError(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex.Flatten())));
             }
@@ -73,7 +74,6 @@ namespace LaunchDarkly.Client
                 Logger.LogError(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
             }
         }
-
 
 
         void IDisposable.Dispose()

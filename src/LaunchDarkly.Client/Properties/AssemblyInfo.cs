@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("LaunchDarkly.Client")]
 [assembly: AssemblyDescription("LaunchDarkly .Net Client")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Catamorphic, Co.")]
+[assembly: AssemblyCompany("LaunchDarkly")]
 [assembly: AssemblyProduct("LaunchDarkly.Client")]
-[assembly: AssemblyCopyright("Copyright 2015 Catamorphic, Co.")]
+[assembly: AssemblyCopyright("Copyright 2016 LaunchDarkly")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
