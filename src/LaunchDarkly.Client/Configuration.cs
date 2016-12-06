@@ -14,6 +14,7 @@ namespace LaunchDarkly.Client
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
+        public TimeSpan HttpClientTimeout { get; internal set; }
         public bool Offline { get; internal set; }
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
 
@@ -26,8 +27,9 @@ namespace LaunchDarkly.Client
         internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
         private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
         private static readonly int DefaultEventQueueCapacity = 500;
-        private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(2);
-        private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
 
         public static Configuration Default(string sdkKey)
         {
@@ -39,6 +41,7 @@ namespace LaunchDarkly.Client
                 EventQueueFrequency = DefaultEventQueueFrequency,
                 PollingInterval = DefaultPollingInterval,
                 StartWaitTime = DefaultStartWaitTime,
+                HttpClientTimeout = DefaultHttpClientTimeout,
                 Offline = false,
                 SdkKey = sdkKey
             };
@@ -46,13 +49,11 @@ namespace LaunchDarkly.Client
             return defaultConfiguration;
         }
 
-        // Not using singleton client due to: https://github.com/dotnet/corefx/issues/11224
         internal HttpClient HttpClient()
         {
-            var httpClient = new HttpClient(new HttpClientHandler());
+            var httpClient = new HttpClient(new HttpClientHandler(), false);
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
             httpClient.DefaultRequestHeaders.Add("Authorization", SdkKey);
-            httpClient.Timeout = TimeSpan.FromSeconds(10);
             return httpClient;
         }
     }
@@ -150,6 +151,12 @@ namespace LaunchDarkly.Client
             if (loggerFactory != null)
                 LdLogger.LoggerFactory = loggerFactory;
 
+            return configuration;
+        }
+
+        public static Configuration WithHttpClientTimeout(this Configuration configuration, TimeSpan timeSpan)
+        {
+            configuration.HttpClientTimeout = timeSpan;
             return configuration;
         }
     }

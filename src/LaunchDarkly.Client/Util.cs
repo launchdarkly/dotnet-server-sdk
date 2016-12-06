@@ -14,12 +14,6 @@ namespace LaunchDarkly.Client
         internal static string ExceptionMessage(Exception e)
         {
             var msg = e.Message;
-
-            if (e is System.Threading.Tasks.TaskCanceledException)
-            {
-                msg += " (Likely due to a http request timeout)";
-            }
-
             if (e.InnerException != null)
             {
                 return msg + " with inner exception: " + e.InnerException.Message;

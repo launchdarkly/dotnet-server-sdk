@@ -18,3 +18,11 @@ Mac OS:
 dotnet build src/LaunchDarkly.Client 
 dotnet test test/LaunchDarkly.Tests
 ```
+
+To package for local use:
+1. Bump version here in package.json and in dependency declaration in app
+1. `dotnet pack src/LaunchDarkly.Client`
+1. Restore your app using the output directory of the previous command:
+```
+dotnet restore -s [.net-client repo root]/src/LaunchDarkly.Client/bin/Debug/
+```
