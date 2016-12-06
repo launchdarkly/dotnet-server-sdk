@@ -18,7 +18,7 @@ namespace LaunchDarkly.Client
         private readonly Configuration _config;
         private readonly BlockingCollection<Event> _queue;
         private readonly Timer _timer;
-        private HttpClient _httpClient;
+        private volatile HttpClient _httpClient;
         private readonly Uri _uri;
 
         internal EventProcessor(Configuration config)

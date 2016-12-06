@@ -14,9 +14,9 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureRequestor>();
         private readonly Uri _uri;
-        private HttpClient _httpClient;
+        private volatile HttpClient _httpClient;
         private readonly Configuration _config;
-        private EntityTagHeaderValue _etag;
+        private volatile EntityTagHeaderValue _etag;
 
         internal FeatureRequestor(Configuration config)
         {
@@ -76,13 +76,13 @@ namespace LaunchDarkly.Client
         private async Task<IDictionary<string, FeatureFlag>> FetchFeatureFlagsAsync(CancellationTokenSource cts)
         {
             Logger.LogDebug("Getting all flags with uri: " + _uri.AbsoluteUri);
+            var request = new HttpRequestMessage(HttpMethod.Get, _uri);
             if (_etag != null)
             {
-                _httpClient.DefaultRequestHeaders.IfNoneMatch.Clear();
-                _httpClient.DefaultRequestHeaders.IfNoneMatch.Add(_etag);
+                request.Headers.IfNoneMatch.Add(_etag);
             }
 
-            using (var response = await _httpClient.GetAsync(_uri, cts.Token).ConfigureAwait(false))
+            using (var response = await _httpClient.SendAsync(request, cts.Token).ConfigureAwait(false))
             {
                 if (response.StatusCode == HttpStatusCode.NotModified)
                 {
