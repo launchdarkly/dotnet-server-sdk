@@ -51,7 +51,7 @@ namespace LaunchDarkly.Client
 
         internal HttpClient HttpClient()
         {
-            var httpClient = new HttpClient(new HttpClientHandler(), false);
+            var httpClient = new HttpClient(handler: new HttpClientHandler(), disposeHandler: false);
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
             httpClient.DefaultRequestHeaders.Add("Authorization", SdkKey);
             return httpClient;
