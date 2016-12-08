@@ -2,6 +2,13 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.1.0] - 2016-12-07
+### Added
+- Configurable http request timeout
+
+### Changed
+- Made http requests more resilient and logging more informative.
+
 ## [3.0.0] - 2016-10-27
 ### Changed
 - Addresses Unnecesary Lock contention when polling: https://github.com/launchdarkly/.net-client/issues/18
