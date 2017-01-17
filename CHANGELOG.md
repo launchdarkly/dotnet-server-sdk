@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.1.1] - 2017-01-16
+### Changed
+- Improved error handling when sending events
+
 ## [3.1.0] - 2016-12-07
 ### Added
 - Configurable http request timeout

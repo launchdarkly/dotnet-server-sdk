@@ -68,14 +68,13 @@ namespace LaunchDarkly.Client
         private async Task BulkSubmitAsync(IList<Event> events)
         {
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
-            StringContent stringContent = null;
+            var jsonEvents = "";
             try
             {
-                var json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
-                stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+                jsonEvents = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
                 Logger.LogDebug("Submitting " + events.Count + " events to " + _uri.AbsoluteUri + " with json: " +
-                                stringContent);
-                await SendEventsAsync(stringContent, cts);
+                                jsonEvents);
+                await SendEventsAsync(jsonEvents, cts);
             }
             catch (Exception e)
             {
@@ -90,8 +89,8 @@ namespace LaunchDarkly.Client
                 try
                 {
                     Logger.LogDebug("Submitting " + events.Count + " events to " + _uri.AbsoluteUri + " with json: " +
-                                    stringContent);
-                    await SendEventsAsync(stringContent, cts);
+                                    jsonEvents);
+                    await SendEventsAsync(jsonEvents, cts);
                 }
                 catch (TaskCanceledException tce)
                 {
@@ -124,9 +123,10 @@ namespace LaunchDarkly.Client
         }
 
 
-        private async Task SendEventsAsync(StringContent content, CancellationTokenSource cts)
+        private async Task SendEventsAsync(String jsonEvents, CancellationTokenSource cts)
         {
-            using (var response = await _httpClient.PostAsync(_uri, content).ConfigureAwait(false))
+            using (var stringContent = new StringContent(jsonEvents, Encoding.UTF8, "application/json"))
+            using (var response = await _httpClient.PostAsync(_uri, stringContent).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode)
                 {
