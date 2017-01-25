@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using LaunchDarkly.Client;
 using Xunit;
 
@@ -28,6 +29,16 @@ namespace LaunchDarkly.Tests
 
             var expected = TimeSpan.FromSeconds(1);
             Assert.Equal(expected, config.PollingInterval);
+        }
+
+        [Fact]
+        public void CanSetHttpClientHandler()
+        {
+            var handler = new HttpClientHandler();
+            var config = Configuration.Default("AnyOtherSdkKey")
+                .WithHttpClientHandler(handler);
+
+            Assert.Equal(handler, config.HttpClientHandler);
         }
     }
 }
