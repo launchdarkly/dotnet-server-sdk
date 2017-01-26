@@ -10,7 +10,8 @@ Getting Started
 Mac OS:
 
 1. [Download .net core and follow instructions](https://www.microsoft.com/net/core#macos)
-
+1. Run ```brew install mono` to install the Mono for .NET Framework 4.5.
+1. Add `export DOTNET_REFERENCE_ASSEMBLIES_PATH="/usr/local/lib/mono/xbuild-frameworks/"` to your profile so that `dotnet` can find the .NET Framework 4.5 assemblies.
 1. Run ```dotnet restore``` to pull in required packages
 1. Make sure you can build and run tests from command line:
 
