@@ -5,6 +5,7 @@ namespace LaunchDarkly.Client
 {
     interface IFeatureStore
     {
+        Task LoadPersistedDataAsync();
         string VersionIdentifier { get; }
         Task<bool> WaitForInitializationAsync();
         FeatureFlag Get(string key);
