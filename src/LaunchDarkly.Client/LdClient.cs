@@ -30,10 +30,11 @@ namespace LaunchDarkly.Client
 
             var featureRequestor = new FeatureRequestor(config);
             _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
-            var initTask = _updateProcessor.Start();
+            var initTask = _featureStore.WaitForInitializationAsync();
+            _updateProcessor.Start();
             Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds +
                                   " milliseconds for LaunchDarkly client to start..");
-            var unused = initTask.Task.Wait(_configuration.StartWaitTime);
+            var unused = initTask.Wait(_configuration.StartWaitTime);
         }
 
         public LdClient(Configuration config) : this(config, new EventProcessor(config))
@@ -46,7 +47,7 @@ namespace LaunchDarkly.Client
 
         public bool Initialized()
         {
-            return IsOffline() || _updateProcessor.Initialized();
+            return IsOffline() || _featureStore.Initialized();
         }
 
         public bool IsOffline()

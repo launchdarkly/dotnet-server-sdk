@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
@@ -8,10 +9,17 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<InMemoryFeatureStore>();
         private static readonly int RwLockMaxWaitMillis = 1000;
+        private static int UNINITIALIZED = 0;
+        private static int INITIALIZED = 1;
         private readonly ReaderWriterLockSlim RwLock = new ReaderWriterLockSlim();
         private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();
-        private bool _initialized = false;
+        private int _initialized = UNINITIALIZED;
+        private readonly TaskCompletionSource<bool> _initTask = new TaskCompletionSource<bool>();
 
+        Task<bool> IFeatureStore.WaitForInitializationAsync()
+        {
+            return _initTask.Task;
+        }
         FeatureFlag IFeatureStore.Get(string key)
         {
             try
@@ -69,7 +77,12 @@ namespace LaunchDarkly.Client
                 {
                     Features[feature.Key] = feature.Value;
                 }
-                _initialized = true;
+                //We can't use bool in CompareExchange because it is not a reference type.
+                if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                {
+                    _initTask.SetResult(true);
+                    Logger.LogInformation("Initialized LaunchDarkly Feature store.");
+                }
             }
             finally
             {
@@ -122,7 +135,15 @@ namespace LaunchDarkly.Client
 
         bool IFeatureStore.Initialized()
         {
-            return _initialized;
+            try
+            {
+                RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
+                return _initialized == INITIALIZED;
+            }
+            finally
+            {
+                RwLock.ExitReadLock();
+            }
         }
     }
 }
