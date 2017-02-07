@@ -48,10 +48,10 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
-                if (allFeatures != null)
+                var allFeatures = await _featureRequestor.MakeAllRequestAsync(_featureStore.VersionIdentifier);
+                if (allFeatures.FeatureFlags != null)
                 {
-                    _featureStore.Init(allFeatures);
+                    _featureStore.Init(allFeatures.FeatureFlags, allFeatures.VersionIdentifier);
                 }
             }
             catch (AggregateException ex)

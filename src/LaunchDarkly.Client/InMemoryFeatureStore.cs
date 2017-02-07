@@ -15,7 +15,24 @@ namespace LaunchDarkly.Client
         private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask = new TaskCompletionSource<bool>();
-        
+        private string _versionIdentifier;
+
+        string IFeatureStore.VersionIdentifier
+        {
+            get
+            {
+                try
+                {
+                    RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
+                    return _versionIdentifier;
+                }
+                finally
+                {
+                    RwLock.ExitReadLock();
+                }
+            }
+        }
+
         Task<bool> IFeatureStore.WaitForInitializationAsync()
         {
             return _initTask.Task;
@@ -67,7 +84,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Init(IDictionary<string, FeatureFlag> features)
+        void IFeatureStore.Init(IDictionary<string, FeatureFlag> features, string versionIdentifier)
         {
             try
             {
@@ -77,6 +94,7 @@ namespace LaunchDarkly.Client
                 {
                     Features[feature.Key] = feature.Value;
                 }
+                _versionIdentifier = versionIdentifier;
                 //We can't use bool in CompareExchange because it is not a reference type.
                 if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
                 {
