@@ -15,7 +15,7 @@ namespace LaunchDarkly.Client
         private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask = new TaskCompletionSource<bool>();
-
+        
         Task<bool> IFeatureStore.WaitForInitializationAsync()
         {
             return _initTask.Task;
@@ -89,50 +89,7 @@ namespace LaunchDarkly.Client
                 RwLock.ExitWriteLock();
             }
         }
-
-        void IFeatureStore.Delete(string key, int version)
-        {
-            try
-            {
-                RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
-                FeatureFlag f;
-                if (Features.TryGetValue(key, out f) && f.Version < version)
-                {
-                    f.Deleted = true;
-                    f.Version = version;
-                    Features[key] = f;
-                }
-                else if (f == null)
-                {
-                    f = new FeatureFlag();
-                    f.Deleted = true;
-                    f.Version = version;
-                    Features[key] = f;
-                }
-            }
-            finally
-            {
-                RwLock.ExitWriteLock();
-            }
-        }
-
-        void IFeatureStore.Upsert(string key, FeatureFlag featureFlag)
-        {
-            try
-            {
-                RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
-                FeatureFlag old;
-                if (!Features.TryGetValue(key, out old) || old.Version < featureFlag.Version)
-                {
-                    Features[key] = featureFlag;
-                }
-            }
-            finally
-            {
-                RwLock.ExitWriteLock();
-            }
-        }
-
+        
         bool IFeatureStore.Initialized()
         {
             try
