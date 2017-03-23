@@ -17,10 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\LaunchDarkly.Client\LaunchDarkly.Client.csproj" />
   </ItemGroup>
 
