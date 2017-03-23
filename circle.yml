@@ -8,5 +8,5 @@ dependencies:
     - dotnet restore
 test:
   override:
-    - dotnet build -f netcoreapp1.0
+    - dotnet build
     - (cd test/LaunchDarkly.Tests && dotnet test)
