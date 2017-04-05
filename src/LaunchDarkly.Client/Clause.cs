@@ -9,10 +9,10 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<Clause>();
 
-        internal string Attribute { get; private set; }
-        internal string Op { get; private set; }
-        internal List<JValue> Values { get; private set; }
-        internal bool Negate { get; private set; }
+        internal string Attribute { get; }
+        internal string Op { get; }
+        internal List<JValue> Values { get; }
+        internal bool Negate { get; }
 
         [JsonConstructor]
         internal Clause(string attribute, string op, List<JValue> values, bool negate)
@@ -25,7 +25,7 @@ namespace LaunchDarkly.Client
 
         internal bool MatchesUser(User user, Configuration configuration)
         {
-            var userValue = user.GetValueForEvaluation(Attribute);
+            JToken userValue = user.GetValueForEvaluation(Attribute);
             if (userValue == null)
             {
                 return false;
@@ -38,7 +38,7 @@ namespace LaunchDarkly.Client
                 {
                     if (!(element is JValue))
                     {
-                        Logger.LogError("Invalid custom attribute value in user object: " + element);
+                        Logger.LogError($"Invalid custom attribute value in user object: {element}");
                         return false;
                     }
                     if (MatchAny(element as JValue))
@@ -52,14 +52,13 @@ namespace LaunchDarkly.Client
             {
                 return MaybeNegate(MatchAny(userValue as JValue));
             }
-            Logger.LogWarning("Got unexpected user attribute type: " + userValue.Type + " for user key: " + user.Key +
-                              " and attribute: " + Attribute);
+            Logger.LogWarning($"Got unexpected user attribute type: {userValue.Type} for user key: {user.Key} and attribute: {Attribute}");
             return false;
         }
 
         private bool MatchAny(JValue userValue)
         {
-            foreach (var v in Values)
+            foreach (JValue v in Values)
             {
                 if (Operator.Apply(Op, userValue, v))
                 {
@@ -71,14 +70,7 @@ namespace LaunchDarkly.Client
 
         private bool MaybeNegate(bool b)
         {
-            if (Negate)
-            {
-                return !b;
-            }
-            else
-            {
-                return b;
-            }
+            return Negate ? !b : b;
         }
     }
 }
