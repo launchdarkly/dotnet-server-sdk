@@ -40,6 +40,8 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 
+        internal IDictionary<string,object> CustomTypes { get; }
+
         internal JToken GetValueForEvaluation(string attribute)
         {
             switch (attribute)
@@ -75,6 +77,7 @@ namespace LaunchDarkly.Client
         {
             Key = key;
             Custom = new Dictionary<string, JToken>();
+            CustomTypes = new Dictionary<string, object>();
         }
 
         public static User WithKey(string key)
@@ -198,6 +201,16 @@ namespace LaunchDarkly.Client
                 throw new ArgumentException("Attribute Name can not be empty");
 
             user.Custom.Add(attribute, new JArray(value.ToArray()));
+
+            return user;
+        }
+
+        public static User AndCustomAttribute(this User user, string attribute, object value)
+        {
+            if (attribute == string.Empty)
+                throw new ArgumentException("Attribute Name can not be empty");
+
+            user.CustomTypes.Add(attribute, value);
 
             return user;
         }
