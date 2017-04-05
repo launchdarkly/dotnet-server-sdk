@@ -23,7 +23,7 @@ namespace LaunchDarkly.Client
             Negate = negate;
         }
 
-        internal bool MatchesUser(User user)
+        internal bool MatchesUser(User user, Configuration configuration)
         {
             var userValue = user.GetValueForEvaluation(Attribute);
             if (userValue == null)
@@ -48,7 +48,7 @@ namespace LaunchDarkly.Client
                 }
                 return MaybeNegate(false);
             }
-            else if (userValue is JValue)
+            if (userValue is JValue)
             {
                 return MaybeNegate(MatchAny(userValue as JValue));
             }

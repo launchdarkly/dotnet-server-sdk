@@ -13,11 +13,11 @@ namespace LaunchDarkly.Client
             Clauses = clauses;
         }
 
-        internal bool MatchesUser(User user)
+        internal bool MatchesUser(User user, Configuration configuration)
         {
             foreach (var c in Clauses)
             {
-                if (!c.MatchesUser(user))
+                if (!c.MatchesUser(user, configuration))
                 {
                     return false;
                 }
