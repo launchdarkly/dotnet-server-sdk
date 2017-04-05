@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
@@ -16,6 +20,8 @@ namespace LaunchDarkly.Client
         public TimeSpan StartWaitTime { get; internal set; }
         public TimeSpan HttpClientTimeout { get; internal set; }
         public bool Offline { get; internal set; }
+        public IImmutableDictionary<Type,IValueConverter> ValueConverters { get; internal set; }
+
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
 
         internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
@@ -31,6 +37,7 @@ namespace LaunchDarkly.Client
         private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
 
+
         public static Configuration Default(string sdkKey)
         {
             var defaultConfiguration = new Configuration
@@ -43,7 +50,8 @@ namespace LaunchDarkly.Client
                 StartWaitTime = DefaultStartWaitTime,
                 HttpClientTimeout = DefaultHttpClientTimeout,
                 Offline = false,
-                SdkKey = sdkKey
+                SdkKey = sdkKey,
+                ValueConverters = new Dictionary<Type, IValueConverter>().ToImmutableDictionary()
             };
 
             return defaultConfiguration;
@@ -157,6 +165,12 @@ namespace LaunchDarkly.Client
         public static Configuration WithHttpClientTimeout(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.HttpClientTimeout = timeSpan;
+            return configuration;
+        }
+
+        public static Configuration WithValueConverter(this Configuration configuration, Type type, IValueConverter converter)
+        {
+            configuration.ValueConverters = configuration.ValueConverters.Add( type, converter );
             return configuration;
         }
     }
