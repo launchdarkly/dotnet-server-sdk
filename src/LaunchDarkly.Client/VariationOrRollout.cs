@@ -47,14 +47,15 @@ namespace LaunchDarkly.Client
 
         private float BucketUser(User user, string featureKey, string attr, string salt)
         {
-            var userValue = user.GetValueForEvaluation(attr);
-            if (userValue != null && userValue.Type.Equals(JTokenType.String))
+            object userValue = user.GetValueForEvaluation(attr);
+            string sUserValue = userValue as string;
+            if (sUserValue != null)
             {
-                var idHash = userValue.Value<string>();
+                string idHash = sUserValue;
                 if (!string.IsNullOrEmpty(user.SecondaryKey))
                     idHash += "." + user.SecondaryKey;
 
-                var hash = Hash(String.Format("{0}.{1}.{2}", featureKey, salt, idHash)).Substring(0, 15);
+                var hash = Hash($"{featureKey}.{salt}.{idHash}").Substring(0, 15);
                 var longValue = long.Parse(hash, NumberStyles.HexNumber);
                 return longValue / longScale;
             }

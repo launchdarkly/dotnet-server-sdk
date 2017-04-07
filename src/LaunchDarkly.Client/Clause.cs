@@ -25,8 +25,8 @@ namespace LaunchDarkly.Client
 
         internal bool MatchesUser(User user, Configuration configuration)
         {
-            JToken userValue = user.GetValueForEvaluation(Attribute);
-            if (userValue == null)
+            object userValue = user.GetValueForEvaluation(Attribute);
+            if (userValue == null )
             {
                 return false;
             }
@@ -41,26 +41,27 @@ namespace LaunchDarkly.Client
                         Logger.LogError($"Invalid custom attribute value in user object: {element}");
                         return false;
                     }
-                    if (MatchAny(element as JValue))
+                    if (MatchAny(element as JValue, configuration))
                     {
                         return MaybeNegate(true);
                     }
                 }
                 return MaybeNegate(false);
             }
+
             if (userValue is JValue)
             {
-                return MaybeNegate(MatchAny(userValue as JValue));
+                return MaybeNegate(MatchAny(userValue as JValue, configuration));
             }
-            Logger.LogWarning($"Got unexpected user attribute type: {userValue.Type} for user key: {user.Key} and attribute: {Attribute}");
-            return false;
+
+            return MaybeNegate(MatchAny(userValue, configuration)); 
         }
 
-        private bool MatchAny(JValue userValue)
+        private bool MatchAny(object userValue, Configuration configuration)
         {
-            foreach (JValue v in Values)
+            foreach (JValue clauseValue in Values)
             {
-                if (Operator.Apply(Op, userValue, v))
+                if (Operator.Apply(Op, userValue, clauseValue, configuration))
                 {
                     return true;
                 }

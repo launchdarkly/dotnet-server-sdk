@@ -40,36 +40,44 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 
-        internal IDictionary<string,object> CustomTypes { get; }
+        internal IDictionary<string,Type> CustomTypes { get; }
 
-        internal JToken GetValueForEvaluation(string attribute)
+        internal object GetValueForEvaluation(string attribute)
         {
             switch (attribute)
             {
                 case "key":
-                    return new JValue(Key);
+                    return Key;
                 case "secondary":
                     return null;
                 case "ip":
-                    return new JValue(IpAddress);
+                    return IpAddress;
                 case "email":
-                    return new JValue(Email);
+                    return Email;
                 case "avatar":
-                    return new JValue(Avatar);
+                    return Avatar;
                 case "firstName":
-                    return new JValue(FirstName);
+                    return FirstName;
                 case "lastName":
-                    return new JValue(LastName);
+                    return LastName;
                 case "name":
-                    return new JValue(Name);
+                    return Name;
                 case "country":
-                    return new JValue(Country);
+                    return Country;
                 case "anonymous":
-                    return new JValue(Anonymous);
+                    return Anonymous;
                 default:
                     JToken customValue;
-                    Custom.TryGetValue(attribute, out customValue);
-                    return customValue;
+                    if(Custom.TryGetValue(attribute, out customValue))
+                    {
+                        Type type;
+                        if(CustomTypes.TryGetValue(attribute, out type))
+                        {
+                            return customValue.ToObject(type);
+                        }
+                        return customValue;
+                    }
+                    return null;
             }
         }
 
@@ -77,7 +85,7 @@ namespace LaunchDarkly.Client
         {
             Key = key;
             Custom = new Dictionary<string, JToken>();
-            CustomTypes = new Dictionary<string, object>();
+            CustomTypes = new Dictionary<string, Type>();
         }
 
         public static User WithKey(string key)
@@ -210,7 +218,8 @@ namespace LaunchDarkly.Client
             if (attribute == string.Empty)
                 throw new ArgumentException("Attribute Name can not be empty");
 
-            user.CustomTypes.Add(attribute, value);
+            user.CustomTypes.Add(attribute, value.GetType());
+            user.Custom.Add(attribute, JToken.FromObject(value));
 
             return user;
         }
