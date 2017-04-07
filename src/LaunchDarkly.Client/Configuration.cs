@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
@@ -36,7 +34,6 @@ namespace LaunchDarkly.Client
         private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
-
 
         public static Configuration Default(string sdkKey)
         {
