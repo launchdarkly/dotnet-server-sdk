@@ -36,8 +36,8 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("foo@bar.com").AndCustomAttribute("bizzle", "cripps");
             var json = JsonConvert.SerializeObject(user);
             var newUser = JsonConvert.DeserializeObject<User>(json);
-            Assert.Equal("cripps", (string) user.Custom["bizzle"]);
-            Assert.Equal("foo@bar.com", user.Key);
+            Assert.Equal("cripps", (string)newUser.Custom["bizzle"]);
+            Assert.Equal("foo@bar.com", newUser.Key);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace LaunchDarkly.Tests
         {
             var user = User.WithKey("AnyUniqueKey");
 
-            Assert.Throws<ArgumentException>(() => user.AndCountry(""));
+            Assert.Throws<ArgumentException>(() => user.AndCountry(string.Empty));
             Assert.Throws<ArgumentException>(() => user.AndCountry("A"));
             Assert.Throws<ArgumentException>(() => user.AndCountry("ABC"));
         }
@@ -102,7 +102,7 @@ namespace LaunchDarkly.Tests
         public void WhenCreatingACustomAttribute_AnAttributeNameMustBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey");
-            Assert.Throws<ArgumentException>(() => user.AndCustomAttribute("", "AnyValue"));
+            Assert.Throws<ArgumentException>(() => user.AndCustomAttribute(string.Empty, "AnyValue"));
         }
 
         [Fact]
@@ -125,7 +125,6 @@ namespace LaunchDarkly.Tests
             Assert.Equal("AnyValue", (string) user.Custom["AnyAttributeName"]);
             Assert.Equal("AnyOtherValue", (string) user.Custom["AnyOtherAttributeName"]);
         }
-
 
         [Fact]
         public void WhenCreatingAUser_AllOptionalPropertiesCanBeSetTogether()
