@@ -38,9 +38,7 @@ namespace LaunchDarkly.Client
         public bool? Anonymous { get; set; }
 
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, JToken> Custom { get; set; }
-
-        internal IDictionary<string,Type> CustomTypes { get; }
+        public Dictionary<string, object> Custom { get; set; }
 
         internal object GetValueForEvaluation(string attribute)
         {
@@ -67,14 +65,9 @@ namespace LaunchDarkly.Client
                 case "anonymous":
                     return Anonymous;
                 default:
-                    JToken customValue;
+                    object customValue;
                     if(Custom.TryGetValue(attribute, out customValue))
                     {
-                        Type type;
-                        if(CustomTypes.TryGetValue(attribute, out type))
-                        {
-                            return customValue.ToObject(type);
-                        }
                         return customValue;
                     }
                     return null;
@@ -84,8 +77,7 @@ namespace LaunchDarkly.Client
         public User(string key)
         {
             Key = key;
-            Custom = new Dictionary<string, JToken>();
-            CustomTypes = new Dictionary<string, Type>();
+            Custom = new Dictionary<string, object>();
         }
 
         public static User WithKey(string key)
@@ -153,73 +145,12 @@ namespace LaunchDarkly.Client
             return user;
         }
 
-        public static User AndCustomAttribute(this User user, string attribute, string value)
-        {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
-        }
-
-        public static User AndCustomAttribute(this User user, string attribute, bool value)
-        {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
-        }
-
-        public static User AndCustomAttribute(this User user, string attribute, int value)
-        {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
-        }
-
-        public static User AndCustomAttribute(this User user, string attribute, float value)
-        {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
-        }
-
-        public static User AndCustomAttribute(this User user, string attribute, List<string> value)
-        {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JArray(value.ToArray()));
-
-            return user;
-        }
-
-        public static User AndCustomAttribute(this User user, string attribute, List<int> value)
-        {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JArray(value.ToArray()));
-
-            return user;
-        }
-
         public static User AndCustomAttribute(this User user, string attribute, object value)
         {
             if (attribute == string.Empty)
                 throw new ArgumentException("Attribute Name can not be empty");
 
-            user.CustomTypes.Add(attribute, value.GetType());
-            user.Custom.Add(attribute, JToken.FromObject(value));
+            user.Custom.Add(attribute, value);
 
             return user;
         }

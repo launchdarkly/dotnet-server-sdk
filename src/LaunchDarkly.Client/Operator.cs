@@ -1,39 +1,36 @@
 ﻿using LaunchDarkly.Client.Operators;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using System;
 
-namespace LaunchDarkly.Client
-{
+namespace LaunchDarkly.Client {
 
     internal static class Operator
     {
 
         private static readonly ILogger Logger = LdLogger.CreateLogger("Operator");
 
-        internal static bool Apply(string op, object uValue, JValue cValue, Configuration configuration) {
+        internal static bool Apply(string op, object userValue, object clauseValue, Configuration configuration) {
             try
             {
-                if(uValue == null || cValue == null)
+                if(userValue == null || clauseValue == null)
                 {
                     return false;
                 }
 
-                object convertedClauseValue = cValue.Value;
-                Type userValueType = uValue.GetType();
-                if(userValueType != convertedClauseValue.GetType())
+                Type userValueType = userValue.GetType();
+                if(userValueType != clauseValue.GetType())
                 {
                     IValueConverter converter;
                     if(configuration.ValueConverters.TryGetValue(userValueType, out converter))
                     {
-                        convertedClauseValue = converter.Convert(cValue.Value, userValueType);
+                        clauseValue = converter.Convert(clauseValue, userValueType);
                     }
                 }
 
                 IOperatorExecutor executor = OperatorExecutorFactory.CreateExecutor(op);
                 if(executor != null)
                 {
-                    return executor.Execute(uValue, convertedClauseValue);
+                    return executor.Execute(userValue, clauseValue);
                 }
 
                 return false;
@@ -41,7 +38,7 @@ namespace LaunchDarkly.Client
             } catch ( Exception e )
             {
                 Logger.LogDebug(
-                    $"Got a possibly expected exception when applying operator: {op} to user Value: {uValue} and feature flag value: {cValue}. Exception message: {e.Message}"
+                    $"Got a possibly expected exception when applying operator: {op} to user Value: {userValue} and feature flag value: {clauseValue}. Exception message: {e.Message}"
                 );
             }
             return false;
