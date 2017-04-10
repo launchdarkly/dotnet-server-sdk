@@ -95,7 +95,7 @@ namespace LaunchDarkly.Tests
                 .AndCustomAttribute("AnyAttributeName", "AnyValue");
 
             Assert.Equal("AnyUniqueKey", user.Key);
-            Assert.Equal("AnyValue", (string) user.Custom["AnyAttributeName"]);
+            Assert.Equal("AnyValue", user.Custom["AnyAttributeName"]);
         }
 
         [Fact]
@@ -122,8 +122,21 @@ namespace LaunchDarkly.Tests
                 .AndCustomAttribute("AnyOtherAttributeName", "AnyOtherValue");
 
             Assert.Equal("AnyUniqueKey", user.Key);
-            Assert.Equal("AnyValue", (string) user.Custom["AnyAttributeName"]);
-            Assert.Equal("AnyOtherValue", (string) user.Custom["AnyOtherAttributeName"]);
+            Assert.Equal("AnyValue", user.Custom["AnyAttributeName"]);
+            Assert.Equal("AnyValue", user.Custom["AnyAttributeName"]);
+            Assert.Equal("AnyOtherValue", user.Custom["AnyOtherAttributeName"] );
+        }
+
+        [Fact]
+        public void WhenCreatingAUser_ObjectsOfTypesOtherThanPrimitivesOrArraysCanBeAdded()
+        {
+            var user = User.WithKey("AnyUniqueKey")
+                .AndCustomAttribute("Version", new Version("4.6.8"))
+                .AndCustomAttribute("AnonymousType", new { IntProperty = 10, StringProperty = "hello" });
+
+            Assert.Equal("AnyUniqueKey", user.Key);
+            Assert.Equal( new Version( "4.6.8" ), user.Custom["Version"]);
+            Assert.Equal( new { IntProperty = 10, StringProperty = "hello" }, user.Custom["AnonymousType"] );
         }
 
         [Fact]
@@ -138,8 +151,8 @@ namespace LaunchDarkly.Tests
             Assert.Equal("AnyUniqueKey", user.Key);
             Assert.Equal("1.2.3.4", user.IpAddress);
             Assert.Equal("US", user.Country);
-            Assert.Equal("AnyValue", (string) user.Custom["AnyAttributeName"]);
-            Assert.Equal("AnyOtherValue", (string) user.Custom["AnyOtherAttributeName"]);
+            Assert.Equal("AnyValue", user.Custom["AnyAttributeName"]);
+            Assert.Equal("AnyOtherValue", user.Custom["AnyOtherAttributeName"]);
         }
     }
 }
