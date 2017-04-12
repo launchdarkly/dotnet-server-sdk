@@ -7,6 +7,16 @@ using Xunit;
 namespace LaunchDarkly.Tests
 {
 
+    internal class VersionConverter : IValueConverter
+    {
+
+        public object Convert(object value, Type type)
+        {
+            return new Version((string) value);
+        }
+
+    }
+
     public class OperatorTest
     {
 
@@ -79,6 +89,44 @@ namespace LaunchDarkly.Tests
             yield return new object[] { new JValue(7), new JValue(7) };
             yield return new object[] { new JValue("test"), new JValue("test") };
             yield return new object[] { new Version("1.11.1"), new Version("1.11.1") };
+        }
+
+        [Fact]
+        public void Apply_AnyOperator_TypeConversionIsRequiredAndNoConverterProvided_ReturnsFalse()
+        {
+            Clause sut = new Clause(
+                attribute: "version",
+                op: "in",
+                values: new List<object> { "12.3.4" },
+                negate: false
+            );
+
+            User user = User.WithKey("test-key")
+                .AndCustomAttribute("version", new Version("12.3.4"));
+
+            bool result = sut.MatchesUser(user, _configuration);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void Apply_AnyOperator_TypeConversionIsRequiredAndConverterProvided_ReturnsTrue()
+        {
+            Clause sut = new Clause(
+                attribute: "version",
+                op: "in",
+                values: new List<object> { "12.3.4" },
+                negate: false
+            );
+
+            User user = User.WithKey("test-key")
+                .AndCustomAttribute("version", new Version("12.3.4"));
+
+            var configuration = Configuration.Default("sdk-test")
+                .WithValueConverter(typeof(Version), new VersionConverter());
+            bool result = sut.MatchesUser(user, configuration);
+
+            Assert.True(result);
         }
 
         [Theory]
