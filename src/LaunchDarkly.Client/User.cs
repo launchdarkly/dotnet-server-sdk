@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Client 
 {
     public class User
     {
