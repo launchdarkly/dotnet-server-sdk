@@ -1,6 +1,7 @@
 ﻿using LaunchDarkly.Client.Operators;
 using Microsoft.Extensions.Logging;
 using System;
+using LaunchDarkly.Client.CustomAttributes;
 
 namespace LaunchDarkly.Client {
 

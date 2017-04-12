@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using LaunchDarkly.Client.CustomAttributes;
 using Xunit;
 
 namespace LaunchDarkly.Tests

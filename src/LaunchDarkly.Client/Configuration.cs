@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Net.Http;
 using System.Reflection;
+using LaunchDarkly.Client.CustomAttributes;
 
 namespace LaunchDarkly.Client
 {
