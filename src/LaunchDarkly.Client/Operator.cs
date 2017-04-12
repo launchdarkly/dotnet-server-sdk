@@ -39,7 +39,10 @@ namespace LaunchDarkly.Client {
             } catch ( Exception e )
             {
                 Logger.LogDebug(
-                    $"Got a possibly expected exception when applying operator: {op} to user Value: {userValue} and feature flag value: {clauseValue}. Exception message: {e.Message}"
+                    "Got a possibly expected exception when applying operator: " +
+                    $"\"{op}\" to user Value: {userValue} of type \"{userValue?.GetType().AssemblyQualifiedName}\" and " +
+                    $"feature flag value: {clauseValue} of type \"{clauseValue?.GetType().AssemblyQualifiedName}\". " +
+                    $"Exception: {e}"
                 );
             }
             return false;

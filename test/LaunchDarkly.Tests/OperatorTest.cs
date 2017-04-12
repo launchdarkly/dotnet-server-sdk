@@ -125,9 +125,31 @@ namespace LaunchDarkly.Tests
 
             var configuration = Configuration.Default("sdk-test")
                 .WithTypeConverter(typeof(Version), new VersionConverter());
+
             bool result = sut.MatchesUser(user, configuration);
 
             Assert.True(result);
+        }
+
+        [Fact]
+        public void Apply_AnyOperator_TypeConversionIsRequiredAndConverterFails_ReturnsFalse()
+        {
+            Clause sut = new Clause(
+                attribute: "version",
+                op: "in",
+                values: new List<object> { 12.3 },
+                negate: false
+            );
+
+            User user = User.WithKey("test-key")
+                .AndCustomAttribute("version", new Version("12.3.4"));
+
+            var configuration = Configuration.Default("sdk-test")
+                .WithTypeConverter(typeof(Version), new VersionConverter());
+
+            bool result = sut.MatchesUser(user, configuration);
+
+            Assert.False(result);
         }
 
         [Theory]
