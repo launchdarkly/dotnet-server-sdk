@@ -28,13 +28,13 @@ namespace LaunchDarkly.Client {
                     }
                 }
 
-                IOperatorExecutor executor = OperatorExecutorFactory.CreateExecutor(op);
-                if(executor != null)
+                IOperatorExecutor executor;
+                if(!OperatorExecutorFactory.TryCreateExecutor(op, out executor))
                 {
-                    return executor.Execute(userValue, clauseValue);
+                    return false;
                 }
 
-                return false;
+                return executor.Execute(userValue, clauseValue);
 
             } catch ( Exception e )
             {

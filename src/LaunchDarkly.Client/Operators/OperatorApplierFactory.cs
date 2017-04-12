@@ -22,14 +22,9 @@ namespace LaunchDarkly.Client.Operators
                 { "after", new After() }
             };
 
-        public static IOperatorExecutor CreateExecutor(string op)
+        public static bool TryCreateExecutor(string op, out IOperatorExecutor executor)
         {
-            IOperatorExecutor executor;
-            if(Executors.TryGetValue(op, out executor))
-            {
-                return executor;
-            }
-            return null;
+            return Executors.TryGetValue(op, out executor);
         }
 
     }
