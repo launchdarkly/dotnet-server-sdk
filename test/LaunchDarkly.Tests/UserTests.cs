@@ -27,7 +27,7 @@ namespace LaunchDarkly.Tests
         {
             var json = "{\"key\":\"user@test.com\", \"custom\": {\"bizzle\":\"cripps\"}}";
             var user = JsonConvert.DeserializeObject<User>(json);
-            Assert.Equal("cripps", (string) user.Custom["bizzle"]);
+            Assert.Equal("cripps", user.Custom["bizzle"]);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("foo@bar.com").AndCustomAttribute("bizzle", "cripps");
             var json = JsonConvert.SerializeObject(user);
             var newUser = JsonConvert.DeserializeObject<User>(json);
-            Assert.Equal("cripps", (string)newUser.Custom["bizzle"]);
+            Assert.Equal("cripps", newUser.Custom["bizzle"]);
             Assert.Equal("foo@bar.com", newUser.Key);
         }
 
