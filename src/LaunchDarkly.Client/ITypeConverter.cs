@@ -3,7 +3,7 @@ using System;
 namespace LaunchDarkly.Client
 {
 
-    public interface IValueConverter
+    public interface ITypeConverter
     {
 
         object Convert(object value, Type type);

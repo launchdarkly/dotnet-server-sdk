@@ -7,7 +7,7 @@ using Xunit;
 namespace LaunchDarkly.Tests
 {
 
-    internal class VersionConverter : IValueConverter
+    internal class VersionConverter : ITypeConverter
     {
 
         public object Convert(object value, Type type)
@@ -123,7 +123,7 @@ namespace LaunchDarkly.Tests
                 .AndCustomAttribute("version", new Version("12.3.4"));
 
             var configuration = Configuration.Default("sdk-test")
-                .WithValueConverter(typeof(Version), new VersionConverter());
+                .WithTypeConverter(typeof(Version), new VersionConverter());
             bool result = sut.MatchesUser(user, configuration);
 
             Assert.True(result);

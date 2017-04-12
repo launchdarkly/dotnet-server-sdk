@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client {
                 Type userValueType = userValue.GetType();
                 if(userValueType != clauseValue.GetType())
                 {
-                    IValueConverter converter;
+                    ITypeConverter converter;
                     if(configuration.ValueConverters.TryGetValue(userValueType, out converter))
                     {
                         clauseValue = converter.Convert(clauseValue, userValueType);

@@ -18,7 +18,7 @@ namespace LaunchDarkly.Client
         public TimeSpan StartWaitTime { get; internal set; }
         public TimeSpan HttpClientTimeout { get; internal set; }
         public bool Offline { get; internal set; }
-        public IImmutableDictionary<Type,IValueConverter> ValueConverters { get; internal set; }
+        public IImmutableDictionary<Type,ITypeConverter> ValueConverters { get; internal set; }
 
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
 
@@ -48,7 +48,7 @@ namespace LaunchDarkly.Client
                 HttpClientTimeout = DefaultHttpClientTimeout,
                 Offline = false,
                 SdkKey = sdkKey,
-                ValueConverters = new Dictionary<Type, IValueConverter>().ToImmutableDictionary()
+                ValueConverters = new Dictionary<Type, ITypeConverter>().ToImmutableDictionary()
             };
 
             return defaultConfiguration;
@@ -165,7 +165,7 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithValueConverter(this Configuration configuration, Type type, IValueConverter converter)
+        public static Configuration WithTypeConverter(this Configuration configuration, Type type, ITypeConverter converter)
         {
             configuration.ValueConverters = configuration.ValueConverters.Add( type, converter );
             return configuration;
