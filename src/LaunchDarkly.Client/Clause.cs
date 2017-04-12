@@ -1,21 +1,18 @@
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace LaunchDarkly.Client
-{
+namespace LaunchDarkly.Client {
     internal class Clause
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<Clause>();
 
         internal string Attribute { get; }
         internal string Op { get; }
-        internal List<JValue> Values { get; }
+        internal IList<object> Values { get; }
         internal bool Negate { get; }
 
         [JsonConstructor]
-        internal Clause(string attribute, string op, List<JValue> values, bool negate)
+        internal Clause(string attribute, string op, IList<object> values, bool negate)
         {
             Attribute = attribute;
             Op = op;
@@ -31,27 +28,20 @@ namespace LaunchDarkly.Client
                 return false;
             }
 
-            if (userValue is JArray)
+            if( !( userValue is string ) )
             {
-                var array = userValue as JArray;
-                foreach (var element in array)
+                var eUserValue = userValue as IEnumerable;
+                if(eUserValue != null)
                 {
-                    if (!(element is JValue))
+                    foreach (object value in eUserValue )
                     {
-                        Logger.LogError($"Invalid custom attribute value in user object: {element}");
-                        return false;
+                        if (MatchAny(value, configuration))
+                        {
+                            return MaybeNegate(true);
+                        }
                     }
-                    if (MatchAny(element as JValue, configuration))
-                    {
-                        return MaybeNegate(true);
-                    }
+                    return MaybeNegate(false);
                 }
-                return MaybeNegate(false);
-            }
-
-            if (userValue is JValue)
-            {
-                return MaybeNegate(MatchAny(userValue as JValue, configuration));
             }
 
             return MaybeNegate(MatchAny(userValue, configuration)); 
@@ -59,7 +49,7 @@ namespace LaunchDarkly.Client
 
         private bool MatchAny(object userValue, Configuration configuration)
         {
-            foreach (JValue clauseValue in Values)
+            foreach (object clauseValue in Values)
             {
                 if (Operator.Apply(Op, userValue, clauseValue, configuration))
                 {
