@@ -304,7 +304,7 @@ namespace LaunchDarkly.Tests
             yield return new object[] { 46d, 45 };
             yield return new object[] { 33d, 32d };
             yield return new object[] { 23, 22d };
-            yield return new object[] { new Version("1.11.1"), new Version("1.11.2") };
+            yield return new object[] { new Version("1.11.2"), new Version("1.11.1") };
             yield return new object[] { new Version("1.11.0"), new Version("1.10.1") };
         }
 
@@ -341,7 +341,7 @@ namespace LaunchDarkly.Tests
             yield return new object[] { 54d, 55 };
             yield return new object[] { 55d, 55d };
             yield return new object[] { 54d, 55d };
-            yield return new object[] { new Version("1.11.3"), new Version("1.11.2") };
+            yield return new object[] { new Version("1.11.2"), new Version("1.11.3") };
             yield return new object[] { new Version("1.11.0"), new Version("1.11.0") };
         }
 
