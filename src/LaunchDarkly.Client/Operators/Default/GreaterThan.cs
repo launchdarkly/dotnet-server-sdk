@@ -3,7 +3,7 @@
 namespace LaunchDarkly.Client.Operators
 {
 
-    internal class GreatedThan : IOperatorExecutor
+    internal class GreaterThan : IOperatorExecutor
     {
 
         bool IOperatorExecutor.Execute(object userValue, object clauseValue)

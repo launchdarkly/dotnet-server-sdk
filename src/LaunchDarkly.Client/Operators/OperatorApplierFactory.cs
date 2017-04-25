@@ -16,7 +16,7 @@ namespace LaunchDarkly.Client.Operators
                 { "contains", new Contains() },
                 { "lessThan", new LessThan() },
                 { "lessThanOrEqual", new LessThanOrEqual() },
-                { "greaterThan", new GreatedThan() },
+                { "greaterThan", new GreaterThan() },
                 { "greaterThanOrEqual", new GreaterThanOrEqual() },
                 { "before", new Before() },
                 { "after", new After() }
