@@ -1,188 +1,53 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using LaunchDarkly.Client.Operators;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
+using System;
+using LaunchDarkly.Client.CustomAttributes;
 
-namespace LaunchDarkly.Client
-{
+namespace LaunchDarkly.Client {
+
     internal static class Operator
     {
+
         private static readonly ILogger Logger = LdLogger.CreateLogger("Operator");
 
-        internal static bool Apply(string op, JValue uValue, JValue cValue)
-        {
+        internal static bool Apply(string op, object userValue, object clauseValue, Configuration configuration) {
             try
             {
-                if (uValue == null || cValue == null)
-                    return false;
-
-                double? uDouble;
-                DateTime? uDateTime;
-                switch (op)
+                if(userValue == null || clauseValue == null)
                 {
-                    case "in":
-                        if (uValue.Equals(cValue))
-                        {
-                            return true;
-                        }
-
-                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
-                        {
-                            return uValue.Value<string>().Equals(cValue.Value<string>());
-                        }
-
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
-                        {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value.Equals(cDouble.Value)) return true;
-                                }
-                            }
-                        }
-                        break;
-                    case "endsWith":
-                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
-                        {
-                            return uValue.Value<string>().EndsWith(cValue.Value<string>());
-                        }
-                        break;
-                    case "startsWith":
-                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
-                        {
-                            return uValue.Value<string>().StartsWith(cValue.Value<string>());
-                        }
-                        break;
-                    case "matches":
-                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
-                        {
-                            var regex = new Regex(cValue.Value<string>());
-                            return regex.IsMatch(uValue.Value<string>());
-                        }
-                        break;
-                    case "contains":
-                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
-                        {
-                            return uValue.Value<string>().Contains(cValue.Value<string>());
-                        }
-                        break;
-                    case "lessThan":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
-                        {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value < cDouble.Value) return true;
-                                }
-                            }
-                        }
-                        break;
-                    case "lessThanOrEqual":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
-                        {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value <= cDouble.Value) return true;
-                                }
-                            }
-                        }
-                        break;
-                    case "greaterThan":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
-                        {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value > cDouble.Value) return true;
-                                }
-                            }
-                        }
-                        break;
-                    case "greaterThanOrEqual":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
-                        {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value >= cDouble.Value) return true;
-                                }
-                            }
-                        }
-                        break;
-                    case "before":
-                        uDateTime = JValueToDateTime(uValue);
-                        if (uDateTime.HasValue)
-                        {
-                            var cDateTime = JValueToDateTime(cValue);
-                            if (cDateTime.HasValue)
-                            {
-                                return DateTime.Compare(uDateTime.Value, cDateTime.Value) < 0;
-                            }
-                        }
-                        break;
-                    case "after":
-                        uDateTime = JValueToDateTime(uValue);
-                        if (uDateTime.HasValue)
-                        {
-                            var cDateTime = JValueToDateTime(cValue);
-                            if (cDateTime.HasValue)
-                            {
-                                return DateTime.Compare(uDateTime.Value, cDateTime.Value) > 0;
-                            }
-                        }
-                        break;
-                    default:
-                        return false;
+                    return false;
                 }
-            }
-            catch (Exception e)
+
+                Type userValueType = userValue.GetType();
+                if(userValueType != clauseValue.GetType())
+                {
+                    ITypeConverter converter;
+                    if(configuration.ValueConverters.TryGetValue(userValueType, out converter))
+                    {
+                        clauseValue = converter.Convert(clauseValue, userValueType);
+                    }
+                }
+
+                IOperatorExecutor executor;
+                if(!OperatorExecutorFactory.TryCreateExecutor(op, out executor))
+                {
+                    return false;
+                }
+
+                return executor.Execute(userValue, clauseValue);
+
+            } catch ( Exception e )
             {
                 Logger.LogDebug(
-                    String.Format(
-                        "Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
-                        op, uValue, cValue, e.Message));
+                    "Got a possibly expected exception when applying operator: " +
+                    $"\"{op}\" to user Value: {userValue} of type \"{userValue?.GetType().AssemblyQualifiedName}\" and " +
+                    $"feature flag value: {clauseValue} of type \"{clauseValue?.GetType().AssemblyQualifiedName}\". " +
+                    $"Exception: {e}"
+                );
             }
             return false;
         }
 
-        private static double? ParseDoubleFromJValue(JValue jValue)
-        {
-            if (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer))
-            {
-                return (double) jValue;
-            }
-            return null;
-        }
-
-        //Visible for testing
-        internal static DateTime? JValueToDateTime(JValue jValue)
-        {
-            switch (jValue.Type)
-            {
-                case JTokenType.Date:
-                    return jValue.Value<DateTime>().ToUniversalTime();
-                case JTokenType.String:
-                    return DateTime.Parse(jValue.Value<string>()).ToUniversalTime();
-                default:
-                    var jvalueDouble = ParseDoubleFromJValue(jValue);
-                    if (jvalueDouble.HasValue)
-                    {
-                        return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(jvalueDouble.Value);
-                    }
-                    break;
-            }
-            return null;
-        }
     }
+
 }

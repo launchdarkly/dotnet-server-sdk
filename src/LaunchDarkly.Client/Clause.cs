@@ -1,21 +1,18 @@
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace LaunchDarkly.Client
-{
+namespace LaunchDarkly.Client {
     internal class Clause
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<Clause>();
 
-        internal string Attribute { get; private set; }
-        internal string Op { get; private set; }
-        internal List<JValue> Values { get; private set; }
-        internal bool Negate { get; private set; }
+        internal string Attribute { get; }
+        internal string Op { get; }
+        internal IList<object> Values { get; }
+        internal bool Negate { get; }
 
         [JsonConstructor]
-        internal Clause(string attribute, string op, List<JValue> values, bool negate)
+        internal Clause(string attribute, string op, IList<object> values, bool negate)
         {
             Attribute = attribute;
             Op = op;
@@ -23,45 +20,38 @@ namespace LaunchDarkly.Client
             Negate = negate;
         }
 
-        internal bool MatchesUser(User user)
+        internal bool MatchesUser(User user, Configuration configuration)
         {
-            var userValue = user.GetValueForEvaluation(Attribute);
-            if (userValue == null)
+            object userValue = user.GetValueForEvaluation(Attribute);
+            if (userValue == null )
             {
                 return false;
             }
 
-            if (userValue is JArray)
+            if( !( userValue is string ) )
             {
-                var array = userValue as JArray;
-                foreach (var element in array)
+                var eUserValue = userValue as IEnumerable;
+                if(eUserValue != null)
                 {
-                    if (!(element is JValue))
+                    foreach (object value in eUserValue )
                     {
-                        Logger.LogError("Invalid custom attribute value in user object: " + element);
-                        return false;
+                        if (MatchAny(value, configuration))
+                        {
+                            return MaybeNegate(true);
+                        }
                     }
-                    if (MatchAny(element as JValue))
-                    {
-                        return MaybeNegate(true);
-                    }
+                    return MaybeNegate(false);
                 }
-                return MaybeNegate(false);
             }
-            else if (userValue is JValue)
-            {
-                return MaybeNegate(MatchAny(userValue as JValue));
-            }
-            Logger.LogWarning("Got unexpected user attribute type: " + userValue.Type + " for user key: " + user.Key +
-                              " and attribute: " + Attribute);
-            return false;
+
+            return MaybeNegate(MatchAny(userValue, configuration)); 
         }
 
-        private bool MatchAny(JValue userValue)
+        private bool MatchAny(object userValue, Configuration configuration)
         {
-            foreach (var v in Values)
+            foreach (object clauseValue in Values)
             {
-                if (Operator.Apply(Op, userValue, v))
+                if (Operator.Apply(Op, userValue, clauseValue, configuration))
                 {
                     return true;
                 }
@@ -71,14 +61,7 @@ namespace LaunchDarkly.Client
 
         private bool MaybeNegate(bool b)
         {
-            if (Negate)
-            {
-                return !b;
-            }
-            else
-            {
-                return b;
-            }
+            return Negate ? !b : b;
         }
     }
 }

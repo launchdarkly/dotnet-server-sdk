@@ -59,7 +59,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        internal EvalResult Evaluate(User user, IFeatureStore featureStore)
+        internal EvalResult Evaluate( User user, IFeatureStore featureStore, Configuration configuration )
         {
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
             EvalResult evalResult = new EvalResult(null, prereqEvents);
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Client
 
             if (On)
             {
-                evalResult.Result = Evaluate(user, featureStore, prereqEvents);
+                evalResult.Result = Evaluate(user, featureStore, prereqEvents, configuration);
                 if (evalResult.Result != null)
                 {
                     return evalResult;
@@ -82,7 +82,7 @@ namespace LaunchDarkly.Client
         }
 
         // Returning either a nil EvalResult or EvalResult.value indicates prereq failure/error.
-        private JToken Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events)
+        private JToken Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events, Configuration configuration)
         {
             var prereqOk = true;
             if (Prerequisites != null)
@@ -99,7 +99,7 @@ namespace LaunchDarkly.Client
                     }
                     else if (prereqFeatureFlag.On)
                     {
-                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events);
+                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, configuration);
                         try
                         {
                             JToken variation = prereqFeatureFlag.GetVariation(prereq.Variation);
@@ -125,13 +125,12 @@ namespace LaunchDarkly.Client
             }
             if (prereqOk)
             {
-                return GetVariation(EvaluateIndex(user));
+                return GetVariation(EvaluateIndex(user, configuration));
             }
             return null;
         }
 
-
-        private int? EvaluateIndex(User user)
+        private int? EvaluateIndex(User user, Configuration configuration)
         {
             // Check to see if targets match
             foreach (var target in Targets)
@@ -148,7 +147,7 @@ namespace LaunchDarkly.Client
             // Now walk through the rules and see if any match
             foreach (Rule rule in Rules)
             {
-                if (rule.MatchesUser(user))
+                if (rule.MatchesUser(user, configuration))
                 {
                     return rule.VariationIndexForUser(user, Key, Salt);
                 }

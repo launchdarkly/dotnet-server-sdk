@@ -54,7 +54,6 @@ namespace LaunchDarkly.Client
             return _configuration.Offline;
         }
 
-
         [Obsolete("Please use BoolVariation instead.")]
         public bool Toggle(string key, User user, bool defaultValue = false)
         {
@@ -74,13 +73,11 @@ namespace LaunchDarkly.Client
             return value.Value<int>();
         }
 
-
         public float FloatVariation(string key, User user, float defaultValue)
         {
             var value = Evaluate(key, user, defaultValue, JTokenType.Float);
             return value.Value<float>();
         }
-
 
         public string StringVariation(string key, User user, string defaultValue)
         {
@@ -118,7 +115,7 @@ namespace LaunchDarkly.Client
             {
                 try
                 {
-                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore);
+                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _configuration );
                     results.Add(pair.Key, evalResult.Result);
                 }
                 catch (Exception e)
@@ -153,7 +150,7 @@ namespace LaunchDarkly.Client
                     return defaultValue;
                 }
 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore);
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _configuration);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
