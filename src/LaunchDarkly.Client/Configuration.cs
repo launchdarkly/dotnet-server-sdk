@@ -15,6 +15,7 @@ namespace LaunchDarkly.Client
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
         public TimeSpan HttpClientTimeout { get; internal set; }
+        public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool Offline { get; internal set; }
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
 
@@ -42,6 +43,7 @@ namespace LaunchDarkly.Client
                 PollingInterval = DefaultPollingInterval,
                 StartWaitTime = DefaultStartWaitTime,
                 HttpClientTimeout = DefaultHttpClientTimeout,
+                HttpClientHandler = new HttpClientHandler(),
                 Offline = false,
                 SdkKey = sdkKey
             };
@@ -51,7 +53,7 @@ namespace LaunchDarkly.Client
 
         internal HttpClient HttpClient()
         {
-            var httpClient = new HttpClient(handler: new HttpClientHandler(), disposeHandler: false);
+            var httpClient = new HttpClient(handler: HttpClientHandler, disposeHandler: false);
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
             httpClient.DefaultRequestHeaders.Add("Authorization", SdkKey);
             return httpClient;
@@ -157,6 +159,12 @@ namespace LaunchDarkly.Client
         public static Configuration WithHttpClientTimeout(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.HttpClientTimeout = timeSpan;
+            return configuration;
+        }
+
+        public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
+        {
+            configuration.HttpClientHandler = httpClientHandler;
             return configuration;
         }
     }
