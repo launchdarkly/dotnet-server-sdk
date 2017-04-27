@@ -15,12 +15,12 @@ namespace LaunchDarkly.Client
         private readonly IFeatureStore _featureStore;
         private readonly IUpdateProcessor _updateProcessor;
 
-        public LdClient(Configuration config, IStoreEvents eventStore)
+        public LdClient(Configuration config, IStoreEvents eventStore, InMemoryFeatureStore featureStore)
         {
             Logger.LogInformation("Starting LaunchDarkly Client " + Configuration.Version);
             _configuration = config;
             _eventStore = eventStore;
-            _featureStore = new InMemoryFeatureStore();
+            _featureStore = featureStore;
 
             if (_configuration.Offline)
             {
@@ -30,13 +30,21 @@ namespace LaunchDarkly.Client
 
             var featureRequestor = new FeatureRequestor(config);
             _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
-            var initTask = _updateProcessor.Start();
+
+            var initTask = _featureStore.WaitForInitializationAsync();
+            _featureStore.LoadPersistedDataAsync().ContinueWith(t => {
+                _updateProcessor.Start();
+            });
             Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds +
                                   " milliseconds for LaunchDarkly client to start..");
-            var unused = initTask.Task.Wait(_configuration.StartWaitTime);
+            var unused = initTask.Wait(_configuration.StartWaitTime);
         }
 
-        public LdClient(Configuration config) : this(config, new EventProcessor(config))
+        public LdClient(Configuration config) : this(config, new EventProcessor(config), new InMemoryFeatureStore())
+        {
+        }
+
+        public LdClient(Configuration config, InMemoryFeatureStore featureStore) : this(config, new EventProcessor(config), featureStore)
         {
         }
 
@@ -46,7 +54,7 @@ namespace LaunchDarkly.Client
 
         public bool Initialized()
         {
-            return IsOffline() || _updateProcessor.Initialized();
+            return IsOffline() || _featureStore.Initialized();
         }
 
         public bool IsOffline()

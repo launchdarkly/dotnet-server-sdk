@@ -8,14 +8,11 @@ namespace LaunchDarkly.Client
     internal class PollingProcessor : IUpdateProcessor
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<PollingProcessor>();
-        private static int UNINITIALIZED = 0;
-        private static int INITIALIZED = 1;
         private readonly Configuration _config;
         private readonly FeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
-        private int _initialized = UNINITIALIZED;
-        private readonly TaskCompletionSource<bool> _initTask;
-        private bool _disposed;
+        private readonly CancellationTokenSource _stopCts = new CancellationTokenSource();
+
 
 
         internal PollingProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
@@ -23,28 +20,27 @@ namespace LaunchDarkly.Client
             _config = config;
             _featureRequestor = featureRequestor;
             _featureStore = featureStore;
-            _initTask = new TaskCompletionSource<bool>();
         }
+        
 
-        bool IUpdateProcessor.Initialized()
-        {
-            return _initialized == INITIALIZED;
-        }
-
-        TaskCompletionSource<bool> IUpdateProcessor.Start()
+        void IUpdateProcessor.Start()
         {
             Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: " +
                                   (int) _config.PollingInterval.TotalMilliseconds + " milliseconds");
-            Task.Run(() => UpdateTaskLoopAsync());
-            return _initTask;
+            var stopToken = _stopCts.Token;
+            Task.Run(() => UpdateTaskLoopAsync(stopToken));
         }
 
-        private async Task UpdateTaskLoopAsync()
+        private async Task UpdateTaskLoopAsync(CancellationToken stopToken)
         {
-            while (!_disposed)
+            while (!stopToken.IsCancellationRequested)
             {
                 await UpdateTaskAsync();
-                await Task.Delay(_config.PollingInterval);
+                try
+                {
+                    await Task.Delay(_config.PollingInterval, stopToken);
+                }
+                catch (OperationCanceledException) { }
             }
         }
 
@@ -52,17 +48,10 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
-                if (allFeatures != null)
+                var allFeatures = await _featureRequestor.MakeAllRequestAsync(_featureStore.VersionIdentifier);
+                if (allFeatures.FeatureFlags != null)
                 {
-                    _featureStore.Init(allFeatures);
-
-                    //We can't use bool in CompareExchange because it is not a reference type.
-                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
-                    {
-                        _initTask.SetResult(true);
-                        Logger.LogInformation("Initialized LaunchDarkly Polling Processor.");
-                    }
+                    _featureStore.Init(allFeatures.FeatureFlags, allFeatures.VersionIdentifier);
                 }
             }
             catch (AggregateException ex)
@@ -79,7 +68,7 @@ namespace LaunchDarkly.Client
         void IDisposable.Dispose()
         {
             Logger.LogInformation("Stopping LaunchDarkly PollingProcessor");
-            _disposed = true;
+            _stopCts.Cancel();
         }
     }
 }

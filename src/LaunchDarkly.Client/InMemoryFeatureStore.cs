@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
@@ -8,10 +12,74 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<InMemoryFeatureStore>();
         private static readonly int RwLockMaxWaitMillis = 1000;
+        private static int UNINITIALIZED = 0;
+        private static int INITIALIZED = 1;
         private readonly ReaderWriterLockSlim RwLock = new ReaderWriterLockSlim();
         private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();
-        private bool _initialized = false;
+        private int _initialized = UNINITIALIZED;
+        private readonly TaskCompletionSource<bool> _initTask = new TaskCompletionSource<bool>();
+        private readonly BlockingCollection<string> _storeQueue = new BlockingCollection<string>();
+        private string _versionIdentifier;
 
+        protected virtual Task<string> LoadPersistedDataAsync()
+        {
+            return Task.FromResult<string>(null);
+        }
+
+        protected virtual Task StorePersistedDataAsync(string data)
+        {
+            return  Task.FromResult(0);
+        }
+
+        protected virtual bool IsPersisted => false;
+
+        string IFeatureStore.VersionIdentifier
+        {
+            get
+            {
+                try
+                {
+                    RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
+                    return _versionIdentifier;
+                }
+                finally
+                {
+                    RwLock.ExitReadLock();
+                }
+            }
+        }
+
+        async Task IFeatureStore.LoadPersistedDataAsync()
+        {
+            if (!IsPersisted)
+            {
+                return;
+            }
+            try
+            {
+                var json = await this.LoadPersistedDataAsync();
+                if (json == null)
+                {
+                    return;
+                }
+                var data = JsonConvert.DeserializeObject<FeatureRequestor.VersionedFeatureFlags>(json);
+                if (data.FeatureFlags != null)
+                {
+                    // init persisted version to avoid write back
+                    _versionIdentifier = data.VersionIdentifier;
+                    ((IFeatureStore)this).Init(data.FeatureFlags, data.VersionIdentifier);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning("Unable to load persisted data: "+ex.Message);
+            }
+        }
+
+        Task<bool> IFeatureStore.WaitForInitializationAsync()
+        {
+            return _initTask.Task;
+        }
         FeatureFlag IFeatureStore.Get(string key)
         {
             try
@@ -59,7 +127,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Init(IDictionary<string, FeatureFlag> features)
+        void IFeatureStore.Init(IDictionary<string, FeatureFlag> features, string versionIdentifier)
         {
             try
             {
@@ -69,32 +137,28 @@ namespace LaunchDarkly.Client
                 {
                     Features[feature.Key] = feature.Value;
                 }
-                _initialized = true;
-            }
-            finally
-            {
-                RwLock.ExitWriteLock();
-            }
-        }
-
-        void IFeatureStore.Delete(string key, int version)
-        {
-            try
-            {
-                RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
-                FeatureFlag f;
-                if (Features.TryGetValue(key, out f) && f.Version < version)
+                if (_versionIdentifier != versionIdentifier)
                 {
-                    f.Deleted = true;
-                    f.Version = version;
-                    Features[key] = f;
+                    _versionIdentifier = versionIdentifier;
+                    if (IsPersisted)
+                    {
+                        var json = JsonConvert.SerializeObject(new FeatureRequestor.VersionedFeatureFlags
+                        {
+                            FeatureFlags = features,
+                            VersionIdentifier = versionIdentifier
+                        });
+                        _storeQueue.Add(json);
+                    }
                 }
-                else if (f == null)
+                //We can't use bool in CompareExchange because it is not a reference type.
+                if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
                 {
-                    f = new FeatureFlag();
-                    f.Deleted = true;
-                    f.Version = version;
-                    Features[key] = f;
+                    _initTask.SetResult(true);
+                    Logger.LogInformation("Initialized LaunchDarkly Feature store.");
+                    if (IsPersisted)
+                    {
+                        StartStoreQueue();
+                    }
                 }
             }
             finally
@@ -103,26 +167,29 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Upsert(string key, FeatureFlag featureFlag)
+        private void StartStoreQueue()
         {
-            try
+            Task.Run(async () =>
             {
-                RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
-                FeatureFlag old;
-                if (!Features.TryGetValue(key, out old) || old.Version < featureFlag.Version)
+                // there is room for improvement there to make sure we don't block
+                foreach (var storePayload in _storeQueue.GetConsumingEnumerable())
                 {
-                    Features[key] = featureFlag;
+                    await StorePersistedDataAsync(storePayload);
                 }
-            }
-            finally
-            {
-                RwLock.ExitWriteLock();
-            }
+            });
         }
 
         bool IFeatureStore.Initialized()
         {
-            return _initialized;
+            try
+            {
+                RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
+                return _initialized == INITIALIZED;
+            }
+            finally
+            {
+                RwLock.ExitReadLock();
+            }
         }
     }
 }

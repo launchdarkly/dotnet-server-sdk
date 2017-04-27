@@ -12,11 +12,16 @@ namespace LaunchDarkly.Client
 {
     internal class FeatureRequestor
     {
+
+        internal struct VersionedFeatureFlags
+        {
+            public IDictionary<string, FeatureFlag> FeatureFlags { get; set; }
+            public string VersionIdentifier { get; set; }
+        }
         private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureRequestor>();
         private readonly Uri _uri;
         private volatile HttpClient _httpClient;
         private readonly Configuration _config;
-        private volatile EntityTagHeaderValue _etag;
 
         internal FeatureRequestor(Configuration config)
         {
@@ -27,12 +32,12 @@ namespace LaunchDarkly.Client
 
         // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there
         // was a problem getting flags.
-        internal async Task<IDictionary<string, FeatureFlag>> MakeAllRequestAsync()
+        internal async Task<VersionedFeatureFlags> MakeAllRequestAsync(string localVersionIdentifier)
         {
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
             try
             {
-                return await FetchFeatureFlagsAsync(cts);
+                return await FetchFeatureFlagsAsync(localVersionIdentifier, cts);
             }
             catch (Exception e)
             {
@@ -46,7 +51,7 @@ namespace LaunchDarkly.Client
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
                 try
                 {
-                    return await FetchFeatureFlagsAsync(cts);
+                    return await FetchFeatureFlagsAsync(localVersionIdentifier, cts);
                 }
                 catch (TaskCanceledException tce)
                 {
@@ -73,13 +78,13 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private async Task<IDictionary<string, FeatureFlag>> FetchFeatureFlagsAsync(CancellationTokenSource cts)
+        private async Task<VersionedFeatureFlags> FetchFeatureFlagsAsync(string localVersion, CancellationTokenSource cts)
         {
             Logger.LogDebug("Getting all flags with uri: " + _uri.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, _uri);
-            if (_etag != null)
+            if (localVersion != null)
             {
-                request.Headers.IfNoneMatch.Add(_etag);
+                request.Headers.IfNoneMatch.Add(new EntityTagHeaderValue(localVersion));
             }
 
             using (var response = await _httpClient.SendAsync(request, cts.Token).ConfigureAwait(false))
@@ -87,15 +92,15 @@ namespace LaunchDarkly.Client
                 if (response.StatusCode == HttpStatusCode.NotModified)
                 {
                     Logger.LogDebug("Get all flags returned 304: not modified");
-                    return null;
+                    return new VersionedFeatureFlags();
                 }
-                _etag = response.Headers.ETag;
+                var version = response?.Headers?.ETag?.Tag;
                 //We ensure the status code after checking for 304, because 304 isn't considered success
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
                 Logger.LogDebug("Get all flags returned " + flags.Keys.Count + " feature flags");
-                return flags;
+                return new VersionedFeatureFlags {FeatureFlags = flags, VersionIdentifier = version};
             }
         }
     }
