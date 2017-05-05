@@ -23,7 +23,7 @@ namespace LaunchDarkly.Tests
 
             Assert.True(actual);
 
-            Thread.Sleep(TimeSpan.FromSeconds(10));
+            System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(10)).Wait();
             client.Flush();
             client.Dispose();
         }

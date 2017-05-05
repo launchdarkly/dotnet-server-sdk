@@ -84,7 +84,7 @@ namespace LaunchDarkly.Client
 
                 Logger.LogDebug("Error sending events: " + Util.ExceptionMessage(e) +
                                 " waiting 1 second before retrying.");
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
                 try
                 {
