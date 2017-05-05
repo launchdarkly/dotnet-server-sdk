@@ -2,11 +2,11 @@
 
 namespace LaunchDarkly.Client
 {
-    internal static class Util
+    public static class Util
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        internal static long GetUnixTimestampMillis(DateTime dateTime)
+        public static long GetUnixTimestampMillis(DateTime dateTime)
         {
             return (long) (dateTime - UnixEpoch).TotalMilliseconds;
         }

@@ -14,7 +14,6 @@ namespace LaunchDarkly.Tests
         public void ClientTest()
         {
             Configuration config = Configuration.Default(API_KEY);
-            config.StartWaitTime = TimeSpan.FromSeconds(20);
             LdClient client = new LdClient(config);
             Assert.True(client.Initialized());
 

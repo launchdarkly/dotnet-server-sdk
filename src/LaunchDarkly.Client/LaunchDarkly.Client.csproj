@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>MyKey.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
   </PropertyGroup>
