@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
             Logger.LogInformation("Starting LaunchDarkly Client " + Configuration.Version);
             _configuration = config;
             _eventStore = eventStore;
-            _featureStore = new InMemoryFeatureStore();
+            _featureStore = config.FeatureStore;
 
             if (_configuration.Offline)
             {
