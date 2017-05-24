@@ -16,6 +16,8 @@ namespace LaunchDarkly.Client
         public TimeSpan StartWaitTime { get; internal set; }
         public TimeSpan HttpClientTimeout { get; internal set; }
         public bool Offline { get; internal set; }
+        internal IFeatureStore FeatureStore { get; set; }
+
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
 
         internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
@@ -43,7 +45,8 @@ namespace LaunchDarkly.Client
                 StartWaitTime = DefaultStartWaitTime,
                 HttpClientTimeout = DefaultHttpClientTimeout,
                 Offline = false,
-                SdkKey = sdkKey
+                SdkKey = sdkKey,
+                FeatureStore = new InMemoryFeatureStore()
             };
 
             return defaultConfiguration;
@@ -157,6 +160,15 @@ namespace LaunchDarkly.Client
         public static Configuration WithHttpClientTimeout(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.HttpClientTimeout = timeSpan;
+            return configuration;
+        }
+        
+        public static Configuration WithFeatureStore(this Configuration configuration, IFeatureStore featureStore)
+        {
+            if (featureStore != null)
+            {
+                configuration.FeatureStore = featureStore;
+            }
             return configuration;
         }
     }

@@ -5,11 +5,11 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    internal static class Operator
+    public static class Operator
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger("Operator");
 
-        internal static bool Apply(string op, JValue uValue, JValue cValue)
+        public static bool Apply(string op, JValue uValue, JValue cValue)
         {
             try
             {
@@ -166,7 +166,7 @@ namespace LaunchDarkly.Client
         }
 
         //Visible for testing
-        internal static DateTime? JValueToDateTime(JValue jValue)
+        public static DateTime? JValueToDateTime(JValue jValue)
         {
             switch (jValue.Type)
             {
