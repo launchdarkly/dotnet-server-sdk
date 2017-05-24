@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>3.1.2</VersionPrefix>
-    <VersionSuffix>beta6</VersionSuffix>
+    <VersionSuffix>beta7</VersionSuffix>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>LaunchDarkly.Client</AssemblyName>
