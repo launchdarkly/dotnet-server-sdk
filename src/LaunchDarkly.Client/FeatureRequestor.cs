@@ -42,7 +42,7 @@ namespace LaunchDarkly.Client
 
                 Logger.LogDebug("Error getting feature flags: " + Util.ExceptionMessage(e) +
                                 " waiting 1 second before retrying.");
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
                 try
                 {
