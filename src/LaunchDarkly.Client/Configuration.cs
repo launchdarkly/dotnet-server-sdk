@@ -164,13 +164,15 @@ namespace LaunchDarkly.Client
             configuration.HttpClientTimeout = timeSpan;
             return configuration;
         }
-        
+
         public static Configuration WithFeatureStore(this Configuration configuration, IFeatureStore featureStore)
         {
             if (featureStore != null)
             {
                 configuration.FeatureStore = featureStore;
             }
+            return configuration;
+        }
 
         public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
         {
