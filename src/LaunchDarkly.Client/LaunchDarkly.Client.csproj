@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>3.1.2</VersionPrefix>
-    <VersionSuffix>beta7</VersionSuffix>
+    <VersionPrefix>3.2.0</VersionPrefix>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>LaunchDarkly.Client</AssemblyName>

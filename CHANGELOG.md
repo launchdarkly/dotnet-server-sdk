@@ -2,9 +2,14 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
-## [3.1.2] - 2017-04-29
+## 
+## [3.2.0] - 2017-05-25
+### Added
+- Config option to use custom implementation of IFeatureStore
+- Artifact is now signed
 ### Changed
 - Removed NETStandard.Library from dependencies so it isn't brought in by non-.NET core projects.
+- Project files migrated to current `*.csproj` standard
 
 ## [3.1.1] - 2017-01-16
 ### Changed
