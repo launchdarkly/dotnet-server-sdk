@@ -1,7 +1,6 @@
 LaunchDarkly SDK for .NET
 ===========================
-
-[![Build status](https://ci.appveyor.com/api/projects/status/wjj4xipn4xpniu8c?svg=true)](https://ci.appveyor.com/project/jkodumal/net-client)
+[![CircleCI](https://circleci.com/gh/launchdarkly/.net-client/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/.net-client/tree/master)
 
 Quick setup
 -----------
