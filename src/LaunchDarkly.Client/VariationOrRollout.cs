@@ -35,7 +35,7 @@ namespace LaunchDarkly.Client
                 float sum = 0F;
                 foreach (WeightedVariation wv in Rollout.Variations)
                 {
-                    sum += (float)wv.Weight / 100000F;
+                    sum += (float) wv.Weight / 100000F;
                     if (bucket < sum)
                     {
                         return wv.Variation;
@@ -65,7 +65,7 @@ namespace LaunchDarkly.Client
         private static string Hash(string s)
         {
             var sha = SHA1.Create();
-            byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(s));
+            byte[] data = sha.ComputeHash(Encoding.UTF8.GetBytes(s));
 
             var sb = new StringBuilder();
             foreach (byte t in data)

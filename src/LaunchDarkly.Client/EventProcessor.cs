@@ -1,40 +1,45 @@
-﻿using LaunchDarkly.Client.Logging;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
-    sealed class EventProcessor : IDisposable, IStoreEvents
+    internal sealed class EventProcessor : IDisposable, IStoreEvents
     {
-        private static readonly ILog Logger = LogProvider.For<EventProcessor>();
+        private static readonly ILogger Logger = LdLogger.CreateLogger<EventProcessor>();
 
         private readonly Configuration _config;
-        private BlockingCollection<Event> _queue;
-        private System.Threading.Timer _timer;
-        private readonly HttpClient _httpClient;
+        private readonly BlockingCollection<Event> _queue;
+        private readonly Timer _timer;
+        private volatile HttpClient _httpClient;
+        private readonly Uri _uri;
 
         internal EventProcessor(Configuration config)
         {
             _config = config;
+            _httpClient = config.HttpClient();
             _queue = new BlockingCollection<Event>(_config.EventQueueCapacity);
-            _timer = new System.Threading.Timer(SubmitEvents, null, _config.EventQueueFrequency, _config.EventQueueFrequency);
-            _httpClient = config.HttpClient;
+            _timer = new Timer(SubmitEvents, null, _config.EventQueueFrequency,
+                _config.EventQueueFrequency);
+            _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
         }
 
         private void SubmitEvents(object StateInfo)
         {
-            ((IStoreEvents)this).Flush();
+            ((IStoreEvents) this).Flush();
         }
 
         void IStoreEvents.Add(Event eventToLog)
         {
             if (!_queue.TryAdd(eventToLog))
-                Logger.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                Logger.LogWarning("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
         }
 
         void IDisposable.Dispose()
@@ -56,31 +61,82 @@ namespace LaunchDarkly.Client
 
             if (events.Any())
             {
-                BulkSubmit(events);
+                Task.Run(() => BulkSubmitAsync(events)).GetAwaiter().GetResult();
             }
         }
 
-        private void BulkSubmit(IEnumerable<Event> events)
+        private async Task BulkSubmitAsync(IList<Event> events)
         {
-            var uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
+            var cts = new CancellationTokenSource(_config.HttpClientTimeout);
+            var jsonEvents = "";
             try
             {
-                string json = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
-                Logger.Debug("Submitting " + events.Count() + " events to " + uri.AbsoluteUri + " with json: " + json);
+                jsonEvents = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
+                Logger.LogDebug("Submitting " + events.Count + " events to " + _uri.AbsoluteUri + " with json: " +
+                                jsonEvents);
+                await SendEventsAsync(jsonEvents, cts);
+            }
+            catch (Exception e)
+            {
+                // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
+                _httpClient?.Dispose();
+                _httpClient = _config.HttpClient();
 
-                using (var responseTask = _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json")))
+                Logger.LogDebug("Error sending events: " + Util.ExceptionMessage(e) +
+                                " waiting 1 second before retrying.");
+                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
+                cts = new CancellationTokenSource(_config.HttpClientTimeout);
+                try
                 {
-                    responseTask.ConfigureAwait(false);
-                    HttpResponseMessage response = responseTask.Result;
+                    Logger.LogDebug("Submitting " + events.Count + " events to " + _uri.AbsoluteUri + " with json: " +
+                                    jsonEvents);
+                    await SendEventsAsync(jsonEvents, cts);
+                }
+                catch (TaskCanceledException tce)
+                {
+                    if (tce.CancellationToken == cts.Token)
+                    {
+                        //Indicates the task was cancelled by something other than a request timeout
+                        Logger.LogError(string.Format("Error Submitting Events using uri: '{0}' '{1}'", _uri.AbsoluteUri,
+                                            Util.ExceptionMessage(tce)) + tce + " " + tce.StackTrace);
+                    }
+                    else
+                    {
+                        //Otherwise this was a request timeout.
+                        Logger.LogError("Timed out trying to send " + events.Count + " events after " +
+                                        _config.HttpClientTimeout);
+                    }
+                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
+                    _httpClient?.Dispose();
+                    _httpClient = _config.HttpClient();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(string.Format("Error Submitting Events using uri: '{0}' '{1}'", _uri.AbsoluteUri,
+                                        Util.ExceptionMessage(ex)) + ex + " " + ex.StackTrace);
 
-                    if (!response.IsSuccessStatusCode)
-                        Logger.Error(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
-                            uri.AbsoluteUri, response.StatusCode));
+                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
+                    _httpClient?.Dispose();
+                    _httpClient = _config.HttpClient();
                 }
             }
-            catch (Exception ex)
+        }
+
+
+        private async Task SendEventsAsync(String jsonEvents, CancellationTokenSource cts)
+        {
+            using (var stringContent = new StringContent(jsonEvents, Encoding.UTF8, "application/json"))
+            using (var response = await _httpClient.PostAsync(_uri, stringContent).ConfigureAwait(false))
             {
-                Logger.Error(string.Format("Error Submitting Events using uri: '{0}' '{1}'", uri.AbsoluteUri, ex.Message));
+                if (!response.IsSuccessStatusCode)
+                {
+                    Logger.LogError(string.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                        _uri.AbsoluteUri, response.StatusCode));
+                }
+                else
+                {
+                    Logger.LogDebug("Got " + response.StatusCode + " when sending events.");
+                }
             }
         }
     }

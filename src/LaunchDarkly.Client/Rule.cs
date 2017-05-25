@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
-    class Rule : VariationOrRollout
+    internal class Rule : VariationOrRollout
     {
         internal List<Clause> Clauses { get; private set; }
 
@@ -21,7 +21,6 @@ namespace LaunchDarkly.Client
                 {
                     return false;
                 }
-
             }
             return true;
         }

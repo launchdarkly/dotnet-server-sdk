@@ -64,6 +64,7 @@ local.properties
 *.dotCover
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
+packages/
 src/packages/
 src/LaunchDarkly.Tests/App.config
 
@@ -170,3 +171,11 @@ pip-log.txt
 *.nupkg
 PortabilityAnalysis.html
 nuget.exe
+
+########################
+## .NET Core / VS Code
+########################
+
+project.lock.json
+
+*.snk

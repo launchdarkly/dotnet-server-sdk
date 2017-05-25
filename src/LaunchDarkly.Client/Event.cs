@@ -7,12 +7,16 @@ namespace LaunchDarkly.Client
     public abstract class Event
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         [JsonProperty(PropertyName = "kind", NullValueHandling = NullValueHandling.Ignore)]
         public string Kind { get; private set; }
+
         [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
         public User User { get; private set; }
+
         [JsonProperty(PropertyName = "creationDate", NullValueHandling = NullValueHandling.Ignore)]
         public long CreationDate { get; private set; }
+
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; private set; }
 
@@ -26,7 +30,7 @@ namespace LaunchDarkly.Client
 
         public static long GetUnixTimestampMillis(DateTime dateTime)
         {
-            return (long)(dateTime - UnixEpoch).TotalMilliseconds;
+            return (long) (dateTime - UnixEpoch).TotalMilliseconds;
         }
     }
 
@@ -34,14 +38,18 @@ namespace LaunchDarkly.Client
     {
         [JsonProperty(PropertyName = "value", NullValueHandling = NullValueHandling.Ignore)]
         public JToken Value { get; private set; }
+
         [JsonProperty(PropertyName = "default", NullValueHandling = NullValueHandling.Ignore)]
         public JToken Default { get; private set; }
+
         [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
         public JToken Version { get; private set; }
+
         [JsonProperty(PropertyName = "prereqOf", NullValueHandling = NullValueHandling.Ignore)]
         public JToken PrereqOf { get; private set; }
 
-        public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version, JToken prereqOf) : base("feature", key, user)
+        public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version,
+            JToken prereqOf) : base("feature", key, user)
         {
             Value = value;
             Default = defaultValue;
@@ -50,7 +58,7 @@ namespace LaunchDarkly.Client
         }
     }
 
-    public class CustomEvent: Event
+    public class CustomEvent : Event
     {
         [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
         public string Data { get; private set; }
@@ -61,8 +69,10 @@ namespace LaunchDarkly.Client
         }
     }
 
-    public class IdentifyEvent: Event
+    public class IdentifyEvent : Event
     {
-        public IdentifyEvent(User user) : base("identify", user.Key, user) { }
+        public IdentifyEvent(User user) : base("identify", user.Key, user)
+        {
+        }
     }
 }
