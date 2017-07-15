@@ -120,7 +120,7 @@ namespace LaunchDarkly.Client
 
         public static User AndName(this User user, string name)
         {
-            user.LastName = name;
+            user.Name = name;
             return user;
         }
 
