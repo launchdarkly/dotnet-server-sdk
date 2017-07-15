@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.3.1] - 2017-07-14
+### Fixed
+- `UserExtensions.AndName` updates `user.Name` instead of `user.LastName`
+
 ## [3.3.0] - 2017-06-16
 ### Added
 - Config option to use custom implementation of IFeatureStore
