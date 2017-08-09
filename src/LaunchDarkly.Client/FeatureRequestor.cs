@@ -57,7 +57,7 @@ namespace LaunchDarkly.Client
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
-                        throw tce;
+                        throw new TaskCanceledException("", tce);
                     }
                     //Otherwise this was a request timeout.
                     throw new Exception("Get Features with URL: " + _uri.AbsoluteUri + " timed out after : " +
@@ -68,7 +68,7 @@ namespace LaunchDarkly.Client
                     // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
                     _httpClient?.Dispose();
                     _httpClient = _config.HttpClient();
-                    throw ex;
+                    throw new Exception("", ex);
                 }
             }
         }
