@@ -2,6 +2,11 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.3.2] - 2017-08-30
+### Changed
+- Updated dependency versions. Thanks @ISkomorokh!
+- Exceptions in `FeatureRequestor` are rethrown without replacing stack information
+
 ## [3.3.1] - 2017-07-14
 ### Fixed
 - `UserExtensions.AndName` updates `user.Name` instead of `user.LastName`

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("LaunchDarkly")]
 [assembly: AssemblyProduct("LaunchDarkly.Client")]
-[assembly: AssemblyCopyright("Copyright 2016 LaunchDarkly")]
+[assembly: AssemblyCopyright("Copyright 2017 LaunchDarkly")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
