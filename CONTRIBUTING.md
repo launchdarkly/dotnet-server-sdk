@@ -16,7 +16,7 @@ Mac OS:
 1. Make sure you can build and run tests from command line:
 
 ```
-dotnet build src/LaunchDarkly.Client -f netstandard1.6
+dotnet build src/LaunchDarkly.Client -f netstandard1.4
 dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
 ```
 
