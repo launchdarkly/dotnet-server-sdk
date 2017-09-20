@@ -8,6 +8,7 @@ namespace LaunchDarkly.Client
     public class Configuration
     {
         public Uri BaseUri { get; internal set; }
+        public Uri StreamUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
         public string SdkKey { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
@@ -28,6 +29,7 @@ namespace LaunchDarkly.Client
             .InformationalVersion;
 
         internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
+        private static readonly Uri DefaultStreamUri = new Uri("https://stream.launchdarkly.com");
         private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
         private static readonly int DefaultEventQueueCapacity = 500;
         private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(5);
@@ -39,6 +41,7 @@ namespace LaunchDarkly.Client
             var defaultConfiguration = new Configuration
             {
                 BaseUri = DefaultUri,
+                StreamUri = DefaultStreamUri,
                 EventsUri = DefaultEventsUri,
                 EventQueueCapacity = DefaultEventQueueCapacity,
                 EventQueueFrequency = DefaultEventQueueFrequency,
@@ -77,6 +80,22 @@ namespace LaunchDarkly.Client
         {
             if (uri != null)
                 configuration.BaseUri = uri;
+
+            return configuration;
+        }
+
+        public static Configuration WithStreamUri(this Configuration configuration, string uri)
+        {
+            if (uri != null)
+                configuration.StreamUri = new Uri(uri);
+
+            return configuration;
+        }
+
+        public static Configuration WithStreamUri(this Configuration configuration, Uri uri)
+        {
+            if (uri != null)
+                configuration.StreamUri = uri;
 
             return configuration;
         }
