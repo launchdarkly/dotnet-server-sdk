@@ -41,6 +41,13 @@
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LaunchDarkly.EventSource\LaunchDarkly.EventSource.csproj">
+      <Project>{4a78d1af-516d-4a83-a172-eba2856dda2b}</Project>
+      <Name>LaunchDarkly.EventSource</Name>
+    </ProjectReference>
+  </ItemGroup>
+
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
