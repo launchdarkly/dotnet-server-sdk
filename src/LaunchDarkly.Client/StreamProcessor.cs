@@ -37,7 +37,7 @@ namespace LaunchDarkly.Client
 
         TaskCompletionSource<bool> IUpdateProcessor.Start()
         {
-            Dictionary<string, string> headers = new Dictionary<string, string> {{"Authorization", _config.SdkKey}, {"User-Agent", ".NETClient/" + Configuration.Version}, {"Accept", "text/event-stream"}};
+            Dictionary<string, string> headers = new Dictionary<string, string> {{"Authorization", _config.SdkKey}, {"User-Agent", "DotNetClient/" + Configuration.Version}, {"Accept", "text/event-stream"}};
             
             EventSource.Configuration config = new EventSource.Configuration(
                 uri: new Uri(_config.StreamUri, "/flags"),
