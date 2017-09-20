@@ -63,7 +63,7 @@ namespace LaunchDarkly.Client
                     throw new Exception("Get Features with URL: " + _uri.AbsoluteUri + " timed out after : " +
                                         _config.HttpClientTimeout);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
                     _httpClient?.Dispose();
