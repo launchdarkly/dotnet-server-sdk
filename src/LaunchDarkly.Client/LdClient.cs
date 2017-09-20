@@ -30,9 +30,9 @@ namespace LaunchDarkly.Client
 
             var featureRequestor = new FeatureRequestor(config);
 
-            if (config.stream)
+            if (config.Stream)
             {
-                _updateProcessor = new StreamProcessor(config, featureRequestor, _featureStore)
+                _updateProcessor = new StreamProcessor(config, featureRequestor, _featureStore);
             }
             else 
             {

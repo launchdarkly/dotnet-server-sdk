@@ -53,7 +53,7 @@ namespace LaunchDarkly.Client
                 Offline = false,
                 SdkKey = sdkKey,
                 FeatureStore = new InMemoryFeatureStore(),
-                Stream = true;
+                Stream = true
             };
 
             return defaultConfiguration;
