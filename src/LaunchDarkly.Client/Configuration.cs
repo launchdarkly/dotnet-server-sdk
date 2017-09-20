@@ -11,6 +11,7 @@ namespace LaunchDarkly.Client
         public Uri StreamUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
         public string SdkKey { get; internal set; }
+        public bool Stream { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
@@ -51,7 +52,8 @@ namespace LaunchDarkly.Client
                 HttpClientHandler = new HttpClientHandler(),
                 Offline = false,
                 SdkKey = sdkKey,
-                FeatureStore = new InMemoryFeatureStore()
+                FeatureStore = new InMemoryFeatureStore(),
+                Stream = true;
             };
 
             return defaultConfiguration;
@@ -196,6 +198,12 @@ namespace LaunchDarkly.Client
         public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
         {
             configuration.HttpClientHandler = httpClientHandler;
+            return configuration;
+        }
+
+        public static Configuration WithStream(this Configuration configuration, bool stream)
+        {
+            configuration.Stream = stream;
             return configuration;
         }
     }

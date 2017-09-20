@@ -29,7 +29,15 @@ namespace LaunchDarkly.Client
             }
 
             var featureRequestor = new FeatureRequestor(config);
-            _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
+
+            if (config.stream)
+            {
+                _updateProcessor = new StreamProcessor(config, featureRequestor, _featureStore)
+            }
+            else 
+            {
+                _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
+            }
             var initTask = _updateProcessor.Start();
             Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds +
                                   " milliseconds for LaunchDarkly client to start..");
