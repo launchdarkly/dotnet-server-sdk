@@ -102,8 +102,7 @@ namespace LaunchDarkly.Client
                     InitTaskAsync();
                     break;
                 case INDIRECT_PATCH:
-                    //TODO
-                    //UpdateTaskAsync();
+                    UpdateTaskAsync(e.Message.Data);
                     break;
             }
         }
@@ -129,7 +128,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
+                var allFeatures = await _featureRequestor.GetAllFlagsAsync();
                 if (allFeatures != null)
                 {
                     _featureStore.Init(allFeatures);
@@ -151,7 +150,25 @@ namespace LaunchDarkly.Client
                 Logger.LogError(string.Format("Error Initializing features: '{0}'", Util.ExceptionMessage(ex)));
             }
         }
-
+        private async Task UpdateTaskAsync(string featureKey)
+        {
+            try
+            {
+                var feature = await _featureRequestor.GetFlagAsync(featureKey);
+                if (feature != null)
+                {
+                    _featureStore.Upsert(featureKey, feature);
+                }
+            }
+            catch (AggregateException ex)
+            {
+                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex.Flatten())));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
+            }
+        }
         private class FeaturePatchData
         {
             string path = "";

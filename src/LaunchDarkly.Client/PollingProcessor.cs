@@ -52,7 +52,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
+                var allFeatures = await _featureRequestor.GetAllFlagsAsync();
                 if (allFeatures != null)
                 {
                     _featureStore.Init(allFeatures);

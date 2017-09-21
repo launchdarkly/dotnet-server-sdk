@@ -27,12 +27,16 @@ namespace LaunchDarkly.Client
 
         // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there
         // was a problem getting flags.
-        internal async Task<IDictionary<string, FeatureFlag>> MakeAllRequestAsync()
+        internal async Task<IDictionary<string, FeatureFlag>> GetAllFlagsAsync()
         {
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
+            string content = null;
             try
             {
-                return await FetchFeatureFlagsAsync(cts);
+                content = await Get(cts, _uri);
+                var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
+                Logger.LogDebug("Get all flags returned " + flags.Keys.Count + " feature flags");
+                return flags;
             }
             catch (Exception e)
             {
@@ -46,7 +50,10 @@ namespace LaunchDarkly.Client
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
                 try
                 {
-                    return await FetchFeatureFlagsAsync(cts);
+                    content = await Get(cts, _uri);
+                    var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
+                    Logger.LogDebug("Get all flags returned " + flags.Keys.Count + " feature flags");
+                    return flags;
                 }
                 catch (TaskCanceledException tce)
                 {
@@ -72,11 +79,63 @@ namespace LaunchDarkly.Client
                 }
             }
         }
-
-        private async Task<IDictionary<string, FeatureFlag>> FetchFeatureFlagsAsync(CancellationTokenSource cts)
+        // Returns the latest version of a flag, or null if it has not been modified. Throws an exception if there
+        // was a problem getting flags.
+        internal async Task<FeatureFlag> GetFlagAsync(string featureKey)
         {
-            Logger.LogDebug("Getting all flags with uri: " + _uri.AbsoluteUri);
-            var request = new HttpRequestMessage(HttpMethod.Get, _uri);
+            var cts = new CancellationTokenSource(_config.HttpClientTimeout);
+            string content = null;
+            Uri flagPath = new Uri(_uri + "/" + featureKey);
+            try
+            {
+                content = await Get(cts, flagPath);
+                var flag = JsonConvert.DeserializeObject<FeatureFlag>(content);
+                return flag;
+            }
+            catch (Exception e)
+            {
+                // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
+                _httpClient?.Dispose();
+                _httpClient = _config.HttpClient();
+
+                Logger.LogDebug("Error getting feature flags: " + Util.ExceptionMessage(e) +
+                                " waiting 1 second before retrying.");
+                System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1)).Wait();
+                cts = new CancellationTokenSource(_config.HttpClientTimeout);
+                try
+                {
+                    content = await Get(cts, flagPath);
+                    var flag = JsonConvert.DeserializeObject<FeatureFlag>(content);
+                    return flag;
+                }
+                catch (TaskCanceledException tce)
+                {
+                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
+                    _httpClient?.Dispose();
+                    _httpClient = _config.HttpClient();
+
+                    if (tce.CancellationToken == cts.Token)
+                    {
+                        //Indicates the task was cancelled by something other than a request timeout
+                        throw;
+                    }
+                    //Otherwise this was a request timeout.
+                    throw new Exception("Get Feature with URL: " + flagPath + " timed out after : " +
+                                        _config.HttpClientTimeout);
+                }
+                catch (Exception)
+                {
+                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
+                    _httpClient?.Dispose();
+                    _httpClient = _config.HttpClient();
+                    throw;
+                }
+            }
+        }
+        private async Task<string> Get(CancellationTokenSource cts, Uri path)
+        {
+            Logger.LogDebug("Getting all flags with uri: " + path.AbsoluteUri);
+            var request = new HttpRequestMessage(HttpMethod.Get, path);
             if (_etag != null)
             {
                 request.Headers.IfNoneMatch.Add(_etag);
@@ -92,10 +151,7 @@ namespace LaunchDarkly.Client
                 _etag = response.Headers.ETag;
                 //We ensure the status code after checking for 304, because 304 isn't considered success
                 response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
-                Logger.LogDebug("Get all flags returned " + flags.Keys.Count + " feature flags");
-                return flags;
+                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
         }
     }
