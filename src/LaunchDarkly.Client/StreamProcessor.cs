@@ -25,7 +25,6 @@ namespace LaunchDarkly.Client
         private readonly IFeatureStore _featureStore;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
-        private bool _disposed;
         private static EventSource.EventSource _es;
 
         internal StreamProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
@@ -123,7 +122,7 @@ namespace LaunchDarkly.Client
         void IDisposable.Dispose()
         {
             Logger.LogInformation("Stopping LaunchDarkly StreamProcessor");
-            _disposed = true;
+            _es.Close();
         }
 
         private async Task InitTaskAsync()
