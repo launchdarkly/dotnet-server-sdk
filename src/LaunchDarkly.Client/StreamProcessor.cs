@@ -47,9 +47,9 @@ namespace LaunchDarkly.Client
             
             EventSource.Configuration config = new EventSource.Configuration(
                 uri: new Uri(_config.StreamUri, "/flags"),
-                connectionTimeOut: TimeSpan.FromSeconds(20),
-                delayRetryDuration: TimeSpan.FromMilliseconds(1000),
-                readTimeout: TimeSpan.FromMilliseconds(1000 * 60 * 5),
+                connectionTimeOut: _config.ConnectionTimeout,
+                delayRetryDuration: _config.ReconnectTime,
+                readTimeout: _config.ReadTimeout,
                 requestHeaders: headers,
                 logger: LdLogger.CreateLogger<EventSource.EventSource>()
             );
@@ -155,8 +155,8 @@ namespace LaunchDarkly.Client
 
         private class FeaturePatchData
         {
-            string path;
-            FeatureFlag data;
+            string path = "";
+            FeatureFlag data = null;
 
             public FeaturePatchData() {}
 
@@ -171,8 +171,8 @@ namespace LaunchDarkly.Client
 
         private class FeatureDeleteData
         {
-            string path;
-            int version;
+            string path = "";
+            int version = 0;
 
             public FeatureDeleteData() {}
 

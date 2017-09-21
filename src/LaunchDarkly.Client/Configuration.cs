@@ -16,12 +16,17 @@ namespace LaunchDarkly.Client
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
+        // The time out when reading data from the EventSource API. If null, defaults to 5 minutes.
+        public TimeSpan ReadTimeout { get; internal set; }
+        // The time to wait before attempting to reconnect to the EventSource API. If null, defaults to 1 second.
+        public TimeSpan ReconnectTime { get; internal set; }
+        // The connection time out. If null, defaults to 10 seconds.
+        public TimeSpan ConnectionTimeout { get; internal set; }
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool Offline { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
 
-        public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
 
         internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
                 .GetTypeInfo()
@@ -29,12 +34,16 @@ namespace LaunchDarkly.Client
                 .GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)))
             .InformationalVersion;
 
+        public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
         internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
         private static readonly Uri DefaultStreamUri = new Uri("https://stream.launchdarkly.com");
         private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
         private static readonly int DefaultEventQueueCapacity = 500;
         private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
+        private static readonly TimeSpan DefaultReconnectTime = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan DefaultConnectionTimeout = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
 
         public static Configuration Default(string sdkKey)
@@ -48,6 +57,9 @@ namespace LaunchDarkly.Client
                 EventQueueFrequency = DefaultEventQueueFrequency,
                 PollingInterval = DefaultPollingInterval,
                 StartWaitTime = DefaultStartWaitTime,
+                ReadTimeout = DefaultReadTimeout,
+                ReconnectTime = DefaultReconnectTime,
+                ConnectionTimeout = DefaultConnectionTimeout,
                 HttpClientTimeout = DefaultHttpClientTimeout,
                 HttpClientHandler = new HttpClientHandler(),
                 Offline = false,
@@ -183,6 +195,24 @@ namespace LaunchDarkly.Client
         public static Configuration WithHttpClientTimeout(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.HttpClientTimeout = timeSpan;
+            return configuration;
+        }
+
+
+        public static Configuration WithReadTimeout(this Configuration configuration, TimeSpan timeSpan)
+        {
+            configuration.ReadTimeout = timeSpan;
+            return configuration;
+        }
+
+        public static Configuration WithReconnectTime(this Configuration configuration, TimeSpan timeSpan)
+        {
+            configuration.ReconnectTime = timeSpan;
+            return configuration;
+        }
+        public static Configuration WithConnectionTimeout(this Configuration configuration, TimeSpan timeSpan)
+        {
+            configuration.ConnectionTimeout = timeSpan;
             return configuration;
         }
 
