@@ -24,6 +24,7 @@ namespace LaunchDarkly.Client
         public TimeSpan ConnectionTimeout { get; internal set; }
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
+        public bool UseLdd { get; internal set; }
         public bool Offline { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
 
@@ -175,6 +176,12 @@ namespace LaunchDarkly.Client
         public static Configuration WithStartWaitTime(this Configuration configuration, TimeSpan startWaitTime)
         {
             configuration.StartWaitTime = startWaitTime;
+            return configuration;
+        }
+
+        public static Configuration WithUseLdd(this Configuration configuration, bool useLdd)
+        {
+            configuration.UseLdd = useLdd;
             return configuration;
         }
 

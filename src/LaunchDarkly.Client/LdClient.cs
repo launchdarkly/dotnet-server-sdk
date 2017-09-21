@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
             Logger.LogInformation("Starting LaunchDarkly Client " + Configuration.Version);
             _configuration = config;
             _eventStore = eventStore;
-            _featureStore = config.FeatureStore;
+            _featureStore = _configuration.FeatureStore;
 
             if (_configuration.Offline)
             {
@@ -28,9 +28,15 @@ namespace LaunchDarkly.Client
                 return;
             }
 
+            if (_configuration.UseLdd)
+            {
+                Logger.LogInformation("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
+                return;
+            }
+
             var featureRequestor = new FeatureRequestor(config);
 
-            if (config.Stream)
+            if (_configuration.Stream)
             {
                 _updateProcessor = new StreamProcessor(config, featureRequestor, _featureStore);
             }
@@ -54,7 +60,7 @@ namespace LaunchDarkly.Client
 
         public bool Initialized()
         {
-            return IsOffline() || _updateProcessor.Initialized();
+            return IsOffline() || _configuration.UseLdd || _updateProcessor.Initialized();
         }
 
         public bool IsOffline()
