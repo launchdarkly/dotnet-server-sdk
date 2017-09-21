@@ -98,9 +98,6 @@ namespace LaunchDarkly.Client
                     FeatureDeleteData deleteData = JsonConvert.DeserializeObject<FeatureDeleteData>(e.Message.Data);
                     _featureStore.Delete(deleteData.Key(), deleteData.Version());
                     break;
-                case INDIRECT_PUT:
-                    InitTaskAsync();
-                    break;
                 case INDIRECT_PATCH:
                     UpdateTaskAsync(e.Message.Data);
                     break;
@@ -124,32 +121,6 @@ namespace LaunchDarkly.Client
             _es.Close();
         }
 
-        private async Task InitTaskAsync()
-        {
-            try
-            {
-                var allFeatures = await _featureRequestor.GetAllFlagsAsync();
-                if (allFeatures != null)
-                {
-                    _featureStore.Init(allFeatures);
-
-                    //We can't use bool in CompareExchange because it is not a reference type.
-                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
-                    {
-                        _initTask.SetResult(true);
-                        Logger.LogInformation("Initialized LaunchDarkly Streaming Processor.");
-                    }
-                }
-            }
-            catch (AggregateException ex)
-            {
-                Logger.LogError(string.Format("Error Initializing features: '{0}'", Util.ExceptionMessage(ex.Flatten())));
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(string.Format("Error Initializing features: '{0}'", Util.ExceptionMessage(ex)));
-            }
-        }
         private async Task UpdateTaskAsync(string featureKey)
         {
             try
