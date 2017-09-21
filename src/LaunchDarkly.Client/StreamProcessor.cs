@@ -49,7 +49,7 @@ namespace LaunchDarkly.Client
                 uri: new Uri(_config.StreamUri, "/flags"),
                 connectionTimeOut: TimeSpan.FromSeconds(20),
                 delayRetryDuration: TimeSpan.FromMilliseconds(1000),
-                readTimeout: TimeSpan.FromMilliseconds(1000),
+                readTimeout: TimeSpan.FromMilliseconds(1000 * 60 * 5),
                 requestHeaders: headers,
                 logger: LdLogger.CreateLogger<EventSource.EventSource>()
             );
