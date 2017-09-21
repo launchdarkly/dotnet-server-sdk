@@ -5,12 +5,18 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using LaunchDarkly.EventSource;
+using Newtonsoft.Json;
 
 
 namespace LaunchDarkly.Client
 {
     internal class StreamProcessor : IUpdateProcessor
     {
+        private const String PUT = "put";
+        private const String PATCH = "patch";
+        private const String DELETE = "delete";
+        private const String INDIRECT_PUT = "indirect/put";
+        private const String INDIRECT_PATCH = "indirect/patch";
         private static readonly ILogger Logger = LdLogger.CreateLogger<StreamProcessor>();
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
@@ -46,7 +52,7 @@ namespace LaunchDarkly.Client
                 readTimeout: TimeSpan.FromMilliseconds(1000),
                 requestHeaders: headers,
                 logger: LdLogger.CreateLogger<EventSource.EventSource>()
-            );      
+            );
             _es = new EventSource.EventSource(config);
 
             _es.Opened += OnOpen;
@@ -66,31 +72,64 @@ namespace LaunchDarkly.Client
             return _initTask;
         }
 
-        private static void OnOpen(object sender, EventSource.StateChangedEventArgs e)
+        private void OnOpen(object sender, EventSource.StateChangedEventArgs e)
         {
-            Logger.LogInformation("EventSource Opened. Current State: {0}", e.ReadyState);
         }
 
-        private static void OnClosed(object sender, EventSource.StateChangedEventArgs e)
+        private void OnClosed(object sender, EventSource.StateChangedEventArgs e)
         {
-            Logger.LogInformation("EventSource Closed. Current State {0}", e.ReadyState);
         }
 
-        private static void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
+        private void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
         {
+            switch(e.EventName)
+            {
+                case PUT:
+                    _featureStore.Init(JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(e.Message.Data));
+                    if(Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0) {
+                        _initTask.SetResult(true);
+                        Logger.LogInformation("Initialized LaunchDarkly client.");
+                    }
+                    break;
+                case PATCH:
+                    //TODO
+                    break;
+                case DELETE:
+                    //TODO
+                    break;
+                case INDIRECT_PUT:
+                    //TODO
+                    // try
+                    // {   
+                    //     _featureStore.Init(_featureRequestor.MakeAllRequestAsync()); 
+                    //     if(Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0) {
+                    //         _initTask.SetResult(true);
+                    //         Logger.LogInformation("Initialized LaunchDarkly client.");
+                    //     }
+                    // }
+                    // catch (Exception ex)
+                    // {
+                    //     Logger.LogError("Encountered exception in LaunchDarkly client", ex);
+                    // }
+                    break;
+                case INDIRECT_PATCH:
+                    //TODO
+                    break;
+            }
             Logger.LogInformation("EventSource Message Received. Event Name: {0}", e.EventName);
             Logger.LogInformation("EventSource Message Properties: {0}\tLast Event Id: {1}{0}\tOrigin: {2}{0}\tData: {3}",
                 Environment.NewLine, e.Message.LastEventId, e.Message.Origin, e.Message.Data);
         }
 
-        private static void OnComment(object sender, EventSource.CommentReceivedEventArgs e)
+        private void OnComment(object sender, EventSource.CommentReceivedEventArgs e)
         {
-            Logger.LogInformation("EventSource Comment Received: {0}", e.Comment);
+            Logger.LogDebug("Received a heartbeat.");
         }
 
-        private static void OnError(object sender, EventSource.ExceptionEventArgs e)
+        private void OnError(object sender, EventSource.ExceptionEventArgs e)
         {
-            Logger.LogInformation("EventSource Error Occurred. Details: {0}", e.Exception.Message);
+            Logger.LogError("Encountered EventSource error:", e.Exception.Message);
+            Logger.LogDebug("", e);
         }
 
         void IDisposable.Dispose()
