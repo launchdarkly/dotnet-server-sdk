@@ -88,37 +88,25 @@ namespace LaunchDarkly.Client
                     _featureStore.Init(JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(e.Message.Data));
                     if(Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0) {
                         _initTask.SetResult(true);
-                        Logger.LogInformation("Initialized LaunchDarkly client.");
+                        Logger.LogInformation("Initialized LaunchDarkly Stream Processor.");
                     }
                     break;
                 case PATCH:
-                    //TODO
+                    FeaturePatchData patchData = JsonConvert.DeserializeObject<FeaturePatchData>(e.Message.Data);
+                    _featureStore.Upsert(patchData.Key(), patchData.Feature());
                     break;
                 case DELETE:
-                    //TODO
+                    FeatureDeleteData deleteData = JsonConvert.DeserializeObject<FeatureDeleteData>(e.Message.Data);
+                    _featureStore.Delete(deleteData.Key(), deleteData.Version());
                     break;
                 case INDIRECT_PUT:
-                    //TODO
-                    // try
-                    // {   
-                    //     _featureStore.Init(_featureRequestor.MakeAllRequestAsync()); 
-                    //     if(Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0) {
-                    //         _initTask.SetResult(true);
-                    //         Logger.LogInformation("Initialized LaunchDarkly client.");
-                    //     }
-                    // }
-                    // catch (Exception ex)
-                    // {
-                    //     Logger.LogError("Encountered exception in LaunchDarkly client", ex);
-                    // }
+                    InitTaskAsync();
                     break;
                 case INDIRECT_PATCH:
                     //TODO
+                    //UpdateTaskAsync();
                     break;
             }
-            Logger.LogInformation("EventSource Message Received. Event Name: {0}", e.EventName);
-            Logger.LogInformation("EventSource Message Properties: {0}\tLast Event Id: {1}{0}\tOrigin: {2}{0}\tData: {3}",
-                Environment.NewLine, e.Message.LastEventId, e.Message.Origin, e.Message.Data);
         }
 
         private void OnComment(object sender, EventSource.CommentReceivedEventArgs e)
@@ -136,6 +124,65 @@ namespace LaunchDarkly.Client
         {
             Logger.LogInformation("Stopping LaunchDarkly StreamProcessor");
             _disposed = true;
+        }
+
+        private async Task InitTaskAsync()
+        {
+            try
+            {
+                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
+                if (allFeatures != null)
+                {
+                    _featureStore.Init(allFeatures);
+
+                    //We can't use bool in CompareExchange because it is not a reference type.
+                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                    {
+                        _initTask.SetResult(true);
+                        Logger.LogInformation("Initialized LaunchDarkly Streaming Processor.");
+                    }
+                }
+            }
+            catch (AggregateException ex)
+            {
+                Logger.LogError(string.Format("Error Initializing features: '{0}'", Util.ExceptionMessage(ex.Flatten())));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(string.Format("Error Initializing features: '{0}'", Util.ExceptionMessage(ex)));
+            }
+        }
+
+        private class FeaturePatchData
+        {
+            string path;
+            FeatureFlag data;
+
+            public FeaturePatchData() {}
+
+            public String Key() {
+                return path.Substring(1);
+            }
+
+            public FeatureFlag Feature() {
+                return data;
+            }
+        }
+
+        private class FeatureDeleteData
+        {
+            string path;
+            int version;
+
+            public FeatureDeleteData() {}
+
+            public String Key() {
+                return path.Substring(1);
+            }
+
+            public int Version() {
+                return version;
+            }
         }
     }
 }
