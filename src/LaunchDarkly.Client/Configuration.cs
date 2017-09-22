@@ -21,7 +21,6 @@ namespace LaunchDarkly.Client
         // The time to wait before attempting to reconnect to the EventSource API. If null, defaults to 1 second.
         public TimeSpan ReconnectTime { get; internal set; }
         // The connection time out. If null, defaults to 10 seconds.
-        public TimeSpan ConnectionTimeout { get; internal set; }
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool UseLdd { get; internal set; }
@@ -44,7 +43,6 @@ namespace LaunchDarkly.Client
         private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
         private static readonly TimeSpan DefaultReconnectTime = TimeSpan.FromSeconds(1);
-        private static readonly TimeSpan DefaultConnectionTimeout = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
 
         public static Configuration Default(string sdkKey)
@@ -60,7 +58,6 @@ namespace LaunchDarkly.Client
                 StartWaitTime = DefaultStartWaitTime,
                 ReadTimeout = DefaultReadTimeout,
                 ReconnectTime = DefaultReconnectTime,
-                ConnectionTimeout = DefaultConnectionTimeout,
                 HttpClientTimeout = DefaultHttpClientTimeout,
                 HttpClientHandler = new HttpClientHandler(),
                 Offline = false,
@@ -215,11 +212,6 @@ namespace LaunchDarkly.Client
         public static Configuration WithReconnectTime(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.ReconnectTime = timeSpan;
-            return configuration;
-        }
-        public static Configuration WithConnectionTimeout(this Configuration configuration, TimeSpan timeSpan)
-        {
-            configuration.ConnectionTimeout = timeSpan;
             return configuration;
         }
 
