@@ -46,7 +46,8 @@ namespace LaunchDarkly.Client
             
             EventSource.Configuration config = new EventSource.Configuration(
                 uri: new Uri(_config.StreamUri, "/flags"),
-                connectionTimeOut: _config.ConnectionTimeout,
+                messageHandler: _config.HttpClientHandler,
+                connectionTimeOut: _config.HttpClientTimeout,
                 delayRetryDuration: _config.ReconnectTime,
                 readTimeout: _config.ReadTimeout,
                 requestHeaders: headers,
