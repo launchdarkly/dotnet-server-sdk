@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using LaunchDarkly.EventSource;
 using Newtonsoft.Json;
 
-
 namespace LaunchDarkly.Client
 {
     internal class StreamProcessor : IUpdateProcessor
@@ -97,7 +96,7 @@ namespace LaunchDarkly.Client
                     break;
                 case DELETE:
                     FeatureDeleteData deleteData = JsonConvert.DeserializeObject<FeatureDeleteData>(e.Message.Data);
-                    _featureStore.Delete(deleteData.Key(), deleteData.Version());
+                    _featureStore.Delete(deleteData.Key(), deleteData.CurrentVersion());
                     break;
                 case INDIRECT_PATCH:
                     UpdateTaskAsync(e.Message.Data);
@@ -143,33 +142,43 @@ namespace LaunchDarkly.Client
         }
         private class FeaturePatchData
         {
-            string path = "";
-            FeatureFlag data = null;
+            internal string Path { get; private set; }
+            internal FeatureFlag Data { get; private set; }
 
-            public FeaturePatchData() {}
+            [JsonConstructor]
+            internal FeaturePatchData(string path, FeatureFlag data)
+            {
+                Path = path;
+                Data = data;
+            }
 
             public String Key() {
-                return path.Substring(1);
+                return Path.Substring(1);
             }
 
             public FeatureFlag Feature() {
-                return data;
+                return Data;
             }
         }
 
-        private class FeatureDeleteData
+        internal class FeatureDeleteData
         {
-            string path = "";
-            int version = 0;
+            internal string Path { get; set; }
+            internal int Version { get; set; }
 
-            public FeatureDeleteData() {}
-
-            public String Key() {
-                return path.Substring(1);
+            [JsonConstructor]
+            internal FeatureDeleteData(string path, int version)
+            {
+                Path = path;
+                Version = version;
             }
 
-            public int Version() {
-                return version;
+            public String Key() {
+                return Path.Substring(1);
+            }
+
+            public int CurrentVersion() {
+                return Version;
             }
         }
     }
