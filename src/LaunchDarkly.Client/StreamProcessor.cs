@@ -79,7 +79,7 @@ namespace LaunchDarkly.Client
         {
         }
 
-        private void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
+        private async void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
         {
             switch(e.EventName)
             {
@@ -99,7 +99,7 @@ namespace LaunchDarkly.Client
                     _featureStore.Delete(deleteData.Key(), deleteData.CurrentVersion());
                     break;
                 case INDIRECT_PATCH:
-                    UpdateTaskAsync(e.Message.Data);
+                    await UpdateTaskAsync(e.Message.Data);
                     break;
             }
         }
