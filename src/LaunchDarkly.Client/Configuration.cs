@@ -16,11 +16,17 @@ namespace LaunchDarkly.Client
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
-        // The time out when reading data from the EventSource API. If null, defaults to 5 minutes.
+        /// <summary>
+        /// The time out when reading data from the EventSource API. If null, defaults to 5 minutes.
+        /// </summary>
         public TimeSpan ReadTimeout { get; internal set; }
-        // The time to wait before attempting to reconnect to the EventSource API. If null, defaults to 1 second.
+        /// <summary>
+        /// The time to wait before attempting to reconnect to the EventSource API. If null, defaults to 1 second.
+        /// </summary>
         public TimeSpan ReconnectTime { get; internal set; }
-        // The connection time out. If null, defaults to 10 seconds.
+        /// <summary>
+        /// The connection time out. If null, defaults to 10 seconds.
+        /// </summary>
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool UseLdd { get; internal set; }
