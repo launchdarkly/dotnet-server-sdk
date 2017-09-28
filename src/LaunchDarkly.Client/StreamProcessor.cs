@@ -82,11 +82,11 @@ namespace LaunchDarkly.Client
                     break;
                 case PATCH:
                     FeaturePatchData patchData = JsonConvert.DeserializeObject<FeaturePatchData>(e.Message.Data);
-                    _featureStore.Upsert(patchData.Key(), patchData.Feature());
+                    _featureStore.Upsert(patchData.Key(), patchData.Data);
                     break;
                 case DELETE:
                     FeatureDeleteData deleteData = JsonConvert.DeserializeObject<FeatureDeleteData>(e.Message.Data);
-                    _featureStore.Delete(deleteData.Key(), deleteData.CurrentVersion());
+                    _featureStore.Delete(deleteData.Key(), deleteData.Version);
                     break;
                 case INDIRECT_PATCH:
                     await UpdateTaskAsync(e.Message.Data);
@@ -145,16 +145,12 @@ namespace LaunchDarkly.Client
             public String Key() {
                 return Path.Substring(1);
             }
-
-            public FeatureFlag Feature() {
-                return Data;
-            }
         }
 
         internal class FeatureDeleteData
         {
-            internal string Path { get; set; }
-            internal int Version { get; set; }
+            internal string Path { get; private set; }
+            internal int Version { get; private set; }
 
             [JsonConstructor]
             internal FeatureDeleteData(string path, int version)
@@ -165,10 +161,6 @@ namespace LaunchDarkly.Client
 
             public String Key() {
                 return Path.Substring(1);
-            }
-
-            public int CurrentVersion() {
-                return Version;
             }
         }
     }
