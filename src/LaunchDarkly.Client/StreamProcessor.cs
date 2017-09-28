@@ -53,9 +53,7 @@ namespace LaunchDarkly.Client
                 logger: LdLogger.CreateLogger<EventSource.EventSource>()
             );
             _es = new EventSource.EventSource(config);
-
-            _es.Opened += OnOpen;
-            _es.Closed += OnClosed;
+            
             _es.CommentReceived += OnComment;
             _es.MessageReceived += OnMessage;
             _es.Error += OnError;
@@ -69,14 +67,6 @@ namespace LaunchDarkly.Client
                 Logger.LogError("General Exception: {0}", ex);
             }
             return _initTask;
-        }
-
-        private void OnOpen(object sender, EventSource.StateChangedEventArgs e)
-        {
-        }
-
-        private void OnClosed(object sender, EventSource.StateChangedEventArgs e)
-        {
         }
 
         private async void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
