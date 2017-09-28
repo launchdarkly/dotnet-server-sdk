@@ -14,7 +14,6 @@ namespace LaunchDarkly.Client
         private const String PUT = "put";
         private const String PATCH = "patch";
         private const String DELETE = "delete";
-        private const String INDIRECT_PUT = "indirect/put";
         private const String INDIRECT_PATCH = "indirect/patch";
         private static readonly ILogger Logger = LdLogger.CreateLogger<StreamProcessor>();
         private static int UNINITIALIZED = 0;
