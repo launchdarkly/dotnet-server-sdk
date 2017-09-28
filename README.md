@@ -2,6 +2,23 @@ LaunchDarkly SDK for .NET
 ===========================
 [![CircleCI](https://circleci.com/gh/launchdarkly/.net-client/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/.net-client/tree/master)
 
+Streaming beta
+-----------
+This branch adds streaming and relay support to the .NET SDK. Streaming is enabled by default.  
+
+#### New builder parameters:
+- `IsStreamingEnabled`: Boolean, true by default.
+- `IsRelayEnabled`: Boolean, false by default. Enables relay mode.
+- `StreamUri`: Stream URI to be used. If relay mode is enabled, this should point to your relay instance.
+- `ReadTimeout`: The time out when reading data from the stream. If null, defaults to 5 minutes.
+- `ReconnectTime`: The connection timeout. If null, defaults to 10 seconds.
+
+#### Connecting to ld-relay
+```C#
+Configuration config = Configuration.Default(API_KEY).WithIsRelayEnabled(true).WithStreamUri("YOUR_RELAY_URI");
+LdClient client = new LdClient(config);
+```
+
 Quick setup
 -----------
 
