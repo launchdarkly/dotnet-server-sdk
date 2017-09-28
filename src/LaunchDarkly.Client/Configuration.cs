@@ -11,7 +11,7 @@ namespace LaunchDarkly.Client
         public Uri StreamUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
         public string SdkKey { get; internal set; }
-        public bool Stream { get; internal set; }
+        public bool IsStreamingEnabled { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
         public TimeSpan PollingInterval { get; internal set; }
@@ -29,7 +29,7 @@ namespace LaunchDarkly.Client
         /// </summary>
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
-        public bool UseLdd { get; internal set; }
+        public bool IsRelayEnabled { get; internal set; }
         public bool Offline { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
 
@@ -69,7 +69,8 @@ namespace LaunchDarkly.Client
                 Offline = false,
                 SdkKey = sdkKey,
                 FeatureStore = new InMemoryFeatureStore(),
-                Stream = true
+                IsStreamingEnabled = true,
+                IsRelayEnabled = false
             };
 
             return defaultConfiguration;
@@ -182,9 +183,9 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithUseLdd(this Configuration configuration, bool useLdd)
+        public static Configuration WithIsRelayEnabled(this Configuration configuration, bool enableRelay)
         {
-            configuration.UseLdd = useLdd;
+            configuration.IsRelayEnabled = enableRelay;
             return configuration;
         }
 
@@ -236,9 +237,9 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithStream(this Configuration configuration, bool stream)
+        public static Configuration WithIsStreamingEnabled(this Configuration configuration, bool enableStream)
         {
-            configuration.Stream = stream;
+            configuration.IsStreamingEnabled = enableStream;
             return configuration;
         }
     }
