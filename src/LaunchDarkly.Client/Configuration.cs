@@ -29,6 +29,9 @@ namespace LaunchDarkly.Client
         /// </summary>
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
+        /// <summary>
+        /// Enables ld-relay: https://github.com/launchdarkly/ld-relay. Defaults to false
+        /// </summary>
         public bool IsRelayEnabled { get; internal set; }
         public bool Offline { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }

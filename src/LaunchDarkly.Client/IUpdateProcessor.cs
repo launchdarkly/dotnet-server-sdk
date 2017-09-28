@@ -5,7 +5,7 @@ namespace LaunchDarkly.Client
 {
     internal interface IUpdateProcessor : IDisposable
     {
-        TaskCompletionSource<bool> Start();
+        Task<bool> Start();
         bool Initialized();
     }
 }

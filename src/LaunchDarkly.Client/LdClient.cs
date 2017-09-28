@@ -47,7 +47,7 @@ namespace LaunchDarkly.Client
             var initTask = _updateProcessor.Start();
             Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds +
                                   " milliseconds for LaunchDarkly client to start..");
-            var unused = initTask.Task.Wait(_configuration.StartWaitTime);
+            var unused = initTask.Wait(_configuration.StartWaitTime);
         }
 
         public LdClient(Configuration config) : this(config, new EventProcessor(config))

@@ -38,7 +38,7 @@ namespace LaunchDarkly.Client
             return _initialized == INITIALIZED;
         }
 
-        TaskCompletionSource<bool> IUpdateProcessor.Start()
+        async Task<bool> IUpdateProcessor.Start()
         {
             Dictionary<string, string> headers = new Dictionary<string, string> {{"Authorization", _config.SdkKey}, {"User-Agent", "DotNetClient/" + Configuration.Version}, {"Accept", "text/event-stream"}};
             
@@ -59,13 +59,13 @@ namespace LaunchDarkly.Client
 
             try
             {
-                _es.StartAsync();
+                await _es.StartAsync();
             }
             catch (Exception ex)
             {
                 Logger.LogError("General Exception: {0}", ex);
             }
-            return _initTask;
+            return await _initTask.Task;
         }
 
         private async void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
