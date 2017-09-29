@@ -56,6 +56,8 @@ namespace LaunchDarkly.Client
             _es.CommentReceived += OnComment;
             _es.MessageReceived += OnMessage;
             _es.Error += OnError;
+            _es.Opened += OnOpen;
+            _es.Closed += OnClose;
 
             try
             {
@@ -91,6 +93,13 @@ namespace LaunchDarkly.Client
                     await UpdateTaskAsync(e.Message.Data);
                     break;
             }
+        }
+        private void OnOpen(object sender, EventSource.StateChangedEventArgs e) {
+            Logger.LogDebug("Eventsource Opened");
+        }
+        
+        private void OnClose(object sender, EventSource.StateChangedEventArgs e) {
+            Logger.LogDebug("Eventsource Closed");
         }
 
         private void OnComment(object sender, EventSource.CommentReceivedEventArgs e)
