@@ -66,6 +66,7 @@ namespace LaunchDarkly.Client
             catch (Exception ex)
             {
                 Logger.LogError("General Exception: {0}", ex);
+                _initTask.SetException(ex);
             }
             return await _initTask.Task;
         }
