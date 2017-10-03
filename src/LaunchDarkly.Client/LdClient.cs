@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
             Logger.LogInformation("Starting LaunchDarkly Client " + Configuration.Version);
             _configuration = config;
             _eventStore = eventStore;
-            _featureStore = config.FeatureStore;
+            _featureStore = _configuration.FeatureStore;
 
             if (_configuration.Offline)
             {
@@ -28,12 +28,26 @@ namespace LaunchDarkly.Client
                 return;
             }
 
+            if (_configuration.IsRelayEnabled)
+            {
+                Logger.LogInformation("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
+                return;
+            }
+
             var featureRequestor = new FeatureRequestor(config);
-            _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
+
+            if (_configuration.IsStreamingEnabled)
+            {
+                _updateProcessor = new StreamProcessor(config, featureRequestor, _featureStore);
+            }
+            else 
+            {
+                _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
+            }
             var initTask = _updateProcessor.Start();
             Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds +
                                   " milliseconds for LaunchDarkly client to start..");
-            var unused = initTask.Task.Wait(_configuration.StartWaitTime);
+            var unused = initTask.Wait(_configuration.StartWaitTime);
         }
 
         public LdClient(Configuration config) : this(config, new EventProcessor(config))
@@ -46,7 +60,7 @@ namespace LaunchDarkly.Client
 
         public bool Initialized()
         {
-            return IsOffline() || _updateProcessor.Initialized();
+            return IsOffline() || _configuration.IsRelayEnabled || _updateProcessor.Initialized();
         }
 
         public bool IsOffline()
