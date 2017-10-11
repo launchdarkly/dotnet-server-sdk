@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <VersionPrefix>3.4.0</VersionPrefix>
-    <VersionSuffix>alpha1</VersionSuffix>
+    <VersionSuffix>alpha2</VersionSuffix>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>LaunchDarkly.Client</AssemblyName>
@@ -18,7 +18,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.EventSource" Version="1.1.0" />
+    <PackageReference Include="LaunchDarkly.EventSource" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
