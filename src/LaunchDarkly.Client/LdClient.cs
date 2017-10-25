@@ -28,19 +28,13 @@ namespace LaunchDarkly.Client
                 return;
             }
 
-            if (_configuration.IsRelayEnabled)
-            {
-                Logger.LogInformation("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
-                return;
-            }
-
             var featureRequestor = new FeatureRequestor(config);
 
             if (_configuration.IsStreamingEnabled)
             {
                 _updateProcessor = new StreamProcessor(config, featureRequestor, _featureStore);
             }
-            else 
+            else
             {
                 _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
             }
@@ -60,7 +54,7 @@ namespace LaunchDarkly.Client
 
         public bool Initialized()
         {
-            return IsOffline() || _configuration.IsRelayEnabled || _updateProcessor.Initialized();
+            return IsOffline() || _updateProcessor.Initialized();
         }
 
         public bool IsOffline()

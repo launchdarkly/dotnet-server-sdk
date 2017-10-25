@@ -27,13 +27,11 @@ namespace LaunchDarkly.Tests
             var config = Configuration.Default("AnyOtherSdkKey")
                 .WithStreamUri("https://stream.AnyOtherEndpoint.com")
                 .WithIsStreamingEnabled(false)
-                .WithIsRelayEnabled(true)
                 .WithReadTimeout(TimeSpan.FromDays(1))
                 .WithReconnectTime(TimeSpan.FromDays(1));
 
             Assert.Equal(new Uri("https://stream.AnyOtherEndpoint.com"), config.StreamUri);
             Assert.Equal(false, config.IsStreamingEnabled);
-            Assert.Equal(true, config.IsRelayEnabled);
             Assert.Equal(TimeSpan.FromDays(1), config.ReadTimeout);
             Assert.Equal(TimeSpan.FromDays(1), config.ReconnectTime);
         }
