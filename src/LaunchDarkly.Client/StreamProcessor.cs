@@ -115,13 +115,16 @@ namespace LaunchDarkly.Client
             }
             catch (JsonReaderException ex)
             {
-                Logger.LogDebug("Failed to deserialize feature flag {0}:\n{1}", e.EventName, e.Message.Data);
+                Logger.LogDebug("Failed to deserialize feature flag {0}, waiting 1 second before reconnecting:\n{1}", e.EventName, e.Message.Data);
                 Logger.LogError("Encountered an error reading feature flag configuration: {0}", ex);
-                RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError("Encountered an unexpected error:", ex);
+                Logger.LogError("Encountered an unexpected error, waiting 1 second before reconnecting:", ex);
+            }
+            finally
+            {
+                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 RestartEventSource();
             }
         }
