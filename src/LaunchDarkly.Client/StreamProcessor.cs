@@ -40,8 +40,8 @@ namespace LaunchDarkly.Client
 
         async Task<bool> IUpdateProcessor.Start()
         {
-            Dictionary<string, string> headers = new Dictionary<string, string> {{"Authorization", _config.SdkKey}, {"User-Agent", "DotNetClient/" + Configuration.Version}, {"Accept", "text/event-stream"}};
-            
+            Dictionary<string, string> headers = new Dictionary<string, string> { { "Authorization", _config.SdkKey }, { "User-Agent", "DotNetClient/" + Configuration.Version }, { "Accept", "text/event-stream" } };
+
             EventSource.Configuration config = new EventSource.Configuration(
                 uri: new Uri(_config.StreamUri, "/flags"),
                 messageHandler: _config.HttpClientHandler,
@@ -52,7 +52,7 @@ namespace LaunchDarkly.Client
                 logger: LdLogger.CreateLogger<EventSource.EventSource>()
             );
             _es = new EventSource.EventSource(config);
-            
+
             _es.CommentReceived += OnComment;
             _es.MessageReceived += OnMessage;
             _es.Error += OnError;
@@ -71,13 +71,31 @@ namespace LaunchDarkly.Client
             return await _initTask.Task;
         }
 
+        private async void RestartEventSource()
+        {
+            Logger.LogInformation("Stopping LaunchDarkly StreamProcessor");
+            _es.Close();
+            try
+            {
+                await _es.StartAsync();
+                Logger.LogInformation("Reconnected to LaunchDarkly StreamProcessor");
+            }
+            catch (Exception exc)
+            {
+                Logger.LogError("General Exception: {0}", exc);
+            }
+        }
+
         private async void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
         {
-            switch(e.EventName)
+            try
             {
+                switch (e.EventName)
+                {
                 case PUT:
                     _featureStore.Init(JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(e.Message.Data));
-                    if(Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0) {
+                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                    {
                         _initTask.SetResult(true);
                         Logger.LogInformation("Initialized LaunchDarkly Stream Processor.");
                     }
@@ -93,13 +111,27 @@ namespace LaunchDarkly.Client
                 case INDIRECT_PATCH:
                     await UpdateTaskAsync(e.Message.Data);
                     break;
+                }
+            }
+            catch (JsonReaderException ex)
+            {
+                Logger.LogDebug("Failed to deserialize feature flag {0}:\n{1}", e.EventName, e.Message.Data);
+                Logger.LogError("Encountered an error reading feature flag configuration: {0}", ex);
+                RestartEventSource();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Encountered an unexpected error:", ex);
+                RestartEventSource();
             }
         }
-        private void OnOpen(object sender, EventSource.StateChangedEventArgs e) {
+        private void OnOpen(object sender, EventSource.StateChangedEventArgs e)
+        {
             Logger.LogDebug("Eventsource Opened");
         }
-        
-        private void OnClose(object sender, EventSource.StateChangedEventArgs e) {
+
+        private void OnClose(object sender, EventSource.StateChangedEventArgs e)
+        {
             Logger.LogDebug("Eventsource Closed");
         }
 
@@ -139,7 +171,7 @@ namespace LaunchDarkly.Client
                 Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
             }
         }
-        private class FeaturePatchData
+        internal class FeaturePatchData
         {
             internal string Path { get; private set; }
             internal FeatureFlag Data { get; private set; }
@@ -151,7 +183,8 @@ namespace LaunchDarkly.Client
                 Data = data;
             }
 
-            public String Key() {
+            public String Key()
+            {
                 return Path.Substring(1);
             }
         }
@@ -168,7 +201,8 @@ namespace LaunchDarkly.Client
                 Version = version;
             }
 
-            public String Key() {
+            public String Key()
+            {
                 return Path.Substring(1);
             }
         }

@@ -29,12 +29,6 @@ namespace LaunchDarkly.Client
         /// </summary>
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
-        /// <summary>
-        /// Enables the <see href="https://github.com/launchdarkly/ld-relay">LaunchDarkly relay proxy</see>. 
-        /// The relay proxy can be configured to forward multiple environment streams, even across multiple projects, 
-        /// effectively replacing the stream. False by default.
-        /// </summary>
-        public bool IsRelayEnabled { get; internal set; }
         public bool Offline { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
 
@@ -74,8 +68,7 @@ namespace LaunchDarkly.Client
                 Offline = false,
                 SdkKey = sdkKey,
                 FeatureStore = new InMemoryFeatureStore(),
-                IsStreamingEnabled = true,
-                IsRelayEnabled = false
+                IsStreamingEnabled = true
             };
 
             return defaultConfiguration;
@@ -185,12 +178,6 @@ namespace LaunchDarkly.Client
         public static Configuration WithStartWaitTime(this Configuration configuration, TimeSpan startWaitTime)
         {
             configuration.StartWaitTime = startWaitTime;
-            return configuration;
-        }
-
-        public static Configuration WithIsRelayEnabled(this Configuration configuration, bool enableRelay)
-        {
-            configuration.IsRelayEnabled = enableRelay;
             return configuration;
         }
 
