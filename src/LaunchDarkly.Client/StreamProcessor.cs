@@ -73,8 +73,9 @@ namespace LaunchDarkly.Client
 
         private async void RestartEventSource()
         {
-            Logger.LogInformation("Stopping LaunchDarkly StreamProcessor");
+            Logger.LogInformation("Stopping LaunchDarkly StreamProcessor, waiting 1 second before restarting");
             _es.Close();
+            Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             try
             {
                 await _es.StartAsync();
@@ -115,16 +116,13 @@ namespace LaunchDarkly.Client
             }
             catch (JsonReaderException ex)
             {
-                Logger.LogDebug("Failed to deserialize feature flag {0}, waiting 1 second before reconnecting:\n{1}", e.EventName, e.Message.Data);
+                Logger.LogDebug("Failed to deserialize feature flag {0}:\n{1}", e.EventName, e.Message.Data);
                 Logger.LogError("Encountered an error reading feature flag configuration: {0}", ex);
+                RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError("Encountered an unexpected error, waiting 1 second before reconnecting:", ex);
-            }
-            finally
-            {
-                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
+                Logger.LogError("Encountered an unexpected error:", ex);
                 RestartEventSource();
             }
         }
