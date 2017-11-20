@@ -24,6 +24,7 @@ namespace LaunchDarkly.Client
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
         private static EventSource.EventSource _es;
+        private readonly EventSource.ExponentialBackoffWithDecorrelation _backOff;
 
         internal StreamProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
         {
@@ -31,6 +32,7 @@ namespace LaunchDarkly.Client
             _featureRequestor = featureRequestor;
             _featureStore = featureStore;
             _initTask = new TaskCompletionSource<bool>();
+            _backOff = new EventSource.ExponentialBackoffWithDecorrelation(_config.ReconnectTime, TimeSpan.FromMilliseconds(30000));
         }
 
         bool IUpdateProcessor.Initialized()
@@ -73,12 +75,21 @@ namespace LaunchDarkly.Client
 
         private async void RestartEventSource()
         {
-            Logger.LogInformation("Stopping LaunchDarkly StreamProcessor, waiting 1 second before restarting");
+            if (_backOff.GetReconnectAttemptCount() > 0 && _config.ReconnectTime > TimeSpan.FromMilliseconds(0))
+            {
+                TimeSpan sleepTime = _backOff.GetNextBackOff();
+                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting " + sleepTime.TotalMilliseconds + " milliseconds before restarting...");
+                await Task.Delay(sleepTime);
+            }
+            else
+            {
+                _backOff.IncrementReconnectAttemptCount();
+            }
             _es.Close();
-            Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             try
             {
                 await _es.StartAsync();
+                _backOff.ResetReconnectAttemptCount();
                 Logger.LogInformation("Reconnected to LaunchDarkly StreamProcessor");
             }
             catch (Exception exc)
@@ -122,7 +133,7 @@ namespace LaunchDarkly.Client
             }
             catch (Exception ex)
             {
-                Logger.LogError("Encountered an unexpected error:", ex);
+                Logger.LogError("Encountered an unexpected error: {0}", ex);
                 RestartEventSource();
             }
         }
@@ -143,8 +154,7 @@ namespace LaunchDarkly.Client
 
         private void OnError(object sender, EventSource.ExceptionEventArgs e)
         {
-            Logger.LogError("Encountered EventSource error:", e.Exception.Message);
-            Logger.LogDebug("", e);
+            Logger.LogError("Encountered EventSource error: {0}", e);
         }
 
         void IDisposable.Dispose()
