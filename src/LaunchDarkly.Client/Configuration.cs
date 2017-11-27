@@ -14,6 +14,9 @@ namespace LaunchDarkly.Client
         public bool IsStreamingEnabled { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
+        /// <summary>
+        /// Set the polling interval (when streaming is disabled). Values less than the default of 30 seconds will be set to 30 seconds.
+        /// </summary>
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
         /// <summary>
@@ -39,7 +42,7 @@ namespace LaunchDarkly.Client
                 .GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)))
             .InformationalVersion;
 
-        public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
+        public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(30);
         internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
         private static readonly Uri DefaultStreamUri = new Uri("https://stream.launchdarkly.com");
         private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");

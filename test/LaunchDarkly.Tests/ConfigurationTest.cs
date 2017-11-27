@@ -13,12 +13,12 @@ namespace LaunchDarkly.Tests
             var config = Configuration.Default("AnyOtherSdkKey")
                 .WithUri("https://app.AnyOtherEndpoint.com")
                 .WithEventQueueCapacity(99)
-                .WithPollingInterval(TimeSpan.FromSeconds(1.5));
+                .WithPollingInterval(TimeSpan.FromMinutes(1));
 
             Assert.Equal(new Uri("https://app.AnyOtherEndpoint.com"), config.BaseUri);
             Assert.Equal("AnyOtherSdkKey", config.SdkKey);
             Assert.Equal(99, config.EventQueueCapacity);
-            Assert.Equal(TimeSpan.FromSeconds(1.5), config.PollingInterval);
+            Assert.Equal(TimeSpan.FromMinutes(1), config.PollingInterval);
         }
 
         [Fact]
@@ -39,9 +39,9 @@ namespace LaunchDarkly.Tests
         public void CannotOverrideTooSmallPollingInterval()
         {
             var config = Configuration.Default("AnyOtherSdkKey")
-                .WithPollingInterval(TimeSpan.FromMilliseconds(100));
+                .WithPollingInterval(TimeSpan.FromSeconds(10));
 
-            var expected = TimeSpan.FromSeconds(1);
+            var expected = TimeSpan.FromSeconds(30);
             Assert.Equal(expected, config.PollingInterval);
         }
 
