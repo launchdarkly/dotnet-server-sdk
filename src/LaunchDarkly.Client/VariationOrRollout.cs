@@ -30,7 +30,7 @@ namespace LaunchDarkly.Client
 
             if (Rollout != null)
             {
-                string bucketBy = Rollout.BucketBy == null ? "key" : Rollout.BucketBy;
+                string bucketBy = Rollout.BucketBy ?? "key";
                 float bucket = BucketUser(user, key, bucketBy, salt);
                 float sum = 0F;
                 foreach (WeightedVariation wv in Rollout.Variations)
