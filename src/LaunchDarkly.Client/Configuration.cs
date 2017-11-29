@@ -8,18 +8,37 @@ namespace LaunchDarkly.Client
     public class Configuration
     {
         public Uri BaseUri { get; internal set; }
+        public Uri StreamUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
         public string SdkKey { get; internal set; }
+        /// <summary>
+        /// Whether or not the streaming API should be used to receive flag updates. This is true by default.
+        /// Streaming should only be disabled on the advice of LaunchDarkly support.
+        /// </summary>
+        public bool IsStreamingEnabled { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
+        /// <summary>
+        /// Set the polling interval (when streaming is disabled). Values less than the default of 30 seconds will be set to 30 seconds.
+        /// </summary>
         public TimeSpan PollingInterval { get; internal set; }
         public TimeSpan StartWaitTime { get; internal set; }
+        /// <summary>
+        /// The timeout when reading data from the EventSource API. If null, defaults to 5 minutes.
+        /// </summary>
+        public TimeSpan ReadTimeout { get; internal set; }
+        /// <summary>
+        /// The time to wait before attempting to reconnect to the EventSource API. If null, defaults to 1 second.
+        /// </summary>
+        public TimeSpan ReconnectTime { get; internal set; }
+        /// <summary>
+        /// The connection timeout. If null, defaults to 10 seconds.
+        /// </summary>
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool Offline { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
 
-        public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(1);
 
         internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
                 .GetTypeInfo()
@@ -27,11 +46,15 @@ namespace LaunchDarkly.Client
                 .GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)))
             .InformationalVersion;
 
+        public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(30);
         internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
+        private static readonly Uri DefaultStreamUri = new Uri("https://stream.launchdarkly.com");
         private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
         private static readonly int DefaultEventQueueCapacity = 500;
         private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
+        private static readonly TimeSpan DefaultReconnectTime = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
 
         public static Configuration Default(string sdkKey)
@@ -39,16 +62,20 @@ namespace LaunchDarkly.Client
             var defaultConfiguration = new Configuration
             {
                 BaseUri = DefaultUri,
+                StreamUri = DefaultStreamUri,
                 EventsUri = DefaultEventsUri,
                 EventQueueCapacity = DefaultEventQueueCapacity,
                 EventQueueFrequency = DefaultEventQueueFrequency,
                 PollingInterval = DefaultPollingInterval,
                 StartWaitTime = DefaultStartWaitTime,
+                ReadTimeout = DefaultReadTimeout,
+                ReconnectTime = DefaultReconnectTime,
                 HttpClientTimeout = DefaultHttpClientTimeout,
                 HttpClientHandler = new HttpClientHandler(),
                 Offline = false,
                 SdkKey = sdkKey,
-                FeatureStore = new InMemoryFeatureStore()
+                FeatureStore = new InMemoryFeatureStore(),
+                IsStreamingEnabled = true
             };
 
             return defaultConfiguration;
@@ -77,6 +104,22 @@ namespace LaunchDarkly.Client
         {
             if (uri != null)
                 configuration.BaseUri = uri;
+
+            return configuration;
+        }
+
+        public static Configuration WithStreamUri(this Configuration configuration, string uri)
+        {
+            if (uri != null)
+                configuration.StreamUri = new Uri(uri);
+
+            return configuration;
+        }
+
+        public static Configuration WithStreamUri(this Configuration configuration, Uri uri)
+        {
+            if (uri != null)
+                configuration.StreamUri = uri;
 
             return configuration;
         }
@@ -165,6 +208,19 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+
+        public static Configuration WithReadTimeout(this Configuration configuration, TimeSpan timeSpan)
+        {
+            configuration.ReadTimeout = timeSpan;
+            return configuration;
+        }
+
+        public static Configuration WithReconnectTime(this Configuration configuration, TimeSpan timeSpan)
+        {
+            configuration.ReconnectTime = timeSpan;
+            return configuration;
+        }
+
         public static Configuration WithFeatureStore(this Configuration configuration, IFeatureStore featureStore)
         {
             if (featureStore != null)
@@ -177,6 +233,12 @@ namespace LaunchDarkly.Client
         public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
         {
             configuration.HttpClientHandler = httpClientHandler;
+            return configuration;
+        }
+
+        public static Configuration WithIsStreamingEnabled(this Configuration configuration, bool enableStream)
+        {
+            configuration.IsStreamingEnabled = enableStream;
             return configuration;
         }
     }

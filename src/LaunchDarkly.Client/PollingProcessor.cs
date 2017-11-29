@@ -31,12 +31,12 @@ namespace LaunchDarkly.Client
             return _initialized == INITIALIZED;
         }
 
-        TaskCompletionSource<bool> IUpdateProcessor.Start()
+        Task<bool> IUpdateProcessor.Start()
         {
             Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: " +
                                   (int) _config.PollingInterval.TotalMilliseconds + " milliseconds");
             Task.Run(() => UpdateTaskLoopAsync());
-            return _initTask;
+            return _initTask.Task;
         }
 
         private async Task UpdateTaskLoopAsync()
@@ -52,7 +52,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var allFeatures = await _featureRequestor.MakeAllRequestAsync();
+                var allFeatures = await _featureRequestor.GetAllFlagsAsync();
                 if (allFeatures != null)
                 {
                     _featureStore.Init(allFeatures);
