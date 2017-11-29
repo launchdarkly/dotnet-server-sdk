@@ -11,6 +11,10 @@ namespace LaunchDarkly.Client
         public Uri StreamUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
         public string SdkKey { get; internal set; }
+        /// <summary>
+        /// Whether or not the streaming API should be used to receive flag updates. This is true by default.
+        /// Streaming should only be disabled on the advice of LaunchDarkly support.
+        /// </summary>
         public bool IsStreamingEnabled { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }

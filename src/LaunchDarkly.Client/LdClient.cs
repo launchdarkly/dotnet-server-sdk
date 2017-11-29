@@ -36,6 +36,7 @@ namespace LaunchDarkly.Client
             }
             else
             {
+                Logger.LogWarning("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
                 _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
             }
             var initTask = _updateProcessor.Start();
