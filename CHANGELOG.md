@@ -2,6 +2,21 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.4.0] - 2017-11-29
+### Added
+- SSE Streaming functionality as an alternative to Polling. :rocket:
+- New builder parameters to complement streaming functionality
+  - `WithIsStreamingEnabled`: Set whether streaming mode should be enabled, `true` by default.
+  - `WithStreamUri`: Set the base URL of the LaunchDarkly streaming server. May be used in conjunction with the [LaunchDarkly Relay Proxy](https://github.com/launchdarkly/ld-relay).
+  - `WithReadTimeout`: The timeout when reading data from the streaming API. Defaults to 5 minutes
+  - `WithReconnectTime`: The time to wait before attempting to reconnect to the streaming API. Defaults to 1 second
+- Apache 2.0 License
+
+### Changed
+- Streaming is now used to retrieve feature flag configurations by default.
+- Minimum (and default) polling interval changed from 1 second to 30 seconds.
+- `PollingProcessor` no longer retries failed feature flag polling attempts.
+
 ## [3.3.2] - 2017-08-30
 ### Changed
 - Updated dependency versions. Thanks @ISkomorokh!
@@ -19,7 +34,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 - Removed NETStandard.Library from dependencies so it isn't brought in by non-.NET core projects.
 - Project files migrated to current `*.csproj` standard
 - Fixed release that inadvertently removed the ability to set a custom HttpClientHandler
- 
+
 ## [3.2.0] - 2017-05-25
 ### Added
 - Config option to use custom implementation of IFeatureStore
