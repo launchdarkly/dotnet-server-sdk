@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
@@ -33,6 +34,8 @@ namespace LaunchDarkly.Client
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool Offline { get; internal set; }
+        public bool AllAttributesPrivate { get; internal set; }
+        public ISet<string> PrivateAttributeNames { get; internal set; } = new HashSet<string>();
         internal IFeatureStore FeatureStore { get; set; }
 
 
@@ -235,6 +238,18 @@ namespace LaunchDarkly.Client
         public static Configuration WithIsStreamingEnabled(this Configuration configuration, bool enableStream)
         {
             configuration.IsStreamingEnabled = enableStream;
+            return configuration;
+        }
+
+        public static Configuration WithAllAttributesPrivate(this Configuration configuration, bool allAttributesPrivate)
+        {
+            configuration.AllAttributesPrivate = allAttributesPrivate;
+            return configuration;
+        }
+
+        public static Configuration WithPrivateAttributeName(this Configuration configuration, string attributeName)
+        {
+            configuration.PrivateAttributeNames.Add(attributeName);
             return configuration;
         }
     }
