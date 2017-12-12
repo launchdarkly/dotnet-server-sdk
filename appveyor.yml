@@ -1,0 +1,23 @@
+version: 3.4.0-{build}
+
+image: Visual Studio 2017
+
+configuration: Release
+platform: Any CPU
+
+before_build:
+  - dotnet restore
+  - aws s3 cp s3://d2l-launch-darkly-signing-keys/LaunchDarkly.Client.snk LaunchDarkly.snk
+
+build_script:
+  - dotnet build src\LaunchDarkly.Client\LaunchDarkly.Client.csproj --framework net45
+
+after_build:
+  - dotnet pack src\LaunchDarkly.Client\LaunchDarkly.Client.csproj
+
+test_script:
+  - dotnet test test\LaunchDarkly.Tests\LaunchDarkly.Tests.csproj
+
+artifacts:
+  - path: 'src\LaunchDarkly.Client\bin\**\*.nupkg'
+    name: Nuget
