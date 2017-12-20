@@ -148,10 +148,12 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogDebug(
-                    String.Format(
-                        "Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
-                        op, uValue, cValue, e.Message));
+                Logger.LogDebug(e,
+                    "Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
+                    op,
+                    uValue,
+                    cValue, 
+                    Util.ExceptionMessage(e));
             }
             return false;
         }
