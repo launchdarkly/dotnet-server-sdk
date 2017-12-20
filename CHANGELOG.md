@@ -4,7 +4,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ## [3.4.0] - 2017-11-29
 ### Added
-- SSE Streaming functionality as an alternative to Polling. :rocket:
+- :rocket: Support for Streaming via [Server-Sent Events](http://html5doctor.com/server-sent-events/) as an alternative to Polling. [HTTP-based streaming](https://launchdarkly.com/performance.html) is favored over polling to reduce network traffic and propagate feature flag updates faster. :rocket:
 - New builder parameters to complement streaming functionality
   - `WithIsStreamingEnabled`: Set whether streaming mode should be enabled, `true` by default.
   - `WithStreamUri`: Set the base URL of the LaunchDarkly streaming server. May be used in conjunction with the [LaunchDarkly Relay Proxy](https://github.com/launchdarkly/ld-relay).
