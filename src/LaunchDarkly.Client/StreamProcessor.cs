@@ -67,7 +67,10 @@ namespace LaunchDarkly.Client
             }
             catch (Exception ex)
             {
-                Logger.LogError("General Exception: {0}", ex);
+                Logger.LogError(ex, 
+                    "General Exception: {0}",
+                    Util.ExceptionMessage(ex));
+
                 _initTask.SetException(ex);
             }
             return await _initTask.Task;
@@ -78,7 +81,10 @@ namespace LaunchDarkly.Client
             if (_backOff.GetReconnectAttemptCount() > 0 && _config.ReconnectTime > TimeSpan.FromMilliseconds(0))
             {
                 TimeSpan sleepTime = _backOff.GetNextBackOff();
-                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting " + sleepTime.TotalMilliseconds + " milliseconds before restarting...");
+
+                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before restarting...",
+                    sleepTime.TotalMilliseconds);
+
                 await Task.Delay(sleepTime);
             }
             else
@@ -94,7 +100,9 @@ namespace LaunchDarkly.Client
             }
             catch (Exception exc)
             {
-                Logger.LogError("General Exception: {0}", exc);
+                Logger.LogError(exc, 
+                    "General Exception: {0}",
+                    Util.ExceptionMessage(exc));
             }
         }
 
@@ -127,13 +135,23 @@ namespace LaunchDarkly.Client
             }
             catch (JsonReaderException ex)
             {
-                Logger.LogDebug("Failed to deserialize feature flag {0}:\n{1}", e.EventName, e.Message.Data);
-                Logger.LogError("Encountered an error reading feature flag configuration: {0}", ex);
+                Logger.LogDebug(ex,
+                    "Failed to deserialize feature flag {0}:\n{1}", 
+                    e.EventName, 
+                    e.Message.Data);
+
+                Logger.LogError(ex, 
+                    "Encountered an error reading feature flag configuration: {0}", 
+                    Util.ExceptionMessage(ex));
+
                 RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError("Encountered an unexpected error: {0}", ex);
+                Logger.LogError(ex, 
+                    "Encountered an unexpected error: {0}",
+                    Util.ExceptionMessage(ex));
+
                 RestartEventSource();
             }
         }
@@ -154,7 +172,9 @@ namespace LaunchDarkly.Client
 
         private void OnError(object sender, EventSource.ExceptionEventArgs e)
         {
-            Logger.LogError("Encountered EventSource error: {0}", e);
+            Logger.LogError(e.Exception,
+                "Encountered EventSource error: {0}", 
+                Util.ExceptionMessage(e.Exception));
         }
 
         void IDisposable.Dispose()
@@ -175,11 +195,15 @@ namespace LaunchDarkly.Client
             }
             catch (AggregateException ex)
             {
-                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex.Flatten())));
+                Logger.LogError(ex, 
+                    "Error Updating feature: '{0}'", 
+                    Util.ExceptionMessage(ex.Flatten()));
             }
             catch (Exception ex)
             {
-                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
+                Logger.LogError(ex, 
+                    "Error Updating feature: '{0}'", 
+                    Util.ExceptionMessage(ex));
             }
         }
         internal class FeaturePatchData

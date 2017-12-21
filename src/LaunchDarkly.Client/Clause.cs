@@ -38,7 +38,8 @@ namespace LaunchDarkly.Client
                 {
                     if (!(element is JValue))
                     {
-                        Logger.LogError("Invalid custom attribute value in user object: " + element);
+                        Logger.LogError("Invalid custom attribute value in user object: {0}",
+                            element);
                         return false;
                     }
                     if (MatchAny(element as JValue))
@@ -52,8 +53,10 @@ namespace LaunchDarkly.Client
             {
                 return MaybeNegate(MatchAny(userValue as JValue));
             }
-            Logger.LogWarning("Got unexpected user attribute type: " + userValue.Type + " for user key: " + user.Key +
-                              " and attribute: " + Attribute);
+            Logger.LogWarning("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
+                userValue.Type,
+                user.Key,
+                Attribute);
             return false;
         }
 

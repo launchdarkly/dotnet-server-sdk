@@ -65,7 +65,9 @@ namespace LaunchDarkly.Client
             EvalResult evalResult = new EvalResult(null, prereqEvents);
             if (user == null || user.Key == null)
             {
-                Logger.LogWarning("User or user key is null when evaluating flag: " + Key + " returning null");
+                Logger.LogWarning("User or user key is null when evaluating flag: {0} returning null",
+                    Key);
+
                 return evalResult;
             }
 
@@ -93,8 +95,9 @@ namespace LaunchDarkly.Client
                     JToken prereqEvalResult = null;
                     if (prereqFeatureFlag == null)
                     {
-                        Logger.LogError("Could not retrieve prerequisite flag: " + prereq.Key + " when evaluating: " +
-                                        Key);
+                        Logger.LogError("Could not retrieve prerequisite flag: {0} when evaluating: {1}",
+                            prereq.Key,
+                            Key);
                         return null;
                     }
                     else if (prereqFeatureFlag.On)
@@ -110,7 +113,10 @@ namespace LaunchDarkly.Client
                         }
                         catch (EvaluationException e)
                         {
-                            Logger.LogWarning("Error evaluating prerequisites: " + e.Message, e);
+                            Logger.LogWarning(e,
+                                "Error evaluating prerequisites: {0}",
+                                Util.ExceptionMessage(e));
+
                             prereqOk = false;
                         }
                     }
