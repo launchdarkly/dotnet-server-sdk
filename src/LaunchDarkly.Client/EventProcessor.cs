@@ -78,10 +78,6 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                _httpClient?.Dispose();
-                _httpClient = _config.HttpClient();
-
                 Logger.LogDebug("Error sending events: " + Util.ExceptionMessage(e) +
                                 " waiting 1 second before retrying.");
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
@@ -106,18 +102,11 @@ namespace LaunchDarkly.Client
                         Logger.LogError("Timed out trying to send " + events.Count + " events after " +
                                         _config.HttpClientTimeout);
                     }
-                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                    _httpClient?.Dispose();
-                    _httpClient = _config.HttpClient();
                 }
                 catch (Exception ex)
                 {
                     Logger.LogError(string.Format("Error Submitting Events using uri: '{0}' '{1}'", _uri.AbsoluteUri,
                                         Util.ExceptionMessage(ex)) + ex + " " + ex.StackTrace);
-
-                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                    _httpClient?.Dispose();
-                    _httpClient = _config.HttpClient();
                 }
             }
         }
