@@ -17,7 +17,9 @@ namespace LaunchDarkly.Client
 
         public LdClient(Configuration config, IStoreEvents eventStore)
         {
-            Logger.LogInformation("Starting LaunchDarkly Client " + Configuration.Version);
+            Logger.LogInformation("Starting LaunchDarkly Client {0}",
+                Configuration.Version);
+
             _configuration = config;
             _eventStore = eventStore;
             _featureStore = _configuration.FeatureStore;
@@ -40,8 +42,10 @@ namespace LaunchDarkly.Client
                 _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
             }
             var initTask = _updateProcessor.Start();
-            Logger.LogInformation("Waiting up to " + _configuration.StartWaitTime.TotalMilliseconds +
-                                  " milliseconds for LaunchDarkly client to start..");
+
+            Logger.LogInformation("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
+                _configuration.StartWaitTime.TotalMilliseconds);
+
             var unused = initTask.Wait(_configuration.StartWaitTime);
         }
 
@@ -132,7 +136,9 @@ namespace LaunchDarkly.Client
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError("Exception caught when evaluating all flags: " + e.Message, e);
+                    Logger.LogError(e, 
+                        "Exception caught when evaluating all flags: {0}",
+                        Util.ExceptionMessage(e));
                 }
             }
             return results;
@@ -157,7 +163,9 @@ namespace LaunchDarkly.Client
                 var featureFlag = _featureStore.Get(featureKey);
                 if (featureFlag == null)
                 {
-                    Logger.LogWarning("Unknown feature flag " + featureKey + "; returning default value: ");
+                    Logger.LogWarning("Unknown feature flag {0}; returning default value",
+                        featureKey);
+
                     sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
                     return defaultValue;
                 }
@@ -174,8 +182,11 @@ namespace LaunchDarkly.Client
                 {
                     if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
                     {
-                        Logger.LogError("Expected type: " + expectedType + " but got " + evalResult.GetType() +
-                                        " when evaluating FeatureFlag: " + featureKey + ". Returning default");
+                        Logger.LogError("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
+                            expectedType,
+                            evalResult.GetType(),
+                            featureKey);
+
                         sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, featureFlag.Version);
                         return defaultValue;
                     }
@@ -185,11 +196,13 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogError(
-                    String.Format(
-                        "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
-                        e.Message, featureKey, user.Key));
-                Logger.LogDebug(e.ToString());
+                Logger.LogError(e,
+                     "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
+                     Util.ExceptionMessage(e), 
+                     featureKey, 
+                     user.Key);
+
+                Logger.LogDebug("{0}", e);
             }
             sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
             return defaultValue;
