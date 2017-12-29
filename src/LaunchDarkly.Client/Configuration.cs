@@ -146,25 +146,9 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        internal static Configuration WithEventQueueCapacity(this Configuration configuration, string eventQueueCapacity)
-        {
-            if (eventQueueCapacity != null)
-                return WithEventQueueCapacity(configuration, int.Parse(eventQueueCapacity));
-
-            return configuration;
-        }
-
         public static Configuration WithEventQueueFrequency(this Configuration configuration, TimeSpan frequency)
         {
             configuration.EventQueueFrequency = frequency;
-
-            return configuration;
-        }
-
-        internal static Configuration WithEventQueueFrequency(this Configuration configuration, string frequency)
-        {
-            if (frequency != null)
-                return WithEventQueueFrequency(configuration, TimeSpan.FromSeconds(int.Parse(frequency)));
 
             return configuration;
         }
