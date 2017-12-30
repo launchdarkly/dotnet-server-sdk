@@ -38,16 +38,19 @@ namespace LaunchDarkly.Client
                     return null;
                 }
                 var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
-                Logger.LogDebug("Get all flags returned " + flags.Keys.Count + " feature flags");
+
+                Logger.LogDebug("Get all flags returned {0} feature flags",
+                    flags.Keys.Count);
+
                 return flags;
             }
             catch (Exception e)
             {
-                // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                _httpClient?.Dispose();
-                _httpClient = _config.HttpClient();
-                Logger.LogError("Error getting feature flags: " + Util.ExceptionMessage(e));
-                Logger.LogDebug(e.ToString());
+                Logger.LogError(e, 
+                    "Error getting feature flags: {0}",
+                    Util.ExceptionMessage(e));
+
+                Logger.LogDebug("{0}", e);
                 return null;
             }
         }
@@ -67,12 +70,10 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                _httpClient?.Dispose();
-                _httpClient = _config.HttpClient();
+                Logger.LogDebug(e,
+                    "Error getting feature flags: {0} waiting 1 second before retrying.",
+                    Util.ExceptionMessage(e));
 
-                Logger.LogDebug("Error getting feature flags: " + Util.ExceptionMessage(e) +
-                                " waiting 1 second before retrying.");
                 System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
                 try
@@ -83,10 +84,6 @@ namespace LaunchDarkly.Client
                 }
                 catch (TaskCanceledException tce)
                 {
-                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                    _httpClient?.Dispose();
-                    _httpClient = _config.HttpClient();
-
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
@@ -98,16 +95,13 @@ namespace LaunchDarkly.Client
                 }
                 catch (Exception)
                 {
-                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                    _httpClient?.Dispose();
-                    _httpClient = _config.HttpClient();
                     throw;
                 }
             }
         }
         private async Task<string> Get(CancellationTokenSource cts, Uri path)
         {
-            Logger.LogDebug("Getting flags with uri: " + path.AbsoluteUri);
+            Logger.LogDebug("Getting flags with uri: {0}", path.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             if (_etag != null)
             {

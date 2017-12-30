@@ -11,6 +11,10 @@ namespace LaunchDarkly.Client
         public Uri StreamUri { get; internal set; }
         public Uri EventsUri { get; internal set; }
         public string SdkKey { get; internal set; }
+        /// <summary>
+        /// Whether or not the streaming API should be used to receive flag updates. This is true by default.
+        /// Streaming should only be disabled on the advice of LaunchDarkly support.
+        /// </summary>
         public bool IsStreamingEnabled { get; internal set; }
         public int EventQueueCapacity { get; internal set; }
         public TimeSpan EventQueueFrequency { get; internal set; }
@@ -142,25 +146,9 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        internal static Configuration WithEventQueueCapacity(this Configuration configuration, string eventQueueCapacity)
-        {
-            if (eventQueueCapacity != null)
-                return WithEventQueueCapacity(configuration, int.Parse(eventQueueCapacity));
-
-            return configuration;
-        }
-
         public static Configuration WithEventQueueFrequency(this Configuration configuration, TimeSpan frequency)
         {
             configuration.EventQueueFrequency = frequency;
-
-            return configuration;
-        }
-
-        internal static Configuration WithEventQueueFrequency(this Configuration configuration, string frequency)
-        {
-            if (frequency != null)
-                return WithEventQueueFrequency(configuration, TimeSpan.FromSeconds(int.Parse(frequency)));
 
             return configuration;
         }
