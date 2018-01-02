@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <VersionPrefix>3.4.0</VersionPrefix>
-    <TargetFrameworks>netstandard1.4;netstandard1.6;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.4;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>LaunchDarkly.Client</AssemblyName>
     <OutputType>Library</OutputType>
