@@ -8,6 +8,8 @@ dependencies:
   override:
     - dotnet restore
     - dotnet build src/LaunchDarkly.Client -f netstandard1.4
+    - dotnet build src/LaunchDarkly.Client -f netstandard1.6
+    - dotnet build src/LaunchDarkly.Client -f netstandard2.0
 test:
   override:
     - dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
