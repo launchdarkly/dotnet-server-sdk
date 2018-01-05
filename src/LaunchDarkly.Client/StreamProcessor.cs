@@ -78,20 +78,20 @@ namespace LaunchDarkly.Client
 
         private async void RestartEventSource()
         {
+            TimeSpan sleepTime = TimeSpan.FromMilliseconds(0);
             if (_backOff.GetReconnectAttemptCount() > 0 && _config.ReconnectTime > TimeSpan.FromMilliseconds(0))
             {
-                TimeSpan sleepTime = _backOff.GetNextBackOff();
+                sleepTime = _backOff.GetNextBackOff();
 
-                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before restarting...",
+                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before reconnecting...",
                     sleepTime.TotalMilliseconds);
-
-                await Task.Delay(sleepTime);
             }
             else
             {
                 _backOff.IncrementReconnectAttemptCount();
             }
             _es.Close();
+            await Task.Delay(sleepTime);
             try
             {
                 await _es.StartAsync();
