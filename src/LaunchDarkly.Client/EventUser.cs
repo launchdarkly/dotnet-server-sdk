@@ -46,10 +46,6 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "privateAttrs", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> PrivateAttrs { get; set; }
 
-        public EventUser()
-        {
-        }
-
         public static EventUser FromUser(User user, Configuration config)
         {
             EventUserBuilder eub = new EventUserBuilder(user, config);
@@ -103,7 +99,8 @@ namespace LaunchDarkly.Client
             {
                 return null;
             }
-            else if (_config.AllAttributesPrivate || _config.PrivateAttributeNames.Contains(name) ||
+            else if (_config.AllAttributesPrivate ||
+                     (_config.PrivateAttributeNames != null &&_config.PrivateAttributeNames.Contains(name)) ||
                      (_user.PrivateAttributeNames != null && _user.PrivateAttributeNames.Contains(name)))
             {
                 if (_result.PrivateAttrs is null)

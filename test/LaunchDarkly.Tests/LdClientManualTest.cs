@@ -8,8 +8,9 @@ namespace LaunchDarkly.Tests
     public class LdClientManualTest
     {
         private static string API_KEY = "YOUR_SDK_KEY";
-        private static string FLAG_KEY = "test-flag";
+        private static string FLAG_KEY = "YOUR_FLAG_KEY";
 
+//        [Fact]
         public void ClientTest()
         {
             Configuration config = Configuration.Default(API_KEY);

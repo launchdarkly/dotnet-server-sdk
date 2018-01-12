@@ -35,7 +35,7 @@ namespace LaunchDarkly.Client
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool Offline { get; internal set; }
         public bool AllAttributesPrivate { get; internal set; }
-        public ISet<string> PrivateAttributeNames { get; internal set; } = new HashSet<string>();
+        public ISet<string> PrivateAttributeNames { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
 
 
@@ -74,7 +74,9 @@ namespace LaunchDarkly.Client
                 Offline = false,
                 SdkKey = sdkKey,
                 FeatureStore = new InMemoryFeatureStore(),
-                IsStreamingEnabled = true
+                IsStreamingEnabled = true,
+                AllAttributesPrivate = false,
+                PrivateAttributeNames = null
             };
 
             return defaultConfiguration;
@@ -249,6 +251,10 @@ namespace LaunchDarkly.Client
 
         public static Configuration WithPrivateAttributeName(this Configuration configuration, string attributeName)
         {
+            if (configuration.PrivateAttributeNames == null)
+            {
+                configuration.PrivateAttributeNames = new HashSet<string>();
+            }
             configuration.PrivateAttributeNames.Add(attributeName);
             return configuration;
         }
