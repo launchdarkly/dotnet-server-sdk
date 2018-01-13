@@ -12,7 +12,7 @@ namespace LaunchDarkly.Client
         public string Kind { get; private set; }
 
         [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        public User User { get; private set; }
+        public EventUser User { get; private set; }
 
         [JsonProperty(PropertyName = "creationDate", NullValueHandling = NullValueHandling.Ignore)]
         public long CreationDate { get; private set; }
@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; private set; }
 
-        protected Event(string kind, string key, User user)
+        protected Event(string kind, string key, EventUser user)
         {
             Kind = kind;
             CreationDate = GetUnixTimestampMillis(DateTime.UtcNow);
@@ -48,7 +48,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "prereqOf", NullValueHandling = NullValueHandling.Ignore)]
         public JToken PrereqOf { get; private set; }
 
-        public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version,
+        public FeatureRequestEvent(string key, EventUser user, JToken value, JToken defaultValue, JToken version,
             JToken prereqOf) : base("feature", key, user)
         {
             Value = value;
@@ -63,7 +63,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
         public string Data { get; private set; }
 
-        public CustomEvent(string key, User user, string data) : base("custom", key, user)
+        public CustomEvent(string key, EventUser user, string data) : base("custom", key, user)
         {
             Data = data;
         }
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Client
 
     public class IdentifyEvent : Event
     {
-        public IdentifyEvent(User user) : base("identify", user.Key, user)
+        public IdentifyEvent(EventUser user) : base("identify", user.Key, user)
         {
         }
     }
