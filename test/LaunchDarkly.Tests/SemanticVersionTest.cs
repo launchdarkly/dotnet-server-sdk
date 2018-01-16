@@ -53,6 +53,22 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void LeadingZeroesAreNotAllowed()
+        {
+            Assert.Throws<ArgumentException>(() => SemanticVersion.Parse("02.3.4", false));
+            Assert.Throws<ArgumentException>(() => SemanticVersion.Parse("2.03.4", false));
+            Assert.Throws<ArgumentException>(() => SemanticVersion.Parse("2.3.04", false));
+        }
+
+        [Fact]
+        public void ZeroByItselfIsAllowed()
+        {
+            Assert.Equal(0, SemanticVersion.Parse("0.3.4").Major);
+            Assert.Equal(0, SemanticVersion.Parse("2.0.4").Minor);
+            Assert.Equal(0, SemanticVersion.Parse("2.3.0").Patch);
+        }
+
+        [Fact]
         public void CanParseVersionWithMajorOnly()
         {
             var sv = SemanticVersion.Parse("2", true);

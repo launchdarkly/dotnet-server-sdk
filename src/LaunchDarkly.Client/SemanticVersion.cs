@@ -8,7 +8,7 @@ namespace LaunchDarkly.Client
     internal class SemanticVersion
     {
         static Regex VERSION_REGEX = new Regex(
-            @"^(?<major>[1-9]\d*)(\.(?<minor>[1-9]\d*))?(\.(?<patch>[1-9]\d*))?" +
+            @"^(?<major>0|[1-9]\d*)(\.(?<minor>0|[1-9]\d*))?(\.(?<patch>0|[1-9]\d*))?" +
             @"(\-(?<prerel>[0-9A-Za-z\-\.]+))?(\+(?<build>[0-9A-Za-z\-\.]+))?$",
             RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
