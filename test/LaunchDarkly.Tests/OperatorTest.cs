@@ -263,6 +263,25 @@ namespace LaunchDarkly.Tests
             Assert.False(Operator.Apply("greaterThanOrEqual", new JValue(userValue), new JValue(clauseValue)));
         }
 
+        [Theory]
+        [InlineData("semVerEqual", "2.0.1", "2.0.1", true)]
+        [InlineData("semVerEqual", "2.0", "2.0.0", true)]
+        [InlineData("semVerEqual", "2", "2.0.0", true)]
+        [InlineData("semVerEqual", "2.0-rc1", "2.0.0-rc1", true)]
+        [InlineData("semVerLessThan", "2.0.0", "2.0.1", true)]
+        [InlineData("semVerLessThan", "2.0", "2.0.1", true)]
+        [InlineData("semVerLessThan", "2.0.1", "2.0.0", false)]
+        [InlineData("semVerLessThan", "2.0.1", "2.0", false)]
+        [InlineData("semVerGreaterThan", "2.0.1", "2.0.0", true)]
+        [InlineData("semVerGreaterThan", "2.0.1", "2.0", true)]
+        [InlineData("semVerGreaterThan", "2.0.0", "2.0.1", false)]
+        [InlineData("semVerGreaterThan", "2.0", "2.0.1", false)]
+        [InlineData("semVerLessThan", "2.0.1", "xbad%ver", false)]
+        [InlineData("semVerGreaterThan", "2.0.1", "xbad%ver", false)]
+        public void Apply_Any_Operators(string opName, object userValue, object clauseValue, bool expected)
+        {
+            var result = Operator.Apply(opName, new JValue(userValue), new JValue(clauseValue));
+            Assert.Equal(expected, result);
+        }
     }
-
 }
