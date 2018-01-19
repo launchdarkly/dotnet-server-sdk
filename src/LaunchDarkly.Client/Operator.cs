@@ -140,6 +140,8 @@ namespace LaunchDarkly.Client
                 try
                 {
                     return SemVersion.Parse(jValue.Value<String>(), strict: false);
+                    // Note that in the library we're using, "strict: false" means the minor and patch versions can
+                    // be omitted and will default to zero, which is the behavior we want.
                 }
                 catch (InvalidOperationException)
                 {
