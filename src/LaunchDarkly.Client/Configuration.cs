@@ -38,6 +38,7 @@ namespace LaunchDarkly.Client
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool Offline { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
+        internal ISegmentStore SegmentStore { get; set; }
 
 
         internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
@@ -75,6 +76,7 @@ namespace LaunchDarkly.Client
                 Offline = false,
                 SdkKey = sdkKey,
                 FeatureStore = new InMemoryFeatureStore(),
+                SegmentStore = new InMemorySegmentStore(),
                 IsStreamingEnabled = true
             };
 
@@ -210,6 +212,15 @@ namespace LaunchDarkly.Client
             if (featureStore != null)
             {
                 configuration.FeatureStore = featureStore;
+            }
+            return configuration;
+        }
+
+        public static Configuration WithSegmentStore(this Configuration configuration, ISegmentStore segmentStore)
+        {
+            if (segmentStore != null)
+            {
+                configuration.SegmentStore = segmentStore;
             }
             return configuration;
         }

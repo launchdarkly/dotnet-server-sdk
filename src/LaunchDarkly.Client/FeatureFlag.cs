@@ -6,12 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class FeatureFlag
+    public class FeatureFlag : IVersionedData
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureFlag>();
 
-        internal string Key { get; private set; }
-        internal int Version { get; set; }
+        public string Key { get; private set; }
+        public int Version { get; set; }
         internal bool On { get; private set; }
         internal List<Prerequisite> Prerequisites { get; private set; }
         internal string Salt { get; private set; }
@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
         internal VariationOrRollout Fallthrough { get; private set; }
         internal int? OffVariation { get; private set; }
         internal List<JToken> Variations { get; private set; }
-        internal bool Deleted { get; set; }
+        public bool Deleted { get; set; }
 
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
@@ -59,7 +59,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        internal EvalResult Evaluate(User user, IFeatureStore featureStore)
+        internal EvalResult Evaluate(User user, IFeatureStore featureStore, ISegmentStore segmentStore)
         {
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
             EvalResult evalResult = new EvalResult(null, prereqEvents);
@@ -73,7 +73,7 @@ namespace LaunchDarkly.Client
 
             if (On)
             {
-                evalResult.Result = Evaluate(user, featureStore, prereqEvents);
+                evalResult.Result = Evaluate(user, featureStore, segmentStore, prereqEvents);
                 if (evalResult.Result != null)
                 {
                     return evalResult;
@@ -84,7 +84,7 @@ namespace LaunchDarkly.Client
         }
 
         // Returning either a nil EvalResult or EvalResult.value indicates prereq failure/error.
-        private JToken Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events)
+        private JToken Evaluate(User user, IFeatureStore featureStore, ISegmentStore segmentStore, IList<FeatureRequestEvent> events)
         {
             var prereqOk = true;
             if (Prerequisites != null)
@@ -102,7 +102,7 @@ namespace LaunchDarkly.Client
                     }
                     else if (prereqFeatureFlag.On)
                     {
-                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events);
+                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, segmentStore, events);
                         try
                         {
                             JToken variation = prereqFeatureFlag.GetVariation(prereq.Variation);
@@ -131,13 +131,13 @@ namespace LaunchDarkly.Client
             }
             if (prereqOk)
             {
-                return GetVariation(EvaluateIndex(user));
+                return GetVariation(EvaluateIndex(user, segmentStore));
             }
             return null;
         }
 
 
-        private int? EvaluateIndex(User user)
+        private int? EvaluateIndex(User user, ISegmentStore segmentStore)
         {
             // Check to see if targets match
             foreach (var target in Targets)
@@ -154,7 +154,7 @@ namespace LaunchDarkly.Client
             // Now walk through the rules and see if any match
             foreach (Rule rule in Rules)
             {
-                if (rule.MatchesUser(user))
+                if (rule.MatchesUser(user, segmentStore))
                 {
                     return rule.VariationIndexForUser(user, Key, Salt);
                 }

@@ -13,6 +13,7 @@ namespace LaunchDarkly.Client
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
         private readonly IFeatureStore _featureStore;
+        private readonly ISegmentStore _segmentStore;
         private readonly IUpdateProcessor _updateProcessor;
 
         public LdClient(Configuration config, IStoreEvents eventStore)
@@ -23,6 +24,7 @@ namespace LaunchDarkly.Client
             _configuration = config;
             _eventStore = eventStore;
             _featureStore = _configuration.FeatureStore;
+            _segmentStore = _configuration.SegmentStore;
 
             if (_configuration.Offline)
             {
@@ -131,7 +133,7 @@ namespace LaunchDarkly.Client
             {
                 try
                 {
-                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore);
+                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _segmentStore);
                     results.Add(pair.Key, evalResult.Result);
                 }
                 catch (Exception e)
@@ -170,7 +172,7 @@ namespace LaunchDarkly.Client
                     return defaultValue;
                 }
 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore);
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _segmentStore);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
