@@ -23,6 +23,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; private set; }
 
+        [Obsolete]
         protected Event(string kind, string key, User user) : this(kind, key, null, user)
         {
         }
