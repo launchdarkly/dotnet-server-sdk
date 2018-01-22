@@ -8,7 +8,7 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Used internally to represent user data that is being serialized in an event.
     /// </summary>
-    public class EventUser
+    internal class EventUser
     {
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; set; }

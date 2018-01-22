@@ -126,7 +126,7 @@ namespace LaunchDarkly.Client
                     }
                     //We don't short circuit and also send events for each prereq.
                     events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, EventUser.FromUser(user, config),
-                        prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
+                        user, prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
                 }
             }
             if (prereqOk)
