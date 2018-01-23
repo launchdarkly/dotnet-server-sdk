@@ -199,6 +199,12 @@ namespace LaunchDarkly.Client
                     "Error Updating feature: '{0}'",
                     Util.ExceptionMessage(ex.Flatten()));
             }
+            catch (TimeoutException ex) {
+                Logger.LogError(ex,
+                    "Error Updating feature: '{0}'",
+                    Util.ExceptionMessage(ex));
+                RestartEventSource();
+            }
             catch (Exception ex)
             {
                 Logger.LogError(ex,
