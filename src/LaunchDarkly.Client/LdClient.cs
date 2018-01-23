@@ -163,7 +163,7 @@ namespace LaunchDarkly.Client
                 var featureFlag = _featureStore.Get(featureKey);
                 if (featureFlag == null)
                 {
-                    Logger.LogWarning("Unknown feature flag {0}; returning default value",
+                    Logger.LogInformation("Unknown feature flag {0}; returning default value",
                         featureKey);
 
                     sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
