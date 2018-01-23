@@ -11,8 +11,11 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "kind", NullValueHandling = NullValueHandling.Ignore)]
         public string Kind { get; private set; }
 
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
+        [Obsolete]
         public User User { get; private set; }
+
+        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
+        internal EventUser EventUser { get; private set; }
 
         [JsonProperty(PropertyName = "creationDate", NullValueHandling = NullValueHandling.Ignore)]
         public long CreationDate { get; private set; }
@@ -20,12 +23,17 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
         public string Key { get; private set; }
 
-        protected Event(string kind, string key, User user)
+        [Obsolete]
+        protected Event(string kind, string key, User user) : this(kind, key, null, user)
+        {
+        }
+
+        internal Event(string kind, string key, EventUser eventUser, User user)
         {
             Kind = kind;
             CreationDate = GetUnixTimestampMillis(DateTime.UtcNow);
             Key = key;
-            User = user;
+            EventUser = eventUser;
         }
 
         public static long GetUnixTimestampMillis(DateTime dateTime)
@@ -48,8 +56,18 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "prereqOf", NullValueHandling = NullValueHandling.Ignore)]
         public JToken PrereqOf { get; private set; }
 
+        [Obsolete]
         public FeatureRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version,
-            JToken prereqOf) : base("feature", key, user)
+            JToken prereqOf) : this(key, null, user, value, defaultValue, version, prereqOf)
+        {
+            Value = value;
+            Default = defaultValue;
+            Version = version;
+            PrereqOf = prereqOf;
+        }
+
+        internal FeatureRequestEvent(string key, EventUser eventUser, User user, JToken value, JToken defaultValue, JToken version,
+            JToken prereqOf) : base("feature", key, eventUser, user)
         {
             Value = value;
             Default = defaultValue;
@@ -63,7 +81,11 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
         public string Data { get; private set; }
 
-        public CustomEvent(string key, User user, string data) : base("custom", key, user)
+        public CustomEvent(string key, User user, string data) : this(key, null, user, data)
+        {
+        }
+
+        internal CustomEvent(string key, EventUser eventUser, User user, string data) : base("custom", key, eventUser, user)
         {
             Data = data;
         }
@@ -71,8 +93,12 @@ namespace LaunchDarkly.Client
 
     public class IdentifyEvent : Event
     {
-        public IdentifyEvent(User user) : base("identify", user.Key, user)
+        public IdentifyEvent(User user) : this(null, user)
         {
         }
-    }
+
+        internal IdentifyEvent(EventUser eventUser, User user) : base("identify", user.Key, eventUser, user)
+        {
+        }
+}
 }

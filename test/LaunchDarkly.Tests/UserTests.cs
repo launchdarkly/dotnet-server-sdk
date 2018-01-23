@@ -15,40 +15,6 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void DeserializeBasicUserAsJson()
-        {
-            var json = "{\"key\":\"user@test.com\"}";
-            var user = JsonConvert.DeserializeObject<User>(json);
-            Assert.Equal("user@test.com", user.Key);
-        }
-
-        [Fact]
-        public void DeserializeUserWithCustomAsJson()
-        {
-            var json = "{\"key\":\"user@test.com\", \"custom\": {\"bizzle\":\"cripps\"}}";
-            var user = JsonConvert.DeserializeObject<User>(json);
-            Assert.Equal("cripps", (string) user.Custom["bizzle"]);
-        }
-
-        [Fact]
-        public void SerializingAndDeserializingAUserWithCustomAttributesIsIdempotent()
-        {
-            var user = User.WithKey("foo@bar.com").AndCustomAttribute("bizzle", "cripps");
-            var json = JsonConvert.SerializeObject(user);
-            var newUser = JsonConvert.DeserializeObject<User>(json);
-            Assert.Equal("cripps", (string) user.Custom["bizzle"]);
-            Assert.Equal("foo@bar.com", user.Key);
-        }
-
-        [Fact]
-        public void SerializingAUserWithNoAnonymousSetYieldsNoAnonymous()
-        {
-            var user = User.WithKey("foo@bar.com");
-            var json = JsonConvert.SerializeObject(user);
-            Assert.False(json.Contains("anonymous"));
-        }
-
-        [Fact]
         public void WhenCreatingAUser_AnOptionalSecondaryKeyCanBeProvided()
         {
             var user = User.WithKey("AnyUniqueKey")
@@ -79,7 +45,7 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void IfCountryIsSpecied_ItMustBeA2CharacterCode()
+        public void IfCountryIsSpecified_ItMustBeA2CharacterCode()
         {
             var user = User.WithKey("AnyUniqueKey");
 
@@ -141,6 +107,104 @@ namespace LaunchDarkly.Tests
             Assert.Equal("US", user.Country);
             Assert.Equal("AnyValue", (string) user.Custom["AnyAttributeName"]);
             Assert.Equal("AnyOtherValue", (string) user.Custom["AnyOtherAttributeName"]);
+        }
+
+        [Fact]
+        public void SettingPrivateIpSetsIp()
+        {
+            var user = User.WithKey("key").AndPrivateIpAddress("x");
+            Assert.Equal("x", user.IpAddress);
+        }
+
+        [Fact]
+        public void SettingPrivateIpMarksIpAsPrivate()
+        {
+            var user = User.WithKey("key").AndPrivateIpAddress("x");
+            Assert.True(user.PrivateAttributeNames.Contains("ip"));
+        }
+
+        [Fact]
+        public void SettingPrivateEmailSetsEmail()
+        {
+            var user = User.WithKey("key").AndPrivateEmail("x");
+            Assert.Equal("x", user.Email);
+        }
+
+        [Fact]
+        public void SettingPrivateEmailMarksEmailAsPrivate()
+        {
+            var user = User.WithKey("key").AndPrivateEmail("x");
+            Assert.True(user.PrivateAttributeNames.Contains("email"));
+        }
+
+        [Fact]
+        public void SettingPrivateAvatarSetsAvatar()
+        {
+            var user = User.WithKey("key").AndPrivateAvatar("x");
+            Assert.Equal("x", user.Avatar);
+        }
+
+        [Fact]
+        public void SettingPrivateAvatarMarksAvatarAsPrivate()
+        {
+            var user = User.WithKey("key").AndPrivateAvatar("x");
+            Assert.True(user.PrivateAttributeNames.Contains("avatar"));
+        }
+
+        [Fact]
+        public void SettingPrivateFirstNameSetsFirstName()
+        {
+            var user = User.WithKey("key").AndPrivateFirstName("x");
+            Assert.Equal("x", user.FirstName);
+        }
+
+        [Fact]
+        public void SettingPrivateFirstNameMarksFirstNameAsPrivate()
+        {
+            var user = User.WithKey("key").AndPrivateFirstName("x");
+            Assert.True(user.PrivateAttributeNames.Contains("firstName"));
+        }
+
+        [Fact]
+        public void SettingPrivateLastNameSetsLastName()
+        {
+            var user = User.WithKey("key").AndPrivateLastName("x");
+            Assert.Equal("x", user.LastName);
+        }
+
+        [Fact]
+        public void SettingPrivateLastNameMarksLastNameAsPrivate()
+        {
+            var user = User.WithKey("key").AndPrivateLastName("x");
+            Assert.True(user.PrivateAttributeNames.Contains("lastName"));
+        }
+
+        [Fact]
+        public void SettingPrivateNameSetsName()
+        {
+            var user = User.WithKey("key").AndPrivateName("x");
+            Assert.Equal("x", user.Name);
+        }
+
+        [Fact]
+        public void SettingPrivateNameMarksNameAsPrivate()
+        {
+            var user = User.WithKey("key").AndPrivateName("x");
+            Assert.True(user.PrivateAttributeNames.Contains("name"));
+        }
+
+        [Fact]
+        public void SettingPrivateCountrySetsCountry()
+        {
+            var user = User.WithKey("key").AndPrivateCountry("us");
+            Assert.Equal("us", user.Country);
+        }
+
+        [Fact]
+        public void SettingPrivateCountryMarksCountryAsPrivate()
+        {
+            var user = User.WithKey("key").AndPrivateCountry("us");
+            Assert.True(user.PrivateAttributeNames.Contains("country"));
         }
     }
 }
