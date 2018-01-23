@@ -131,7 +131,7 @@ namespace LaunchDarkly.Client
             {
                 try
                 {
-                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore);
+                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _configuration);
                     results.Add(pair.Key, evalResult.Result);
                 }
                 catch (Exception e)
@@ -170,7 +170,7 @@ namespace LaunchDarkly.Client
                     return defaultValue;
                 }
 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore);
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _configuration);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
@@ -228,7 +228,7 @@ namespace LaunchDarkly.Client
             {
                 Logger.LogWarning("Track called with null user or null user key");
             }
-            _eventStore.Add(new CustomEvent(name, user, data));
+            _eventStore.Add(new CustomEvent(name, EventUser.FromUser(user, _configuration), user, data));
         }
 
         public void Identify(User user)
@@ -237,12 +237,12 @@ namespace LaunchDarkly.Client
             {
                 Logger.LogWarning("Identify called with null user or null user key");
             }
-            _eventStore.Add(new IdentifyEvent(user));
+            _eventStore.Add(new IdentifyEvent(EventUser.FromUser(user, _configuration), user));
         }
 
         private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)
         {
-            _eventStore.Add(new FeatureRequestEvent(key, user, value, defaultValue, version, null));
+            _eventStore.Add(new FeatureRequestEvent(key, EventUser.FromUser(user, _configuration), user, value, defaultValue, version, null));
         }
 
         protected virtual void Dispose(bool disposing)
