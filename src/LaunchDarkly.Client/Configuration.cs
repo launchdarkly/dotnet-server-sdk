@@ -162,12 +162,9 @@ namespace LaunchDarkly.Client
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
             {
-                configuration.PollingInterval = Configuration.DefaultPollingInterval;
+                throw new System.ArgumentException("Polling interval cannot be less than the default of 30 seconds.", "pollingInterval");
             }
-            else
-            {
-                configuration.PollingInterval = pollingInterval;
-            }
+            configuration.PollingInterval = pollingInterval;
             return configuration;
         }
 
