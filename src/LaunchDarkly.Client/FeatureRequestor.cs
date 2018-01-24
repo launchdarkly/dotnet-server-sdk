@@ -46,7 +46,7 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogError(e, 
+                Logger.LogError(e,
                     "Error getting feature flags: {0}",
                     Util.ExceptionMessage(e));
 
@@ -90,8 +90,8 @@ namespace LaunchDarkly.Client
                         throw;
                     }
                     //Otherwise this was a request timeout.
-                    throw new Exception("Get Feature with URL: " + flagPath + " timed out after : " +
-                                        _config.HttpClientTimeout);
+                    throw new TimeoutException("Get Feature with URL: " + flagPath +
+                                                " timed out after : " +_config.HttpClientTimeout);
                 }
                 catch (Exception)
                 {
