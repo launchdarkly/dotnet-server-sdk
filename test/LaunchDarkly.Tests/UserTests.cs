@@ -206,5 +206,42 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("key").AndPrivateCountry("us");
             Assert.True(user.PrivateAttributeNames.Contains("country"));
         }
+
+        // Note that we never deserialize users from JSON in the client code; however, our integration tests
+        // do require that User be deserializable.
+
+        [Fact]
+        public void DeserializeBasicUserAsJson()
+        {
+            var json = "{\"key\":\"user@test.com\"}";
+            var user = JsonConvert.DeserializeObject<User>(json);
+            Assert.Equal("user@test.com", user.Key);
+        }
+
+        [Fact]
+        public void DeserializeUserWithCustomAsJson()
+        {
+            var json = "{\"key\":\"user@test.com\", \"custom\": {\"bizzle\":\"cripps\"}}";
+            var user = JsonConvert.DeserializeObject<User>(json);
+            Assert.Equal("cripps", (string) user.Custom["bizzle"]);
+        }
+
+        [Fact]
+        public void SerializingAndDeserializingAUserWithCustomAttributesIsIdempotent()
+        {
+            var user = User.WithKey("foo@bar.com").AndCustomAttribute("bizzle", "cripps");
+            var json = JsonConvert.SerializeObject(user);
+            var newUser = JsonConvert.DeserializeObject<User>(json);
+            Assert.Equal("cripps", (string) user.Custom["bizzle"]);
+            Assert.Equal("foo@bar.com", user.Key);
+        }
+
+        [Fact]
+        public void SerializingAUserWithNoAnonymousSetYieldsNoAnonymous()
+        {
+            var user = User.WithKey("foo@bar.com");
+            var json = JsonConvert.SerializeObject(user);
+            Assert.False(json.Contains("anonymous"));
+        }
     }
 }
