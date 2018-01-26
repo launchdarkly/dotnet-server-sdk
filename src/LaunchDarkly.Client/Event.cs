@@ -12,6 +12,7 @@ namespace LaunchDarkly.Client
         public string Kind { get; private set; }
 
         [Obsolete]
+        [JsonIgnore]
         public User User { get; private set; }
 
         [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
