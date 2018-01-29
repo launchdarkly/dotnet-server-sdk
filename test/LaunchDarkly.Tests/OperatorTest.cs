@@ -273,7 +273,6 @@ namespace LaunchDarkly.Tests
         [InlineData("semVerLessThan", "2.0", "2.0.1", true)]
         [InlineData("semVerLessThan", "2.0.1", "2.0.0", false)]
         [InlineData("semVerLessThan", "2.0.1", "2.0", false)]
-        [InlineData("semVerLessThan", "2.0.0-rc", "2.0.0", true)]
         [InlineData("semVerLessThan", "2.0.0-rc", "2.0.0-rc-beta", true)]
         [InlineData("semVerGreaterThan", "2.0.1", "2.0.0", true)]
         [InlineData("semVerGreaterThan", "2.0.1", "2.0", true)]
