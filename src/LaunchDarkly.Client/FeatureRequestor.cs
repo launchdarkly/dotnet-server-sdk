@@ -46,10 +46,6 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                _httpClient?.Dispose();
-                _httpClient = _config.HttpClient();
-
                 Logger.LogError(e, 
                     "Error getting feature flags: {0}",
                     Util.ExceptionMessage(e));
@@ -74,10 +70,6 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                _httpClient?.Dispose();
-                _httpClient = _config.HttpClient();
-
                 Logger.LogDebug(e,
                     "Error getting feature flags: {0} waiting 1 second before retrying.",
                     Util.ExceptionMessage(e));
@@ -92,10 +84,6 @@ namespace LaunchDarkly.Client
                 }
                 catch (TaskCanceledException tce)
                 {
-                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                    _httpClient?.Dispose();
-                    _httpClient = _config.HttpClient();
-
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
@@ -107,9 +95,6 @@ namespace LaunchDarkly.Client
                 }
                 catch (Exception)
                 {
-                    // Using a new client after errors because: https://github.com/dotnet/corefx/issues/11224
-                    _httpClient?.Dispose();
-                    _httpClient = _config.HttpClient();
                     throw;
                 }
             }
