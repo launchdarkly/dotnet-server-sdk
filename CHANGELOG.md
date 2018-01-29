@@ -8,6 +8,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ### Changed
 - The stream connection will now restart when a large feature flag update fails repeatedly to ensure that the client is using most recent flag values.
+- Client no longer reconnects after detecting an invalidated SDK key.
 
 ## [3.4.1] - 2018-01-19
 ### Added
