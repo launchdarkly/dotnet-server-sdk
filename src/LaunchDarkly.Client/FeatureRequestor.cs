@@ -31,28 +31,16 @@ namespace LaunchDarkly.Client
         {
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
             string content = null;
-            try
-            {
-                content = await Get(cts, _uri);
-                if(string.IsNullOrEmpty(content)) {
-                    return null;
-                }
-                var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
-
-                Logger.LogDebug("Get all flags returned {0} feature flags",
-                    flags.Keys.Count);
-
-                return flags;
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e, 
-                    "Error getting feature flags: {0}",
-                    Util.ExceptionMessage(e));
-
-                Logger.LogDebug("{0}", e);
+            content = await Get(cts, _uri);
+            if(string.IsNullOrEmpty(content)) {
                 return null;
             }
+            var flags = JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(content);
+
+            Logger.LogDebug("Get all flags returned {0} feature flags",
+                flags.Keys.Count);
+
+            return flags;
         }
 
         // Returns the latest version of a flag, or null if it has not been modified. Throws an exception if there
@@ -90,8 +78,8 @@ namespace LaunchDarkly.Client
                         throw;
                     }
                     //Otherwise this was a request timeout.
-                    throw new Exception("Get Feature with URL: " + flagPath + " timed out after : " +
-                                        _config.HttpClientTimeout);
+                    throw new TimeoutException("Get Feature with URL: " + flagPath +
+                                                " timed out after : " +_config.HttpClientTimeout);
                 }
                 catch (Exception)
                 {
@@ -117,7 +105,10 @@ namespace LaunchDarkly.Client
                 }
                 _etag = response.Headers.ETag;
                 //We ensure the status code after checking for 304, because 304 isn't considered success
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new FeatureRequestorUnsuccessfulResponseException((int)response.StatusCode);
+                }
                 return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
         }

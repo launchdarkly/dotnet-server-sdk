@@ -175,6 +175,14 @@ namespace LaunchDarkly.Client
             Logger.LogError(e.Exception,
                 "Encountered EventSource error: {0}",
                 Util.ExceptionMessage(e.Exception));
+            if (e.Exception is EventSource.EventSourceServiceUnsuccessfulResponseException)
+            {
+                if (((EventSource.EventSourceServiceUnsuccessfulResponseException)e.Exception).StatusCode == 401)
+                {
+                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    ((IDisposable)this).Dispose();
+                }
+            }
         }
 
         void IDisposable.Dispose()
@@ -198,6 +206,21 @@ namespace LaunchDarkly.Client
                 Logger.LogError(ex,
                     "Error Updating feature: '{0}'",
                     Util.ExceptionMessage(ex.Flatten()));
+            }
+            catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
+            {
+                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
+                if (ex.StatusCode == 401)
+                {
+                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    ((IDisposable)this).Dispose();
+                }
+            }
+            catch (TimeoutException ex) {
+                Logger.LogError(ex,
+                    "Error Updating feature: '{0}'",
+                    Util.ExceptionMessage(ex));
+                RestartEventSource();
             }
             catch (Exception ex)
             {

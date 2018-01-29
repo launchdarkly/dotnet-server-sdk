@@ -59,7 +59,7 @@ namespace LaunchDarkly.Client
         }
 
 
-        internal EvalResult Evaluate(User user, IFeatureStore featureStore)
+        internal EvalResult Evaluate(User user, IFeatureStore featureStore, Configuration config)
         {
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
             EvalResult evalResult = new EvalResult(null, prereqEvents);
@@ -73,7 +73,7 @@ namespace LaunchDarkly.Client
 
             if (On)
             {
-                evalResult.Result = Evaluate(user, featureStore, prereqEvents);
+                evalResult.Result = Evaluate(user, featureStore, prereqEvents, config);
                 if (evalResult.Result != null)
                 {
                     return evalResult;
@@ -84,7 +84,7 @@ namespace LaunchDarkly.Client
         }
 
         // Returning either a nil EvalResult or EvalResult.value indicates prereq failure/error.
-        private JToken Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events)
+        private JToken Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events, Configuration config)
         {
             var prereqOk = true;
             if (Prerequisites != null)
@@ -102,7 +102,7 @@ namespace LaunchDarkly.Client
                     }
                     else if (prereqFeatureFlag.On)
                     {
-                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events);
+                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, config);
                         try
                         {
                             JToken variation = prereqFeatureFlag.GetVariation(prereq.Variation);
@@ -125,8 +125,8 @@ namespace LaunchDarkly.Client
                         prereqOk = false;
                     }
                     //We don't short circuit and also send events for each prereq.
-                    events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, user, prereqEvalResult, null,
-                        prereqFeatureFlag.Version, prereq.Key));
+                    events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, EventUser.FromUser(user, config),
+                        user, prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
                 }
             }
             if (prereqOk)
