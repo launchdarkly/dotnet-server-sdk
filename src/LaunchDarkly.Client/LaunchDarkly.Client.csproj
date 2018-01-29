@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <VersionPrefix>3.5.0-beta1</VersionPrefix>
+    <VersionPrefix>3.5.0</VersionPrefix>
     <TargetFrameworks>netstandard1.4;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/.net-client/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
