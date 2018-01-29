@@ -40,6 +40,8 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Custom { get; set; }
 
+        public ISet<string> PrivateAttributeNames { get; set; }
+
         internal JToken GetValueForEvaluation(string attribute)
         {
             switch (attribute)
@@ -81,6 +83,30 @@ namespace LaunchDarkly.Client
         {
             return new User(key);
         }
+
+        internal User AddCustom(string attribute, JToken value)
+        {
+            if (attribute == string.Empty)
+            {
+                throw new ArgumentException("Attribute Name cannot be empty");
+            }
+            if (Custom is null)
+            {
+                Custom = new Dictionary<string, JToken>();
+            }
+            Custom.Add(attribute, value);
+            return this;
+        }
+
+        internal User AddPrivate(string name)
+        {
+            if (PrivateAttributeNames is null)
+            {
+                PrivateAttributeNames = new HashSet<string>();
+            }
+            PrivateAttributeNames.Add(name);
+            return this;
+        }
     }
 
     public static class UserExtensions
@@ -97,6 +123,11 @@ namespace LaunchDarkly.Client
             return user;
         }
 
+        public static User AndPrivateIpAddress(this User user, string ipAddress)
+        {
+            return user.AndIpAddress(ipAddress).AddPrivate("ip");
+        }
+
         public static User AndCountry(this User user, string country)
         {
             if (country.Length != 2)
@@ -106,10 +137,20 @@ namespace LaunchDarkly.Client
             return user;
         }
 
+        public static User AndPrivateCountry(this User user, string country)
+        {
+            return user.AndCountry(country).AddPrivate("country");
+        }
+
         public static User AndFirstName(this User user, string firstName)
         {
             user.FirstName = firstName;
             return user;
+        }
+
+        public static User AndPrivateFirstName(this User user, string firstName)
+        {
+            return user.AndFirstName(firstName).AddPrivate("firstName");
         }
 
         public static User AndLastName(this User user, string lastName)
@@ -118,16 +159,31 @@ namespace LaunchDarkly.Client
             return user;
         }
 
+        public static User AndPrivateLastName(this User user, string lastName)
+        {
+            return user.AndLastName(lastName).AddPrivate("lastName");
+        }
+
         public static User AndName(this User user, string name)
         {
             user.Name = name;
             return user;
         }
 
+        public static User AndPrivateName(this User user, string name)
+        {
+            return user.AndName(name).AddPrivate("name");
+        }
+
         public static User AndEmail(this User user, string email)
         {
             user.Email = email;
             return user;
+        }
+
+        public static User AndPrivateEmail(this User user, string email)
+        {
+            return user.AndEmail(email).AddPrivate("email");
         }
 
         public static User AndAnonymous(this User user, bool anonymous)
@@ -142,64 +198,69 @@ namespace LaunchDarkly.Client
             return user;
         }
 
+        public static User AndPrivateAvatar(this User user, string avatar)
+        {
+            return user.AndAvatar(avatar).AddPrivate("avatar");
+        }
+
         public static User AndCustomAttribute(this User user, string attribute, string value)
         {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
+            return user.AddCustom(attribute, new JValue(value));
         }
 
         public static User AndCustomAttribute(this User user, string attribute, bool value)
         {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
+            return user.AddCustom(attribute, new JValue(value));
         }
 
         public static User AndCustomAttribute(this User user, string attribute, int value)
         {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
+            return user.AddCustom(attribute, new JValue(value));
         }
 
         public static User AndCustomAttribute(this User user, string attribute, float value)
         {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JValue(value));
-
-            return user;
+            return user.AddCustom(attribute, new JValue(value));
         }
 
         public static User AndCustomAttribute(this User user, string attribute, List<string> value)
         {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
-
-            user.Custom.Add(attribute, new JArray(value.ToArray()));
-
-            return user;
+            return user.AddCustom(attribute, new JArray(value.ToArray()));
         }
 
         public static User AndCustomAttribute(this User user, string attribute, List<int> value)
         {
-            if (attribute == string.Empty)
-                throw new ArgumentException("Attribute Name can not be empty");
+            return user.AddCustom(attribute, new JArray(value.ToArray()));
+        }
 
-            user.Custom.Add(attribute, new JArray(value.ToArray()));
+        public static User AndPrivateCustomAttribute(this User user, string attribute, string value)
+        {
+            return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
+        }
 
-            return user;
+        public static User AndPrivateCustomAttribute(this User user, string attribute, bool value)
+        {
+            return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
+        }
+
+        public static User AndPrivateCustomAttribute(this User user, string attribute, int value)
+        {
+            return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
+        }
+
+        public static User AndPrivateCustomAttribute(this User user, string attribute, float value)
+        {
+            return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
+        }
+
+        public static User AndPrivateCustomAttribute(this User user, string attribute, List<string> value)
+        {
+            return user.AddCustom(attribute, new JArray(value.ToArray())).AddPrivate(attribute);
+        }
+
+        public static User AndPrivateCustomAttribute(this User user, string attribute, List<int> value)
+        {
+            return user.AddCustom(attribute, new JArray(value.ToArray())).AddPrivate(attribute);
         }
     }
 }

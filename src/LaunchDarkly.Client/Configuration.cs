@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
@@ -37,6 +38,8 @@ namespace LaunchDarkly.Client
         public TimeSpan HttpClientTimeout { get; internal set; }
         public HttpClientHandler HttpClientHandler { get; internal set; }
         public bool Offline { get; internal set; }
+        public bool AllAttributesPrivate { get; internal set; }
+        public ISet<string> PrivateAttributeNames { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
         internal ISegmentStore SegmentStore { get; set; }
 
@@ -77,7 +80,9 @@ namespace LaunchDarkly.Client
                 SdkKey = sdkKey,
                 FeatureStore = new InMemoryFeatureStore(),
                 SegmentStore = new InMemorySegmentStore(),
-                IsStreamingEnabled = true
+                IsStreamingEnabled = true,
+                AllAttributesPrivate = false,
+                PrivateAttributeNames = null
             };
 
             return defaultConfiguration;
@@ -159,12 +164,9 @@ namespace LaunchDarkly.Client
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
             {
-                configuration.PollingInterval = Configuration.DefaultPollingInterval;
+                throw new System.ArgumentException("Polling interval cannot be less than the default of 30 seconds.", "pollingInterval");
             }
-            else
-            {
-                configuration.PollingInterval = pollingInterval;
-            }
+            configuration.PollingInterval = pollingInterval;
             return configuration;
         }
 
@@ -234,6 +236,22 @@ namespace LaunchDarkly.Client
         public static Configuration WithIsStreamingEnabled(this Configuration configuration, bool enableStream)
         {
             configuration.IsStreamingEnabled = enableStream;
+            return configuration;
+        }
+
+        public static Configuration WithAllAttributesPrivate(this Configuration configuration, bool allAttributesPrivate)
+        {
+            configuration.AllAttributesPrivate = allAttributesPrivate;
+            return configuration;
+        }
+
+        public static Configuration WithPrivateAttributeName(this Configuration configuration, string attributeName)
+        {
+            if (configuration.PrivateAttributeNames == null)
+            {
+                configuration.PrivateAttributeNames = new HashSet<string>();
+            }
+            configuration.PrivateAttributeNames.Add(attributeName);
             return configuration;
         }
     }

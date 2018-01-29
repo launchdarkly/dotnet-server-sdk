@@ -20,6 +20,7 @@ namespace LaunchDarkly.Client
         private readonly Timer _timer;
         private volatile HttpClient _httpClient;
         private readonly Uri _uri;
+        private volatile bool _shutdown;
 
         internal EventProcessor(Configuration config)
         {
@@ -52,16 +53,19 @@ namespace LaunchDarkly.Client
 
         void IStoreEvents.Flush()
         {
-            Event e;
-            List<Event> events = new List<Event>();
-            while (_queue.TryTake(out e))
+            if (!_shutdown)
             {
-                events.Add(e);
-            }
+                Event e;
+                List<Event> events = new List<Event>();
+                while (_queue.TryTake(out e))
+                {
+                    events.Add(e);
+                }
 
-            if (events.Any())
-            {
-                Task.Run(() => BulkSubmitAsync(events)).GetAwaiter().GetResult();
+                if (events.Any())
+                {
+                    Task.Run(() => BulkSubmitAsync(events)).GetAwaiter().GetResult();
+                }
             }
         }
 
@@ -82,7 +86,7 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogDebug(e, 
+                Logger.LogDebug(e,
                     "Error sending events: {0} waiting 1 second before retrying.",
                     Util.ExceptionMessage(e));
 
@@ -101,8 +105,8 @@ namespace LaunchDarkly.Client
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
-                        Logger.LogError(tce, 
-                            "Error Submitting Events using uri: '{0}' '{1}'", 
+                        Logger.LogError(tce,
+                            "Error Submitting Events using uri: '{0}' '{1}'",
                             _uri.AbsoluteUri,
                             Util.ExceptionMessage(tce));
                     }
@@ -136,6 +140,12 @@ namespace LaunchDarkly.Client
                     Logger.LogError("Error Submitting Events using uri: '{0}'; Status: '{1}'",
                         _uri.AbsoluteUri,
                         response.StatusCode);
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        Logger.LogError("Received 401 error, no further events will be posted since SDK key is invalid");
+                        _shutdown = true;
+                        ((IDisposable)this).Dispose();
+                    }
                 }
                 else
                 {
