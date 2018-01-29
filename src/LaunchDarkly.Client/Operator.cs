@@ -114,7 +114,7 @@ namespace LaunchDarkly.Client
         }
 
         //Visible for testing
-        internal static DateTime? JValueToDateTime(JValue jValue)
+        public static DateTime? JValueToDateTime(JValue jValue)
         {
             switch (jValue.Type)
             {
@@ -133,7 +133,7 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        private static SemVersion JValueToSemVer(JValue jValue)
+        public static SemVersion JValueToSemVer(JValue jValue)
         {
             if (jValue.Type == JTokenType.String)
             {
