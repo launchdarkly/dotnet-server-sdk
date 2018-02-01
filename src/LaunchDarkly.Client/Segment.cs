@@ -36,19 +36,22 @@ namespace LaunchDarkly.Client
         {
             if (user.Key != null)
             {
-                if (Included.Contains(user.Key))
+                if (Included != null && Included.Contains(user.Key))
                 {
                     return true;
                 }
-                if (Excluded.Contains(user.Key))
+                if (Excluded != null && Excluded.Contains(user.Key))
                 {
                     return false;
                 }
-                foreach (var rule in Rules)
+                if (Rules != null)
                 {
-                    if (rule.MatchesUser(user, this.Key, this.Salt))
+                    foreach (var rule in Rules)
                     {
-                        return true;
+                        if (rule.MatchesUser(user, this.Key, this.Salt))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
