@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using Semver;
 
 namespace LaunchDarkly.Client
 {
@@ -16,7 +15,9 @@ namespace LaunchDarkly.Client
             {
                 if (uValue == null || cValue == null)
                     return false;
-                
+
+                double? uDouble;
+                DateTime? uDateTime;
                 switch (op)
                 {
                     case "in":
@@ -30,34 +31,117 @@ namespace LaunchDarkly.Client
                             return uValue.Value<string>().Equals(cValue.Value<string>());
                         }
 
-                        return NumericOperator(uValue, cValue, (a, b) => a == b);
-
+                        uDouble = ParseDoubleFromJValue(uValue);
+                        if (uDouble.HasValue)
+                        {
+                            var cDouble = ParseDoubleFromJValue(cValue);
+                            {
+                                if (cDouble.HasValue)
+                                {
+                                    if (uDouble.Value.Equals(cDouble.Value)) return true;
+                                }
+                            }
+                        }
+                        break;
                     case "endsWith":
-                        return StringOperator(uValue, cValue, (a, b) => a.EndsWith(b));
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            return uValue.Value<string>().EndsWith(cValue.Value<string>());
+                        }
+                        break;
                     case "startsWith":
-                        return StringOperator(uValue, cValue, (a, b) => a.StartsWith(b));
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            return uValue.Value<string>().StartsWith(cValue.Value<string>());
+                        }
+                        break;
                     case "matches":
-                        return StringOperator(uValue, cValue, (a, b) => new Regex(b).IsMatch(a));
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            var regex = new Regex(cValue.Value<string>());
+                            return regex.IsMatch(uValue.Value<string>());
+                        }
+                        break;
                     case "contains":
-                        return StringOperator(uValue, cValue, (a, b) => a.Contains(b));
+                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        {
+                            return uValue.Value<string>().Contains(cValue.Value<string>());
+                        }
+                        break;
                     case "lessThan":
-                        return NumericOperator(uValue, cValue, (a, b) => a < b);
+                        uDouble = ParseDoubleFromJValue(uValue);
+                        if (uDouble.HasValue)
+                        {
+                            var cDouble = ParseDoubleFromJValue(cValue);
+                            {
+                                if (cDouble.HasValue)
+                                {
+                                    if (uDouble.Value < cDouble.Value) return true;
+                                }
+                            }
+                        }
+                        break;
                     case "lessThanOrEqual":
-                        return NumericOperator(uValue, cValue, (a, b) => a <= b);
+                        uDouble = ParseDoubleFromJValue(uValue);
+                        if (uDouble.HasValue)
+                        {
+                            var cDouble = ParseDoubleFromJValue(cValue);
+                            {
+                                if (cDouble.HasValue)
+                                {
+                                    if (uDouble.Value <= cDouble.Value) return true;
+                                }
+                            }
+                        }
+                        break;
                     case "greaterThan":
-                        return NumericOperator(uValue, cValue, (a, b) => a > b);
+                        uDouble = ParseDoubleFromJValue(uValue);
+                        if (uDouble.HasValue)
+                        {
+                            var cDouble = ParseDoubleFromJValue(cValue);
+                            {
+                                if (cDouble.HasValue)
+                                {
+                                    if (uDouble.Value > cDouble.Value) return true;
+                                }
+                            }
+                        }
+                        break;
                     case "greaterThanOrEqual":
-                        return NumericOperator(uValue, cValue, (a, b) => a >= b);
+                        uDouble = ParseDoubleFromJValue(uValue);
+                        if (uDouble.HasValue)
+                        {
+                            var cDouble = ParseDoubleFromJValue(cValue);
+                            {
+                                if (cDouble.HasValue)
+                                {
+                                    if (uDouble.Value >= cDouble.Value) return true;
+                                }
+                            }
+                        }
+                        break;
                     case "before":
-                        return DateOperator(uValue, cValue, (a, b) => DateTime.Compare(a, b) < 0);
+                        uDateTime = JValueToDateTime(uValue);
+                        if (uDateTime.HasValue)
+                        {
+                            var cDateTime = JValueToDateTime(cValue);
+                            if (cDateTime.HasValue)
+                            {
+                                return DateTime.Compare(uDateTime.Value, cDateTime.Value) < 0;
+                            }
+                        }
+                        break;
                     case "after":
-                        return DateOperator(uValue, cValue, (a, b) => DateTime.Compare(a, b) > 0);
-                    case "semVerEqual":
-                        return SemVerOperator(uValue, cValue, (a, b) => a.Equals(b));
-                    case "semVerLessThan":
-                        return SemVerOperator(uValue, cValue, (a, b) => a < b);
-                    case "semVerGreaterThan":
-                        return SemVerOperator(uValue, cValue, (a, b) => a > b);
+                        uDateTime = JValueToDateTime(uValue);
+                        if (uDateTime.HasValue)
+                        {
+                            var cDateTime = JValueToDateTime(cValue);
+                            if (cDateTime.HasValue)
+                            {
+                                return DateTime.Compare(uDateTime.Value, cDateTime.Value) > 0;
+                            }
+                        }
+                        break;
                     default:
                         return false;
                 }
@@ -74,15 +158,6 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        private static bool StringOperator(JValue uValue, JValue cValue, Func<string, string, bool> fn)
-        {
-            if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
-            {
-                return fn(uValue.Value<string>(), cValue.Value<string>());
-            }
-            return false;
-        }
-
         private static double? ParseDoubleFromJValue(JValue jValue)
         {
             if (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer))
@@ -92,29 +167,8 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        private static bool NumericOperator(JValue uValue, JValue cValue, Func<double, double, bool> fn)
-        {
-            var uDouble = ParseDoubleFromJValue(uValue);
-            var cDouble = ParseDoubleFromJValue(cValue);
-            return uDouble.HasValue && cDouble.HasValue && fn(uDouble.Value, cDouble.Value);
-        }
-
-        private static bool DateOperator(JValue uValue, JValue cValue, Func<DateTime, DateTime, bool> fn)
-        {
-            var uDateTime = JValueToDateTime(uValue);
-            var cDateTime = JValueToDateTime(cValue);
-            return uDateTime.HasValue && cDateTime.HasValue && fn(uDateTime.Value, cDateTime.Value);
-        }
-
-        private static bool SemVerOperator(JValue uValue, JValue cValue, Func<SemVersion, SemVersion, bool> fn)
-        {
-            var uVersion = JValueToSemVer(uValue);
-            var cVersion = JValueToSemVer(cValue);
-            return uVersion != null && cVersion != null && fn(uVersion, cVersion);
-        }
-
         //Visible for testing
-        internal static DateTime? JValueToDateTime(JValue jValue)
+        public static DateTime? JValueToDateTime(JValue jValue)
         {
             switch (jValue.Type)
             {
@@ -129,24 +183,6 @@ namespace LaunchDarkly.Client
                         return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(jvalueDouble.Value);
                     }
                     break;
-            }
-            return null;
-        }
-
-        private static SemVersion JValueToSemVer(JValue jValue)
-        {
-            if (jValue.Type == JTokenType.String)
-            {
-                try
-                {
-                    return SemVersion.Parse(jValue.Value<String>(), strict: false);
-                    // Note that in the library we're using, "strict: false" means the minor and patch versions can
-                    // be omitted and will default to zero, which is the behavior we want.
-                }
-                catch (InvalidOperationException)
-                {
-                    return null;
-                }
             }
             return null;
         }
