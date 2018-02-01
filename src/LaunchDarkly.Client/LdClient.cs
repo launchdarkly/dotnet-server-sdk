@@ -13,7 +13,6 @@ namespace LaunchDarkly.Client
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
         private readonly IFeatureStore _featureStore;
-        private readonly ISegmentStore _segmentStore;
         private readonly IUpdateProcessor _updateProcessor;
 
         public LdClient(Configuration config, IStoreEvents eventStore)
@@ -24,7 +23,6 @@ namespace LaunchDarkly.Client
             _configuration = config;
             _eventStore = eventStore;
             _featureStore = _configuration.FeatureStore;
-            _segmentStore = _configuration.SegmentStore;
 
             if (_configuration.Offline)
             {
@@ -127,13 +125,13 @@ namespace LaunchDarkly.Client
                 return null;
             }
 
-            IDictionary<string, FeatureFlag> flags = _featureStore.All();
+            IDictionary<string, FeatureFlag> flags = _featureStore.All(VersionedDataKind.Features);
             IDictionary<string, JToken> results = new Dictionary<string, JToken>();
             foreach (KeyValuePair<string, FeatureFlag> pair in flags)
             {
                 try
                 {
-                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _segmentStore, _configuration);
+                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _configuration);
                     results.Add(pair.Key, evalResult.Result);
                 }
                 catch (Exception e)
@@ -162,7 +160,7 @@ namespace LaunchDarkly.Client
 
             try
             {
-                var featureFlag = _featureStore.Get(featureKey);
+                var featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
                 if (featureFlag == null)
                 {
                     Logger.LogInformation("Unknown feature flag {0}; returning default value",
@@ -172,7 +170,7 @@ namespace LaunchDarkly.Client
                     return defaultValue;
                 }
 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _segmentStore, _configuration);
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _configuration);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)

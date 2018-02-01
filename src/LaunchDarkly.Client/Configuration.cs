@@ -41,7 +41,6 @@ namespace LaunchDarkly.Client
         public bool AllAttributesPrivate { get; internal set; }
         public ISet<string> PrivateAttributeNames { get; internal set; }
         internal IFeatureStore FeatureStore { get; set; }
-        internal ISegmentStore SegmentStore { get; set; }
 
 
         internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
@@ -79,7 +78,6 @@ namespace LaunchDarkly.Client
                 Offline = false,
                 SdkKey = sdkKey,
                 FeatureStore = new InMemoryFeatureStore(),
-                SegmentStore = new InMemorySegmentStore(),
                 IsStreamingEnabled = true,
                 AllAttributesPrivate = false,
                 PrivateAttributeNames = null
@@ -217,16 +215,7 @@ namespace LaunchDarkly.Client
             }
             return configuration;
         }
-
-        public static Configuration WithSegmentStore(this Configuration configuration, ISegmentStore segmentStore)
-        {
-            if (segmentStore != null)
-            {
-                configuration.SegmentStore = segmentStore;
-            }
-            return configuration;
-        }
-
+        
         public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
         {
             configuration.HttpClientHandler = httpClientHandler;

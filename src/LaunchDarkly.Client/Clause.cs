@@ -23,13 +23,13 @@ namespace LaunchDarkly.Client
             Negate = negate;
         }
 
-        internal bool MatchesUser(User user, ISegmentStore segmentStore)
+        internal bool MatchesUser(User user, IFeatureStore store)
         {
             if (Op == "segmentMatch")
             {
                 foreach (var value in Values)
                 {
-                    Segment segment = segmentStore.Get(value.Value<string>());
+                    Segment segment = store.Get(VersionedDataKind.Segments, value.Value<string>());
                     if (segment != null && segment.MatchesUser(user))
                     {
                         return MaybeNegate(true);

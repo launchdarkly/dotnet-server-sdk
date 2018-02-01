@@ -6,6 +6,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using LaunchDarkly.EventSource;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
@@ -112,36 +113,62 @@ namespace LaunchDarkly.Client
             {
                 switch (e.EventName)
                 {
-                case PUT:
-                    _featureStore.Init(JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(e.Message.Data));
-                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
-                    {
-                        _initTask.SetResult(true);
-                        Logger.LogInformation("Initialized LaunchDarkly Stream Processor.");
-                    }
-                    break;
-                case PATCH:
-                    FeaturePatchData patchData = JsonConvert.DeserializeObject<FeaturePatchData>(e.Message.Data);
-                    _featureStore.Upsert(patchData.Key(), patchData.Data);
-                    break;
-                case DELETE:
-                    FeatureDeleteData deleteData = JsonConvert.DeserializeObject<FeatureDeleteData>(e.Message.Data);
-                    _featureStore.Delete(deleteData.Key(), deleteData.Version);
-                    break;
-                case INDIRECT_PATCH:
-                    await UpdateTaskAsync(e.Message.Data);
-                    break;
+                    case PUT:
+                        _featureStore.Init(JsonConvert.DeserializeObject<AllData>(e.Message.Data).ToGenericDictionary());
+                        if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                        {
+                            _initTask.SetResult(true);
+                            Logger.LogInformation("Initialized LaunchDarkly Stream Processor.");
+                        }
+                        break;
+                    case PATCH:
+                        PatchData patchData = JsonConvert.DeserializeObject<PatchData>(e.Message.Data);
+                        string patchKey;
+                        if (GetKeyFromPath(patchData.Path, VersionedDataKind.Features, out patchKey))
+                        {
+                            FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
+                            _featureStore.Upsert(VersionedDataKind.Features, flag);
+                        }
+                        else if (GetKeyFromPath(patchData.Path, VersionedDataKind.Segments, out patchKey))
+                        {
+                            Segment segment = patchData.Data.ToObject<Segment>();
+                            _featureStore.Upsert(VersionedDataKind.Segments, segment);
+                        }
+                        else
+                        {
+                            Logger.LogWarning("Received patch event with unknown path: {0}", patchData.Path);
+                        }
+                        break;
+                    case DELETE:
+                        DeleteData deleteData = JsonConvert.DeserializeObject<DeleteData>(e.Message.Data);
+                        string deleteKey;
+                        if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Features, out deleteKey))
+                        {
+                            _featureStore.Delete(VersionedDataKind.Features, deleteKey, deleteData.Version);
+                        }
+                        else if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Segments, out deleteKey))
+                        {
+                            _featureStore.Delete(VersionedDataKind.Segments, deleteKey, deleteData.Version);
+                        }
+                        else
+                        {
+                            Logger.LogWarning("Received delete event with unknown path: {0}", deleteData.Path);
+                        }
+                        break;
+                    case INDIRECT_PATCH:
+                        await UpdateTaskAsync(e.Message.Data);
+                        break;
                 }
             }
             catch (JsonReaderException ex)
             {
                 Logger.LogDebug(ex,
-                    "Failed to deserialize feature flag {0}:\n{1}",
+                    "Failed to deserialize feature flag or segment {0}:\n{1}",
                     e.EventName,
                     e.Message.Data);
 
                 Logger.LogError(ex,
-                    "Encountered an error reading feature flag configuration: {0}",
+                    "Encountered an error reading feature flag or segment configuration: {0}",
                     Util.ExceptionMessage(ex));
 
                 RestartEventSource();
@@ -191,25 +218,41 @@ namespace LaunchDarkly.Client
             _es.Close();
         }
 
-        private async Task UpdateTaskAsync(string featureKey)
+        private async Task UpdateTaskAsync(string objectPath)
         {
             try
             {
-                var feature = await _featureRequestor.GetFlagAsync(featureKey);
-                if (feature != null)
+                string key;
+                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out key))
                 {
-                    _featureStore.Upsert(featureKey, feature);
+                    var feature = await _featureRequestor.GetFlagAsync(key);
+                    if (feature != null)
+                    {
+                        _featureStore.Upsert(VersionedDataKind.Features, feature);
+                    }
+                }
+                else if (GetKeyFromPath(objectPath, VersionedDataKind.Segments, out key))
+                {
+                    var segment = await _featureRequestor.GetSegmentAsync(key);
+                    if (segment != null)
+                    {
+                        _featureStore.Upsert(VersionedDataKind.Segments, segment);
+                    }
+                }
+                else
+                {
+                    Logger.LogWarning("Received indirect patch event with unknown path: {0}", objectPath);
                 }
             }
             catch (AggregateException ex)
             {
                 Logger.LogError(ex,
-                    "Error Updating feature: '{0}'",
-                    Util.ExceptionMessage(ex.Flatten()));
+                    "Error Updating {0}: '{1}'",
+                    objectPath, Util.ExceptionMessage(ex.Flatten()));
             }
             catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
-                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
+                Logger.LogError(string.Format("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex)));
                 if (ex.StatusCode == 401)
                 {
                     Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
@@ -218,8 +261,8 @@ namespace LaunchDarkly.Client
             }
             catch (TimeoutException ex) {
                 Logger.LogError(ex,
-                    "Error Updating feature: '{0}'",
-                    Util.ExceptionMessage(ex));
+                    "Error Updating {0}: '{1}'",
+                    objectPath, Util.ExceptionMessage(ex));
                 RestartEventSource();
             }
             catch (Exception ex)
@@ -229,39 +272,41 @@ namespace LaunchDarkly.Client
                     Util.ExceptionMessage(ex));
             }
         }
-        internal class FeaturePatchData
+
+        private bool GetKeyFromPath(string path, IVersionedDataKind kind, out string key)
+        {
+            if (path.StartsWith(kind.GetStreamApiPath()))
+            {
+                key = path.Substring(kind.GetStreamApiPath().Length);
+                return true;
+            }
+            key = null;
+            return false;
+        }
+
+        internal class PatchData
         {
             internal string Path { get; private set; }
-            internal FeatureFlag Data { get; private set; }
+            internal JToken Data { get; private set; }
 
             [JsonConstructor]
-            internal FeaturePatchData(string path, FeatureFlag data)
+            internal PatchData(string path, JToken data)
             {
                 Path = path;
                 Data = data;
             }
-
-            public String Key()
-            {
-                return Path.Substring(1);
-            }
         }
 
-        internal class FeatureDeleteData
+        internal class DeleteData
         {
             internal string Path { get; private set; }
             internal int Version { get; private set; }
 
             [JsonConstructor]
-            internal FeatureDeleteData(string path, int version)
+            internal DeleteData(string path, int version)
             {
                 Path = path;
                 Version = version;
-            }
-
-            public String Key()
-            {
-                return Path.Substring(1);
             }
         }
     }
