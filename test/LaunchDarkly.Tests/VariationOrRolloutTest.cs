@@ -13,23 +13,27 @@ namespace LaunchDarkly.Tests
         {
             var user1 = new User("userKeyA");
             var bucket = VariationOrRollout.BucketUser(user1, "hashKey", "key", "saltyA");
-            Assert.InRange(bucket, 0.42157586, 0.42157588);
+            Assert.Equal(0.42157587, bucket, 6);
 
             var user2 = new User("userKeyB");
             bucket = VariationOrRollout.BucketUser(user2, "hashKey", "key", "saltyA");
-            Assert.InRange(bucket, 0.6708484, 0.6708486);
+            Assert.Equal(0.6708485, bucket, 6);
 
             var user3 = new User("userKeyC");
             bucket = VariationOrRollout.BucketUser(user3, "hashKey", "key", "saltyA");
-            Assert.InRange(bucket, 0.1034310, 0.1034311);
+            Assert.Equal(0.10343106, bucket, 6);
         }
 
         [Fact]
         public void TestBucketUserByIntAttr()
         {
-            var user = new User("userKey").AndCustomAttribute("intAttr", 3);
+            var user = new User("userKey").AndCustomAttribute("intAttr", 33333);
             var bucket = VariationOrRollout.BucketUser(user, "hashKey", "intAttr", "saltyA");
-            Assert.InRange(bucket, 0.0073090, 0.0073091);
+            Assert.Equal(0.54771423, bucket, 7);
+
+            user = new User("userKey").AndCustomAttribute("stringAttr", "33333");
+            var bucket2 = VariationOrRollout.BucketUser(user, "hashKey", "stringAttr", "saltyA");
+            Assert.Equal(bucket, bucket2, 15);
         }
 
         [Fact]
