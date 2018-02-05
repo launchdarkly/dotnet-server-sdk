@@ -77,29 +77,24 @@ namespace LaunchDarkly.Client
             {
                 return Patch.CompareTo(other.Patch);
             }
-            return CompareIdentifiers(SplitIdentifiers(Prerelease), SplitIdentifiers(other.Prerelease));
-        }
-
-        private string[] SplitIdentifiers(string version)
-        {
-            if (String.IsNullOrEmpty(version))
+            if (String.IsNullOrEmpty(Prerelease) && String.IsNullOrEmpty(other.Prerelease))
             {
-                return new string[0];
+                return 0; // build component is ignored in precedence comparison
             }
-            return version.Split('.');
+            // *no* prerelease component always has higher precedence than *any* prerelease component
+            if (String.IsNullOrEmpty(Prerelease))
+            {
+                return 1;
+            }
+            if (String.IsNullOrEmpty(other.Prerelease))
+            {
+                return -1;
+            }
+            return CompareIdentifiers(Prerelease.Split('.'), other.Prerelease.Split('.'));
         }
 
         private int CompareIdentifiers(string[] ids1, string[] ids2)
         {
-            // *no* prerelease component is always higher than *any* prerelease component
-            if (ids1.Length == 0 && ids2.Length > 0)
-            {
-                return 1;
-            }
-            if (ids1.Length > 0 && ids2.Length == 0)
-            {
-                return -1;
-            }
             for (int i = 0; ; i++)
             {
                 if (i >= ids1.Length)
