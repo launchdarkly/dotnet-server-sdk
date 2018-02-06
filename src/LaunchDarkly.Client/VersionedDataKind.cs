@@ -28,10 +28,10 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// The members of this class denote all the VersionedDataKind collections that exist.
     /// </summary>
-    public abstract class VersionedDataKind
+    internal abstract class VersionedDataKind
     {
-        public static VersionedDataKind<FeatureFlag> Features = new FeaturesVersionedDataKind();
-        public static VersionedDataKind<Segment> Segments = new SegmentsVersionedDataKind();
+        internal static VersionedDataKind<FeatureFlag> Features = new FeaturesVersionedDataKind();
+        internal static VersionedDataKind<Segment> Segments = new SegmentsVersionedDataKind();
     }
 
     public abstract class VersionedDataKind<T> : IVersionedDataKind where T : IVersionedData
@@ -45,7 +45,7 @@ namespace LaunchDarkly.Client
         public abstract T MakeDeletedItem(string key, int version);
     }
 
-    public class FeaturesVersionedDataKind : VersionedDataKind<FeatureFlag>
+    internal class FeaturesVersionedDataKind : VersionedDataKind<FeatureFlag>
     {
         override public string GetNamespace()
         {
@@ -68,7 +68,7 @@ namespace LaunchDarkly.Client
         }
     }
 
-    public class SegmentsVersionedDataKind : VersionedDataKind<Segment>
+    internal class SegmentsVersionedDataKind : VersionedDataKind<Segment>
     {
         override public string GetNamespace()
         {

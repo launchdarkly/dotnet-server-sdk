@@ -10,8 +10,8 @@ namespace LaunchDarkly.Tests
     {
         protected IFeatureStore store;
 
-        protected FeatureFlag feature1 = MakeFeature("foo", 10);
-        protected FeatureFlag feature2 = MakeFeature("bar", 10);
+        internal FeatureFlag feature1 = MakeFeature("foo", 10);
+        internal FeatureFlag feature2 = MakeFeature("bar", 10);
 
         protected void InitStore()
         {
@@ -24,12 +24,12 @@ namespace LaunchDarkly.Tests
             store.Init(allData);
         }
 
-        protected static FeatureFlag MakeFeature(string key, int version)
+        internal static FeatureFlag MakeFeature(string key, int version)
         {
             return new FeatureFlag(key, version, false, null, null, null, null, null, null, null, false);
         }
 
-        protected static FeatureFlag CopyFeatureWithVersion(FeatureFlag old, int newVersion)
+        internal static FeatureFlag CopyFeatureWithVersion(FeatureFlag old, int newVersion)
         {
             return new FeatureFlag(old.Key, newVersion, old.On, old.Prerequisites, old.Salt,
                 old.Targets, old.Rules, old.Fallthrough, old.OffVariation, old.Variations, old.Deleted);

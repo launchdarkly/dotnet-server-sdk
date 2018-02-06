@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class Segment : IVersionedData
+    internal class Segment : IVersionedData
     {
         public string Key { get; private set; }
         public int Version { get; set; }
