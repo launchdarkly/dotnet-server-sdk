@@ -2,7 +2,7 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
-## [3.5.1] - 2018-02-05
+## [3.5.1] - 2018-02-06
 - Downgrade Microsoft.Extensions.Logging to 1.0.2 to reduce dependencies brought in when building against .NET Framework.
 
 ## [3.5.0] - 2018-01-29
