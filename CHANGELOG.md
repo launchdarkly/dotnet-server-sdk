@@ -2,9 +2,6 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
-## [3.5.1] - 2018-02-05
-- Downgrade Microsoft.Extensions.Logging to 1.0.2 to reduce dependencies brought in when building against .NET Framework.
-
 ## [3.5.0] - 2018-01-29
 ### Added
 - Support for specifying [private user attributes](https://docs.launchdarkly.com/docs/private-user-attributes) in order to prevent user attributes from being sent in analytics events back to LaunchDarkly. See the `AllAttributesPrivate` and `PrivateAttributeNames` methods on `Configuration` as well as the `AndPrivateX` methods on `User`.
