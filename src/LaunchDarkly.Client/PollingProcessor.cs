@@ -53,10 +53,10 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                var allFeatures = await _featureRequestor.GetAllFlagsAsync();
-                if (allFeatures != null)
+                var allData = await _featureRequestor.GetAllDataAsync();
+                if (allData != null)
                 {
-                    _featureStore.Init(allFeatures);
+                    _featureStore.Init(allData.ToGenericDictionary());
 
                     //We can't use bool in CompareExchange because it is not a reference type.
                     if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)

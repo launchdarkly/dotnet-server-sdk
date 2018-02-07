@@ -6,12 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class FeatureFlag
+    internal class FeatureFlag : IVersionedData
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureFlag>();
 
-        internal string Key { get; private set; }
-        internal int Version { get; set; }
+        public string Key { get; private set; }
+        public int Version { get; set; }
         internal bool On { get; private set; }
         internal List<Prerequisite> Prerequisites { get; private set; }
         internal string Salt { get; private set; }
@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
         internal VariationOrRollout Fallthrough { get; private set; }
         internal int? OffVariation { get; private set; }
         internal List<JToken> Variations { get; private set; }
-        internal bool Deleted { get; set; }
+        public bool Deleted { get; set; }
 
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
@@ -91,7 +91,7 @@ namespace LaunchDarkly.Client
             {
                 foreach (var prereq in Prerequisites)
                 {
-                    var prereqFeatureFlag = featureStore.Get(prereq.Key);
+                    var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
                     JToken prereqEvalResult = null;
                     if (prereqFeatureFlag == null)
                     {
@@ -131,13 +131,13 @@ namespace LaunchDarkly.Client
             }
             if (prereqOk)
             {
-                return GetVariation(EvaluateIndex(user));
+                return GetVariation(EvaluateIndex(user, featureStore));
             }
             return null;
         }
 
 
-        private int? EvaluateIndex(User user)
+        private int? EvaluateIndex(User user, IFeatureStore store)
         {
             // Check to see if targets match
             foreach (var target in Targets)
@@ -154,7 +154,7 @@ namespace LaunchDarkly.Client
             // Now walk through the rules and see if any match
             foreach (Rule rule in Rules)
             {
-                if (rule.MatchesUser(user))
+                if (rule.MatchesUser(user, store))
                 {
                     return rule.VariationIndexForUser(user, Key, Salt);
                 }

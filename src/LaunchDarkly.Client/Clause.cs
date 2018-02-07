@@ -23,7 +23,27 @@ namespace LaunchDarkly.Client
             Negate = negate;
         }
 
-        internal bool MatchesUser(User user)
+        internal bool MatchesUser(User user, IFeatureStore store)
+        {
+            if (Op == "segmentMatch")
+            {
+                foreach (var value in Values)
+                {
+                    Segment segment = store.Get(VersionedDataKind.Segments, value.Value<string>());
+                    if (segment != null && segment.MatchesUser(user))
+                    {
+                        return MaybeNegate(true);
+                    }
+                }
+                return MaybeNegate(false);
+            }
+            else
+            {
+                return MatchesUserNoSegments(user);
+            }
+        }
+
+        internal bool MatchesUserNoSegments(User user)
         {
             var userValue = user.GetValueForEvaluation(Attribute);
             if (userValue == null)

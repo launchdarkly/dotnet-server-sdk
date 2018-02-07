@@ -125,7 +125,7 @@ namespace LaunchDarkly.Client
                 return null;
             }
 
-            IDictionary<string, FeatureFlag> flags = _featureStore.All();
+            IDictionary<string, FeatureFlag> flags = _featureStore.All(VersionedDataKind.Features);
             IDictionary<string, JToken> results = new Dictionary<string, JToken>();
             foreach (KeyValuePair<string, FeatureFlag> pair in flags)
             {
@@ -160,7 +160,7 @@ namespace LaunchDarkly.Client
 
             try
             {
-                var featureFlag = _featureStore.Get(featureKey);
+                var featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
                 if (featureFlag == null)
                 {
                     Logger.LogInformation("Unknown feature flag {0}; returning default value",

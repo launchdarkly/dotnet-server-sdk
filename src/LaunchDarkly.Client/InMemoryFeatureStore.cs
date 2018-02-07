@@ -4,33 +4,43 @@ using Microsoft.Extensions.Logging;
 
 namespace LaunchDarkly.Client
 {
+    /// <summary>
+    /// In-memory, thread-safe implementation of IFeatureStore.
+    /// </summary>
     public class InMemoryFeatureStore : IFeatureStore
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<InMemoryFeatureStore>();
         private static readonly int RwLockMaxWaitMillis = 1000;
         private readonly ReaderWriterLockSlim RwLock = new ReaderWriterLockSlim();
-        private readonly IDictionary<string, FeatureFlag> Features = new Dictionary<string, FeatureFlag>();
+        private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> Items =
+            new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
         private bool _initialized = false;
 
-        FeatureFlag IFeatureStore.Get(string key)
+        public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
         {
             try
             {
                 RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
-                FeatureFlag f;
-                if (!Features.TryGetValue(key, out f))
+                IDictionary<string, IVersionedData> itemsOfKind;
+                IVersionedData item;
+
+                if (!Items.TryGetValue(kind, out itemsOfKind))
                 {
-                    Logger.LogWarning("Attempted to get feature with key: {0} not found in feature store. Returning null.",
-                        key);
+                    Logger.LogDebug("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
                     return null;
                 }
-                if (f.Deleted)
+                if (!itemsOfKind.TryGetValue(key, out item))
                 {
-                    Logger.LogWarning("Attempted to get deleted feature with key:{0} from feature store. Returning null.",
-                        key);
+                    Logger.LogDebug("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
                     return null;
                 }
-                return f;
+                if (item.Deleted)
+                {
+                    Logger.LogWarning("Attempted to get deleted item with key {0} in '{1}'; returning null.",
+                        key, kind.GetNamespace());
+                    return null;
+                }
+                return (T)item;
             }
             finally
             {
@@ -38,20 +48,24 @@ namespace LaunchDarkly.Client
             }
         }
 
-        IDictionary<string, FeatureFlag> IFeatureStore.All()
+        public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
         {
             try
             {
                 RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
-                IDictionary<string, FeatureFlag> fs = new Dictionary<string, FeatureFlag>();
-                foreach (var feature in Features)
+                IDictionary<string, T> ret = new Dictionary<string, T>();
+                IDictionary<string, IVersionedData> itemsOfKind;
+                if (Items.TryGetValue(kind, out itemsOfKind))
                 {
-                    if (!feature.Value.Deleted)
+                    foreach (var entry in itemsOfKind)
                     {
-                        fs[feature.Key] = feature.Value;
+                        if (!entry.Value.Deleted)
+                        {
+                            ret[entry.Key] = (T)entry.Value;
+                        }
                     }
                 }
-                return fs;
+                return ret;
             }
             finally
             {
@@ -59,15 +73,20 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Init(IDictionary<string, FeatureFlag> features)
+        public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
         {
             try
             {
                 RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
-                Features.Clear();
-                foreach (var feature in features)
+                Items.Clear();
+                foreach (var kindEntry in items)
                 {
-                    Features[feature.Key] = feature.Value;
+                    IDictionary<string, IVersionedData> itemsOfKind = new Dictionary<string, IVersionedData>();
+                    foreach (var e1 in kindEntry.Value)
+                    {
+                        itemsOfKind[e1.Key] = e1.Value;
+                    }
+                    Items[kindEntry.Key] = itemsOfKind;
                 }
                 _initialized = true;
             }
@@ -77,24 +96,19 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Delete(string key, int version)
+        public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
         {
             try
             {
                 RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
-                FeatureFlag f;
-                if (Features.TryGetValue(key, out f) && f.Version < version)
+                IDictionary<string, IVersionedData> itemsOfKind;
+                if (Items.TryGetValue(kind, out itemsOfKind))
                 {
-                    f.Deleted = true;
-                    f.Version = version;
-                    Features[key] = f;
-                }
-                else if (f == null)
-                {
-                    f = new FeatureFlag();
-                    f.Deleted = true;
-                    f.Version = version;
-                    Features[key] = f;
+                    IVersionedData item;
+                    if (!itemsOfKind.TryGetValue(key, out item) || item.Version < version)
+                    {
+                        itemsOfKind[key] = kind.MakeDeletedItem(key, version);
+                    }
                 }
             }
             finally
@@ -103,15 +117,21 @@ namespace LaunchDarkly.Client
             }
         }
 
-        void IFeatureStore.Upsert(string key, FeatureFlag featureFlag)
+        public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
         {
             try
             {
                 RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
-                FeatureFlag old;
-                if (!Features.TryGetValue(key, out old) || old.Version < featureFlag.Version)
+                IDictionary<string, IVersionedData> itemsOfKind;
+                if (!Items.TryGetValue(kind, out itemsOfKind))
                 {
-                    Features[key] = featureFlag;
+                    itemsOfKind = new Dictionary<string, IVersionedData>();
+                    Items[kind] = itemsOfKind;
+                }
+                IVersionedData old;
+                if (!itemsOfKind.TryGetValue(item.Key, out old) || old.Version < item.Version)
+                {
+                    itemsOfKind[item.Key] = item;
                 }
             }
             finally
@@ -120,7 +140,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        bool IFeatureStore.Initialized()
+        public bool Initialized()
         {
             return _initialized;
         }

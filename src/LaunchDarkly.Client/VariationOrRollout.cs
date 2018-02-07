@@ -45,7 +45,7 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        private float BucketUser(User user, string featureKey, string attr, string salt)
+        internal static float BucketUser(User user, string featureKey, string attr, string salt)
         {
             var userValue = user.GetValueForEvaluation(attr);
             if (userValue != null && userValue.Type.Equals(JTokenType.String))

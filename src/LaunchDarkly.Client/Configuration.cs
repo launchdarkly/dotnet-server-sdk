@@ -215,7 +215,7 @@ namespace LaunchDarkly.Client
             }
             return configuration;
         }
-
+        
         public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
         {
             configuration.HttpClientHandler = httpClientHandler;
