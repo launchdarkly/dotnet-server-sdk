@@ -15,7 +15,7 @@ namespace LaunchDarkly.Client
         private readonly IFeatureStore _featureStore;
         private readonly IUpdateProcessor _updateProcessor;
 
-        public LdClient(Configuration config, IStoreEvents eventStore)
+        internal LdClient(Configuration config, IStoreEvents eventStore)
         {
             Logger.LogInformation("Starting LaunchDarkly Client {0}",
                 Configuration.Version);
@@ -228,7 +228,7 @@ namespace LaunchDarkly.Client
             {
                 Logger.LogWarning("Track called with null user or null user key");
             }
-            _eventStore.Add(new CustomEvent(name, EventUser.FromUser(user, _configuration), user, data));
+            _eventStore.Add(new CustomEvent(name, EventUser.FromUser(user, _configuration), data));
         }
 
         public void Identify(User user)
@@ -237,12 +237,12 @@ namespace LaunchDarkly.Client
             {
                 Logger.LogWarning("Identify called with null user or null user key");
             }
-            _eventStore.Add(new IdentifyEvent(EventUser.FromUser(user, _configuration), user));
+            _eventStore.Add(new IdentifyEvent(EventUser.FromUser(user, _configuration)));
         }
 
         private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)
         {
-            _eventStore.Add(new FeatureRequestEvent(key, EventUser.FromUser(user, _configuration), user, value, defaultValue, version, null));
+            _eventStore.Add(new FeatureRequestEvent(key, EventUser.FromUser(user, _configuration), value, defaultValue, version, null));
         }
 
         protected virtual void Dispose(bool disposing)
