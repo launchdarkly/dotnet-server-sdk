@@ -16,7 +16,7 @@ namespace LaunchDarkly.Client
                 if (uValue == null || cValue == null)
                     return false;
 
-                double? uDouble;
+                int comparison;
                 DateTime? uDateTime;
                 switch (op)
                 {
@@ -31,16 +31,9 @@ namespace LaunchDarkly.Client
                             return uValue.Value<string>().Equals(cValue.Value<string>());
                         }
 
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
                         {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value.Equals(cDouble.Value)) return true;
-                                }
-                            }
+                            return comparison == 0;
                         }
                         break;
                     case "endsWith":
@@ -69,55 +62,27 @@ namespace LaunchDarkly.Client
                         }
                         break;
                     case "lessThan":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
                         {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value < cDouble.Value) return true;
-                                }
-                            }
+                            return comparison < 0;
                         }
                         break;
                     case "lessThanOrEqual":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
                         {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value <= cDouble.Value) return true;
-                                }
-                            }
+                            return comparison <= 0;
                         }
                         break;
                     case "greaterThan":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
                         {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value > cDouble.Value) return true;
-                                }
-                            }
+                            return comparison > 0;
                         }
                         break;
                     case "greaterThanOrEqual":
-                        uDouble = ParseDoubleFromJValue(uValue);
-                        if (uDouble.HasValue)
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
                         {
-                            var cDouble = ParseDoubleFromJValue(cValue);
-                            {
-                                if (cDouble.HasValue)
-                                {
-                                    if (uDouble.Value >= cDouble.Value) return true;
-                                }
-                            }
+                            return comparison >= 0;
                         }
                         break;
                     case "before":
@@ -158,9 +123,26 @@ namespace LaunchDarkly.Client
             return false;
         }
 
+        private static bool TryCompareNumericValues(JValue x, JValue y, out int result)
+        {
+            if (!IsNumericValue(x) || !IsNumericValue(y))
+            {
+                result = default(int);
+                return false;
+            }
+
+            result = x.CompareTo(y);
+            return true;
+        }
+
+        private static bool IsNumericValue(JValue jValue)
+        {
+            return (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer));
+        }
+
         private static double? ParseDoubleFromJValue(JValue jValue)
         {
-            if (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer))
+            if (IsNumericValue(jValue))
             {
                 return (double) jValue;
             }
