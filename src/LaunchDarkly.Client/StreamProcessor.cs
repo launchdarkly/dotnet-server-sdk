@@ -40,7 +40,7 @@ namespace LaunchDarkly.Client
             return _initialized == INITIALIZED;
         }
 
-        async Task<bool> IUpdateProcessor.Start()
+        Task<bool> IUpdateProcessor.Start()
         {
             Dictionary<string, string> headers = new Dictionary<string, string> { { "Authorization", _config.SdkKey }, { "User-Agent", "DotNetClient/" + Configuration.Version }, { "Accept", "text/event-stream" } };
 
@@ -63,29 +63,35 @@ namespace LaunchDarkly.Client
 
             try
             {
-                await _es.StartAsync();
+                Task.Run(() => _es.StartAsync());
             }
             catch (Exception ex)
             {
-                Logger.LogError("General Exception: {0}", ex);
+                Logger.LogError(ex,
+                    "General Exception: {0}",
+                    Util.ExceptionMessage(ex));
+
                 _initTask.SetException(ex);
             }
-            return await _initTask.Task;
+            return _initTask.Task;
         }
 
         private async void RestartEventSource()
         {
+            TimeSpan sleepTime = TimeSpan.FromMilliseconds(0);
             if (_backOff.GetReconnectAttemptCount() > 0 && _config.ReconnectTime > TimeSpan.FromMilliseconds(0))
             {
-                TimeSpan sleepTime = _backOff.GetNextBackOff();
-                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting " + sleepTime.TotalMilliseconds + " milliseconds before restarting...");
-                await Task.Delay(sleepTime);
+                sleepTime = _backOff.GetNextBackOff();
+
+                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before reconnecting...",
+                    sleepTime.TotalMilliseconds);
             }
             else
             {
                 _backOff.IncrementReconnectAttemptCount();
             }
             _es.Close();
+            await Task.Delay(sleepTime);
             try
             {
                 await _es.StartAsync();
@@ -94,7 +100,9 @@ namespace LaunchDarkly.Client
             }
             catch (Exception exc)
             {
-                Logger.LogError("General Exception: {0}", exc);
+                Logger.LogError(exc,
+                    "General Exception: {0}",
+                    Util.ExceptionMessage(exc));
             }
         }
 
@@ -127,13 +135,23 @@ namespace LaunchDarkly.Client
             }
             catch (JsonReaderException ex)
             {
-                Logger.LogDebug("Failed to deserialize feature flag {0}:\n{1}", e.EventName, e.Message.Data);
-                Logger.LogError("Encountered an error reading feature flag configuration: {0}", ex);
+                Logger.LogDebug(ex,
+                    "Failed to deserialize feature flag {0}:\n{1}",
+                    e.EventName,
+                    e.Message.Data);
+
+                Logger.LogError(ex,
+                    "Encountered an error reading feature flag configuration: {0}",
+                    Util.ExceptionMessage(ex));
+
                 RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError("Encountered an unexpected error: {0}", ex);
+                Logger.LogError(ex,
+                    "Encountered an unexpected error: {0}",
+                    Util.ExceptionMessage(ex));
+
                 RestartEventSource();
             }
         }
@@ -154,7 +172,17 @@ namespace LaunchDarkly.Client
 
         private void OnError(object sender, EventSource.ExceptionEventArgs e)
         {
-            Logger.LogError("Encountered EventSource error: {0}", e);
+            Logger.LogError(e.Exception,
+                "Encountered EventSource error: {0}",
+                Util.ExceptionMessage(e.Exception));
+            if (e.Exception is EventSource.EventSourceServiceUnsuccessfulResponseException)
+            {
+                if (((EventSource.EventSourceServiceUnsuccessfulResponseException)e.Exception).StatusCode == 401)
+                {
+                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    ((IDisposable)this).Dispose();
+                }
+            }
         }
 
         void IDisposable.Dispose()
@@ -175,11 +203,30 @@ namespace LaunchDarkly.Client
             }
             catch (AggregateException ex)
             {
-                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex.Flatten())));
+                Logger.LogError(ex,
+                    "Error Updating feature: '{0}'",
+                    Util.ExceptionMessage(ex.Flatten()));
+            }
+            catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
+            {
+                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
+                if (ex.StatusCode == 401)
+                {
+                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    ((IDisposable)this).Dispose();
+                }
+            }
+            catch (TimeoutException ex) {
+                Logger.LogError(ex,
+                    "Error Updating feature: '{0}'",
+                    Util.ExceptionMessage(ex));
+                RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
+                Logger.LogError(ex,
+                    "Error Updating feature: '{0}'",
+                    Util.ExceptionMessage(ex));
             }
         }
         internal class FeaturePatchData

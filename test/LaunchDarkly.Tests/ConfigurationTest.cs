@@ -35,14 +35,11 @@ namespace LaunchDarkly.Tests
             Assert.Equal(TimeSpan.FromDays(1), config.ReadTimeout);
             Assert.Equal(TimeSpan.FromDays(1), config.ReconnectTime);
         }
+
         [Fact]
         public void CannotOverrideTooSmallPollingInterval()
         {
-            var config = Configuration.Default("AnyOtherSdkKey")
-                .WithPollingInterval(TimeSpan.FromSeconds(10));
-
-            var expected = TimeSpan.FromSeconds(30);
-            Assert.Equal(expected, config.PollingInterval);
+            Assert.Throws<System.ArgumentException>(() => Configuration.Default("AnyOtherSdkKey").WithPollingInterval(TimeSpan.FromSeconds(29)));
         }
 
         [Fact]
