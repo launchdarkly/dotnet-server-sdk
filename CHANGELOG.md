@@ -2,9 +2,27 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.5.0] - 2018-01-29
+### Added
+- Support for specifying [private user attributes](https://docs.launchdarkly.com/docs/private-user-attributes) in order to prevent user attributes from being sent in analytics events back to LaunchDarkly. See the `AllAttributesPrivate` and `PrivateAttributeNames` methods on `Configuration` as well as the `AndPrivateX` methods on `User`.
+
+### Changed
+- The stream connection will now restart when a large feature flag update fails repeatedly to ensure that the client is using most recent flag values.
+- Client no longer reconnects after detecting an invalidated SDK key.
+
+## [3.4.1] - 2018-01-19
+### Added
+- Framework target for netstandard1.4 and netstandard2.0. Thanks @nolanblew and @ISkomorokh!
+- Added the Apache 2.0 license to `LaunchDarkly.Client.csproj`
+
+### Changed
+- Fixed a bug causing ASP.NET applications to be blocked during client initialization.
+- Removed unused and transitive dependencies.
+- Improved logging. Thanks @MorganVergara and @JeffAshton!
+
 ## [3.4.0] - 2017-11-29
 ### Added
-- SSE Streaming functionality as an alternative to Polling. :rocket:
+- :rocket: Support for Streaming via [Server-Sent Events](http://html5doctor.com/server-sent-events/) as an alternative to Polling. [HTTP-based streaming](https://launchdarkly.com/performance.html) is favored over polling to reduce network traffic and propagate feature flag updates faster. :rocket:
 - New builder parameters to complement streaming functionality
   - `WithIsStreamingEnabled`: Set whether streaming mode should be enabled, `true` by default.
   - `WithStreamUri`: Set the base URL of the LaunchDarkly streaming server. May be used in conjunction with the [LaunchDarkly Relay Proxy](https://github.com/launchdarkly/ld-relay).

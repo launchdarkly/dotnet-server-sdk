@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\LaunchDarkly.Client\LaunchDarkly.Client.csproj" />
   </ItemGroup>
 
@@ -29,5 +25,11 @@
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.extensibility.execution" Version="2.2.0" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+  </PropertyGroup>
 
 </Project>
