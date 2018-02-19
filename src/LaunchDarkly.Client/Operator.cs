@@ -17,7 +17,6 @@ namespace LaunchDarkly.Client
                     return false;
 
                 int comparison;
-                DateTime? uDateTime;
 
                 switch (op)
                 {
@@ -130,14 +129,7 @@ namespace LaunchDarkly.Client
             }
             return null;
         }
-
-        private static bool NumericOperator(JValue uValue, JValue cValue, Func<double, double, bool> fn)
-        {
-            var uDouble = ParseDoubleFromJValue(uValue);
-            var cDouble = ParseDoubleFromJValue(cValue);
-            return uDouble.HasValue && cDouble.HasValue && fn(uDouble.Value, cDouble.Value);
-        }
-
+        
         private static bool DateOperator(JValue uValue, JValue cValue, Func<DateTime, DateTime, bool> fn)
         {
             var uDateTime = JValueToDateTime(uValue);
