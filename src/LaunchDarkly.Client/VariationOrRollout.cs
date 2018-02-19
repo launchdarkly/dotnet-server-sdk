@@ -45,12 +45,11 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        private float BucketUser(User user, string featureKey, string attr, string salt)
+        internal static float BucketUser(User user, string featureKey, string attr, string salt)
         {
-            var userValue = user.GetValueForEvaluation(attr);
-            if (userValue != null && userValue.Type.Equals(JTokenType.String))
+            var idHash = BucketableStringValue(user.GetValueForEvaluation(attr));
+            if (idHash != null)
             {
-                var idHash = userValue.Value<string>();
                 if (!string.IsNullOrEmpty(user.SecondaryKey))
                     idHash += "." + user.SecondaryKey;
 
@@ -60,6 +59,22 @@ namespace LaunchDarkly.Client
             }
 
             return 0F;
+        }
+
+        private static string BucketableStringValue(JToken value)
+        {
+            if (value != null)
+            {
+                if (value.Type.Equals(JTokenType.String))
+                {
+                    return value.Value<string>();
+                }
+                if (value.Type.Equals(JTokenType.Integer))
+                {
+                    return Convert.ToString(value.Value<int>());
+                }
+            }
+            return null;
         }
 
         private static string Hash(string s)
