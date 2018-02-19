@@ -6,6 +6,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 ### Added
 - New property `LdClient.Version` returns the client's current version number.
 - Adds support for a future LaunchDarkly feature, coming soon: semantic version user attributes.
+- Custom attributes can now have long integer values.
 
 ### Changed
 - It is now possible to compute rollouts based on an integer attribute of a user, not just a string attribute.
