@@ -19,6 +19,11 @@ namespace LaunchDarkly.Client
         IDictionary<string, JToken> AllFlags(User user);
         string SecureModeHash(User user);
 
+        /// <summary>
+        /// Returns the current version number of the LaunchDarkly client.
+        /// </summary>
+        Version Version { get; }
+
         [Obsolete("Please use BoolVariation instead.")]
         bool Toggle(string key, User user, bool defaultValue = false);
     }
