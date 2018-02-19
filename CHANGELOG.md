@@ -4,7 +4,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ## [3.6.0] - 2018-02-19
 ### Added
-- New property LdClient.Version returns the client's current version number.
+- New property `LdClient.Version` returns the client's current version number.
 - Adds support for a future LaunchDarkly feature, coming soon: semantic version user attributes.
 
 ### Changed
