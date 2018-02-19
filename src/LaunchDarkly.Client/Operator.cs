@@ -15,7 +15,10 @@ namespace LaunchDarkly.Client
             {
                 if (uValue == null || cValue == null)
                     return false;
-                
+
+                int comparison;
+                DateTime? uDateTime;
+
                 switch (op)
                 {
                     case "in":
@@ -29,7 +32,11 @@ namespace LaunchDarkly.Client
                             return uValue.Value<string>().Equals(cValue.Value<string>());
                         }
 
-                        return NumericOperator(uValue, cValue, (a, b) => a == b);
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
+                        {
+                            return comparison == 0;
+                        }
+                        break;
 
                     case "endsWith":
                         return StringOperator(uValue, cValue, (a, b) => a.EndsWith(b));
@@ -40,13 +47,29 @@ namespace LaunchDarkly.Client
                     case "contains":
                         return StringOperator(uValue, cValue, (a, b) => a.Contains(b));
                     case "lessThan":
-                        return NumericOperator(uValue, cValue, (a, b) => a < b);
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
+                        {
+                            return comparison < 0;
+                        }
+                        break;
                     case "lessThanOrEqual":
-                        return NumericOperator(uValue, cValue, (a, b) => a <= b);
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
+                        {
+                            return comparison <= 0;
+                        }
+                        break;
                     case "greaterThan":
-                        return NumericOperator(uValue, cValue, (a, b) => a > b);
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
+                        {
+                            return comparison > 0;
+                        }
+                        break;
                     case "greaterThanOrEqual":
-                        return NumericOperator(uValue, cValue, (a, b) => a >= b);
+                        if (TryCompareNumericValues(uValue, cValue, out comparison))
+                        {
+                            return comparison >= 0;
+                        }
+                        break;
                     case "before":
                         return DateOperator(uValue, cValue, (a, b) => DateTime.Compare(a, b) < 0);
                     case "after":
@@ -73,6 +96,23 @@ namespace LaunchDarkly.Client
             return false;
         }
 
+        private static bool TryCompareNumericValues(JValue x, JValue y, out int result)
+        {
+            if (!IsNumericValue(x) || !IsNumericValue(y))
+            {
+                result = default(int);
+                return false;
+            }
+
+            result = x.CompareTo(y);
+            return true;
+        }
+
+        private static bool IsNumericValue(JValue jValue)
+        {
+            return (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer));
+        }
+        
         private static bool StringOperator(JValue uValue, JValue cValue, Func<string, string, bool> fn)
         {
             if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
@@ -84,7 +124,7 @@ namespace LaunchDarkly.Client
 
         private static double? ParseDoubleFromJValue(JValue jValue)
         {
-            if (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer))
+            if (IsNumericValue(jValue))
             {
                 return (double) jValue;
             }
