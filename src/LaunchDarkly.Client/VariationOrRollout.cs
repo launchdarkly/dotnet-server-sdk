@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    class VariationOrRollout
+    internal class VariationOrRollout
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 

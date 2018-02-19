@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public static class Operator
+    internal static class Operator
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger("Operator");
 
