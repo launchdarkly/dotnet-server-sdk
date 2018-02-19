@@ -8,8 +8,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 - Adds support for a future LaunchDarkly feature, coming soon: semantic version user attributes.
 
 ### Changed
-- It is now possible to compute rollouts based on an integer attribute of a user, not just a
-string attribute.
+- It is now possible to compute rollouts based on an integer attribute of a user, not just a string attribute.
 
 ## [3.5.0] - 2018-01-29
 ### Added
