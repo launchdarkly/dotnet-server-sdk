@@ -5,7 +5,7 @@ using System.Text;
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// Objects used by IFeatureStore implementations to denote a specific collection of IVersionedData-derived objects.
+    /// Objects used by <see cref="IFeatureStore"/> implementations to denote a specific collection of IVersionedData-derived objects.
     /// </summary>
     public interface IVersionedDataKind
     {
@@ -15,7 +15,7 @@ namespace LaunchDarkly.Client
         string GetNamespace();
 
         /// <summary>
-        /// The runtime class of objects in this collection, e.g. typeof(FeatureFlag).
+        /// The runtime class of objects in this collection, e.g. typeof(<c>FeatureFlag</c>).
         /// </summary>
         Type GetItemType();
 
@@ -26,7 +26,7 @@ namespace LaunchDarkly.Client
     }
 
     /// <summary>
-    /// The members of this class denote all the VersionedDataKind collections that exist.
+    /// The members of this class denote all the <c>VersionedDataKind</c> collections that exist.
     /// </summary>
     internal abstract class VersionedDataKind
     {
@@ -34,14 +34,28 @@ namespace LaunchDarkly.Client
         internal static VersionedDataKind<Segment> Segments = new SegmentsVersionedDataKind();
     }
 
+    /// <summary>
+    /// Objects used by <see cref="IFeatureStore"/> implementations to denote a specific collection of
+    /// <c>IVersionedData</c>-derived objects.
+    /// </summary>
     public abstract class VersionedDataKind<T> : IVersionedDataKind where T : IVersionedData
     {
+        /// <see cref="IVersionedDataKind.GetNamespace"/>
         public abstract string GetNamespace();
 
+        /// <see cref="IVersionedDataKind.GetItemType"/>
         public abstract Type GetItemType();
 
+        /// <see cref="IVersionedDataKind.GetStreamApiPath"/>
         public abstract String GetStreamApiPath();
 
+        /// <summary>
+        /// Returns an instance of the desired class with the <c>Deleted</c> property set to
+        /// true and the <c>Key</c> and <c>Version</c> properties prepopulated.
+        /// </summary>
+        /// <param name="key">the item's unique string key</param>
+        /// <param name="version">the desired version number</param>
+        /// <returns>an instance of the desired class</returns>
         public abstract T MakeDeletedItem(string key, int version);
     }
 
