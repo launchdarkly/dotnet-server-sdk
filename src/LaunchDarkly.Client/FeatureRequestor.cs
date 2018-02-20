@@ -41,8 +41,8 @@ namespace LaunchDarkly.Client
             }
             var ret = JsonConvert.DeserializeObject<AllData>(content);
 
-            Log.Debug(String.Format("Get all returned {0} feature flags and {1} segments",
-                ret.Flags.Keys.Count, ret.Segments.Keys.Count));
+            Log.DebugFormat("Get all returned {0} feature flags and {1} segments",
+                ret.Flags.Keys.Count, ret.Segments.Keys.Count);
 
             return ret;
         }
@@ -73,8 +73,8 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Log.Debug(String.Format("Error getting {0}: {1} waiting 1 second before retrying.",
-                    objectName, Util.ExceptionMessage(e)), e);
+                Log.DebugFormat("Error getting {0}: {1} waiting 1 second before retrying.",
+                    e, objectName, Util.ExceptionMessage(e));
 
                 System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
@@ -103,7 +103,7 @@ namespace LaunchDarkly.Client
 
         private async Task<string> Get(CancellationTokenSource cts, Uri path)
         {
-            Log.Debug(String.Format("Getting flags with uri: {0}", path.AbsoluteUri));
+            Log.DebugFormat("Getting flags with uri: {0}", path.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             if (_etag != null)
             {

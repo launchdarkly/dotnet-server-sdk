@@ -15,7 +15,7 @@ namespace LaunchDarkly.Client
             {
                 if (uValue == null || cValue == null)
                     return false;
-                
+
                 switch (op)
                 {
                     case "in":
@@ -63,11 +63,12 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Log.Debug(String.Format("Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
+                Log.DebugFormat("Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
+                    e,
                     op,
                     uValue,
-                    cValue, 
-                    Util.ExceptionMessage(e)), e);
+                    cValue,
+                    Util.ExceptionMessage(e));
             }
             return false;
         }

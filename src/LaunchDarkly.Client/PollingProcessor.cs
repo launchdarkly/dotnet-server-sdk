@@ -33,8 +33,8 @@ namespace LaunchDarkly.Client
 
         Task<bool> IUpdateProcessor.Start()
         {
-            Log.Info(String.Format("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
-                _config.PollingInterval.TotalMilliseconds));
+            Log.InfoFormat("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
+                _config.PollingInterval.TotalMilliseconds);
 
             Task.Run(() => UpdateTaskLoopAsync());
             return _initTask.Task;
@@ -68,19 +68,21 @@ namespace LaunchDarkly.Client
             }
             catch (AggregateException ex)
             {
-                Log.Error(String.Format("Error Updating features: '{0}'",
-                    Util.ExceptionMessage(ex.Flatten())), ex);
+                Log.ErrorFormat("Error Updating features: '{0}'",
+                    ex,
+                    Util.ExceptionMessage(ex.Flatten()));
             }
             catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
-                Log.Error(String.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
+                Log.ErrorFormat("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
                 Log.Error("Received 401 error, no further polling requests will be made since SDK key is invalid");
                 ((IDisposable)this).Dispose();
             }
             catch (Exception ex)
             {
-                Log.Error(String.Format("Error Updating features: '{0}'",
-                    Util.ExceptionMessage(ex)), ex);
+                Log.ErrorFormat("Error Updating features: '{0}'",
+                    ex,
+                    Util.ExceptionMessage(ex));
             }
         }
 

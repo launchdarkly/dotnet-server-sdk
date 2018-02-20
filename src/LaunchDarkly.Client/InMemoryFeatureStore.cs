@@ -27,18 +27,18 @@ namespace LaunchDarkly.Client
 
                 if (!Items.TryGetValue(kind, out itemsOfKind))
                 {
-                    Log.Debug(String.Format("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace()));
+                    Log.DebugFormat("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
                     return null;
                 }
                 if (!itemsOfKind.TryGetValue(key, out item))
                 {
-                    Log.Debug(String.Format("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace()));
+                    Log.DebugFormat("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
                     return null;
                 }
                 if (item.Deleted)
                 {
-                    Log.Warn(String.Format("Attempted to get deleted item with key {0} in '{1}'; returning null.",
-                        key, kind.GetNamespace()));
+                    Log.WarnFormat("Attempted to get deleted item with key {0} in '{1}'; returning null.",
+                        key, kind.GetNamespace());
                     return null;
                 }
                 return (T)item;

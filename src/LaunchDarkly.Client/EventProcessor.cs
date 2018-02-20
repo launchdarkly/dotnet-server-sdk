@@ -77,26 +77,26 @@ namespace LaunchDarkly.Client
             {
                 jsonEvents = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
 
-                Log.Debug(String.Format("Submitting {0} events to {1} with json: {2}",
+                Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                     events.Count,
                     _uri.AbsoluteUri,
-                    jsonEvents));
+                    jsonEvents);
 
                 await SendEventsAsync(jsonEvents, cts);
             }
             catch (Exception e)
             {
-                Log.Debug(String.Format("Error sending events: {0} waiting 1 second before retrying.",
-                    Util.ExceptionMessage(e)), e);
+                Log.DebugFormat("Error sending events: {0} waiting 1 second before retrying.",
+                    e, Util.ExceptionMessage(e));
 
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
                 try
                 {
-                    Log.Debug(String.Format("Submitting {0} events to {1} with json: {2}",
+                    Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                         events.Count,
                         _uri.AbsoluteUri,
-                        jsonEvents));
+                        jsonEvents);
                     await SendEventsAsync(jsonEvents, cts);
                 }
                 catch (TaskCanceledException tce)
@@ -104,23 +104,26 @@ namespace LaunchDarkly.Client
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
-                        Log.Error(String.Format("Error Submitting Events using uri: '{0}' '{1}'",
+                        Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                            tce,
                             _uri.AbsoluteUri,
-                            Util.ExceptionMessage(tce)), tce);
+                            Util.ExceptionMessage(tce));
                     }
                     else
                     {
                         //Otherwise this was a request timeout.
-                        Log.Error(String.Format("Timed out trying to send {0} events after {1}",
+                        Log.ErrorFormat("Timed out trying to send {0} events after {1}",
+                            tce,
                             events.Count,
-                            _config.HttpClientTimeout), tce);
+                            _config.HttpClientTimeout);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(String.Format("Error Submitting Events using uri: '{0}' '{1}'",
+                    Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                        ex,
                         _uri.AbsoluteUri,
-                         Util.ExceptionMessage(ex)), ex);
+                         Util.ExceptionMessage(ex));
                 }
             }
         }
@@ -133,9 +136,9 @@ namespace LaunchDarkly.Client
             {
                 if (!response.IsSuccessStatusCode)
                 {
-                    Log.Error(String.Format("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                    Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
                         _uri.AbsoluteUri,
-                        response.StatusCode));
+                        response.StatusCode);
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
                         Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
@@ -145,8 +148,8 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    Log.Debug(String.Format("Got {0} when sending events.",
-                        response.StatusCode));
+                    Log.DebugFormat("Got {0} when sending events.",
+                        response.StatusCode);
                 }
             }
         }
