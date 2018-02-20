@@ -16,6 +16,7 @@ namespace LaunchDarkly.Client
             new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
         private bool _initialized = false;
 
+        /// <see cref="IFeatureStore.Get{T}(VersionedDataKind{T}, string)"/>
         public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
         {
             try
@@ -48,6 +49,7 @@ namespace LaunchDarkly.Client
             }
         }
 
+        /// <see cref="IFeatureStore.All{T}(VersionedDataKind{T})"/>
         public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
         {
             try
@@ -73,6 +75,7 @@ namespace LaunchDarkly.Client
             }
         }
 
+        /// <see cref="IFeatureStore.Init(IDictionary{IVersionedDataKind, IDictionary{string, IVersionedData}})"/>
         public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
         {
             try
@@ -96,6 +99,7 @@ namespace LaunchDarkly.Client
             }
         }
 
+        /// <see cref="IFeatureStore.Delete{T}(VersionedDataKind{T}, string, int)"/>
         public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
         {
             try
@@ -117,6 +121,7 @@ namespace LaunchDarkly.Client
             }
         }
 
+        /// <see cref="IFeatureStore.Upsert{T}(VersionedDataKind{T}, T)"/>
         public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
         {
             try
@@ -140,6 +145,7 @@ namespace LaunchDarkly.Client
             }
         }
 
+        /// <see cref="IFeatureStore.Initialized"/>
         public bool Initialized()
         {
             return _initialized;
