@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -7,7 +8,7 @@ namespace LaunchDarkly.Client
 {
     internal class Clause
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<Clause>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Clause));
 
         internal string Attribute { get; private set; }
         internal string Op { get; private set; }
@@ -58,8 +59,8 @@ namespace LaunchDarkly.Client
                 {
                     if (!(element is JValue))
                     {
-                        Logger.LogError("Invalid custom attribute value in user object: {0}",
-                            element);
+                        Log.Error(String.Format("Invalid custom attribute value in user object: {0}",
+                            element));
                         return false;
                     }
                     if (MatchAny(element as JValue))
@@ -73,10 +74,10 @@ namespace LaunchDarkly.Client
             {
                 return MaybeNegate(MatchAny(userValue as JValue));
             }
-            Logger.LogWarning("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
+            Log.Warn(String.Format("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
                 userValue.Type,
                 user.Key,
-                Attribute);
+                Attribute));
             return false;
         }
 

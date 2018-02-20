@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
     internal static class Operator
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger("Operator");
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Operator));
 
         public static bool Apply(string op, JValue uValue, JValue cValue)
         {
@@ -63,12 +63,11 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogDebug(e,
-                    "Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
+                Log.Debug(String.Format("Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
                     op,
                     uValue,
                     cValue, 
-                    Util.ExceptionMessage(e));
+                    Util.ExceptionMessage(e)), e);
             }
             return false;
         }

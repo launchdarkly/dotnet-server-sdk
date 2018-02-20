@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 
 namespace LaunchDarkly.Client
 {
@@ -180,11 +180,9 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        public static Configuration WithLoggerFactory(this Configuration configuration, ILoggerFactory loggerFactory)
+        [Obsolete("WithLogger factory is deprecated. Configure logging by following the instructions here: https://docs.launchdarkly.com/docs#section-logging")]
+        public static Configuration WithLoggerFactory(this Configuration configuration, ILogManager logManager)
         {
-            if (loggerFactory != null)
-                LdLogger.LoggerFactory = loggerFactory;
-
             return configuration;
         }
 

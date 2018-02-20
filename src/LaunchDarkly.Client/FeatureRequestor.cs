@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
@@ -12,7 +12,7 @@ namespace LaunchDarkly.Client
 {
     internal class FeatureRequestor
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureRequestor>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureRequestor));
         private readonly Uri _allUri;
         private readonly Uri _flagsUri;
         private readonly Uri _segmentsUri;
@@ -41,8 +41,8 @@ namespace LaunchDarkly.Client
             }
             var ret = JsonConvert.DeserializeObject<AllData>(content);
 
-            Logger.LogDebug("Get all returned {0} feature flags and {1} segments",
-                ret.Flags.Keys.Count, ret.Segments.Keys.Count);
+            Log.Debug(String.Format("Get all returned {0} feature flags and {1} segments",
+                ret.Flags.Keys.Count, ret.Segments.Keys.Count));
 
             return ret;
         }
@@ -73,9 +73,8 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogDebug(e,
-                    "Error getting {0}: {1} waiting 1 second before retrying.",
-                    objectName, Util.ExceptionMessage(e));
+                Log.Debug(String.Format("Error getting {0}: {1} waiting 1 second before retrying.",
+                    objectName, Util.ExceptionMessage(e)), e);
 
                 System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
@@ -104,7 +103,7 @@ namespace LaunchDarkly.Client
 
         private async Task<string> Get(CancellationTokenSource cts, Uri path)
         {
-            Logger.LogDebug("Getting flags with uri: {0}", path.AbsoluteUri);
+            Log.Debug(String.Format("Getting flags with uri: {0}", path.AbsoluteUri));
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             if (_etag != null)
             {
@@ -115,7 +114,7 @@ namespace LaunchDarkly.Client
             {
                 if (response.StatusCode == HttpStatusCode.NotModified)
                 {
-                    Logger.LogDebug("Get all flags returned 304: not modified");
+                    Log.Debug("Get all flags returned 304: not modified");
                     return null;
                 }
                 _etag = response.Headers.ETag;

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
     public class LdClient : IDisposable, ILdClient
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<LdClient>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
         private readonly Configuration _configuration;
         private readonly IStoreEvents _eventStore;
@@ -17,8 +17,8 @@ namespace LaunchDarkly.Client
 
         internal LdClient(Configuration config, IStoreEvents eventStore)
         {
-            Logger.LogInformation("Starting LaunchDarkly Client {0}",
-                Configuration.Version);
+            Log.Info(String.Format("Starting LaunchDarkly Client {0}",
+                Configuration.Version));
 
             _configuration = config;
             _eventStore = eventStore;
@@ -26,7 +26,7 @@ namespace LaunchDarkly.Client
 
             if (_configuration.Offline)
             {
-                Logger.LogInformation("Starting Launchdarkly client in offline mode.");
+                Log.Info("Starting Launchdarkly client in offline mode.");
                 return;
             }
 
@@ -38,13 +38,13 @@ namespace LaunchDarkly.Client
             }
             else
             {
-                Logger.LogWarning("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
+                Log.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
                 _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
             }
             var initTask = _updateProcessor.Start();
 
-            Logger.LogInformation("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
-                _configuration.StartWaitTime.TotalMilliseconds);
+            Log.Info(String.Format("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
+                _configuration.StartWaitTime.TotalMilliseconds));
 
             var unused = initTask.Wait(_configuration.StartWaitTime);
         }
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Client
         [Obsolete("Please use BoolVariation instead.")]
         public bool Toggle(string key, User user, bool defaultValue = false)
         {
-            Logger.LogWarning("Toggle() method is deprecated. Please use BoolVariation() instead");
+            Log.Warn("Toggle() method is deprecated. Please use BoolVariation() instead");
             return BoolVariation(key, user, defaultValue);
         }
 
@@ -111,17 +111,17 @@ namespace LaunchDarkly.Client
         {
             if (IsOffline())
             {
-                Logger.LogWarning("AllFlags() was called when client is in offline mode. Returning null.");
+                Log.Warn("AllFlags() was called when client is in offline mode. Returning null.");
                 return null;
             }
             if (!Initialized())
             {
-                Logger.LogWarning("AllFlags() was called before client has finished initializing. Returning null.");
+                Log.Warn("AllFlags() was called before client has finished initializing. Returning null.");
                 return null;
             }
             if (user == null || user.Key == null)
             {
-                Logger.LogWarning("AllFlags() called with null user or null user key. Returning null");
+                Log.Warn("AllFlags() called with null user or null user key. Returning null");
                 return null;
             }
 
@@ -136,9 +136,7 @@ namespace LaunchDarkly.Client
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError(e, 
-                        "Exception caught when evaluating all flags: {0}",
-                        Util.ExceptionMessage(e));
+                    Log.Error(String.Format("Exception caught when evaluating all flags: {0}",  Util.ExceptionMessage(e)), e);
                 }
             }
             return results;
@@ -148,12 +146,12 @@ namespace LaunchDarkly.Client
         {
             if (!Initialized())
             {
-                Logger.LogWarning("LaunchDarkly client has not yet been initialized. Returning default");
+                Log.Warn("LaunchDarkly client has not yet been initialized. Returning default");
                 return defaultValue;
             }
             if (user == null || user.Key == null)
             {
-                Logger.LogWarning("Feature flag evaluation called with null user or null user key. Returning default");
+                Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
                 sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
                 return defaultValue;
             }
@@ -163,8 +161,8 @@ namespace LaunchDarkly.Client
                 var featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
                 if (featureFlag == null)
                 {
-                    Logger.LogInformation("Unknown feature flag {0}; returning default value",
-                        featureKey);
+                    Log.Info(String.Format("Unknown feature flag {0}; returning default value",
+                        featureKey));
 
                     sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
                     return defaultValue;
@@ -182,10 +180,10 @@ namespace LaunchDarkly.Client
                 {
                     if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
                     {
-                        Logger.LogError("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
+                        Log.Error(String.Format("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
                             expectedType,
                             evalResult.GetType(),
-                            featureKey);
+                            featureKey));
 
                         sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, featureFlag.Version);
                         return defaultValue;
@@ -196,13 +194,12 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogError(e,
-                     "Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
+                Log.Error(String.Format("Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
                      Util.ExceptionMessage(e), 
                      featureKey, 
-                     user.Key);
+                     user.Key), e);
 
-                Logger.LogDebug("{0}", e);
+                Log.Debug("{0}", e);
             }
             sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
             return defaultValue;
@@ -226,7 +223,7 @@ namespace LaunchDarkly.Client
         {
             if (user == null || user.Key == null)
             {
-                Logger.LogWarning("Track called with null user or null user key");
+                Log.Warn("Track called with null user or null user key");
             }
             _eventStore.Add(new CustomEvent(name, EventUser.FromUser(user, _configuration), data));
         }
@@ -235,7 +232,7 @@ namespace LaunchDarkly.Client
         {
             if (user == null || user.Key == null)
             {
-                Logger.LogWarning("Identify called with null user or null user key");
+                Log.Warn("Identify called with null user or null user key");
             }
             _eventStore.Add(new IdentifyEvent(EventUser.FromUser(user, _configuration)));
         }
@@ -247,7 +244,7 @@ namespace LaunchDarkly.Client
 
         protected virtual void Dispose(bool disposing)
         {
-            Logger.LogInformation("Closing LaunchDarkly client.");
+            Log.Info("Closing LaunchDarkly client.");
             //We do not have native resource, so the boolean parameter can be ignored.
             if (_eventStore is EventProcessor)
                 ((_eventStore) as IDisposable).Dispose();

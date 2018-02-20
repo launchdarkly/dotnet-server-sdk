@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 
 namespace LaunchDarkly.Client
 {
     internal class PollingProcessor : IUpdateProcessor
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<PollingProcessor>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(PollingProcessor));
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
@@ -33,8 +33,8 @@ namespace LaunchDarkly.Client
 
         Task<bool> IUpdateProcessor.Start()
         {
-            Logger.LogInformation("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
-                _config.PollingInterval.TotalMilliseconds);
+            Log.Info(String.Format("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
+                _config.PollingInterval.TotalMilliseconds));
 
             Task.Run(() => UpdateTaskLoopAsync());
             return _initTask.Task;
@@ -62,34 +62,32 @@ namespace LaunchDarkly.Client
                     if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
                     {
                         _initTask.SetResult(true);
-                        Logger.LogInformation("Initialized LaunchDarkly Polling Processor.");
+                        Log.Info("Initialized LaunchDarkly Polling Processor.");
                     }
                 }
             }
             catch (AggregateException ex)
             {
-                Logger.LogError(ex, 
-                    "Error Updating features: '{0}'",
-                    Util.ExceptionMessage(ex.Flatten()));
+                Log.Error(String.Format("Error Updating features: '{0}'",
+                    Util.ExceptionMessage(ex.Flatten())), ex);
             }
             catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
-                Logger.LogError(string.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
-                Logger.LogError("Received 401 error, no further polling requests will be made since SDK key is invalid");
+                Log.Error(String.Format("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
+                Log.Error("Received 401 error, no further polling requests will be made since SDK key is invalid");
                 ((IDisposable)this).Dispose();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, 
-                    "Error Updating features: '{0}'",
-                    Util.ExceptionMessage(ex));
+                Log.Error(String.Format("Error Updating features: '{0}'",
+                    Util.ExceptionMessage(ex)), ex);
             }
         }
 
 
         void IDisposable.Dispose()
         {
-            Logger.LogInformation("Stopping LaunchDarkly PollingProcessor");
+            Log.Info("Stopping LaunchDarkly PollingProcessor");
             _disposed = true;
         }
     }
