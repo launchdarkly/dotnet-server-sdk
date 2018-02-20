@@ -223,6 +223,11 @@ namespace LaunchDarkly.Client
             return user.AddCustom(attribute, new JValue(value));
         }
 
+        public static User AndCustomAttribute(this User user, string attribute, long value)
+        {
+            return user.AddCustom(attribute, new JValue(value));
+        }
+
         public static User AndCustomAttribute(this User user, string attribute, List<string> value)
         {
             return user.AddCustom(attribute, new JArray(value.ToArray()));
@@ -249,6 +254,11 @@ namespace LaunchDarkly.Client
         }
 
         public static User AndPrivateCustomAttribute(this User user, string attribute, float value)
+        {
+            return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
+        }
+
+        public static User AndPrivateCustomAttribute(this User user, string attribute, long value)
         {
             return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
         }
