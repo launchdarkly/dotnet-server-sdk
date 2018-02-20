@@ -74,7 +74,7 @@ namespace LaunchDarkly.Client
             }
             catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
-                Log.ErrorFormat("Error Updating features: '{0}'", Util.ExceptionMessage(ex)));
+                Log.ErrorFormat("Error Updating features: '{0}'", Util.ExceptionMessage(ex));
                 Log.Error("Received 401 error, no further polling requests will be made since SDK key is invalid");
                 ((IDisposable)this).Dispose();
             }

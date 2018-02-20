@@ -180,12 +180,6 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
-        [Obsolete("WithLogger factory is deprecated. Configure logging by following the instructions here: https://docs.launchdarkly.com/docs#section-logging")]
-        public static Configuration WithLoggerFactory(this Configuration configuration, ILogManager logManager)
-        {
-            return configuration;
-        }
-
         public static Configuration WithHttpClientTimeout(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.HttpClientTimeout = timeSpan;
@@ -213,7 +207,7 @@ namespace LaunchDarkly.Client
             }
             return configuration;
         }
-        
+
         public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
         {
             configuration.HttpClientHandler = httpClientHandler;

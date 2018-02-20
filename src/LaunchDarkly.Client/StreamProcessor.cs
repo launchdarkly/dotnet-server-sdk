@@ -162,7 +162,7 @@ namespace LaunchDarkly.Client
                 Log.DebugFormat("Failed to deserialize feature flag or segment {0}:\n{1}",
                     ex,
                     e.EventName,
-                    e.Message.Data));
+                    e.Message.Data);
 
                 Log.ErrorFormat("Encountered an error reading feature flag or segment configuration: {0}",
                     ex, Util.ExceptionMessage(ex));
