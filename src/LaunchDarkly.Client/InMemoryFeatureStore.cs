@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 
 namespace LaunchDarkly.Client
 {
@@ -9,7 +10,7 @@ namespace LaunchDarkly.Client
     /// </summary>
     public class InMemoryFeatureStore : IFeatureStore
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<InMemoryFeatureStore>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryFeatureStore));
         private static readonly int RwLockMaxWaitMillis = 1000;
         private readonly ReaderWriterLockSlim RwLock = new ReaderWriterLockSlim();
         private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> Items =
@@ -27,17 +28,17 @@ namespace LaunchDarkly.Client
 
                 if (!Items.TryGetValue(kind, out itemsOfKind))
                 {
-                    Logger.LogDebug("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
+                    Log.DebugFormat("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
                     return null;
                 }
                 if (!itemsOfKind.TryGetValue(key, out item))
                 {
-                    Logger.LogDebug("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
+                    Log.DebugFormat("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
                     return null;
                 }
                 if (item.Deleted)
                 {
-                    Logger.LogWarning("Attempted to get deleted item with key {0} in '{1}'; returning null.",
+                    Log.WarnFormat("Attempted to get deleted item with key {0} in '{1}'; returning null.",
                         key, kind.GetNamespace());
                     return null;
                 }

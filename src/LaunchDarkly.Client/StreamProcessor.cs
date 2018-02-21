@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Http;
-using Microsoft.Extensions.Logging;
-using LaunchDarkly.EventSource;
+using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -16,7 +14,7 @@ namespace LaunchDarkly.Client
         private const String PATCH = "patch";
         private const String DELETE = "delete";
         private const String INDIRECT_PATCH = "indirect/patch";
-        private static readonly ILogger Logger = LdLogger.CreateLogger<StreamProcessor>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(StreamProcessor));
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
@@ -52,7 +50,7 @@ namespace LaunchDarkly.Client
                 delayRetryDuration: _config.ReconnectTime,
                 readTimeout: _config.ReadTimeout,
                 requestHeaders: headers,
-                logger: LdLogger.CreateLogger<EventSource.EventSource>()
+               logger: LogManager.GetLogger(typeof(EventSource.EventSource))
             );
             _es = new EventSource.EventSource(config);
 
@@ -68,9 +66,8 @@ namespace LaunchDarkly.Client
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex,
-                    "General Exception: {0}",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("General Exception: {0}",
+                    ex, Util.ExceptionMessage(ex));
 
                 _initTask.SetException(ex);
             }
@@ -84,7 +81,7 @@ namespace LaunchDarkly.Client
             {
                 sleepTime = _backOff.GetNextBackOff();
 
-                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before reconnecting...",
+                Log.InfoFormat("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before reconnecting...",
                     sleepTime.TotalMilliseconds);
             }
             else
@@ -97,12 +94,12 @@ namespace LaunchDarkly.Client
             {
                 await _es.StartAsync();
                 _backOff.ResetReconnectAttemptCount();
-                Logger.LogInformation("Reconnected to LaunchDarkly StreamProcessor");
+                Log.Info("Reconnected to LaunchDarkly StreamProcessor");
             }
             catch (Exception exc)
             {
-                Logger.LogError(exc,
-                    "General Exception: {0}",
+                Log.ErrorFormat("General Exception: {0}",
+                    exc,
                     Util.ExceptionMessage(exc));
             }
         }
@@ -118,7 +115,7 @@ namespace LaunchDarkly.Client
                         if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
                         {
                             _initTask.SetResult(true);
-                            Logger.LogInformation("Initialized LaunchDarkly Stream Processor.");
+                            Log.Info("Initialized LaunchDarkly Stream Processor.");
                         }
                         break;
                     case PATCH:
@@ -136,7 +133,7 @@ namespace LaunchDarkly.Client
                         }
                         else
                         {
-                            Logger.LogWarning("Received patch event with unknown path: {0}", patchData.Path);
+                            Log.WarnFormat("Received patch event with unknown path: {0}", patchData.Path);
                         }
                         break;
                     case DELETE:
@@ -152,7 +149,7 @@ namespace LaunchDarkly.Client
                         }
                         else
                         {
-                            Logger.LogWarning("Received delete event with unknown path: {0}", deleteData.Path);
+                            Log.WarnFormat("Received delete event with unknown path: {0}", deleteData.Path);
                         }
                         break;
                     case INDIRECT_PATCH:
@@ -162,51 +159,49 @@ namespace LaunchDarkly.Client
             }
             catch (JsonReaderException ex)
             {
-                Logger.LogDebug(ex,
-                    "Failed to deserialize feature flag or segment {0}:\n{1}",
+                Log.DebugFormat("Failed to deserialize feature flag or segment {0}:\n{1}",
+                    ex,
                     e.EventName,
                     e.Message.Data);
 
-                Logger.LogError(ex,
-                    "Encountered an error reading feature flag or segment configuration: {0}",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Encountered an error reading feature flag or segment configuration: {0}",
+                    ex, Util.ExceptionMessage(ex));
 
                 RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex,
-                    "Encountered an unexpected error: {0}",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Encountered an unexpected error: {0}",
+                    ex, Util.ExceptionMessage(ex));
 
                 RestartEventSource();
             }
         }
         private void OnOpen(object sender, EventSource.StateChangedEventArgs e)
         {
-            Logger.LogDebug("Eventsource Opened");
+            Log.Debug("Eventsource Opened");
         }
 
         private void OnClose(object sender, EventSource.StateChangedEventArgs e)
         {
-            Logger.LogDebug("Eventsource Closed");
+            Log.Debug("Eventsource Closed");
         }
 
         private void OnComment(object sender, EventSource.CommentReceivedEventArgs e)
         {
-            Logger.LogDebug("Received a heartbeat.");
+            Log.Debug("Received a heartbeat.");
         }
 
         private void OnError(object sender, EventSource.ExceptionEventArgs e)
         {
-            Logger.LogError(e.Exception,
-                "Encountered EventSource error: {0}",
+            Log.ErrorFormat("Encountered EventSource error: {0}",
+                e.Exception,
                 Util.ExceptionMessage(e.Exception));
             if (e.Exception is EventSource.EventSourceServiceUnsuccessfulResponseException)
             {
                 if (((EventSource.EventSourceServiceUnsuccessfulResponseException)e.Exception).StatusCode == 401)
                 {
-                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    Log.Error("Received 401 error, no further streaming connection will be made since SDK key is invalid");
                     ((IDisposable)this).Dispose();
                 }
             }
@@ -214,7 +209,7 @@ namespace LaunchDarkly.Client
 
         void IDisposable.Dispose()
         {
-            Logger.LogInformation("Stopping LaunchDarkly StreamProcessor");
+            Log.Info("Stopping LaunchDarkly StreamProcessor");
             _es.Close();
         }
 
@@ -241,35 +236,32 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    Logger.LogWarning("Received indirect patch event with unknown path: {0}", objectPath);
+                    Log.WarnFormat("Received indirect patch event with unknown path: {0}", objectPath);
                 }
             }
             catch (AggregateException ex)
             {
-                Logger.LogError(ex,
-                    "Error Updating {0}: '{1}'",
-                    objectPath, Util.ExceptionMessage(ex.Flatten()));
+                Log.ErrorFormat("Error Updating {0}: '{1}'",
+                    ex, objectPath, Util.ExceptionMessage(ex.Flatten()));
             }
             catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
-                Logger.LogError(string.Format("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex)));
+                Log.ErrorFormat("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex));
                 if (ex.StatusCode == 401)
                 {
-                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    Log.Error("Received 401 error, no further streaming connection will be made since SDK key is invalid");
                     ((IDisposable)this).Dispose();
                 }
             }
             catch (TimeoutException ex) {
-                Logger.LogError(ex,
-                    "Error Updating {0}: '{1}'",
-                    objectPath, Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Error Updating {0}: '{1}'",
+                    ex, objectPath, Util.ExceptionMessage(ex));
                 RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex,
-                    "Error Updating feature: '{0}'",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Error Updating feature: '{0}'",
+                    ex,Util.ExceptionMessage(ex));
             }
         }
 

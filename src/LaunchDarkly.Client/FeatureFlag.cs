@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -8,7 +8,7 @@ namespace LaunchDarkly.Client
 {
     internal class FeatureFlag : IVersionedData
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureFlag>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureFlag));
 
         public string Key { get; private set; }
         public int Version { get; set; }
@@ -65,7 +65,7 @@ namespace LaunchDarkly.Client
             EvalResult evalResult = new EvalResult(null, prereqEvents);
             if (user == null || user.Key == null)
             {
-                Logger.LogWarning("User or user key is null when evaluating flag: {0} returning null",
+                Log.WarnFormat("User or user key is null when evaluating flag: {0} returning null",
                     Key);
 
                 return evalResult;
@@ -95,7 +95,7 @@ namespace LaunchDarkly.Client
                     JToken prereqEvalResult = null;
                     if (prereqFeatureFlag == null)
                     {
-                        Logger.LogError("Could not retrieve prerequisite flag: {0} when evaluating: {1}",
+                        Log.ErrorFormat("Could not retrieve prerequisite flag: {0} when evaluating: {1}",
                             prereq.Key,
                             Key);
                         return null;
@@ -113,8 +113,8 @@ namespace LaunchDarkly.Client
                         }
                         catch (EvaluationException e)
                         {
-                            Logger.LogWarning(e,
-                                "Error evaluating prerequisites: {0}",
+                            Log.WarnFormat("Error evaluating prerequisites: {0}",
+                                e,
                                 Util.ExceptionMessage(e));
 
                             prereqOk = false;
