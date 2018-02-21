@@ -16,6 +16,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ### Removed
 - Obsolete/deprecated methods have been removed.
+- Removed `Configuration.WithLoggerFactory` since the logging framework has changed. For more details on setting up logging, see [here](https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-logging).
 
 ## [3.6.1] - 2018-02-21
 ### Fixed
