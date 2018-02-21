@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.6.1] - 2018-02-21
+### Fixed
+- Improved performance of the semantic version operators by precompiling a regex.
+
 ## [3.6.0] - 2018-02-19
 ### Added
 - New property `LdClient.Version` returns the client's current version number.
