@@ -118,14 +118,8 @@ namespace LaunchDarkly.Client
         string SecureModeHash(User user);
 
         /// <summary>
-        /// Deprecated. Use <see cref="BoolVariation(string, User, bool)"/> instead.
+        /// Returns the current version number of the LaunchDarkly client.
         /// </summary>
-        /// <param name="key">the unique key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
-        /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>whether or not the flag should be enabled, or <c>defaultValue</c> if the flag is
-        /// disabled in the LaunchDarkly control panel</returns>
-        [Obsolete("Please use BoolVariation instead.")]
-        bool Toggle(string key, User user, bool defaultValue = false);
+        Version Version { get; }
     }
 }

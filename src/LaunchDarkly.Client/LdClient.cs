@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Cryptography;
 using Common.Logging;
 using Newtonsoft.Json.Linq;
@@ -81,14 +82,6 @@ namespace LaunchDarkly.Client
         public bool IsOffline()
         {
             return _configuration.Offline;
-        }
-
-        /// <see cref="ILdClient.Toggle(string, User, bool)"/>
-        [Obsolete("Please use BoolVariation instead.")]
-        public bool Toggle(string key, User user, bool defaultValue = false)
-        {
-            Log.Warn("Toggle() method is deprecated. Please use BoolVariation() instead");
-            return BoolVariation(key, user, defaultValue);
         }
 
         /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>
@@ -259,6 +252,15 @@ namespace LaunchDarkly.Client
                 Log.Warn("Identify called with null user or null user key");
             }
             _eventStore.Add(new IdentifyEvent(EventUser.FromUser(user, _configuration)));
+        }
+
+        /// <see cref="ILdClient.Version"/>
+        public Version Version
+        {
+            get
+            {
+                return typeof(LdClient).GetTypeInfo().Assembly.GetName().Version;
+            }
         }
 
         private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)
