@@ -9,9 +9,13 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 ### Changed
 - The client now uses [Common.Logging](https://net-commons.github.io/common-logging/).
 - The `FeatureStore` interface has been changed to support user segment data as well as feature flags. Existing code that uses `InMemoryFeatureStore` or `RedisFeatureStore` should work as before, but custom feature store implementations will need to be updated.
+- Some previously public classes that were not meant to be public are now internal.
 
 ### Fixed
 - All previously undocumented methods now have documentation comments.
+
+### Removed
+- Obsolete/deprecated methods have been removed.
 
 ## [3.6.1] - 2018-02-21
 ### Fixed
