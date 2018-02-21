@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 
 namespace LaunchDarkly.Client
 {
@@ -344,20 +344,6 @@ namespace LaunchDarkly.Client
         public static Configuration WithOffline(this Configuration configuration, bool offline)
         {
             configuration.Offline = offline;
-            return configuration;
-        }
-
-        /// <summary>
-        /// Sets the <see cref="ILoggerFactory"/> instance to use for logging.
-        /// </summary>
-        /// <param name="configuration">the configuration</param>
-        /// <param name="loggerFactory">the logger factory</param>
-        /// <returns>the same <c>Configuration</c> instance</returns>
-        public static Configuration WithLoggerFactory(this Configuration configuration, ILoggerFactory loggerFactory)
-        {
-            if (loggerFactory != null)
-                LdLogger.LoggerFactory = loggerFactory;
-
             return configuration;
         }
 

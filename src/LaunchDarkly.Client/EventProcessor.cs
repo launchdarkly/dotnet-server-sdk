@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
     internal sealed class EventProcessor : IDisposable, IStoreEvents
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<EventProcessor>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(EventProcessor));
 
         private readonly Configuration _config;
         private readonly BlockingCollection<Event> _queue;
@@ -40,7 +40,7 @@ namespace LaunchDarkly.Client
         void IStoreEvents.Add(Event eventToLog)
         {
             if (!_queue.TryAdd(eventToLog))
-                Logger.LogWarning("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
         }
 
         void IDisposable.Dispose()
@@ -77,7 +77,7 @@ namespace LaunchDarkly.Client
             {
                 jsonEvents = JsonConvert.SerializeObject(events.ToList(), Formatting.None);
 
-                Logger.LogDebug("Submitting {0} events to {1} with json: {2}",
+                Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                     events.Count,
                     _uri.AbsoluteUri,
                     jsonEvents);
@@ -86,15 +86,14 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Logger.LogDebug(e,
-                    "Error sending events: {0} waiting 1 second before retrying.",
-                    Util.ExceptionMessage(e));
+                Log.DebugFormat("Error sending events: {0} waiting 1 second before retrying.",
+                    e, Util.ExceptionMessage(e));
 
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
                 cts = new CancellationTokenSource(_config.HttpClientTimeout);
                 try
                 {
-                    Logger.LogDebug("Submitting {0} events to {1} with json: {2}",
+                    Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                         events.Count,
                         _uri.AbsoluteUri,
                         jsonEvents);
@@ -105,24 +104,24 @@ namespace LaunchDarkly.Client
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
-                        Logger.LogError(tce,
-                            "Error Submitting Events using uri: '{0}' '{1}'",
+                        Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                            tce,
                             _uri.AbsoluteUri,
                             Util.ExceptionMessage(tce));
                     }
                     else
                     {
                         //Otherwise this was a request timeout.
-                        Logger.LogError(tce,
-                            "Timed out trying to send {0} events after {1}",
+                        Log.ErrorFormat("Timed out trying to send {0} events after {1}",
+                            tce,
                             events.Count,
                             _config.HttpClientTimeout);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex,
-                        "Error Submitting Events using uri: '{0}' '{1}'",
+                    Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                        ex,
                         _uri.AbsoluteUri,
                          Util.ExceptionMessage(ex));
                 }
@@ -137,19 +136,19 @@ namespace LaunchDarkly.Client
             {
                 if (!response.IsSuccessStatusCode)
                 {
-                    Logger.LogError("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                    Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
                         _uri.AbsoluteUri,
                         response.StatusCode);
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
-                        Logger.LogError("Received 401 error, no further events will be posted since SDK key is invalid");
+                        Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
                         _shutdown = true;
                         ((IDisposable)this).Dispose();
                     }
                 }
                 else
                 {
-                    Logger.LogDebug("Got {0} when sending events.",
+                    Log.DebugFormat("Got {0} when sending events.",
                         response.StatusCode);
                 }
             }
