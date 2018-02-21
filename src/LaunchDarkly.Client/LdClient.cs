@@ -6,6 +6,10 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
+    /// <summary>
+    /// A client for the LaunchDarkly API. Client instances are thread-safe. Applications should instantiate
+    /// a single <c>LdClient</c> for the lifetime of their application.
+    /// </summary>
     public class LdClient : IDisposable, ILdClient
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
@@ -49,25 +53,37 @@ namespace LaunchDarkly.Client
             var unused = initTask.Wait(_configuration.StartWaitTime);
         }
 
+        /// <summary>
+        /// Creates a new client to connect to LaunchDarkly with a custom configuration. This constructor
+        /// can be used to configure advanced client features, such as customizing the LaunchDarkly base URL.
+        /// </summary>
+        /// <param name="config">a client configuration object</param>
         public LdClient(Configuration config) : this(config, new EventProcessor(config))
         {
         }
 
+        /// <summary>
+        /// Creates a new client instance that connects to LaunchDarkly with the default configuration. In most
+        /// cases, you should use this constructor.
+        /// </summary>
+        /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
         public LdClient(string sdkKey) : this(Configuration.Default(sdkKey))
         {
         }
 
+        /// <see cref="ILdClient.Initialized"/>
         public bool Initialized()
         {
             return IsOffline() || _updateProcessor.Initialized();
         }
 
+        /// <see cref="ILdClient.IsOffline"/>
         public bool IsOffline()
         {
             return _configuration.Offline;
         }
 
-
+        /// <see cref="ILdClient.Toggle(string, User, bool)"/>
         [Obsolete("Please use BoolVariation instead.")]
         public bool Toggle(string key, User user, bool defaultValue = false)
         {
@@ -75,38 +91,42 @@ namespace LaunchDarkly.Client
             return BoolVariation(key, user, defaultValue);
         }
 
+        /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>
         public bool BoolVariation(string key, User user, bool defaultValue = false)
         {
             var value = Evaluate(key, user, defaultValue, JTokenType.Boolean);
             return value.Value<bool>();
         }
 
+        /// <see cref="ILdClient.IntVariation(string, User, int)"/>
         public int IntVariation(string key, User user, int defaultValue)
         {
             var value = Evaluate(key, user, defaultValue, JTokenType.Integer);
             return value.Value<int>();
         }
 
-
+        /// <see cref="ILdClient.FloatVariation(string, User, float)"/>
         public float FloatVariation(string key, User user, float defaultValue)
         {
             var value = Evaluate(key, user, defaultValue, JTokenType.Float);
             return value.Value<float>();
         }
 
-
+        /// <see cref="ILdClient.StringVariation(string, User, string)"/>
         public string StringVariation(string key, User user, string defaultValue)
         {
             var value = Evaluate(key, user, defaultValue, JTokenType.String);
             return value.Value<string>();
         }
 
+        /// <see cref="ILdClient.JsonVariation(string, User, JToken)"/>
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
             var value = Evaluate(key, user, defaultValue, null);
             return value;
         }
 
+        /// <see cref="ILdClient.AllFlags(User)"/>
         public IDictionary<string, JToken> AllFlags(User user)
         {
             if (IsOffline())
@@ -206,6 +226,7 @@ namespace LaunchDarkly.Client
             return defaultValue;
         }
 
+        /// <see cref="ILdClient.SecureModeHash(User)"/>
         public string SecureModeHash(User user)
         {
             if (user == null || string.IsNullOrEmpty(user.Key))
@@ -220,6 +241,7 @@ namespace LaunchDarkly.Client
             return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
+        /// <see cref="ILdClient.Track(string, User, string)"/>
         public void Track(string name, User user, string data)
         {
             if (user == null || user.Key == null)
@@ -229,6 +251,7 @@ namespace LaunchDarkly.Client
             _eventStore.Add(new CustomEvent(name, EventUser.FromUser(user, _configuration), data));
         }
 
+        /// <see cref="ILdClient.Identify(User)"/>
         public void Identify(User user)
         {
             if (user == null || user.Key == null)
@@ -243,6 +266,9 @@ namespace LaunchDarkly.Client
             _eventStore.Add(new FeatureRequestEvent(key, EventUser.FromUser(user, _configuration), value, defaultValue, version, null));
         }
 
+        /// <summary>
+        /// Used internally.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             Log.Info("Closing LaunchDarkly client.");
@@ -256,6 +282,7 @@ namespace LaunchDarkly.Client
             }
         }
 
+        /// <see cref="ILdClient.Dispose"/>
         public void Dispose()
         {
             Dispose(true);
@@ -263,6 +290,7 @@ namespace LaunchDarkly.Client
             GC.SuppressFinalize(this);
         }
 
+        /// <see cref="ILdClient.Flush"/>
         public void Flush()
         {
             _eventStore.Flush();
