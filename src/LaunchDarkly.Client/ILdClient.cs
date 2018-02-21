@@ -116,5 +116,10 @@ namespace LaunchDarkly.Client
         /// <param name="user">the user to be hashed along with the SDK key</param>
         /// <returns>the hash, or null if the hash could not be calculated</returns>
         string SecureModeHash(User user);
+
+        /// <summary>
+        /// Returns the current version number of the LaunchDarkly client.
+        /// </summary>
+        Version Version { get; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -253,6 +254,15 @@ namespace LaunchDarkly.Client
                 Logger.LogWarning("Identify called with null user or null user key");
             }
             _eventStore.Add(new IdentifyEvent(EventUser.FromUser(user, _configuration)));
+        }
+
+        /// <see cref="ILdClient.Version"/>
+        public Version Version
+        {
+            get
+            {
+                return typeof(LdClient).GetTypeInfo().Assembly.GetName().Version;
+            }
         }
 
         private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)

@@ -10,7 +10,7 @@ namespace LaunchDarkly.Client
         static Regex VERSION_REGEX = new Regex(
             @"^(?<major>0|[1-9]\d*)(\.(?<minor>0|[1-9]\d*))?(\.(?<patch>0|[1-9]\d*))?" +
             @"(\-(?<prerel>[0-9A-Za-z\-\.]+))?(\+(?<build>[0-9A-Za-z\-\.]+))?$",
-            RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+            RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
 
         public int Major { get; private set; }
         public int Minor { get; private set; }

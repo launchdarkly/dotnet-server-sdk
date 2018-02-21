@@ -436,6 +436,20 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
+        /// Adds a <c>long</c>-valued custom attribute. When set to one of the
+        /// <a href="http://docs.launchdarkly.com/docs/targeting-users#targeting-based-on-user-attributes">built-in
+        /// user attribute keys</a>, this custom attribute will be ignored.
+        /// </summary>
+        /// <param name="user">the user</param>
+        /// <param name="attribute">the key for the custom attribute</param>
+        /// <param name="value">the value for the custom attribute</param>
+        /// <returns>the same user</returns>
+        public static User AndCustomAttribute(this User user, string attribute, long value)
+        {
+            return user.AddCustom(attribute, new JValue(value));
+        }
+
+        /// <summary>
         /// Adds a custom attribute whose value is a list of strings. When set to one of the
         /// <a href="http://docs.launchdarkly.com/docs/targeting-users#targeting-based-on-user-attributes">built-in
         /// user attribute keys</a>, this custom attribute will be ignored.
@@ -519,6 +533,21 @@ namespace LaunchDarkly.Client
         /// <param name="value">the value for the custom attribute</param>
         /// <returns>the same user</returns>
         public static User AndPrivateCustomAttribute(this User user, string attribute, float value)
+        {
+            return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
+        }
+
+        /// <summary>
+        /// Adds a <c>long</c>-valued custom attribute, and ensures that the attribute will not
+        /// be sent back to LaunchDarkly. When set to one of the
+        /// <a href="http://docs.launchdarkly.com/docs/targeting-users#targeting-based-on-user-attributes">built-in
+        /// user attribute keys</a>, this custom attribute will be ignored.
+        /// </summary>
+        /// <param name="user">the user</param>
+        /// <param name="attribute">the key for the custom attribute</param>
+        /// <param name="value">the value for the custom attribute</param>
+        /// <returns>the same user</returns>
+        public static User AndPrivateCustomAttribute(this User user, string attribute, long value)
         {
             return user.AddCustom(attribute, new JValue(value)).AddPrivate(attribute);
         }
