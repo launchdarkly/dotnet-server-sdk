@@ -83,14 +83,6 @@ namespace LaunchDarkly.Client
             return _configuration.Offline;
         }
 
-        /// <see cref="ILdClient.Toggle(string, User, bool)"/>
-        [Obsolete("Please use BoolVariation instead.")]
-        public bool Toggle(string key, User user, bool defaultValue = false)
-        {
-            Logger.LogWarning("Toggle() method is deprecated. Please use BoolVariation() instead");
-            return BoolVariation(key, user, defaultValue);
-        }
-
         /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>
         public bool BoolVariation(string key, User user, bool defaultValue = false)
         {
