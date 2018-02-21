@@ -116,16 +116,5 @@ namespace LaunchDarkly.Client
         /// <param name="user">the user to be hashed along with the SDK key</param>
         /// <returns>the hash, or null if the hash could not be calculated</returns>
         string SecureModeHash(User user);
-
-        /// <summary>
-        /// Deprecated. Use <see cref="BoolVariation(string, User, bool)"/> instead.
-        /// </summary>
-        /// <param name="key">the unique key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
-        /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>whether or not the flag should be enabled, or <c>defaultValue</c> if the flag is
-        /// disabled in the LaunchDarkly control panel</returns>
-        [Obsolete("Please use BoolVariation instead.")]
-        bool Toggle(string key, User user, bool defaultValue = false);
     }
 }
