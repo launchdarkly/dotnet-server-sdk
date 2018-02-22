@@ -11,14 +11,14 @@ namespace LaunchDarkly.Client
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
-        private readonly FeatureRequestor _featureRequestor;
+        private readonly IFeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
         private bool _disposed;
 
 
-        internal PollingProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
+        internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IFeatureStore featureStore)
         {
             _config = config;
             _featureRequestor = featureRequestor;

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
-    internal class FeatureRequestor
+    internal class FeatureRequestor : IFeatureRequestor
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureRequestor));
         private readonly Uri _allUri;
@@ -31,7 +31,7 @@ namespace LaunchDarkly.Client
 
         // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there
         // was a problem getting flags.
-        internal async Task<AllData> GetAllDataAsync()
+        async Task<AllData> IFeatureRequestor.GetAllDataAsync()
         {
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
             string content = null;
@@ -49,14 +49,14 @@ namespace LaunchDarkly.Client
 
         // Returns the latest version of a flag, or null if it has not been modified. Throws an exception if there
         // was a problem getting flags.
-        internal async Task<FeatureFlag> GetFlagAsync(string featureKey)
+        async Task<FeatureFlag> IFeatureRequestor.GetFlagAsync(string featureKey)
         {
             return await GetObjectAsync<FeatureFlag>(featureKey, "feature flag", typeof(FeatureFlag), _flagsUri);
         }
 
         // Returns the latest version of a segment, or null if it has not been modified. Throws an exception if there
         // was a problem getting segments.
-        internal async Task<Segment> GetSegmentAsync(string segmentKey)
+        async Task<Segment> IFeatureRequestor.GetSegmentAsync(string segmentKey)
         {
             return await GetObjectAsync<Segment>(segmentKey, "segment", typeof(Segment), _segmentsUri);
         }
@@ -125,40 +125,6 @@ namespace LaunchDarkly.Client
                 }
                 return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
-        }
-    }
-
-    internal class AllData
-    {
-        internal IDictionary<string, FeatureFlag> Flags { get; private set; }
-
-        internal IDictionary<string, Segment> Segments { get; private set; }
-
-        [JsonConstructor]
-        internal AllData(IDictionary<string, FeatureFlag> flags, IDictionary<string, Segment> segments)
-        {
-            Flags = flags;
-            Segments = segments;
-        }
-
-        internal IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> ToGenericDictionary()
-        {
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> ret =
-                new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
-            // sadly the following is necessary because IDictionary has invariant type parameters...
-            IDictionary<string, IVersionedData> items = new Dictionary<string, IVersionedData>();
-            foreach (var entry in Flags)
-            {
-                items[entry.Key] = entry.Value;
-            }
-            ret.Add(VersionedDataKind.Features, items);
-            items = new Dictionary<string, IVersionedData>();
-            foreach (var entry in Segments)
-            {
-                items[entry.Key] = entry.Value;
-            }
-            ret.Add(VersionedDataKind.Segments, items);
-            return ret;
         }
     }
 }
