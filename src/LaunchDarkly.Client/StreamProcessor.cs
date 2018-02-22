@@ -111,7 +111,7 @@ namespace LaunchDarkly.Client
                 switch (e.EventName)
                 {
                     case PUT:
-                        _featureStore.Init(JsonConvert.DeserializeObject<AllData>(e.Message.Data).ToGenericDictionary());
+                        _featureStore.Init(JsonConvert.DeserializeObject<PutData>(e.Message.Data).Data.ToGenericDictionary());
                         if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
                         {
                             _initTask.SetResult(true);
@@ -274,6 +274,17 @@ namespace LaunchDarkly.Client
             }
             key = null;
             return false;
+        }
+
+        internal class PutData
+        {
+            internal AllData Data { get; private set; }
+
+            [JsonConstructor]
+            internal PutData(AllData data)
+            {
+                Data = data;
+            }
         }
 
         internal class PatchData
