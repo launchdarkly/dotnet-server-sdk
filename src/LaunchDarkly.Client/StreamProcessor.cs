@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
+using LaunchDarkly.EventSource;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -18,14 +19,14 @@ namespace LaunchDarkly.Client
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
-        private readonly FeatureRequestor _featureRequestor;
+        private readonly IFeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
-        private static EventSource.EventSource _es;
+        private static IEventSource _es;
         private readonly EventSource.ExponentialBackoffWithDecorrelation _backOff;
 
-        internal StreamProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
+        internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor, IFeatureStore featureStore)
         {
             _config = config;
             _featureRequestor = featureRequestor;
@@ -43,16 +44,7 @@ namespace LaunchDarkly.Client
         {
             Dictionary<string, string> headers = new Dictionary<string, string> { { "Authorization", _config.SdkKey }, { "User-Agent", "DotNetClient/" + Configuration.Version }, { "Accept", "text/event-stream" } };
 
-            EventSource.Configuration config = new EventSource.Configuration(
-                uri: new Uri(_config.StreamUri, "/all"),
-                messageHandler: _config.HttpClientHandler,
-                connectionTimeOut: _config.HttpClientTimeout,
-                delayRetryDuration: _config.ReconnectTime,
-                readTimeout: _config.ReadTimeout,
-                requestHeaders: headers,
-               logger: LogManager.GetLogger(typeof(EventSource.EventSource))
-            );
-            _es = new EventSource.EventSource(config);
+            _es = CreateEventSource(new Uri(_config.StreamUri, "/all"), headers);
 
             _es.CommentReceived += OnComment;
             _es.MessageReceived += OnMessage;
@@ -72,6 +64,20 @@ namespace LaunchDarkly.Client
                 _initTask.SetException(ex);
             }
             return _initTask.Task;
+        }
+
+        virtual protected IEventSource CreateEventSource(Uri streamUri, Dictionary<string, string> headers)
+        {
+            EventSource.Configuration config = new EventSource.Configuration(
+                uri: streamUri,
+                messageHandler: _config.HttpClientHandler,
+                connectionTimeOut: _config.HttpClientTimeout,
+                delayRetryDuration: _config.ReconnectTime,
+                readTimeout: _config.ReadTimeout,
+                requestHeaders: headers,
+               logger: LogManager.GetLogger(typeof(EventSource.EventSource))
+            );
+            return new EventSource.EventSource(config);
         }
 
         private async void RestartEventSource()
