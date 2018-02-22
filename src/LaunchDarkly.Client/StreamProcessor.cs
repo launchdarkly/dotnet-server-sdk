@@ -44,7 +44,7 @@ namespace LaunchDarkly.Client
             Dictionary<string, string> headers = new Dictionary<string, string> { { "Authorization", _config.SdkKey }, { "User-Agent", "DotNetClient/" + Configuration.Version }, { "Accept", "text/event-stream" } };
 
             EventSource.Configuration config = new EventSource.Configuration(
-                uri: new Uri(_config.StreamUri, "/flags"),
+                uri: new Uri(_config.StreamUri, "/all"),
                 messageHandler: _config.HttpClientHandler,
                 connectionTimeOut: _config.HttpClientTimeout,
                 delayRetryDuration: _config.ReconnectTime,
