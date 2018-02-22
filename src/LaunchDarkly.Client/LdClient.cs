@@ -50,7 +50,7 @@ namespace LaunchDarkly.Client
             var unused = initTask.Wait(_configuration.StartWaitTime);
         }
 
-        public LdClient(Configuration config) : this(config, new EventProcessor(config))
+        public LdClient(Configuration config) : this(config, LdStoreEventsFactory.Create(config))
         {
         }
 
@@ -258,8 +258,8 @@ namespace LaunchDarkly.Client
         {
             Logger.LogInformation("Closing LaunchDarkly client.");
             //We do not have native resource, so the boolean parameter can be ignored.
-            if (_eventStore is EventProcessor)
-                ((_eventStore) as IDisposable).Dispose();
+
+            _eventStore.Dispose();
 
             if (_updateProcessor != null)
             {

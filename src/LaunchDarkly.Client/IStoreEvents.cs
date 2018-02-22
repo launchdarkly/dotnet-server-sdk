@@ -1,6 +1,8 @@
-﻿namespace LaunchDarkly.Client
+﻿using System;
+
+namespace LaunchDarkly.Client
 {
-    public interface IStoreEvents
+    public interface IStoreEvents : IDisposable
     {
         void Add(Event eventToLog);
         void Flush();
