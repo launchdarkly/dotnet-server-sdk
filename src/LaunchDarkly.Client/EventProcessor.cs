@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client
 {
-    internal sealed class EventProcessor : IDisposable, IStoreEvents
+    internal sealed class EventProcessor : IStoreEvents
     {
         private static readonly ILogger Logger = LdLogger.CreateLogger<EventProcessor>();
 
