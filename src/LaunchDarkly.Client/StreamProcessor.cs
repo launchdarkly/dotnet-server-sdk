@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Http;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using LaunchDarkly.EventSource;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
@@ -15,18 +15,18 @@ namespace LaunchDarkly.Client
         private const String PATCH = "patch";
         private const String DELETE = "delete";
         private const String INDIRECT_PATCH = "indirect/patch";
-        private static readonly ILogger Logger = LdLogger.CreateLogger<StreamProcessor>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(StreamProcessor));
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
-        private readonly FeatureRequestor _featureRequestor;
+        private readonly IFeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
-        private static EventSource.EventSource _es;
+        private static IEventSource _es;
         private readonly EventSource.ExponentialBackoffWithDecorrelation _backOff;
 
-        internal StreamProcessor(Configuration config, FeatureRequestor featureRequestor, IFeatureStore featureStore)
+        internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor, IFeatureStore featureStore)
         {
             _config = config;
             _featureRequestor = featureRequestor;
@@ -44,16 +44,7 @@ namespace LaunchDarkly.Client
         {
             Dictionary<string, string> headers = new Dictionary<string, string> { { "Authorization", _config.SdkKey }, { "User-Agent", "DotNetClient/" + Configuration.Version }, { "Accept", "text/event-stream" } };
 
-            EventSource.Configuration config = new EventSource.Configuration(
-                uri: new Uri(_config.StreamUri, "/flags"),
-                messageHandler: _config.HttpClientHandler,
-                connectionTimeOut: _config.HttpClientTimeout,
-                delayRetryDuration: _config.ReconnectTime,
-                readTimeout: _config.ReadTimeout,
-                requestHeaders: headers,
-                logger: LdLogger.CreateLogger<EventSource.EventSource>()
-            );
-            _es = new EventSource.EventSource(config);
+            _es = CreateEventSource(new Uri(_config.StreamUri, "/all"), headers);
 
             _es.CommentReceived += OnComment;
             _es.MessageReceived += OnMessage;
@@ -67,13 +58,26 @@ namespace LaunchDarkly.Client
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex,
-                    "General Exception: {0}",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("General Exception: {0}",
+                    ex, Util.ExceptionMessage(ex));
 
                 _initTask.SetException(ex);
             }
             return _initTask.Task;
+        }
+
+        virtual protected IEventSource CreateEventSource(Uri streamUri, Dictionary<string, string> headers)
+        {
+            EventSource.Configuration config = new EventSource.Configuration(
+                uri: streamUri,
+                messageHandler: _config.HttpClientHandler,
+                connectionTimeOut: _config.HttpClientTimeout,
+                delayRetryDuration: _config.ReconnectTime,
+                readTimeout: _config.ReadTimeout,
+                requestHeaders: headers,
+               logger: LogManager.GetLogger(typeof(EventSource.EventSource))
+            );
+            return new EventSource.EventSource(config);
         }
 
         private async void RestartEventSource()
@@ -83,7 +87,7 @@ namespace LaunchDarkly.Client
             {
                 sleepTime = _backOff.GetNextBackOff();
 
-                Logger.LogInformation("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before reconnecting...",
+                Log.InfoFormat("Stopping LaunchDarkly StreamProcessor. Waiting {0} milliseconds before reconnecting...",
                     sleepTime.TotalMilliseconds);
             }
             else
@@ -96,12 +100,12 @@ namespace LaunchDarkly.Client
             {
                 await _es.StartAsync();
                 _backOff.ResetReconnectAttemptCount();
-                Logger.LogInformation("Reconnected to LaunchDarkly StreamProcessor");
+                Log.Info("Reconnected to LaunchDarkly StreamProcessor");
             }
             catch (Exception exc)
             {
-                Logger.LogError(exc,
-                    "General Exception: {0}",
+                Log.ErrorFormat("General Exception: {0}",
+                    exc,
                     Util.ExceptionMessage(exc));
             }
         }
@@ -112,74 +116,98 @@ namespace LaunchDarkly.Client
             {
                 switch (e.EventName)
                 {
-                case PUT:
-                    _featureStore.Init(JsonConvert.DeserializeObject<IDictionary<string, FeatureFlag>>(e.Message.Data));
-                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
-                    {
-                        _initTask.SetResult(true);
-                        Logger.LogInformation("Initialized LaunchDarkly Stream Processor.");
-                    }
-                    break;
-                case PATCH:
-                    FeaturePatchData patchData = JsonConvert.DeserializeObject<FeaturePatchData>(e.Message.Data);
-                    _featureStore.Upsert(patchData.Key(), patchData.Data);
-                    break;
-                case DELETE:
-                    FeatureDeleteData deleteData = JsonConvert.DeserializeObject<FeatureDeleteData>(e.Message.Data);
-                    _featureStore.Delete(deleteData.Key(), deleteData.Version);
-                    break;
-                case INDIRECT_PATCH:
-                    await UpdateTaskAsync(e.Message.Data);
-                    break;
+                    case PUT:
+                        _featureStore.Init(JsonConvert.DeserializeObject<PutData>(e.Message.Data).Data.ToGenericDictionary());
+                        if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                        {
+                            _initTask.SetResult(true);
+                            Log.Info("Initialized LaunchDarkly Stream Processor.");
+                        }
+                        break;
+                    case PATCH:
+                        PatchData patchData = JsonConvert.DeserializeObject<PatchData>(e.Message.Data);
+                        string patchKey;
+                        if (GetKeyFromPath(patchData.Path, VersionedDataKind.Features, out patchKey))
+                        {
+                            FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
+                            _featureStore.Upsert(VersionedDataKind.Features, flag);
+                        }
+                        else if (GetKeyFromPath(patchData.Path, VersionedDataKind.Segments, out patchKey))
+                        {
+                            Segment segment = patchData.Data.ToObject<Segment>();
+                            _featureStore.Upsert(VersionedDataKind.Segments, segment);
+                        }
+                        else
+                        {
+                            Log.WarnFormat("Received patch event with unknown path: {0}", patchData.Path);
+                        }
+                        break;
+                    case DELETE:
+                        DeleteData deleteData = JsonConvert.DeserializeObject<DeleteData>(e.Message.Data);
+                        string deleteKey;
+                        if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Features, out deleteKey))
+                        {
+                            _featureStore.Delete(VersionedDataKind.Features, deleteKey, deleteData.Version);
+                        }
+                        else if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Segments, out deleteKey))
+                        {
+                            _featureStore.Delete(VersionedDataKind.Segments, deleteKey, deleteData.Version);
+                        }
+                        else
+                        {
+                            Log.WarnFormat("Received delete event with unknown path: {0}", deleteData.Path);
+                        }
+                        break;
+                    case INDIRECT_PATCH:
+                        await UpdateTaskAsync(e.Message.Data);
+                        break;
                 }
             }
             catch (JsonReaderException ex)
             {
-                Logger.LogDebug(ex,
-                    "Failed to deserialize feature flag {0}:\n{1}",
+                Log.DebugFormat("Failed to deserialize feature flag or segment {0}:\n{1}",
+                    ex,
                     e.EventName,
                     e.Message.Data);
 
-                Logger.LogError(ex,
-                    "Encountered an error reading feature flag configuration: {0}",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Encountered an error reading feature flag or segment configuration: {0}",
+                    ex, Util.ExceptionMessage(ex));
 
                 RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex,
-                    "Encountered an unexpected error: {0}",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Encountered an unexpected error: {0}",
+                    ex, Util.ExceptionMessage(ex));
 
                 RestartEventSource();
             }
         }
         private void OnOpen(object sender, EventSource.StateChangedEventArgs e)
         {
-            Logger.LogDebug("Eventsource Opened");
+            Log.Debug("Eventsource Opened");
         }
 
         private void OnClose(object sender, EventSource.StateChangedEventArgs e)
         {
-            Logger.LogDebug("Eventsource Closed");
+            Log.Debug("Eventsource Closed");
         }
 
         private void OnComment(object sender, EventSource.CommentReceivedEventArgs e)
         {
-            Logger.LogDebug("Received a heartbeat.");
+            Log.Debug("Received a heartbeat.");
         }
 
         private void OnError(object sender, EventSource.ExceptionEventArgs e)
         {
-            Logger.LogError(e.Exception,
-                "Encountered EventSource error: {0}",
+            Log.ErrorFormat("Encountered EventSource error: {0}",
+                e.Exception,
                 Util.ExceptionMessage(e.Exception));
             if (e.Exception is EventSource.EventSourceServiceUnsuccessfulResponseException)
             {
                 if (((EventSource.EventSourceServiceUnsuccessfulResponseException)e.Exception).StatusCode == 401)
                 {
-                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    Log.Error("Received 401 error, no further streaming connection will be made since SDK key is invalid");
                     ((IDisposable)this).Dispose();
                 }
             }
@@ -187,81 +215,107 @@ namespace LaunchDarkly.Client
 
         void IDisposable.Dispose()
         {
-            Logger.LogInformation("Stopping LaunchDarkly StreamProcessor");
+            Log.Info("Stopping LaunchDarkly StreamProcessor");
             _es.Close();
         }
 
-        private async Task UpdateTaskAsync(string featureKey)
+        private async Task UpdateTaskAsync(string objectPath)
         {
             try
             {
-                var feature = await _featureRequestor.GetFlagAsync(featureKey);
-                if (feature != null)
+                string key;
+                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out key))
                 {
-                    _featureStore.Upsert(featureKey, feature);
+                    var feature = await _featureRequestor.GetFlagAsync(key);
+                    if (feature != null)
+                    {
+                        _featureStore.Upsert(VersionedDataKind.Features, feature);
+                    }
+                }
+                else if (GetKeyFromPath(objectPath, VersionedDataKind.Segments, out key))
+                {
+                    var segment = await _featureRequestor.GetSegmentAsync(key);
+                    if (segment != null)
+                    {
+                        _featureStore.Upsert(VersionedDataKind.Segments, segment);
+                    }
+                }
+                else
+                {
+                    Log.WarnFormat("Received indirect patch event with unknown path: {0}", objectPath);
                 }
             }
             catch (AggregateException ex)
             {
-                Logger.LogError(ex,
-                    "Error Updating feature: '{0}'",
-                    Util.ExceptionMessage(ex.Flatten()));
+                Log.ErrorFormat("Error Updating {0}: '{1}'",
+                    ex, objectPath, Util.ExceptionMessage(ex.Flatten()));
             }
             catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
-                Logger.LogError(string.Format("Error Updating feature: '{0}'", Util.ExceptionMessage(ex)));
+                Log.ErrorFormat("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex));
                 if (ex.StatusCode == 401)
                 {
-                    Logger.LogError("Received 401 error, no further streaming connection will be made since SDK key is invalid");
+                    Log.Error("Received 401 error, no further streaming connection will be made since SDK key is invalid");
                     ((IDisposable)this).Dispose();
                 }
             }
             catch (TimeoutException ex) {
-                Logger.LogError(ex,
-                    "Error Updating feature: '{0}'",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Error Updating {0}: '{1}'",
+                    ex, objectPath, Util.ExceptionMessage(ex));
                 RestartEventSource();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex,
-                    "Error Updating feature: '{0}'",
-                    Util.ExceptionMessage(ex));
+                Log.ErrorFormat("Error Updating feature: '{0}'",
+                    ex,Util.ExceptionMessage(ex));
             }
         }
-        internal class FeaturePatchData
+
+        private bool GetKeyFromPath(string path, IVersionedDataKind kind, out string key)
         {
-            internal string Path { get; private set; }
-            internal FeatureFlag Data { get; private set; }
+            if (path.StartsWith(kind.GetStreamApiPath()))
+            {
+                key = path.Substring(kind.GetStreamApiPath().Length);
+                return true;
+            }
+            key = null;
+            return false;
+        }
+
+        internal class PutData
+        {
+            internal AllData Data { get; private set; }
 
             [JsonConstructor]
-            internal FeaturePatchData(string path, FeatureFlag data)
+            internal PutData(AllData data)
+            {
+                Data = data;
+            }
+        }
+
+        internal class PatchData
+        {
+            internal string Path { get; private set; }
+            internal JToken Data { get; private set; }
+
+            [JsonConstructor]
+            internal PatchData(string path, JToken data)
             {
                 Path = path;
                 Data = data;
             }
-
-            public String Key()
-            {
-                return Path.Substring(1);
-            }
         }
 
-        internal class FeatureDeleteData
+        internal class DeleteData
         {
             internal string Path { get; private set; }
             internal int Version { get; private set; }
 
             [JsonConstructor]
-            internal FeatureDeleteData(string path, int version)
+            internal DeleteData(string path, int version)
             {
                 Path = path;
                 Version = version;
-            }
-
-            public String Key()
-            {
-                return Path.Substring(1);
             }
         }
     }

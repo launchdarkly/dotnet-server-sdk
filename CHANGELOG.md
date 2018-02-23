@@ -2,6 +2,22 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [4.0.0] - 2018-02-21
+### Added
+- Support for a new LaunchDarkly feature: reusable user segments.
+
+### Changed
+- The client now uses [Common.Logging](https://net-commons.github.io/common-logging/).
+- The `FeatureStore` interface has been changed to support user segment data as well as feature flags. Existing code that uses `InMemoryFeatureStore` or `RedisFeatureStore` should work as before, but custom feature store implementations will need to be updated.
+- Some previously public classes that were not meant to be public are now internal.
+
+### Fixed
+- All previously undocumented methods now have documentation comments.
+
+### Removed
+- Obsolete/deprecated methods have been removed.
+- Removed `Configuration.WithLoggerFactory` since the logging framework has changed. For more details on setting up logging, see [here](https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-logging).
+
 ## [3.6.1] - 2018-02-21
 ### Fixed
 - Improved performance of the semantic version operators by precompiling a regex.

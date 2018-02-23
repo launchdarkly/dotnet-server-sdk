@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    public class FeatureFlag
+    internal class FeatureFlag : IVersionedData
     {
-        private static readonly ILogger Logger = LdLogger.CreateLogger<FeatureFlag>();
+        private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureFlag));
 
-        internal string Key { get; private set; }
-        internal int Version { get; set; }
+        public string Key { get; private set; }
+        public int Version { get; set; }
         internal bool On { get; private set; }
         internal List<Prerequisite> Prerequisites { get; private set; }
         internal string Salt { get; private set; }
@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
         internal VariationOrRollout Fallthrough { get; private set; }
         internal int? OffVariation { get; private set; }
         internal List<JToken> Variations { get; private set; }
-        internal bool Deleted { get; set; }
+        public bool Deleted { get; set; }
 
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
@@ -65,7 +65,7 @@ namespace LaunchDarkly.Client
             EvalResult evalResult = new EvalResult(null, prereqEvents);
             if (user == null || user.Key == null)
             {
-                Logger.LogWarning("User or user key is null when evaluating flag: {0} returning null",
+                Log.WarnFormat("User or user key is null when evaluating flag: {0} returning null",
                     Key);
 
                 return evalResult;
@@ -91,11 +91,11 @@ namespace LaunchDarkly.Client
             {
                 foreach (var prereq in Prerequisites)
                 {
-                    var prereqFeatureFlag = featureStore.Get(prereq.Key);
+                    var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
                     JToken prereqEvalResult = null;
                     if (prereqFeatureFlag == null)
                     {
-                        Logger.LogError("Could not retrieve prerequisite flag: {0} when evaluating: {1}",
+                        Log.ErrorFormat("Could not retrieve prerequisite flag: {0} when evaluating: {1}",
                             prereq.Key,
                             Key);
                         return null;
@@ -113,8 +113,8 @@ namespace LaunchDarkly.Client
                         }
                         catch (EvaluationException e)
                         {
-                            Logger.LogWarning(e,
-                                "Error evaluating prerequisites: {0}",
+                            Log.WarnFormat("Error evaluating prerequisites: {0}",
+                                e,
                                 Util.ExceptionMessage(e));
 
                             prereqOk = false;
@@ -126,18 +126,18 @@ namespace LaunchDarkly.Client
                     }
                     //We don't short circuit and also send events for each prereq.
                     events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, EventUser.FromUser(user, config),
-                        user, prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
+                        prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
                 }
             }
             if (prereqOk)
             {
-                return GetVariation(EvaluateIndex(user));
+                return GetVariation(EvaluateIndex(user, featureStore));
             }
             return null;
         }
 
 
-        private int? EvaluateIndex(User user)
+        private int? EvaluateIndex(User user, IFeatureStore store)
         {
             // Check to see if targets match
             foreach (var target in Targets)
@@ -154,7 +154,7 @@ namespace LaunchDarkly.Client
             // Now walk through the rules and see if any match
             foreach (Rule rule in Rules)
             {
-                if (rule.MatchesUser(user))
+                if (rule.MatchesUser(user, store))
                 {
                     return rule.VariationIndexForUser(user, Key, Salt);
                 }

@@ -2,44 +2,99 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
+using Common.Logging;
 
 namespace LaunchDarkly.Client
 {
+    /// <summary>
+    /// This class exposes advanced configuration options for <see cref="LdClient"/>.
+    /// </summary>
     public class Configuration
     {
+        /// <summary>
+        /// The base URI of the LaunchDarkly server.
+        /// </summary>
         public Uri BaseUri { get; internal set; }
+        /// <summary>
+        /// The base URL of the LaunchDarkly streaming server.
+        /// </summary>
         public Uri StreamUri { get; internal set; }
+        /// <summary>
+        /// The base URL of the LaunchDarkly analytics event server.
+        /// </summary>
         public Uri EventsUri { get; internal set; }
+        /// <summary>
+        /// The SDK key for your LaunchDarkly environment.
+        /// </summary>
         public string SdkKey { get; internal set; }
         /// <summary>
         /// Whether or not the streaming API should be used to receive flag updates. This is true by default.
         /// Streaming should only be disabled on the advice of LaunchDarkly support.
         /// </summary>
         public bool IsStreamingEnabled { get; internal set; }
+        /// <summary>
+        /// The capacity of the events buffer. The client buffers up to this many events in
+        /// memory before flushing. If the capacity is exceeded before the buffer is flushed,
+        /// events will be discarded. Increasing the capacity means that events are less likely
+        /// to be discarded, at the cost of consuming more memory.
+        /// </summary>
         public int EventQueueCapacity { get; internal set; }
+        /// <summary>
+        /// The time between flushes of the event buffer. Decreasing the flush interval means
+        /// that the event buffer is less likely to reach capacity. The default value is 5 seconds.
+        /// </summary>
         public TimeSpan EventQueueFrequency { get; internal set; }
         /// <summary>
-        /// Set the polling interval (when streaming is disabled). Values less than the default of 30 seconds will be set to 30 seconds.
+        /// Set the polling interval (when streaming is disabled). Values less than the default of
+        /// 30 seconds will be set to the default.
         /// </summary>
         public TimeSpan PollingInterval { get; internal set; }
+        /// <summary>
+        /// How long the client constructor will block awaiting a successful connection to
+        /// LaunchDarkly. Setting this to 0 will not block and will cause the constructor to return
+        /// immediately. The default value is 5 seconds.
+        /// </summary>
         public TimeSpan StartWaitTime { get; internal set; }
         /// <summary>
-        /// The timeout when reading data from the EventSource API. If null, defaults to 5 minutes.
+        /// The timeout when reading data from the EventSource API. The default value is 5 minutes.
         /// </summary>
         public TimeSpan ReadTimeout { get; internal set; }
         /// <summary>
-        /// The time to wait before attempting to reconnect to the EventSource API. If null, defaults to 1 second.
+        /// The reconnect base time for the streaming connection.The streaming connection
+        /// uses an exponential backoff algorithm (with jitter) for reconnects, but will start the
+        /// backoff with a value near the value specified here. The default value is 1 second.
         /// </summary>
         public TimeSpan ReconnectTime { get; internal set; }
         /// <summary>
-        /// The connection timeout. If null, defaults to 10 seconds.
+        /// The connection timeout. The default value is 10 seconds.
         /// </summary>
         public TimeSpan HttpClientTimeout { get; internal set; }
+        /// <summary>
+        /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
+        /// </summary>
         public HttpClientHandler HttpClientHandler { get; internal set; }
+        /// <summary>
+        /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
+        /// </summary>
         public bool Offline { get; internal set; }
+        /// <summary>
+        /// Whether or not user attributes (other than the key) should be private (not sent to
+        /// the LaunchDarkly server). If this is true, all of the user attributes will be private,
+        /// not just the attributes specified with the <c>AndPrivate...</c> methods on the
+        /// <see cref="User"/> object. By default, this is false.
+        /// </summary>
         public bool AllAttributesPrivate { get; internal set; }
+        /// <summary>
+        /// Marks a set of attribute names as private. Any users sent to LaunchDarkly with this
+        /// configuration active will have attributes with these names removed, even if you did
+        /// not use the <c>AndPrivate...</c> methods on the <see cref="User"/> object.
+        /// </summary>
         public ISet<string> PrivateAttributeNames { get; internal set; }
+        /// <summary>
+        /// The implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
+        /// and related data received from LaunchDarkly. The default is
+        /// <see cref="InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
+        /// </summary>
         internal IFeatureStore FeatureStore { get; set; }
 
 
@@ -49,17 +104,53 @@ namespace LaunchDarkly.Client
                 .GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)))
             .InformationalVersion;
 
+        /// <summary>
+        /// Default value for <see cref="PollingInterval"/>.
+        /// </summary>
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(30);
+        /// <summary>
+        /// Default value for <see cref="BaseUri"/>.
+        /// </summary>
         internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
+        /// <summary>
+        /// Default value for <see cref="StreamUri"/>.
+        /// </summary>
         private static readonly Uri DefaultStreamUri = new Uri("https://stream.launchdarkly.com");
+        /// <summary>
+        /// Default value for <see cref="EventsUri"/>.
+        /// </summary>
         private static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
+        /// <summary>
+        /// Default value for <see cref="EventQueueCapacity"/>.
+        /// </summary>
         private static readonly int DefaultEventQueueCapacity = 500;
+        /// <summary>
+        /// Default value for <see cref="EventQueueFrequency"/>.
+        /// </summary>
         private static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(5);
+        /// <summary>
+        /// Default value for <see cref="StartWaitTime"/>.
+        /// </summary>
         private static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
+        /// <summary>
+        /// Default value for <see cref="ReadTimeout"/>.
+        /// </summary>
         private static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
+        /// <summary>
+        /// Default value for <see cref="ReconnectTime"/>.
+        /// </summary>
         private static readonly TimeSpan DefaultReconnectTime = TimeSpan.FromSeconds(1);
+        /// <summary>
+        /// Default value for <see cref="HttpClientTimeout"/>.
+        /// </summary>
         private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
 
+        /// <summary>
+        /// Creates a configuration with all parameters set to the default. Use extension methods
+        /// to set additional parameters.
+        /// </summary>
+        /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
+        /// <returns>a <c>Configuration</c> instance</returns>
         public static Configuration Default(string sdkKey)
         {
             var defaultConfiguration = new Configuration
@@ -95,8 +186,17 @@ namespace LaunchDarkly.Client
         }
     }
 
+    /// <summary>
+    /// Extension methods that can be called on a <see cref="Configuration"/> to add to its properties.
+    /// </summary>
     public static class ConfigurationExtensions
     {
+        /// <summary>
+        /// Sets the base URI of the LaunchDarkly server for this configuration.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="uri">the base URI as a string</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithUri(this Configuration configuration, string uri)
         {
             if (uri != null)
@@ -105,6 +205,12 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the base URI of the LaunchDarkly server for this configuration.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="uri">the base URI</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithUri(this Configuration configuration, Uri uri)
         {
             if (uri != null)
@@ -113,6 +219,12 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the base URL of the LaunchDarkly streaming server for this configuration.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="uri">the stream URI as a string</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithStreamUri(this Configuration configuration, string uri)
         {
             if (uri != null)
@@ -121,6 +233,12 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the base URL of the LaunchDarkly streaming server for this configuration.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="uri">the stream URI</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithStreamUri(this Configuration configuration, Uri uri)
         {
             if (uri != null)
@@ -129,6 +247,12 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the base URL of the LaunchDarkly analytics event server for this configuration.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="uri">the events URI as a string</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithEventsUri(this Configuration configuration, string uri)
         {
             if (uri != null)
@@ -137,6 +261,12 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the base URL of the LaunchDarkly analytics event server for this configuration.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="uri">the events URI</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithEventsUri(this Configuration configuration, Uri uri)
         {
             if (uri != null)
@@ -145,12 +275,28 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the capacity of the events buffer. The client buffers up to this many events in
+        /// memory before flushing. If the capacity is exceeded before the buffer is flushed,
+        /// events will be discarded. Increasing the capacity means that events are less likely
+        /// to be discarded, at the cost of consuming more memory.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="eventQueueCapacity"></param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithEventQueueCapacity(this Configuration configuration, int eventQueueCapacity)
         {
             configuration.EventQueueCapacity = eventQueueCapacity;
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the time between flushes of the event buffer. Decreasing the flush interval means
+        /// that the event buffer is less likely to reach capacity. The default value is 5 seconds.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="frequency">the flush interval</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithEventQueueFrequency(this Configuration configuration, TimeSpan frequency)
         {
             configuration.EventQueueFrequency = frequency;
@@ -158,6 +304,13 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the polling interval (when streaming is disabled). Values less than the default of
+        /// 30 seconds will be set to the default.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="pollingInterval">the rule update polling interval</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithPollingInterval(this Configuration configuration, TimeSpan pollingInterval)
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
@@ -168,45 +321,78 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets how long the client constructor will block awaiting a successful connection to
+        /// LaunchDarkly. Setting this to 0 will not block and will cause the constructor to return
+        /// immediately. The default value is 5 seconds.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="startWaitTime">the length of time to wait</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithStartWaitTime(this Configuration configuration, TimeSpan startWaitTime)
         {
             configuration.StartWaitTime = startWaitTime;
             return configuration;
         }
 
+        /// <summary>
+        /// Sets whether or not this client is offline. If true, no calls to Launchdarkly will be made.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="offline">true if the client should remain offline</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithOffline(this Configuration configuration, bool offline)
         {
             configuration.Offline = offline;
             return configuration;
         }
 
-        public static Configuration WithLoggerFactory(this Configuration configuration, ILoggerFactory loggerFactory)
-        {
-            if (loggerFactory != null)
-                LdLogger.LoggerFactory = loggerFactory;
-
-            return configuration;
-        }
-
+        /// <summary>
+        /// Sets the connection timeout. The default value is 10 seconds.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="timeSpan">the connection timeout</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithHttpClientTimeout(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.HttpClientTimeout = timeSpan;
             return configuration;
         }
 
-
+        /// <summary>
+        /// Sets the timeout when reading data from the EventSource API. The default value is 5 minutes.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="timeSpan">the read timeout</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithReadTimeout(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.ReadTimeout = timeSpan;
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the reconnect base time for the streaming connection. The streaming connection
+        /// uses an exponential backoff algorithm (with jitter) for reconnects, but will start the
+        /// backoff with a value near the value specified here. The default value is 1 second.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="timeSpan">the reconnect time base value</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithReconnectTime(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.ReconnectTime = timeSpan;
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
+        /// and related data received from LaunchDarkly. The default is
+        /// <see cref="InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="featureStore"></param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithFeatureStore(this Configuration configuration, IFeatureStore featureStore)
         {
             if (featureStore != null)
@@ -216,24 +402,56 @@ namespace LaunchDarkly.Client
             return configuration;
         }
 
+        /// <summary>
+        /// Sets the object to be used for sending HTTP requests. This is exposed for testing purposes.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="httpClientHandler">the <c>HttpClientHandler</c> to use</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithHttpClientHandler(this Configuration configuration, HttpClientHandler httpClientHandler)
         {
             configuration.HttpClientHandler = httpClientHandler;
             return configuration;
         }
 
+        /// <summary>
+        /// Sets whether or not the streaming API should be used to receive flag updates. This
+        /// is true by default. Streaming should only be disabled on the advice of LaunchDarkly
+        /// support.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="enableStream">true if the streaming API should be used</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithIsStreamingEnabled(this Configuration configuration, bool enableStream)
         {
             configuration.IsStreamingEnabled = enableStream;
             return configuration;
         }
 
+        /// <summary>
+        /// Sets whether or not user attributes (other than the key) should be private (not sent to
+        /// the LaunchDarkly server). If this is true, all of the user attributes will be private,
+        /// not just the attributes specified with the <c>AndPrivate...</c> methods on the
+        /// <see cref="User"/> object. By default, this is false.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="allAttributesPrivate">true if all attributes should be private</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithAllAttributesPrivate(this Configuration configuration, bool allAttributesPrivate)
         {
             configuration.AllAttributesPrivate = allAttributesPrivate;
             return configuration;
         }
 
+        /// <summary>
+        /// Marks an attribute name as private. Any users sent to LaunchDarkly with this
+        /// configuration active will have attributes with this name removed, even if you did
+        /// not use the <c>AndPrivate...</c> methods on the <see cref="User"/> object. You may
+        /// call this method repeatedly to mark multiple attributes as private.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="attributeName">the attribute name</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithPrivateAttributeName(this Configuration configuration, string attributeName)
         {
             if (configuration.PrivateAttributeNames == null)

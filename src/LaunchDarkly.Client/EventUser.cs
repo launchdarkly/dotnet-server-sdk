@@ -1,52 +1,65 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// Used internally to represent user data that is being serialized in an event.
+    /// Used internally to represent user data that is being serialized in an <see cref="Event"/>.
     /// </summary>
-    internal class EventUser
+    public class EventUser
     {
+        /// <see cref="User.Key"/>
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]
-        public string Key { get; set; }
+        public string Key { get; internal set; }
 
+        /// <see cref="User.SecondaryKey"/>
         [JsonProperty(PropertyName = "secondary", NullValueHandling = NullValueHandling.Ignore)]
-        public string SecondaryKey { get; set; }
+        public string SecondaryKey { get; internal set; }
 
+        /// <see cref="User.IpAddress"/>
         [JsonProperty(PropertyName = "ip", NullValueHandling = NullValueHandling.Ignore)]
-        public string IpAddress { get; set; }
+        public string IpAddress { get; internal set; }
 
+        /// <see cref="User.Country"/>
         [JsonProperty(PropertyName = "country", NullValueHandling = NullValueHandling.Ignore)]
-        public string Country { get; set; }
+        public string Country { get; internal set; }
 
+        /// <see cref="User.FirstName"/>
         [JsonProperty(PropertyName = "firstName", NullValueHandling = NullValueHandling.Ignore)]
-        public string FirstName { get; set; }
+        public string FirstName { get; internal set; }
 
+        /// <see cref="User.LastName"/>
         [JsonProperty(PropertyName = "lastName", NullValueHandling = NullValueHandling.Ignore)]
-        public string LastName { get; set; }
+        public string LastName { get; internal set; }
 
+        /// <see cref="User.Name"/>
         [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        public string Name { get; internal set; }
 
+        /// <see cref="User.Avatar"/>
         [JsonProperty(PropertyName = "avatar", NullValueHandling = NullValueHandling.Ignore)]
-        public string Avatar { get; set; }
+        public string Avatar { get; internal set; }
 
+        /// <see cref="User.Email"/>
         [JsonProperty(PropertyName = "email", NullValueHandling = NullValueHandling.Ignore)]
-        public string Email { get; set; }
+        public string Email { get; internal set; }
 
+        /// <see cref="User.Anonymous"/>
         [JsonProperty(PropertyName = "anonymous", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Anonymous { get; set; }
+        public bool? Anonymous { get; internal set; }
 
+        /// <see cref="User.Custom"/>
         [JsonProperty(PropertyName = "custom", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, JToken> Custom { get; set; }
+        public Dictionary<string, JToken> Custom { get; internal set; }
 
+        /// <summary>
+        /// A list of attribute names that have been omitted from the event.
+        /// </summary>
         [JsonProperty(PropertyName = "privateAttrs", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> PrivateAttrs { get; set; }
 
-        public static EventUser FromUser(User user, Configuration config)
+        internal static EventUser FromUser(User user, Configuration config)
         {
             EventUserBuilder eub = new EventUserBuilder(user, config);
             return eub.Build();
