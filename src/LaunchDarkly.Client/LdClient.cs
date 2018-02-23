@@ -20,7 +20,14 @@ namespace LaunchDarkly.Client
         private readonly IFeatureStore _featureStore;
         private readonly IUpdateProcessor _updateProcessor;
 
-        internal LdClient(Configuration config, IStoreEvents eventStore)
+        /// <summary>
+        /// Creates a new client to connect to LaunchDarkly with a custom configuration, and a custom
+        /// implementation of the analytics event processor. This constructor should only be used if you are
+        /// overriding the default event-sending behavior.
+        /// </summary>
+        /// <param name="config">a client configuration object</param>
+        /// <param name="eventStore">an event processor</param>
+        public LdClient(Configuration config, IStoreEvents eventStore)
         {
             Log.InfoFormat("Starting LaunchDarkly Client {0}",
                 Configuration.Version);
