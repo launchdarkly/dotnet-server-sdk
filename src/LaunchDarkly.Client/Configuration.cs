@@ -90,13 +90,27 @@ namespace LaunchDarkly.Client
         /// not use the <c>AndPrivate...</c> methods on the <see cref="User"/> object.
         /// </summary>
         public ISet<string> PrivateAttributeNames { get; internal set; }
-        /// <summary>
-        /// The implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
-        /// and related data received from LaunchDarkly. The default is
-        /// <see cref="InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
-        /// </summary>
+        [Obsolete]
         internal IFeatureStore FeatureStore { get; set; }
-
+        /// <summary>
+        /// A factory object that creates an implementation of <see cref="IFeatureStore"/>, to be used
+        /// for holding feature flags and related data received from LaunchDarkly. The default is
+        /// <see cref="Implementations.InMemoryFeatureStore"/>, but you may provide a custom
+        /// implementation.
+        /// </summary>
+        public IFeatureStoreFactory FeatureStoreFactory { get; internal set; }
+        /// <summary>
+        /// A factory object that creates an implementation of <see cref="IStoreEvents"/>, which will
+        /// process all analytics events. The default is <see cref="Implementations.DefaultEventProcessor"/>,
+        /// but you may provide a custom implementation.
+        /// </summary>
+        public IEventProcessorFactory EventProcessorFactory { get; internal set; }
+        /// <summary>
+        /// A factory object that creates an implementation of <see cref="IUpdateProcessor"/>, which will
+        /// receive feature flag data. The default is <see cref="Implementations.DefaultUpdateProcessor"/>,
+        /// but you may provide a custom implementation.
+        /// </summary>
+        public IUpdateProcessorFactory UpdateProcessorFactory { get; internal set; }
 
         internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
                 .GetTypeInfo()
@@ -386,19 +400,57 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Sets the implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
-        /// and related data received from LaunchDarkly. The default is
-        /// <see cref="InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
+        /// Obsolete; please use <see cref="WithFeatureStoreFactory"/> instead.
         /// </summary>
-        /// <param name="configuration">the configuration</param>
-        /// <param name="featureStore"></param>
-        /// <returns>the same <c>Configuration</c> instance</returns>
+        [Obsolete]
         public static Configuration WithFeatureStore(this Configuration configuration, IFeatureStore featureStore)
         {
             if (featureStore != null)
             {
                 configuration.FeatureStore = featureStore;
             }
+            return configuration;
+        }
+
+        /// <summary>
+        /// Sets the implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
+        /// and related data received from LaunchDarkly, using a factory object. The default is
+        /// <see cref="Implementations.InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="factory">the factory object</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithFeatureStoreFactory(this Configuration configuration, IFeatureStoreFactory factory)
+        {
+            configuration.FeatureStoreFactory = factory;
+            return configuration;
+        }
+
+        /// <summary>
+        /// Sets the implementation of <see cref="IStoreEvents"/> to be used for processing analytics events,
+        /// using a factory object. The default is <see cref="Implementations.DefaultEventProcessor"/>, but
+        /// you may choose to use a custom implementation (for instance, a test fixture).
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="factory">the factory object</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithEventProcessorFactory(this Configuration configuration, IEventProcessorFactory factory)
+        {
+            configuration.EventProcessorFactory = factory;
+            return configuration;
+        }
+
+        /// <summary>
+        /// Sets the implementation of <see cref="IUpdateProcessor"/> to be used for receiving feature flag data,
+        /// using a factory object. The default is <see cref="Implementations.DefaultUpdateProcessor"/>, but
+        /// you may choose to use a custom implementation (for instance, a test fixture).
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="factory">the factory object</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithUpdateProcessorFactory(this Configuration configuration, IUpdateProcessorFactory factory)
+        {
+            configuration.UpdateProcessorFactory = factory;
             return configuration;
         }
 

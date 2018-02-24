@@ -19,6 +19,8 @@ namespace LaunchDarkly.Client
         private readonly IStoreEvents _eventStore;
         private readonly IFeatureStore _featureStore;
         private readonly IUpdateProcessor _updateProcessor;
+        private bool _shouldDisposeEventStore;
+        private bool _shouldDisposeFeatureStore;
 
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration, and a custom
@@ -33,30 +35,45 @@ namespace LaunchDarkly.Client
                 Configuration.Version);
 
             _configuration = config;
-            _eventStore = eventStore;
-            _featureStore = _configuration.FeatureStore;
-
-            if (_configuration.Offline)
+            if (eventStore == null)
             {
-                Log.Info("Starting Launchdarkly client in offline mode.");
-                return;
-            }
-
-            var featureRequestor = new FeatureRequestor(config);
-
-            if (_configuration.IsStreamingEnabled)
-            {
-                _updateProcessor = new StreamProcessor(config, featureRequestor, _featureStore);
+                _eventStore = (_configuration.EventProcessorFactory ??
+                    Implementations.DefaultEventProcessor).CreateEventProcessor(_configuration);
+                _shouldDisposeEventStore = true;
             }
             else
             {
-                Log.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
-                _updateProcessor = new PollingProcessor(config, featureRequestor, _featureStore);
+                _eventStore = eventStore;
+                // The following line is for backward compatibility with the obsolete mechanism by which the
+                // caller could pass in an IStoreEvents implementation instance that we did not create.  We
+                // were not disposing of that instance when the client was closed, so we should continue not
+                // doing so until the next major version eliminates that mechanism.  We will always dispose
+                // of instances that we created ourselves from a factory.
+                _shouldDisposeEventStore = false;
             }
+
+            if (_configuration.FeatureStore == null)
+            {
+                _featureStore = (_configuration.FeatureStoreFactory ??
+                    Implementations.InMemoryFeatureStore).CreateFeatureStore(_configuration);
+                _shouldDisposeFeatureStore = true;
+            }
+            else
+            {
+                _featureStore = _configuration.FeatureStore;
+                _shouldDisposeFeatureStore = false; // see previous comment
+            }
+
+            _updateProcessor = (_configuration.UpdateProcessorFactory ??
+                Implementations.DefaultUpdateProcessor).CreateUpdateProcessor(_configuration, _featureStore);
+
             var initTask = _updateProcessor.Start();
 
-            Log.InfoFormat("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
-                _configuration.StartWaitTime.TotalMilliseconds);
+            if (!(_updateProcessor is NoopUpdateProcessor))
+            {
+                Log.InfoFormat("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
+                    _configuration.StartWaitTime.TotalMilliseconds);
+            }
 
             var unused = initTask.Wait(_configuration.StartWaitTime);
         }
@@ -280,13 +297,20 @@ namespace LaunchDarkly.Client
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            Log.Info("Closing LaunchDarkly client.");
-            //We do not have native resource, so the boolean parameter can be ignored.
-            if (_eventStore is EventProcessor)
-                ((_eventStore) as IDisposable).Dispose();
-
-            if (_updateProcessor != null)
+            if (disposing) // follow standard IDisposable pattern
             {
+                Log.Info("Closing LaunchDarkly client.");
+                // See comments in LdClient constructor: eventually all of these implementation objects
+                // will be factory-created and will have the same lifecycle as the client. But since we
+                // previously allowed people to pass in their own objects which we did not dispose of,
+                if (_shouldDisposeEventStore && _eventStore is IDisposable)
+                {
+                    (_eventStore as IDisposable).Dispose();
+                }
+                if (_shouldDisposeFeatureStore && _featureStore is IDisposable)
+                {
+                    (_featureStore as IDisposable).Dispose();
+                }
                 _updateProcessor.Dispose();
             }
         }
