@@ -41,7 +41,7 @@ namespace LaunchDarkly.Client
 
         void IStoreEvents.Add(Event eventToLog)
         {
-            if (_config.EventSamplingInterval > 0 && _random.Next(_config.EventSamplingInterval) != 0)
+            if (_config.EventSamplingInterval > 1 && _random.Next(_config.EventSamplingInterval) != 0)
             {
                 return;
             }
