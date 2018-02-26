@@ -51,8 +51,7 @@ namespace LaunchDarkly.Client
         /// </summary>
         public int EventSamplingInterval { get; internal set; }
         /// <summary>
-        /// Set the polling interval (when streaming is disabled). Values less than the default of
-        /// 30 seconds will be set to the default.
+        /// Set the polling interval (when streaming is disabled). The default value is 30 seconds.
         /// </summary>
         public TimeSpan PollingInterval { get; internal set; }
         /// <summary>
@@ -197,6 +196,8 @@ namespace LaunchDarkly.Client
     /// </summary>
     public static class ConfigurationExtensions
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ConfigurationExtensions));
+
         /// <summary>
         /// Sets the base URI of the LaunchDarkly server for this configuration.
         /// </summary>
@@ -306,7 +307,6 @@ namespace LaunchDarkly.Client
         public static Configuration WithEventQueueFrequency(this Configuration configuration, TimeSpan frequency)
         {
             configuration.EventQueueFrequency = frequency;
-
             return configuration;
         }
 
@@ -320,13 +320,18 @@ namespace LaunchDarkly.Client
         /// <returns>the same <c>Configuration</c> instance</returns>
         public static Configuration WithEventSamplingInterval(this Configuration configuration, int interval)
         {
+            if (interval < 0)
+            {
+                Log.Warn("EventSamplingInterval cannot be less than zero.");
+                interval = 0;
+            }
             configuration.EventSamplingInterval = interval;
             return configuration;
         }
 
         /// <summary>
         /// Sets the polling interval (when streaming is disabled). Values less than the default of
-        /// 30 seconds will be set to the default.
+        /// 30 seconds will be changed to the default.
         /// </summary>
         /// <param name="configuration">the configuration</param>
         /// <param name="pollingInterval">the rule update polling interval</param>
@@ -335,7 +340,8 @@ namespace LaunchDarkly.Client
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
             {
-                throw new System.ArgumentException("Polling interval cannot be less than the default of 30 seconds.", "pollingInterval");
+                Log.Warn("PollingInterval cannot be less than the default of 30 seconds.");
+                pollingInterval = Configuration.DefaultPollingInterval;
             }
             configuration.PollingInterval = pollingInterval;
             return configuration;
