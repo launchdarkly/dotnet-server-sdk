@@ -20,6 +20,7 @@ namespace LaunchDarkly.Client
         private readonly Timer _timer;
         private volatile HttpClient _httpClient;
         private readonly Uri _uri;
+        private readonly Random _random;
         private volatile bool _shutdown;
 
         internal EventProcessor(Configuration config)
@@ -30,6 +31,7 @@ namespace LaunchDarkly.Client
             _timer = new Timer(SubmitEvents, null, _config.EventQueueFrequency,
                 _config.EventQueueFrequency);
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
+            _random = new Random();
         }
 
         private void SubmitEvents(object StateInfo)
@@ -39,8 +41,14 @@ namespace LaunchDarkly.Client
 
         void IStoreEvents.Add(Event eventToLog)
         {
+            if (_config.EventSamplingInterval > 0 && _random.Next(_config.EventSamplingInterval) != 0)
+            {
+                return;
+            }
             if (!_queue.TryAdd(eventToLog))
+            {
                 Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+            }
         }
 
         void IDisposable.Dispose()

@@ -45,6 +45,12 @@ namespace LaunchDarkly.Client
         /// </summary>
         public TimeSpan EventQueueFrequency { get; internal set; }
         /// <summary>
+        /// Enables event sampling if non-zero. When set to the default of zero, all analytics events are
+        /// sent back to LaunchDarkly. When greater than zero, there is a 1 in <c>EventSamplingInterval</c>
+        /// chance that events will be sent (example: if the interval is 20, on average 5% of events will be sent).
+        /// </summary>
+        public int EventSamplingInterval { get; internal set; }
+        /// <summary>
         /// Set the polling interval (when streaming is disabled). Values less than the default of
         /// 30 seconds will be set to the default.
         /// </summary>
@@ -301,6 +307,20 @@ namespace LaunchDarkly.Client
         {
             configuration.EventQueueFrequency = frequency;
 
+            return configuration;
+        }
+
+        /// <summary>
+        /// Enables event sampling if non-zero. When set to the default of zero, all analytics events are
+        /// sent back to LaunchDarkly. When greater than zero, there is a 1 in <c>EventSamplingInterval</c>
+        /// chance that events will be sent (example: if the interval is 20, on average 5% of events will be sent).
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="interval">the sampling interval</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithEventSamplingInterval(this Configuration configuration, int interval)
+        {
+            configuration.EventSamplingInterval = interval;
             return configuration;
         }
 
