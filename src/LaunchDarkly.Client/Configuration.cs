@@ -45,8 +45,13 @@ namespace LaunchDarkly.Client
         /// </summary>
         public TimeSpan EventQueueFrequency { get; internal set; }
         /// <summary>
-        /// Set the polling interval (when streaming is disabled). Values less than the default of
-        /// 30 seconds will be set to the default.
+        /// Enables event sampling if non-zero. When set to the default of zero, all analytics events are
+        /// sent back to LaunchDarkly. When greater than zero, there is a 1 in <c>EventSamplingInterval</c>
+        /// chance that events will be sent (example: if the interval is 20, on average 5% of events will be sent).
+        /// </summary>
+        public int EventSamplingInterval { get; internal set; }
+        /// <summary>
+        /// Set the polling interval (when streaming is disabled). The default value is 30 seconds.
         /// </summary>
         public TimeSpan PollingInterval { get; internal set; }
         /// <summary>
@@ -90,6 +95,26 @@ namespace LaunchDarkly.Client
         /// not use the <c>AndPrivate...</c> methods on the <see cref="User"/> object.
         /// </summary>
         public ISet<string> PrivateAttributeNames { get; internal set; }
+        /// <summary>
+        /// The number of user keys that the event processor can remember at any one time, so that
+        /// duplicate user details will not be sent in analytics events.
+        /// </summary>
+        public int UserKeysCapacity { get; internal set; }
+        /// <summary>
+        /// The interval at which the event processor will reset its set of known user keys. The
+        /// default value is five minutes.
+        /// </summary>
+        public TimeSpan UserKeysFlushInterval { get; internal set; }
+        /// <summary>
+        /// True if full user details should be included in every analytics event. The default is false (events will
+        /// only include the user key, except for one "index" event that provides the full details for the user).
+        /// </summary>
+        public bool InlineUsersInEvents { get; internal set; }
+        /// <summary>
+        /// The implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
+        /// and related data received from LaunchDarkly. The default is
+        /// <see cref="InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
+        /// </summary>
         [Obsolete]
         internal IFeatureStore FeatureStore { get; set; }
         /// <summary>
@@ -100,7 +125,7 @@ namespace LaunchDarkly.Client
         /// </summary>
         public IFeatureStoreFactory FeatureStoreFactory { get; internal set; }
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="IStoreEvents"/>, which will
+        /// A factory object that creates an implementation of <see cref="IEventProcessor"/>, which will
         /// process all analytics events. The default is <see cref="Implementations.DefaultEventProcessor"/>,
         /// but you may provide a custom implementation.
         /// </summary>
@@ -158,7 +183,15 @@ namespace LaunchDarkly.Client
         /// Default value for <see cref="HttpClientTimeout"/>.
         /// </summary>
         private static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
-
+        /// <summary>
+        /// Default value for <see cref="UserKeysCapacity"/>.
+        /// </summary>
+        private static readonly int DefaultUserKeysCapacity = 1000;
+        /// <summary>
+        /// Default value for <see cref="UserKeysFlushInterval"/>.
+        /// </summary>
+        private static readonly TimeSpan DefaultUserKeysFlushInterval = TimeSpan.FromMinutes(5);
+        
         /// <summary>
         /// Creates a configuration with all parameters set to the default. Use extension methods
         /// to set additional parameters.
@@ -185,7 +218,10 @@ namespace LaunchDarkly.Client
                 FeatureStore = new InMemoryFeatureStore(),
                 IsStreamingEnabled = true,
                 AllAttributesPrivate = false,
-                PrivateAttributeNames = null
+                PrivateAttributeNames = null,
+                UserKeysCapacity = DefaultUserKeysCapacity,
+                UserKeysFlushInterval = DefaultUserKeysFlushInterval,
+                InlineUsersInEvents = false
             };
 
             return defaultConfiguration;
@@ -205,6 +241,8 @@ namespace LaunchDarkly.Client
     /// </summary>
     public static class ConfigurationExtensions
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ConfigurationExtensions));
+
         /// <summary>
         /// Sets the base URI of the LaunchDarkly server for this configuration.
         /// </summary>
@@ -314,13 +352,31 @@ namespace LaunchDarkly.Client
         public static Configuration WithEventQueueFrequency(this Configuration configuration, TimeSpan frequency)
         {
             configuration.EventQueueFrequency = frequency;
+            return configuration;
+        }
 
+        /// <summary>
+        /// Enables event sampling if non-zero. When set to the default of zero, all analytics events are
+        /// sent back to LaunchDarkly. When greater than zero, there is a 1 in <c>EventSamplingInterval</c>
+        /// chance that events will be sent (example: if the interval is 20, on average 5% of events will be sent).
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="interval">the sampling interval</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithEventSamplingInterval(this Configuration configuration, int interval)
+        {
+            if (interval < 0)
+            {
+                Log.Warn("EventSamplingInterval cannot be less than zero.");
+                interval = 0;
+            }
+            configuration.EventSamplingInterval = interval;
             return configuration;
         }
 
         /// <summary>
         /// Sets the polling interval (when streaming is disabled). Values less than the default of
-        /// 30 seconds will be set to the default.
+        /// 30 seconds will be changed to the default.
         /// </summary>
         /// <param name="configuration">the configuration</param>
         /// <param name="pollingInterval">the rule update polling interval</param>
@@ -329,7 +385,8 @@ namespace LaunchDarkly.Client
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
             {
-                throw new System.ArgumentException("Polling interval cannot be less than the default of 30 seconds.", "pollingInterval");
+                Log.Warn("PollingInterval cannot be less than the default of 30 seconds.");
+                pollingInterval = Configuration.DefaultPollingInterval;
             }
             configuration.PollingInterval = pollingInterval;
             return configuration;
@@ -427,7 +484,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Sets the implementation of <see cref="IStoreEvents"/> to be used for processing analytics events,
+        /// Sets the implementation of <see cref="IEventProcessor"/> to be used for processing analytics events,
         /// using a factory object. The default is <see cref="Implementations.DefaultEventProcessor"/>, but
         /// you may choose to use a custom implementation (for instance, a test fixture).
         /// </summary>
@@ -511,6 +568,45 @@ namespace LaunchDarkly.Client
                 configuration.PrivateAttributeNames = new HashSet<string>();
             }
             configuration.PrivateAttributeNames.Add(attributeName);
+            return configuration;
+        }
+
+        /// <summary>
+        /// Sets the number of user keys that the event processor can remember at any one time, so that
+        /// duplicate user details will not be sent in analytics events.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="capacity">the user key cache capacity</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithUserKeysCapacity(this Configuration configuration, int capacity)
+        {
+            configuration.UserKeysCapacity = capacity;
+            return configuration;
+        }
+
+        /// <summary>
+        /// Sets the interval in seconds at which the event processor will reset its set of known user keys. The
+        /// default value is five minutes.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="flushInterval">the flush interval</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithUserKeysFlushInterval(this Configuration configuration, TimeSpan flushInterval)
+        {
+            configuration.UserKeysFlushInterval = flushInterval;
+            return configuration;
+        }
+
+        /// <summary>
+        /// Sets whether to include full user details in every analytics event. The default is false (events will
+        /// only include the user key, except for one "index" event that provides the full details for the user).
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="inlineUsers">true or false</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithInlineUsersInEvents(this Configuration configuration, bool inlineUsers)
+        {
+            configuration.InlineUsersInEvents = inlineUsers;
             return configuration;
         }
     }

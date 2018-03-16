@@ -2,6 +2,12 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [4.1.0] - 2018-03-05
+### Added
+- `Configuration` now has an `EventSamplingInterval` property. If greater than zero, this causes a fraction of analytics events to be sent to LaunchDarkly: one per that number of events (pseudo-randomly). For instance, setting it to 5 would cause 20% of events to be sent on average.
+### Changed
+- `ConfigurationExtensions.WithPollingInterval` will no longer throw an exception if the parameter is lower than the minimum. Instead, it will simply set the value to the minimum and log a warning.
+
 ## [4.0.0] - 2018-02-21
 ### Added
 - Support for a new LaunchDarkly feature: reusable user segments.

@@ -26,7 +26,7 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Used when the client is offline or in LDD mode.
     /// </summary>
-    internal class NoopUpdateProcessor : IUpdateProcessor
+    internal class NullUpdateProcessor : IUpdateProcessor
     {
         Task<bool> IUpdateProcessor.Start()
         {

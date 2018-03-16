@@ -93,12 +93,15 @@ namespace LaunchDarkly.Client
             _result.Email = CheckPrivateAttr("email", _user.Email);
             if (_user.Custom != null)
             {
-                _result.Custom = new Dictionary<string, JToken>();
                 foreach (KeyValuePair<string, JToken> kv in _user.Custom)
                 {
                     JToken value = CheckPrivateAttr(kv.Key, kv.Value);
                     if (value != null)
                     {
+                        if (_result.Custom == null)
+                        {
+                            _result.Custom = new Dictionary<string, JToken>();
+                        }
                         _result.Custom[kv.Key] = kv.Value;
                     }
                 }

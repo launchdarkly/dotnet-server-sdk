@@ -151,5 +151,8 @@ namespace LaunchDarkly.Client
         {
             return _initialized;
         }
+
+        public void Dispose()
+        { }
     }
 }

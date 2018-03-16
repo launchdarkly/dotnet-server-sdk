@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LaunchDarkly.Client
 {
@@ -6,7 +7,7 @@ namespace LaunchDarkly.Client
     /// Interface for a data store that holds feature flags and related data received by the streaming client.
     /// </summary>
     /// <seealso cref="IFeatureStoreFactory"/>
-    public interface IFeatureStore
+    public interface IFeatureStore : IDisposable
     {
         /// <summary>
         /// Retrieve an object from the specified collection, or return null if not found.

@@ -20,12 +20,14 @@ namespace LaunchDarkly.Client
         internal VariationOrRollout Fallthrough { get; private set; }
         internal int? OffVariation { get; private set; }
         internal List<JToken> Variations { get; private set; }
+        internal bool TrackEvents { get; private set; }
+        internal long? DebugEventsUntilDate { get; private set; }
         public bool Deleted { get; set; }
 
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
             List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation,
-            List<JToken> variations,
+            List<JToken> variations, bool trackEvents, long? debugEventsUntilDate,
             bool deleted)
         {
             Key = key;
@@ -38,9 +40,10 @@ namespace LaunchDarkly.Client
             Fallthrough = fallthrough;
             OffVariation = offVariation;
             Variations = variations;
+            TrackEvents = trackEvents;
+            DebugEventsUntilDate = debugEventsUntilDate;
             Deleted = deleted;
         }
-
 
         internal FeatureFlag()
         {
@@ -48,21 +51,22 @@ namespace LaunchDarkly.Client
 
         internal struct EvalResult
         {
+            internal int? Variation;
             internal JToken Result;
             internal readonly IList<FeatureRequestEvent> PrerequisiteEvents;
-
-            internal EvalResult(JToken result, IList<FeatureRequestEvent> events) : this()
+            
+            internal EvalResult(int? variation, JToken result, IList<FeatureRequestEvent> events) : this()
             {
+                Variation = variation;
                 Result = result;
                 PrerequisiteEvents = events;
             }
         }
-
-
-        internal EvalResult Evaluate(User user, IFeatureStore featureStore, Configuration config)
+        
+        internal EvalResult Evaluate(User user, IFeatureStore featureStore, EventFactory eventFactory)
         {
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
-            EvalResult evalResult = new EvalResult(null, prereqEvents);
+            EvalResult evalResult = new EvalResult(null, null, prereqEvents);
             if (user == null || user.Key == null)
             {
                 Log.WarnFormat("User or user key is null when evaluating flag: {0} returning null",
@@ -73,18 +77,20 @@ namespace LaunchDarkly.Client
 
             if (On)
             {
-                evalResult.Result = Evaluate(user, featureStore, prereqEvents, config);
+                evalResult = Evaluate(user, featureStore, prereqEvents, eventFactory);
                 if (evalResult.Result != null)
                 {
                     return evalResult;
                 }
             }
+            evalResult.Variation = OffVariation;
             evalResult.Result = OffVariationValue;
             return evalResult;
         }
 
         // Returning either a nil EvalResult or EvalResult.value indicates prereq failure/error.
-        private JToken Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events, Configuration config)
+        private EvalResult Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
+            EventFactory eventFactory)
         {
             var prereqOk = true;
             if (Prerequisites != null)
@@ -92,21 +98,20 @@ namespace LaunchDarkly.Client
                 foreach (var prereq in Prerequisites)
                 {
                     var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
-                    JToken prereqEvalResult = null;
+                    EvalResult prereqEvalResult = new EvalResult(null, null, events);
                     if (prereqFeatureFlag == null)
                     {
                         Log.ErrorFormat("Could not retrieve prerequisite flag: {0} when evaluating: {1}",
                             prereq.Key,
                             Key);
-                        return null;
+                        return new EvalResult(null, null, events);
                     }
                     else if (prereqFeatureFlag.On)
                     {
-                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, config);
+                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
                         try
                         {
-                            JToken variation = prereqFeatureFlag.GetVariation(prereq.Variation);
-                            if (prereqEvalResult == null || variation == null || !prereqEvalResult.Equals(variation))
+                            if (prereqEvalResult.Variation != prereq.Variation)
                             {
                                 prereqOk = false;
                             }
@@ -125,18 +130,19 @@ namespace LaunchDarkly.Client
                         prereqOk = false;
                     }
                     //We don't short circuit and also send events for each prereq.
-                    events.Add(new FeatureRequestEvent(prereqFeatureFlag.Key, EventUser.FromUser(user, config),
-                        prereqEvalResult, null, prereqFeatureFlag.Version, prereq.Key));
+                    events.Add(eventFactory.NewPrerequisiteFeatureRequestEvent(prereqFeatureFlag,
+                        user, null, prereqEvalResult.Result, this));
                 }
             }
             if (prereqOk)
             {
-                return GetVariation(EvaluateIndex(user, featureStore));
+                int? index = EvaluateIndex(user, featureStore);
+                JToken result = GetVariation(index);
+                return new EvalResult(index, result, events);
             }
-            return null;
+            return new EvalResult(null, null, events);
         }
-
-
+        
         private int? EvaluateIndex(User user, IFeatureStore store)
         {
             // Check to see if targets match

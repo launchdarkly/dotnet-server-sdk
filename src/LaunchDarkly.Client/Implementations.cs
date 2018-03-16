@@ -65,15 +65,22 @@ namespace LaunchDarkly.Client
 
     internal class DefaultEventProcessorFactory : IEventProcessorFactory
     {
-        IStoreEvents IEventProcessorFactory.CreateEventProcessor(Configuration config)
+        IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
-            return new EventProcessor(config);
+            if (config.Offline)
+            {
+                return new NullEventProcessor();
+            }
+            else
+            {
+                return new DefaultEventProcessor(config);
+            }
         }
     }
 
     internal class NullEventProcessorFactory : IEventProcessorFactory
     {
-        IStoreEvents IEventProcessorFactory.CreateEventProcessor(Configuration config)
+        IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
             return new NullEventProcessor();
         }
@@ -96,7 +103,7 @@ namespace LaunchDarkly.Client
             if (config.Offline)
             {
                 Log.Info("Starting Launchdarkly client in offline mode.");
-                return new NoopUpdateProcessor();
+                return new NullUpdateProcessor();
             }
             else
             {
