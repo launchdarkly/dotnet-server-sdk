@@ -227,6 +227,18 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void FlushDoesNothingIfThereAreNoEvents()
+        {
+            _ep = new DefaultEventProcessor(_config);
+            _ep.Flush();
+
+            foreach (LogEntry le in _server.LogEntries)
+            {
+                Assert.True(false, "Should not have sent an HTTP request");
+            }
+        }
+
+        [Fact]
         public void SdkKeyIsSent()
         {
             _ep = new DefaultEventProcessor(_config);
