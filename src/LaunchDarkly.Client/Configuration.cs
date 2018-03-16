@@ -528,7 +528,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Sets the interval in seconds at which the event processor will reset its set of known user keys. The
+        /// Sets the interval at which the event processor will reset its set of known user keys. The
         /// default value is five minutes.
         /// </summary>
         /// <param name="configuration">the configuration</param>
