@@ -132,10 +132,7 @@ namespace LaunchDarkly.Client
                 if (!(e is IdentifyEvent))
                 {
                     IndexEvent ie = new IndexEvent(e.CreationDate, e.User);
-                    if (!QueueEvent(ie))
-                    {
-                        return;
-                    }
+                    QueueEvent(ie);
                 }
             }
 
@@ -155,7 +152,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private bool QueueEvent(Event e)
+        private void QueueEvent(Event e)
         {
             if (_eventQueue.Count >= _config.EventQueueCapacity)
             {
@@ -164,11 +161,12 @@ namespace LaunchDarkly.Client
                     Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
                     exceededCapacity = true;
                 }
-                return false;
             }
-            _eventQueue.Add(e);
-            exceededCapacity = false;
-            return true;
+            else
+            {
+                _eventQueue.Add(e);
+                exceededCapacity = false;
+            }
         }
 
         private bool ShouldTrackFullEvent(Event e)
