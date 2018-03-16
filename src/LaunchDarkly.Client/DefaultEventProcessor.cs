@@ -24,6 +24,7 @@ namespace LaunchDarkly.Client
         private readonly HttpClient _httpClient;
         private readonly Uri _uri;
         private readonly Random _random;
+        private bool exceededCapacity;
         private long _lastKnownPastTime;
         private volatile bool _shutdown;
 
@@ -158,11 +159,15 @@ namespace LaunchDarkly.Client
         {
             if (_eventQueue.Count >= _config.EventQueueCapacity)
             {
-                // TODO: log warning only once
-                Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                if (!exceededCapacity)
+                {
+                    Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                    exceededCapacity = true;
+                }
                 return false;
             }
             _eventQueue.Add(e);
+            exceededCapacity = false;
             return true;
         }
 
