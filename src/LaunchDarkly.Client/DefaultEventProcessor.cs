@@ -180,7 +180,7 @@ namespace LaunchDarkly.Client
                 if (fe.DebugEventsUntilDate != null)
                 {
                     long lastPast = Interlocked.Read(ref _lastKnownPastTime);
-                    if ((lastPast != 0 && fe.DebugEventsUntilDate > lastPast) ||
+                    if (fe.DebugEventsUntilDate > lastPast &&
                         fe.DebugEventsUntilDate > Util.GetUnixTimestampMillis(DateTime.Now))
                     {
                         return true;
