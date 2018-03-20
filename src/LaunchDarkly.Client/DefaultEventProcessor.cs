@@ -365,6 +365,12 @@ namespace LaunchDarkly.Client
                 {
                     Log.DebugFormat("Got {0} when sending events.",
                         response.StatusCode);
+                    DateTimeOffset? respDate = response.Headers.Date;
+                    if (respDate.HasValue)
+                    {
+                        Interlocked.Exchange(ref _lastKnownPastTime,
+                            Util.GetUnixTimestampMillis(respDate.Value.DateTime));
+                    }
                 }
             }
         }
