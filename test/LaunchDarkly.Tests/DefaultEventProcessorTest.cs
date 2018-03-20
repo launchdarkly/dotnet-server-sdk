@@ -12,9 +12,12 @@ namespace LaunchDarkly.Tests
 {
     public class DefaultEventProcessorTest : IDisposable
     {
+        private static readonly String HttpDateFormat = "ddd, dd MMM yyyy HH:mm:ss 'GMT'";
+
         private Configuration _config = Configuration.Default("SDK_KEY");
         private IEventProcessor _ep;
         private FluentMockServer _server;
+        private long? _serverTimestamp;
         private User _user = new User("userKey").AndName("Red");
         private JToken _userJson = JToken.Parse("{\"key\":\"userKey\",\"name\":\"Red\"}");
         private JToken _scrubbedUserJson = JToken.Parse("{\"key\":\"userKey\",\"privateAttrs\":[\"name\"]}");
@@ -139,6 +142,62 @@ namespace LaunchDarkly.Tests
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe, _userJson),
                 item => CheckFeatureEvent(item, fe, flag, true, null),
+                item => CheckSummaryEvent(item));
+        }
+
+        [Fact]
+        public void DebugModeExpiresBasedOnClientTimeIfClientTimeIsLaterThanServerTime()
+        {
+            _ep = new DefaultEventProcessor(_config);
+
+            // Pick a server time that is somewhat behind the client time
+            long serverTime = Util.GetUnixTimestampMillis(DateTime.Now) - 20000;
+
+            // Send and flush an event we don't care about, just to set the last server time
+            _serverTimestamp = serverTime;
+            _ep.SendEvent(EventFactory.Default.NewIdentifyEvent(new User("otherUser")));
+            FlushAndGetEvents();
+
+            // Now send an event with debug mode on, with a "debug until" time that is further in
+            // the future than the server time, but in the past compared to the client.
+            long debugUntil = serverTime + 1000;
+            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).DebugEventsUntilDate(debugUntil).Build();
+            FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
+                1, new JValue("value"), null);
+            _ep.SendEvent(fe);
+
+            // Should get a summary event only, not a full feature event
+            JArray output = FlushAndGetEvents();
+            Assert.Collection(output,
+                item => CheckIndexEvent(item, fe, _userJson),
+                item => CheckSummaryEvent(item));
+        }
+
+        [Fact]
+        public void DebugModeExpiresBasedOnServerTimeIfServerTimeIsLaterThanClientTime()
+        {
+            _ep = new DefaultEventProcessor(_config);
+
+            // Pick a server time that is somewhat ahead of the client time
+            long serverTime = Util.GetUnixTimestampMillis(DateTime.Now) + 20000;
+
+            // Send and flush an event we don't care about, just to set the last server time
+            _serverTimestamp = serverTime;
+            _ep.SendEvent(EventFactory.Default.NewIdentifyEvent(new User("otherUser")));
+            FlushAndGetEvents();
+
+            // Now send an event with debug mode on, with a "debug until" time that is further in
+            // the future than the client time, but in the past compared to the server.
+            long debugUntil = serverTime - 1000;
+            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).DebugEventsUntilDate(debugUntil).Build();
+            FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
+                1, new JValue("value"), null);
+            _ep.SendEvent(fe);
+
+            // Should get a summary event only, not a full feature event
+            JArray output = FlushAndGetEvents();
+            Assert.Collection(output,
+                item => CheckIndexEvent(item, fe, _userJson),
                 item => CheckSummaryEvent(item));
         }
 
@@ -333,8 +392,15 @@ namespace LaunchDarkly.Tests
 
         private RequestMessage FlushAndGetRequest()
         {
+            IResponseBuilder resp = Response.Create().WithStatusCode(200);
+            if (_serverTimestamp.HasValue)
+            {
+                DateTime dt = Util.UnixEpoch.AddMilliseconds(_serverTimestamp.Value);
+                resp.WithHeader("Date", dt.ToString(HttpDateFormat));
+            }
             _server.Given(Request.Create().WithPath("/bulk").UsingPost())
-                .RespondWith(Response.Create().WithStatusCode(200));
+                .RespondWith(resp);
+            _server.ResetLogEntries();
             _ep.Flush();
             foreach (LogEntry le in _server.LogEntries)
             {
