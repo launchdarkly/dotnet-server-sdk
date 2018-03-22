@@ -21,7 +21,6 @@ namespace LaunchDarkly.Client
         private volatile HttpClient _httpClient;
         private readonly Uri _uri;
         private readonly Random _random;
-        private readonly Object _randomMutex;
         private volatile bool _shutdown;
 
         internal EventProcessor(Configuration config)
@@ -33,7 +32,6 @@ namespace LaunchDarkly.Client
                 _config.EventQueueFrequency);
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             _random = new Random();
-            _randomMutex = new Object();
         }
 
         private void SubmitEvents(object StateInfo)
@@ -81,7 +79,7 @@ namespace LaunchDarkly.Client
 
         private bool ShouldAddEventWithSamplingInterval(int interval)
         {
-            lock (_randomMutex)
+            lock (_random)
             {
                 return _random.Next(interval) == 0;
             }
