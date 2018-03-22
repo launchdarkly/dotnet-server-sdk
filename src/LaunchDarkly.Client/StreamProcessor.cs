@@ -215,8 +215,17 @@ namespace LaunchDarkly.Client
 
         void IDisposable.Dispose()
         {
-            Log.Info("Stopping LaunchDarkly StreamProcessor");
-            _es.Close();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Log.Info("Stopping LaunchDarkly StreamProcessor");
+                _es.Close();
+            }
         }
 
         private async Task UpdateTaskAsync(string objectPath)
