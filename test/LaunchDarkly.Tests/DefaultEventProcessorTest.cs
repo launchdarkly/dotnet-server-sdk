@@ -17,7 +17,6 @@ namespace LaunchDarkly.Tests
         private Configuration _config = Configuration.Default("SDK_KEY");
         private IEventProcessor _ep;
         private FluentMockServer _server;
-        private long? _serverTimestamp;
         private User _user = new User("userKey").AndName("Red");
         private JToken _userJson = JToken.Parse("{\"key\":\"userKey\",\"name\":\"Red\"}");
         private JToken _scrubbedUserJson = JToken.Parse("{\"key\":\"userKey\",\"privateAttrs\":[\"name\"]}");
@@ -44,7 +43,7 @@ namespace LaunchDarkly.Tests
             IdentifyEvent e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIdentifyEvent(item, e, _userJson));
         }
@@ -57,7 +56,7 @@ namespace LaunchDarkly.Tests
             IdentifyEvent e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIdentifyEvent(item, e, _scrubbedUserJson));
         }
@@ -71,7 +70,7 @@ namespace LaunchDarkly.Tests
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe, _userJson),
                 item => CheckFeatureEvent(item, fe, flag, false, null),
@@ -88,7 +87,7 @@ namespace LaunchDarkly.Tests
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe, _scrubbedUserJson),
                 item => CheckFeatureEvent(item, fe, flag, false, null),
@@ -105,7 +104,7 @@ namespace LaunchDarkly.Tests
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckFeatureEvent(item, fe, flag, false, _userJson),
                 item => CheckSummaryEvent(item));
@@ -122,7 +121,7 @@ namespace LaunchDarkly.Tests
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckFeatureEvent(item, fe, flag, false, _scrubbedUserJson),
                 item => CheckSummaryEvent(item));
@@ -138,7 +137,7 @@ namespace LaunchDarkly.Tests
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe, _userJson),
                 item => CheckFeatureEvent(item, fe, flag, true, null),
@@ -154,9 +153,8 @@ namespace LaunchDarkly.Tests
             long serverTime = Util.GetUnixTimestampMillis(DateTime.Now) - 20000;
 
             // Send and flush an event we don't care about, just to set the last server time
-            _serverTimestamp = serverTime;
             _ep.SendEvent(EventFactory.Default.NewIdentifyEvent(new User("otherUser")));
-            FlushAndGetEvents();
+            FlushAndGetEvents(AddDateHeader(OkResponse(), serverTime));
 
             // Now send an event with debug mode on, with a "debug until" time that is further in
             // the future than the server time, but in the past compared to the client.
@@ -167,7 +165,7 @@ namespace LaunchDarkly.Tests
             _ep.SendEvent(fe);
 
             // Should get a summary event only, not a full feature event
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe, _userJson),
                 item => CheckSummaryEvent(item));
@@ -182,9 +180,8 @@ namespace LaunchDarkly.Tests
             long serverTime = Util.GetUnixTimestampMillis(DateTime.Now) + 20000;
 
             // Send and flush an event we don't care about, just to set the last server time
-            _serverTimestamp = serverTime;
             _ep.SendEvent(EventFactory.Default.NewIdentifyEvent(new User("otherUser")));
-            FlushAndGetEvents();
+            FlushAndGetEvents(AddDateHeader(OkResponse(), serverTime));
 
             // Now send an event with debug mode on, with a "debug until" time that is further in
             // the future than the client time, but in the past compared to the server.
@@ -195,7 +192,7 @@ namespace LaunchDarkly.Tests
             _ep.SendEvent(fe);
 
             // Should get a summary event only, not a full feature event
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe, _userJson),
                 item => CheckSummaryEvent(item));
@@ -215,7 +212,7 @@ namespace LaunchDarkly.Tests
             _ep.SendEvent(fe1);
             _ep.SendEvent(fe2);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe1, _userJson),
                 item => CheckFeatureEvent(item, fe1, flag1, false, null),
@@ -239,7 +236,7 @@ namespace LaunchDarkly.Tests
             _ep.SendEvent(fe1);
             _ep.SendEvent(fe2);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe1, _userJson),
                 item => CheckSummaryEventCounters(item, fe1, fe2));
@@ -252,7 +249,7 @@ namespace LaunchDarkly.Tests
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, e, _userJson),
                 item => CheckCustomEvent(item, e, null));
@@ -266,7 +263,7 @@ namespace LaunchDarkly.Tests
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckCustomEvent(item, e, _userJson));
         }
@@ -280,7 +277,7 @@ namespace LaunchDarkly.Tests
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
 
-            JArray output = FlushAndGetEvents();
+            JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckCustomEvent(item, e, _scrubbedUserJson));
         }
@@ -304,9 +301,26 @@ namespace LaunchDarkly.Tests
             Event e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
-            RequestMessage r = FlushAndGetRequest();
+            RequestMessage r = FlushAndGetRequest(OkResponse());
 
             Assert.Equal("SDK_KEY", r.Headers["Authorization"][0]);
+        }
+
+        [Fact]
+        public void NoMoreEventsArePostedAfterReceiving401Error()
+        {
+            _ep = new DefaultEventProcessor(_config);
+            Event e = EventFactory.Default.NewIdentifyEvent(_user);
+            _ep.SendEvent(e);
+            FlushAndGetEvents(Response.Create().WithStatusCode(401));
+            _server.ResetLogEntries();
+
+            _ep.SendEvent(e);
+            _ep.Flush();
+            foreach (LogEntry le in _server.LogEntries)
+            {
+                Assert.True(false, "Should not have sent an HTTP request");
+            }
         }
 
         private JObject MakeUserJson(User user)
@@ -390,14 +404,19 @@ namespace LaunchDarkly.Tests
             }
         }
 
-        private RequestMessage FlushAndGetRequest()
+        private IResponseBuilder OkResponse()
         {
-            IResponseBuilder resp = Response.Create().WithStatusCode(200);
-            if (_serverTimestamp.HasValue)
-            {
-                DateTime dt = Util.UnixEpoch.AddMilliseconds(_serverTimestamp.Value);
-                resp.WithHeader("Date", dt.ToString(HttpDateFormat));
-            }
+            return Response.Create().WithStatusCode(200);
+        }
+
+        private IResponseBuilder AddDateHeader(IResponseBuilder resp, long timestamp)
+        {
+            DateTime dt = Util.UnixEpoch.AddMilliseconds(timestamp);
+            return resp.WithHeader("Date", dt.ToString(HttpDateFormat));
+        }
+
+        private RequestMessage FlushAndGetRequest(IResponseBuilder resp)
+        {
             _server.Given(Request.Create().WithPath("/bulk").UsingPost())
                 .RespondWith(resp);
             _server.ResetLogEntries();
@@ -410,9 +429,9 @@ namespace LaunchDarkly.Tests
             return null;
         }
 
-        private JArray FlushAndGetEvents()
+        private JArray FlushAndGetEvents(IResponseBuilder resp)
         {
-            return FlushAndGetRequest().BodyAsJson as JArray;
+            return FlushAndGetRequest(resp).BodyAsJson as JArray;
         }
     }
 }

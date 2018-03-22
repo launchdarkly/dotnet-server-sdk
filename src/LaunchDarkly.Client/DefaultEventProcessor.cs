@@ -77,6 +77,10 @@ namespace LaunchDarkly.Client
 
         private bool SubmitMessage(IEventMessage message)
         {
+            if (_shutdown)
+            {
+                return false;
+            }
             try
             {
                 _messageQueue.Add(message);
@@ -91,12 +95,21 @@ namespace LaunchDarkly.Client
 
         void IDisposable.Dispose()
         {
-            ((IEventProcessor)this).Flush();
-            _shutdown = true;
-            _messageQueue.CompleteAdding();
-            _timer1.Dispose();
-            _timer2.Dispose();
-            _messageQueue.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ((IEventProcessor)this).Flush();
+                _shutdown = true;
+                _messageQueue.CompleteAdding();
+                _timer1.Dispose();
+                _timer2.Dispose();
+                _messageQueue.Dispose();
+            }
         }
         
         private void RunMainLoop()
@@ -356,9 +369,7 @@ namespace LaunchDarkly.Client
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
                         Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
-                        _shutdown = true;
                         _messageQueue.TryAdd(new ShutdownMessage());
-                        ((IDisposable)this).Dispose();
                     }
                 }
                 else
