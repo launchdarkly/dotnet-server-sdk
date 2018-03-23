@@ -4,7 +4,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ## [4.1.1] - 2018-03-23
 ### Fixed
-- Fixed a bug in the event sampling feature that was introduced in 4.1.0: sampling might not work correctly if events were generated from multiple threads.
+- Fixed a [bug](https://github.com/launchdarkly/.net-client/issues/75) in the event sampling feature that was introduced in 4.1.0: sampling might not work correctly if events were generated from multiple threads.
 
 ## [4.1.0] - 2018-03-05
 ### Added
