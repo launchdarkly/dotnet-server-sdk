@@ -41,7 +41,7 @@ namespace LaunchDarkly.Client
 
         void IStoreEvents.Add(Event eventToLog)
         {
-            if (_config.EventSamplingInterval > 1 && _random.Next(_config.EventSamplingInterval) != 0)
+            if (_config.EventSamplingInterval > 1 && !ShouldAddEventWithSamplingInterval(_config.EventSamplingInterval))
             {
                 return;
             }
@@ -74,6 +74,14 @@ namespace LaunchDarkly.Client
                 {
                     Task.Run(() => BulkSubmitAsync(events)).GetAwaiter().GetResult();
                 }
+            }
+        }
+
+        private bool ShouldAddEventWithSamplingInterval(int interval)
+        {
+            lock (_random)
+            {
+                return _random.Next(interval) == 0;
             }
         }
 
