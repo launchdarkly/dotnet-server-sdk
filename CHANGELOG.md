@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [4.1.1] - 2018-03-23
+### Fixed
+- Fixed a bug in the event sampling feature that was introduced in 4.1.0: sampling might not work correctly if events were generated from multiple threads.
+
 ## [4.1.0] - 2018-03-05
 ### Added
 - `Configuration` now has an `EventSamplingInterval` property. If greater than zero, this causes a fraction of analytics events to be sent to LaunchDarkly: one per that number of events (pseudo-randomly). For instance, setting it to 5 would cause 20% of events to be sent on average.
