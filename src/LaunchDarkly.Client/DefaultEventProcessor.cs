@@ -19,6 +19,7 @@ namespace LaunchDarkly.Client
         private readonly BlockingCollection<IEventMessage> _messageQueue;
         private readonly List<Event> _eventQueue;
         private readonly EventSummarizer _summarizer;
+        private readonly LRUCacheSet<string> _userKeys;
         private readonly Timer _timer1;
         private readonly Timer _timer2;
         private readonly HttpClient _httpClient;
@@ -31,7 +32,8 @@ namespace LaunchDarkly.Client
         internal DefaultEventProcessor(Configuration config)
         {
             _config = config;
-            _summarizer = new EventSummarizer(config);
+            _summarizer = new EventSummarizer();
+            _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
             _httpClient = config.HttpClient();
             _messageQueue = new BlockingCollection<IEventMessage>(_config.EventQueueCapacity);
             _eventQueue = new List<Event>();
@@ -127,7 +129,7 @@ namespace LaunchDarkly.Client
                 }
                 else if (message is FlushUsersMessage)
                 {
-                    _summarizer.ResetUsers();
+                    _userKeys.Clear();
                 }
                 else if (message is ShutdownMessage)
                 {
@@ -140,7 +142,7 @@ namespace LaunchDarkly.Client
         {
             // For each user we haven't seen before, we add an index event - unless this is already
             // an identify event for that user.
-            if (!_config.InlineUsersInEvents && e.User != null && !_summarizer.NoticeUser(e.User))
+            if (!_config.InlineUsersInEvents && e.User != null && !NoticeUser(e.User))
             {
                 if (!(e is IdentifyEvent))
                 {
@@ -180,6 +182,20 @@ namespace LaunchDarkly.Client
                 _eventQueue.Add(e);
                 exceededCapacity = false;
             }
+        }
+
+        /// <summary>
+        /// Adds to the set of users we've noticed, and returns true if the user was already known to us.
+        /// </summary>
+        /// <param name="user">a user</param>
+        /// <returns>true if we've already seen this user</returns>
+        private bool NoticeUser(User user)
+        {
+            if (user == null || user.Key == null)
+            {
+                return false;
+            }
+            return _userKeys.Add(user.Key);
         }
 
         private bool ShouldTrackFullEvent(Event e)

@@ -9,36 +9,12 @@ namespace LaunchDarkly.Client
     internal sealed class EventSummarizer
     {
         private SummaryState _eventsState;
-        private LRUCacheSet<string> _userKeys;
 
-        public EventSummarizer(Configuration config)
+        public EventSummarizer()
         {
             _eventsState = new SummaryState();
-            _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
         }
-
-        /// <summary>
-        /// Adds to the set of users we've noticed, and returns true if the user was already known to us.
-        /// </summary>
-        /// <param name="user">a user</param>
-        /// <returns>true if we've already seen this user</returns>
-        internal bool NoticeUser(User user)
-        {
-            if (user == null || user.Key == null)
-            {
-                return false;
-            }
-            return _userKeys.Add(user.Key);
-        }
-
-        /// <summary>
-        /// Resets the set of users we've seen.
-        /// </summary>
-        internal void ResetUsers()
-        {
-            _userKeys.Clear();
-        }
-
+        
         /// <summary>
         /// Adds this event to our counters, if it is a type of event we need to count.
         /// </summary>

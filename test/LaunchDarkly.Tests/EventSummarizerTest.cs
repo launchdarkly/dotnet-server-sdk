@@ -7,46 +7,13 @@ namespace LaunchDarkly.Tests
 {
     public class EventSummarizerTest
     {
-        private Configuration _config = Configuration.Default("SDK_KEY").WithUserKeysCapacity(100);
         private User _user = new User("key");
         private TestEventFactory _eventFactory = new TestEventFactory();
 
         [Fact]
-        public void NoticeUserReturnsFalseForNeverSeenUser()
-        {
-            EventSummarizer es = new EventSummarizer(_config);
-            Assert.False(es.NoticeUser(_user));
-        }
-
-        [Fact]
-        public void NoticeUserReturnsTrueForPreviouslySeenUser()
-        {
-            EventSummarizer es = new EventSummarizer(_config);
-            es.NoticeUser(_user);
-            User user2 = new User(_user.Key);
-            Assert.True(es.NoticeUser(user2));
-        }
-
-        [Fact]
-        public void OldestUserForgottenIfCapacityExceeded()
-        {
-            _config.WithUserKeysCapacity(2);
-            EventSummarizer es = new EventSummarizer(_config);
-            User user1 = new User("user1");
-            User user2 = new User("user2");
-            User user3 = new User("user3");
-            es.NoticeUser(user1);
-            es.NoticeUser(user2);
-            es.NoticeUser(user3);
-            Assert.True(es.NoticeUser(user3));
-            Assert.True(es.NoticeUser(user2));
-            Assert.False(es.NoticeUser(user1));
-        }
-
-        [Fact]
         public void SummarizeEventDoesNothingForIdentifyEvent()
         {
-            EventSummarizer es = new EventSummarizer(_config);
+            EventSummarizer es = new EventSummarizer();
             SummaryState snapshot = es.Snapshot();
             es.SummarizeEvent(_eventFactory.NewIdentifyEvent(_user));
             SummaryState snapshot2 = es.Snapshot();
@@ -58,7 +25,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SummarizeEventDoesNothingForCustomEvent()
         {
-            EventSummarizer es = new EventSummarizer(_config);
+            EventSummarizer es = new EventSummarizer();
             SummaryState snapshot = es.Snapshot();
             es.SummarizeEvent(_eventFactory.NewCustomEvent("whatever", _user, null));
             SummaryState snapshot2 = es.Snapshot();
@@ -70,7 +37,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SummarizeEventSetsStartAndEndDates()
         {
-            EventSummarizer es = new EventSummarizer(_config);
+            EventSummarizer es = new EventSummarizer();
             FeatureFlag flag = new FeatureFlagBuilder("key").Build();
             _eventFactory.Timestamp = 2000;
             Event event1 = _eventFactory.NewFeatureRequestEvent(flag, _user, null, null, null);
@@ -90,7 +57,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SummarizeEventIncrementsCounters()
         {
-            EventSummarizer es = new EventSummarizer(_config);
+            EventSummarizer es = new EventSummarizer();
             FeatureFlag flag1 = new FeatureFlagBuilder("key1").Build();
             FeatureFlag flag2 = new FeatureFlagBuilder("key2").Build();
             string unknownFlagKey = "badkey";
