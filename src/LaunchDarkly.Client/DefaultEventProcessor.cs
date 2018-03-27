@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -143,9 +142,7 @@ namespace LaunchDarkly.Client
     }
     
     internal class FlushUsersMessage : IEventMessage { }
-
-    internal class ShutdownMessage : IEventMessage { }
-
+    
     internal sealed class EventConsumer : IDisposable
     {
         private readonly Configuration _config;
@@ -412,16 +409,10 @@ namespace LaunchDarkly.Client
             {
                 eventsOut.Add(MakeSummaryEvent(snapshot));
             }
-            if (eventsOut.Count == 0)
-            {
-                return;
-            }
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
-            var jsonEvents = "";
+            var jsonEvents = JsonConvert.SerializeObject(eventsOut, Formatting.None);
             try
             {
-                jsonEvents = JsonConvert.SerializeObject(eventsOut, Formatting.None);
-
                 await SendEventsAsync(jsonEvents, eventsOut.Count, cts);
             }
             catch (Exception e)
@@ -588,29 +579,6 @@ namespace LaunchDarkly.Client
             Default = defaultVal;
             Counters = counters;
         }
-
-        // Used only in tests
-        public override bool Equals(object obj)
-        {
-            if (obj is EventSummaryFlag o)
-            {
-                bool se = Counters.SequenceEqual(o.Counters);
-                return Object.Equals(Default, o.Default) && Counters.SequenceEqual(o.Counters);
-            }
-            return false;
-        }
-
-        // Used only in tests
-        public override int GetHashCode()
-        {
-            return (Default == null ? 0 : Default.GetHashCode()) + 31 * Counters.GetHashCode();
-        }
-
-        // Used only in tests
-        public override string ToString()
-        {
-            return "{" + Default + ", " + String.Join(", ", Counters) + "}";
-        }
     }
 
     internal sealed class EventSummaryCounter
@@ -633,30 +601,6 @@ namespace LaunchDarkly.Client
             {
                 Unknown = true;
             }
-        }
-
-        // Used only in tests
-        public override bool Equals(object obj)
-        {
-            if (obj is EventSummaryCounter o)
-            {
-                return Object.Equals(Value, o.Value) && Version == o.Version && Count == o.Count
-                    && Unknown == o.Unknown;
-            }
-            return false;
-        }
-
-        // Used only in tests
-        public override int GetHashCode()
-        {
-            return (Value == null ? 0 : Value.GetHashCode()) + 31 *
-                (Version.GetHashCode() + 31 * (Count + 31 * Unknown.GetHashCode()));
-        }
-
-        // Used only in tests
-        public override string ToString()
-        {
-            return "{" + Value + ", " + Version + ", " + Count + "}";
         }
     }
 }
