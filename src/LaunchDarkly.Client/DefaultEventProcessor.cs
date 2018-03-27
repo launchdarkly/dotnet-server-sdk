@@ -14,10 +14,13 @@ namespace LaunchDarkly.Client
 {
     internal sealed class DefaultEventProcessor : IEventProcessor
     {
+        internal static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
+
         private readonly BlockingCollection<IEventMessage> _messageQueue;
         private readonly EventConsumer _consumer;
         private readonly Timer _flushTimer;
         private readonly Timer _flushUsersTimer;
+        private int _inputCapacityExceeded = 0;
 
         internal DefaultEventProcessor(Configuration config)
         {
@@ -27,7 +30,6 @@ namespace LaunchDarkly.Client
                 config.EventQueueFrequency);
             _flushUsersTimer = new Timer(DoUserKeysFlush, null, config.UserKeysFlushInterval,
                 config.UserKeysFlushInterval);
-
         }
 
         void IEventProcessor.SendEvent(Event eventToLog)
@@ -49,7 +51,20 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                _messageQueue.Add(message);
+                if (_messageQueue.TryAdd(message))
+                {
+                    Interlocked.Exchange(ref _inputCapacityExceeded, 0);
+                    // this is really just a bool, but Interlocked doesn't support bool
+                }
+                else
+                {
+                    // This doesn't mean that the output event buffer is full, but rather that the main thread is
+                    // seriously backed up with not-yet-processed events. We shouldn't see this.
+                    if (Interlocked.Exchange(ref _inputCapacityExceeded, 1) == 0)
+                    {
+                        Log.Warn("Events are being produced faster than they can be processed");
+                    }
+                }
             }
             catch (InvalidOperationException)
             {
@@ -133,8 +148,6 @@ namespace LaunchDarkly.Client
 
     internal sealed class EventConsumer : IDisposable
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
-
         private readonly Configuration _config;
         private readonly BlockingCollection<IEventMessage> _messageQueue;
         private readonly List<Event> _eventQueue;
@@ -236,7 +249,7 @@ namespace LaunchDarkly.Client
             {
                 if (!exceededCapacity)
                 {
-                    Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                    DefaultEventProcessor.Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
                     exceededCapacity = true;
                 }
             }
@@ -413,7 +426,7 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                Log.DebugFormat("Error sending events: {0} waiting 1 second before retrying.",
+                DefaultEventProcessor.Log.DebugFormat("Error sending events: {0} waiting 1 second before retrying.",
                     e, Util.ExceptionMessage(e));
 
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
@@ -427,19 +440,19 @@ namespace LaunchDarkly.Client
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
-                        Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                        DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
                             tce, _uri.AbsoluteUri, Util.ExceptionMessage(tce));
                     }
                     else
                     {
                         //Otherwise this was a request timeout.
-                        Log.ErrorFormat("Timed out trying to send {0} events after {1}",
+                        DefaultEventProcessor.Log.ErrorFormat("Timed out trying to send {0} events after {1}",
                             tce, eventsOut.Count, _config.HttpClientTimeout);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                    DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
                         ex,
                         _uri.AbsoluteUri,
                          Util.ExceptionMessage(ex));
@@ -450,7 +463,7 @@ namespace LaunchDarkly.Client
 
         private async Task SendEventsAsync(String jsonEvents, int count, CancellationTokenSource cts)
         {
-            Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
+            DefaultEventProcessor.Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                 count, _uri.AbsoluteUri, jsonEvents);
 
             using (var stringContent = new StringContent(jsonEvents, Encoding.UTF8, "application/json"))
@@ -458,18 +471,18 @@ namespace LaunchDarkly.Client
             {
                 if (!response.IsSuccessStatusCode)
                 {
-                    Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                    DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
                         _uri.AbsoluteUri,
                         response.StatusCode);
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
-                        Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
+                        DefaultEventProcessor.Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
                         _disabled = true;
                     }
                 }
                 else
                 {
-                    Log.DebugFormat("Got {0} when sending events.",
+                    DefaultEventProcessor.Log.DebugFormat("Got {0} when sending events.",
                         response.StatusCode);
                     DateTimeOffset? respDate = response.Headers.Date;
                     if (respDate.HasValue)
