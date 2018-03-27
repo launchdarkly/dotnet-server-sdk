@@ -14,76 +14,39 @@ namespace LaunchDarkly.Client
 {
     internal sealed class DefaultEventProcessor : IEventProcessor
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
-
-        private readonly Configuration _config;
         private readonly BlockingCollection<IEventMessage> _messageQueue;
-        private readonly List<Event> _eventQueue;
-        private readonly EventSummarizer _summarizer;
-        private readonly LRUCacheSet<string> _userKeys;
-        private readonly Timer _timer1;
-        private readonly Timer _timer2;
-        private readonly HttpClient _httpClient;
-        private readonly Uri _uri;
-        private readonly Random _random;
-        private bool exceededCapacity;
-        private long _lastKnownPastTime;
-        private volatile bool _shutdown;
+        private readonly EventConsumer _consumer;
+        private readonly Timer _flushTimer;
+        private readonly Timer _flushUsersTimer;
 
         internal DefaultEventProcessor(Configuration config)
         {
-            _config = config;
-            _summarizer = new EventSummarizer();
-            _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
-            _httpClient = config.HttpClient();
-            _messageQueue = new BlockingCollection<IEventMessage>(_config.EventQueueCapacity);
-            _eventQueue = new List<Event>();
-            _timer1 = new Timer(DoBackgroundFlush, null, _config.EventQueueFrequency,
-                _config.EventQueueFrequency);
-            _timer2 = new Timer(DoUserKeysFlush, null, _config.UserKeysFlushInterval,
-                _config.UserKeysFlushInterval);
-            _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
-            _random = new Random();
-            Task.Run(() => RunMainLoop());
-        }
+            _messageQueue = new BlockingCollection<IEventMessage>(config.EventQueueCapacity);
+            _consumer = new EventConsumer(config, _messageQueue);
+            _flushTimer = new Timer(DoBackgroundFlush, null, config.EventQueueFrequency,
+                config.EventQueueFrequency);
+            _flushUsersTimer = new Timer(DoUserKeysFlush, null, config.UserKeysFlushInterval,
+                config.UserKeysFlushInterval);
 
-        private void DoBackgroundFlush(object StateInfo)
-        {
-            SubmitMessage(new FlushMessage());
-        }
-
-        private void DoUserKeysFlush(object StateInfo)
-        {
-            SubmitMessage(new FlushUsersMessage());
         }
 
         void IEventProcessor.SendEvent(Event eventToLog)
         {
-            EventMessage message = new EventMessage
-            {
-                Event = eventToLog
-            };
+            EventMessage message = new EventMessage(eventToLog);
             SubmitMessage(message);
         }
 
         void IEventProcessor.Flush()
         {
-            FlushMessage message = new FlushMessage
-            {
-                Reply = new Semaphore(0, 1)
-            };
+            FlushMessage message = new FlushMessage(true);
             if (SubmitMessage(message))
             {
-                message.Reply.WaitOne();
+                message.WaitForCompletion();
             }
         }
 
         private bool SubmitMessage(IEventMessage message)
         {
-            if (_shutdown)
-            {
-                return false;
-            }
             try
             {
                 _messageQueue.Add(message);
@@ -107,40 +70,139 @@ namespace LaunchDarkly.Client
             if (disposing)
             {
                 ((IEventProcessor)this).Flush();
-                _shutdown = true;
+                ((IDisposable)_consumer).Dispose();
                 _messageQueue.CompleteAdding();
-                _timer1.Dispose();
-                _timer2.Dispose();
+                _flushTimer.Dispose();
+                _flushUsersTimer.Dispose();
                 _messageQueue.Dispose();
             }
         }
         
+        private void DoBackgroundFlush(object StateInfo)
+        {
+            SubmitMessage(new FlushMessage(false));
+        }
+
+        private void DoUserKeysFlush(object StateInfo)
+        {
+            SubmitMessage(new FlushUsersMessage());
+        }
+    }
+
+    internal interface IEventMessage { }
+
+    internal class EventMessage : IEventMessage
+    {
+        internal Event Event { get; private set; }
+
+        internal EventMessage(Event e)
+        {
+            Event = e;
+        }
+    }
+    
+    internal class FlushMessage : IEventMessage
+    {
+        internal readonly Semaphore _reply;
+        
+        internal FlushMessage(bool synchronous)
+        {
+            _reply = synchronous ? new Semaphore(0, 1) : null;
+        }
+        
+        internal void WaitForCompletion()
+        {
+            if (_reply != null)
+            {
+                _reply.WaitOne();
+            }
+        }
+
+        internal void Completed()
+        {
+            if (_reply != null)
+            {
+                _reply.Release();
+            }
+        }
+    }
+    
+    internal class FlushUsersMessage : IEventMessage { }
+
+    internal class ShutdownMessage : IEventMessage { }
+
+    internal sealed class EventConsumer : IDisposable
+    {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
+
+        private readonly Configuration _config;
+        private readonly BlockingCollection<IEventMessage> _messageQueue;
+        private readonly List<Event> _eventQueue;
+        private readonly EventSummarizer _summarizer;
+        private readonly LRUCacheSet<string> _userKeys;
+        private readonly HttpClient _httpClient;
+        private readonly Uri _uri;
+        private readonly Random _random;
+        private bool exceededCapacity;
+        private long _lastKnownPastTime;
+        private volatile bool _shutdown;
+        private volatile bool _disabled;
+
+        internal EventConsumer(Configuration config, BlockingCollection<IEventMessage> messageQueue)
+        {
+            _config = config;
+            _messageQueue = messageQueue;
+            _summarizer = new EventSummarizer();
+            _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
+            _httpClient = config.HttpClient();
+            _eventQueue = new List<Event>();
+            _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
+            _random = new Random();
+            Task.Run(() => RunMainLoop());
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _shutdown = true;
+                _httpClient.Dispose();
+            }
+        }
+
         private void RunMainLoop()
         {
             while (!_shutdown)
             {
                 IEventMessage message = _messageQueue.Take();
-                if (message is EventMessage)
+                if (message is EventMessage em)
                 {
-                    ProcessEvent((message as EventMessage).Event);
+                    ProcessEvent(em.Event);
                 }
-                else if (message is FlushMessage)
+                else if (message is FlushMessage fm)
                 {
-                    DispatchFlush((message as FlushMessage).Reply);
+                    DispatchFlush(fm);
                 }
                 else if (message is FlushUsersMessage)
                 {
                     _userKeys.Clear();
-                }
-                else if (message is ShutdownMessage)
-                {
-                    _shutdown = true;
                 }
             }
         }
 
         private void ProcessEvent(Event e)
         {
+            if (_disabled)
+            {
+                return;
+            }
+
             // For each user we haven't seen before, we add an index event - unless this is already
             // an identify event for that user.
             if (!_config.InlineUsersInEvents && e.User != null && !NoticeUser(e.User))
@@ -300,26 +362,29 @@ namespace LaunchDarkly.Client
         /// Grabs a snapshot of the current internal state, and starts a new thread to send it to the server
         /// (if there's anything to send).
         /// </summary>
-        /// <param name="reply">If non-null, we will use this semaphore to tell the caller when we're done.</param>
-        private void DispatchFlush(Semaphore reply)
+        /// <param name="message">the message that generated this call</param>
+        private void DispatchFlush(FlushMessage message)
         {
+            if (_disabled)
+            {
+                message.Completed();
+                return;
+            }
+
             EventSummary snapshot = _summarizer.Snapshot();
             Event[] events = _eventQueue.ToArray();
             _eventQueue.Clear();
             if (events.Length > 0 || !snapshot.Empty)
             {
-                Task.Run(() => FlushEventsAsync(events, snapshot, reply));
+                Task.Run(() => FlushEventsAsync(events, snapshot, message));
             }
             else
             {
-                if (reply != null)
-                {
-                    reply.Release();
-                }
+                message.Completed();
             }
         }
 
-        private async Task FlushEventsAsync(Event[] events, EventSummary snapshot, Semaphore reply)
+        private async Task FlushEventsAsync(Event[] events, EventSummary snapshot, FlushMessage message)
         {
             List<IEventOutput> eventsOut = new List<IEventOutput>(events.Length + 1);
             foreach (Event e in events)
@@ -380,10 +445,7 @@ namespace LaunchDarkly.Client
                          Util.ExceptionMessage(ex));
                 }
             }
-            if (reply != null)
-            {
-                reply.Release();
-            }
+            message.Completed();
         }
 
         private async Task SendEventsAsync(String jsonEvents, int count, CancellationTokenSource cts)
@@ -402,7 +464,7 @@ namespace LaunchDarkly.Client
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
                         Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
-                        _messageQueue.TryAdd(new ShutdownMessage());
+                        _disabled = true;
                     }
                 }
                 else
@@ -419,22 +481,6 @@ namespace LaunchDarkly.Client
             }
         }
     }
-
-    internal interface IEventMessage { }
-
-    internal class EventMessage : IEventMessage
-    {
-        internal Event Event { get; set; }
-    }
-
-    internal class FlushMessage : IEventMessage
-    {
-        internal Semaphore Reply { get; set; }
-    }
-
-    internal class FlushUsersMessage : IEventMessage { }
-
-    internal class ShutdownMessage : IEventMessage { }
 
     internal interface IEventOutput { }
 

@@ -91,6 +91,7 @@ namespace LaunchDarkly.Client
             Variation = variation;
         }
 
+        // Required because we use this class as a dictionary key
         public override bool Equals(object obj)
         {
             if (obj is EventsCounterKey o)
@@ -100,6 +101,7 @@ namespace LaunchDarkly.Client
             return false;
         }
 
+        // Required because we use this class as a dictionary key
         public override int GetHashCode()
         {
             return Key.GetHashCode() + 31 * (Variation.GetHashCode() + 31 * Version.GetHashCode());
@@ -124,6 +126,7 @@ namespace LaunchDarkly.Client
             Count++;
         }
 
+        // Used only in tests
         public override bool Equals(object obj)
         {
             if (obj is EventsCounterValue o)
@@ -133,12 +136,14 @@ namespace LaunchDarkly.Client
             return false;
         }
 
+        // Used only in tests
         public override int GetHashCode()
         {
             return Count + 31 * ((FlagValue == null ? 0 : FlagValue.GetHashCode()) + 31 *
                 (Default == null ? 0 : Default.GetHashCode()));
         }
 
+        // Used only in tests
         public override string ToString()
         {
             return "{" + Count + ", " + FlagValue + ", " + Default + "}";
