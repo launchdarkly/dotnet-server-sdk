@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -272,6 +273,29 @@ namespace LaunchDarkly.Client
             return null;
         }
 
+        // Transform the summary data into the format used in event sending.
+        private SummaryEventOutput MakeSummaryEvent(EventSummary summary)
+        {
+            Dictionary<string, EventSummaryFlag> flagsOut = new Dictionary<string, EventSummaryFlag>();
+            foreach (KeyValuePair<EventsCounterKey, EventsCounterValue> entry in summary.Counters)
+            {
+                EventSummaryFlag flag;
+                if (!flagsOut.TryGetValue(entry.Key.Key, out flag))
+                {
+                    flag = new EventSummaryFlag(entry.Value.Default, new List<EventSummaryCounter>());
+                    flagsOut[entry.Key.Key] = flag;
+                }
+                flag.Counters.Add(new EventSummaryCounter(entry.Value.FlagValue, entry.Key.Version,
+                    entry.Value.Count));
+            }
+            return new SummaryEventOutput
+            {
+                StartDate = summary.StartDate,
+                EndDate = summary.EndDate,
+                Features = flagsOut
+            };
+        }
+
         /// <summary>
         /// Grabs a snapshot of the current internal state, and starts a new thread to send it to the server
         /// (if there's anything to send).
@@ -279,7 +303,7 @@ namespace LaunchDarkly.Client
         /// <param name="reply">If non-null, we will use this semaphore to tell the caller when we're done.</param>
         private void DispatchFlush(Semaphore reply)
         {
-            SummaryState snapshot = _summarizer.Snapshot();
+            EventSummary snapshot = _summarizer.Snapshot();
             Event[] events = _eventQueue.ToArray();
             _eventQueue.Clear();
             if (events.Length > 0 || !snapshot.Empty)
@@ -295,7 +319,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private async Task FlushEventsAsync(Event[] events, SummaryState snapshot, Semaphore reply)
+        private async Task FlushEventsAsync(Event[] events, EventSummary snapshot, Semaphore reply)
         {
             List<IEventOutput> eventsOut = new List<IEventOutput>(events.Length + 1);
             foreach (Event e in events)
@@ -308,14 +332,7 @@ namespace LaunchDarkly.Client
             }
             if (snapshot.Counters.Count > 0)
             {
-                SummaryOutput summary = _summarizer.Output(snapshot);
-                SummaryEventOutput se = new SummaryEventOutput
-                {
-                    StartDate = summary.StartDate,
-                    EndDate = summary.EndDate,
-                    Features = summary.Features
-                };
-                eventsOut.Add(se);
+                eventsOut.Add(MakeSummaryEvent(snapshot));
             }
             if (eventsOut.Count == 0)
             {
@@ -498,5 +515,89 @@ namespace LaunchDarkly.Client
         internal long EndDate { get; set; }
         [JsonProperty(PropertyName = "features")]
         internal Dictionary<string, EventSummaryFlag> Features;
+    }
+
+    internal sealed class EventSummaryFlag
+    {
+        [JsonProperty(PropertyName = "default")]
+        internal JToken Default { get; private set; }
+        [JsonProperty(PropertyName = "counters")]
+        internal List<EventSummaryCounter> Counters { get; private set; }
+
+        internal EventSummaryFlag(JToken defaultVal, List<EventSummaryCounter> counters)
+        {
+            Default = defaultVal;
+            Counters = counters;
+        }
+
+        // Used only in tests
+        public override bool Equals(object obj)
+        {
+            if (obj is EventSummaryFlag o)
+            {
+                bool se = Counters.SequenceEqual(o.Counters);
+                return Object.Equals(Default, o.Default) && Counters.SequenceEqual(o.Counters);
+            }
+            return false;
+        }
+
+        // Used only in tests
+        public override int GetHashCode()
+        {
+            return (Default == null ? 0 : Default.GetHashCode()) + 31 * Counters.GetHashCode();
+        }
+
+        // Used only in tests
+        public override string ToString()
+        {
+            return "{" + Default + ", " + String.Join(", ", Counters) + "}";
+        }
+    }
+
+    internal sealed class EventSummaryCounter
+    {
+        [JsonProperty(PropertyName = "value")]
+        internal JToken Value { get; private set; }
+        [JsonProperty(PropertyName = "version")]
+        internal int? Version { get; private set; }
+        [JsonProperty(PropertyName = "count")]
+        internal int Count { get; private set; }
+        [JsonProperty(PropertyName = "unknown", NullValueHandling = NullValueHandling.Ignore)]
+        internal bool? Unknown { get; private set; }
+
+        internal EventSummaryCounter(JToken value, int? version, int count)
+        {
+            Value = value;
+            Version = version;
+            Count = count;
+            if (version == null)
+            {
+                Unknown = true;
+            }
+        }
+
+        // Used only in tests
+        public override bool Equals(object obj)
+        {
+            if (obj is EventSummaryCounter o)
+            {
+                return Object.Equals(Value, o.Value) && Version == o.Version && Count == o.Count
+                    && Unknown == o.Unknown;
+            }
+            return false;
+        }
+
+        // Used only in tests
+        public override int GetHashCode()
+        {
+            return (Value == null ? 0 : Value.GetHashCode()) + 31 *
+                (Version.GetHashCode() + 31 * (Count + 31 * Unknown.GetHashCode()));
+        }
+
+        // Used only in tests
+        public override string ToString()
+        {
+            return "{" + Value + ", " + Version + ", " + Count + "}";
+        }
     }
 }

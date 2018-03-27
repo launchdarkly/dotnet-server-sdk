@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
     internal sealed class EventSummarizer
     {
-        private SummaryState _eventsState;
+        private EventSummary _eventsState;
 
         public EventSummarizer()
         {
-            _eventsState = new SummaryState();
+            _eventsState = new EventSummary();
         }
         
         /// <summary>
@@ -32,32 +30,15 @@ namespace LaunchDarkly.Client
         /// Returns a snapshot of the current summarized event data, and resets this state.
         /// </summary>
         /// <returns>the previous event state</returns>
-        internal SummaryState Snapshot()
+        internal EventSummary Snapshot()
         {
-            SummaryState ret = _eventsState;
-            _eventsState = new SummaryState();
+            EventSummary ret = _eventsState;
+            _eventsState = new EventSummary();
             return ret;
-        }
-
-        internal SummaryOutput Output(SummaryState snapshot)
-        {
-            Dictionary<string, EventSummaryFlag> flagsOut = new Dictionary<string, EventSummaryFlag>();
-            foreach (KeyValuePair<EventsCounterKey, EventsCounterValue> entry in snapshot.Counters)
-            {
-                EventSummaryFlag flag;
-                if (!flagsOut.TryGetValue(entry.Key.Key, out flag))
-                {
-                    flag = new EventSummaryFlag(entry.Value.Default, new List<EventSummaryCounter>());
-                    flagsOut[entry.Key.Key] = flag;
-                }
-                flag.Counters.Add(new EventSummaryCounter(entry.Value.FlagValue, entry.Key.Version,
-                    entry.Value.Count));
-            }
-            return new SummaryOutput(snapshot.StartDate, snapshot.EndDate, flagsOut);
         }
     }
 
-    internal sealed class SummaryState
+    internal sealed class EventSummary
     {
         internal Dictionary<EventsCounterKey, EventsCounterValue> Counters { get; } =
             new Dictionary<EventsCounterKey, EventsCounterValue>();
@@ -73,7 +54,7 @@ namespace LaunchDarkly.Client
 
         internal void IncrementCounter(string key, int? variation, int? version, JToken flagValue, JToken defaultVal)
         {
-            EventsCounterKey counterKey = new EventsCounterKey(key, variation, version);
+            EventsCounterKey counterKey = new EventsCounterKey(key, version, variation);
             if (Counters.TryGetValue(counterKey, out EventsCounterValue value))
             {
                 value.Increment();
@@ -100,14 +81,14 @@ namespace LaunchDarkly.Client
     internal sealed class EventsCounterKey
     {
         internal readonly string Key;
-        internal readonly int? Variation;
         internal readonly int? Version;
+        internal readonly int? Variation;
 
-        internal EventsCounterKey(string key, int? variation, int? version)
+        internal EventsCounterKey(string key, int? version, int? variation)
         {
             Key = key;
-            Variation = variation;
             Version = version;
+            Variation = variation;
         }
 
         public override bool Equals(object obj)
@@ -142,106 +123,25 @@ namespace LaunchDarkly.Client
         {
             Count++;
         }
-    }
 
-    internal sealed class EventSummaryFlag
-    {
-        [JsonProperty(PropertyName = "default")]
-        internal JToken Default { get; private set; }
-        [JsonProperty(PropertyName = "counters")]
-        internal List<EventSummaryCounter> Counters { get; private set; }
-
-        internal EventSummaryFlag(JToken defaultVal, List<EventSummaryCounter> counters)
-        {
-            Default = defaultVal;
-            Counters = counters;
-        }
-
-        // Used only in tests
         public override bool Equals(object obj)
         {
-            if (obj is EventSummaryFlag o)
+            if (obj is EventsCounterValue o)
             {
-                bool se = Counters.SequenceEqual(o.Counters);
-                return Object.Equals(Default, o.Default) && Counters.SequenceEqual(o.Counters);
+                return Count == o.Count && Object.Equals(FlagValue, o.FlagValue) && Object.Equals(Default, o.Default);
             }
             return false;
         }
 
-        // Used only in tests
         public override int GetHashCode()
         {
-            return (Default == null ? 0 : Default.GetHashCode()) + 31 * Counters.GetHashCode();
+            return Count + 31 * ((FlagValue == null ? 0 : FlagValue.GetHashCode()) + 31 *
+                (Default == null ? 0 : Default.GetHashCode()));
         }
 
-        // Used only in tests
         public override string ToString()
         {
-            return "{" + Default + ", " + String.Join(", ", Counters) + "}";
-        }
-    }
-
-    internal sealed class EventSummaryCounter
-    {
-        [JsonProperty(PropertyName = "value")]
-        internal JToken Value { get; private set; }
-        [JsonProperty(PropertyName = "version")]
-        internal int? Version { get; private set; }
-        [JsonProperty(PropertyName = "count")]
-        internal int Count { get; private set; }
-        [JsonProperty(PropertyName = "unknown", NullValueHandling = NullValueHandling.Ignore)]
-        internal bool? Unknown { get; private set; }
-
-        internal EventSummaryCounter(JToken value, int? version, int count)
-        {
-            Value = value;
-            Version = version;
-            Count = count;
-            if (version == null)
-            {
-                Unknown = true;
-            }
-        }
-
-        // Used only in tests
-        public override bool Equals(object obj)
-        {
-            if (obj is EventSummaryCounter o)
-            {
-                return Object.Equals(Value, o.Value) && Version == o.Version && Count == o.Count
-                    && Unknown == o.Unknown;
-            }
-            return false;
-        }
-
-        // Used only in tests
-        public override int GetHashCode()
-        {
-            return (Value == null ? 0 : Value.GetHashCode()) + 31 *
-                (Version.GetHashCode() + 31 * (Count + 31 * Unknown.GetHashCode()));
-        }
-
-        // Used only in tests
-        public override string ToString()
-        {
-            return "{" + Value + ", " + Version + ", " + Count + "}";
-        }
-    }
-
-    internal sealed class SummaryOutput
-    {
-        [JsonProperty(PropertyName = "startDate")]
-        internal long StartDate { get; private set; }
-        [JsonProperty(PropertyName = "endDate")]
-        internal long EndDate { get; private set; }
-        [JsonProperty(PropertyName = "features")]
-        internal Dictionary<string, EventSummaryFlag> Features { get; private set; }
-
-        internal SummaryOutput(long startDate, long endDate, Dictionary<string, EventSummaryFlag> features)
-        {
-            StartDate = startDate;
-            EndDate = endDate;
-            Features = features;
+            return "{" + Count + ", " + FlagValue + ", " + Default + "}";
         }
     }
 }
