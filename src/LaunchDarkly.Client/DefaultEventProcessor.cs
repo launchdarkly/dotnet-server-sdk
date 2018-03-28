@@ -19,7 +19,8 @@ namespace LaunchDarkly.Client
         private readonly EventConsumer _consumer;
         private readonly Timer _flushTimer;
         private readonly Timer _flushUsersTimer;
-        private int _inputCapacityExceeded = 0;
+        private AtomicBoolean _stopped;
+        private AtomicBoolean _inputCapacityExceeded;
 
         internal DefaultEventProcessor(Configuration config)
         {
@@ -29,20 +30,42 @@ namespace LaunchDarkly.Client
                 config.EventQueueFrequency);
             _flushUsersTimer = new Timer(DoUserKeysFlush, null, config.UserKeysFlushInterval,
                 config.UserKeysFlushInterval);
+            _stopped = new AtomicBoolean(false);
+            _inputCapacityExceeded = new AtomicBoolean(false);
         }
 
         void IEventProcessor.SendEvent(Event eventToLog)
         {
-            EventMessage message = new EventMessage(eventToLog);
-            SubmitMessage(message);
+            SubmitMessage(new EventMessage(eventToLog));
         }
 
         void IEventProcessor.Flush()
         {
-            FlushMessage message = new FlushMessage(true);
-            if (SubmitMessage(message))
+            SubmitMessage(new FlushMessage());
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                message.WaitForCompletion();
+                if (!_stopped.GetAndSet(true))
+                {
+                    _flushTimer.Dispose();
+                    _flushUsersTimer.Dispose();
+                    SubmitMessage(new FlushMessage());
+                    ShutdownMessage message = new ShutdownMessage();
+                    SubmitMessage(message);
+                    message.WaitForCompletion();
+                    ((IDisposable)_consumer).Dispose();
+                    _messageQueue.CompleteAdding();
+                    _messageQueue.Dispose();
+                }
             }
         }
 
@@ -52,14 +75,13 @@ namespace LaunchDarkly.Client
             {
                 if (_messageQueue.TryAdd(message))
                 {
-                    Interlocked.Exchange(ref _inputCapacityExceeded, 0);
-                    // this is really just a bool, but Interlocked doesn't support bool
+                    _inputCapacityExceeded.GetAndSet(false);
                 }
                 else
                 {
                     // This doesn't mean that the output event buffer is full, but rather that the main thread is
                     // seriously backed up with not-yet-processed events. We shouldn't see this.
-                    if (Interlocked.Exchange(ref _inputCapacityExceeded, 1) == 0)
+                    if (!_inputCapacityExceeded.GetAndSet(true))
                     {
                         Log.Warn("Events are being produced faster than they can be processed");
                     }
@@ -73,33 +95,38 @@ namespace LaunchDarkly.Client
             return true;
         }
 
-        void IDisposable.Dispose()
+        // exposed for testing
+        internal void WaitUntilInactive()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            TestSyncMessage message = new TestSyncMessage();
+            SubmitMessage(message);
+            message.WaitForCompletion();
         }
 
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                ((IEventProcessor)this).Flush();
-                ((IDisposable)_consumer).Dispose();
-                _messageQueue.CompleteAdding();
-                _flushTimer.Dispose();
-                _flushUsersTimer.Dispose();
-                _messageQueue.Dispose();
-            }
-        }
-        
         private void DoBackgroundFlush(object StateInfo)
         {
-            SubmitMessage(new FlushMessage(false));
+            SubmitMessage(new FlushMessage());
         }
 
         private void DoUserKeysFlush(object StateInfo)
         {
             SubmitMessage(new FlushUsersMessage());
+        }
+    }
+
+    internal class AtomicBoolean
+    {
+        internal int _value;
+
+        internal AtomicBoolean(bool value)
+        {
+            _value = value ? 1 : 0;
+        }
+
+        internal bool GetAndSet(bool newValue)
+        {
+            int old = Interlocked.Exchange(ref _value, newValue ? 1 : 0);
+            return old != 0;
         }
     }
 
@@ -114,34 +141,34 @@ namespace LaunchDarkly.Client
             Event = e;
         }
     }
-    
-    internal class FlushMessage : IEventMessage
+
+    internal class FlushMessage : IEventMessage { }
+
+    internal class FlushUsersMessage : IEventMessage { }
+
+    internal class SynchronousMessage : IEventMessage
     {
         internal readonly Semaphore _reply;
         
-        internal FlushMessage(bool synchronous)
+        internal SynchronousMessage()
         {
-            _reply = synchronous ? new Semaphore(0, 1) : null;
+            _reply = new Semaphore(0, 1);
         }
         
         internal void WaitForCompletion()
         {
-            if (_reply != null)
-            {
-                _reply.WaitOne();
-            }
+            _reply.WaitOne();
         }
 
         internal void Completed()
         {
-            if (_reply != null)
-            {
-                _reply.Release();
-            }
+            _reply.Release();
         }
     }
-    
-    internal class FlushUsersMessage : IEventMessage { }
+
+    internal class TestSyncMessage : SynchronousMessage { }
+
+    internal class ShutdownMessage : SynchronousMessage { }
     
     internal sealed class EventConsumer : IDisposable
     {
@@ -150,12 +177,12 @@ namespace LaunchDarkly.Client
         private readonly List<Event> _eventQueue;
         private readonly EventSummarizer _summarizer;
         private readonly LRUCacheSet<string> _userKeys;
+        private readonly CountdownEvent _flushWorkersCounter;
         private readonly HttpClient _httpClient;
         private readonly Uri _uri;
         private readonly Random _random;
         private bool exceededCapacity;
         private long _lastKnownPastTime;
-        private volatile bool _shutdown;
         private volatile bool _disabled;
 
         internal EventConsumer(Configuration config, BlockingCollection<IEventMessage> messageQueue)
@@ -164,6 +191,7 @@ namespace LaunchDarkly.Client
             _messageQueue = messageQueue;
             _summarizer = new EventSummarizer();
             _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
+            _flushWorkersCounter = new CountdownEvent(1);
             _httpClient = config.HttpClient();
             _eventQueue = new List<Event>();
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
@@ -181,29 +209,47 @@ namespace LaunchDarkly.Client
         {
             if (disposing)
             {
-                _shutdown = true;
                 _httpClient.Dispose();
             }
         }
 
         private void RunMainLoop()
         {
-            while (!_shutdown)
+            bool running = true;
+            while (running)
             {
                 IEventMessage message = _messageQueue.Take();
                 if (message is EventMessage em)
                 {
                     ProcessEvent(em.Event);
                 }
-                else if (message is FlushMessage fm)
+                else if (message is FlushMessage)
                 {
-                    DispatchFlush(fm);
+                    StartFlush();
                 }
                 else if (message is FlushUsersMessage)
                 {
                     _userKeys.Clear();
                 }
+                else if (message is TestSyncMessage tm)
+                {
+                    WaitForFlushes();
+                    tm.Completed();
+                }
+                else if (message is ShutdownMessage sm)
+                {
+                    WaitForFlushes();
+                    running = false;
+                    sm.Completed();
+                }
             }
+        }
+
+        private void WaitForFlushes()
+        {
+            _flushWorkersCounter.Signal();
+            _flushWorkersCounter.Wait();
+            _flushWorkersCounter.Reset(1);
         }
 
         private void ProcessEvent(Event e)
@@ -372,12 +418,10 @@ namespace LaunchDarkly.Client
         /// Grabs a snapshot of the current internal state, and starts a new thread to send it to the server
         /// (if there's anything to send).
         /// </summary>
-        /// <param name="message">the message that generated this call</param>
-        private void DispatchFlush(FlushMessage message)
+        private void StartFlush()
         {
             if (_disabled)
             {
-                message.Completed();
                 return;
             }
 
@@ -386,15 +430,12 @@ namespace LaunchDarkly.Client
             _eventQueue.Clear();
             if (events.Length > 0 || !snapshot.Empty)
             {
-                Task.Run(() => FlushEventsAsync(events, snapshot, message));
-            }
-            else
-            {
-                message.Completed();
+                _flushWorkersCounter.AddCount();
+                Task.Run(() => FlushEventsAsync(events, snapshot));
             }
         }
 
-        private async Task FlushEventsAsync(Event[] events, EventSummary snapshot, FlushMessage message)
+        private async Task FlushEventsAsync(Event[] events, EventSummary snapshot)
         {
             List<IEventOutput> eventsOut = new List<IEventOutput>(events.Length + 1);
             foreach (Event e in events)
@@ -449,7 +490,7 @@ namespace LaunchDarkly.Client
                          Util.ExceptionMessage(ex));
                 }
             }
-            message.Completed();
+            _flushWorkersCounter.Signal();
         }
 
         private async Task SendEventsAsync(String jsonEvents, int count, CancellationTokenSource cts)

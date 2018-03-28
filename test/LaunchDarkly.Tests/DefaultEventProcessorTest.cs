@@ -283,6 +283,21 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void FinalFlushIsDoneOnDispose()
+        {
+            _ep = new DefaultEventProcessor(_config);
+            IdentifyEvent e = EventFactory.Default.NewIdentifyEvent(_user);
+            _ep.SendEvent(e);
+
+            PrepareResponse(OkResponse());
+            _ep.Dispose();
+
+            JArray output = GetLastRequest().BodyAsJson as JArray;
+            Assert.Collection(output,
+                item => CheckIdentifyEvent(item, e, _userJson));
+        }
+
+        [Fact]
         public void FlushDoesNothingIfThereAreNoEvents()
         {
             _ep = new DefaultEventProcessor(_config);
@@ -415,12 +430,23 @@ namespace LaunchDarkly.Tests
             return resp.WithHeader("Date", dt.ToString(HttpDateFormat));
         }
 
-        private RequestMessage FlushAndGetRequest(IResponseBuilder resp)
+        private void PrepareResponse(IResponseBuilder resp)
         {
             _server.Given(Request.Create().WithPath("/bulk").UsingPost())
                 .RespondWith(resp);
             _server.ResetLogEntries();
+        }
+
+        private RequestMessage FlushAndGetRequest(IResponseBuilder resp)
+        {
+            PrepareResponse(resp);
             _ep.Flush();
+            ((DefaultEventProcessor)_ep).WaitUntilInactive();
+            return GetLastRequest();
+        }
+
+        private RequestMessage GetLastRequest()
+        {
             foreach (LogEntry le in _server.LogEntries)
             {
                 return le.RequestMessage;
