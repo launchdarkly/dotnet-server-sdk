@@ -31,3 +31,4 @@ jobs:
       - run: dotnet restore
       - run: dotnet build src/LaunchDarkly.Client -f netstandard2.0
       - run: dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
+
