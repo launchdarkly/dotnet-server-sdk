@@ -391,18 +391,7 @@ namespace LaunchDarkly.Client
             using (var stringContent = new StringContent(jsonEvents, Encoding.UTF8, "application/json"))
             using (var response = await _httpClient.PostAsync(_uri, stringContent).ConfigureAwait(false))
             {
-                if (!response.IsSuccessStatusCode)
-                {
-                    DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
-                        _uri.AbsoluteUri,
-                        response.StatusCode);
-                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    {
-                        DefaultEventProcessor.Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
-                        _disabled = true;
-                    }
-                }
-                else
+                if (response.IsSuccessStatusCode)
                 {
                     DefaultEventProcessor.Log.DebugFormat("Got {0} when sending events.",
                         response.StatusCode);
@@ -411,6 +400,17 @@ namespace LaunchDarkly.Client
                     {
                         Interlocked.Exchange(ref _lastKnownPastTime,
                             Util.GetUnixTimestampMillis(respDate.Value.DateTime));
+                    }
+                }
+                else
+                {
+                    DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
+                        _uri.AbsoluteUri,
+                        response.StatusCode);
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        DefaultEventProcessor.Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
+                        _disabled = true;
                     }
                 }
             }
