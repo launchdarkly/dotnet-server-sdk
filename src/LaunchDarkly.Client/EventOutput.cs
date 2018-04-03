@@ -68,8 +68,6 @@ namespace LaunchDarkly.Client
 
     internal sealed class SummaryEventOutput : EventOutput
     {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "summary";
         [JsonProperty(PropertyName = "startDate")]
         internal long StartDate { get; set; }
         [JsonProperty(PropertyName = "endDate")]

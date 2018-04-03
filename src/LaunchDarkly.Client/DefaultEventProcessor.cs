@@ -172,6 +172,8 @@ namespace LaunchDarkly.Client
     
     internal sealed class EventDispatcher : IDisposable
     {
+        private static readonly int MaxFlushWorkers = 5;
+
         private readonly Configuration _config;
         private readonly LRUCacheSet<string> _userKeys;
         private readonly CountdownEvent _flushWorkersCounter;
@@ -330,8 +332,20 @@ namespace LaunchDarkly.Client
             FlushPayload payload = buffer.GetPayload();
             if (payload.Events.Length > 0 || !payload.Summary.Empty)
             {
+                lock (_flushWorkersCounter)
+                {
+                    // Note that this counter will be 1, not 0, when there are no active flush workers.
+                    // This is because a .NET CountdownEvent can't be reused without explicitly resetting
+                    // it once it has gone to zero.
+                    if (_flushWorkersCounter.CurrentCount >= MaxFlushWorkers + 1)
+                    {
+                        // We already have too many workers, so just leave the events as is
+                        return;
+                    }
+                    // We haven't hit the limit, we'll go ahead and start a flush task
+                    _flushWorkersCounter.AddCount(1);
+                }
                 buffer.Clear();
-                _flushWorkersCounter.AddCount();
                 Task.Run(() => FlushEventsAsync(payload));
             }
         }
