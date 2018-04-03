@@ -275,7 +275,9 @@ namespace LaunchDarkly.Client
 
             if (ShouldTrackFullEvent(e))
             {
-                // Sampling interval applies only to fully-tracked events.
+                // Sampling interval applies only to fully-tracked events. Note that we don't have to
+                // worry about thread-safety of Random here because this method is only executed on a
+                // single thread.
                 if (_config.EventSamplingInterval > 1 && _random.Next(_config.EventSamplingInterval) != 0)
                 {
                     return;
@@ -342,78 +344,6 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private IEventOutput MakeEventOutput(Event e)
-        {
-            if (e is FeatureRequestEvent fe)
-            {
-                bool debug = !fe.TrackEvents && fe.DebugEventsUntilDate != null;
-                return new FeatureRequestEventOutput
-                {
-                    Kind = debug ? "debug" : "feature",
-                    CreationDate = fe.CreationDate,
-                    Key = fe.Key,
-                    User = _config.InlineUsersInEvents ? EventUser.FromUser(fe.User, _config) : null,
-                    UserKey = _config.InlineUsersInEvents ? null : fe.User.Key,
-                    Version = fe.Version,
-                    Value = fe.Value,
-                    Default = fe.Default,
-                    PrereqOf = fe.PrereqOf
-                };
-            }
-            else if (e is IdentifyEvent)
-            {
-                return new IdentifyEventOutput
-                {
-                    CreationDate = e.CreationDate,
-                    Key = e.User.Key,
-                    User = EventUser.FromUser(e.User, _config)
-                };
-            }
-            else if (e is CustomEvent ce)
-            {
-                return new CustomEventOutput
-                {
-                    CreationDate = ce.CreationDate,
-                    Key = ce.Key,
-                    User = _config.InlineUsersInEvents ? EventUser.FromUser(ce.User, _config) : null,
-                    UserKey = _config.InlineUsersInEvents ? null : ce.User.Key,
-                    Data = ce.Data
-                };
-            }
-            else if (e is IndexEvent)
-            {
-                return new IndexEventOutput
-                {
-                    CreationDate = e.CreationDate,
-                    User = EventUser.FromUser(e.User, _config)
-                };
-            }
-            return null;
-        }
-
-        // Transform the summary data into the format used in event sending.
-        private SummaryEventOutput MakeSummaryEvent(EventSummary summary)
-        {
-            Dictionary<string, EventSummaryFlag> flagsOut = new Dictionary<string, EventSummaryFlag>();
-            foreach (KeyValuePair<EventsCounterKey, EventsCounterValue> entry in summary.Counters)
-            {
-                EventSummaryFlag flag;
-                if (!flagsOut.TryGetValue(entry.Key.Key, out flag))
-                {
-                    flag = new EventSummaryFlag(entry.Value.Default, new List<EventSummaryCounter>());
-                    flagsOut[entry.Key.Key] = flag;
-                }
-                flag.Counters.Add(new EventSummaryCounter(entry.Value.FlagValue, entry.Key.Version,
-                    entry.Value.Count));
-            }
-            return new SummaryEventOutput
-            {
-                StartDate = summary.StartDate,
-                EndDate = summary.EndDate,
-                Features = flagsOut
-            };
-        }
-
         /// <summary>
         /// Grabs a snapshot of the current internal state, and starts a new thread to send it to the server
         /// (if there's anything to send).
@@ -437,19 +367,8 @@ namespace LaunchDarkly.Client
 
         private async Task FlushEventsAsync(Event[] events, EventSummary snapshot)
         {
-            List<IEventOutput> eventsOut = new List<IEventOutput>(events.Length + 1);
-            foreach (Event e in events)
-            {
-                IEventOutput eo = MakeEventOutput(e);
-                if (eo != null)
-                {
-                    eventsOut.Add(eo);
-                }
-            }
-            if (snapshot.Counters.Count > 0)
-            {
-                eventsOut.Add(MakeSummaryEvent(snapshot));
-            }
+            EventOutputFormatter formatter = new EventOutputFormatter(_config);
+            List<EventOutput> eventsOut = formatter.MakeOutputEvents(events, snapshot);
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
             var jsonEvents = JsonConvert.SerializeObject(eventsOut, Formatting.None);
             try
@@ -497,7 +416,7 @@ namespace LaunchDarkly.Client
         {
             DefaultEventProcessor.Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                 count, _uri.AbsoluteUri, jsonEvents);
-
+            
             using (var stringContent = new StringContent(jsonEvents, Encoding.UTF8, "application/json"))
             using (var response = await _httpClient.PostAsync(_uri, stringContent).ConfigureAwait(false))
             {
@@ -523,124 +442,6 @@ namespace LaunchDarkly.Client
                             Util.GetUnixTimestampMillis(respDate.Value.DateTime));
                     }
                 }
-            }
-        }
-    }
-
-    internal interface IEventOutput { }
-
-    internal class FeatureRequestEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; }
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "key")]
-        internal string Key { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-        [JsonProperty(PropertyName = "userKey", NullValueHandling = NullValueHandling.Ignore)]
-        internal string UserKey { get; set; }
-        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
-        internal int? Version { get; set; }
-        [JsonProperty(PropertyName = "value")]
-        internal JToken Value { get; set; }
-        [JsonProperty(PropertyName = "default", NullValueHandling = NullValueHandling.Ignore)]
-        internal JToken Default { get; set; }
-        [JsonProperty(PropertyName = "prereqOf", NullValueHandling = NullValueHandling.Ignore)]
-        internal string PrereqOf { get; set; }
-    }
-
-    internal class IdentifyEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "identify";
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "key")]
-        internal string Key { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-    }
-
-    internal class CustomEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "custom";
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "key")]
-        internal string Key { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-        [JsonProperty(PropertyName = "userKey", NullValueHandling = NullValueHandling.Ignore)]
-        internal string UserKey { get; set; }
-        [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
-        internal JToken Data { get; set; }
-    }
-
-    internal class IndexEvent : Event
-    {
-        internal IndexEvent(long creationDate, User user) :
-            base(creationDate, user.Key, user)
-        { }
-    }
-
-    internal class IndexEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "index";
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-    }
-
-    internal class SummaryEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "summary";
-        [JsonProperty(PropertyName = "startDate")]
-        internal long StartDate { get; set; }
-        [JsonProperty(PropertyName = "endDate")]
-        internal long EndDate { get; set; }
-        [JsonProperty(PropertyName = "features")]
-        internal Dictionary<string, EventSummaryFlag> Features;
-    }
-
-    internal sealed class EventSummaryFlag
-    {
-        [JsonProperty(PropertyName = "default")]
-        internal JToken Default { get; private set; }
-        [JsonProperty(PropertyName = "counters")]
-        internal List<EventSummaryCounter> Counters { get; private set; }
-
-        internal EventSummaryFlag(JToken defaultVal, List<EventSummaryCounter> counters)
-        {
-            Default = defaultVal;
-            Counters = counters;
-        }
-    }
-
-    internal sealed class EventSummaryCounter
-    {
-        [JsonProperty(PropertyName = "value")]
-        internal JToken Value { get; private set; }
-        [JsonProperty(PropertyName = "version")]
-        internal int? Version { get; private set; }
-        [JsonProperty(PropertyName = "count")]
-        internal int Count { get; private set; }
-        [JsonProperty(PropertyName = "unknown", NullValueHandling = NullValueHandling.Ignore)]
-        internal bool? Unknown { get; private set; }
-
-        internal EventSummaryCounter(JToken value, int? version, int count)
-        {
-            Value = value;
-            Version = version;
-            Count = count;
-            if (version == null)
-            {
-                Unknown = true;
             }
         }
     }

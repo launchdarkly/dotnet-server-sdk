@@ -118,4 +118,15 @@ namespace LaunchDarkly.Client
         {
         }
     }
+
+    /// <summary>
+    /// An analytics event generated internally to capture user details from another event.
+    /// </summary>
+    internal class IndexEvent : Event
+    {
+        internal IndexEvent(long creationDate, User user) :
+            base(creationDate, user.Key, user)
+        { }
+    }
+
 }
