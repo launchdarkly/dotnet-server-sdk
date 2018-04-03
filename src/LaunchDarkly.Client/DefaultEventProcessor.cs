@@ -362,7 +362,7 @@ namespace LaunchDarkly.Client
             }
             catch (Exception e)
             {
-                DefaultEventProcessor.Log.DebugFormat("Error sending events: {0} waiting 1 second before retrying.",
+                DefaultEventProcessor.Log.DebugFormat("Error sending events: {0}; waiting 1 second before retrying.",
                     e, Util.ExceptionMessage(e));
 
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
@@ -376,7 +376,7 @@ namespace LaunchDarkly.Client
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
-                        DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                        DefaultEventProcessor.Log.ErrorFormat("Error submitting events using uri: '{0}' '{1}'",
                             tce, _uri.AbsoluteUri, Util.ExceptionMessage(tce));
                     }
                     else
@@ -388,7 +388,7 @@ namespace LaunchDarkly.Client
                 }
                 catch (Exception ex)
                 {
-                    DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                    DefaultEventProcessor.Log.ErrorFormat("Error submitting events using uri: '{0}' '{1}'",
                         ex,
                         _uri.AbsoluteUri,
                          Util.ExceptionMessage(ex));
@@ -401,14 +401,16 @@ namespace LaunchDarkly.Client
         {
             DefaultEventProcessor.Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                 count, _uri.AbsoluteUri, jsonEvents);
-            
+
+            Stopwatch timer = new Stopwatch();
             using (var stringContent = new StringContent(jsonEvents, Encoding.UTF8, "application/json"))
             using (var response = await _httpClient.PostAsync(_uri, stringContent).ConfigureAwait(false))
             {
+                timer.Stop();
+                DefaultEventProcessor.Log.DebugFormat("Event delivery took {0} ms, response status {1}",
+                    response.StatusCode, timer.ElapsedMilliseconds);
                 if (response.IsSuccessStatusCode)
                 {
-                    DefaultEventProcessor.Log.DebugFormat("Got {0} when sending events.",
-                        response.StatusCode);
                     DateTimeOffset? respDate = response.Headers.Date;
                     if (respDate.HasValue)
                     {
@@ -418,8 +420,7 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    DefaultEventProcessor.Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
-                        _uri.AbsoluteUri,
+                    DefaultEventProcessor.Log.WarnFormat("Unexpected response status when posting events: {0}",
                         response.StatusCode);
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
