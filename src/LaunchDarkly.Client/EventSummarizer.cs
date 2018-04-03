@@ -13,10 +13,7 @@ namespace LaunchDarkly.Client
             _eventsState = new EventSummary();
         }
         
-        /// <summary>
-        /// Adds this event to our counters, if it is a type of event we need to count.
-        /// </summary>
-        /// <param name="e">an event</param>
+        // Adds this event to our counters, if it is a type of event we need to count.
         internal void SummarizeEvent(Event e)
         {
             if (e is FeatureRequestEvent fe)
@@ -26,15 +23,17 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <summary>
-        /// Returns a snapshot of the current summarized event data, and resets this state.
-        /// </summary>
-        /// <returns>the previous event state</returns>
+        // Returns the current summarized event data.
         internal EventSummary Snapshot()
         {
             EventSummary ret = _eventsState;
             _eventsState = new EventSummary();
             return ret;
+        }
+
+        internal void Clear()
+        {
+            _eventsState = new EventSummary();
         }
     }
 

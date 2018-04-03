@@ -16,7 +16,7 @@ namespace LaunchDarkly.Client
         internal static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
 
         private readonly BlockingCollection<IEventMessage> _messageQueue;
-        private readonly EventConsumer _consumer;
+        private readonly EventDispatcher _dispatcher;
         private readonly Timer _flushTimer;
         private readonly Timer _flushUsersTimer;
         private AtomicBoolean _stopped;
@@ -25,7 +25,7 @@ namespace LaunchDarkly.Client
         internal DefaultEventProcessor(Configuration config)
         {
             _messageQueue = new BlockingCollection<IEventMessage>(config.EventQueueCapacity);
-            _consumer = new EventConsumer(config, _messageQueue);
+            _dispatcher = new EventDispatcher(config, _messageQueue);
             _flushTimer = new Timer(DoBackgroundFlush, null, config.EventQueueFrequency,
                 config.EventQueueFrequency);
             _flushUsersTimer = new Timer(DoUserKeysFlush, null, config.UserKeysFlushInterval,
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Client
                     ShutdownMessage message = new ShutdownMessage();
                     SubmitMessage(message);
                     message.WaitForCompletion();
-                    ((IDisposable)_consumer).Dispose();
+                    ((IDisposable)_dispatcher).Dispose();
                     _messageQueue.CompleteAdding();
                     _messageQueue.Dispose();
                 }
@@ -170,33 +170,29 @@ namespace LaunchDarkly.Client
 
     internal class ShutdownMessage : SynchronousMessage { }
     
-    internal sealed class EventConsumer : IDisposable
+    internal sealed class EventDispatcher : IDisposable
     {
         private readonly Configuration _config;
-        private readonly BlockingCollection<IEventMessage> _messageQueue;
-        private readonly List<Event> _eventQueue;
-        private readonly EventSummarizer _summarizer;
         private readonly LRUCacheSet<string> _userKeys;
         private readonly CountdownEvent _flushWorkersCounter;
         private readonly HttpClient _httpClient;
         private readonly Uri _uri;
         private readonly Random _random;
-        private bool exceededCapacity;
         private long _lastKnownPastTime;
         private volatile bool _disabled;
 
-        internal EventConsumer(Configuration config, BlockingCollection<IEventMessage> messageQueue)
+        internal EventDispatcher(Configuration config, BlockingCollection<IEventMessage> messageQueue)
         {
             _config = config;
-            _messageQueue = messageQueue;
-            _summarizer = new EventSummarizer();
             _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
             _flushWorkersCounter = new CountdownEvent(1);
             _httpClient = config.HttpClient();
-            _eventQueue = new List<Event>();
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             _random = new Random();
-            Task.Run(() => RunMainLoop());
+
+            EventBuffer buffer = new EventBuffer(config.EventQueueCapacity);
+
+            Task.Run(() => RunMainLoop(messageQueue, buffer));
         }
 
         void IDisposable.Dispose()
@@ -213,19 +209,19 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private void RunMainLoop()
+        private void RunMainLoop(BlockingCollection<IEventMessage> messageQueue, EventBuffer buffer)
         {
             bool running = true;
             while (running)
             {
-                IEventMessage message = _messageQueue.Take();
+                IEventMessage message = messageQueue.Take();
                 if (message is EventMessage em)
                 {
-                    ProcessEvent(em.Event);
+                    ProcessEvent(em.Event, buffer);
                 }
                 else if (message is FlushMessage)
                 {
-                    StartFlush();
+                    StartFlush(buffer);
                 }
                 else if (message is FlushUsersMessage)
                 {
@@ -247,12 +243,13 @@ namespace LaunchDarkly.Client
 
         private void WaitForFlushes()
         {
-            _flushWorkersCounter.Signal();
-            _flushWorkersCounter.Wait();
+            // Our CountdownEvent was initialized with a count of 1, so that's the lowest it can be at this point.
+            _flushWorkersCounter.Signal(); // Drop the count to zero if there are no active flush tasks.
+            _flushWorkersCounter.Wait();   // Wait until it is zero.
             _flushWorkersCounter.Reset(1);
         }
 
-        private void ProcessEvent(Event e)
+        private void ProcessEvent(Event e, EventBuffer buffer)
         {
             if (_disabled)
             {
@@ -266,12 +263,12 @@ namespace LaunchDarkly.Client
                 if (!(e is IdentifyEvent))
                 {
                     IndexEvent ie = new IndexEvent(e.CreationDate, e.User);
-                    QueueEvent(ie);
+                    buffer.AddEvent(ie);
                 }
             }
 
             // Always record the event in the summarizer.
-            _summarizer.SummarizeEvent(e);
+            buffer.AddToSummary(e);
 
             if (ShouldTrackFullEvent(e))
             {
@@ -284,32 +281,11 @@ namespace LaunchDarkly.Client
                 }
                 // Queue the event as-is; we'll transform it into an output event when we're flushing
                 // (to avoid doing that work on our main thread).
-                QueueEvent(e);
+                buffer.AddEvent(e);
             }
         }
 
-        private void QueueEvent(Event e)
-        {
-            if (_eventQueue.Count >= _config.EventQueueCapacity)
-            {
-                if (!exceededCapacity)
-                {
-                    DefaultEventProcessor.Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
-                    exceededCapacity = true;
-                }
-            }
-            else
-            {
-                _eventQueue.Add(e);
-                exceededCapacity = false;
-            }
-        }
-
-        /// <summary>
-        /// Adds to the set of users we've noticed, and returns true if the user was already known to us.
-        /// </summary>
-        /// <param name="user">a user</param>
-        /// <returns>true if we've already seen this user</returns>
+        // Adds to the set of users we've noticed, and returns true if the user was already known to us.
         private bool NoticeUser(User user)
         {
             if (user == null || user.Key == null)
@@ -344,31 +320,26 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <summary>
-        /// Grabs a snapshot of the current internal state, and starts a new thread to send it to the server
-        /// (if there's anything to send).
-        /// </summary>
-        private void StartFlush()
+        // Grabs a snapshot of the current internal state, and starts a new task to send it to the server.
+        private void StartFlush(EventBuffer buffer)
         {
             if (_disabled)
             {
                 return;
             }
-
-            EventSummary snapshot = _summarizer.Snapshot();
-            Event[] events = _eventQueue.ToArray();
-            _eventQueue.Clear();
-            if (events.Length > 0 || !snapshot.Empty)
+            FlushPayload payload = buffer.GetPayload();
+            if (payload.Events.Length > 0 || !payload.Summary.Empty)
             {
+                buffer.Clear();
                 _flushWorkersCounter.AddCount();
-                Task.Run(() => FlushEventsAsync(events, snapshot));
+                Task.Run(() => FlushEventsAsync(payload));
             }
         }
 
-        private async Task FlushEventsAsync(Event[] events, EventSummary snapshot)
+        private async Task FlushEventsAsync(FlushPayload payload)
         {
             EventOutputFormatter formatter = new EventOutputFormatter(_config);
-            List<EventOutput> eventsOut = formatter.MakeOutputEvents(events, snapshot);
+            List<EventOutput> eventsOut = formatter.MakeOutputEvents(payload.Events, payload.Summary);
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
             var jsonEvents = JsonConvert.SerializeObject(eventsOut, Formatting.None);
             try
@@ -443,6 +414,60 @@ namespace LaunchDarkly.Client
                     }
                 }
             }
+        }
+    }
+
+    internal sealed class FlushPayload
+    {
+        internal Event[] Events { get; set; }
+        internal EventSummary Summary { get; set; }
+    }
+
+    internal sealed class EventBuffer
+    {
+        private readonly List<Event> _events;
+        private readonly EventSummarizer _summarizer;
+        private int _capacity;
+        private bool _exceededCapacity;
+
+        internal EventBuffer(int capacity)
+        {
+            _capacity = capacity;
+            _events = new List<Event>();
+            _summarizer = new EventSummarizer();
+        }
+
+        internal void AddEvent(Event e)
+        {
+            if (_events.Count >= _capacity)
+            {
+                if (!_exceededCapacity)
+                {
+                    DefaultEventProcessor.Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                    _exceededCapacity = true;
+                }
+            }
+            else
+            {
+                _events.Add(e);
+                _exceededCapacity = false;
+            }
+        }
+
+        internal void AddToSummary(Event e)
+        {
+            _summarizer.SummarizeEvent(e);
+        }
+
+        internal FlushPayload GetPayload()
+        {
+            return new FlushPayload { Events = _events.ToArray(), Summary = _summarizer.Snapshot() };
+        }
+
+        internal void Clear()
+        {
+            _events.Clear();
+            _summarizer.Clear();
         }
     }
 }
