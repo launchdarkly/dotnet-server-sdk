@@ -18,7 +18,7 @@ jobs:
       - run: dotnet restore
       - run: dotnet build src/LaunchDarkly.Client -f netstandard1.4
       - run: dotnet build src/LaunchDarkly.Client -f netstandard1.6
-      - run: dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
+      - run: dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f netcoreapp1.1
   test-2.0:
     docker:
       - image: microsoft/dotnet:2.0-sdk-jessie
@@ -30,5 +30,5 @@ jobs:
       - run: aws s3 cp s3://launchdarkly-pastebin/ci/dotnet/LaunchDarkly.snk LaunchDarkly.snk
       - run: dotnet restore
       - run: dotnet build src/LaunchDarkly.Client -f netstandard2.0
-      - run: dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
+      - run: dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f netcoreapp2.0
 
