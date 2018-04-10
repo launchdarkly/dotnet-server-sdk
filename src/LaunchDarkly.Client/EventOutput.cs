@@ -144,14 +144,14 @@ namespace LaunchDarkly.Client
         {
             if (e is FeatureRequestEvent fe)
             {
-                bool debug = !fe.TrackEvents && fe.DebugEventsUntilDate != null;
+                bool inlineUser = _config.InlineUsersInEvents || fe.Debug;
                 return new FeatureRequestEventOutput
                 {
-                    Kind = debug ? "debug" : "feature",
+                    Kind = fe.Debug ? "debug" : "feature",
                     CreationDate = fe.CreationDate,
                     Key = fe.Key,
-                    User = _config.InlineUsersInEvents ? EventUser.FromUser(fe.User, _config) : null,
-                    UserKey = _config.InlineUsersInEvents ? null : fe.User.Key,
+                    User = inlineUser ? EventUser.FromUser(fe.User, _config) : null,
+                    UserKey = inlineUser ? null : fe.User.Key,
                     Version = fe.Version,
                     Value = fe.Value,
                     Default = fe.Default,

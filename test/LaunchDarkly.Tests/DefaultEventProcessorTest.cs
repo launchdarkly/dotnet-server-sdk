@@ -128,6 +128,22 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void IndexEventIsStillGeneratedIfInlineUsersIsTrueButFeatureEventIsNotTracked()
+        {
+            _config.WithInlineUsersInEvents(true);
+            _ep = new DefaultEventProcessor(_config);
+            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(false).Build();
+            FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
+                1, new JValue("value"), null);
+            _ep.SendEvent(fe);
+
+            JArray output = FlushAndGetEvents(OkResponse());
+            Assert.Collection(output,
+                item => CheckIndexEvent(item, fe, _userJson),
+                item => CheckSummaryEvent(item));
+        }
+
+        [Fact]
         public void EventKindIsDebugIfFlagIsTemporarilyInDebugMode()
         {
             _ep = new DefaultEventProcessor(_config);
@@ -140,7 +156,26 @@ namespace LaunchDarkly.Tests
             JArray output = FlushAndGetEvents(OkResponse());
             Assert.Collection(output,
                 item => CheckIndexEvent(item, fe, _userJson),
-                item => CheckFeatureEvent(item, fe, flag, true, null),
+                item => CheckFeatureEvent(item, fe, flag, true, _userJson),
+                item => CheckSummaryEvent(item));
+        }
+
+        [Fact]
+        public void EventCanBeBothTrackedAndDebugged()
+        {
+            _ep = new DefaultEventProcessor(_config);
+            long futureTime = Util.GetUnixTimestampMillis(DateTime.Now) + 1000000;
+            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(true)
+                .DebugEventsUntilDate(futureTime).Build();
+            FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
+                1, new JValue("value"), null);
+            _ep.SendEvent(fe);
+
+            JArray output = FlushAndGetEvents(OkResponse());
+            Assert.Collection(output,
+                item => CheckIndexEvent(item, fe, _userJson),
+                item => CheckFeatureEvent(item, fe, flag, false, null),
+                item => CheckFeatureEvent(item, fe, flag, true, _userJson),
                 item => CheckSummaryEvent(item));
         }
 

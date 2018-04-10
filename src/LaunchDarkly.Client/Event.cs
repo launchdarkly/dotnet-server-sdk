@@ -73,13 +73,18 @@ namespace LaunchDarkly.Client
         public bool TrackEvents { get; private set; }
 
         /// <summary>
-        /// If set, full-fidelity analytics events are being captured until this date/time.
+        /// If set, debug events are being generated until this date/time.
         /// </summary>
         public long? DebugEventsUntilDate { get; private set; }
 
+        /// <summary>
+        /// If set, this is a debug event.
+        /// </summary>
+        public bool Debug { get; private set; }
+
         internal FeatureRequestEvent(long creationDate, string key, User user, int? variation,
-            JToken value, JToken defaultValue, int? version, string prereqOf, bool trackEvents, long? debugEventsUntilDate) :
-            base(creationDate, key, user)
+            JToken value, JToken defaultValue, int? version, string prereqOf, bool trackEvents, long? debugEventsUntilDate,
+            bool debug) : base(creationDate, key, user)
         {
             Variation = variation;
             Value = value;
@@ -88,6 +93,7 @@ namespace LaunchDarkly.Client
             PrereqOf = prereqOf;
             TrackEvents = trackEvents;
             DebugEventsUntilDate = debugEventsUntilDate;
+            Debug = debug;
         }
     }
 

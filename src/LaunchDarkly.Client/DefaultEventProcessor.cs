@@ -258,32 +258,50 @@ namespace LaunchDarkly.Client
                 return;
             }
 
-            // For each user we haven't seen before, we add an index event - unless this is already
-            // an identify event for that user.
-            if (!_config.InlineUsersInEvents && e.User != null && !NoticeUser(e.User))
-            {
-                if (!(e is IdentifyEvent))
-                {
-                    IndexEvent ie = new IndexEvent(e.CreationDate, e.User);
-                    buffer.AddEvent(ie);
-                }
-            }
-
             // Always record the event in the summarizer.
             buffer.AddToSummary(e);
 
-            if (ShouldTrackFullEvent(e))
+            // Decide whether to add the event to the payload. Feature events may be added twice, once for
+            // the event (if tracked) and once for debugging.
+            bool willAddFullEvent = false;
+            Event debugEvent = null;
+            if (e is FeatureRequestEvent fe)
             {
-                // Sampling interval applies only to fully-tracked events. Note that we don't have to
-                // worry about thread-safety of Random here because this method is only executed on a
-                // single thread.
-                if (_config.EventSamplingInterval > 1 && _random.Next(_config.EventSamplingInterval) != 0)
+                if (ShouldSampleEvent())
                 {
-                    return;
+                    willAddFullEvent = fe.TrackEvents;
+                    if (ShouldDebugEvent(fe))
+                    {
+                        debugEvent = EventFactory.Default.NewDebugEvent(fe);
+                    }
                 }
-                // Queue the event as-is; we'll transform it into an output event when we're flushing
-                // (to avoid doing that work on our main thread).
+            }
+            else
+            {
+                willAddFullEvent = ShouldSampleEvent();
+            }
+
+            // For each user we haven't seen before, we add an index event - unless this is already
+            // an identify event for that user.
+            if (!(willAddFullEvent && _config.InlineUsersInEvents))
+            {
+                if (e.User != null && !NoticeUser(e.User))
+                {
+                    if (!(e is IdentifyEvent))
+                    {
+                        IndexEvent ie = new IndexEvent(e.CreationDate, e.User);
+                        buffer.AddEvent(ie);
+                    }
+                }
+            }
+
+            if (willAddFullEvent)
+            {
                 buffer.AddEvent(e);
+            }
+            if (debugEvent != null)
+            {
+                buffer.AddEvent(debugEvent);
             }
         }
 
@@ -295,6 +313,28 @@ namespace LaunchDarkly.Client
                 return false;
             }
             return _userKeys.Add(user.Key);
+        }
+
+        private bool ShouldDebugEvent(FeatureRequestEvent fe)
+        {
+            if (fe.DebugEventsUntilDate != null)
+            {
+                long lastPast = Interlocked.Read(ref _lastKnownPastTime);
+                if (fe.DebugEventsUntilDate > lastPast &&
+                    fe.DebugEventsUntilDate > Util.GetUnixTimestampMillis(DateTime.Now))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool ShouldSampleEvent()
+        {
+            // Sampling interval applies only to fully-tracked events. Note that we don't have to
+            // worry about thread-safety of Random here because this method is only executed on a
+            // single thread.
+            return _config.EventSamplingInterval <= 0 || _random.Next(_config.EventSamplingInterval) == 0;
         }
 
         private bool ShouldTrackFullEvent(Event e)
