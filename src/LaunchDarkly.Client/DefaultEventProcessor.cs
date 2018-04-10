@@ -1,47 +1,106 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
     internal sealed class DefaultEventProcessor : IEventProcessor
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
+        internal static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
 
-        private readonly Configuration _config;
         private readonly BlockingCollection<IEventMessage> _messageQueue;
-        private readonly List<Event> _eventQueue;
-        private readonly EventSummarizer _summarizer;
-        private readonly Timer _timer1;
-        private readonly Timer _timer2;
-        private readonly HttpClient _httpClient;
-        private readonly Uri _uri;
-        private readonly Random _random;
-        private bool exceededCapacity;
-        private long _lastKnownPastTime;
-        private volatile bool _shutdown;
+        private readonly EventDispatcher _dispatcher;
+        private readonly Timer _flushTimer;
+        private readonly Timer _flushUsersTimer;
+        private AtomicBoolean _stopped;
+        private AtomicBoolean _inputCapacityExceeded;
 
         internal DefaultEventProcessor(Configuration config)
         {
-            _config = config;
-            _summarizer = new EventSummarizer(config);
-            _httpClient = config.HttpClient();
-            _messageQueue = new BlockingCollection<IEventMessage>(_config.EventQueueCapacity);
-            _eventQueue = new List<Event>();
-            _timer1 = new Timer(DoBackgroundFlush, null, _config.EventQueueFrequency,
-                _config.EventQueueFrequency);
-            _timer2 = new Timer(DoUserKeysFlush, null, _config.UserKeysFlushInterval,
-                _config.UserKeysFlushInterval);
-            _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
-            _random = new Random();
-            Task.Run(() => RunMainLoop());
+            _messageQueue = new BlockingCollection<IEventMessage>(config.EventQueueCapacity);
+            _dispatcher = new EventDispatcher(config, _messageQueue);
+            _flushTimer = new Timer(DoBackgroundFlush, null, config.EventQueueFrequency,
+                config.EventQueueFrequency);
+            _flushUsersTimer = new Timer(DoUserKeysFlush, null, config.UserKeysFlushInterval,
+                config.UserKeysFlushInterval);
+            _stopped = new AtomicBoolean(false);
+            _inputCapacityExceeded = new AtomicBoolean(false);
+        }
+
+        void IEventProcessor.SendEvent(Event eventToLog)
+        {
+            SubmitMessage(new EventMessage(eventToLog));
+        }
+
+        void IEventProcessor.Flush()
+        {
+            SubmitMessage(new FlushMessage());
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (!_stopped.GetAndSet(true))
+                {
+                    _flushTimer.Dispose();
+                    _flushUsersTimer.Dispose();
+                    SubmitMessage(new FlushMessage());
+                    ShutdownMessage message = new ShutdownMessage();
+                    SubmitMessage(message);
+                    message.WaitForCompletion();
+                    ((IDisposable)_dispatcher).Dispose();
+                    _messageQueue.CompleteAdding();
+                    _messageQueue.Dispose();
+                }
+            }
+        }
+
+        private bool SubmitMessage(IEventMessage message)
+        {
+            try
+            {
+                if (_messageQueue.TryAdd(message))
+                {
+                    _inputCapacityExceeded.GetAndSet(false);
+                }
+                else
+                {
+                    // This doesn't mean that the output event buffer is full, but rather that the main thread is
+                    // seriously backed up with not-yet-processed events. We shouldn't see this.
+                    if (!_inputCapacityExceeded.GetAndSet(true))
+                    {
+                        Log.Warn("Events are being produced faster than they can be processed");
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // queue has been shut down
+                return false;
+            }
+            return true;
+        }
+
+        // exposed for testing
+        internal void WaitUntilInactive()
+        {
+            TestSyncMessage message = new TestSyncMessage();
+            SubmitMessage(message);
+            message.WaitForCompletion();
         }
 
         private void DoBackgroundFlush(object StateInfo)
@@ -53,122 +112,227 @@ namespace LaunchDarkly.Client
         {
             SubmitMessage(new FlushUsersMessage());
         }
+    }
 
-        void IEventProcessor.SendEvent(Event eventToLog)
+    internal class AtomicBoolean
+    {
+        internal int _value;
+
+        internal AtomicBoolean(bool value)
         {
-            EventMessage message = new EventMessage
-            {
-                Event = eventToLog
-            };
-            SubmitMessage(message);
+            _value = value ? 1 : 0;
         }
 
-        void IEventProcessor.Flush()
+        internal bool GetAndSet(bool newValue)
         {
-            FlushMessage message = new FlushMessage
-            {
-                Reply = new Semaphore(0, 1)
-            };
-            if (SubmitMessage(message))
-            {
-                message.Reply.WaitOne();
-            }
+            int old = Interlocked.Exchange(ref _value, newValue ? 1 : 0);
+            return old != 0;
+        }
+    }
+
+    internal interface IEventMessage { }
+
+    internal class EventMessage : IEventMessage
+    {
+        internal Event Event { get; private set; }
+
+        internal EventMessage(Event e)
+        {
+            Event = e;
+        }
+    }
+
+    internal class FlushMessage : IEventMessage { }
+
+    internal class FlushUsersMessage : IEventMessage { }
+
+    internal class SynchronousMessage : IEventMessage
+    {
+        internal readonly Semaphore _reply;
+        
+        internal SynchronousMessage()
+        {
+            _reply = new Semaphore(0, 1);
+        }
+        
+        internal void WaitForCompletion()
+        {
+            _reply.WaitOne();
         }
 
-        private bool SubmitMessage(IEventMessage message)
+        internal void Completed()
         {
-            try
-            {
-                _messageQueue.Add(message);
-            }
-            catch (InvalidOperationException)
-            {
-                // queue has been shut down
-                return false;
-            }
-            return true;
+            _reply.Release();
+        }
+    }
+
+    internal class TestSyncMessage : SynchronousMessage { }
+
+    internal class ShutdownMessage : SynchronousMessage { }
+    
+    internal sealed class EventDispatcher : IDisposable
+    {
+        private static readonly int MaxFlushWorkers = 5;
+
+        private readonly Configuration _config;
+        private readonly LRUCacheSet<string> _userKeys;
+        private readonly CountdownEvent _flushWorkersCounter;
+        private readonly HttpClient _httpClient;
+        private readonly Uri _uri;
+        private readonly Random _random;
+        private long _lastKnownPastTime;
+        private volatile bool _disabled;
+
+        internal EventDispatcher(Configuration config, BlockingCollection<IEventMessage> messageQueue)
+        {
+            _config = config;
+            _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
+            _flushWorkersCounter = new CountdownEvent(1);
+            _httpClient = config.HttpClient();
+            _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
+            _random = new Random();
+
+            EventBuffer buffer = new EventBuffer(config.EventQueueCapacity);
+
+            Task.Run(() => RunMainLoop(messageQueue, buffer));
         }
 
         void IDisposable.Dispose()
         {
-            ((IEventProcessor)this).Flush();
-            _shutdown = true;
-            _messageQueue.CompleteAdding();
-            _timer1.Dispose();
-            _timer2.Dispose();
-            _messageQueue.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
-        
-        private void RunMainLoop()
+
+        private void Dispose(bool disposing)
         {
-            while (!_shutdown)
+            if (disposing)
             {
-                IEventMessage message = _messageQueue.Take();
-                if (message is EventMessage)
+                _httpClient.Dispose();
+            }
+        }
+
+        private void RunMainLoop(BlockingCollection<IEventMessage> messageQueue, EventBuffer buffer)
+        {
+            bool running = true;
+            while (running)
+            {
+                IEventMessage message = messageQueue.Take();
+                switch(message)
                 {
-                    ProcessEvent((message as EventMessage).Event);
-                }
-                else if (message is FlushMessage)
-                {
-                    DispatchFlush((message as FlushMessage).Reply);
-                }
-                else if (message is FlushUsersMessage)
-                {
-                    _summarizer.ResetUsers();
-                }
-                else if (message is ShutdownMessage)
-                {
-                    _shutdown = true;
+                    case EventMessage em:
+                        ProcessEvent(em.Event, buffer);
+                        break;
+                    case FlushMessage fm:
+                        StartFlush(buffer);
+                        break;
+                    case FlushUsersMessage fm:
+                        _userKeys.Clear();
+                        break;
+                    case TestSyncMessage tm:
+                        WaitForFlushes();
+                        tm.Completed();
+                        break;
+                    case ShutdownMessage sm:
+                        WaitForFlushes();
+                        running = false;
+                        sm.Completed();
+                        break;
                 }
             }
         }
 
-        private void ProcessEvent(Event e)
+        private void WaitForFlushes()
         {
+            // Our CountdownEvent was initialized with a count of 1, so that's the lowest it can be at this point.
+            _flushWorkersCounter.Signal(); // Drop the count to zero if there are no active flush tasks.
+            _flushWorkersCounter.Wait();   // Wait until it is zero.
+            _flushWorkersCounter.Reset(1);
+        }
+
+        private void ProcessEvent(Event e, EventBuffer buffer)
+        {
+            if (_disabled)
+            {
+                return;
+            }
+
+            // Always record the event in the summarizer.
+            buffer.AddToSummary(e);
+
+            // Decide whether to add the event to the payload. Feature events may be added twice, once for
+            // the event (if tracked) and once for debugging.
+            bool willAddFullEvent = false;
+            Event debugEvent = null;
+            if (e is FeatureRequestEvent fe)
+            {
+                if (ShouldSampleEvent())
+                {
+                    willAddFullEvent = fe.TrackEvents;
+                    if (ShouldDebugEvent(fe))
+                    {
+                        debugEvent = EventFactory.Default.NewDebugEvent(fe);
+                    }
+                }
+            }
+            else
+            {
+                willAddFullEvent = ShouldSampleEvent();
+            }
+
             // For each user we haven't seen before, we add an index event - unless this is already
             // an identify event for that user.
-            if (!_config.InlineUsersInEvents && e.User != null && !_summarizer.NoticeUser(e.User))
+            if (!(willAddFullEvent && _config.InlineUsersInEvents))
             {
-                if (!(e is IdentifyEvent))
+                if (e.User != null && !NoticeUser(e.User))
                 {
-                    IndexEvent ie = new IndexEvent(e.CreationDate, e.User);
-                    if (!QueueEvent(ie))
+                    if (!(e is IdentifyEvent))
                     {
-                        return;
+                        IndexEvent ie = new IndexEvent(e.CreationDate, e.User);
+                        buffer.AddEvent(ie);
                     }
                 }
             }
 
-            // Always record the event in the summarizer.
-            _summarizer.SummarizeEvent(e);
-
-            if (ShouldTrackFullEvent(e))
+            if (willAddFullEvent)
             {
-                // Sampling interval applies only to fully-tracked events.
-                if (_config.EventSamplingInterval > 1 && _random.Next(_config.EventSamplingInterval) != 0)
-                {
-                    return;
-                }
-                // Queue the event as-is; we'll transform it into an output event when we're flushing
-                // (to avoid doing that work on our main thread).
-                QueueEvent(e);
+                buffer.AddEvent(e);
+            }
+            if (debugEvent != null)
+            {
+                buffer.AddEvent(debugEvent);
             }
         }
 
-        private bool QueueEvent(Event e)
+        // Adds to the set of users we've noticed, and returns true if the user was already known to us.
+        private bool NoticeUser(User user)
         {
-            if (_eventQueue.Count >= _config.EventQueueCapacity)
+            if (user == null || user.Key == null)
             {
-                if (!exceededCapacity)
-                {
-                    Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
-                    exceededCapacity = true;
-                }
                 return false;
             }
-            _eventQueue.Add(e);
-            exceededCapacity = false;
-            return true;
+            return _userKeys.Add(user.Key);
+        }
+
+        private bool ShouldDebugEvent(FeatureRequestEvent fe)
+        {
+            if (fe.DebugEventsUntilDate != null)
+            {
+                long lastPast = Interlocked.Read(ref _lastKnownPastTime);
+                if (fe.DebugEventsUntilDate > lastPast &&
+                    fe.DebugEventsUntilDate > Util.GetUnixTimestampMillis(DateTime.Now))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool ShouldSampleEvent()
+        {
+            // Sampling interval applies only to fully-tracked events. Note that we don't have to
+            // worry about thread-safety of Random here because this method is only executed on a
+            // single thread.
+            return _config.EventSamplingInterval <= 0 || _random.Next(_config.EventSamplingInterval) == 0;
         }
 
         private bool ShouldTrackFullEvent(Event e)
@@ -182,7 +346,7 @@ namespace LaunchDarkly.Client
                 if (fe.DebugEventsUntilDate != null)
                 {
                     long lastPast = Interlocked.Read(ref _lastKnownPastTime);
-                    if ((lastPast != 0 && fe.DebugEventsUntilDate > lastPast) ||
+                    if (fe.DebugEventsUntilDate > lastPast &&
                         fe.DebugEventsUntilDate > Util.GetUnixTimestampMillis(DateTime.Now))
                     {
                         return true;
@@ -196,115 +360,47 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private IEventOutput MakeEventOutput(Event e)
+        // Grabs a snapshot of the current internal state, and starts a new task to send it to the server.
+        private void StartFlush(EventBuffer buffer)
         {
-            if (e is FeatureRequestEvent fe)
-            {
-                bool debug = !fe.TrackEvents && fe.DebugEventsUntilDate != null;
-                return new FeatureRequestEventOutput
-                {
-                    Kind = debug ? "debug" : "feature",
-                    CreationDate = fe.CreationDate,
-                    Key = fe.Key,
-                    User = _config.InlineUsersInEvents ? EventUser.FromUser(fe.User, _config) : null,
-                    UserKey = _config.InlineUsersInEvents ? null : fe.User.Key,
-                    Version = fe.Version,
-                    Value = fe.Value,
-                    Default = fe.Default,
-                    PrereqOf = fe.PrereqOf
-                };
-            }
-            else if (e is IdentifyEvent)
-            {
-                return new IdentifyEventOutput
-                {
-                    CreationDate = e.CreationDate,
-                    Key = e.User.Key,
-                    User = EventUser.FromUser(e.User, _config)
-                };
-            }
-            else if (e is CustomEvent ce)
-            {
-                return new CustomEventOutput
-                {
-                    CreationDate = ce.CreationDate,
-                    Key = ce.Key,
-                    User = _config.InlineUsersInEvents ? EventUser.FromUser(ce.User, _config) : null,
-                    UserKey = _config.InlineUsersInEvents ? null : ce.User.Key,
-                    Data = ce.Data
-                };
-            }
-            else if (e is IndexEvent)
-            {
-                return new IndexEventOutput
-                {
-                    CreationDate = e.CreationDate,
-                    User = EventUser.FromUser(e.User, _config)
-                };
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Grabs a snapshot of the current internal state, and starts a new thread to send it to the server
-        /// (if there's anything to send).
-        /// </summary>
-        /// <param name="reply">If non-null, we will use this semaphore to tell the caller when we're done.</param>
-        private void DispatchFlush(Semaphore reply)
-        {
-            SummaryState snapshot = _summarizer.Snapshot();
-            Event[] events = _eventQueue.ToArray();
-            _eventQueue.Clear();
-            if (events.Length > 0 || !snapshot.Empty)
-            {
-                Task.Run(() => FlushEventsAsync(events, snapshot, reply));
-            }
-            else
-            {
-                if (reply != null)
-                {
-                    reply.Release();
-                }
-            }
-        }
-
-        private async Task FlushEventsAsync(Event[] events, SummaryState snapshot, Semaphore reply)
-        {
-            List<IEventOutput> eventsOut = new List<IEventOutput>(events.Length + 1);
-            foreach (Event e in events)
-            {
-                IEventOutput eo = MakeEventOutput(e);
-                if (eo != null)
-                {
-                    eventsOut.Add(eo);
-                }
-            }
-            if (snapshot.Counters.Count > 0)
-            {
-                SummaryOutput summary = _summarizer.Output(snapshot);
-                SummaryEventOutput se = new SummaryEventOutput
-                {
-                    StartDate = summary.StartDate,
-                    EndDate = summary.EndDate,
-                    Features = summary.Features
-                };
-                eventsOut.Add(se);
-            }
-            if (eventsOut.Count == 0)
+            if (_disabled)
             {
                 return;
             }
+            FlushPayload payload = buffer.GetPayload();
+            if (payload.Events.Length > 0 || !payload.Summary.Empty)
+            {
+                lock (_flushWorkersCounter)
+                {
+                    // Note that this counter will be 1, not 0, when there are no active flush workers.
+                    // This is because a .NET CountdownEvent can't be reused without explicitly resetting
+                    // it once it has gone to zero.
+                    if (_flushWorkersCounter.CurrentCount >= MaxFlushWorkers + 1)
+                    {
+                        // We already have too many workers, so just leave the events as is
+                        return;
+                    }
+                    // We haven't hit the limit, we'll go ahead and start a flush task
+                    _flushWorkersCounter.AddCount(1);
+                }
+                buffer.Clear();
+                Task.Run(() => FlushEventsAsync(payload));
+            }
+        }
+
+        private async Task FlushEventsAsync(FlushPayload payload)
+        {
+            EventOutputFormatter formatter = new EventOutputFormatter(_config);
+            List<EventOutput> eventsOut = formatter.MakeOutputEvents(payload.Events, payload.Summary);
             var cts = new CancellationTokenSource(_config.HttpClientTimeout);
-            var jsonEvents = "";
+            var jsonEvents = JsonConvert.SerializeObject(eventsOut, Formatting.None);
             try
             {
-                jsonEvents = JsonConvert.SerializeObject(eventsOut, Formatting.None);
-
                 await SendEventsAsync(jsonEvents, eventsOut.Count, cts);
             }
             catch (Exception e)
             {
-                Log.DebugFormat("Error sending events: {0} waiting 1 second before retrying.",
+                DefaultEventProcessor.Log.DebugFormat("Error sending events: {0}; waiting 1 second before retrying.",
                     e, Util.ExceptionMessage(e));
 
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
@@ -318,154 +414,113 @@ namespace LaunchDarkly.Client
                     if (tce.CancellationToken == cts.Token)
                     {
                         //Indicates the task was cancelled by something other than a request timeout
-                        Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                        DefaultEventProcessor.Log.ErrorFormat("Error submitting events using uri: '{0}' '{1}'",
                             tce, _uri.AbsoluteUri, Util.ExceptionMessage(tce));
                     }
                     else
                     {
                         //Otherwise this was a request timeout.
-                        Log.ErrorFormat("Timed out trying to send {0} events after {1}",
+                        DefaultEventProcessor.Log.ErrorFormat("Timed out trying to send {0} events after {1}",
                             tce, eventsOut.Count, _config.HttpClientTimeout);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.ErrorFormat("Error Submitting Events using uri: '{0}' '{1}'",
+                    DefaultEventProcessor.Log.ErrorFormat("Error submitting events using uri: '{0}' '{1}'",
                         ex,
                         _uri.AbsoluteUri,
                          Util.ExceptionMessage(ex));
                 }
             }
-            if (reply != null)
-            {
-                reply.Release();
-            }
+            _flushWorkersCounter.Signal();
         }
 
         private async Task SendEventsAsync(String jsonEvents, int count, CancellationTokenSource cts)
         {
-            Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
+            DefaultEventProcessor.Log.DebugFormat("Submitting {0} events to {1} with json: {2}",
                 count, _uri.AbsoluteUri, jsonEvents);
 
+            Stopwatch timer = new Stopwatch();
             using (var stringContent = new StringContent(jsonEvents, Encoding.UTF8, "application/json"))
             using (var response = await _httpClient.PostAsync(_uri, stringContent).ConfigureAwait(false))
             {
-                if (!response.IsSuccessStatusCode)
+                timer.Stop();
+                DefaultEventProcessor.Log.DebugFormat("Event delivery took {0} ms, response status {1}",
+                    response.StatusCode, timer.ElapsedMilliseconds);
+                if (response.IsSuccessStatusCode)
                 {
-                    Log.ErrorFormat("Error Submitting Events using uri: '{0}'; Status: '{1}'",
-                        _uri.AbsoluteUri,
-                        response.StatusCode);
-                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    DateTimeOffset? respDate = response.Headers.Date;
+                    if (respDate.HasValue)
                     {
-                        Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
-                        _shutdown = true;
-                        _messageQueue.TryAdd(new ShutdownMessage());
-                        ((IDisposable)this).Dispose();
+                        Interlocked.Exchange(ref _lastKnownPastTime,
+                            Util.GetUnixTimestampMillis(respDate.Value.DateTime));
                     }
                 }
                 else
                 {
-                    Log.DebugFormat("Got {0} when sending events.",
+                    DefaultEventProcessor.Log.WarnFormat("Unexpected response status when posting events: {0}",
                         response.StatusCode);
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        DefaultEventProcessor.Log.Error("Received 401 error, no further events will be posted since SDK key is invalid");
+                        _disabled = true;
+                    }
                 }
             }
         }
     }
 
-    internal interface IEventMessage { }
-
-    internal class EventMessage : IEventMessage
+    internal sealed class FlushPayload
     {
-        internal Event Event { get; set; }
+        internal Event[] Events { get; set; }
+        internal EventSummary Summary { get; set; }
     }
 
-    internal class FlushMessage : IEventMessage
+    internal sealed class EventBuffer
     {
-        internal Semaphore Reply { get; set; }
-    }
+        private readonly List<Event> _events;
+        private readonly EventSummarizer _summarizer;
+        private int _capacity;
+        private bool _exceededCapacity;
 
-    internal class FlushUsersMessage : IEventMessage { }
+        internal EventBuffer(int capacity)
+        {
+            _capacity = capacity;
+            _events = new List<Event>();
+            _summarizer = new EventSummarizer();
+        }
 
-    internal class ShutdownMessage : IEventMessage { }
+        internal void AddEvent(Event e)
+        {
+            if (_events.Count >= _capacity)
+            {
+                if (!_exceededCapacity)
+                {
+                    DefaultEventProcessor.Log.Warn("Exceeded event queue capacity. Increase capacity to avoid dropping events.");
+                    _exceededCapacity = true;
+                }
+            }
+            else
+            {
+                _events.Add(e);
+                _exceededCapacity = false;
+            }
+        }
 
-    internal interface IEventOutput { }
+        internal void AddToSummary(Event e)
+        {
+            _summarizer.SummarizeEvent(e);
+        }
 
-    internal class FeatureRequestEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; }
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "key")]
-        internal string Key { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-        [JsonProperty(PropertyName = "userKey", NullValueHandling = NullValueHandling.Ignore)]
-        internal string UserKey { get; set; }
-        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
-        internal int? Version { get; set; }
-        [JsonProperty(PropertyName = "value")]
-        internal JToken Value { get; set; }
-        [JsonProperty(PropertyName = "default", NullValueHandling = NullValueHandling.Ignore)]
-        internal JToken Default { get; set; }
-        [JsonProperty(PropertyName = "prereqOf", NullValueHandling = NullValueHandling.Ignore)]
-        internal string PrereqOf { get; set; }
-    }
+        internal FlushPayload GetPayload()
+        {
+            return new FlushPayload { Events = _events.ToArray(), Summary = _summarizer.Snapshot() };
+        }
 
-    internal class IdentifyEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "identify";
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "key")]
-        internal string Key { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-    }
-
-    internal class CustomEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "custom";
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "key")]
-        internal string Key { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-        [JsonProperty(PropertyName = "userKey", NullValueHandling = NullValueHandling.Ignore)]
-        internal string UserKey { get; set; }
-        [JsonProperty(PropertyName = "data", NullValueHandling = NullValueHandling.Ignore)]
-        internal JToken Data { get; set; }
-    }
-
-    internal class IndexEvent : Event
-    {
-        internal IndexEvent(long creationDate, User user) :
-            base(creationDate, user.Key, user)
-        { }
-    }
-
-    internal class IndexEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "index";
-        [JsonProperty(PropertyName = "creationDate")]
-        internal long CreationDate { get; set; }
-        [JsonProperty(PropertyName = "user", NullValueHandling = NullValueHandling.Ignore)]
-        internal EventUser User { get; set; }
-    }
-
-    internal class SummaryEventOutput : IEventOutput
-    {
-        [JsonProperty(PropertyName = "kind")]
-        internal string Kind { get; set; } = "summary";
-        [JsonProperty(PropertyName = "startDate")]
-        internal long StartDate { get; set; }
-        [JsonProperty(PropertyName = "endDate")]
-        internal long EndDate { get; set; }
-        [JsonProperty(PropertyName = "features")]
-        internal Dictionary<string, EventSummaryFlag> Features;
+        internal void Clear()
+        {
+            _events.Clear();
+            _summarizer.Clear();
+        }
     }
 }

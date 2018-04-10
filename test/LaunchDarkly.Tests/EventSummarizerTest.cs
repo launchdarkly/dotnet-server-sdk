@@ -1,55 +1,23 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using LaunchDarkly.Client;
 
 namespace LaunchDarkly.Tests
 {
     public class EventSummarizerTest
     {
-        private Configuration _config = Configuration.Default("SDK_KEY").WithUserKeysCapacity(100);
         private User _user = new User("key");
         private TestEventFactory _eventFactory = new TestEventFactory();
 
         [Fact]
-        public void NoticeUserReturnsFalseForNeverSeenUser()
-        {
-            EventSummarizer es = new EventSummarizer(_config);
-            Assert.False(es.NoticeUser(_user));
-        }
-
-        [Fact]
-        public void NoticeUserReturnsTrueForPreviouslySeenUser()
-        {
-            EventSummarizer es = new EventSummarizer(_config);
-            es.NoticeUser(_user);
-            User user2 = new User(_user.Key);
-            Assert.True(es.NoticeUser(user2));
-        }
-
-        [Fact]
-        public void OldestUserForgottenIfCapacityExceeded()
-        {
-            _config.WithUserKeysCapacity(2);
-            EventSummarizer es = new EventSummarizer(_config);
-            User user1 = new User("user1");
-            User user2 = new User("user2");
-            User user3 = new User("user3");
-            es.NoticeUser(user1);
-            es.NoticeUser(user2);
-            es.NoticeUser(user3);
-            Assert.True(es.NoticeUser(user3));
-            Assert.True(es.NoticeUser(user2));
-            Assert.False(es.NoticeUser(user1));
-        }
-
-        [Fact]
         public void SummarizeEventDoesNothingForIdentifyEvent()
         {
-            EventSummarizer es = new EventSummarizer(_config);
-            SummaryState snapshot = es.Snapshot();
+            EventSummarizer es = new EventSummarizer();
+            EventSummary snapshot = es.Snapshot();
             es.SummarizeEvent(_eventFactory.NewIdentifyEvent(_user));
-            SummaryState snapshot2 = es.Snapshot();
+            EventSummary snapshot2 = es.Snapshot();
             Assert.Equal(snapshot.StartDate, snapshot2.StartDate);
             Assert.Equal(snapshot.EndDate, snapshot2.EndDate);
             Assert.Equal(snapshot.Counters, snapshot2.Counters);
@@ -58,10 +26,10 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SummarizeEventDoesNothingForCustomEvent()
         {
-            EventSummarizer es = new EventSummarizer(_config);
-            SummaryState snapshot = es.Snapshot();
+            EventSummarizer es = new EventSummarizer();
+            EventSummary snapshot = es.Snapshot();
             es.SummarizeEvent(_eventFactory.NewCustomEvent("whatever", _user, null));
-            SummaryState snapshot2 = es.Snapshot();
+            EventSummary snapshot2 = es.Snapshot();
             Assert.Equal(snapshot.StartDate, snapshot2.StartDate);
             Assert.Equal(snapshot.EndDate, snapshot2.EndDate);
             Assert.Equal(snapshot.Counters, snapshot2.Counters);
@@ -70,7 +38,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SummarizeEventSetsStartAndEndDates()
         {
-            EventSummarizer es = new EventSummarizer(_config);
+            EventSummarizer es = new EventSummarizer();
             FeatureFlag flag = new FeatureFlagBuilder("key").Build();
             _eventFactory.Timestamp = 2000;
             Event event1 = _eventFactory.NewFeatureRequestEvent(flag, _user, null, null, null);
@@ -81,7 +49,7 @@ namespace LaunchDarkly.Tests
             es.SummarizeEvent(event1);
             es.SummarizeEvent(event2);
             es.SummarizeEvent(event3);
-            SummaryOutput data = es.Output(es.Snapshot());
+            EventSummary data = es.Snapshot();
 
             Assert.Equal(1000, data.StartDate);
             Assert.Equal(2000, data.EndDate);
@@ -90,7 +58,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SummarizeEventIncrementsCounters()
         {
-            EventSummarizer es = new EventSummarizer(_config);
+            EventSummarizer es = new EventSummarizer();
             FeatureFlag flag1 = new FeatureFlagBuilder("key1").Build();
             FeatureFlag flag2 = new FeatureFlagBuilder("key2").Build();
             string unknownFlagKey = "badkey";
@@ -111,26 +79,17 @@ namespace LaunchDarkly.Tests
             es.SummarizeEvent(event3);
             es.SummarizeEvent(event4);
             es.SummarizeEvent(event5);
-            SummaryOutput data = es.Output(es.Snapshot());
+            EventSummary data = es.Snapshot();
 
-            data.Features[flag1.Key].Counters.Sort((a, b) => ((string)a.Value).CompareTo((string)b.Value));
-            EventSummaryCounter expected1 = new EventSummaryCounter(new JValue("value1"),
-                flag1.Version, 2);
-            EventSummaryCounter expected2 = new EventSummaryCounter(new JValue("value2"),
-                flag1.Version, 1);
-            EventSummaryCounter expected3 = new EventSummaryCounter(new JValue("value99"),
-                flag2.Version, 1);
-            EventSummaryCounter expected4 = new EventSummaryCounter(default3,
-                null, 1);
-            Assert.Equal(new EventSummaryFlag(default1,
-                new List<EventSummaryCounter> { expected1, expected2 }),
-                data.Features[flag1.Key]);
-            Assert.Equal(new EventSummaryFlag(default2,
-                new List<EventSummaryCounter> { expected3 }),
-                data.Features[flag2.Key]);
-            Assert.Equal(new EventSummaryFlag(default3,
-                new List<EventSummaryCounter> { expected4 }),
-                data.Features[unknownFlagKey]);
+            Dictionary<EventsCounterKey, EventsCounterValue> expected = new Dictionary<EventsCounterKey, EventsCounterValue>();
+            Assert.Equal(new EventsCounterValue(2, new JValue("value1"), default1),
+                data.Counters[new EventsCounterKey(flag1.Key, flag1.Version, 1)]);
+            Assert.Equal(new EventsCounterValue(1, new JValue("value2"), default1),
+                data.Counters[new EventsCounterKey(flag1.Key, flag1.Version, 2)]);
+            Assert.Equal(new EventsCounterValue(1, new JValue("value99"), default2),
+                data.Counters[new EventsCounterKey(flag2.Key, flag2.Version, 1)]);
+            Assert.Equal(new EventsCounterValue(1, default3, default3),
+                data.Counters[new EventsCounterKey(unknownFlagKey, null, null)]);
         }
     }
 

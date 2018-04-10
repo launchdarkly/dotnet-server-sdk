@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LaunchDarkly.Client
 {
-    // Simple, non-thread-safe LRU cache implementation used by EventSummarizer.
+    // Simple, non-thread-safe LRU cache implementation used by DefaultEventProcessor.
     internal class LRUCacheSet<A>
     {
         private int _capacity;
@@ -16,6 +14,11 @@ namespace LaunchDarkly.Client
             _capacity = capacity;
         }
 
+        /// <summary>
+        /// Adds a value to the set and returns true if it was already there.
+        /// </summary>
+        /// <param name="value">a value</param>
+        /// <returns>true if it was already in the set</returns>
         public bool Add(A value)
         {
             LinkedListNode<A> node;
@@ -35,6 +38,9 @@ namespace LaunchDarkly.Client
             return false;
         }
 
+        /// <summary>
+        /// Removes all values.
+        /// </summary>
         public void Clear()
         {
             _map.Clear();

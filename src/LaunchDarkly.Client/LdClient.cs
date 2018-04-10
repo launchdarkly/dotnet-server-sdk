@@ -11,7 +11,7 @@ namespace LaunchDarkly.Client
     /// A client for the LaunchDarkly API. Client instances are thread-safe. Applications should instantiate
     /// a single <c>LdClient</c> for the lifetime of their application.
     /// </summary>
-    public class LdClient : IDisposable, ILdClient
+    public sealed class LdClient : IDisposable, ILdClient
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
@@ -289,10 +289,7 @@ namespace LaunchDarkly.Client
             }
         }
         
-        /// <summary>
-        /// Used internally.
-        /// </summary>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing) // follow standard IDisposable pattern
             {
