@@ -11,14 +11,15 @@ namespace LaunchDarkly.Client
     /// A client for the LaunchDarkly API. Client instances are thread-safe. Applications should instantiate
     /// a single <c>LdClient</c> for the lifetime of their application.
     /// </summary>
-    public class LdClient : IDisposable, ILdClient
+    public sealed class LdClient : IDisposable, ILdClient
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
         private readonly Configuration _configuration;
-        private readonly IStoreEvents _eventStore;
+        private readonly IEventProcessor _eventProcessor;
         private readonly IFeatureStore _featureStore;
         private readonly IUpdateProcessor _updateProcessor;
+        private readonly EventFactory _eventFactory = EventFactory.Default;
 
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration, and a custom
@@ -26,15 +27,31 @@ namespace LaunchDarkly.Client
         /// overriding the default event-sending behavior.
         /// </summary>
         /// <param name="config">a client configuration object</param>
-        /// <param name="eventStore">an event processor</param>
-        public LdClient(Configuration config, IStoreEvents eventStore)
+        /// <param name="eventProcessor">an event processor</param>
+        public LdClient(Configuration config, IEventProcessor eventProcessor)
         {
             Log.InfoFormat("Starting LaunchDarkly Client {0}",
                 Configuration.Version);
 
             _configuration = config;
-            _eventStore = eventStore;
+            _eventProcessor = eventProcessor;
             _featureStore = _configuration.FeatureStore;
+
+            if (eventProcessor == null)
+            {
+                if (_configuration.Offline)
+                {
+                    _eventProcessor = new NullEventProcessor();
+                }
+                else
+                {
+                    _eventProcessor = new DefaultEventProcessor(_configuration);
+                }
+            }
+            else
+            {
+                _eventProcessor = eventProcessor;
+            }
 
             if (_configuration.Offline)
             {
@@ -66,7 +83,7 @@ namespace LaunchDarkly.Client
         /// can be used to configure advanced client features, such as customizing the LaunchDarkly base URL.
         /// </summary>
         /// <param name="config">a client configuration object</param>
-        public LdClient(Configuration config) : this(config, new EventProcessor(config))
+        public LdClient(Configuration config) : this(config, null)
         {
         }
 
@@ -151,7 +168,7 @@ namespace LaunchDarkly.Client
             {
                 try
                 {
-                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _configuration);
+                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _eventFactory);
                     results.Add(pair.Key, evalResult.Result);
                 }
                 catch (Exception e)
@@ -172,10 +189,10 @@ namespace LaunchDarkly.Client
             if (user == null || user.Key == null)
             {
                 Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
+                _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, null, defaultValue));
                 return defaultValue;
             }
-
+            
             try
             {
                 var featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
@@ -184,16 +201,16 @@ namespace LaunchDarkly.Client
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
                         featureKey);
 
-                    sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
+                    _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue));
                     return defaultValue;
                 }
 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _configuration);
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _eventFactory);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
                     {
-                        _eventStore.Add(prereqEvent);
+                        _eventProcessor.SendEvent(prereqEvent);
                     }
                 }
                 if (evalResult.Result != null)
@@ -205,10 +222,10 @@ namespace LaunchDarkly.Client
                             evalResult.GetType(),
                             featureKey);
 
-                        sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, featureFlag.Version);
+                        _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, null, defaultValue, defaultValue));
                         return defaultValue;
                     }
-                    sendFlagRequestEvent(featureKey, user, evalResult.Result, defaultValue, featureFlag.Version);
+                    _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, evalResult.Variation, evalResult.Result, defaultValue));
                     return evalResult.Result;
                 }
             }
@@ -222,7 +239,7 @@ namespace LaunchDarkly.Client
 
                 Log.Debug("{0}", e);
             }
-            sendFlagRequestEvent(featureKey, user, defaultValue, defaultValue, null);
+            _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue));
             return defaultValue;
         }
 
@@ -248,7 +265,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Warn("Track called with null user or null user key");
             }
-            _eventStore.Add(new CustomEvent(name, EventUser.FromUser(user, _configuration), data));
+            _eventProcessor.SendEvent(_eventFactory.NewCustomEvent(name, user, data));
         }
 
         /// <see cref="ILdClient.Identify(User)"/>
@@ -258,7 +275,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Warn("Identify called with null user or null user key");
             }
-            _eventStore.Add(new IdentifyEvent(EventUser.FromUser(user, _configuration)));
+            _eventProcessor.SendEvent(_eventFactory.NewIdentifyEvent(user));
         }
 
         /// <see cref="ILdClient.Version"/>
@@ -269,25 +286,17 @@ namespace LaunchDarkly.Client
                 return typeof(LdClient).GetTypeInfo().Assembly.GetName().Version;
             }
         }
-
-        private void sendFlagRequestEvent(string key, User user, JToken value, JToken defaultValue, JToken version)
+        
+        private void Dispose(bool disposing)
         {
-            _eventStore.Add(new FeatureRequestEvent(key, EventUser.FromUser(user, _configuration), value, defaultValue, version, null));
-        }
-
-        /// <summary>
-        /// Used internally.
-        /// </summary>
-        protected virtual void Dispose(bool disposing)
-        {
-            Log.Info("Closing LaunchDarkly client.");
-            //We do not have native resource, so the boolean parameter can be ignored.
-            if (_eventStore is EventProcessor)
-                ((_eventStore) as IDisposable).Dispose();
-
-            if (_updateProcessor != null)
+            if (disposing)
             {
-                _updateProcessor.Dispose();
+                Log.Info("Closing LaunchDarkly client.");
+                _eventProcessor.Dispose();
+                if (_updateProcessor != null)
+                {
+                    _updateProcessor.Dispose();
+                }
             }
         }
 
@@ -302,7 +311,7 @@ namespace LaunchDarkly.Client
         /// <see cref="ILdClient.Flush"/>
         public void Flush()
         {
-            _eventStore.Flush();
+            _eventProcessor.Flush();
         }
     }
 }

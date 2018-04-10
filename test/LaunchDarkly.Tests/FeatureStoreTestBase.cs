@@ -26,13 +26,12 @@ namespace LaunchDarkly.Tests
 
         internal static FeatureFlag MakeFeature(string key, int version)
         {
-            return new FeatureFlag(key, version, false, null, null, null, null, null, null, null, false);
+            return new FeatureFlagBuilder(key).Version(version).Build();
         }
 
         internal static FeatureFlag CopyFeatureWithVersion(FeatureFlag old, int newVersion)
         {
-            return new FeatureFlag(old.Key, newVersion, old.On, old.Prerequisites, old.Salt,
-                old.Targets, old.Rules, old.Fallthrough, old.OffVariation, old.Variations, old.Deleted);
+            return new FeatureFlagBuilder(old).Version(newVersion).Build();
         }
 
         [Fact]
