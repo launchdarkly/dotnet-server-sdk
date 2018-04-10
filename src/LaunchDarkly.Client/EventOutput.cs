@@ -142,52 +142,47 @@ namespace LaunchDarkly.Client
 
         private EventOutput MakeOutputEvent(Event e)
         {
-            if (e is FeatureRequestEvent fe)
+            switch (e)
             {
-                bool inlineUser = _config.InlineUsersInEvents || fe.Debug;
-                return new FeatureRequestEventOutput
-                {
-                    Kind = fe.Debug ? "debug" : "feature",
-                    CreationDate = fe.CreationDate,
-                    Key = fe.Key,
-                    User = inlineUser ? EventUser.FromUser(fe.User, _config) : null,
-                    UserKey = inlineUser ? null : fe.User.Key,
-                    Version = fe.Version,
-                    Value = fe.Value,
-                    Default = fe.Default,
-                    PrereqOf = fe.PrereqOf
-                };
-            }
-            else if (e is IdentifyEvent)
-            {
-                return new IdentifyEventOutput
-                {
-                    Kind = "identify",
-                    CreationDate = e.CreationDate,
-                    Key = e.User.Key,
-                    User = EventUser.FromUser(e.User, _config)
-                };
-            }
-            else if (e is CustomEvent ce)
-            {
-                return new CustomEventOutput
-                {
-                    Kind = "custom",
-                    CreationDate = ce.CreationDate,
-                    Key = ce.Key,
-                    User = _config.InlineUsersInEvents ? EventUser.FromUser(ce.User, _config) : null,
-                    UserKey = _config.InlineUsersInEvents ? null : ce.User.Key,
-                    Data = ce.Data
-                };
-            }
-            else if (e is IndexEvent)
-            {
-                return new IndexEventOutput
-                {
-                    Kind = "index",
-                    CreationDate = e.CreationDate,
-                    User = EventUser.FromUser(e.User, _config)
-                };
+                case FeatureRequestEvent fe:
+                    bool inlineUser = _config.InlineUsersInEvents || fe.Debug;
+                    return new FeatureRequestEventOutput
+                    {
+                        Kind = fe.Debug ? "debug" : "feature",
+                        CreationDate = fe.CreationDate,
+                        Key = fe.Key,
+                        User = inlineUser ? EventUser.FromUser(fe.User, _config) : null,
+                        UserKey = inlineUser ? null : fe.User.Key,
+                        Version = fe.Version,
+                        Value = fe.Value,
+                        Default = fe.Default,
+                        PrereqOf = fe.PrereqOf
+                    };
+                case IdentifyEvent ie:
+                    return new IdentifyEventOutput
+                    {
+                        Kind = "identify",
+                        CreationDate = e.CreationDate,
+                        Key = e.User.Key,
+                        User = EventUser.FromUser(e.User, _config)
+                    };
+                case CustomEvent ce:
+                    return new CustomEventOutput
+                    {
+                        Kind = "custom",
+                        CreationDate = ce.CreationDate,
+                        Key = ce.Key,
+                        User = _config.InlineUsersInEvents ? EventUser.FromUser(ce.User, _config) : null,
+                        UserKey = _config.InlineUsersInEvents ? null : ce.User.Key,
+                        Data = ce.Data
+                    };
+                case IndexEvent ie:
+                    return new IndexEventOutput
+                    {
+                        Kind = "index",
+                        CreationDate = e.CreationDate,
+                        User = EventUser.FromUser(e.User, _config)
+                    };
             }
             return null;
         }

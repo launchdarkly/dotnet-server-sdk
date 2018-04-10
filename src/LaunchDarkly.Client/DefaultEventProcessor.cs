@@ -217,28 +217,26 @@ namespace LaunchDarkly.Client
             while (running)
             {
                 IEventMessage message = messageQueue.Take();
-                if (message is EventMessage em)
+                switch(message)
                 {
-                    ProcessEvent(em.Event, buffer);
-                }
-                else if (message is FlushMessage)
-                {
-                    StartFlush(buffer);
-                }
-                else if (message is FlushUsersMessage)
-                {
-                    _userKeys.Clear();
-                }
-                else if (message is TestSyncMessage tm)
-                {
-                    WaitForFlushes();
-                    tm.Completed();
-                }
-                else if (message is ShutdownMessage sm)
-                {
-                    WaitForFlushes();
-                    running = false;
-                    sm.Completed();
+                    case EventMessage em:
+                        ProcessEvent(em.Event, buffer);
+                        break;
+                    case FlushMessage fm:
+                        StartFlush(buffer);
+                        break;
+                    case FlushUsersMessage fm:
+                        _userKeys.Clear();
+                        break;
+                    case TestSyncMessage tm:
+                        WaitForFlushes();
+                        tm.Completed();
+                        break;
+                    case ShutdownMessage sm:
+                        WaitForFlushes();
+                        running = false;
+                        sm.Completed();
+                        break;
                 }
             }
         }
