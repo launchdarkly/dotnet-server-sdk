@@ -357,6 +357,18 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void SchemaHeaderIsSent()
+        {
+            _ep = new DefaultEventProcessor(_config);
+            Event e = EventFactory.Default.NewIdentifyEvent(_user);
+            _ep.SendEvent(e);
+
+            RequestMessage r = FlushAndGetRequest(OkResponse());
+
+            Assert.Equal("2", r.Headers["X-LaunchDarkly-Event-Schema"][0]);
+        }
+
+        [Fact]
         public void NoMoreEventsArePostedAfterReceiving401Error()
         {
             _ep = new DefaultEventProcessor(_config);
