@@ -231,6 +231,7 @@ namespace LaunchDarkly.Client
                 else
                 {
                     _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, null, defaultValue, defaultValue));
+                    return defaultValue;
                 }
             }
             catch (Exception e)
