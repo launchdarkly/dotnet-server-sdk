@@ -189,7 +189,7 @@ namespace LaunchDarkly.Client
             if (user == null || user.Key == null)
             {
                 Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, null, defaultValue));
+                _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue));
                 return defaultValue;
             }
             
@@ -227,6 +227,10 @@ namespace LaunchDarkly.Client
                     }
                     _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, evalResult.Variation, evalResult.Result, defaultValue));
                     return evalResult.Result;
+                }
+                else
+                {
+                    _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, null, defaultValue, defaultValue));
                 }
             }
             catch (Exception e)
