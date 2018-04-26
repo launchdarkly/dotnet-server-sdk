@@ -63,7 +63,7 @@ namespace LaunchDarkly.Client
     /// Interface for a factory that creates some implementation of <see cref="IFeatureStore"/>.
     /// </summary>
     /// <seealso cref="ConfigurationExtensions.WithFeatureStoreFactory(Configuration, IFeatureStoreFactory)"/>
-    /// <seealso cref="Implementations"/>
+    /// <seealso cref="Components"/>
     public interface IFeatureStoreFactory
     {
         /// <summary>

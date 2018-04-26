@@ -28,7 +28,7 @@ namespace LaunchDarkly.Client
     /// Interface for a factory that creates some implementation of <see cref="IEventProcessor"/>.
     /// </summary>
     /// <seealso cref="ConfigurationExtensions.WithEventProcessorFactory(Configuration, IEventProcessorFactory)"/>
-    /// <seealso cref="Implementations"/>
+    /// <seealso cref="Components"/>
     public interface IEventProcessorFactory
     {
         /// <summary>
@@ -39,7 +39,7 @@ namespace LaunchDarkly.Client
         IEventProcessor CreateEventProcessor(Configuration config);
     }
 
-    /// <see cref="Implementations.NullEventProcessor"/>
+    /// <see cref="Components.NullEventProcessor"/>
     internal class NullEventProcessor : IEventProcessor
     {
         void IEventProcessor.SendEvent(Event eventToLog)
