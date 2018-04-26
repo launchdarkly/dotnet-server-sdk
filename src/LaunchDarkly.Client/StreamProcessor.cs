@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
+    // Note, this class is not sealed because we are overriding its CreateEventSource method in tests.
     internal class StreamProcessor : IUpdateProcessor
     {
         private const String PUT = "put";
