@@ -14,6 +14,7 @@ namespace LaunchDarkly.Client
         private static IEventProcessorFactory _eventProcessorFactory = new DefaultEventProcessorFactory();
         private static IEventProcessorFactory _nullEventProcessorFactory = new NullEventProcessorFactory();
         private static IUpdateProcessorFactory _updateProcessorFactory = new DefaultUpdateProcessorFactory();
+        private static IUpdateProcessorFactory _nullUpdateProcessorFactory = new NullUpdateProcessorFactory();
         
         /// <summary>
         /// Returns a factory for the default in-memory implementation of <see cref="IFeatureStore"/>.
@@ -28,7 +29,7 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Returns a factory for the default implementation of <see cref="IStoreEvents"/>, which
-        /// forwards all analytics events to LaunchDarkly.
+        /// forwards all analytics events to LaunchDarkly (unless the client is offline).
         /// </summary>
         public static IEventProcessorFactory DefaultEventProcessor
         {
@@ -40,7 +41,8 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Returns a factory for a null implementation of <see cref="IStoreEvents"/>, which will
-        /// discard all analytics events and not send them to LaunchDarkly.
+        /// discard all analytics events and not send them to LaunchDarkly, regardless of any
+        /// other configuration.
         /// </summary>
         public static IEventProcessorFactory NullEventProcessor
         {
@@ -52,13 +54,26 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Returns a factory for the default implementation of <see cref="IUpdateProcessor"/>, which
-        /// receives feature flag data from LaunchDarkly using either streaming or polling as configured.
+        /// receives feature flag data from LaunchDarkly using either streaming or polling as configured
+        /// (or does nothing if the client is offline, or in LDD mode).
         /// </summary>
         public static IUpdateProcessorFactory DefaultUpdateProcessor
         {
             get
             {
                 return _updateProcessorFactory;
+            }
+        }
+
+        /// <summary>
+        /// Returns a factory for a null implementation of <see cref="IUpdateProcessor"/>, which
+        /// does not connect to LaunchDarkly, regardless of any other configuration.
+        /// </summary>
+        public static IUpdateProcessorFactory NullUpdateProcessor
+        {
+            get
+            {
+                return _nullUpdateProcessorFactory;
             }
         }
     }
@@ -88,7 +103,7 @@ namespace LaunchDarkly.Client
 
     internal class InMemoryFeatureStoreFactory : IFeatureStoreFactory
     {
-        IFeatureStore IFeatureStoreFactory.CreateFeatureStore(Configuration config)
+        IFeatureStore IFeatureStoreFactory.CreateFeatureStore()
         {
             return new InMemoryFeatureStore();
         }
@@ -96,7 +111,8 @@ namespace LaunchDarkly.Client
 
     internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactory
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(DefaultUpdateProcessorFactory));
+        // Note, logger uses LDClient class name for backward compatibility
+        private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
         IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
@@ -118,6 +134,14 @@ namespace LaunchDarkly.Client
                     return new PollingProcessor(config, requestor, featureStore);
                 }
             }
+        }
+    }
+
+    internal class NullUpdateProcessorFactory : IUpdateProcessorFactory
+    {
+        IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
+        {
+            return new NullUpdateProcessor();
         }
     }
 }

@@ -61,7 +61,7 @@ namespace LaunchDarkly.Client
             if (_configuration.FeatureStore == null)
             {
                 _featureStore = (_configuration.FeatureStoreFactory ??
-                    Implementations.InMemoryFeatureStore).CreateFeatureStore(_configuration);
+                    Implementations.InMemoryFeatureStore).CreateFeatureStore();
                 _shouldDisposeFeatureStore = true;
             }
             else

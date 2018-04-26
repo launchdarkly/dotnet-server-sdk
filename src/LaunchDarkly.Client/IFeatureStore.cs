@@ -69,8 +69,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Creates an implementation instance.
         /// </summary>
-        /// <param name="config">the LaunchDarkly configuration</param>
         /// <returns>an <c>IStoreEvents</c> instance</returns>
-        IFeatureStore CreateFeatureStore(Configuration config);
+        IFeatureStore CreateFeatureStore();
     }
 }
