@@ -53,7 +53,7 @@ namespace LaunchDarkly.Tests
             client.StringVariation("flagkey", null, "default");
 
             Assert.Collection(ep.Events,
-                e => CheckFlagEvent(e, flag, null, null, null, new JValue("default"), new JValue("default")));
+                e => CheckFlagEvent(e, flag, flag.Version, null, null, new JValue("default"), new JValue("default")));
         }
 
         private void CheckFlagEvent(Event e, FeatureFlag flag, int? version, User user, int? variation, JToken value, JToken defaultVal)
