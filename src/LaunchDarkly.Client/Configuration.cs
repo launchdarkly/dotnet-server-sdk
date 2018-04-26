@@ -110,12 +110,7 @@ namespace LaunchDarkly.Client
         /// only include the user key, except for one "index" event that provides the full details for the user).
         /// </summary>
         public bool InlineUsersInEvents { get; internal set; }
-        /// <summary>
-        /// The implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
-        /// and related data received from LaunchDarkly. The default is
-        /// <see cref="InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
-        /// </summary>
-        [Obsolete]
+        // (Used internally, was never public, will remove when WithFeatureStore is removed)
         internal IFeatureStore FeatureStore { get; set; }
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IFeatureStore"/>, to be used
@@ -459,7 +454,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Obsolete; please use <see cref="WithFeatureStoreFactory"/> instead.
         /// </summary>
-        [Obsolete]
+        [Obsolete("Deprecated, please use WithFeatureStoreFactory instead.")]
         public static Configuration WithFeatureStore(this Configuration configuration, IFeatureStore featureStore)
         {
             if (featureStore != null)
