@@ -192,6 +192,8 @@ namespace LaunchDarkly.Client
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             _random = new Random();
 
+            _httpClient.DefaultRequestHeaders.Add("X-LaunchDarkly-Event-Schema", "2");
+            
             EventBuffer buffer = new EventBuffer(config.EventQueueCapacity);
 
             Task.Run(() => RunMainLoop(messageQueue, buffer));

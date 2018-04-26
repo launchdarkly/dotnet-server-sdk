@@ -7,36 +7,60 @@ namespace LaunchDarkly.Tests
 {
     public class LdClientTest
     {
+        private LdClient MakeClient(IFeatureStore featureStore, MockEventProcessor ep)
+        {
+            Configuration config = Configuration.Default("secret")
+                .WithOffline(true)
+                .WithFeatureStore(featureStore);
+            LdClient client = new LdClient(config, ep);
+            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
+            return client;
+        }
+
         [Fact]
         public void EvaluatingFlagGeneratesEvent()
         {
             IFeatureStore featureStore = new InMemoryFeatureStore();
-            Configuration config = Configuration.Default("secret")
-                .WithOffline(true)
-                .WithFeatureStore(featureStore);
             MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = new LdClient(config, ep);
+            LdClient client = MakeClient(featureStore, ep);
 
             FeatureFlag flag = new FeatureFlagBuilder("flagkey")
                 .OffVariation(0)
                 .Variations(new List<JToken> { new JValue("a"), new JValue("b") })
                 .Build();
-            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             featureStore.Upsert(VersionedDataKind.Features, flag);
 
             User user = new User("user");
             client.StringVariation("flagkey", user, "default");
 
             Assert.Collection(ep.Events,
-                e => CheckFlagEvent(e, flag, user, 0, new JValue("a"), new JValue("default")));
+                e => CheckFlagEvent(e, flag, flag.Version, user, 0, new JValue("a"), new JValue("default")));
         }
 
-        private void CheckFlagEvent(Event e, FeatureFlag flag, User user, int variation, JToken value, JToken defaultVal)
+        [Fact]
+        public void EvaluatingFlagWithNullUserGeneratesEvent()
         {
-            Assert.IsType<FeatureRequestEvent>(e);
-            FeatureRequestEvent fe = e as FeatureRequestEvent;
+            IFeatureStore featureStore = new InMemoryFeatureStore();
+            MockEventProcessor ep = new MockEventProcessor();
+            LdClient client = MakeClient(featureStore, ep);
+
+            FeatureFlag flag = new FeatureFlagBuilder("flagkey")
+                .OffVariation(0)
+                .Variations(new List<JToken> { new JValue("a"), new JValue("b") })
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+            
+            client.StringVariation("flagkey", null, "default");
+
+            Assert.Collection(ep.Events,
+                e => CheckFlagEvent(e, flag, flag.Version, null, null, new JValue("default"), new JValue("default")));
+        }
+
+        private void CheckFlagEvent(Event e, FeatureFlag flag, int? version, User user, int? variation, JToken value, JToken defaultVal)
+        {
+            FeatureRequestEvent fe = Assert.IsType<FeatureRequestEvent>(e);
             Assert.Equal(flag.Key, fe.Key);
-            Assert.Equal(flag.Version, fe.Version);
+            Assert.Equal(version, fe.Version);
             Assert.Equal(user, fe.User);
             Assert.Equal(variation, fe.Variation);
             Assert.Equal(value, fe.Value);
@@ -47,10 +71,9 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void EvaluatingUnknownFlagGeneratesEvent()
         {
-            Configuration config = Configuration.Default("secret")
-                .WithOffline(true);
+            IFeatureStore featureStore = new InMemoryFeatureStore();
             MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = new LdClient(config, ep);
+            LdClient client = MakeClient(featureStore, ep);
 
             User user = new User("user");
             client.StringVariation("badflag", user, "default");
@@ -61,8 +84,7 @@ namespace LaunchDarkly.Tests
 
         private void CheckUnknownFlagEvent(Event e, string key, User user, JToken value)
         {
-            Assert.IsType<FeatureRequestEvent>(e);
-            FeatureRequestEvent fe = e as FeatureRequestEvent;
+            FeatureRequestEvent fe = Assert.IsType<FeatureRequestEvent>(e);
             Assert.Equal(key, fe.Key);
             Assert.Null(fe.Version);
             Assert.Equal(user, fe.User);
