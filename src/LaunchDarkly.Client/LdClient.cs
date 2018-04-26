@@ -25,11 +25,15 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration, and a custom
-        /// implementation of the analytics event processor. This constructor should only be used if you are
-        /// overriding the default event-sending behavior.
+        /// implementation of the analytics event processor.
+        /// 
+        /// This constructor is deprecated; please use
+        /// <see cref="ConfigurationExtensions.WithEventProcessorFactory(Configuration, IEventProcessorFactory)"/>
+        /// instead.
         /// </summary>
         /// <param name="config">a client configuration object</param>
         /// <param name="eventProcessor">an event processor</param>
+        [Obsolete("Deprecated, please use Configuration.WithEventProcessorFactory")]
         public LdClient(Configuration config, IEventProcessor eventProcessor)
         {
             Log.InfoFormat("Starting LaunchDarkly Client {0}",
@@ -314,6 +318,17 @@ namespace LaunchDarkly.Client
             }
         }
 
+        /// <summary>
+        /// Shuts down the client and releases any resources it is using.
+        /// 
+        /// Any components that were added by specifying a factory object
+        /// (<see cref="ConfigurationExtensions.WithFeatureStore(Configuration, IFeatureStore)"/>, etc.)
+        /// will also be disposed of by this method; their lifecycle is the same as the client's.
+        /// However, for any components that you constructed yourself and passed in (via the deprecated
+        /// method <see cref="ConfigurationExtensions.WithFeatureStore(Configuration, IFeatureStore)"/>,
+        /// or the deprecated <c>LdClient</c> constructor that takes an <see cref="IEventProcessor"/>),
+        /// this will not happen; you are responsible for managing their lifecycle.
+        /// </summary>
         /// <see cref="ILdClient.Dispose"/>
         public void Dispose()
         {
