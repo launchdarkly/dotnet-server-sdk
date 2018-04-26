@@ -19,6 +19,13 @@ namespace LaunchDarkly.Client
                 flag.Version, null, flag.TrackEvents, flag.DebugEventsUntilDate, false);
         }
 
+        internal FeatureRequestEvent NewDefaultFeatureRequestEvent(FeatureFlag flag, User user,
+            JToken defaultVal)
+        {
+            return new FeatureRequestEvent(GetTimestamp(), flag.Key, user, null, defaultVal, defaultVal,
+                flag.Version, null, flag.TrackEvents, flag.DebugEventsUntilDate, false);
+        }
+
         internal FeatureRequestEvent NewUnknownFeatureRequestEvent(string key, User user,
             JToken defaultVal)
         {

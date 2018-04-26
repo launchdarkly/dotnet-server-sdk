@@ -186,12 +186,6 @@ namespace LaunchDarkly.Client
                 Log.Warn("LaunchDarkly client has not yet been initialized. Returning default");
                 return defaultValue;
             }
-            if (user == null || user.Key == null)
-            {
-                Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, null, defaultValue));
-                return defaultValue;
-            }
             
             try
             {
@@ -205,6 +199,13 @@ namespace LaunchDarkly.Client
                     return defaultValue;
                 }
 
+                if (user == null || user.Key == null)
+                {
+                    Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
+                    _eventProcessor.SendEvent(_eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue));
+                    return defaultValue;
+                }
+                
                 FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _eventFactory);
                 if (!IsOffline())
                 {
@@ -222,11 +223,16 @@ namespace LaunchDarkly.Client
                             evalResult.GetType(),
                             featureKey);
 
-                        _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, null, defaultValue, defaultValue));
+                        _eventProcessor.SendEvent(_eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue));
                         return defaultValue;
                     }
                     _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, evalResult.Variation, evalResult.Result, defaultValue));
                     return evalResult.Result;
+                }
+                else
+                {
+                    _eventProcessor.SendEvent(_eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue));
+                    return defaultValue;
                 }
             }
             catch (Exception e)
