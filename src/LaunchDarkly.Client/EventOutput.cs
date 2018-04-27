@@ -24,6 +24,8 @@ namespace LaunchDarkly.Client
         internal EventUser User { get; set; }
         [JsonProperty(PropertyName = "userKey", NullValueHandling = NullValueHandling.Ignore)]
         internal string UserKey { get; set; }
+        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
+        internal int? Variation { get; set; }
         [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
         internal int? Version { get; set; }
         [JsonProperty(PropertyName = "value")]
@@ -79,30 +81,27 @@ namespace LaunchDarkly.Client
     internal sealed class EventSummaryFlag
     {
         [JsonProperty(PropertyName = "default")]
-        internal JToken Default { get; private set; }
+        internal JToken Default { get; set; }
         [JsonProperty(PropertyName = "counters")]
-        internal List<EventSummaryCounter> Counters { get; private set; }
-
-        internal EventSummaryFlag(JToken defaultVal, List<EventSummaryCounter> counters)
-        {
-            Default = defaultVal;
-            Counters = counters;
-        }
+        internal List<EventSummaryCounter> Counters { get; set; }
     }
 
     internal sealed class EventSummaryCounter
     {
+        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
+        internal int? Variation { get; set; }
         [JsonProperty(PropertyName = "value")]
         internal JToken Value { get; private set; }
-        [JsonProperty(PropertyName = "version")]
+        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
         internal int? Version { get; private set; }
         [JsonProperty(PropertyName = "count")]
         internal int Count { get; private set; }
         [JsonProperty(PropertyName = "unknown", NullValueHandling = NullValueHandling.Ignore)]
         internal bool? Unknown { get; private set; }
 
-        internal EventSummaryCounter(JToken value, int? version, int count)
+        internal EventSummaryCounter(int? variation, JToken value, int? version, int count)
         {
+            Variation = variation;
             Value = value;
             Version = version;
             Count = count;
@@ -154,6 +153,7 @@ namespace LaunchDarkly.Client
                         User = inlineUser ? EventUser.FromUser(fe.User, _config) : null,
                         UserKey = inlineUser ? null : fe.User.Key,
                         Version = fe.Version,
+                        Variation = fe.Variation,
                         Value = fe.Value,
                         Default = fe.Default,
                         PrereqOf = fe.PrereqOf
@@ -196,11 +196,15 @@ namespace LaunchDarkly.Client
                 EventSummaryFlag flag;
                 if (!flagsOut.TryGetValue(entry.Key.Key, out flag))
                 {
-                    flag = new EventSummaryFlag(entry.Value.Default, new List<EventSummaryCounter>());
+                    flag = new EventSummaryFlag
+                    {
+                        Default = entry.Value.Default,
+                        Counters = new List<EventSummaryCounter>()
+                    };
                     flagsOut[entry.Key.Key] = flag;
                 }
-                flag.Counters.Add(new EventSummaryCounter(entry.Value.FlagValue, entry.Key.Version,
-                    entry.Value.Count));
+                flag.Counters.Add(new EventSummaryCounter(entry.Key.Variation, entry.Value.FlagValue,
+                    entry.Key.Version, entry.Value.Count));
             }
             return new SummaryEventOutput
             {
