@@ -8,7 +8,7 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Provides factories for the standard implementations of LaunchDarkly component interfaces.
     /// </summary>
-    public static class Implementations
+    public static class Components
     {
         private static IFeatureStoreFactory _inMemoryFeatureStoreFactory = new InMemoryFeatureStoreFactory();
         private static IEventProcessorFactory _eventProcessorFactory = new DefaultEventProcessorFactory();

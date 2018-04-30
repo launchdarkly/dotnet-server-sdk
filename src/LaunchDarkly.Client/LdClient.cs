@@ -44,7 +44,7 @@ namespace LaunchDarkly.Client
             if (eventProcessor == null)
             {
                 _eventProcessor = (_configuration.EventProcessorFactory ??
-                    Implementations.DefaultEventProcessor).CreateEventProcessor(_configuration);
+                    Components.DefaultEventProcessor).CreateEventProcessor(_configuration);
                 _shouldDisposeEventProcessor = true;
             }
             else
@@ -61,7 +61,7 @@ namespace LaunchDarkly.Client
             if (_configuration.FeatureStore == null)
             {
                 _featureStore = (_configuration.FeatureStoreFactory ??
-                    Implementations.InMemoryFeatureStore).CreateFeatureStore();
+                    Components.InMemoryFeatureStore).CreateFeatureStore();
                 _shouldDisposeFeatureStore = true;
             }
             else
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Client
             }
 
             _updateProcessor = (_configuration.UpdateProcessorFactory ??
-                Implementations.DefaultUpdateProcessor).CreateUpdateProcessor(_configuration, _featureStore);
+                Components.DefaultUpdateProcessor).CreateUpdateProcessor(_configuration, _featureStore);
 
             var initTask = _updateProcessor.Start();
 

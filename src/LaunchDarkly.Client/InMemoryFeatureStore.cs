@@ -8,7 +8,7 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// In-memory, thread-safe implementation of IFeatureStore.
     /// 
-    /// Referencing this class directly is deprecated; please use <see cref="Implementations.InMemoryFeatureStore"/>
+    /// Referencing this class directly is deprecated; please use <see cref="Components.InMemoryFeatureStore"/>
     /// instead.
     /// </summary>
     public class InMemoryFeatureStore : IFeatureStore

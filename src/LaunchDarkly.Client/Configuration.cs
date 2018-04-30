@@ -115,19 +115,19 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IFeatureStore"/>, to be used
         /// for holding feature flags and related data received from LaunchDarkly. The default is
-        /// <see cref="Implementations.InMemoryFeatureStore"/>, but you may provide a custom
+        /// <see cref="Components.InMemoryFeatureStore"/>, but you may provide a custom
         /// implementation.
         /// </summary>
         public IFeatureStoreFactory FeatureStoreFactory { get; internal set; }
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IEventProcessor"/>, which will
-        /// process all analytics events. The default is <see cref="Implementations.DefaultEventProcessor"/>,
+        /// process all analytics events. The default is <see cref="Components.DefaultEventProcessor"/>,
         /// but you may provide a custom implementation.
         /// </summary>
         public IEventProcessorFactory EventProcessorFactory { get; internal set; }
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IUpdateProcessor"/>, which will
-        /// receive feature flag data. The default is <see cref="Implementations.DefaultUpdateProcessor"/>,
+        /// receive feature flag data. The default is <see cref="Components.DefaultUpdateProcessor"/>,
         /// but you may provide a custom implementation.
         /// </summary>
         public IUpdateProcessorFactory UpdateProcessorFactory { get; internal set; }
@@ -467,7 +467,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Sets the implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
         /// and related data received from LaunchDarkly, using a factory object. The default is
-        /// <see cref="Implementations.InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
+        /// <see cref="Components.InMemoryFeatureStore"/>, but you may choose to use a custom implementation.
         /// </summary>
         /// <param name="configuration">the configuration</param>
         /// <param name="factory">the factory object</param>
@@ -480,7 +480,7 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Sets the implementation of <see cref="IEventProcessor"/> to be used for processing analytics events,
-        /// using a factory object. The default is <see cref="Implementations.DefaultEventProcessor"/>, but
+        /// using a factory object. The default is <see cref="Components.DefaultEventProcessor"/>, but
         /// you may choose to use a custom implementation (for instance, a test fixture).
         /// </summary>
         /// <param name="configuration">the configuration</param>
@@ -494,7 +494,7 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Sets the implementation of <see cref="IUpdateProcessor"/> to be used for receiving feature flag data,
-        /// using a factory object. The default is <see cref="Implementations.DefaultUpdateProcessor"/>, but
+        /// using a factory object. The default is <see cref="Components.DefaultUpdateProcessor"/>, but
         /// you may choose to use a custom implementation (for instance, a test fixture).
         /// </summary>
         /// <param name="configuration">the configuration</param>
