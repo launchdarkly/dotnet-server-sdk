@@ -365,7 +365,7 @@ namespace LaunchDarkly.Tests
 
             RequestMessage r = FlushAndGetRequest(OkResponse());
 
-            Assert.Equal("2", r.Headers["X-LaunchDarkly-Event-Schema"][0]);
+            Assert.Equal("3", r.Headers["X-LaunchDarkly-Event-Schema"][0]);
         }
 
         [Fact]
