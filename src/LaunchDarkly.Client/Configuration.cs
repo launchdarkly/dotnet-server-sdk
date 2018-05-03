@@ -210,7 +210,7 @@ namespace LaunchDarkly.Client
                 HttpClientHandler = new HttpClientHandler(),
                 Offline = false,
                 SdkKey = sdkKey,
-                FeatureStore = new InMemoryFeatureStore(),
+                FeatureStore = null,
                 IsStreamingEnabled = true,
                 AllAttributesPrivate = false,
                 PrivateAttributeNames = null,

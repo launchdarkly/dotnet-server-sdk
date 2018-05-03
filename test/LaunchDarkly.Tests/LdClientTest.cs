@@ -10,9 +10,9 @@ namespace LaunchDarkly.Tests
         private LdClient MakeClient(IFeatureStore featureStore, MockEventProcessor ep)
         {
             Configuration config = Configuration.Default("secret")
-                .WithOffline(true)
                 .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .WithEventProcessorFactory(TestUtils.SpecificEventProcessor(ep));
+                .WithEventProcessorFactory(TestUtils.SpecificEventProcessor(ep))
+                .WithUpdateProcessorFactory(Components.NullUpdateProcessor);
             LdClient client = new LdClient(config);
             featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             return client;
