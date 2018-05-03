@@ -89,7 +89,9 @@ namespace LaunchDarkly.Client
         /// can be used to configure advanced client features, such as customizing the LaunchDarkly base URL.
         /// </summary>
         /// <param name="config">a client configuration object</param>
+        #pragma warning disable 618  // suppress warning for calling obsolete ctor
         public LdClient(Configuration config) : this(config, null)
+        #pragma warning restore 618
         {
         }
 

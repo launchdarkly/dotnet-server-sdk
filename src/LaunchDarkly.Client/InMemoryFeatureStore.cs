@@ -20,6 +20,9 @@ namespace LaunchDarkly.Client
             new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
         private bool _initialized = false;
 
+        /// <summary>
+        /// Creates a new empty feature store instance.
+        /// </summary>
         public InMemoryFeatureStore() { }
 
         /// <see cref="IFeatureStore.Get{T}(VersionedDataKind{T}, string)"/>
@@ -157,6 +160,7 @@ namespace LaunchDarkly.Client
             return _initialized;
         }
 
+        /// <see cref="IDisposable.Dispose"/>
         public void Dispose()
         { }
     }
