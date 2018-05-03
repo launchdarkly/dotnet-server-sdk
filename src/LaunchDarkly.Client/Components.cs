@@ -28,7 +28,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Returns a factory for the default implementation of <see cref="IStoreEvents"/>, which
+        /// Returns a factory for the default implementation of <see cref="IEventProcessor"/>, which
         /// forwards all analytics events to LaunchDarkly (unless the client is offline).
         /// </summary>
         public static IEventProcessorFactory DefaultEventProcessor
@@ -40,7 +40,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Returns a factory for a null implementation of <see cref="IStoreEvents"/>, which will
+        /// Returns a factory for a null implementation of <see cref="IEventProcessor"/>, which will
         /// discard all analytics events and not send them to LaunchDarkly, regardless of any
         /// other configuration.
         /// </summary>

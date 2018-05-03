@@ -11,8 +11,9 @@ namespace LaunchDarkly.Tests
         {
             Configuration config = Configuration.Default("secret")
                 .WithOffline(true)
-                .WithFeatureStore(featureStore);
-            LdClient client = new LdClient(config, ep);
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .WithEventProcessorFactory(TestUtils.SpecificEventProcessor(ep));
+            LdClient client = new LdClient(config);
             featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             return client;
         }

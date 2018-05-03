@@ -34,7 +34,8 @@ namespace LaunchDarkly.Tests
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
             _featureStore = new InMemoryFeatureStore();
-            _config = Client.Configuration.Default(SDK_KEY).WithFeatureStore(_featureStore);
+            _config = Client.Configuration.Default(SDK_KEY)
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore));
         }
 
         [Fact]
