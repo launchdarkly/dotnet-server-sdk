@@ -14,6 +14,7 @@ namespace LaunchDarkly.Client
     internal sealed class DefaultEventProcessor : IEventProcessor
     {
         internal static readonly ILog Log = LogManager.GetLogger(typeof(DefaultEventProcessor));
+        internal static readonly string CurrentSchemaVersion = "3";
 
         private readonly BlockingCollection<IEventMessage> _messageQueue;
         private readonly EventDispatcher _dispatcher;
@@ -192,7 +193,8 @@ namespace LaunchDarkly.Client
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             _random = new Random();
 
-            _httpClient.DefaultRequestHeaders.Add("X-LaunchDarkly-Event-Schema", "2");
+            _httpClient.DefaultRequestHeaders.Add("X-LaunchDarkly-Event-Schema",
+                DefaultEventProcessor.CurrentSchemaVersion);
             
             EventBuffer buffer = new EventBuffer(config.EventQueueCapacity);
 

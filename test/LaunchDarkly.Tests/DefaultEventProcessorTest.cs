@@ -365,7 +365,7 @@ namespace LaunchDarkly.Tests
 
             RequestMessage r = FlushAndGetRequest(OkResponse());
 
-            Assert.Equal("2", r.Headers["X-LaunchDarkly-Event-Schema"][0]);
+            Assert.Equal("3", r.Headers["X-LaunchDarkly-Event-Schema"][0]);
         }
 
         [Fact]
@@ -413,6 +413,14 @@ namespace LaunchDarkly.Tests
             Assert.Equal(fe.CreationDate, (long)o["creationDate"]);
             Assert.Equal(flag.Key, (string)o["key"]);
             Assert.Equal(flag.Version, (int)o["version"]);
+            if (fe.Variation == null)
+            {
+                Assert.Null(o["variation"]);
+            }
+            else
+            {
+                Assert.Equal(fe.Variation, (int)o["variation"]);
+            }
             Assert.Equal(fe.Value, o["value"]);
             CheckEventUserOrKey(o, fe, userJson);
         }
@@ -460,6 +468,7 @@ namespace LaunchDarkly.Tests
                 Assert.NotNull(cs);
                 Assert.Equal(1, cs.Count);
                 JObject c = cs[0] as JObject;
+                Assert.Equal(fe.Variation, c["variation"]);
                 Assert.Equal(fe.Value, c["value"]);
                 Assert.Equal(fe.Version, (int)c["version"]);
                 Assert.Equal(1, (int)c["count"]);
