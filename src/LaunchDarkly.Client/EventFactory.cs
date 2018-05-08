@@ -12,14 +12,14 @@ namespace LaunchDarkly.Client
 
         internal abstract long GetTimestamp();
 
-        internal FeatureRequestEvent NewFeatureRequestEvent(FeatureFlag flag, User user,
+        internal FeatureRequestEvent NewFeatureRequestEvent(IFlagEventProperties flag, User user,
             int? variation, JToken value, JToken defaultVal)
         {
             return new FeatureRequestEvent(GetTimestamp(), flag.Key, user, variation, value, defaultVal,
                 flag.Version, null, flag.TrackEvents, flag.DebugEventsUntilDate, false);
         }
 
-        internal FeatureRequestEvent NewDefaultFeatureRequestEvent(FeatureFlag flag, User user,
+        internal FeatureRequestEvent NewDefaultFeatureRequestEvent(IFlagEventProperties flag, User user,
             JToken defaultVal)
         {
             return new FeatureRequestEvent(GetTimestamp(), flag.Key, user, null, defaultVal, defaultVal,
@@ -33,8 +33,8 @@ namespace LaunchDarkly.Client
                 null, null, false, null, false);
         }
 
-        internal FeatureRequestEvent NewPrerequisiteFeatureRequestEvent(FeatureFlag prereqFlag, User user,
-            int? variation, JToken value, FeatureFlag prereqOf)
+        internal FeatureRequestEvent NewPrerequisiteFeatureRequestEvent(IFlagEventProperties prereqFlag, User user,
+            int? variation, JToken value, IFlagEventProperties prereqOf)
         {
             return new FeatureRequestEvent(GetTimestamp(), prereqFlag.Key, user, variation, value, null,
                 prereqFlag.Version, prereqOf.Key, prereqFlag.TrackEvents, prereqFlag.DebugEventsUntilDate, false);

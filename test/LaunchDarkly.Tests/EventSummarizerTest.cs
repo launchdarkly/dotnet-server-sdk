@@ -39,7 +39,7 @@ namespace LaunchDarkly.Tests
         public void SummarizeEventSetsStartAndEndDates()
         {
             EventSummarizer es = new EventSummarizer();
-            FeatureFlag flag = new FeatureFlagBuilder("key").Build();
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("key").Build();
             _eventFactory.Timestamp = 2000;
             Event event1 = _eventFactory.NewFeatureRequestEvent(flag, _user, null, null, null);
             _eventFactory.Timestamp = 1000;
@@ -59,8 +59,8 @@ namespace LaunchDarkly.Tests
         public void SummarizeEventIncrementsCounters()
         {
             EventSummarizer es = new EventSummarizer();
-            FeatureFlag flag1 = new FeatureFlagBuilder("key1").Build();
-            FeatureFlag flag2 = new FeatureFlagBuilder("key2").Build();
+            IFlagEventProperties flag1 = new FlagEventPropertiesBuilder("key1").Build();
+            IFlagEventProperties flag2 = new FlagEventPropertiesBuilder("key2").Build();
             string unknownFlagKey = "badkey";
             JToken default1 = new JValue("default1");
             JToken default2 = new JValue("default2");

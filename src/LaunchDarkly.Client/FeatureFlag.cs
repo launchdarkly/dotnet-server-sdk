@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
-    internal class FeatureFlag : IVersionedData
+    internal class FeatureFlag : IVersionedData, IFlagEventProperties
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureFlag));
 
@@ -20,8 +20,8 @@ namespace LaunchDarkly.Client
         internal VariationOrRollout Fallthrough { get; private set; }
         internal int? OffVariation { get; private set; }
         internal List<JToken> Variations { get; private set; }
-        internal bool TrackEvents { get; private set; }
-        internal long? DebugEventsUntilDate { get; private set; }
+        public bool TrackEvents { get; private set; }
+        public long? DebugEventsUntilDate { get; private set; }
         public bool Deleted { get; set; }
 
         [JsonConstructor]
