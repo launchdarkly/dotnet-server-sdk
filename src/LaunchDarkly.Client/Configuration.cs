@@ -9,7 +9,7 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// This class exposes advanced configuration options for <see cref="LdClient"/>.
     /// </summary>
-    public class Configuration
+    public class Configuration : IBaseConfiguration
     {
         /// <summary>
         /// The base URI of the LaunchDarkly server.
