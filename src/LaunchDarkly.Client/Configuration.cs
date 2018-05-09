@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Reflection;
 using Common.Logging;
 
 namespace LaunchDarkly.Client
@@ -131,13 +130,10 @@ namespace LaunchDarkly.Client
         /// but you may provide a custom implementation.
         /// </summary>
         public IUpdateProcessorFactory UpdateProcessorFactory { get; internal set; }
-
-        internal static readonly string Version = ((AssemblyInformationalVersionAttribute) typeof(LdClient)
-                .GetTypeInfo()
-                .Assembly
-                .GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)))
-            .InformationalVersion;
-
+        /// <summary>
+        /// A string that will be sent to LaunchDarkly to identify the SDK type.
+        /// </summary>
+        public string UserAgentType { get { return "DotNetClient"; } }
         /// <summary>
         /// Default value for <see cref="PollingInterval"/>.
         /// </summary>
@@ -220,14 +216,6 @@ namespace LaunchDarkly.Client
             };
 
             return defaultConfiguration;
-        }
-
-        internal HttpClient HttpClient()
-        {
-            var httpClient = new HttpClient(handler: HttpClientHandler, disposeHandler: false);
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/" + Version);
-            httpClient.DefaultRequestHeaders.Add("Authorization", SdkKey);
-            return httpClient;
         }
     }
 

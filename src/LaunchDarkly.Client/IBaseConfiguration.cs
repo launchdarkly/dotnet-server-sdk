@@ -88,5 +88,15 @@ namespace LaunchDarkly.Client
         /// The connection timeout. The default value is 10 seconds.
         /// </summary>
         TimeSpan HttpClientTimeout { get; }
+
+        /// <summary>
+        /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
+        /// </summary>
+        HttpClientHandler HttpClientHandler { get; }
+
+        /// <summary>
+        /// A string that will be sent to LaunchDarkly to identify the SDK type.
+        /// </summary>
+        string UserAgentType { get; }
     }
 }

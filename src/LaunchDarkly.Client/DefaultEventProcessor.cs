@@ -23,14 +23,22 @@ namespace LaunchDarkly.Client
         private AtomicBoolean _stopped;
         private AtomicBoolean _inputCapacityExceeded;
 
-        internal DefaultEventProcessor(IBaseConfiguration config, HttpClient httpClient)
+        internal DefaultEventProcessor(IBaseConfiguration config,
+            IUserDeduplicator userDeduplicator, HttpClient httpClient)
         {
             _messageQueue = new BlockingCollection<IEventMessage>(config.EventQueueCapacity);
-            _dispatcher = new EventDispatcher(config, _messageQueue, httpClient);
+            _dispatcher = new EventDispatcher(config, _messageQueue, userDeduplicator, httpClient);
             _flushTimer = new Timer(DoBackgroundFlush, null, config.EventQueueFrequency,
                 config.EventQueueFrequency);
-            _flushUsersTimer = new Timer(DoUserKeysFlush, null, config.UserKeysFlushInterval,
-                config.UserKeysFlushInterval);
+            if (userDeduplicator != null && userDeduplicator.FlushInterval.HasValue)
+            {
+                _flushUsersTimer = new Timer(DoUserKeysFlush, null, userDeduplicator.FlushInterval.Value,
+                    userDeduplicator.FlushInterval.Value);
+            }
+            else
+            {
+                _flushUsersTimer = null;
+            }
             _stopped = new AtomicBoolean(false);
             _inputCapacityExceeded = new AtomicBoolean(false);
         }
@@ -58,7 +66,10 @@ namespace LaunchDarkly.Client
                 if (!_stopped.GetAndSet(true))
                 {
                     _flushTimer.Dispose();
-                    _flushUsersTimer.Dispose();
+                    if (_flushUsersTimer != null)
+                    {
+                        _flushUsersTimer.Dispose();
+                    }
                     SubmitMessage(new FlushMessage());
                     ShutdownMessage message = new ShutdownMessage();
                     SubmitMessage(message);
@@ -176,7 +187,7 @@ namespace LaunchDarkly.Client
         private static readonly int MaxFlushWorkers = 5;
 
         private readonly IBaseConfiguration _config;
-        private readonly LRUCacheSet<string> _userKeys;
+        private readonly IUserDeduplicator _userDeduplicator;
         private readonly CountdownEvent _flushWorkersCounter;
         private readonly HttpClient _httpClient;
         private readonly Uri _uri;
@@ -186,10 +197,11 @@ namespace LaunchDarkly.Client
 
         internal EventDispatcher(IBaseConfiguration config,
             BlockingCollection<IEventMessage> messageQueue,
+            IUserDeduplicator userDeduplicator,
             HttpClient httpClient)
         {
             _config = config;
-            _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
+            _userDeduplicator = userDeduplicator;
             _flushWorkersCounter = new CountdownEvent(1);
             _httpClient = httpClient;
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
@@ -232,7 +244,10 @@ namespace LaunchDarkly.Client
                         StartFlush(buffer);
                         break;
                     case FlushUsersMessage fm:
-                        _userKeys.Clear();
+                        if (_userDeduplicator != null)
+                        {
+                            _userDeduplicator.Flush();
+                        }
                         break;
                     case TestSyncMessage tm:
                         WaitForFlushes();
@@ -285,20 +300,22 @@ namespace LaunchDarkly.Client
                 willAddFullEvent = ShouldSampleEvent();
             }
 
-            // For each user we haven't seen before, we add an index event - unless this is already
-            // an identify event for that user.
+            // Tell the user deduplicator, if any, about this user; this may produce an index event.
+            // We only need to do this if there is *not* already going to be a full-fidelity event
+            // containing an inline user.
             if (!(willAddFullEvent && _config.InlineUsersInEvents))
             {
-                if (e.User != null && !NoticeUser(e.User))
+                if (_userDeduplicator != null && e.User != null)
                 {
-                    if (!(e is IdentifyEvent))
+                    bool needUserEvent = _userDeduplicator.ProcessUser(e.User);
+                    if (needUserEvent && !(e is IdentifyEvent))
                     {
                         IndexEvent ie = new IndexEvent(e.CreationDate, e.User);
                         buffer.AddEvent(ie);
                     }
                 }
             }
-
+            
             if (willAddFullEvent)
             {
                 buffer.AddEvent(e);
@@ -307,16 +324,6 @@ namespace LaunchDarkly.Client
             {
                 buffer.AddEvent(debugEvent);
             }
-        }
-
-        // Adds to the set of users we've noticed, and returns true if the user was already known to us.
-        private bool NoticeUser(User user)
-        {
-            if (user == null || user.Key == null)
-            {
-                return false;
-            }
-            return _userKeys.Add(user.Key);
         }
 
         private bool ShouldDebugEvent(FeatureRequestEvent fe)
