@@ -23,10 +23,10 @@ namespace LaunchDarkly.Client
         private AtomicBoolean _stopped;
         private AtomicBoolean _inputCapacityExceeded;
 
-        internal DefaultEventProcessor(Configuration config)
+        internal DefaultEventProcessor(IBaseConfiguration config, HttpClient httpClient)
         {
             _messageQueue = new BlockingCollection<IEventMessage>(config.EventQueueCapacity);
-            _dispatcher = new EventDispatcher(config, _messageQueue);
+            _dispatcher = new EventDispatcher(config, _messageQueue, httpClient);
             _flushTimer = new Timer(DoBackgroundFlush, null, config.EventQueueFrequency,
                 config.EventQueueFrequency);
             _flushUsersTimer = new Timer(DoUserKeysFlush, null, config.UserKeysFlushInterval,
@@ -175,7 +175,7 @@ namespace LaunchDarkly.Client
     {
         private static readonly int MaxFlushWorkers = 5;
 
-        private readonly Configuration _config;
+        private readonly IBaseConfiguration _config;
         private readonly LRUCacheSet<string> _userKeys;
         private readonly CountdownEvent _flushWorkersCounter;
         private readonly HttpClient _httpClient;
@@ -184,12 +184,14 @@ namespace LaunchDarkly.Client
         private long _lastKnownPastTime;
         private volatile bool _disabled;
 
-        internal EventDispatcher(Configuration config, BlockingCollection<IEventMessage> messageQueue)
+        internal EventDispatcher(IBaseConfiguration config,
+            BlockingCollection<IEventMessage> messageQueue,
+            HttpClient httpClient)
         {
             _config = config;
             _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
             _flushWorkersCounter = new CountdownEvent(1);
-            _httpClient = config.HttpClient();
+            _httpClient = httpClient;
             _uri = new Uri(_config.EventsUri.AbsoluteUri + "bulk");
             _random = new Random();
 

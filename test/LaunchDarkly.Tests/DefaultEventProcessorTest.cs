@@ -39,7 +39,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IdentifyEventIsQueued()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             IdentifyEvent e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
@@ -52,7 +52,7 @@ namespace LaunchDarkly.Tests
         public void UserDetailsAreScrubbedInIdentifyEvent()
         {
             _config.WithAllAttributesPrivate(true);
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             IdentifyEvent e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
@@ -64,8 +64,8 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IndividualFeatureEventIsQueuedWithIndexEvent()
         {
-            _ep = new DefaultEventProcessor(_config);
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(true).Build();
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -81,8 +81,8 @@ namespace LaunchDarkly.Tests
         public void UserDetailsAreScrubbedInIndexEvent()
         {
             _config.WithAllAttributesPrivate(true);
-            _ep = new DefaultEventProcessor(_config);
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(true).Build();
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -98,8 +98,8 @@ namespace LaunchDarkly.Tests
         public void FeatureEventCanContainInlineUser()
         {
             _config.WithInlineUsersInEvents(true);
-            _ep = new DefaultEventProcessor(_config);
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(true).Build();
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -115,8 +115,8 @@ namespace LaunchDarkly.Tests
         {
             _config.WithAllAttributesPrivate(true);
             _config.WithInlineUsersInEvents(true);
-            _ep = new DefaultEventProcessor(_config);
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(true).Build();
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -131,8 +131,8 @@ namespace LaunchDarkly.Tests
         public void IndexEventIsStillGeneratedIfInlineUsersIsTrueButFeatureEventIsNotTracked()
         {
             _config.WithInlineUsersInEvents(true);
-            _ep = new DefaultEventProcessor(_config);
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(false).Build();
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(false).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -146,9 +146,9 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void EventKindIsDebugIfFlagIsTemporarilyInDebugMode()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             long futureTime = Util.GetUnixTimestampMillis(DateTime.Now) + 1000000;
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).DebugEventsUntilDate(futureTime).Build();
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).DebugEventsUntilDate(futureTime).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -163,9 +163,9 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void EventCanBeBothTrackedAndDebugged()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             long futureTime = Util.GetUnixTimestampMillis(DateTime.Now) + 1000000;
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).TrackEvents(true)
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true)
                 .DebugEventsUntilDate(futureTime).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
@@ -182,7 +182,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void DebugModeExpiresBasedOnClientTimeIfClientTimeIsLaterThanServerTime()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
 
             // Pick a server time that is somewhat behind the client time
             long serverTime = Util.GetUnixTimestampMillis(DateTime.Now) - 20000;
@@ -194,7 +194,7 @@ namespace LaunchDarkly.Tests
             // Now send an event with debug mode on, with a "debug until" time that is further in
             // the future than the server time, but in the past compared to the client.
             long debugUntil = serverTime + 1000;
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).DebugEventsUntilDate(debugUntil).Build();
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).DebugEventsUntilDate(debugUntil).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -209,7 +209,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void DebugModeExpiresBasedOnServerTimeIfServerTimeIsLaterThanClientTime()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
 
             // Pick a server time that is somewhat ahead of the client time
             long serverTime = Util.GetUnixTimestampMillis(DateTime.Now) + 20000;
@@ -221,7 +221,7 @@ namespace LaunchDarkly.Tests
             // Now send an event with debug mode on, with a "debug until" time that is further in
             // the future than the client time, but in the past compared to the server.
             long debugUntil = serverTime - 1000;
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey").Version(11).DebugEventsUntilDate(debugUntil).Build();
+            IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).DebugEventsUntilDate(debugUntil).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
                 1, new JValue("value"), null);
             _ep.SendEvent(fe);
@@ -236,9 +236,9 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void TwoFeatureEventsForSameUserGenerateOnlyOneIndexEvent()
         {
-            _ep = new DefaultEventProcessor(_config);
-            FeatureFlag flag1 = new FeatureFlagBuilder("flagkey1").Version(11).TrackEvents(true).Build();
-            FeatureFlag flag2 = new FeatureFlagBuilder("flagkey2").Version(22).TrackEvents(true).Build();
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
+            IFlagEventProperties flag1 = new FlagEventPropertiesBuilder("flagkey1").Version(11).TrackEvents(true).Build();
+            IFlagEventProperties flag2 = new FlagEventPropertiesBuilder("flagkey2").Version(22).TrackEvents(true).Build();
             JValue value = new JValue("value");
             FeatureRequestEvent fe1 = EventFactory.Default.NewFeatureRequestEvent(flag1, _user,
                 1, value, null);
@@ -258,9 +258,9 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void NonTrackedEventsAreSummarized()
         {
-            _ep = new DefaultEventProcessor(_config);
-            FeatureFlag flag1 = new FeatureFlagBuilder("flagkey1").Version(11).Build();
-            FeatureFlag flag2 = new FeatureFlagBuilder("flagkey2").Version(22).Build();
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
+            IFlagEventProperties flag1 = new FlagEventPropertiesBuilder("flagkey1").Version(11).Build();
+            IFlagEventProperties flag2 = new FlagEventPropertiesBuilder("flagkey2").Version(22).Build();
             JValue value = new JValue("value");
             JValue default1 = new JValue("default1");
             JValue default2 = new JValue("default2");
@@ -280,7 +280,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CustomEventIsQueuedWithUser()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
 
@@ -294,7 +294,7 @@ namespace LaunchDarkly.Tests
         public void CustomEventCanContainInlineUser()
         {
             _config.WithInlineUsersInEvents(true);
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
 
@@ -308,7 +308,7 @@ namespace LaunchDarkly.Tests
         {
             _config.WithAllAttributesPrivate(true);
             _config.WithInlineUsersInEvents(true);
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
 
@@ -320,7 +320,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FinalFlushIsDoneOnDispose()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             IdentifyEvent e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
@@ -335,7 +335,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FlushDoesNothingIfThereAreNoEvents()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             _ep.Flush();
 
             foreach (LogEntry le in _server.LogEntries)
@@ -347,7 +347,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SdkKeyIsSent()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             Event e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
@@ -359,7 +359,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void SchemaHeaderIsSent()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             Event e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
 
@@ -371,7 +371,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void NoMoreEventsArePostedAfterReceiving401Error()
         {
-            _ep = new DefaultEventProcessor(_config);
+            _ep = new DefaultEventProcessor(_config, _config.HttpClient());
             Event e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
             FlushAndGetEvents(Response.Create().WithStatusCode(401));
@@ -406,7 +406,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(userJson, o["user"]);
         }
 
-        private void CheckFeatureEvent(JToken t, FeatureRequestEvent fe, FeatureFlag flag, bool debug, JToken userJson)
+        private void CheckFeatureEvent(JToken t, FeatureRequestEvent fe, IFlagEventProperties flag, bool debug, JToken userJson)
         {
             JObject o = t as JObject;
             Assert.Equal(debug ? "debug" : "feature", (string)o["kind"]);

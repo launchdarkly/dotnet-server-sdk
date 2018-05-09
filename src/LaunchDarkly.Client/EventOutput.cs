@@ -114,9 +114,9 @@ namespace LaunchDarkly.Client
 
     internal sealed class EventOutputFormatter
     {
-        private readonly Configuration _config;
+        private readonly IBaseConfiguration _config;
 
-        internal EventOutputFormatter(Configuration config)
+        internal EventOutputFormatter(IBaseConfiguration config)
         {
             _config = config;
         }

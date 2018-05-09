@@ -88,7 +88,7 @@ namespace LaunchDarkly.Client
             }
             else
             {
-                return new DefaultEventProcessor(config);
+                return new DefaultEventProcessor(config, config.HttpClient());
             }
         }
     }
