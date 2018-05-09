@@ -93,10 +93,5 @@ namespace LaunchDarkly.Client
         /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
         /// </summary>
         HttpClientHandler HttpClientHandler { get; }
-
-        /// <summary>
-        /// A string that will be sent to LaunchDarkly to identify the SDK type.
-        /// </summary>
-        string UserAgentType { get; }
     }
 }

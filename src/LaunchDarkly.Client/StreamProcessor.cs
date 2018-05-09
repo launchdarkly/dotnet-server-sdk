@@ -43,7 +43,7 @@ namespace LaunchDarkly.Client
 
         Task<bool> IUpdateProcessor.Start()
         {
-            Dictionary<string, string> headers = Util.GetRequestHeaders(_config);
+            Dictionary<string, string> headers = Util.GetRequestHeaders(_config, ServerSideClientEnvironment.Instance);
             headers.Add("Accept", "text/event-stream");
 
             _es = CreateEventSource(new Uri(_config.StreamUri, "/all"), headers);

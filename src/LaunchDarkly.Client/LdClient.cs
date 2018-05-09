@@ -37,7 +37,7 @@ namespace LaunchDarkly.Client
         public LdClient(Configuration config, IEventProcessor eventProcessor)
         {
             Log.InfoFormat("Starting LaunchDarkly Client {0}",
-                Util.Version);
+                ServerSideClientEnvironment.Instance.Version);
 
             _configuration = config;
 

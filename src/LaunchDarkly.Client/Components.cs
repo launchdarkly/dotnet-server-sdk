@@ -90,7 +90,7 @@ namespace LaunchDarkly.Client
             {
                 return new DefaultEventProcessor(config,
                     new DefaultUserDeduplicator(config),
-                    Util.MakeHttpClient(config));
+                    Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance));
             }
         }
     }

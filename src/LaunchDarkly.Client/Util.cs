@@ -8,25 +8,20 @@ namespace LaunchDarkly.Client
     internal static class Util
     {
         internal static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        internal static readonly string Version = ((AssemblyInformationalVersionAttribute)typeof(LdClient)
-                .GetTypeInfo()
-                .Assembly
-                .GetCustomAttribute(typeof(AssemblyInformationalVersionAttribute)))
-            .InformationalVersion;
-
-        public static Dictionary<string, string> GetRequestHeaders(IBaseConfiguration config)
+        
+        public static Dictionary<string, string> GetRequestHeaders(IBaseConfiguration config,
+            ClientEnvironment env)
         {
             return new Dictionary<string, string> {
                 { "Authorization", config.SdkKey },
-                { "User-Agent", config.UserAgentType + "/" + Util.Version }
+                { "User-Agent", env.UserAgentType + "/" + env.Version }
             };
         }
 
-        public static HttpClient MakeHttpClient(IBaseConfiguration config)
+        public static HttpClient MakeHttpClient(IBaseConfiguration config, ClientEnvironment env)
         {
             var httpClient = new HttpClient(handler: config.HttpClientHandler, disposeHandler: false);
-            foreach (var h in GetRequestHeaders(config))
+            foreach (var h in GetRequestHeaders(config, env))
             {
                 httpClient.DefaultRequestHeaders.Add(h.Key, h.Value);
             }
