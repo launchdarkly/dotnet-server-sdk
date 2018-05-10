@@ -2,6 +2,19 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.0.0] - 2018-05-10
+
+### Changed:
+- To reduce the network bandwidth used for analytics events, feature request events are now sent as counters rather than individual events, and user details are now sent only at intervals rather than in each event. These behaviors can be modified through the LaunchDarkly UI and with the new configuration option `InlineUsersInEvents`. For more details, see [Analytics Data Stream Reference](https://docs.launchdarkly.com/v2.0/docs/analytics-data-stream-reference).
+- The `IStoreEvents` interface has been renamed to `IEventProcessor`, has slightly different methods, and includes `IDisposable`. Also, the properties of the `Event` classes have changed. This will only affect developers who created their own implementation of `IStoreEvents`.
+
+### Added:
+- New extension methods on `Configuration` (`WithUpdateProcessorFactory`, `WithFeatureStoreFactory`, `WithEventProcessorFactory`) allow you to specify different implementations of each of the main client subcomponents (receiving feature state, storing feature state, and sending analytics events) for testing or for any other purpose. The `Components` class provides factories for all built-in implementations of these.
+
+### Deprecated:
+- The `WithFeatureStore` configuration method is deprecated, replaced by the new factory-based mechanism described above.
+- The `LdClient` constructor overload that takes an `IEventProcessor` (formerly `IStoreEvents`) is deprecated, replaced by `WithEventProcessorFactory`.
+
 ## [4.1.1] - 2018-03-23
 ### Fixed
 - Fixed a [bug](https://github.com/launchdarkly/.net-client/issues/75) in the event sampling feature that was introduced in 4.1.0: sampling might not work correctly if events were generated from multiple threads.
