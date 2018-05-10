@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using LaunchDarkly.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,14 +9,18 @@ namespace LaunchDarkly.Tests
 {
     public class EventUserTest
     {
-        static Configuration _baseConfig = new Configuration();
+        static IBaseConfiguration _baseConfig = new SimpleConfiguration();
 
-        static Configuration _configWithAllAttrsPrivate = new Configuration().WithAllAttributesPrivate(true);
+        static IBaseConfiguration _configWithAllAttrsPrivate = new SimpleConfiguration
+        {
+            AllAttributesPrivate = true
+        };
 
-        static Configuration _configWithSomeAttrsPrivate = new Configuration()
-            .WithPrivateAttributeName("firstName")
-            .WithPrivateAttributeName("bizzle");
-
+        static IBaseConfiguration _configWithSomeAttrsPrivate = new SimpleConfiguration
+        {
+            PrivateAttributeNames = new HashSet<string>(new string[] { "firstName", "bizzle" })
+        };
+        
         static User _baseUser = new User("abc")
             .AndSecondaryKey("xyz")
             .AndFirstName("Sue")
