@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LaunchDarkly.Client
 {
     /// <summary>
     /// Interface for a data store that holds feature flags and related data received by the streaming client.
     /// </summary>
-    public interface IFeatureStore
+    /// <seealso cref="IFeatureStoreFactory"/>
+    public interface IFeatureStore : IDisposable
     {
         /// <summary>
         /// Retrieve an object from the specified collection, or return null if not found.
@@ -55,5 +57,19 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <returns>true if the store contains data</returns>
         bool Initialized();
+    }
+
+    /// <summary>
+    /// Interface for a factory that creates some implementation of <see cref="IFeatureStore"/>.
+    /// </summary>
+    /// <seealso cref="ConfigurationExtensions.WithFeatureStoreFactory(Configuration, IFeatureStoreFactory)"/>
+    /// <seealso cref="Components"/>
+    public interface IFeatureStoreFactory
+    {
+        /// <summary>
+        /// Creates an implementation instance.
+        /// </summary>
+        /// <returns>an <c>IStoreEvents</c> instance</returns>
+        IFeatureStore CreateFeatureStore();
     }
 }

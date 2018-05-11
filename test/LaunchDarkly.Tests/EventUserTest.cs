@@ -61,7 +61,6 @@ namespace LaunchDarkly.Tests
         static JObject _userWithAllAttributesPrivateJson = JObject.Parse(@"
             { ""key"": ""abc"",
               ""secondary"": ""xyz"",
-              ""custom"": { },
               ""privateAttrs"": [ ""ip"", ""country"", ""firstName"", ""lastName"",
                                   ""name"", ""avatar"", ""email"", ""bizzle"", ""dizzle"" ]
             } ");
@@ -82,7 +81,6 @@ namespace LaunchDarkly.Tests
         static JObject _anonUserWithAllAttributesPrivateJson = JObject.Parse(@"
             { ""key"": ""abc"",
               ""anonymous"": true,
-              ""custom"": { },
               ""privateAttrs"": [ ""bizzle"", ""dizzle"" ]
             } ");
         

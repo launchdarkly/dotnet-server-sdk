@@ -14,7 +14,7 @@ namespace LaunchDarkly.Tests
         private static string SDK_KEY = "sdk_key";
         private static string FEATURE_KEY = "feature";
         private static int FEATURE_VERSION = 11;
-        private static FeatureFlag FEATURE = new FeatureFlag(FEATURE_KEY, FEATURE_VERSION, true, null, null, null, null, null, null, null, false);
+        private static FeatureFlag FEATURE = new FeatureFlagBuilder(FEATURE_KEY).Version(FEATURE_VERSION).On(true).Build();
         private static string SEGMENT_KEY = "segment";
         private static int SEGMENT_VERSION = 22;
         private static Segment SEGMENT = new Segment(SEGMENT_KEY, SEGMENT_VERSION, null, null, null, null, false);
@@ -34,7 +34,8 @@ namespace LaunchDarkly.Tests
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
             _featureStore = new InMemoryFeatureStore();
-            _config = Client.Configuration.Default(SDK_KEY).WithFeatureStore(_featureStore);
+            _config = Client.Configuration.Default(SDK_KEY)
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore));
         }
 
         [Fact]

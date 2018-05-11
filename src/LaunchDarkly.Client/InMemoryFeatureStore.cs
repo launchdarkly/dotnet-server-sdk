@@ -7,6 +7,9 @@ namespace LaunchDarkly.Client
 {
     /// <summary>
     /// In-memory, thread-safe implementation of IFeatureStore.
+    /// 
+    /// Referencing this class directly is deprecated; please use <see cref="Components.InMemoryFeatureStore"/>
+    /// instead.
     /// </summary>
     public class InMemoryFeatureStore : IFeatureStore
     {
@@ -16,6 +19,11 @@ namespace LaunchDarkly.Client
         private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> Items =
             new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
         private bool _initialized = false;
+
+        /// <summary>
+        /// Creates a new empty feature store instance.
+        /// </summary>
+        public InMemoryFeatureStore() { }
 
         /// <see cref="IFeatureStore.Get{T}(VersionedDataKind{T}, string)"/>
         public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
@@ -151,5 +159,9 @@ namespace LaunchDarkly.Client
         {
             return _initialized;
         }
+
+        /// <see cref="IDisposable.Dispose"/>
+        public void Dispose()
+        { }
     }
 }
