@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using LaunchDarkly.Client;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
@@ -107,6 +109,33 @@ namespace LaunchDarkly.Tests
             Assert.Equal("US", user.Country);
             Assert.Equal("AnyValue", (string) user.Custom["AnyAttributeName"]);
             Assert.Equal("AnyOtherValue", (string) user.Custom["AnyOtherAttributeName"]);
+        }
+
+        [Fact]
+        public void SettingCustomAttrToListOfIntsCreatesJsonArray()
+        {
+            var user = User.WithKey("key")
+                .AndCustomAttribute("foo", new List<int>() { 1, 2 });
+            var expected = new JArray(new List<JToken>() { new JValue(1), new JValue(2) });
+            Assert.Equal(expected, user.Custom["foo"]);
+        }
+
+        [Fact]
+        public void SettingCustomAttrToListOfStringsCreatesJsonArray()
+        {
+            var user = User.WithKey("key")
+                .AndCustomAttribute("foo", new List<string>() { "a", "b" });
+            var expected = new JArray(new List<JToken>() { new JValue("a"), new JValue("b") });
+            Assert.Equal(expected, user.Custom["foo"]);
+        }
+
+        [Fact]
+        public void SettingCustomAttrToListOfJsonValuesCreatesJsonArray()
+        {
+            var user = User.WithKey("key")
+                .AndCustomAttribute("foo", new List<JToken>() { new JValue(true), new JValue(1.5) });
+            var expected = new JArray(new List<JToken>() { new JValue(true), new JValue(1.5) });
+            Assert.Equal(expected, user.Custom["foo"]);
         }
 
         [Fact]

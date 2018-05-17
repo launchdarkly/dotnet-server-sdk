@@ -478,6 +478,20 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
+        /// Adds a custom attribute whose value is a list of JSON values of any kind. When set to one of the
+        /// <a href="http://docs.launchdarkly.com/docs/targeting-users#targeting-based-on-user-attributes">built-in
+        /// user attribute keys</a>, this custom attribute will be ignored.
+        /// </summary>
+        /// <param name="user">the user</param>
+        /// <param name="attribute">the key for the custom attribute</param>
+        /// <param name="value">the value for the custom attribute</param>
+        /// <returns>the same user</returns>
+        public static User AndCustomAttribute(this User user, string attribute, List<JToken> value)
+        {
+            return user.AddCustom(attribute, new JArray(value.ToArray()));
+        }
+
+        /// <summary>
         /// Adds a <c>string</c>-valued custom attribute, and ensures that the attribute will not
         /// be sent back to LaunchDarkly. When set to one of the
         /// <a href="http://docs.launchdarkly.com/docs/targeting-users#targeting-based-on-user-attributes">built-in
@@ -578,6 +592,21 @@ namespace LaunchDarkly.Client
         /// <param name="value">the value for the custom attribute</param>
         /// <returns>the same user</returns>
         public static User AndPrivateCustomAttribute(this User user, string attribute, List<int> value)
+        {
+            return user.AddCustom(attribute, new JArray(value.ToArray())).AddPrivate(attribute);
+        }
+        
+        /// <summary>
+        /// Adds a custom attribute whose value is a list of JSON values of any kind, and ensures that the
+        /// attribute will not be sent back to LaunchDarkly. When set to one of the
+        /// <a href="http://docs.launchdarkly.com/docs/targeting-users#targeting-based-on-user-attributes">built-in
+        /// user attribute keys</a>, this custom attribute will be ignored.
+        /// </summary>
+        /// <param name="user">the user</param>
+        /// <param name="attribute">the key for the custom attribute</param>
+        /// <param name="value">the value for the custom attribute</param>
+        /// <returns>the same user</returns>
+        public static User AnPrivatedCustomAttribute(this User user, string attribute, List<JToken> value)
         {
             return user.AddCustom(attribute, new JArray(value.ToArray())).AddPrivate(attribute);
         }
