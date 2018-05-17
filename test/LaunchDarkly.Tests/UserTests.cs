@@ -130,12 +130,20 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void SettingCustomAttrToListOfJsonValuesCreatesJsonArray()
+        public void CanSetCustomAttrToJsonValue()
         {
-            var user = User.WithKey("key")
-                .AndCustomAttribute("foo", new List<JToken>() { new JValue(true), new JValue(1.5) });
-            var expected = new JArray(new List<JToken>() { new JValue(true), new JValue(1.5) });
-            Assert.Equal(expected, user.Custom["foo"]);
+            var value = new JArray(new List<JToken>() { new JValue(true), new JValue(1.5) });
+            var user = User.WithKey("key").AndCustomAttribute("foo", value);
+            Assert.Equal(value, user.Custom["foo"]);
+        }
+
+        [Fact]
+        public void CanSetPrivateCustomAttrToJsonValue()
+        {
+            var value = new JArray(new List<JToken>() { new JValue(true), new JValue(1.5) });
+            var user = User.WithKey("key").AndPrivateCustomAttribute("foo", value);
+            Assert.Equal(value, user.Custom["foo"]);
+            Assert.True(user.PrivateAttributeNames.Contains("foo"));
         }
 
         [Fact]
