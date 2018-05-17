@@ -606,7 +606,7 @@ namespace LaunchDarkly.Client
         /// <param name="attribute">the key for the custom attribute</param>
         /// <param name="value">the value for the custom attribute</param>
         /// <returns>the same user</returns>
-        public static User AnPrivatedCustomAttribute(this User user, string attribute, List<JToken> value)
+        public static User AndPrivateCustomAttribute(this User user, string attribute, List<JToken> value)
         {
             return user.AddCustom(attribute, new JArray(value.ToArray())).AddPrivate(attribute);
         }
