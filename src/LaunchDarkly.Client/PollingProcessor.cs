@@ -5,7 +5,7 @@ using Common.Logging;
 
 namespace LaunchDarkly.Client
 {
-    internal class PollingProcessor : IUpdateProcessor
+    internal sealed class PollingProcessor : IUpdateProcessor
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PollingProcessor));
         private static int UNINITIALIZED = 0;
@@ -86,11 +86,19 @@ namespace LaunchDarkly.Client
             }
         }
 
-
         void IDisposable.Dispose()
         {
-            Log.Info("Stopping LaunchDarkly PollingProcessor");
-            _disposed = true;
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Log.Info("Stopping LaunchDarkly PollingProcessor");
+                _disposed = true;
+            }
         }
     }
 }
