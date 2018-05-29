@@ -226,6 +226,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Info("Stopping LaunchDarkly StreamProcessor");
                 _es.Close();
+                _featureRequestor.Dispose();
             }
         }
 
