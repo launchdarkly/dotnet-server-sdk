@@ -16,7 +16,7 @@ namespace LaunchDarkly.Client
         private readonly Uri _allUri;
         private readonly Uri _flagsUri;
         private readonly Uri _segmentsUri;
-        private volatile HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
         private readonly Configuration _config;
         private volatile EntityTagHeaderValue _etag;
 
@@ -27,6 +27,20 @@ namespace LaunchDarkly.Client
             _flagsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
             _segmentsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
             _httpClient = config.HttpClient();
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _httpClient.Dispose();
+            }
         }
 
         // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there

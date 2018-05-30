@@ -98,6 +98,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Info("Stopping LaunchDarkly PollingProcessor");
                 _disposed = true;
+                _featureRequestor.Dispose();
             }
         }
     }
