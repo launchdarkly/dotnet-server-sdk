@@ -9,7 +9,7 @@ namespace LaunchDarkly.Client
     {
         internal static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         
-        public static Dictionary<string, string> GetRequestHeaders(IBaseConfiguration config,
+        internal static Dictionary<string, string> GetRequestHeaders(IBaseConfiguration config,
             ClientEnvironment env)
         {
             return new Dictionary<string, string> {
@@ -18,7 +18,7 @@ namespace LaunchDarkly.Client
             };
         }
 
-        public static HttpClient MakeHttpClient(IBaseConfiguration config, ClientEnvironment env)
+        internal static HttpClient MakeHttpClient(IBaseConfiguration config, ClientEnvironment env)
         {
             var httpClient = new HttpClient(handler: config.HttpClientHandler, disposeHandler: false);
             foreach (var h in GetRequestHeaders(config, env))
@@ -28,7 +28,7 @@ namespace LaunchDarkly.Client
             return httpClient;
         }
 
-        public static long GetUnixTimestampMillis(DateTime dateTime)
+        internal static long GetUnixTimestampMillis(DateTime dateTime)
         {
             return (long) (dateTime - UnixEpoch).TotalMilliseconds;
         }
