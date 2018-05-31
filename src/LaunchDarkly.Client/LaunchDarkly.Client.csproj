@@ -15,6 +15,7 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="LaunchDarkly.Common" Version="1.0.0-beta1" />
     <PackageReference Include="LaunchDarkly.EventSource" Version="3.0.0" />
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
@@ -24,9 +25,6 @@
     <Reference Include="Microsoft.CSharp" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LaunchDarkly.Common\LaunchDarkly.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
