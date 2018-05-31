@@ -1,8 +1,7 @@
-﻿using LaunchDarkly.Client;
-using System;
+﻿using System;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Common.Tests
 {
     class UtilTest
     {

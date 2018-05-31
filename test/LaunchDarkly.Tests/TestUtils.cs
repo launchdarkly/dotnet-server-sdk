@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using LaunchDarkly.Client;
+﻿using LaunchDarkly.Client;
 
 namespace LaunchDarkly.Tests
 {

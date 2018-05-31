@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     /// <summary>
     /// Interface for a strategy for removing duplicate users from the event stream. This has

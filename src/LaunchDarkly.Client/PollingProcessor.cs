@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -72,7 +73,7 @@ namespace LaunchDarkly.Client
                     ex,
                     Util.ExceptionMessage(ex.Flatten()));
             }
-            catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
+            catch (UnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
                 Log.ErrorFormat("Error Updating features: '{0}'", Util.ExceptionMessage(ex));
                 Log.Error("Received 401 error, no further polling requests will be made since SDK key is invalid");

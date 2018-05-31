@@ -1,13 +1,14 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     /// <summary>
     /// Used internally to represent user data that is being serialized in an <see cref="Event"/>.
     /// </summary>
-    public class EventUser
+    internal class EventUser
     {
         /// <see cref="User.Key"/>
         [JsonProperty(PropertyName = "key", NullValueHandling = NullValueHandling.Ignore)]

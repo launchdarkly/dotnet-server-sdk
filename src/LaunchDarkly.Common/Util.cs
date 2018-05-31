@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Reflection;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     internal static class Util
     {

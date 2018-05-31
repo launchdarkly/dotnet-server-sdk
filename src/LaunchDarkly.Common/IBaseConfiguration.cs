@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     /// <summary>
     /// Configuration properties that are used by both server-side and client-side SDKs.
     /// </summary>
-    internal interface IBaseConfiguration
+    public interface IBaseConfiguration
     {
         /// <summary>
         /// The SDK key for your LaunchDarkly environment.
@@ -55,14 +54,14 @@ namespace LaunchDarkly.Client
         /// Whether or not user attributes (other than the key) should be private (not sent to
         /// the LaunchDarkly server). If this is true, all of the user attributes will be private,
         /// not just the attributes specified with the <c>AndPrivate...</c> methods on the
-        /// <see cref="User"/> object. By default, this is false.
+        /// <see cref="LaunchDarkly.Client.User"/> object. By default, this is false.
         /// </summary>
         bool AllAttributesPrivate { get; }
 
         /// <summary>
         /// Marks a set of attribute names as private. Any users sent to LaunchDarkly with this
         /// configuration active will have attributes with these names removed, even if you did
-        /// not use the <c>AndPrivate...</c> methods on the <see cref="User"/> object.
+        /// not use the <c>AndPrivate...</c> methods on the <see cref="LaunchDarkly.Client.User"/> object.
         /// </summary>
         ISet<string> PrivateAttributeNames { get; }
 

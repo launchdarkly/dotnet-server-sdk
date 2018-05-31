@@ -6,6 +6,7 @@ using Common.Logging;
 using LaunchDarkly.EventSource;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -262,7 +263,7 @@ namespace LaunchDarkly.Client
                 Log.ErrorFormat("Error Updating {0}: '{1}'",
                     ex, objectPath, Util.ExceptionMessage(ex.Flatten()));
             }
-            catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
+            catch (UnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
                 Log.ErrorFormat("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex));
                 if (ex.StatusCode == 401)

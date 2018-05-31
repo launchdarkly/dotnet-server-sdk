@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using Common.Logging;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {

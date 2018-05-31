@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using LaunchDarkly.Client;
-
-namespace LaunchDarkly.Tests
+﻿
+namespace LaunchDarkly.Common.Tests
 {
+    // A minimal implementation of IFlagEventProperties for use in the common unit tests.
     internal class FlagEventPropertiesImpl : IFlagEventProperties
     {
         public string Key { get; internal set; }

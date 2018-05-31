@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Common.Tests
 {
     public class EventSummarizerTest
     {

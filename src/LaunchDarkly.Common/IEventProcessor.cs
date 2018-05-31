@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -9,7 +10,7 @@ namespace LaunchDarkly.Client
     {
         /// <summary>
         /// Processes an event. This method is asynchronous; the event may be sent later in the background
-        /// at an interval set by <see cref="Configuration.EventQueueFrequency"/>, or due to a call to
+        /// at an interval set by <see cref="IBaseConfiguration.EventQueueFrequency"/>, or due to a call to
         /// <see cref="Flush"/>.
         /// </summary>
         /// <param name="evt">the event</param>
@@ -24,22 +25,6 @@ namespace LaunchDarkly.Client
         void Flush();
     }
 
-    /// <summary>
-    /// Interface for a factory that creates some implementation of <see cref="IEventProcessor"/>.
-    /// </summary>
-    /// <seealso cref="ConfigurationExtensions.WithEventProcessorFactory(Configuration, IEventProcessorFactory)"/>
-    /// <seealso cref="Components"/>
-    public interface IEventProcessorFactory
-    {
-        /// <summary>
-        /// Creates an implementation instance.
-        /// </summary>
-        /// <param name="config">the LaunchDarkly configuration</param>
-        /// <returns>an <c>IEventProcessor</c> instance</returns>
-        IEventProcessor CreateEventProcessor(Configuration config);
-    }
-
-    /// <see cref="Components.NullEventProcessor"/>
     internal class NullEventProcessor : IEventProcessor
     {
         void IEventProcessor.SendEvent(Event eventToLog)
@@ -51,5 +36,4 @@ namespace LaunchDarkly.Client
         void IDisposable.Dispose()
         { }
     }
-
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     internal abstract class EventFactory
     {

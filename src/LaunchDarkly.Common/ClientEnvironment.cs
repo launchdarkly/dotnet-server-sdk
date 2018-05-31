@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     /// <summary>
     /// Defines basic properties that differ between the server-side and mobile clients.

@@ -8,8 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using Newtonsoft.Json;
+using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     internal sealed class DefaultEventProcessor : IEventProcessor
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using LaunchDarkly.Client;
 using Newtonsoft.Json.Linq;
 using WireMock;
@@ -8,13 +9,13 @@ using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Common.Tests
 {
     public class DefaultEventProcessorTest : IDisposable
     {
         private static readonly String HttpDateFormat = "ddd, dd MMM yyyy HH:mm:ss 'GMT'";
 
-        private Configuration _config = Configuration.Default("SDK_KEY");
+        private SimpleConfiguration _config = new SimpleConfiguration();
         private IEventProcessor _ep;
         private FluentMockServer _server;
         private User _user = new User("userKey").AndName("Red");
@@ -24,7 +25,7 @@ namespace LaunchDarkly.Tests
         public DefaultEventProcessorTest()
         {
             _server = FluentMockServer.Start();
-            _config.WithEventsUri(_server.Urls[0]);
+            _config.EventsUri = new Uri(_server.Urls[0]);
         }
 
         void IDisposable.Dispose()
@@ -36,10 +37,10 @@ namespace LaunchDarkly.Tests
             }
         }
 
-        private IEventProcessor MakeProcessor(Configuration config)
+        private IEventProcessor MakeProcessor(IBaseConfiguration config)
         {
-            return new DefaultEventProcessor(config, new DefaultUserDeduplicator(config),
-                Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance));
+            return new DefaultEventProcessor(config, new TestUserDeduplicator(),
+                Util.MakeHttpClient(config, SimpleClientEnvironment.Instance));
         }
     
         [Fact]
@@ -57,7 +58,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void UserDetailsAreScrubbedInIdentifyEvent()
         {
-            _config.WithAllAttributesPrivate(true);
+            _config.AllAttributesPrivate = true;
             _ep = MakeProcessor(_config);
             IdentifyEvent e = EventFactory.Default.NewIdentifyEvent(_user);
             _ep.SendEvent(e);
@@ -86,7 +87,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void UserDetailsAreScrubbedInIndexEvent()
         {
-            _config.WithAllAttributesPrivate(true);
+            _config.AllAttributesPrivate = true;
             _ep = MakeProcessor(_config);
             IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
@@ -103,7 +104,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FeatureEventCanContainInlineUser()
         {
-            _config.WithInlineUsersInEvents(true);
+            _config.InlineUsersInEvents = true;
             _ep = MakeProcessor(_config);
             IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
@@ -119,8 +120,8 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void UserDetailsAreScrubbedInFeatureEvent()
         {
-            _config.WithAllAttributesPrivate(true);
-            _config.WithInlineUsersInEvents(true);
+            _config.AllAttributesPrivate = true;
+            _config.InlineUsersInEvents = true;
             _ep = MakeProcessor(_config);
             IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(true).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
@@ -136,7 +137,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IndexEventIsStillGeneratedIfInlineUsersIsTrueButFeatureEventIsNotTracked()
         {
-            _config.WithInlineUsersInEvents(true);
+            _config.InlineUsersInEvents = true;
             _ep = MakeProcessor(_config);
             IFlagEventProperties flag = new FlagEventPropertiesBuilder("flagkey").Version(11).TrackEvents(false).Build();
             FeatureRequestEvent fe = EventFactory.Default.NewFeatureRequestEvent(flag, _user,
@@ -299,7 +300,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CustomEventCanContainInlineUser()
         {
-            _config.WithInlineUsersInEvents(true);
+            _config.InlineUsersInEvents = true;
             _ep = MakeProcessor(_config);
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
@@ -312,8 +313,8 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void UserDetailsAreScrubbedInCustomEvent()
         {
-            _config.WithAllAttributesPrivate(true);
-            _config.WithInlineUsersInEvents(true);
+            _config.AllAttributesPrivate = true;
+            _config.InlineUsersInEvents = true;
             _ep = MakeProcessor(_config);
             CustomEvent e = EventFactory.Default.NewCustomEvent("eventkey", _user, "data");
             _ep.SendEvent(e);
@@ -520,6 +521,26 @@ namespace LaunchDarkly.Tests
         private JArray FlushAndGetEvents(IResponseBuilder resp)
         {
             return FlushAndGetRequest(resp).BodyAsJson as JArray;
+        }
+    }
+
+    class TestUserDeduplicator : IUserDeduplicator
+    {
+        private HashSet<string> _userKeys = new HashSet<string>();
+        public TimeSpan? FlushInterval => null;
+
+        public void Flush()
+        {
+        }
+
+        public bool ProcessUser(User user)
+        {
+            if (!_userKeys.Contains(user.Key))
+            {
+                _userKeys.Add(user.Key);
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,21 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <VersionPrefix>5.0.0</VersionPrefix>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>beta1</VersionSuffix>
     <TargetFrameworks>netstandard1.4;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/.net-client/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
-    <AssemblyName>LaunchDarkly.Client</AssemblyName>
+    <AssemblyName>LaunchDarkly.Common</AssemblyName>
     <OutputType>Library</OutputType>
-    <PackageId>LaunchDarkly.Client</PackageId>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <PackageId>LaunchDarkly.Common</PackageId>
+    <Description>LaunchDarkly common code for .NET and Xamarin clients</Description>
+    <Copyright>Copyright 2018 LaunchDarkly</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.EventSource" Version="3.0.0" />
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
@@ -25,18 +21,15 @@
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LaunchDarkly.Common\LaunchDarkly.Common.csproj" />
-  </ItemGroup>
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../../LaunchDarkly.Common.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
-    <Version>5.0.0</Version>
+    <Version>5.0.0-beta1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.4|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard1.4\LaunchDarkly.Client.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard1.4\LaunchDarkly.Common.xml</DocumentationFile>
   </PropertyGroup>
 </Project>

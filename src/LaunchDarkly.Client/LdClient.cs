@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using Common.Logging;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {

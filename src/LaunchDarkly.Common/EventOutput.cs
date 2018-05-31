@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Common
 {
     // Base class for data structures that we send in an event payload, which are somewhat
     // different in shape from the originating events.  Also defines all of its own subclasses

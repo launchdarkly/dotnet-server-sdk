@@ -2,7 +2,7 @@
 
 namespace LaunchDarkly.Client
 {
-    internal class FeatureRequestorUnsuccessfulResponseException : Exception
+    internal class UnsuccessfulResponseException : Exception
     {
         public int StatusCode
         {
@@ -10,7 +10,7 @@ namespace LaunchDarkly.Client
             private set;
         }
 
-        internal FeatureRequestorUnsuccessfulResponseException(int statusCode) :
+        internal UnsuccessfulResponseException(int statusCode) :
             base(string.Format("HTTP status {0}", statusCode))
         {
             StatusCode = statusCode;

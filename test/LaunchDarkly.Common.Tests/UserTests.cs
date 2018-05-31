@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Common.Tests
 {
     public class UserTests
     {
