@@ -57,7 +57,7 @@ namespace LaunchDarkly.Tests
         public void HeadersHaveUserAgent()
         {
             TestStreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal("DotNetClient/" + ServerSideClientEnvironment.Instance.Version, sp.Headers["User-Agent"]);
+            Assert.Equal("DotNetClient/" + ServerSideClientEnvironment.Instance.VersionString, sp.Headers["User-Agent"]);
         }
 
         [Fact]
