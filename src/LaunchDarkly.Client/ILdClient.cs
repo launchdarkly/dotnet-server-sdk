@@ -1,42 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.
     /// </summary>
-    public interface ILdClient
+    public interface ILdClient : ILdCommonClient
     {
-        /// <summary>
-        /// Closes the LaunchDarkly client event processing thread. This should only be called
-        /// on application shutdown.
-        /// </summary>
-        void Dispose();
-
-        /// <summary>
-        /// Flushes all pending events.
-        /// </summary>
-        void Flush();
-
-        /// <summary>
-        /// Registers the user.
-        /// </summary>
-        /// <param name="user">the user to register</param>
-        void Identify(User user);
-
         /// <summary>
         /// Tests whether the client is ready to be used.
         /// </summary>
         /// <returns>true if the client is ready, or false if it is still initializing</returns>
         bool Initialized();
-
-        /// <summary>
-        /// Tests whether the client is being used in offline mode.
-        /// </summary>
-        /// <returns>true if the client is offline</returns>
-        bool IsOffline();
 
         /// <summary>
         /// Calculates the integer value of a feature flag for a given user.
@@ -116,10 +94,5 @@ namespace LaunchDarkly.Client
         /// <param name="user">the user to be hashed along with the SDK key</param>
         /// <returns>the hash, or null if the hash could not be calculated</returns>
         string SecureModeHash(User user);
-
-        /// <summary>
-        /// Returns the current version number of the LaunchDarkly client.
-        /// </summary>
-        Version Version { get; }
     }
 }
