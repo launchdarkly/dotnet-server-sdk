@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Client;
+using LaunchDarkly.Common;
 using LaunchDarkly.EventSource;
 using Moq;
 using Newtonsoft.Json;
@@ -21,6 +22,7 @@ namespace LaunchDarkly.Tests
 
         Mock<IEventSource> _mockEventSource;
         IEventSource _eventSource;
+        TestEventSourceFactory _eventSourceFactory;
         Mock<IFeatureRequestor> _mockRequestor;
         IFeatureRequestor _requestor;
         InMemoryFeatureStore _featureStore;
@@ -31,6 +33,7 @@ namespace LaunchDarkly.Tests
             _mockEventSource = new Mock<IEventSource>();
             _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask);
             _eventSource = _mockEventSource.Object;
+            _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
             _featureStore = new InMemoryFeatureStore();
@@ -42,35 +45,37 @@ namespace LaunchDarkly.Tests
         public void StreamUriHasCorrectEndpoint()
         {
             _config = _config.WithStreamUri(new Uri("http://stream.test.com"));
-            TestStreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal(new Uri("http://stream.test.com/all"), sp.ActualStreamUri);
+            StreamProcessor sp = CreateAndStartProcessor();
+            Assert.Equal(new Uri("http://stream.test.com/all"),
+                _eventSourceFactory.ReceivedProperties.StreamUri);
         }
 
         [Fact]
         public void HeadersHaveAuthorization()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal(SDK_KEY, sp.Headers["Authorization"]);
+            StreamProcessor sp = CreateAndStartProcessor();
+            Assert.Equal(SDK_KEY, _eventSourceFactory.ReceivedHeaders["Authorization"]);
         }
 
         [Fact]
         public void HeadersHaveUserAgent()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal("DotNetClient/" + ServerSideClientEnvironment.Instance.VersionString, sp.Headers["User-Agent"]);
+            StreamProcessor sp = CreateAndStartProcessor();
+            Assert.Equal("DotNetClient/" + ServerSideClientEnvironment.Instance.VersionString,
+                _eventSourceFactory.ReceivedHeaders["User-Agent"]);
         }
 
         [Fact]
         public void HeadersHaveAccept()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal("text/event-stream", sp.Headers["Accept"]);
+            StreamProcessor sp = CreateAndStartProcessor();
+            Assert.Equal("text/event-stream", _eventSourceFactory.ReceivedHeaders["Accept"]);
         }
 
         [Fact]
         public void PutCausesFeatureToBeStored()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             string data = "{\"data\":{\"flags\":{\"" +
                 FEATURE_KEY + "\":" + JsonConvert.SerializeObject(FEATURE) + "},\"segments\":{}}}";
             MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "put");
@@ -82,7 +87,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void PutCausesSegmentToBeStored()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             string data = "{\"data\":{\"flags\":{},\"segments\":{\"" +
                 SEGMENT_KEY + "\":" + JsonConvert.SerializeObject(SEGMENT) + "}}}";
             MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "put");
@@ -94,14 +99,14 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StoreNotInitializedByDefault()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             Assert.False(_featureStore.Initialized());
         }
 
         [Fact]
         public void PutCausesStoreToBeInitialized()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
             Assert.True(_featureStore.Initialized());
         }
@@ -109,14 +114,14 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ProcessorNotInitializedByDefault()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             Assert.False(((IUpdateProcessor)sp).Initialized());
         }
 
         [Fact]
         public void PutCausesProcessorToBeInitialized()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
             Assert.True(((IUpdateProcessor)sp).Initialized());
         }
@@ -124,7 +129,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void TaskIsNotCompletedByDefault()
         {
-            TestStreamProcessor sp = CreateProcessor();
+            StreamProcessor sp = CreateProcessor();
             Task<bool> task = ((IUpdateProcessor)sp).Start();
             Assert.False(task.IsCompleted);
         }
@@ -132,7 +137,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void PutCausesTaskToBeCompleted()
         {
-            TestStreamProcessor sp = CreateProcessor();
+            StreamProcessor sp = CreateProcessor();
             Task<bool> task = ((IUpdateProcessor)sp).Start();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
             Assert.True(task.IsCompleted);
@@ -141,7 +146,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void PatchUpdatesFeature()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
 
             string path = "/flags/" + FEATURE_KEY;
@@ -155,7 +160,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void PatchUpdatesSegment()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
 
             string path = "/segments/" + SEGMENT_KEY;
@@ -169,7 +174,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void DeleteDeletesFeature()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
             _featureStore.Upsert(VersionedDataKind.Features, FEATURE);
 
@@ -184,7 +189,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void DeleteDeletesSegment()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
             _featureStore.Upsert(VersionedDataKind.Segments, SEGMENT);
 
@@ -199,7 +204,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IndirectPatchRequestsAndStoresFeature()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockRequestor.Setup(r => r.GetFlagAsync(FEATURE_KEY)).ReturnsAsync(FEATURE);
 
             string path = "/flags/" + FEATURE_KEY;
@@ -212,7 +217,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IndirectPatchRequestsAndStoresSegment()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             _mockRequestor.Setup(r => r.GetSegmentAsync(SEGMENT_KEY)).ReturnsAsync(SEGMENT);
 
             string path = "/segments/" + SEGMENT_KEY;
@@ -225,7 +230,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void GeneralExceptionDoesNotStopStream()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             ExceptionEventArgs e = new ExceptionEventArgs(new Exception("whatever"));
             _mockEventSource.Raise(es => es.Error += null, e);
 
@@ -235,7 +240,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void Http500ErrorDoesNotStopStream()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             ExceptionEventArgs e = new ExceptionEventArgs(new EventSourceServiceUnsuccessfulResponseException("", 500));
             _mockEventSource.Raise(es => es.Error += null, e);
 
@@ -245,42 +250,45 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void Http401ErrorStopsStream()
         {
-            TestStreamProcessor sp = CreateAndStartProcessor();
+            StreamProcessor sp = CreateAndStartProcessor();
             ExceptionEventArgs e = new ExceptionEventArgs(new EventSourceServiceUnsuccessfulResponseException("", 401));
             _mockEventSource.Raise(es => es.Error += null, e);
 
             _mockEventSource.Verify(es => es.Close());
         }
 
-        private TestStreamProcessor CreateProcessor()
+        private StreamProcessor CreateProcessor()
         {
-            return new TestStreamProcessor(_config, _requestor, _featureStore, _eventSource);
+            return new StreamProcessor(_config, _requestor, _featureStore,
+                _eventSourceFactory.Create());
         }
 
-        private TestStreamProcessor CreateAndStartProcessor()
+        private StreamProcessor CreateAndStartProcessor()
         {
-            TestStreamProcessor sp = CreateProcessor();
+            StreamProcessor sp = CreateProcessor();
             ((IUpdateProcessor)sp).Start();
             return sp;
         }
 
-        class TestStreamProcessor : StreamProcessor
+        class TestEventSourceFactory
         {
-            public Uri ActualStreamUri { get; private set; }
-            public Dictionary<string, string> Headers { get; private set; }
+            public StreamProperties ReceivedProperties { get; private set; }
+            public IDictionary<string, string> ReceivedHeaders { get; private set; }
             IEventSource _eventSource;
 
-            public TestStreamProcessor(Client.Configuration config, IFeatureRequestor featureRequestor, IFeatureStore featureStore, IEventSource eventSource) :
-                base(config, featureRequestor, featureStore)
+            public TestEventSourceFactory(IEventSource eventSource)
             {
                 _eventSource = eventSource;
             }
 
-            override protected IEventSource CreateEventSource(Uri streamUri, Dictionary<string, string> headers)
+            public StreamManager.EventSourceCreator Create()
             {
-                ActualStreamUri = streamUri;
-                Headers = headers;
-                return _eventSource;
+                return (StreamProperties sp, IDictionary<string, string> headers) =>
+                {
+                    ReceivedProperties = sp;
+                    ReceivedHeaders = headers;
+                    return _eventSource;
+                };
             }
         }
         
