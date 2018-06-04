@@ -49,29 +49,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(new Uri("http://stream.test.com/all"),
                 _eventSourceFactory.ReceivedProperties.StreamUri);
         }
-
-        [Fact]
-        public void HeadersHaveAuthorization()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal(SDK_KEY, _eventSourceFactory.ReceivedHeaders["Authorization"]);
-        }
-
-        [Fact]
-        public void HeadersHaveUserAgent()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal("DotNetClient/" + ServerSideClientEnvironment.Instance.VersionString,
-                _eventSourceFactory.ReceivedHeaders["User-Agent"]);
-        }
-
-        [Fact]
-        public void HeadersHaveAccept()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal("text/event-stream", _eventSourceFactory.ReceivedHeaders["Accept"]);
-        }
-
+        
         [Fact]
         public void PutCausesFeatureToBeStored()
         {
@@ -227,36 +205,6 @@ namespace LaunchDarkly.Tests
             AssertSegmentInStore(SEGMENT);
         }
         
-        [Fact]
-        public void GeneralExceptionDoesNotStopStream()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            ExceptionEventArgs e = new ExceptionEventArgs(new Exception("whatever"));
-            _mockEventSource.Raise(es => es.Error += null, e);
-
-            _mockEventSource.Verify(es => es.Close(), Times.Never());
-        }
-
-        [Fact]
-        public void Http500ErrorDoesNotStopStream()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            ExceptionEventArgs e = new ExceptionEventArgs(new EventSourceServiceUnsuccessfulResponseException("", 500));
-            _mockEventSource.Raise(es => es.Error += null, e);
-
-            _mockEventSource.Verify(es => es.Close(), Times.Never());
-        }
-
-        [Fact]
-        public void Http401ErrorStopsStream()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            ExceptionEventArgs e = new ExceptionEventArgs(new EventSourceServiceUnsuccessfulResponseException("", 401));
-            _mockEventSource.Raise(es => es.Error += null, e);
-
-            _mockEventSource.Verify(es => es.Close());
-        }
-
         private StreamProcessor CreateProcessor()
         {
             return new StreamProcessor(_config, _requestor, _featureStore,
