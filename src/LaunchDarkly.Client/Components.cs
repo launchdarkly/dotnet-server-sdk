@@ -126,7 +126,7 @@ namespace LaunchDarkly.Client
                 FeatureRequestor requestor = new FeatureRequestor(config);
                 if (config.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(config, requestor, featureStore);
+                    return new StreamProcessor(config, requestor, featureStore, null);
                 }
                 else
                 {
