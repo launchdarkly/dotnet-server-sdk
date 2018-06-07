@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.Logging;
+﻿using Common.Logging;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -88,7 +86,9 @@ namespace LaunchDarkly.Client
             }
             else
             {
-                return new DefaultEventProcessor(config, config.HttpClient());
+                return new DefaultEventProcessor(config,
+                    new DefaultUserDeduplicator(config),
+                    Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance));
             }
         }
     }

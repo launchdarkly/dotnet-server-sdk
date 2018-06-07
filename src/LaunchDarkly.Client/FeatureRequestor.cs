@@ -7,6 +7,7 @@ using System.Threading;
 using Common.Logging;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -26,7 +27,7 @@ namespace LaunchDarkly.Client
             _allUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-all");
             _flagsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
             _segmentsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
-            _httpClient = config.HttpClient();
+            _httpClient = Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance);
         }
 
         void IDisposable.Dispose()
@@ -135,7 +136,7 @@ namespace LaunchDarkly.Client
                 //We ensure the status code after checking for 304, because 304 isn't considered success
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new FeatureRequestorUnsuccessfulResponseException((int)response.StatusCode);
+                    throw new UnsuccessfulResponseException((int)response.StatusCode);
                 }
                 return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             }

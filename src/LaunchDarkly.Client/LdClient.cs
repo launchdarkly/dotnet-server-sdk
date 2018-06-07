@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using Common.Logging;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -37,7 +38,7 @@ namespace LaunchDarkly.Client
         public LdClient(Configuration config, IEventProcessor eventProcessor)
         {
             Log.InfoFormat("Starting LaunchDarkly Client {0}",
-                Configuration.Version);
+                ServerSideClientEnvironment.Instance.Version);
 
             _configuration = config;
 
@@ -110,7 +111,7 @@ namespace LaunchDarkly.Client
             return IsOffline() || _updateProcessor.Initialized();
         }
 
-        /// <see cref="ILdClient.IsOffline"/>
+        /// <see cref="ILdCommonClient.IsOffline"/>
         public bool IsOffline()
         {
             return _configuration.Offline;
@@ -282,7 +283,7 @@ namespace LaunchDarkly.Client
             _eventProcessor.SendEvent(_eventFactory.NewCustomEvent(name, user, data));
         }
 
-        /// <see cref="ILdClient.Identify(User)"/>
+        /// <see cref="ILdCommonClient.Identify(User)"/>
         public void Identify(User user)
         {
             if (user == null || user.Key == null)
@@ -292,12 +293,12 @@ namespace LaunchDarkly.Client
             _eventProcessor.SendEvent(_eventFactory.NewIdentifyEvent(user));
         }
 
-        /// <see cref="ILdClient.Version"/>
+        /// <see cref="ILdCommonClient.Version"/>
         public Version Version
         {
             get
             {
-                return typeof(LdClient).GetTypeInfo().Assembly.GetName().Version;
+                return ServerSideClientEnvironment.Instance.Version;
             }
         }
         
@@ -331,7 +332,7 @@ namespace LaunchDarkly.Client
         /// or the deprecated <c>LdClient</c> constructor that takes an <see cref="IEventProcessor"/>),
         /// this will not happen; you are responsible for managing their lifecycle.
         /// </summary>
-        /// <see cref="ILdClient.Dispose"/>
+        /// <see cref="IDisposable.Dispose"/>
         public void Dispose()
         {
             Dispose(true);
@@ -339,7 +340,7 @@ namespace LaunchDarkly.Client
             GC.SuppressFinalize(this);
         }
 
-        /// <see cref="ILdClient.Flush"/>
+        /// <see cref="ILdCommonClient.Flush"/>
         public void Flush()
         {
             _eventProcessor.Flush();

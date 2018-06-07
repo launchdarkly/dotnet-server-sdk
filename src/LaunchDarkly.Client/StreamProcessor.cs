@@ -6,6 +6,7 @@ using Common.Logging;
 using LaunchDarkly.EventSource;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -43,7 +44,8 @@ namespace LaunchDarkly.Client
 
         Task<bool> IUpdateProcessor.Start()
         {
-            Dictionary<string, string> headers = new Dictionary<string, string> { { "Authorization", _config.SdkKey }, { "User-Agent", "DotNetClient/" + Configuration.Version }, { "Accept", "text/event-stream" } };
+            Dictionary<string, string> headers = Util.GetRequestHeaders(_config, ServerSideClientEnvironment.Instance);
+            headers.Add("Accept", "text/event-stream");
 
             _es = CreateEventSource(new Uri(_config.StreamUri, "/all"), headers);
 
@@ -261,7 +263,7 @@ namespace LaunchDarkly.Client
                 Log.ErrorFormat("Error Updating {0}: '{1}'",
                     ex, objectPath, Util.ExceptionMessage(ex.Flatten()));
             }
-            catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
+            catch (UnsuccessfulResponseException ex) when (ex.StatusCode == 401)
             {
                 Log.ErrorFormat("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex));
                 if (ex.StatusCode == 401)
