@@ -31,7 +31,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             featureStore.Upsert(VersionedDataKind.Features, flag);
 
-            User user = new User("user");
+            User user = User.WithKey("user");
             client.StringVariation("flagkey", user, "default");
 
             Assert.Collection(ep.Events,
@@ -57,6 +57,85 @@ namespace LaunchDarkly.Tests
                 e => CheckFlagEvent(e, flag, flag.Version, null, null, new JValue("default"), new JValue("default")));
         }
 
+        [Fact]
+        public void EvaluatingUnknownFlagGeneratesEvent()
+        {
+            IFeatureStore featureStore = new InMemoryFeatureStore();
+            MockEventProcessor ep = new MockEventProcessor();
+            LdClient client = MakeClient(featureStore, ep);
+
+            User user = User.WithKey("user");
+            client.StringVariation("badflag", user, "default");
+
+            Assert.Collection(ep.Events,
+                e => CheckUnknownFlagEvent(e, "badflag", user, new JValue("default")));
+        }
+
+        [Fact]
+        public void IdentifyGeneratesIdentifyEvent()
+        {
+            MockEventProcessor ep = new MockEventProcessor();
+            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
+
+            User user = User.WithKey("user");
+            client.Identify(user);
+
+            Assert.Collection(ep.Events,
+                e => CheckIdentifyEvent(e, user));
+        }
+        
+        [Fact]
+        public void TrackGeneratesCustomEvent()
+        {
+            MockEventProcessor ep = new MockEventProcessor();
+            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
+
+            User user = User.WithKey("user");
+            client.Track("thing", user);
+
+            Assert.Collection(ep.Events,
+                e => CheckCustomEvent(e, user, "thing", null));
+        }
+
+        [Fact]
+        public void TrackWithDataGeneratesCustomEvent()
+        {
+            MockEventProcessor ep = new MockEventProcessor();
+            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
+
+            User user = User.WithKey("user");
+            JToken data = new JValue(3);
+            client.Track("thing", data, user);
+
+            Assert.Collection(ep.Events,
+                e => CheckCustomEvent(e, user, "thing", data));
+        }
+
+        [Fact]
+        public void TrackWithStringDataGeneratesCustomEvent()
+        {
+            MockEventProcessor ep = new MockEventProcessor();
+            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
+
+            User user = User.WithKey("user");
+            client.Track("thing", user, "string");
+
+            Assert.Collection(ep.Events,
+                e => CheckCustomEvent(e, user, "thing", new JValue("string")));
+        }
+
+        [Fact]
+        public void SecureModeHashTest()
+        {
+            Configuration config = Configuration.Default("secret");
+            config.WithOffline(true);
+            LdClient client = new LdClient(config);
+
+            var user = User.WithKey("Message");
+            Assert.Equal("aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597", client.SecureModeHash(user));
+            client.Dispose();
+        }
+
         private void CheckFlagEvent(Event e, FeatureFlag flag, int? version, User user, int? variation, JToken value, JToken defaultVal)
         {
             FeatureRequestEvent fe = Assert.IsType<FeatureRequestEvent>(e);
@@ -67,20 +146,6 @@ namespace LaunchDarkly.Tests
             Assert.Equal(value, fe.Value);
             Assert.Equal(defaultVal, fe.Default);
             Assert.Null(fe.PrereqOf);
-        }
-
-        [Fact]
-        public void EvaluatingUnknownFlagGeneratesEvent()
-        {
-            IFeatureStore featureStore = new InMemoryFeatureStore();
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(featureStore, ep);
-
-            User user = new User("user");
-            client.StringVariation("badflag", user, "default");
-
-            Assert.Collection(ep.Events,
-                e => CheckUnknownFlagEvent(e, "badflag", user, new JValue("default")));
         }
 
         private void CheckUnknownFlagEvent(Event e, string key, User user, JToken value)
@@ -95,16 +160,19 @@ namespace LaunchDarkly.Tests
             Assert.Null(fe.PrereqOf);
         }
 
-        [Fact]
-        public void SecureModeHashTest()
+        private void CheckIdentifyEvent(Event e, User user)
         {
-            Configuration config = Configuration.Default("secret");
-            config.WithOffline(true);
-            LdClient client = new LdClient(config);
+            IdentifyEvent ie = Assert.IsType<IdentifyEvent>(e);
+            Assert.Equal(user.Key, ie.Key);
+            Assert.Equal(user, ie.User);
+        }
 
-            var user = User.WithKey("Message");
-            Assert.Equal("aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597", client.SecureModeHash(user));
-            client.Dispose();
+        private void CheckCustomEvent(Event e, User user, string key, JToken data)
+        {
+            CustomEvent ce = Assert.IsType<CustomEvent>(e);
+            Assert.Equal(key, ce.Key);
+            Assert.Equal(user, ce.User);
+            Assert.Equal(data, ce.JsonData);
         }
     }
 

@@ -273,8 +273,20 @@ namespace LaunchDarkly.Client
             return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
+        /// <see cref="ILdClient.Track(string, User)"/>
+        public void Track(string name, User user)
+        {
+            Track(name, null, user);
+        }
+
         /// <see cref="ILdClient.Track(string, User, string)"/>
         public void Track(string name, User user, string data)
+        {
+            Track(name, data, user);
+        }
+
+        /// <see cref="ILdClient.Track(string, JToken, User)"/>
+        public void Track(string name, JToken data, User user)
         {
             if (user == null || user.Key == null)
             {
