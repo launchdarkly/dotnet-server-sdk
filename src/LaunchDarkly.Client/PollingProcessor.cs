@@ -77,6 +77,15 @@ namespace LaunchDarkly.Client
             {
                 Log.ErrorFormat("Error Updating features: '{0}'", Util.ExceptionMessage(ex));
                 Log.Error("Received 401 error, no further polling requests will be made since SDK key is invalid");
+                try
+                {
+                    // if client is initializing, make it stop waiting
+                    _initTask.SetResult(true);
+                }
+                catch (InvalidOperationException)
+                {
+                    // the task was already set - nothing more to do
+                }
                 ((IDisposable)this).Dispose();
             }
             catch (Exception ex)
