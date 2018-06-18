@@ -70,16 +70,57 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void HTTP401ErrorDoesCauseImmediateFailure()
+        public void HTTP401ErrorCausesImmediateFailure()
         {
-            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(new UnsuccessfulResponseException(401));
+            VerifyUnrecoverableHttpError(401);
+        }
+
+        [Fact]
+        public void HTTP403ErrorCausesImmediateFailure()
+        {
+            VerifyUnrecoverableHttpError(403);
+        }
+
+        [Fact]
+        public void HTTP408ErrorDoesNotCauseImmediateFailure()
+        {
+            VerifyRecoverableHttpError(408);
+        }
+
+        [Fact]
+        public void HTTP429ErrorDoesNotCauseImmediateFailure()
+        {
+            VerifyRecoverableHttpError(429);
+        }
+
+        [Fact]
+        public void HTTP500ErrorDoesNotCauseImmediateFailure()
+        {
+            VerifyRecoverableHttpError(500);
+        }
+
+        private void VerifyUnrecoverableHttpError(int status)
+        {
+            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
+                new UnsuccessfulResponseException(status));
             using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
             {
-                var startTime = DateTime.Now;
                 var initTask = ((IUpdateProcessor)pp).Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
-                Assert.InRange(DateTime.Now.Subtract(startTime).Milliseconds, 0, 100);
                 Assert.True(completed);
+                Assert.False(((IUpdateProcessor)pp).Initialized());
+            }
+        }
+
+        private void VerifyRecoverableHttpError(int status)
+        {
+            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
+                new UnsuccessfulResponseException(status));
+            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
+            {
+                var initTask = ((IUpdateProcessor)pp).Start();
+                bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
+                Assert.False(completed);
                 Assert.False(((IUpdateProcessor)pp).Initialized());
             }
         }
