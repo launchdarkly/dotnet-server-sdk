@@ -2,6 +2,20 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.1.0] - 2018-06-26
+### Added:
+- A new overload of `LDClient.Track` allows you to pass any kind of JSON value for the custom event data, not just a string.
+- The `User` class now implements `Equals` and `GetHashCode`, and has a copy constructor.
+
+### Changed:
+- Some classes and interfaces have been moved into a separate assembly, `LaunchDarkly.Common` (source code [here](https://github.com/launchdarkly/dotnet-client-common/)), because they will also be used by the LaunchDarkly Xamarin SDK. The names and namespaces have not changed, so you do not need to make any code changes. `LaunchDarkly.Common` will be installed automatically when you upgrade `LaunchDarkly.Client`; all other dependencies are unchanged.
+- The client now treats most HTTP 4xx errors as unrecoverable: that is, after receiving such an error, it will not make any more HTTP requests for the lifetime of the client instance, in effect taking the client offline. This is because such errors indicate either a configuration problem (invalid SDK key) or a bug, which is not likely to resolve without a restart or an upgrade. This does not apply if the error is 400, 408, 429, or any 5xx error.
+- During initialization, if the client receives any of the unrecoverable errors described above, the client constructor will return immediately; previously it would continue waiting until a timeout. The `Initialized()` method will return false in this case.
+
+### Fixed:
+- Ensured that all `HttpClient` instances managed by the client are disposed of immediately if you call `Dispose` on the client.
+- Passing `null` for user when calling `Identify` or `Track` no longer causes a `NullReferenceException`. Instead, the appropriate event will be sent with no user.
+
 ## [5.0.0] - 2018-05-10
 
 ### Changed:
