@@ -1,42 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.
     /// </summary>
-    public interface ILdClient
+    public interface ILdClient : ILdCommonClient
     {
-        /// <summary>
-        /// Closes the LaunchDarkly client event processing thread. This should only be called
-        /// on application shutdown.
-        /// </summary>
-        void Dispose();
-
-        /// <summary>
-        /// Flushes all pending events.
-        /// </summary>
-        void Flush();
-
-        /// <summary>
-        /// Registers the user.
-        /// </summary>
-        /// <param name="user">the user to register</param>
-        void Identify(User user);
-
         /// <summary>
         /// Tests whether the client is ready to be used.
         /// </summary>
         /// <returns>true if the client is ready, or false if it is still initializing</returns>
         bool Initialized();
-
-        /// <summary>
-        /// Tests whether the client is being used in offline mode.
-        /// </summary>
-        /// <returns>true if the client is offline</returns>
-        bool IsOffline();
 
         /// <summary>
         /// Calculates the integer value of a feature flag for a given user.
@@ -93,8 +71,25 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="name">the name of the event</param>
         /// <param name="user">the user that performed the event</param>
-        /// <param name="data">a JSON string containing additional data associated with the event</param>
+        void Track(string name, User user);
+
+        /// <summary>
+        /// Tracks that a user performed an event.
+        /// </summary>
+        /// <param name="name">the name of the event</param>
+        /// <param name="user">the user that performed the event</param>
+        /// <param name="data">a string containing additional data associated with the event, or null</param>
         void Track(string name, User user, string data);
+
+        /// <summary>
+        /// Tracks that a user performed an event.
+        /// </summary>
+        /// <param name="name">the name of the event</param>
+        /// <param name="data">a JSON element containing additional data associated with the event, or null</param>
+        /// <param name="user">the user that performed the event</param>
+        void Track(string name, JToken data, User user);
+        // Note, the order of the parameters here is different than the other 3-parameter overload so that
+        // passing null for data will not be an ambiguous method call.
 
         /// <summary>
         /// Returns a map from feature flag keys to <see cref="JToken"/> feature flag values for a given user.
@@ -116,10 +111,5 @@ namespace LaunchDarkly.Client
         /// <param name="user">the user to be hashed along with the SDK key</param>
         /// <returns>the hash, or null if the hash could not be calculated</returns>
         string SecureModeHash(User user);
-
-        /// <summary>
-        /// Returns the current version number of the LaunchDarkly client.
-        /// </summary>
-        Version Version { get; }
     }
 }

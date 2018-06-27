@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -15,7 +16,7 @@ namespace LaunchDarkly.Client
         private readonly IFeatureStore _featureStore;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
-        private bool _disposed;
+        private volatile bool _disposed;
 
 
         internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IFeatureStore featureStore)
@@ -72,11 +73,22 @@ namespace LaunchDarkly.Client
                     ex,
                     Util.ExceptionMessage(ex.Flatten()));
             }
-            catch (FeatureRequestorUnsuccessfulResponseException ex) when (ex.StatusCode == 401)
+            catch (UnsuccessfulResponseException ex)
             {
-                Log.ErrorFormat("Error Updating features: '{0}'", Util.ExceptionMessage(ex));
-                Log.Error("Received 401 error, no further polling requests will be made since SDK key is invalid");
-                ((IDisposable)this).Dispose();
+                Log.Error(Util.HttpErrorMessage(ex.StatusCode, "polling request", "will retry"));
+                if (!Util.IsHttpErrorRecoverable(ex.StatusCode))
+                {
+                    try
+                    {
+                        // if client is initializing, make it stop waiting
+                        _initTask.SetResult(true);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // the task was already set - nothing more to do
+                    }
+                    ((IDisposable)this).Dispose();
+                }
             }
             catch (Exception ex)
             {
@@ -98,6 +110,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Info("Stopping LaunchDarkly PollingProcessor");
                 _disposed = true;
+                _featureRequestor.Dispose();
             }
         }
     }

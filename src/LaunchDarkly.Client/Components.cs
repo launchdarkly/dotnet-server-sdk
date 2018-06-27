@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.Logging;
+﻿using Common.Logging;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -80,6 +78,8 @@ namespace LaunchDarkly.Client
 
     internal class DefaultEventProcessorFactory : IEventProcessorFactory
     {
+        private const string EventsUriPath = "/bulk";
+
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
             if (config.Offline)
@@ -88,7 +88,10 @@ namespace LaunchDarkly.Client
             }
             else
             {
-                return new DefaultEventProcessor(config, config.HttpClient());
+                return new DefaultEventProcessor(config,
+                    new DefaultUserDeduplicator(config),
+                    Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance),
+                    EventsUriPath);
             }
         }
     }
@@ -126,7 +129,7 @@ namespace LaunchDarkly.Client
                 FeatureRequestor requestor = new FeatureRequestor(config);
                 if (config.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(config, requestor, featureStore);
+                    return new StreamProcessor(config, requestor, featureStore, null);
                 }
                 else
                 {

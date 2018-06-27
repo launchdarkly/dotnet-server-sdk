@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {

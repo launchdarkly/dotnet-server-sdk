@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client
 {
-    internal interface IFeatureRequestor
+    internal interface IFeatureRequestor : IDisposable
     {
         Task<AllData> GetAllDataAsync();
         Task<FeatureFlag> GetFlagAsync(string featureKey);
