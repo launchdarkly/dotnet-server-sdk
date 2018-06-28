@@ -24,7 +24,7 @@ Your first feature flag
 2. In your application code, use the feature's key to check whether the flag is on for each user:
 
         User user = User.WithKey(username);
-        bool showFeature = ldClient.toggle("your.feature.key", user, false);
+        bool showFeature = ldClient.BoolVariation("your.feature.key", user, false);
         if (showFeature) {
           // application code to show the feature 
         }
