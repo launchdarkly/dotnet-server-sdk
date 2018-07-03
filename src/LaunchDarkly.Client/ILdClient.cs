@@ -67,6 +67,12 @@ namespace LaunchDarkly.Client
         bool BoolVariation(string key, User user, bool defaultValue = false);
 
         /// <summary>
+        /// Registers the user.
+        /// </summary>
+        /// <param name="user">the user to register</param>
+        void Identify(User user);
+
+        /// <summary>
         /// Tracks that a user performed an event.
         /// </summary>
         /// <param name="name">the name of the event</param>
