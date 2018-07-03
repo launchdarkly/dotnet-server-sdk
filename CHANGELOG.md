@@ -5,6 +5,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 ## [5.1.1] - 2018-07-02
 ### Changed:
 - When targeting the .NET 4.5 framework, the dependency on Newtonsoft's JSON.Net framework has been changed: the minimum version is now 6.0.1 rather than 9.0.1. This was changed in order to support customer code that uses older versions of JSON.Net. For most applications, this change should have no effect since it is only a _minimum_ version, which can be overridden by any higher version specified in your own dependencies. Note that when targeting .NET Standard, the minimum JSON.Net version is still 9.0.1 because earlier versions were not compatible with .NET Standard.
+- The `Identify` method has been moved back into `ILdClient` rather than being in `ILdCommonClient`.
 
 ## [5.1.0] - 2018-06-26
 ### Added:
