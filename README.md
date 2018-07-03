@@ -1,6 +1,6 @@
 LaunchDarkly SDK for .NET
 ===========================
-[![CircleCI](https://circleci.com/gh/launchdarkly/.net-client/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/.net-client/tree/master)
+[![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-client/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/dotnet-client/tree/master)
 
 Quick setup
 -----------
@@ -45,7 +45,7 @@ We run integration tests for all our SDKs using a centralized test harness. This
 Contributing
 ------------
 
-See [Contributing](https://github.com/launchdarkly/.net-client/blob/master/CONTRIBUTING.md).
+See [Contributing](https://github.com/launchdarkly/dotnet-client/blob/master/CONTRIBUTING.md).
 
 Signing
 -------
