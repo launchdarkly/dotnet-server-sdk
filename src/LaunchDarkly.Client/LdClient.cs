@@ -295,7 +295,7 @@ namespace LaunchDarkly.Client
             _eventProcessor.SendEvent(_eventFactory.NewCustomEvent(name, user, data));
         }
 
-        /// <see cref="ILdCommonClient.Identify(User)"/>
+        /// <see cref="ILdClient.Identify(User)"/>
         public void Identify(User user)
         {
             if (user == null || user.Key == null)
