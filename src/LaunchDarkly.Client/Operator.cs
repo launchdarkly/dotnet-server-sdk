@@ -117,7 +117,12 @@ namespace LaunchDarkly.Client
         {
             if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
             {
-                return fn(uValue.Value<string>(), cValue.Value<string>());
+                string us = uValue.Value<string>();
+                string cs = cValue.Value<string>();
+                if (us != null && cs != null)
+                {
+                    return fn(us, cs);
+                }
             }
             return false;
         }
@@ -153,7 +158,12 @@ namespace LaunchDarkly.Client
                 case JTokenType.Date:
                     return jValue.Value<DateTime>().ToUniversalTime();
                 case JTokenType.String:
-                    return DateTime.Parse(jValue.Value<string>()).ToUniversalTime();
+                    string s = jValue.Value<string>();
+                    if (s == null)
+                    {
+                        return null;
+                    }
+                    return DateTime.Parse(s).ToUniversalTime();
                 default:
                     var jvalueDouble = ParseDoubleFromJValue(jValue);
                     if (jvalueDouble.HasValue)
@@ -167,11 +177,11 @@ namespace LaunchDarkly.Client
 
         internal static SemanticVersion JValueToSemVer(JValue jValue)
         {
-            if (jValue.Type == JTokenType.String)
+            if (jValue.Type == JTokenType.String && jValue.Value<string>() != null)
             {
                 try
                 {
-                    return SemanticVersion.Parse(jValue.Value<String>(), allowMissingMinorAndPatch: true);
+                    return SemanticVersion.Parse(jValue.Value<string>(), allowMissingMinorAndPatch: true);
                 }
                 catch (ArgumentException)
                 {
