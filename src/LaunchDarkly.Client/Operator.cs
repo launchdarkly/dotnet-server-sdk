@@ -27,9 +27,9 @@ namespace LaunchDarkly.Client
                             return true;
                         }
 
-                        if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+                        if (uValue.Type.Equals(JTokenType.String) || cValue.Type.Equals(JTokenType.String))
                         {
-                            return uValue.Value<string>().Equals(cValue.Value<string>());
+                            return StringOperator(uValue, cValue, (a, b) => a.Equals(b));
                         }
 
                         if (TryCompareNumericValues(uValue, cValue, out comparison))
