@@ -122,5 +122,13 @@ namespace LaunchDarkly.Tests
             _deleted = deleted;
             return this;
         }
+
+        internal FeatureFlagBuilder OffWithValue(JToken value)
+        {
+            _on = false;
+            _offVariation = 0;
+            _variations = new List<JToken> { value };
+            return this;
+        }
     }
 }
