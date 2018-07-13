@@ -10,7 +10,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientHasNullUpdateProcessor()
         {
-            Configuration config = Configuration.Default("SDK_KEY")
+            var config = Configuration.Default("SDK_KEY")
                 .WithUseLdd(true);
             using (var client = new LdClient(config))
             {
@@ -21,7 +21,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientHasDefaultEventProcessor()
         {
-            Configuration config = Configuration.Default("SDK_KEY")
+            var config = Configuration.Default("SDK_KEY")
                 .WithUseLdd(true);
             using (var client = new LdClient(config))
             {
@@ -32,7 +32,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientIsInitialized()
         {
-            Configuration config = Configuration.Default("SDK_KEY")
+            var config = Configuration.Default("SDK_KEY")
                 .WithUseLdd(true);
             using (var client = new LdClient(config))
             {
@@ -43,10 +43,10 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientGetsFlagFromFeatureStore()
         {
-            IFeatureStore featureStore = new InMemoryFeatureStore();
+            var featureStore = new InMemoryFeatureStore();
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
-            Configuration config = Configuration.Default("SDK_KEY")
+            var config = Configuration.Default("SDK_KEY")
                 .WithUseLdd(true)
                 .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore));
             using (var client = new LdClient(config))
