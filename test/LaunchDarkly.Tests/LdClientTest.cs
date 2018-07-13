@@ -1,196 +1,115 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using LaunchDarkly.Client;
+using LaunchDarkly.Common;
+using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
 {
+    // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
     public class LdClientTest
     {
-        private LdClient MakeClient(IFeatureStore featureStore, MockEventProcessor ep)
+        private Mock<IUpdateProcessor> mockUpdateProcessor;
+        private IUpdateProcessor updateProcessor;
+        private Task<bool> initTask;
+
+        public LdClientTest()
         {
-            Configuration config = Configuration.Default("secret")
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .WithEventProcessorFactory(TestUtils.SpecificEventProcessor(ep))
-                .WithUpdateProcessorFactory(Components.NullUpdateProcessor);
-            LdClient client = new LdClient(config);
-            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
-            return client;
-        }
-
-        [Fact]
-        public void EvaluatingFlagGeneratesEvent()
-        {
-            IFeatureStore featureStore = new InMemoryFeatureStore();
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(featureStore, ep);
-
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey")
-                .OffVariation(0)
-                .Variations(new List<JToken> { new JValue("a"), new JValue("b") })
-                .Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
-
-            User user = User.WithKey("user");
-            client.StringVariation("flagkey", user, "default");
-
-            Assert.Collection(ep.Events,
-                e => CheckFlagEvent(e, flag, flag.Version, user, 0, new JValue("a"), new JValue("default")));
-        }
-
-        [Fact]
-        public void EvaluatingFlagWithNullUserGeneratesEvent()
-        {
-            IFeatureStore featureStore = new InMemoryFeatureStore();
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(featureStore, ep);
-
-            FeatureFlag flag = new FeatureFlagBuilder("flagkey")
-                .OffVariation(0)
-                .Variations(new List<JToken> { new JValue("a"), new JValue("b") })
-                .Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
-            
-            client.StringVariation("flagkey", null, "default");
-
-            Assert.Collection(ep.Events,
-                e => CheckFlagEvent(e, flag, flag.Version, null, null, new JValue("default"), new JValue("default")));
-        }
-
-        [Fact]
-        public void EvaluatingUnknownFlagGeneratesEvent()
-        {
-            IFeatureStore featureStore = new InMemoryFeatureStore();
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(featureStore, ep);
-
-            User user = User.WithKey("user");
-            client.StringVariation("badflag", user, "default");
-
-            Assert.Collection(ep.Events,
-                e => CheckUnknownFlagEvent(e, "badflag", user, new JValue("default")));
-        }
-
-        [Fact]
-        public void IdentifyGeneratesIdentifyEvent()
-        {
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
-
-            User user = User.WithKey("user");
-            client.Identify(user);
-
-            Assert.Collection(ep.Events,
-                e => CheckIdentifyEvent(e, user));
+            mockUpdateProcessor = new Mock<IUpdateProcessor>();
+            updateProcessor = mockUpdateProcessor.Object;
+            initTask = Task.FromResult(true);
+            mockUpdateProcessor.Setup(up => up.Start()).Returns(initTask);
         }
         
         [Fact]
-        public void TrackGeneratesCustomEvent()
+        public void ClientHasDefaultEventProcessorByDefault()
         {
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
-
-            User user = User.WithKey("user");
-            client.Track("thing", user);
-
-            Assert.Collection(ep.Events,
-                e => CheckCustomEvent(e, user, "thing", null));
+            var config = Configuration.Default("SDK_KEY")
+                .WithIsStreamingEnabled(false)
+                .WithUri(new Uri("http://fake"))
+                .WithStartWaitTime(TimeSpan.Zero);
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<DefaultEventProcessor>(client._eventProcessor);
+            }
         }
 
         [Fact]
-        public void TrackWithDataGeneratesCustomEvent()
+        public void StreamingClientHasStreamProcessor()
         {
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
-
-            User user = User.WithKey("user");
-            JToken data = new JValue(3);
-            client.Track("thing", data, user);
-
-            Assert.Collection(ep.Events,
-                e => CheckCustomEvent(e, user, "thing", data));
+            var config = Configuration.Default("SDK_KEY")
+                .WithIsStreamingEnabled(true)
+                .WithUri(new Uri("http://fake"))
+                .WithStartWaitTime(TimeSpan.Zero);
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<StreamProcessor>(client._updateProcessor);
+            }
         }
 
         [Fact]
-        public void TrackWithStringDataGeneratesCustomEvent()
+        public void PollingClientHasPollingProcessor()
         {
-            MockEventProcessor ep = new MockEventProcessor();
-            LdClient client = MakeClient(new InMemoryFeatureStore(), ep);
-
-            User user = User.WithKey("user");
-            client.Track("thing", user, "string");
-
-            Assert.Collection(ep.Events,
-                e => CheckCustomEvent(e, user, "thing", new JValue("string")));
+            var config = Configuration.Default("SDK_KEY")
+                .WithIsStreamingEnabled(false)
+                .WithUri(new Uri("http://fake"))
+                .WithStartWaitTime(TimeSpan.Zero);
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<PollingProcessor>(client._updateProcessor);
+            }
         }
 
         [Fact]
-        public void SecureModeHashTest()
+        public void NoWaitForUpdateProcessorIfWaitMillisIsZero()
         {
-            Configuration config = Configuration.Default("secret");
-            config.WithOffline(true);
-            LdClient client = new LdClient(config);
+            mockUpdateProcessor.Setup(up => up.Initialized()).Returns(true);
+            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
+                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
 
-            var user = User.WithKey("Message");
-            Assert.Equal("aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597", client.SecureModeHash(user));
-            client.Dispose();
+            using (var client = new LdClient(config))
+            {
+                Assert.True(client.Initialized());
+            }
+        }
+        
+        [Fact]
+        public void UpdateProcessorCanTimeOut()
+        {
+            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.FromMilliseconds(10))
+                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                Assert.False(client.Initialized());
+            }
         }
 
-        private void CheckFlagEvent(Event e, FeatureFlag flag, int? version, User user, int? variation, JToken value, JToken defaultVal)
+        [Fact]
+        public void EvaluationReturnsDefaultValueIfClientIsNotInited()
         {
-            FeatureRequestEvent fe = Assert.IsType<FeatureRequestEvent>(e);
-            Assert.Equal(flag.Key, fe.Key);
-            Assert.Equal(version, fe.Version);
-            Assert.Equal(user, fe.User);
-            Assert.Equal(variation, fe.Variation);
-            Assert.Equal(value, fe.Value);
-            Assert.Equal(defaultVal, fe.Default);
-            Assert.Null(fe.PrereqOf);
-        }
+            // Note, this tests the current behavior of the .NET client, but it is inconsistent with the other
+            // SDKs: for consistency, it should use the feature store if the feature store is initialized.
 
-        private void CheckUnknownFlagEvent(Event e, string key, User user, JToken value)
-        {
-            FeatureRequestEvent fe = Assert.IsType<FeatureRequestEvent>(e);
-            Assert.Equal(key, fe.Key);
-            Assert.Null(fe.Version);
-            Assert.Equal(user, fe.User);
-            Assert.Null(fe.Variation);
-            Assert.Equal(value, fe.Value);
-            Assert.Equal(value, fe.Default);
-            Assert.Null(fe.PrereqOf);
-        }
+            var featureStore = new InMemoryFeatureStore();
+            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
+            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
 
-        private void CheckIdentifyEvent(Event e, User user)
-        {
-            IdentifyEvent ie = Assert.IsType<IdentifyEvent>(e);
-            Assert.Equal(user.Key, ie.Key);
-            Assert.Equal(user, ie.User);
-        }
+            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
 
-        private void CheckCustomEvent(Event e, User user, string key, JToken data)
-        {
-            CustomEvent ce = Assert.IsType<CustomEvent>(e);
-            Assert.Equal(key, ce.Key);
-            Assert.Equal(user, ce.User);
-            Assert.Equal(data, ce.JsonData);
-        }
-    }
-
-    internal class MockEventProcessor : IEventProcessor
-    {
-        internal List<Event> Events = new List<Event>();
-
-        public void SendEvent(Event e)
-        {
-            Events.Add(e);
-        }
-
-        public void Flush()
-        {
-        }
-
-        public void Dispose()
-        {
+            using (var client = new LdClient(config))
+            {
+                Assert.Equal(0, client.IntVariation("key", User.WithKey("user"), 0));
+            }
         }
     }
 }

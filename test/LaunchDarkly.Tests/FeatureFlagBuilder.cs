@@ -130,5 +130,14 @@ namespace LaunchDarkly.Tests
             _variations = new List<JToken> { value };
             return this;
         }
+
+        internal FeatureFlagBuilder BooleanWithClauses(params Clause[] clauses)
+        {
+            _on = true;
+            _offVariation = 0;
+            _variations = new List<JToken> { new JValue(false), new JValue(true) };
+            _rules = new List<Rule> { new Rule(1, null, new List<Clause>(clauses)) };
+            return this;
+        }
     }
 }
