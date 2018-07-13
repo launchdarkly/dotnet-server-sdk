@@ -17,9 +17,9 @@ namespace LaunchDarkly.Client
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
         private readonly Configuration _configuration;
-        private readonly IEventProcessor _eventProcessor;
+        internal readonly IEventProcessor _eventProcessor;
         private readonly IFeatureStore _featureStore;
-        private readonly IUpdateProcessor _updateProcessor;
+        internal readonly IUpdateProcessor _updateProcessor;
         private readonly EventFactory _eventFactory = EventFactory.Default;
         private bool _shouldDisposeEventProcessor;
         private bool _shouldDisposeFeatureStore;

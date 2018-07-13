@@ -110,6 +110,11 @@ namespace LaunchDarkly.Client
         /// only include the user key, except for one "index" event that provides the full details for the user).
         /// </summary>
         public bool InlineUsersInEvents { get; internal set; }
+        /// <summary>
+        /// True if this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
+        /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
+        /// </summary>
+        public bool UseLdd { get; internal set; }
         // (Used internally, was never public, will remove when WithFeatureStore is removed)
         internal IFeatureStore FeatureStore { get; set; }
         /// <summary>
@@ -437,6 +442,21 @@ namespace LaunchDarkly.Client
         public static Configuration WithReconnectTime(this Configuration configuration, TimeSpan timeSpan)
         {
             configuration.ReconnectTime = timeSpan;
+            return configuration;
+        }
+
+        /// <summary>
+        /// Sets whether this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
+        /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
+        /// For this to work, you should also be using the
+        /// <a href="https://github.com/launchdarkly/dotnet-client-redis">LaunchDarkly Redis integration</a>.
+        /// </summary>
+        /// <param name="configuration">the configuration</param>
+        /// <param name="useLdd">true to use the relay in daemon mode; false to use streaming or polling</param>
+        /// <returns>the same <c>Configuration</c> instance</returns>
+        public static Configuration WithUseLdd(this Configuration configuration, bool useLdd)
+        {
+            configuration.UseLdd = useLdd;
             return configuration;
         }
 
