@@ -192,8 +192,15 @@ namespace LaunchDarkly.Client
         {
             if (!Initialized())
             {
-                Log.Warn("LaunchDarkly client has not yet been initialized. Returning default");
-                return defaultValue;
+                if (_featureStore.Initialized())
+                {
+                    Log.Warn("Evaluation called before client initialized; using last known values from feature store");
+                }
+                else
+                {
+                    Log.Warn("Evaluation called before client initialized; feature store unavailable, returning default value");
+                    return defaultValue;
+                }
             }
             
             try
