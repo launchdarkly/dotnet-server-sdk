@@ -168,7 +168,7 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    Log.Warn("AllFlags() called before client initialized; feature store unable, returning null");
+                    Log.Warn("AllFlags() called before client initialized; feature store unavailable, returning null");
                     return null;
                 }
             }
