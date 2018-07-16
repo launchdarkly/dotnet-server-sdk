@@ -91,11 +91,26 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void EvaluationReturnsDefaultValueIfClientIsNotInited()
+        public void EvaluationReturnsDefaultValueIfNeitherClientNorFeatureStoreIsInited()
         {
-            // Note, this tests the current behavior of the .NET client, but it is inconsistent with the other
-            // SDKs: for consistency, it should use the feature store if the feature store is initialized.
+            var featureStore = new InMemoryFeatureStore();
+            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
+            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                Assert.Equal(0, client.IntVariation("key", User.WithKey("user"), 0));
+            }
+        }
+
+        [Fact]
+        public void EvaluationUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
+        {
             var featureStore = new InMemoryFeatureStore();
             featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
@@ -108,7 +123,46 @@ namespace LaunchDarkly.Tests
 
             using (var client = new LdClient(config))
             {
-                Assert.Equal(0, client.IntVariation("key", User.WithKey("user"), 0));
+                Assert.Equal(1, client.IntVariation("key", User.WithKey("user"), 0));
+            }
+        }
+
+        [Fact]
+        public void AllFlagsReturnsNullIfNeitherClientNorFeatureStoreIsInited()
+        {
+            var featureStore = new InMemoryFeatureStore();
+            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
+
+            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                Assert.Null(client.AllFlags(User.WithKey("user")));
+            }
+        }
+        
+        [Fact]
+        public void AllFlagsUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
+        {
+            var featureStore = new InMemoryFeatureStore();
+            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
+            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+
+            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                IDictionary<string, JToken> result = client.AllFlags(User.WithKey("user"));
+                Assert.NotNull(result);
+                Assert.Equal(new JValue(1), result["key"]);
             }
         }
     }

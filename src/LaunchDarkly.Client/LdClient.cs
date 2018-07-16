@@ -162,8 +162,15 @@ namespace LaunchDarkly.Client
             }
             if (!Initialized())
             {
-                Log.Warn("AllFlags() was called before client has finished initializing. Returning null.");
-                return null;
+                if (_featureStore.Initialized())
+                {
+                    Log.Warn("AllFlags() called before client initialized; using last known values from feature store");
+                }
+                else
+                {
+                    Log.Warn("AllFlags() called before client initialized; feature store unavailable, returning null");
+                    return null;
+                }
             }
             if (user == null || user.Key == null)
             {
@@ -192,8 +199,15 @@ namespace LaunchDarkly.Client
         {
             if (!Initialized())
             {
-                Log.Warn("LaunchDarkly client has not yet been initialized. Returning default");
-                return defaultValue;
+                if (_featureStore.Initialized())
+                {
+                    Log.Warn("Flag evaluation before client initialized; using last known values from feature store");
+                }
+                else
+                {
+                    Log.Warn("Flag evaluation before client initialized; feature store unavailable, returning default value");
+                    return defaultValue;
+                }
             }
             
             try
