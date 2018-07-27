@@ -91,6 +91,22 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void ExceptionFromUpdateProcessorTaskDoesNotCauseExceptionInInit()
+        {
+            TaskCompletionSource<bool> errorTaskSource = new TaskCompletionSource<bool>();
+            mockUpdateProcessor.Setup(up => up.Start()).Returns(errorTaskSource.Task);
+            errorTaskSource.SetException(new Exception("bad"));
+            var config = Configuration.Default("SDK_KEY")
+                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                Assert.False(client.Initialized());
+            }
+        }
+
+        [Fact]
         public void EvaluationReturnsDefaultValueIfNeitherClientNorFeatureStoreIsInited()
         {
             var featureStore = new InMemoryFeatureStore();
