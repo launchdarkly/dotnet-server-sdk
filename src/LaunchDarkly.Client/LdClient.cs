@@ -86,7 +86,7 @@ namespace LaunchDarkly.Client
             {
                 var unused = initTask.Wait(_configuration.StartWaitTime);
             }
-            catch (AggregateException e)
+            catch (AggregateException)
             {
                 // StreamProcessor may throw an exception if initialization fails, because we want that behavior
                 // in the Xamarin client. However, for backward compatibility we do not want to throw exceptions
