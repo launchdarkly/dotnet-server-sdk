@@ -2,6 +2,18 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.2.0] - 2018-07-27
+### Added:
+- New configuration property `UseLdd` allows the client to use the "LaunchDarkly Daemon", i.e. getting feature flag data from a store that is updated by an [`ld-relay`](https://docs.launchdarkly.com/docs/the-relay-proxy) instance. However, this will not be usable until the Redis feature store integration is released (soon).
+
+### Changed:
+- If you attempt to evaluate a flag before the client has established a connection, but you are using a feature store that has already been populated, the client will now use the last known values from the store instead of returning default values.
+- The `LaunchDarkly.Common` package, which is used by `LaunchDarkly.Client`, has been renamed to `LaunchDarkly.Common.StrongName`. Note that you should not have to explicitly install this package; it will be imported automatically.
+
+### Fixed:
+- The SDK was referencing several system assemblies via `<PackageReference>`, which could cause dependency conflicts. These have been changed to framework `<Reference>`s. A redundant reference to `System.Runtime` was removed.
+- The client was logging (at debug level) a lengthy exception stacktrace whenever a string comparison operator was applied to a user property that was null. It no longer does this.
+
 ## [5.1.1] - 2018-07-02
 ### Changed:
 - When targeting the .NET 4.5 framework, the dependency on Newtonsoft's JSON.Net framework has been changed: the minimum version is now 6.0.1 rather than 9.0.1. This was changed in order to support customer code that uses older versions of JSON.Net. For most applications, this change should have no effect since it is only a _minimum_ version, which can be overridden by any higher version specified in your own dependencies. Note that when targeting .NET Standard, the minimum JSON.Net version is still 9.0.1 because earlier versions were not compatible with .NET Standard.
