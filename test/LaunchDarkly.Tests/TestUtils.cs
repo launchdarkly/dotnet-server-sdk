@@ -1,4 +1,5 @@
-﻿using LaunchDarkly.Client;
+﻿using System.Collections.Generic;
+using LaunchDarkly.Client;
 
 namespace LaunchDarkly.Tests
 {
@@ -12,6 +13,11 @@ namespace LaunchDarkly.Tests
         public static IEventProcessorFactory SpecificEventProcessor(IEventProcessor ep)
         {
             return new SpecificEventProcessorFactory(ep);
+        }
+
+        public static IUpdateProcessorFactory SpecificUpdateProcessor(IUpdateProcessor up)
+        {
+            return new SpecificUpdateProcessorFactory(up);
         }
     }
 
@@ -43,5 +49,34 @@ namespace LaunchDarkly.Tests
         {
             return _ep;
         }
+    }
+
+    public class SpecificUpdateProcessorFactory : IUpdateProcessorFactory
+    {
+        private readonly IUpdateProcessor _up;
+
+        public SpecificUpdateProcessorFactory(IUpdateProcessor up)
+        {
+            _up = up;
+        }
+
+        IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
+        {
+            return _up;
+        }
+    }
+
+    public class TestEventProcessor : IEventProcessor
+    {
+        public List<Event> Events = new List<Event>();
+
+        public void SendEvent(Event e)
+        {
+            Events.Add(e);
+        }
+
+        public void Flush() { }
+
+        public void Dispose() { }
     }
 }

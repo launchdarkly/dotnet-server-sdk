@@ -17,9 +17,9 @@ namespace LaunchDarkly.Client
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
         private readonly Configuration _configuration;
-        private readonly IEventProcessor _eventProcessor;
+        internal readonly IEventProcessor _eventProcessor;
         private readonly IFeatureStore _featureStore;
-        private readonly IUpdateProcessor _updateProcessor;
+        internal readonly IUpdateProcessor _updateProcessor;
         private readonly EventFactory _eventFactory = EventFactory.Default;
         private bool _shouldDisposeEventProcessor;
         private bool _shouldDisposeFeatureStore;
@@ -82,7 +82,16 @@ namespace LaunchDarkly.Client
                     _configuration.StartWaitTime.TotalMilliseconds);
             }
 
-            var unused = initTask.Wait(_configuration.StartWaitTime);
+            try
+            {
+                var unused = initTask.Wait(_configuration.StartWaitTime);
+            }
+            catch (AggregateException)
+            {
+                // StreamProcessor may throw an exception if initialization fails, because we want that behavior
+                // in the Xamarin client. However, for backward compatibility we do not want to throw exceptions
+                // from the LdClient constructor in the .NET client, so we'll just swallow this.
+            }
         }
 
         /// <summary>
@@ -162,8 +171,15 @@ namespace LaunchDarkly.Client
             }
             if (!Initialized())
             {
-                Log.Warn("AllFlags() was called before client has finished initializing. Returning null.");
-                return null;
+                if (_featureStore.Initialized())
+                {
+                    Log.Warn("AllFlags() called before client initialized; using last known values from feature store");
+                }
+                else
+                {
+                    Log.Warn("AllFlags() called before client initialized; feature store unavailable, returning null");
+                    return null;
+                }
             }
             if (user == null || user.Key == null)
             {
@@ -192,8 +208,15 @@ namespace LaunchDarkly.Client
         {
             if (!Initialized())
             {
-                Log.Warn("LaunchDarkly client has not yet been initialized. Returning default");
-                return defaultValue;
+                if (_featureStore.Initialized())
+                {
+                    Log.Warn("Flag evaluation before client initialized; using last known values from feature store");
+                }
+                else
+                {
+                    Log.Warn("Flag evaluation before client initialized; feature store unavailable, returning default value");
+                    return defaultValue;
+                }
             }
             
             try

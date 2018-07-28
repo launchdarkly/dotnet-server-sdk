@@ -2,6 +2,11 @@ LaunchDarkly SDK for .NET
 ===========================
 [![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-client/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/dotnet-client/tree/master)
 
+.NET platform compatibility
+---------------------------
+
+This version of the LaunchDarkly SDK is compatible with .NET Framework version 4.5 and above, or .NET Standard 1.4-2.0.
+
 Quick setup
 -----------
 

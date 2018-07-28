@@ -124,6 +124,11 @@ namespace LaunchDarkly.Client
                 Log.Info("Starting Launchdarkly client in offline mode.");
                 return new NullUpdateProcessor();
             }
+            else if (config.UseLdd)
+            {
+                Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
+                return new NullUpdateProcessor();
+            }
             else
             {
                 FeatureRequestor requestor = new FeatureRequestor(config);
