@@ -7,12 +7,19 @@ namespace LaunchDarkly.Client
 {
     internal class Segment : IVersionedData
     {
+        [JsonProperty(PropertyName = "key")]
         public string Key { get; private set; }
+        [JsonProperty(PropertyName = "version")]
         public int Version { get; set; }
+        [JsonProperty(PropertyName = "included")]
         internal List<string> Included { get; private set; }
+        [JsonProperty(PropertyName = "excluded")]
         internal List<string> Excluded { get; private set; }
+        [JsonProperty(PropertyName = "salt")]
         internal string Salt { get; private set; }
+        [JsonProperty(PropertyName = "rules")]
         internal List<SegmentRule> Rules { get; private set; }
+        [JsonProperty(PropertyName = "deleted")]
         public bool Deleted { get; set; }
 
         [JsonConstructor]

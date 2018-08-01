@@ -11,18 +11,31 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureFlag));
 
+        [JsonProperty(PropertyName = "key")]
         public string Key { get; private set; }
+        [JsonProperty(PropertyName = "version")]
         public int Version { get; set; }
+        [JsonProperty(PropertyName = "on")]
         internal bool On { get; private set; }
+        [JsonProperty(PropertyName = "prerequisites")]
         internal List<Prerequisite> Prerequisites { get; private set; }
+        [JsonProperty(PropertyName = "salt")]
         internal string Salt { get; private set; }
+        [JsonProperty(PropertyName = "targets")]
         internal List<Target> Targets { get; private set; }
+        [JsonProperty(PropertyName = "rules")]
         internal List<Rule> Rules { get; private set; }
+        [JsonProperty(PropertyName = "fallthrough")]
         internal VariationOrRollout Fallthrough { get; private set; }
+        [JsonProperty(PropertyName = "offVariation")]
         internal int? OffVariation { get; private set; }
+        [JsonProperty(PropertyName = "variations")]
         internal List<JToken> Variations { get; private set; }
+        [JsonProperty(PropertyName = "trackEvents")]
         public bool TrackEvents { get; private set; }
+        [JsonProperty(PropertyName = "debugEventsUntilDate")]
         public long? DebugEventsUntilDate { get; private set; }
+        [JsonProperty(PropertyName = "deleted")]
         public bool Deleted { get; set; }
 
         [JsonConstructor]
@@ -210,9 +223,11 @@ namespace LaunchDarkly.Client
         }
     }
 
-    class Rollout
+    internal class Rollout
     {
+        [JsonProperty(PropertyName = "variations")]
         internal List<WeightedVariation> Variations { get; private set; }
+        [JsonProperty(PropertyName = "bucketBy")]
         internal string BucketBy { get; private set; }
 
         [JsonConstructor]
@@ -223,9 +238,11 @@ namespace LaunchDarkly.Client
         }
     }
 
-    class WeightedVariation
+    internal class WeightedVariation
     {
+        [JsonProperty(PropertyName = "variation")]
         internal int Variation { get; private set; }
+        [JsonProperty(PropertyName = "weight")]
         internal int Weight { get; private set; }
 
         [JsonConstructor]
@@ -236,9 +253,11 @@ namespace LaunchDarkly.Client
         }
     }
 
-    class Target
+    internal class Target
     {
+        [JsonProperty(PropertyName = "values")]
         internal List<string> Values { get; private set; }
+        [JsonProperty(PropertyName = "variation")]
         internal int Variation { get; private set; }
 
         [JsonConstructor]
@@ -249,9 +268,11 @@ namespace LaunchDarkly.Client
         }
     }
 
-    class Prerequisite
+    internal class Prerequisite
     {
+        [JsonProperty(PropertyName = "key")]
         internal string Key { get; private set; }
+        [JsonProperty(PropertyName = "variation")]
         internal int Variation { get; private set; }
 
         [JsonConstructor]
