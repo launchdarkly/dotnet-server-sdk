@@ -9,9 +9,13 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Clause));
 
+        [JsonProperty(PropertyName = "attribute")]
         internal string Attribute { get; private set; }
+        [JsonProperty(PropertyName = "op")]
         internal string Op { get; private set; }
+        [JsonProperty(PropertyName = "values")]
         internal List<JValue> Values { get; private set; }
+        [JsonProperty(PropertyName = "negate")]
         internal bool Negate { get; private set; }
 
         [JsonConstructor]
