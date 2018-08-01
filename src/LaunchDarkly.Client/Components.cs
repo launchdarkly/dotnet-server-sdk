@@ -78,7 +78,7 @@ namespace LaunchDarkly.Client
 
     internal class DefaultEventProcessorFactory : IEventProcessorFactory
     {
-        private const string EventsUriPath = "/bulk";
+        private const string EventsUriPath = "bulk";
 
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
