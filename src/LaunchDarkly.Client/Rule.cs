@@ -5,6 +5,7 @@ namespace LaunchDarkly.Client
 {
     internal class Rule : VariationOrRollout
     {
+        [JsonProperty(PropertyName = "clauses")]
         internal List<Clause> Clauses { get; private set; }
 
         [JsonConstructor]
