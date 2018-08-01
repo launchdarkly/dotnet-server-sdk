@@ -2,6 +2,11 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.2.1] - 2018-08-01
+### Fixed:
+- The internal classes representing feature flag and segment data were not JSON-serializable. This did not affect the SDK itself, but prevented any `IFeatureStore` implementation based on Json.Net serialization from working.
+- The event processor did not post to the correct URI if the base events URI was set to a custom value with a non-root path. This did not affect normal usage, but would be a problem if events were being redirected to some other service.
+
 ## [5.2.0] - 2018-07-27
 ### Added:
 - New configuration property `UseLdd` allows the client to use the "LaunchDarkly Daemon", i.e. getting feature flag data from a store that is updated by an [`ld-relay`](https://docs.launchdarkly.com/docs/the-relay-proxy) instance. However, this will not be usable until the Redis feature store integration is released (soon).
