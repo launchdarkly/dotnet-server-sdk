@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.2.2] - 2018-08-02
+- In streaming mode, if the stream connection fails, there should be an increasing backoff interval before each reconnect attempt. Previously, it would log a message about waiting some number of milliseconds, but then not actually wait.
+- The required package `LaunchDarkly.EventSource` no longer has `PackageReference`s to System assemblies.
+
 ## [5.2.1] - 2018-08-01
 ### Fixed:
 - The internal classes representing feature flag and segment data were not JSON-serializable. This did not affect the SDK itself, but prevented any `IFeatureStore` implementation based on Json.Net serialization from working.
