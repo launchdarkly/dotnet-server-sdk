@@ -46,7 +46,7 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void CanConvertToJson()
+        public void CanSerializeToJson()
         {
             var state = new FeatureFlagsState(true);
             var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
@@ -55,16 +55,36 @@ namespace LaunchDarkly.Tests
             state.AddFlag(flag1, new JValue("value1"), 0);
             state.AddFlag(flag2, new JValue("value2"), 1);
 
-            string json = @"{""key1"":""value1"",""key2"":""value2"",
+            var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
                 ""$flagsState"":{
                   ""key1"":{
                     ""variation"":0,""version"":100,""trackEvents"":false
                   },""key2"":{
                     ""variation"":1,""version"":200,""trackEvents"":true,""debugEventsUntilDate"":1000
                   }
-                }}";
-            var expected = JsonConvert.DeserializeObject<JToken>(json);
-            TestUtils.AssertJsonEqual(expected, state.ToJson());
+                },
+                ""$valid"":true
+            }";
+            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var actualString = JsonConvert.SerializeObject(state);
+            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
+            TestUtils.AssertJsonEqual(expectedValue, actualValue);
+        }
+
+        [Fact]
+        public void CanDeserializeFromJson()
+        {
+            var state = new FeatureFlagsState(true);
+            var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
+            var flag2 = new FeatureFlagBuilder("key2").Version(200)
+                .TrackEvents(true).DebugEventsUntilDate(1000).Build();
+            state.AddFlag(flag1, new JValue("value1"), 0);
+            state.AddFlag(flag2, new JValue("value2"), 1);
+
+            var jsonString = JsonConvert.SerializeObject(state);
+            var state1 = JsonConvert.DeserializeObject<FeatureFlagsState>(jsonString);
+
+            Assert.Equal(state, state1);
         }
     }
 }

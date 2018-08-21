@@ -8,7 +8,7 @@ namespace LaunchDarkly.Tests
 {
     public class TestUtils
     {
-        public static  void AssertJsonEqual(JToken expected, JToken  actual)
+        public static void AssertJsonEqual(JToken expected, JToken  actual)
         {
             if (!JToken.DeepEquals(expected, actual))
             {
