@@ -55,14 +55,14 @@ namespace LaunchDarkly.Tests
             state.AddFlag(flag1, new JValue("value1"), 0);
             state.AddFlag(flag2, new JValue("value2"), 1);
 
-            string json = "{\"key1\":\"value1\",\"key2\":\"value2\"," +
-                "\"$flagsState\":{" +
-                  "\"key1\":{" +
-                    "\"variation\":0,\"version\":100,\"trackEvents\":false" +
-                  "},\"key2\":{" +
-                    "\"variation\":1,\"version\":200,\"trackEvents\":true,\"debugEventsUntilDate\":1000" +
-                  "}" +
-                "}}";
+            string json = @"{""key1"":""value1"",""key2"":""value2"",
+                ""$flagsState"":{
+                  ""key1"":{
+                    ""variation"":0,""version"":100,""trackEvents"":false
+                  },""key2"":{
+                    ""variation"":1,""version"":200,""trackEvents"":true,""debugEventsUntilDate"":1000
+                  }
+                }}";
             var expected = JsonConvert.DeserializeObject<JToken>(json);
             TestUtils.AssertJsonEqual(expected, state.ToJson());
         }
