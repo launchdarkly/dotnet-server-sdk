@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using LaunchDarkly.Client;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -111,6 +110,99 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features, feature);
 
             Assert.True(client.BoolVariation("feature", user, false));
+        }
+
+        [Fact]
+        public void AllFlagsReturnsFlagValues()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build());
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key2").OffWithValue(new JValue("value2")).Build());
+
+#pragma warning disable 618
+            var values = client.AllFlags(user);
+#pragma warning restore 618
+            var expected = new Dictionary<string, JToken>
+            {
+                { "key1", "value1" },
+                { "key2", "value2"}
+            };
+            Assert.Equal(expected, values);
+        }
+
+        [Fact]
+        public void AllFlagsReturnsNullForNulluser()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build());
+            
+#pragma warning disable 618
+            var values = client.AllFlags(null);
+#pragma warning restore 618
+            Assert.Null(values);
+        }
+
+        [Fact]
+        public void AllFlagsReturnsNullForUserWithNullKey()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build());
+
+#pragma warning disable 618
+            var values = client.AllFlags(User.WithKey(null));
+#pragma warning restore 618
+            Assert.Null(values);
+        }
+
+        [Fact]
+        public void AllFlagsStateReturnsState()
+        {
+            var flag1 = new FeatureFlagBuilder("key1").Version(100)
+                .OffVariation(0).Variations(new List<JToken> { new JValue("value1") })
+                .Build();
+            var flag2 = new FeatureFlagBuilder("key2").Version(200)
+                .OffVariation(1).Variations(new List<JToken> { new JValue("x"), new JValue("value2") })
+                .TrackEvents(true).DebugEventsUntilDate(1000)
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag1);
+            featureStore.Upsert(VersionedDataKind.Features, flag2);
+
+            var state = client.AllFlagsState(user);
+            Assert.True(state.Valid);
+
+            string json = "{\"key1\":\"value1\",\"key2\":\"value2\"," +
+                "\"$flagsState\":{" +
+                  "\"key1\":{" +
+                    "\"variation\":0,\"version\":100,\"trackEvents\":false" +
+                  "},\"key2\":{" +
+                    "\"variation\":1,\"version\":200,\"trackEvents\":true,\"debugEventsUntilDate\":1000" +
+                  "}" +
+                "}}";
+            var expected = JsonConvert.DeserializeObject<JToken>(json);
+            TestUtils.AssertJsonEqual(expected, state.ToJson());
+        }
+
+        [Fact]
+        public void AllFlagsStateReturnsEmptyStateForNullUser()
+        {
+            var flag = new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+
+            var state = client.AllFlagsState(null);
+            Assert.False(state.Valid);
+            Assert.Equal(0, state.ToValuesMap().Count);
+        }
+
+        [Fact]
+        public void AllFlagsStateReturnsEmptyStateForUserWithNullKey()
+        {
+            var flag = new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+
+            var state = client.AllFlagsState(User.WithKey(null));
+            Assert.False(state.Valid);
+            Assert.Equal(0, state.ToValuesMap().Count);
         }
     }
 }

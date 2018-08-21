@@ -1,10 +1,24 @@
 ﻿using System.Collections.Generic;
 using LaunchDarkly.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Xunit;
 
 namespace LaunchDarkly.Tests
 {
     public class TestUtils
     {
+        public static  void AssertJsonEqual(JToken expected, JToken  actual)
+        {
+            if (!JToken.DeepEquals(expected, actual))
+            {
+                Assert.True(false,
+                    string.Format("JSON result mismatch; expected {0}, got {1}",
+                        JsonConvert.SerializeObject(expected),
+                        JsonConvert.SerializeObject(actual)));
+            }
+        }
+
         public static IFeatureStoreFactory SpecificFeatureStore(IFeatureStore store)
         {
             return new SpecificFeatureStoreFactory(store);
