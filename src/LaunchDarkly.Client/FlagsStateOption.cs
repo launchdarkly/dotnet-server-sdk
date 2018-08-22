@@ -26,7 +26,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Specifies that only flags m arked for use with the client-side SDK should be included in the
+        /// Specifies that only flags marked for use with the client-side SDK should be included in the
         /// state object. By default, all flags are included.
         /// </summary>
         public static readonly FlagsStateOption ClientSideOnly = new FlagsStateOption("ClientSideOnly");
