@@ -146,7 +146,6 @@ namespace LaunchDarkly.Client
             {
                 return null;
             }
-            List<string> failedPrereqs = new List<string>();
             foreach (var prereq in Prerequisites)
             {
                 var prereqOk = true;
@@ -170,7 +169,6 @@ namespace LaunchDarkly.Client
                 {
                     prereqOk = false;
                 }
-                // We continue to evaluate all prerequisites even if one failed.
                 if (prereqFeatureFlag != null)
                 {
                     events.Add(eventFactory.NewPrerequisiteFeatureRequestEvent(prereqFeatureFlag, user,
@@ -178,12 +176,8 @@ namespace LaunchDarkly.Client
                 }
                 if (!prereqOk)
                 {
-                    failedPrereqs.Add(prereq.Key);
+                    return new EvaluationReason.PrerequisiteFailed(prereq.Key);
                 }
-            }
-            if (failedPrereqs.Count > 0)
-            {
-                return new EvaluationReason.PrerequisitesFailed(failedPrereqs);
             }
             return null;
         }

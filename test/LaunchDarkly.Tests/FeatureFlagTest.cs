@@ -176,7 +176,7 @@ namespace LaunchDarkly.Tests
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<JToken>(new JValue("off"), 1,
-                new EvaluationReason.PrerequisitesFailed(new List<string> { "feature1" }));
+                new EvaluationReason.PrerequisiteFailed("feature1"));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -203,7 +203,7 @@ namespace LaunchDarkly.Tests
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<JToken>(new JValue("off"), 1,
-                new EvaluationReason.PrerequisitesFailed(new List<string> { "feature1" }));
+                new EvaluationReason.PrerequisiteFailed("feature1"));
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
@@ -292,49 +292,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(f1.Version, e1.Version);
             Assert.Equal(f0.Key, e1.PrereqOf);
         }
-
-        [Fact]
-        public void MultiplePrerequisiteFailuresAreAllRecorded()
-        {
-            var f0 = new FeatureFlagBuilder("feature0")
-                .On(true)
-                .Prerequisites(new List<Prerequisite> { new Prerequisite("feature1", 0),
-                    new Prerequisite("feature2", 0) })
-                .OffVariation(1)
-                .FallthroughVariation(0)
-                .Variations(new List<JToken> { new JValue("fall"), new JValue("off"), new JValue("on") })
-                .Version(1)
-                .Build();
-            var f1 = new FeatureFlagBuilder("feature1")
-                .On(true)
-                .FallthroughVariation(1)
-                .Variations(new List<JToken> { new JValue("nogo"), new JValue("go") })
-                .Version(2)
-                .Build();
-            var f2 = new FeatureFlagBuilder("feature2")
-                .On(true)
-                .FallthroughVariation(1)
-                .Variations(new List<JToken> { new JValue("nogo"), new JValue("go") })
-                .Version(3)
-                .Build();
-            featureStore.Upsert(VersionedDataKind.Features, f1);
-            featureStore.Upsert(VersionedDataKind.Features, f2);
-
-            var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
-
-            var expected = new EvaluationDetail<JToken>(new JValue("off"), 1,
-                new EvaluationReason.PrerequisitesFailed(new List<string> { "feature1", "feature2" }));
-            Assert.Equal(expected, result.Result);
-
-            Assert.Equal(2, result.PrerequisiteEvents.Count);
-
-            FeatureRequestEvent e0 = result.PrerequisiteEvents[0];
-            Assert.Equal(f1.Key, e0.Key);
-
-            FeatureRequestEvent e1 = result.PrerequisiteEvents[1];
-            Assert.Equal(f2.Key, e1.Key);
-        }
-
+        
         [Fact]
         public void FlagMatchesUserFromTargets()
         {
