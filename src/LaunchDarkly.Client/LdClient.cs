@@ -20,7 +20,6 @@ namespace LaunchDarkly.Client
         internal readonly IEventProcessor _eventProcessor;
         private readonly IFeatureStore _featureStore;
         internal readonly IUpdateProcessor _updateProcessor;
-        private readonly EventFactory _eventFactory = EventFactory.Default;
         private bool _shouldDisposeEventProcessor;
         private bool _shouldDisposeFeatureStore;
 
@@ -129,36 +128,70 @@ namespace LaunchDarkly.Client
         /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>
         public bool BoolVariation(string key, User user, bool defaultValue = false)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.Boolean);
+            var value = Evaluate(key, user, defaultValue, JTokenType.Boolean, EventFactory.Default).Value;
             return value.Value<bool>();
         }
 
         /// <see cref="ILdClient.IntVariation(string, User, int)"/>
         public int IntVariation(string key, User user, int defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.Integer);
+            var value = Evaluate(key, user, defaultValue, JTokenType.Integer, EventFactory.Default).Value;
             return value.Value<int>();
         }
 
         /// <see cref="ILdClient.FloatVariation(string, User, float)"/>
         public float FloatVariation(string key, User user, float defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.Float);
+            var value = Evaluate(key, user, defaultValue, JTokenType.Float, EventFactory.Default).Value;
             return value.Value<float>();
         }
 
         /// <see cref="ILdClient.StringVariation(string, User, string)"/>
         public string StringVariation(string key, User user, string defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.String);
+            var value = Evaluate(key, user, defaultValue, JTokenType.String, EventFactory.Default).Value;
             return value.Value<string>();
         }
 
         /// <see cref="ILdClient.JsonVariation(string, User, JToken)"/>
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, null);
+            var value = Evaluate(key, user, defaultValue, null, EventFactory.Default).Value;
             return value;
+        }
+
+        /// <see cref="ILdClient.BoolVariationDetail(string, User, bool)"/>
+        public EvaluationDetail<bool> BoolVariationDetail(string key, User user, bool defaultValue)
+        {
+            var detail = Evaluate(key, user, defaultValue, JTokenType.Boolean, EventFactory.DefaultWithReasons);
+            return new EvaluationDetail<bool>((bool)detail.Value, detail.VariationIndex, detail.Reason);
+        }
+
+        /// <see cref="ILdClient.IntVariationDetail(string, User, int)"/>
+        public EvaluationDetail<int> IntVariationDetail(string key, User user, int defaultValue)
+        {
+            var detail = Evaluate(key, user, defaultValue, JTokenType.Integer, EventFactory.DefaultWithReasons);
+            return new EvaluationDetail<int>((int)detail.Value, detail.VariationIndex, detail.Reason);
+        }
+
+        /// <see cref="ILdClient.FloatVariationDetail(string, User, float)"/>
+        public EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue)
+        {
+            var detail = Evaluate(key, user, defaultValue, JTokenType.Float, EventFactory.DefaultWithReasons);
+            return new EvaluationDetail<float>((float)detail.Value, detail.VariationIndex, detail.Reason);
+        }
+
+        /// <see cref="ILdClient.StringVariationDetail(string, User, string)"/>
+        public EvaluationDetail<string> StringVariationDetail(string key, User user, string defaultValue)
+        {
+            var detail = Evaluate(key, user, defaultValue, JTokenType.String, EventFactory.DefaultWithReasons);
+            return new EvaluationDetail<string>((string)detail.Value, detail.VariationIndex, detail.Reason);
+        }
+
+        /// <see cref="ILdClient.JsonVariationDetail(string, User, JToken)"/>
+        public EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue)
+        {
+            return Evaluate(key, user, defaultValue, null, EventFactory.DefaultWithReasons);
         }
 
         /// <see cref="ILdClient.AllFlags(User)"/>
@@ -193,8 +226,8 @@ namespace LaunchDarkly.Client
             {
                 try
                 {
-                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _eventFactory);
-                    results.Add(pair.Key, evalResult.Result);
+                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, EventFactory.Default);
+                    results.Add(pair.Key, evalResult.Result.Value);
                 }
                 catch (Exception e)
                 {
@@ -204,7 +237,8 @@ namespace LaunchDarkly.Client
             return results;
         }
 
-        private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType)
+        private EvaluationDetail<JToken> Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType,
+            EventFactory eventFactory)
         {
             if (!Initialized())
             {
@@ -215,30 +249,36 @@ namespace LaunchDarkly.Client
                 else
                 {
                     Log.Warn("Flag evaluation before client initialized; feature store unavailable, returning default value");
-                    return defaultValue;
+                    return new EvaluationDetail<JToken>(defaultValue, null,
+                        new EvaluationReason.Error(EvaluationErrorKind.CLIENT_NOT_READY));
                 }
             }
-            
+
+            FeatureFlag featureFlag = null;
             try
             {
-                var featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
+                featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
                 if (featureFlag == null)
                 {
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
                         featureKey);
 
-                    _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue));
-                    return defaultValue;
+                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue,
+                        EvaluationErrorKind.FLAG_NOT_FOUND));
+                    return new EvaluationDetail<JToken>(defaultValue, null,
+                        new EvaluationReason.Error(EvaluationErrorKind.FLAG_NOT_FOUND));
                 }
 
                 if (user == null || user.Key == null)
                 {
                     Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                    _eventProcessor.SendEvent(_eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue));
-                    return defaultValue;
+                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
+                        EvaluationErrorKind.USER_NOT_SPECIFIED));
+                    return new EvaluationDetail<JToken>(defaultValue, null,
+                        new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
                 }
                 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, _eventFactory);
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, eventFactory);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
@@ -246,39 +286,44 @@ namespace LaunchDarkly.Client
                         _eventProcessor.SendEvent(prereqEvent);
                     }
                 }
-                if (evalResult.Result != null)
+                if (evalResult.Result.Value != null && expectedType != null && !evalResult.Result.Value.Type.Equals(expectedType))
                 {
-                    if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
-                    {
-                        Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
-                            expectedType,
-                            evalResult.GetType(),
-                            featureKey);
+                    Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
+                        expectedType,
+                        evalResult.GetType(),
+                        featureKey);
 
-                        _eventProcessor.SendEvent(_eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue));
-                        return defaultValue;
-                    }
-                    _eventProcessor.SendEvent(_eventFactory.NewFeatureRequestEvent(featureFlag, user, evalResult.Variation, evalResult.Result, defaultValue));
-                    return evalResult.Result;
+                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
+                        EvaluationErrorKind.WRONG_TYPE));
+                    return new EvaluationDetail<JToken>(defaultValue, null,
+                        new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
                 }
-                else
-                {
-                    _eventProcessor.SendEvent(_eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue));
-                    return defaultValue;
-                }
+                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
+                    evalResult.Result, defaultValue));
+                return evalResult.Result;
             }
             catch (Exception e)
             {
                 Log.ErrorFormat("Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
-                     e,
                      Util.ExceptionMessage(e),
                      featureKey,
                      user.Key);
-
-                Log.Debug("{0}", e);
+                Log.Debug(e.ToString(), e);
+                var detail = new EvaluationDetail<JToken>(defaultValue, null,
+                    new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION));
+                if (featureFlag == null)
+                {
+                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue,
+                        EvaluationErrorKind.EXCEPTION));
+                }
+                else
+                {
+                    
+                    _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
+                        detail, defaultValue));
+                }
+                return detail;
             }
-            _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue));
-            return defaultValue;
         }
 
         /// <see cref="ILdClient.SecureModeHash(User)"/>
@@ -315,7 +360,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Warn("Track called with null user or null user key");
             }
-            _eventProcessor.SendEvent(_eventFactory.NewCustomEvent(name, user, data));
+            _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data));
         }
 
         /// <see cref="ILdClient.Identify(User)"/>
@@ -325,7 +370,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Warn("Identify called with null user or null user key");
             }
-            _eventProcessor.SendEvent(_eventFactory.NewIdentifyEvent(user));
+            _eventProcessor.SendEvent(EventFactory.Default.NewIdentifyEvent(user));
         }
 
         /// <see cref="ILdCommonClient.Version"/>

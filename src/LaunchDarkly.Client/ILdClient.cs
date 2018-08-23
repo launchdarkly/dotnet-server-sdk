@@ -27,6 +27,17 @@ namespace LaunchDarkly.Client
         int IntVariation(string key, User user, int defaultValue);
 
         /// <summary>
+        /// Calculates the integer value of a feature flag for a given user, and returns an object that
+        /// describes the way the value was determined. The <c>Reason</c> property in the result will
+        /// also be included in analytics events, if you are capturing detailed event data for this flag.
+        /// </summary>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <c>EvaluationDetail</c> object</returns>
+        EvaluationDetail<int> IntVariationDetail(string key, User user, int defaultValue);
+
+        /// <summary>
         /// Calculates the floating point numeric value of a feature flag for a given user.
         /// </summary>
         /// <param name="key">the unique feature key for the feature flag</param>
@@ -35,6 +46,17 @@ namespace LaunchDarkly.Client
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag is
         /// disabled in the LaunchDarkly control panel</returns>
         float FloatVariation(string key, User user, float defaultValue);
+
+        /// <summary>
+        /// Calculates the floating point numeric value of a feature flag for a given user, and returns an object that
+        /// describes the way the value was determined. The <c>Reason</c> property in the result will
+        /// also be included in analytics events, if you are capturing detailed event data for this flag.
+        /// </summary>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <c>EvaluationDetail</c> object</returns>
+        EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue);
 
         /// <summary>
         /// Calculates the <see cref="JToken"/> value of a feature flag for a given user.
@@ -47,6 +69,17 @@ namespace LaunchDarkly.Client
         JToken JsonVariation(string key, User user, JToken defaultValue);
 
         /// <summary>
+        /// Calculates the <see cref="JToken"/> value of a feature flag for a given user, and returns an object that
+        /// describes the way the value was determined. The <c>Reason</c> property in the result will
+        /// also be included in analytics events, if you are capturing detailed event data for this flag.
+        /// </summary>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <c>EvaluationDetail</c> object</returns>
+        EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue);
+
+        /// <summary>
         /// Calculates the string value of a feature flag for a given user.
         /// </summary>
         /// <param name="key">the unique feature key for the feature flag</param>
@@ -57,6 +90,17 @@ namespace LaunchDarkly.Client
         string StringVariation(string key, User user, string defaultValue);
 
         /// <summary>
+        /// Calculates the string value of a feature flag for a given user, and returns an object that
+        /// describes the way the value was determined. The <c>Reason</c> property in the result will
+        /// also be included in analytics events, if you are capturing detailed event data for this flag.
+        /// </summary>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <c>EvaluationDetail</c> object</returns>
+        EvaluationDetail<string> StringVariationDetail(string key, User user, string defaultValue);
+
+        /// <summary>
         /// Calculates the value of a feature flag for a given user.
         /// </summary>
         /// <param name="key">the unique feature key for the feature flag</param>
@@ -65,6 +109,17 @@ namespace LaunchDarkly.Client
         /// <returns>whether or not the flag should be enabled, or <c>defaultValue</c> if the flag is
         /// disabled in the LaunchDarkly control panel</returns>
         bool BoolVariation(string key, User user, bool defaultValue = false);
+
+        /// <summary>
+        /// Calculates the value of a feature flag for a given user, and returns an object that
+        /// describes the way the value was determined. The <c>Reason</c> property in the result will
+        /// also be included in analytics events, if you are capturing detailed event data for this flag.
+        /// </summary>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <c>EvaluationDetail</c> object</returns>
+        EvaluationDetail<bool> BoolVariationDetail(string key, User user, bool defaultValue);
 
         /// <summary>
         /// Registers the user.

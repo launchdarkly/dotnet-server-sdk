@@ -7,6 +7,9 @@ using Xunit;
 
 namespace LaunchDarkly.Tests
 {
+    // Note, exhaustive coverage of all the code paths for evaluation is in FeatureFlagTest.
+    // LdClientEvaluationTest verifies that the LdClient evaluation methods do what they're
+    // supposed to do, regardless of exactly what value we get.
     public class LdClientEvaluationTest
     {
         private static readonly User user = User.WithKey("userkey");
@@ -38,6 +41,16 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void BoolVariationDetailReturnsValueAndReason()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
+
+            var expected = new EvaluationDetail<bool>(true, 0, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.BoolVariationDetail("key", user, false));
+        }
+
+        [Fact]
         public void IntVariationReturnsFlagValue()
         {
             featureStore.Upsert(VersionedDataKind.Features,
@@ -50,6 +63,16 @@ namespace LaunchDarkly.Tests
         public void IntVariationReturnsDefaultValueForUnknownFlag()
         {
             Assert.Equal(1, client.IntVariation("key", user, 1));
+        }
+
+        [Fact]
+        public void IntVariationDetailReturnsValueAndReason()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(2)).Build());
+
+            var expected = new EvaluationDetail<int>(2, 0, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.IntVariationDetail("key", user, 1));
         }
 
         [Fact]
@@ -68,6 +91,16 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void FloatVariationDetailReturnsValueAndReason()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(2.5f)).Build());
+
+            var expected = new EvaluationDetail<float>(2.5f, 0, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.FloatVariationDetail("key", user, 1.0f));
+        }
+
+        [Fact]
         public void StringVariationReturnsFlagValue()
         {
             featureStore.Upsert(VersionedDataKind.Features,
@@ -80,6 +113,16 @@ namespace LaunchDarkly.Tests
         public void StringVariationReturnsDefaultValueForUnknownFlag()
         {
             Assert.Equal("a", client.StringVariation("key", user, "a"));
+        }
+
+        [Fact]
+        public void StringVariationDetailReturnsValueAndReason()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
+
+            var expected = new EvaluationDetail<string>("b", 0, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.StringVariationDetail("key", user, "a"));
         }
 
         [Fact]
@@ -99,7 +142,19 @@ namespace LaunchDarkly.Tests
             var defaultVal = new JValue(42);
             Assert.Equal(defaultVal, client.JsonVariation("key", user, defaultVal));
         }
-        
+
+        [Fact]
+        public void JsonVariationDetailReturnsValueAndReason()
+        {
+            var data = new JObject();
+            data.Add("thing", new JValue("stuff"));
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(data).Build());
+
+            var expected = new EvaluationDetail<JToken>(data, 0, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.JsonVariationDetail("key", user, new JValue(42)));
+        }
+
         [Fact]
         public void CanMatchUserBySegment()
         {
