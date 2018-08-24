@@ -188,6 +188,31 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void AllFlagsStateCanFilterForOnlyClientSideFlags()
+        {
+            var flag1 = new FeatureFlagBuilder("server-side-1").Build();
+            var flag2 = new FeatureFlagBuilder("server-side-2").Build();
+            var flag3 = new FeatureFlagBuilder("client-side-1").ClientSide(true)
+                .OffWithValue("value1").Build();
+            var flag4 = new FeatureFlagBuilder("client-side-2").ClientSide(true)
+                .OffWithValue("value2").Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag1);
+            featureStore.Upsert(VersionedDataKind.Features, flag2);
+            featureStore.Upsert(VersionedDataKind.Features, flag3);
+            featureStore.Upsert(VersionedDataKind.Features, flag4);
+
+            var state = client.AllFlagsState(user, FlagsStateOption.ClientSideOnly);
+            Assert.True(state.Valid);
+
+            var expectedValues = new Dictionary<string, JToken>
+            {
+                { "client-side-1", new JValue("value1") },
+                { "client-side-2", new JValue("value2") }
+            };
+            Assert.Equal(expectedValues, state.ToValuesMap());
+        }
+
+        [Fact]
         public void AllFlagsStateReturnsEmptyStateForNullUser()
         {
             var flag = new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build();

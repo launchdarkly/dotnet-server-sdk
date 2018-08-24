@@ -78,7 +78,7 @@ namespace LaunchDarkly.Client
 
         public override FeatureFlag MakeDeletedItem(string key, int version)
         {
-            return new FeatureFlag(key, version, false, null, "", null, null, null, null, null, false, null, true);
+            return new FeatureFlag(key, version, false, null, "", null, null, null, null, null, false, null, true, false);
         }
     }
 

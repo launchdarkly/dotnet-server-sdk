@@ -120,9 +120,11 @@ namespace LaunchDarkly.Client
         /// a back-end service.
         /// </summary>
         /// <param name="user">the end user requesting the feature flags</param>
+        /// <param name="options">optional <see cref="FlagsStateOption"/> values affecting how the state is
+        /// computed  -  for instance, to filter the set of flags to only include the client-side-enabled ones</param>
         /// <returns>a <see cref="FeatureFlagsState"/> object (will never be null; see
         /// <see cref="FeatureFlagsState.Valid"/></returns>
-        FeatureFlagsState AllFlagsState(User user);
+        FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options);
 
         /// <summary>
         /// For more info: <a href="https://github.com/launchdarkly/js-client#secure-mode">https://github.com/launchdarkly/js-client#secure-mode</a>

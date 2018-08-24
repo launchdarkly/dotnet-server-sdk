@@ -172,8 +172,8 @@ namespace LaunchDarkly.Client
             return state.ToValuesMap();
         }
 
-        /// <see cref="ILdClient.AllFlagsState(User)"/>
-        public FeatureFlagsState AllFlagsState(User user)
+        /// <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>
+        public FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options)
         {
             if (IsOffline())
             {
@@ -199,10 +199,15 @@ namespace LaunchDarkly.Client
             }
 
             var state = new FeatureFlagsState(true);
+            var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             IDictionary<string, FeatureFlag> flags = _featureStore.All(VersionedDataKind.Features);
             foreach (KeyValuePair<string, FeatureFlag> pair in flags)
             {
                 var flag = pair.Value;
+                if (clientSideOnly && !flag.ClientSide)
+                {
+                    continue;
+                }
                 try
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, _eventFactory);
