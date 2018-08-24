@@ -37,12 +37,14 @@ namespace LaunchDarkly.Client
         public long? DebugEventsUntilDate { get; private set; }
         [JsonProperty(PropertyName = "deleted")]
         public bool Deleted { get; set; }
+        [JsonProperty(PropertyName = "clientSide")]
+        public bool ClientSide { get; set; }
 
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
             List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation,
             List<JToken> variations, bool trackEvents, long? debugEventsUntilDate,
-            bool deleted)
+            bool deleted, bool clientSide)
         {
             Key = key;
             Version = version;
@@ -57,6 +59,7 @@ namespace LaunchDarkly.Client
             TrackEvents = trackEvents;
             DebugEventsUntilDate = debugEventsUntilDate;
             Deleted = deleted;
+            ClientSide = clientSide;
         }
 
         internal FeatureFlag()

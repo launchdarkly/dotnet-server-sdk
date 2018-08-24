@@ -108,7 +108,8 @@ namespace LaunchDarkly.Tests
                     ""targets"": [ { ""values"": [ ""userkey"" ], ""variation"": 0 } ],
                     ""trackEvents"": true,
                     ""variations"": [ ""value"" ],
-                    ""version"": 100
+                    ""version"": 100,
+                    ""clientSide"": false
                 }"
             );
         }

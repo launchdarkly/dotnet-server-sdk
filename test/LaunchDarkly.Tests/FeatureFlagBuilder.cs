@@ -21,6 +21,7 @@ namespace LaunchDarkly.Tests
         private bool _trackEvents;
         private long? _debugEventsUntilDate;
         private bool _deleted;
+        private bool _clientSide;
 
         internal FeatureFlagBuilder(string key)
         {
@@ -42,13 +43,14 @@ namespace LaunchDarkly.Tests
             _trackEvents = from.TrackEvents;
             _debugEventsUntilDate = from.DebugEventsUntilDate;
             _deleted = from.Deleted;
+            _clientSide = from.ClientSide;
         }
 
         internal FeatureFlag Build()
         {
             return new FeatureFlag(_key, _version, _on, _prerequisites, _salt,
                 _targets, _rules, _fallthrough, _offVariation, _variations,
-                _trackEvents, _debugEventsUntilDate, _deleted);
+                _trackEvents, _debugEventsUntilDate, _deleted, _clientSide);
         }
 
         internal FeatureFlagBuilder Version(int version)
@@ -120,6 +122,12 @@ namespace LaunchDarkly.Tests
         internal FeatureFlagBuilder DebugEventsUntilDate(long? debugEventsUntilDate)
         {
             _debugEventsUntilDate = debugEventsUntilDate;
+            return this;
+        }
+
+        internal FeatureFlagBuilder ClientSide(bool clientSide)
+        {
+            _clientSide = clientSide;
             return this;
         }
 
