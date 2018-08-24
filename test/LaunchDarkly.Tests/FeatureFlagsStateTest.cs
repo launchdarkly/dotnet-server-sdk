@@ -15,7 +15,7 @@ namespace LaunchDarkly.Tests
         {
             var state = new FeatureFlagsState(true);
             var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1);
+            state.AddFlag(flag, new JValue("value"), 1, null);
 
             Assert.Equal(new JValue("value"), state.GetFlagValue("key"));
         }
@@ -29,13 +29,41 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void CanGetFlagReason()
+        {
+            var state = new FeatureFlagsState(true);
+            var flag = new FeatureFlagBuilder("key").Build();
+            state.AddFlag(flag, new JValue("value"), 1, EvaluationReason.Fallthrough.Instance);
+
+            Assert.Equal(EvaluationReason.Fallthrough.Instance, state.GetFlagReason("key"));
+        }
+
+        [Fact]
+        public void UnknownFlagReturnsNullReason()
+        {
+            var state = new FeatureFlagsState(true);
+
+            Assert.Null(state.GetFlagReason("key"));
+        }
+
+        [Fact]
+        public void ReasonIsNullIfReasonsWereNotRecorded()
+        {
+            var state = new FeatureFlagsState(true);
+            var flag = new FeatureFlagBuilder("key").Build();
+            state.AddFlag(flag, new JValue("value"), 1, null);
+
+            Assert.Null(state.GetFlagReason("key"));
+        }
+
+        [Fact]
         public void CanConvertToValuesMap()
         {
             var state = new FeatureFlagsState(true);
             var flag1 = new FeatureFlagBuilder("key1").Build();
             var flag2 = new FeatureFlagBuilder("key2").Build();
-            state.AddFlag(flag1, new JValue("value1"), 0);
-            state.AddFlag(flag2, new JValue("value2"), 1);
+            state.AddFlag(flag1, new JValue("value1"), 0, null);
+            state.AddFlag(flag2, new JValue("value2"), 1, null);
 
             var expected = new Dictionary<string, JToken>
             {
@@ -52,15 +80,15 @@ namespace LaunchDarkly.Tests
             var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .TrackEvents(true).DebugEventsUntilDate(1000).Build();
-            state.AddFlag(flag1, new JValue("value1"), 0);
-            state.AddFlag(flag2, new JValue("value2"), 1);
+            state.AddFlag(flag1, new JValue("value1"), 0, null);
+            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.Fallthrough.Instance);
 
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
                 ""$flagsState"":{
                   ""key1"":{
                     ""variation"":0,""version"":100,""trackEvents"":false
                   },""key2"":{
-                    ""variation"":1,""version"":200,""trackEvents"":true,""debugEventsUntilDate"":1000
+                    ""variation"":1,""version"":200,""reason"":{""kind"":""FALLTHROUGH""},""trackEvents"":true,""debugEventsUntilDate"":1000
                   }
                 },
                 ""$valid"":true
@@ -78,8 +106,8 @@ namespace LaunchDarkly.Tests
             var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .TrackEvents(true).DebugEventsUntilDate(1000).Build();
-            state.AddFlag(flag1, new JValue("value1"), 0);
-            state.AddFlag(flag2, new JValue("value2"), 1);
+            state.AddFlag(flag1, new JValue("value1"), 0, null);
+            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.Fallthrough.Instance);
 
             var jsonString = JsonConvert.SerializeObject(state);
             var state1 = JsonConvert.DeserializeObject<FeatureFlagsState>(jsonString);

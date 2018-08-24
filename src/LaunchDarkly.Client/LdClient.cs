@@ -233,6 +233,7 @@ namespace LaunchDarkly.Client
 
             var state = new FeatureFlagsState(true);
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
+            var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             IDictionary<string, FeatureFlag> flags = _featureStore.All(VersionedDataKind.Features);
             foreach (KeyValuePair<string, FeatureFlag> pair in flags)
             {
@@ -244,13 +245,15 @@ namespace LaunchDarkly.Client
                 try
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, EventFactory.Default);
-                    state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex);
+                    state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
+                        withReasons ? result.Result.Reason : null);
                 }
                 catch (Exception e)
                 {
                     Log.ErrorFormat("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key, Util.ExceptionMessage(e));
                     Log.Debug(e.ToString(), e);
-                    state.AddFlag(flag, null, null);
+                    EvaluationReason reason = new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION);
+                    state.AddFlag(flag, null, null, withReasons ? reason : null);
                 }
             }
             return state;

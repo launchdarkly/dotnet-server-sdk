@@ -283,6 +283,38 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void AllFlagsStateReturnsStateWithReasons()
+        {
+            var flag1 = new FeatureFlagBuilder("key1").Version(100)
+                .OffVariation(0).Variations(new List<JToken> { new JValue("value1") })
+                .Build();
+            var flag2 = new FeatureFlagBuilder("key2").Version(200)
+                .OffVariation(1).Variations(new List<JToken> { new JValue("x"), new JValue("value2") })
+                .TrackEvents(true).DebugEventsUntilDate(1000)
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag1);
+            featureStore.Upsert(VersionedDataKind.Features, flag2);
+
+            var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
+            Assert.True(state.Valid);
+
+            var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
+                ""$flagsState"":{
+                  ""key1"":{
+                    ""variation"":0,""version"":100,""reason"":{""kind"":""OFF""},""trackEvents"":false
+                  },""key2"":{
+                    ""variation"":1,""version"":200,""reason"":{""kind"":""OFF""},""trackEvents"":true,""debugEventsUntilDate"":1000
+                  }
+                },
+                ""$valid"":true
+            }";
+            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var actualString = JsonConvert.SerializeObject(state);
+            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
+            TestUtils.AssertJsonEqual(expectedValue, actualValue);
+        }
+
+        [Fact]
         public void AllFlagsStateCanFilterForOnlyClientSideFlags()
         {
             var flag1 = new FeatureFlagBuilder("server-side-1").Build();

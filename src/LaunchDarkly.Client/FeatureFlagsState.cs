@@ -41,7 +41,7 @@ namespace LaunchDarkly.Client
             _flagMetadata = metadata;
         }
 
-        internal void AddFlag(FeatureFlag flag, JToken value, int? variation)
+        internal void AddFlag(FeatureFlag flag, JToken value, int? variation, EvaluationReason reason)
         {
             _flagValues[flag.Key] = value;
             _flagMetadata[flag.Key] = new FlagMetadata
@@ -49,7 +49,8 @@ namespace LaunchDarkly.Client
                 Variation = variation,
                 Version = flag.Version,
                 TrackEvents = flag.TrackEvents,
-                DebugEventsUntilDate = flag.DebugEventsUntilDate
+                DebugEventsUntilDate = flag.DebugEventsUntilDate,
+                Reason = reason
             };
         }
 
@@ -69,6 +70,23 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
+        /// Returns the evaluation reason of an individual feature flag (as returned by
+        /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>, etc.) at the time the state
+        /// was recorded.
+        /// </summary>
+        /// <param name="key">the feature flag key</param>
+        /// <returns>the evaluation reason; null if reasons were not recorded, or if there was no
+        /// such flag</returns>
+        public EvaluationReason GetFlagReason(string key)
+        {
+            if (_flagMetadata.TryGetValue(key, out var meta))
+            {
+                return meta.Reason;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Returns a dictionary of flag keys to flag values. If a flag would have evaluated to the
         /// default value, its value will be null.
         ///
@@ -82,6 +100,7 @@ namespace LaunchDarkly.Client
             return _flagValues;
         }
         
+        /// <see cref="object.Equals(object)"/>
         public override bool Equals(object other)
         {
             if (other is FeatureFlagsState o)
@@ -93,6 +112,7 @@ namespace LaunchDarkly.Client
             return false;
         }
 
+        /// <see cref="object.GetHashCode()"/>
         public override int GetHashCode()
         {
             return ((_flagValues.GetHashCode() * 17) + _flagMetadata.GetHashCode()) * 17 + (_valid ? 1 : 0);
@@ -109,6 +129,8 @@ namespace LaunchDarkly.Client
         internal bool TrackEvents { get; set; }
         [JsonProperty(PropertyName = "debugEventsUntilDate", NullValueHandling = NullValueHandling.Ignore)]
         internal long? DebugEventsUntilDate { get; set; }
+        [JsonProperty(PropertyName = "reason", NullValueHandling = NullValueHandling.Ignore)]
+        internal EvaluationReason Reason { get; set; }
 
         public override bool Equals(object other)
         {
@@ -117,15 +139,16 @@ namespace LaunchDarkly.Client
                 return Variation == o.Variation &&
                     Version == o.Version &&
                     TrackEvents == o.TrackEvents &&
-                    DebugEventsUntilDate == o.DebugEventsUntilDate;
+                    DebugEventsUntilDate == o.DebugEventsUntilDate &&
+                    Object.Equals(Reason, o.Reason);
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return ((((Variation.GetHashCode() * 17) + Version.GetHashCode()) * 17) + TrackEvents.GetHashCode()) * 17 +
-                DebugEventsUntilDate.GetHashCode();
+            return (((((Variation.GetHashCode() * 17) + Version.GetHashCode()) * 17) + TrackEvents.GetHashCode()) * 17 +
+                DebugEventsUntilDate.GetHashCode()) * 17 + (Reason == null ? 0 : Reason.GetHashCode());
         }
     }
 

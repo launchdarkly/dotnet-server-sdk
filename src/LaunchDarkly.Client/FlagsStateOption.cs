@@ -31,6 +31,13 @@ namespace LaunchDarkly.Client
         /// </summary>
         public static readonly FlagsStateOption ClientSideOnly = new FlagsStateOption("ClientSideOnly");
 
+        /// <summary>
+        /// Specifies that evaluation reasons should be included in the state object (as returned by
+        /// <see cref="ILdClient.BoolVariationDetail(string, User, bool)"/>, etc.). By default, they
+        /// are not included.
+        /// </summary>
+        public static readonly FlagsStateOption WithReasons = new FlagsStateOption("WithReasons");
+
         internal static bool HasOption(FlagsStateOption[]  options, FlagsStateOption option)
         {
             foreach (var o in options)
