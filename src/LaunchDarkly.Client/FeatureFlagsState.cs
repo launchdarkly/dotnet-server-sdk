@@ -82,6 +82,7 @@ namespace LaunchDarkly.Client
             return _flagValues;
         }
         
+        /// <see cref="object.Equals(object)"/>
         public override bool Equals(object other)
         {
             if (other is FeatureFlagsState o)
@@ -93,6 +94,7 @@ namespace LaunchDarkly.Client
             return false;
         }
 
+        /// <see cref="object.GetHashCode()"/>
         public override int GetHashCode()
         {
             return ((_flagValues.GetHashCode() * 17) + _flagMetadata.GetHashCode()) * 17 + (_valid ? 1 : 0);
