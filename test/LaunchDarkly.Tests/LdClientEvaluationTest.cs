@@ -154,6 +154,46 @@ namespace LaunchDarkly.Tests
             var expected = new EvaluationDetail<JToken>(data, 0, EvaluationReason.Off.Instance);
             Assert.Equal(expected, client.JsonVariationDetail("key", user, new JValue(42)));
         }
+        
+        [Fact]
+        public void VariationDetailReturnsDefaultForUnknownFlag()
+        {
+            var expected = new EvaluationDetail<string>("default", null,
+                new EvaluationReason.Error(EvaluationErrorKind.FLAG_NOT_FOUND));
+            Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
+        }
+        
+        [Fact]
+        public void VariationDetailReturnsDefaultForNullUser()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
+
+            var expected = new EvaluationDetail<string>("default", null,
+                new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
+            Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
+        }
+
+        [Fact]
+        public void VariationDetailReturnsDefaultForUserWithNullKey()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
+
+            var expected = new EvaluationDetail<string>("default", null,
+                new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
+            Assert.Equal(expected, client.StringVariationDetail("key", User.WithKey(null), "default"));
+        }
+
+        [Fact]
+        public void VariationDetailReturnsDefaultForFlagThatEvaluatesToNull()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").On(false).OffVariation(null).Build());
+
+            var expected = new EvaluationDetail<string>("default", null, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.StringVariationDetail("key", user, "default"));
+        }
 
         [Fact]
         public void CanMatchUserBySegment()

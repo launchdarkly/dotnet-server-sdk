@@ -286,11 +286,16 @@ namespace LaunchDarkly.Client
                         _eventProcessor.SendEvent(prereqEvent);
                     }
                 }
-                if (evalResult.Result.Value != null && expectedType != null && !evalResult.Result.Value.Type.Equals(expectedType))
+                var detail = evalResult.Result;
+                if (detail.VariationIndex == null)
+                {
+                    detail = new EvaluationDetail<JToken>(defaultValue, null, detail.Reason);
+                }
+                if (detail.Value != null && expectedType != null && !detail.Value.Type.Equals(expectedType))
                 {
                     Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
                         expectedType,
-                        evalResult.GetType(),
+                        detail.Value.GetType(),
                         featureKey);
 
                     _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
@@ -298,9 +303,8 @@ namespace LaunchDarkly.Client
                     return new EvaluationDetail<JToken>(defaultValue, null,
                         new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
                 }
-                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                    evalResult.Result, defaultValue));
-                return evalResult.Result;
+                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user, detail, defaultValue));
+                return detail;
             }
             catch (Exception e)
             {
@@ -318,7 +322,6 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    
                     _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
                         detail, defaultValue));
                 }
