@@ -2,6 +2,14 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.3.0] - 2018-08-27
+### Added:
+- The new `ILdClient` method `AllFlagsState()` should be used instead of `AllFlags()` if you are passing flag data to the front end for use with the JavaScript SDK. It preserves some flag metadata that the front end requires in order to send analytics events correctly. Versions 2.5.0 and above of the JavaScript SDK are able to use this metadata, but the output of `AllFlagsState()` will still work with older versions.
+- The `AllFlagsState()` method also allows you to select only client-side-enabled flags to pass to the front end, by using the option `FlagsStateOption.ClientSideOnly`.
+
+### Deprecated:
+- `ILdClient.AllFlags()`
+
 ## [5.2.2] - 2018-08-02
 - In streaming mode, if the stream connection fails, there should be an increasing backoff interval before each reconnect attempt. Previously, it would log a message about waiting some number of milliseconds, but then not actually wait.
 - The required package `LaunchDarkly.EventSource` no longer has `PackageReference`s to System assemblies.
