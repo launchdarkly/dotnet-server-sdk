@@ -164,44 +164,63 @@ namespace LaunchDarkly.Client
         /// <see cref="ILdClient.AllFlags(User)"/>
         public IDictionary<string, JToken> AllFlags(User user)
         {
+            var state = AllFlagsState(user);
+            if (!state.Valid)
+            {
+                return null;
+            }
+            return state.ToValuesMap();
+        }
+
+        /// <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>
+        public FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options)
+        {
             if (IsOffline())
             {
-                Log.Warn("AllFlags() was called when client is in offline mode. Returning null.");
-                return null;
+                Log.Warn("AllFlagsState() was called when client is in offline mode. Returning empty state.");
+                return new FeatureFlagsState(false);
             }
             if (!Initialized())
             {
                 if (_featureStore.Initialized())
                 {
-                    Log.Warn("AllFlags() called before client initialized; using last known values from feature store");
+                    Log.Warn("AllFlagsState() called before client initialized; using last known values from feature store");
                 }
                 else
                 {
-                    Log.Warn("AllFlags() called before client initialized; feature store unavailable, returning null");
-                    return null;
+                    Log.Warn("AllFlagsState() called before client initialized; feature store unavailable, returning empty state");
+                    return new FeatureFlagsState(false);
                 }
             }
             if (user == null || user.Key == null)
             {
-                Log.Warn("AllFlags() called with null user or null user key. Returning null");
-                return null;
+                Log.Warn("AllFlagsState() called with null user or null user key. Returning empty state");
+                return new FeatureFlagsState(false);
             }
 
+            var state = new FeatureFlagsState(true);
+            var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             IDictionary<string, FeatureFlag> flags = _featureStore.All(VersionedDataKind.Features);
-            IDictionary<string, JToken> results = new Dictionary<string, JToken>();
             foreach (KeyValuePair<string, FeatureFlag> pair in flags)
             {
+                var flag = pair.Value;
+                if (clientSideOnly && !flag.ClientSide)
+                {
+                    continue;
+                }
                 try
                 {
-                    FeatureFlag.EvalResult evalResult = pair.Value.Evaluate(user, _featureStore, _eventFactory);
-                    results.Add(pair.Key, evalResult.Result);
+                    FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, _eventFactory);
+                    state.AddFlag(flag, result.Result, result.Variation);
                 }
                 catch (Exception e)
                 {
-                    Log.ErrorFormat("Exception caught when evaluating all flags: {0}", e, Util.ExceptionMessage(e));
+                    Log.ErrorFormat("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key, Util.ExceptionMessage(e));
+                    Log.Debug(e.ToString(), e);
+                    state.AddFlag(flag, null, null);
                 }
             }
-            return results;
+            return state;
         }
 
         private JToken Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType)

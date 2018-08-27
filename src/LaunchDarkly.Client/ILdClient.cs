@@ -104,12 +104,27 @@ namespace LaunchDarkly.Client
         /// with null/empty user key a <c>null</c> map will be returned. This method will not send
         /// analytics events back to LaunchDarkly.
         ///
+        /// This method is deprecated; use AllFlagsState() instead.
+        /// </summary>
+        /// <param name="user">the end user requesting the feature flags</param>
+        /// <returns>a map from feature flag keys to {@code JToken} for the specified user</returns>
+        [Obsolete("Use AllFlagsState instead. Current versions of the client-side SDK will not generate analytics events correctly if you pass the result of AllFlags.")]
+        IDictionary<string, JToken> AllFlags(User user);
+
+        /// <summary>
+        /// Returns an object that encapsulates the state of all feature flags for a given user, including the flag
+        /// values and also metadata that can be used on the front end. This method does not send analytics events
+        /// back to LaunchDarkly.
+        ///
         /// The most common use case for this method is to bootstrap a set of client-side feature flags from
         /// a back-end service.
         /// </summary>
         /// <param name="user">the end user requesting the feature flags</param>
-        /// <returns>a map from feature flag keys to {@code JToken} for the specified user</returns>
-        IDictionary<string, JToken> AllFlags(User user);
+        /// <param name="options">optional <see cref="FlagsStateOption"/> values affecting how the state is
+        /// computed  -  for instance, to filter the set of flags to only include the client-side-enabled ones</param>
+        /// <returns>a <see cref="FeatureFlagsState"/> object (will never be null; see
+        /// <see cref="FeatureFlagsState.Valid"/></returns>
+        FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options);
 
         /// <summary>
         /// For more info: <a href="https://github.com/launchdarkly/js-client#secure-mode">https://github.com/launchdarkly/js-client#secure-mode</a>
