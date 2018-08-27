@@ -68,13 +68,11 @@ namespace LaunchDarkly.Client
 
         internal struct EvalResult
         {
-            internal int? Variation;
-            internal JToken Result;
+            internal EvaluationDetail<JToken> Result;
             internal readonly IList<FeatureRequestEvent> PrerequisiteEvents;
             
-            internal EvalResult(int? variation, JToken result, IList<FeatureRequestEvent> events) : this()
+            internal EvalResult(EvaluationDetail<JToken> result, IList<FeatureRequestEvent> events) : this()
             {
-                Variation = variation;
                 Result = result;
                 PrerequisiteEvents = events;
             }
@@ -83,146 +81,144 @@ namespace LaunchDarkly.Client
         internal EvalResult Evaluate(User user, IFeatureStore featureStore, EventFactory eventFactory)
         {
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
-            EvalResult evalResult = new EvalResult(null, null, prereqEvents);
             if (user == null || user.Key == null)
             {
                 Log.WarnFormat("User or user key is null when evaluating flag: {0} returning null",
                     Key);
 
-                return evalResult;
+                return new EvalResult(
+                    new EvaluationDetail<JToken>(null, null, new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED)),
+                    prereqEvents);
             }
 
             if (On)
             {
-                evalResult = Evaluate(user, featureStore, prereqEvents, eventFactory);
-                if (evalResult.Result != null)
-                {
-                    return evalResult;
-                }
+                var details = Evaluate(user, featureStore, prereqEvents, eventFactory);
+                return new EvalResult(details, prereqEvents);
             }
-            evalResult.Variation = OffVariation;
-            evalResult.Result = OffVariationValue;
-            return evalResult;
+
+            return new EvalResult(GetOffValue(EvaluationReason.Off.Instance), prereqEvents);
         }
 
-        // Returning either a nil EvalResult or EvalResult.value indicates prereq failure/error.
-        private EvalResult Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
+        private EvaluationDetail<JToken> Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
             EventFactory eventFactory)
         {
-            var prereqOk = true;
-            if (Prerequisites != null)
+            var prereqFailureReason = CheckPrerequisites(user, featureStore, events, eventFactory);
+            if (prereqFailureReason != null)
             {
-                foreach (var prereq in Prerequisites)
-                {
-                    var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
-                    EvalResult prereqEvalResult = new EvalResult(null, null, events);
-                    if (prereqFeatureFlag == null)
-                    {
-                        Log.ErrorFormat("Could not retrieve prerequisite flag: {0} when evaluating: {1}",
-                            prereq.Key,
-                            Key);
-                        return new EvalResult(null, null, events);
-                    }
-                    else if (prereqFeatureFlag.On)
-                    {
-                        prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
-                        try
-                        {
-                            if (prereqEvalResult.Variation != prereq.Variation)
-                            {
-                                prereqOk = false;
-                            }
-                        }
-                        catch (EvaluationException e)
-                        {
-                            Log.WarnFormat("Error evaluating prerequisites: {0}",
-                                e,
-                                Util.ExceptionMessage(e));
-
-                            prereqOk = false;
-                        }
-                    }
-                    else
-                    {
-                        prereqOk = false;
-                    }
-                    //We don't short circuit and also send events for each prereq.
-                    events.Add(eventFactory.NewPrerequisiteFeatureRequestEvent(prereqFeatureFlag,
-                        user, null, prereqEvalResult.Result, this));
-                }
+                return GetOffValue(prereqFailureReason);
             }
-            if (prereqOk)
-            {
-                int? index = EvaluateIndex(user, featureStore);
-                JToken result = GetVariation(index);
-                return new EvalResult(index, result, events);
-            }
-            return new EvalResult(null, null, events);
-        }
-        
-        private int? EvaluateIndex(User user, IFeatureStore store)
-        {
+            
             // Check to see if targets match
-            foreach (var target in Targets)
+            if (Targets != null)
             {
-                foreach (var v in target.Values)
+                foreach (var target in Targets)
                 {
-                    if (v.Equals(user.Key))
+                    foreach (var v in target.Values)
                     {
-                        return target.Variation;
+                        if (user.Key == v)
+                        {
+                            return GetVariation(target.Variation, EvaluationReason.TargetMatch.Instance);
+                        }
                     }
                 }
             }
-
             // Now walk through the rules and see if any match
-            foreach (Rule rule in Rules)
+            if (Rules != null)
             {
-                if (rule.MatchesUser(user, store))
+                for (int i = 0; i < Rules.Count; i++)
                 {
-                    return rule.VariationIndexForUser(user, Key, Salt);
+                    Rule rule = Rules[i];
+                    if (rule.MatchesUser(user, featureStore))
+                    {
+                        return GetValueForVariationOrRollout(rule, user,
+                            new EvaluationReason.RuleMatch(i, rule.Id));
+                    }
                 }
             }
-
             // Walk through the fallthrough and see if it matches
-            return Fallthrough.VariationIndexForUser(user, Key, Salt);
+            return GetValueForVariationOrRollout(Fallthrough, user, EvaluationReason.Fallthrough.Instance);
         }
 
-        private JToken GetVariation(int? index)
+        // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
+        // short-circuit due to a prerequisite failure.
+        private EvaluationReason CheckPrerequisites(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
+            EventFactory eventFactory)
         {
-            // If the supplied index is null, then rules didn't match, and we want to return
-            // the off variation
-            if (index == null)
+            if (Prerequisites == null || Prerequisites.Count == 0)
             {
                 return null;
             }
-            // If the index doesn't refer to a valid variation, that's an unexpected exception and we will
-            // return the default variation
-            else if (index >= Variations.Count)
+            foreach (var prereq in Prerequisites)
             {
-                throw new EvaluationException("Invalid index");
+                var prereqOk = true;
+                var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
+                EvaluationDetail<JToken> prereqEvalResult = null;
+                if (prereqFeatureFlag == null)
+                {
+                    Log.ErrorFormat("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
+                        prereq.Key, Key);
+                    prereqOk = false;
+                }
+                else if (prereqFeatureFlag.On)
+                {
+                    prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
+                    if (prereqEvalResult.VariationIndex == null || prereqEvalResult.VariationIndex.Value != prereq.Variation)
+                    {
+                        prereqOk = false;
+                    }
+                }
+                else
+                {
+                    prereqOk = false;
+                }
+                if (prereqFeatureFlag != null)
+                {
+                    events.Add(eventFactory.NewPrerequisiteFeatureRequestEvent(prereqFeatureFlag, user,
+                        prereqEvalResult, this));
+                }
+                if (!prereqOk)
+                {
+                    return new EvaluationReason.PrerequisiteFailed(prereq.Key);
+                }
             }
-            else
-            {
-                return Variations[index.Value];
-            }
+            return null;
+        }
+        
+        internal EvaluationDetail<JToken> ErrorResult(EvaluationErrorKind kind)
+        {
+            return new EvaluationDetail<JToken>(null, null, new EvaluationReason.Error(kind));
         }
 
-        internal JToken OffVariationValue
+        internal EvaluationDetail<JToken> GetVariation(int variation, EvaluationReason reason)
         {
-            get
+            if (variation < 0 || variation >= Variations.Count)
             {
-                if (!OffVariation.HasValue)
-                {
-                    return null;
-                }
-
-                if (OffVariation.Value >= Variations.Count)
-                {
-                    throw new EvaluationException("Invalid off variation index");
-                }
-
-                return Variations[OffVariation.Value];
+                Log.ErrorFormat("Data inconsistency in feature flag \"{0}\": invalid variation index", Key);
+                return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
             }
+            return new EvaluationDetail<JToken>(Variations[variation], variation, reason);
+        }
+
+        internal EvaluationDetail<JToken> GetOffValue(EvaluationReason reason)
+        {
+            if (OffVariation == null) // off variation unspecified - return default value
+            {
+                return new EvaluationDetail<JToken>(null, null, reason);
+            }
+            return GetVariation(OffVariation.Value, reason);
+        }
+
+        internal EvaluationDetail<JToken> GetValueForVariationOrRollout(VariationOrRollout vr,
+            User user, EvaluationReason reason)
+        {
+            var index = vr.VariationIndexForUser(user, Key, Salt);
+            if (index == null)
+            {
+                Log.ErrorFormat("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", Key);
+                return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
+            }
+            return GetVariation(index.Value, reason);
         }
     }
 
