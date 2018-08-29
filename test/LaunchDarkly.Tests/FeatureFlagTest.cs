@@ -182,6 +182,40 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void FlagReturnsOffVariationAndEventIfPrerequisiteIsOff()
+        {
+            var f0 = new FeatureFlagBuilder("feature0")
+                .On(true)
+                .Prerequisites(new List<Prerequisite> { new Prerequisite("feature1", 1) })
+                .OffVariation(1)
+                .FallthroughVariation(0)
+                .Variations(new List<JToken> { new JValue("fall"), new JValue("off"), new JValue("on") })
+                .Version(1)
+                .Build();
+            var f1 = new FeatureFlagBuilder("feature1")
+                .On(false)
+                .OffVariation(1)
+                // note that even though it returns the desired variation, it is still off and therefore not a match
+                .Variations(new List<JToken> { new JValue("nogo"), new JValue("go") })
+                .Version(2)
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, f1);
+
+            var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
+
+            var expected = new EvaluationDetail<JToken>(new JValue("off"), 1,
+                new EvaluationReason.PrerequisiteFailed("feature1"));
+            Assert.Equal(expected, result.Result);
+
+            Assert.Equal(1, result.PrerequisiteEvents.Count);
+            FeatureRequestEvent e = result.PrerequisiteEvents[0];
+            Assert.Equal(f1.Key, e.Key);
+            Assert.Equal(new JValue("go"), e.Value);
+            Assert.Equal(f1.Version, e.Version);
+            Assert.Equal(f0.Key, e.PrereqOf);
+        }
+
+        [Fact]
         public void FlagReturnsOffVariationAndEventIfPrerequisiteIsNotMet()
         {
             var f0 = new FeatureFlagBuilder("feature0")
