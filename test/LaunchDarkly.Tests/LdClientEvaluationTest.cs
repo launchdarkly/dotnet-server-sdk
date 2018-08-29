@@ -40,6 +40,15 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void BoolVariationReturnsDefaultValueForWrongType()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
+
+            Assert.Equal(false, client.BoolVariation("key", user, false));
+        }
+
+        [Fact]
         public void BoolVariationDetailReturnsValueAndReason()
         {
             featureStore.Upsert(VersionedDataKind.Features,
@@ -48,7 +57,7 @@ namespace LaunchDarkly.Tests
             var expected = new EvaluationDetail<bool>(true, 0, EvaluationReason.Off.Instance);
             Assert.Equal(expected, client.BoolVariationDetail("key", user, false));
         }
-
+        
         [Fact]
         public void IntVariationReturnsFlagValue()
         {
@@ -59,8 +68,26 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void IntVariationReturnsFlagValueEvenIfEncodedAsFloat()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(2.0f)).Build());
+
+            Assert.Equal(2, client.IntVariation("key", user, 1));
+        }
+
+        [Fact]
         public void IntVariationReturnsDefaultValueForUnknownFlag()
         {
+            Assert.Equal(1, client.IntVariation("key", user, 1));
+        }
+        
+        [Fact]
+        public void IntVariationReturnsDefaultValueForWrongType()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
+
             Assert.Equal(1, client.IntVariation("key", user, 1));
         }
 
@@ -84,8 +111,26 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void FloatVariationReturnsFlagValueEvenIfEncodedAsInt()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(2)).Build());
+
+            Assert.Equal(2.0f, client.FloatVariation("key", user, 1.0f));
+        }
+
+        [Fact]
         public void FloatVariationReturnsDefaultValueForUnknownFlag()
         {
+            Assert.Equal(1.0f, client.FloatVariation("key", user, 1.0f));
+        }
+
+        [Fact]
+        public void FloatVariationReturnsDefaultValueForWrongType()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
+
             Assert.Equal(1.0f, client.FloatVariation("key", user, 1.0f));
         }
 
@@ -111,6 +156,15 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StringVariationReturnsDefaultValueForUnknownFlag()
         {
+            Assert.Equal("a", client.StringVariation("key", user, "a"));
+        }
+
+        [Fact]
+        public void StringVariationReturnsDefaultValueForWrongType()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build());
+
             Assert.Equal("a", client.StringVariation("key", user, "a"));
         }
 
@@ -192,6 +246,17 @@ namespace LaunchDarkly.Tests
 
             var expected = new EvaluationDetail<string>("default", null, EvaluationReason.Off.Instance);
             Assert.Equal(expected, client.StringVariationDetail("key", user, "default"));
+        }
+
+        [Fact]
+        public void VariationDetailReturnsDefaultForWrongType()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
+
+            var expected = new EvaluationDetail<int>(1, null,
+                new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+            Assert.Equal(expected, client.IntVariationDetail("key", user, 1));
         }
 
         [Fact]

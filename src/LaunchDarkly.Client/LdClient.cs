@@ -313,7 +313,7 @@ namespace LaunchDarkly.Client
                 {
                     detail = new EvaluationDetail<JToken>(defaultValue, null, detail.Reason);
                 }
-                if (detail.Value != null && expectedType != null && !detail.Value.Type.Equals(expectedType))
+                if (detail.Value != null && !CheckResultType(expectedType, detail.Value))
                 {
                     Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
                         expectedType,
@@ -348,6 +348,23 @@ namespace LaunchDarkly.Client
                         detail, defaultValue));
                 }
                 return detail;
+            }
+        }
+
+        private bool CheckResultType(JTokenType? expectedType, JToken result)
+        {
+            if (expectedType == null || result == null)
+            {
+                return true;
+            }
+            JTokenType resultType = result.Type;
+            switch (expectedType.Value)
+            {
+                case JTokenType.Integer:
+                case JTokenType.Float:
+                    return resultType == JTokenType.Integer || resultType == JTokenType.Float;
+                default:
+                    return resultType == expectedType;
             }
         }
 
