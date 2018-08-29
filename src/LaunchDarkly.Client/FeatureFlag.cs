@@ -90,19 +90,18 @@ namespace LaunchDarkly.Client
                     new EvaluationDetail<JToken>(null, null, new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED)),
                     prereqEvents);
             }
-
-            if (On)
-            {
-                var details = Evaluate(user, featureStore, prereqEvents, eventFactory);
-                return new EvalResult(details, prereqEvents);
-            }
-
-            return new EvalResult(GetOffValue(EvaluationReason.Off.Instance), prereqEvents);
+            var details = Evaluate(user, featureStore, prereqEvents, eventFactory);
+            return new EvalResult(details, prereqEvents);
         }
 
         private EvaluationDetail<JToken> Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
             EventFactory eventFactory)
         {
+            if (!On)
+            {
+                return GetOffValue(EvaluationReason.Off.Instance);
+            }
+
             var prereqFailureReason = CheckPrerequisites(user, featureStore, events, eventFactory);
             if (prereqFailureReason != null)
             {
@@ -153,27 +152,22 @@ namespace LaunchDarkly.Client
             {
                 var prereqOk = true;
                 var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
-                EvaluationDetail<JToken> prereqEvalResult = null;
                 if (prereqFeatureFlag == null)
                 {
                     Log.ErrorFormat("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
                         prereq.Key, Key);
                     prereqOk = false;
                 }
-                else if (prereqFeatureFlag.On)
+                else
                 {
-                    prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
-                    if (prereqEvalResult.VariationIndex == null || prereqEvalResult.VariationIndex.Value != prereq.Variation)
+                    var prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
+                    // Note that if the prerequisite flag is off, we don't consider it a match no matter
+                    // what its off variation was. But we still need to evaluate it in order to generate
+                    // an event.
+                    if (!prereqFeatureFlag.On || prereqEvalResult.VariationIndex == null || prereqEvalResult.VariationIndex.Value != prereq.Variation)
                     {
                         prereqOk = false;
                     }
-                }
-                else
-                {
-                    prereqOk = false;
-                }
-                if (prereqFeatureFlag != null)
-                {
                     events.Add(eventFactory.NewPrerequisiteFeatureRequestEvent(prereqFeatureFlag, user,
                         prereqEvalResult, this));
                 }
