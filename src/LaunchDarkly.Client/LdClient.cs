@@ -267,7 +267,7 @@ namespace LaunchDarkly.Client
                 }
                 if (evalResult.Result != null)
                 {
-                    if (expectedType != null && !evalResult.Result.Type.Equals(expectedType))
+                    if (!CheckResultType(expectedType, evalResult.Result))
                     {
                         Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
                             expectedType,
@@ -298,6 +298,23 @@ namespace LaunchDarkly.Client
             }
             _eventProcessor.SendEvent(_eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue));
             return defaultValue;
+        }
+
+        private bool CheckResultType(JTokenType? expectedType, JToken result)
+        {
+            if (expectedType == null || result == null)
+            {
+                return true;
+            }
+            JTokenType resultType = result.Type;
+            switch (expectedType.Value)
+            {
+                case JTokenType.Integer:
+                case JTokenType.Float:
+                    return resultType == JTokenType.Integer || resultType == JTokenType.Float;
+                default:
+                    return resultType == expectedType;
+            }
         }
 
         /// <see cref="ILdClient.SecureModeHash(User)"/>
