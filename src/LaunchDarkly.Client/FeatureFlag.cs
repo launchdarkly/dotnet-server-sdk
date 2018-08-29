@@ -152,7 +152,6 @@ namespace LaunchDarkly.Client
             {
                 var prereqOk = true;
                 var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
-                EvaluationDetail<JToken> prereqEvalResult = null;
                 if (prereqFeatureFlag == null)
                 {
                     Log.ErrorFormat("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
@@ -161,7 +160,7 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
+                    var prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
                     // Note that if the prerequisite flag is off, we don't consider it a match no matter
                     // what its off variation was. But we still need to evaluate it in order to generate
                     // an event.
