@@ -15,7 +15,7 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.Common.StrongName" Version="1.1.0" />
+    <PackageReference Include="LaunchDarkly.Common.StrongName" Version="1.1.1" />
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" Condition="'$(TargetFramework)' != 'net45'" />
     <PackageReference Include="Newtonsoft.Json" Version="6.0.1" Condition="'$(TargetFramework)' == 'net45'" />
