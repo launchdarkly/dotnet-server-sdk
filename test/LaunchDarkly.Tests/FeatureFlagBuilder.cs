@@ -95,6 +95,12 @@ namespace LaunchDarkly.Tests
             return this;
         }
 
+        internal FeatureFlagBuilder FallthroughVariation(int variation)
+        {
+            _fallthrough = new VariationOrRollout(variation, null);
+            return this;
+        }
+
         internal FeatureFlagBuilder OffVariation(int? offVariation)
         {
             _offVariation = offVariation;
@@ -144,7 +150,7 @@ namespace LaunchDarkly.Tests
             _on = true;
             _offVariation = 0;
             _variations = new List<JToken> { new JValue(false), new JValue(true) };
-            _rules = new List<Rule> { new Rule(1, null, new List<Clause>(clauses)) };
+            _rules = new List<Rule> { new Rule("id", 1, null, new List<Clause>(clauses)) };
             return this;
         }
     }

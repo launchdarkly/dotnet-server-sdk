@@ -56,7 +56,7 @@ namespace LaunchDarkly.Tests
             var clause = new Clause("name", "in", new List<JValue> { new JValue("x") }, true);
             var wv = new WeightedVariation(0, 50);
             var rollout = new Rollout(new List<WeightedVariation> { wv }, "key");
-            var rule = new Rule(0, rollout, new List<Clause> { clause });
+            var rule = new Rule("ruleid", 0, rollout, new List<Clause> { clause });
             var target = new Target(new List<string> { "userkey" }, 0);
             return new FeatureFlagBuilder("flagkey")
                 .DebugEventsUntilDate(100000)
@@ -93,6 +93,7 @@ namespace LaunchDarkly.Tests
                     ""prerequisites"": [ { ""key"": ""prereq"", ""variation"": 1 } ],
                     ""rules"": [
                         {
+                            ""id"": ""ruleid"",
                             ""variation"": 0,
                             ""rollout"": {
                                 ""variations"": [ { ""variation"": 0, ""weight"": 50 } ],

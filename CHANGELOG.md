@@ -2,6 +2,13 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.4.0] - 2018-08-30
+### Added:
+- The new `LDClient` methods `BoolVariationDetail`, `IntVariationDetail`, `DoubleVariationDetail`, `StringVariationDetail`, and `JsonVariationDetail` allow you to evaluate a feature flag (using the same parameters as you would for `BoolVariation`, etc.) and receive more information about how the value was calculated. This information is returned in an `EvaluationDetail` object, which contains both the result value and an `EvaluationReason` which will tell you, for instance, if the user was individually targeted for the flag or was matched by one of the flag's rules, or if the flag returned the default value due to an error.
+
+### Fixed:
+- When evaluating a prerequisite feature flag, the analytics event for the evaluation did not include the result value if the prerequisite flag was off.
+
 ## [5.3.1] - 2018-08-30
 ### Fixed:
 - Fixed a bug in streaming mode that prevented the client from reconnecting to the stream if it received an HTTP error status from the server (as opposed to simply losing the connection). ([#88](https://github.com/launchdarkly/dotnet-client/issues/88))
