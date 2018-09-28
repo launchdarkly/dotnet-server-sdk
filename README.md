@@ -37,6 +37,11 @@ Your first feature flag
           // the code to run if the feature is off
         }
 
+Redis integration
+-----------------
+
+An implementation of feature flag caching using a Redis server is available as a separate package. More information and source code [here](https://github.com/launchdarkly/dotnet-client-redis).
+
 Learn more
 -----------
 
