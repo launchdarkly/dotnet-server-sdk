@@ -334,7 +334,7 @@ namespace LaunchDarkly.Tests
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
                 ""$flagsState"":{
                   ""key1"":{
-                    ""variation"":0,""version"":100,""trackEvents"":false
+                    ""variation"":0,""version"":100
                   },""key2"":{
                     ""variation"":1,""version"":200,""trackEvents"":true,""debugEventsUntilDate"":1000
                   }
@@ -366,7 +366,7 @@ namespace LaunchDarkly.Tests
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
                 ""$flagsState"":{
                   ""key1"":{
-                    ""variation"":0,""version"":100,""reason"":{""kind"":""OFF""},""trackEvents"":false
+                    ""variation"":0,""version"":100,""reason"":{""kind"":""OFF""}
                   },""key2"":{
                     ""variation"":1,""version"":200,""reason"":{""kind"":""OFF""},""trackEvents"":true,""debugEventsUntilDate"":1000
                   }
@@ -402,6 +402,45 @@ namespace LaunchDarkly.Tests
                 { "client-side-2", new JValue("value2") }
             };
             Assert.Equal(expectedValues, state.ToValuesMap());
+        }
+
+        [Fact]
+        public void AllFlagsStateCanOmitDetailsForUntrackedFlags()
+        {
+            var flag1 = new FeatureFlagBuilder("key1").Version(100)
+                .OffVariation(0).Variations(new List<JToken> { new JValue("value1") })
+                .Build();
+            var flag2 = new FeatureFlagBuilder("key2").Version(200)
+                .OffVariation(1).Variations(new List<JToken> { new JValue("x"), new JValue("value2") })
+                .TrackEvents(true)
+                .Build();
+            var flag3 = new FeatureFlagBuilder("key3").Version(300)
+                .OffVariation(1).Variations(new List<JToken> { new JValue("x"), new JValue("value3") })
+                .DebugEventsUntilDate(1000)
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag1);
+            featureStore.Upsert(VersionedDataKind.Features, flag2);
+            featureStore.Upsert(VersionedDataKind.Features, flag3);
+
+            var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
+            Assert.True(state.Valid);
+
+            var expectedString = @"{""key1"":""value1"",""key2"":""value2"",""key3"":""value3"",
+                ""$flagsState"":{
+                  ""key1"":{
+                    ""variation"":0,""version"":100,""reason"":{""kind"":""OFF""}
+                  },""key2"":{
+                    ""variation"":1,""version"":200,""reason"":{""kind"":""OFF""},""trackEvents"":true
+                  },""key3"":{
+                    ""variation"":1,""version"":300,""reason"":{""kind"":""OFF""},""debugEventsUntilDate"":1000
+                  }
+                },
+                ""$valid"":true
+            }";
+            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var actualString = JsonConvert.SerializeObject(state);
+            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
+            TestUtils.AssertJsonEqual(expectedValue, actualValue);
         }
 
         [Fact]
