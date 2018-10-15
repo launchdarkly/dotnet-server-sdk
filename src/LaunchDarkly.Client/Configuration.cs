@@ -57,7 +57,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// How long the client constructor will block awaiting a successful connection to
         /// LaunchDarkly. Setting this to 0 will not block and will cause the constructor to return
-        /// immediately. The default value is 5 seconds.
+        /// immediately. The default value is 10 seconds.
         /// </summary>
         public TimeSpan StartWaitTime { get; internal set; }
         /// <summary>
