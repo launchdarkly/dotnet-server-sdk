@@ -2,11 +2,13 @@
 {
     /// <summary>
     /// The entry point for the file data source, which allows you to use local files as a source of
-    /// feature flag state. This would typically be used in a test environment, to operate using a
-    /// predetermined feature flag state without an actual LaunchDarkly connection.
+    /// feature flag state.
     /// </summary>
-    /// 
     /// <remarks>
+    /// <para>
+    /// This would typically be used in a test environment, to operate using a predetermined feature flag
+    /// state without an actual LaunchDarkly connection.
+    /// </para>
     /// <para>
     /// To use this component, call <see cref="FileDataSource()"/> to obtain a factory object, call one or
     /// methods to configure it, and then add it to your LaunchDarkly client configuration. At a
@@ -16,12 +18,12 @@
     /// for all configuration options.
     /// </para>
     /// <code>
-    ///     FileDataSourceFactory f = FileComponents.fileDataSource()
-    ///         .filePaths("./testData/flags.json")
-    ///         .autoUpdate(true);
-    ///     LDConfig config = new LDConfig.Builder()
-    ///         .updateProcessorFactory(f)
-    ///         .build();
+    ///     var fileSource = FileComponents.FileDataSource()
+    ///         .WithFilePaths("./testData/flags.json")
+    ///         .WithAutoUpdate(true);
+    ///     var config = Configuration.Default("sdkKey")
+    ///         .WithUpdateProcessorFactory(fileSource)
+    ///         .Build();
     /// </code>
     /// <para>
     /// This will cause the client <i>not</i> to connect to LaunchDarkly to get feature flags. The
