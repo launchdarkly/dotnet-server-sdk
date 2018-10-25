@@ -22,6 +22,7 @@ namespace LaunchDarkly.Client.Files
         private readonly List<string> _paths = new List<string>();
         private bool _autoUpdate = false;
         private TimeSpan _pollInterval = DefaultPollInterval;
+        private Func<string, object> _parser = null;
 
         /// <summary>
         /// Adds any number of source files for loading flag data, specifying each file path as a string.
@@ -31,7 +32,7 @@ namespace LaunchDarkly.Client.Files
         /// The files will not actually be loaded until the LaunchDarkly client starts up.
         /// </para>
         /// <para>
-        /// Files will be parsed as JSON if their first non-whitespace character is '{'. Otherwise, they will be parsed as YAML.
+        /// Files are normally expected to contain JSON; see <see cref="WithParser(Func{string, object})"/> for alternatives.
         /// </para>
         /// </remarks>
         /// <param name="paths">path(s) to the source file(s); may be absolute or relative to the current working directory</param>
@@ -39,6 +40,42 @@ namespace LaunchDarkly.Client.Files
         public FileDataSourceFactory WithFilePaths(params string[] paths)
         {
             _paths.AddRange(paths);
+            return this;
+        }
+
+        /// <summary>
+        /// Specifies an alternate parsing function to use for non-JSON source files.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// By default, the file data source attempts to parse files as JSON objects. You may wish to use another format,
+        /// such as YAML. To avoid bringing in additional dependencies that might conflict with application dependencies,
+        /// the LaunchDarkly SDK does not import a YAML parser, but you can use <c>WithParser</c> to specify a parser of
+        /// your choice.
+        /// </para>
+        /// <para>
+        /// The function you provide should take a string and return an <c>object</c> which should contain only the basic
+        /// types that can be represented in JSON: so, for instance, string values should be <c>string</c>, arrays should
+        /// be <c>List</c>, and objects with key-value pairs should be <c>Dictionary&lt;string, object&gt;</c>. It should
+        /// throw an exception if it can't parse the data.
+        /// </para>
+        /// <para>
+        /// The file data source will still try to parse files as JSON if their first non-whitespace character is '{',
+        /// but if that fails, it will use the custom parser.
+        /// </para>
+        /// <para>
+        /// Here is an example of how you would do this with the <c>YamlDotNet</c> package:
+        /// </para>
+        /// <code>
+        ///     var yaml = new DeserializerBuilder().Build();
+        ///     FileComponents.FileDataSource.WithParser(s => yaml.Deserialize&lt;object&gt;(s))
+        /// </code>
+        /// </remarks>
+        /// <param name="parseFn">the parsing function</param>
+        /// <returns>the same factory object</returns>
+        public FileDataSourceFactory WithParser(Func<string, object> parseFn)
+        {
+            _parser = parseFn;
             return this;
         }
 
@@ -90,7 +127,7 @@ namespace LaunchDarkly.Client.Files
         /// <returns></returns>
         public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
-            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval);
+            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser);
         }
     }
 }

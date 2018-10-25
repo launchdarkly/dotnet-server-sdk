@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using Xunit;
 using LaunchDarkly.Client;
 using LaunchDarkly.Client.Files;
+using YamlDotNet.Serialization;
 
 namespace LaunchDarkly.Tests
 {
     public class FileDataSourceTest
     {
+        private static readonly string ALL_DATA_JSON_FILE = TestUtils.TestFilePath("all-properties.json");
+        private static readonly string ALL_DATA_YAML_FILE = TestUtils.TestFilePath("all-properties.yml");
+
         private readonly IFeatureStore store = new InMemoryFeatureStore();
         private readonly FileDataSourceFactory factory = FileComponents.FileDataSource();
         private readonly Configuration config = Configuration.Default("sdkKey")
@@ -20,7 +23,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FlagsAreNotLoadedUntilStart()
         {
-            factory.WithFilePaths(TestUtils.TestFilePath("all-properties.json"));
+            factory.WithFilePaths(ALL_DATA_JSON_FILE);
             using (var fp = factory.CreateUpdateProcessor(config, store))
             {
                 Assert.False(store.Initialized());
@@ -29,12 +32,25 @@ namespace LaunchDarkly.Tests
             }
         }
 
-        [Theory]
-        [InlineData("all-properties.json")]
-        [InlineData("all-properties.yml")]
-        public void FlagsAreLoadedOnStart(string filename)
+        [Fact]
+        public void FlagsAreLoadedOnStart()
         {
-            factory.WithFilePaths(TestUtils.TestFilePath(filename));
+            factory.WithFilePaths(ALL_DATA_JSON_FILE);
+            using (var fp = factory.CreateUpdateProcessor(config, store))
+            {
+                fp.Start();
+                Assert.True(store.Initialized());
+                Assert.Equal(2, CountFlagsInStore());
+                Assert.Equal(1, CountSegmentsInStore());
+            }
+        }
+
+        [Fact]
+        public void FlagsCanBeLoadedWithExternalYamlParser()
+        {
+            var yaml = new DeserializerBuilder().Build();
+            factory.WithFilePaths(ALL_DATA_YAML_FILE)
+                .WithParser(s => yaml.Deserialize<object>(s));
             using (var fp = factory.CreateUpdateProcessor(config, store))
             {
                 fp.Start();
@@ -56,7 +72,7 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void StartTaskIsCompletedAndInitializedIsFalseAfterUnsuccessfulLoad()
+        public void StartTaskIsCompletedAndInitializedIsFalseAfterFailedLoadDueToMissingFile()
         {
             factory.WithFilePaths("bad-file-path");
             using (var fp = factory.CreateUpdateProcessor(config, store))
@@ -67,6 +83,18 @@ namespace LaunchDarkly.Tests
             }
         }
 
+        [Fact]
+        public void StartTaskIsCompletedAndInitializedIsFalseAfterFailedLoadDueToMalformedFile()
+        {
+            factory.WithFilePaths(TestUtils.TestFilePath("bad-file.txt"));
+            using (var fp = factory.CreateUpdateProcessor(config, store))
+            {
+                var task = fp.Start();
+                Assert.True(task.IsCompleted);
+                Assert.False(fp.Initialized());
+            }
+        }
+        
         [Fact]
         public void ModifiedFileIsNotReloadedIfAutoUpdateIsOff()
         {
@@ -149,12 +177,10 @@ namespace LaunchDarkly.Tests
             }
         }
 
-        [Theory]
-        [InlineData("all-properties.json")]
-        [InlineData("all-properties.yml")]
-        public void FullFlagDefinitionEvaluatesAsExpected(string filename)
+        [Fact]
+        public void FullFlagDefinitionEvaluatesAsExpected()
         {
-            factory.WithFilePaths(TestUtils.TestFilePath(filename));
+            factory.WithFilePaths(ALL_DATA_JSON_FILE);
             config.WithUpdateProcessorFactory(factory);
             using (var client = new LdClient(config))
             {
@@ -162,19 +188,17 @@ namespace LaunchDarkly.Tests
             }
         }
 
-        [Theory]
-        [InlineData("all-properties.json")]
-        [InlineData("all-properties.yml")]
-        public void SimplifiedFlagEvaluatesAsExpected(string filename)
+        [Fact]
+        public void SimplifiedFlagEvaluatesAsExpected()
         {
-            factory.WithFilePaths(TestUtils.TestFilePath(filename));
+            factory.WithFilePaths(ALL_DATA_JSON_FILE);
             config.WithUpdateProcessorFactory(factory);
             using (var client = new LdClient(config))
             {
                 Assert.Equal("value2", client.StringVariation("flag2", user, ""));
             }
         }
-
+        
         private int CountFlagsInStore()
         {
             return store.All(VersionedDataKind.Features).Count;

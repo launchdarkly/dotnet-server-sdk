@@ -7,19 +7,22 @@ using Common.Logging;
 
 namespace LaunchDarkly.Client.Files
 {
-    class FileDataSource : IUpdateProcessor
+    internal class FileDataSource : IUpdateProcessor
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FileDataSource));
         private readonly IFeatureStore _featureStore;
         private readonly List<string> _paths;
         private readonly IDisposable _reloader;
+        private readonly FlagFileParser _parser;
         private volatile bool _started;
         private volatile bool _loadedValidData;
         
-        public FileDataSource(IFeatureStore featureStore, List<string> paths, bool autoUpdate, TimeSpan pollInterval)
+        public FileDataSource(IFeatureStore featureStore, List<string> paths, bool autoUpdate, TimeSpan pollInterval,
+            Func<string, object> alternateParser)
         {
             _featureStore = featureStore;
             _paths = new List<string>(paths);
+            _parser = new FlagFileParser(alternateParser);
             if (autoUpdate)
             {
                 try
@@ -82,7 +85,7 @@ namespace LaunchDarkly.Client.Files
                 try
                 {
                     var content = File.ReadAllText(path);
-                    var data = FlagFileData.FromFileContent(content);
+                    var data = _parser.Parse(content);
                     data.AddToData(allData);
                 }
                 catch (Exception e)
