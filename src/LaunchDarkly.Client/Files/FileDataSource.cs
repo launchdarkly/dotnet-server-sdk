@@ -32,7 +32,7 @@ namespace LaunchDarkly.Client.Files
                 }
                 catch (Exception e)
                 {
-                    Log.Error("Unable to watch files for auto-updating: " + e);
+                    Log.ErrorFormat("Unable to watch files for auto-updating: {0}", e);
                     _reloader = null;
                 }
             }
@@ -87,7 +87,7 @@ namespace LaunchDarkly.Client.Files
                 }
                 catch (Exception e)
                 {
-                    Log.Error(path + ": " + e.ToString());
+                    Log.ErrorFormat("{0}: {1}", path, e);
                     return;
                 }
             }
