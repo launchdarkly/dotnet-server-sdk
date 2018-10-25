@@ -24,10 +24,10 @@ namespace LaunchDarkly.Client.Files
             {
                 try
                 {
-#if NETSTANDARD2_0 || NET45
-                    _reloader = new FileWatchingReloader(_paths, TriggerReload);
-#else
+#if NETSTANDARD1_4 || NETSTANDARD1_6
                     _reloader = new FilePollingReloader(_paths, TriggerReload, pollInterval);
+#else
+                    _reloader = new FileWatchingReloader(_paths, TriggerReload);
 #endif
                 }
                 catch (Exception e)

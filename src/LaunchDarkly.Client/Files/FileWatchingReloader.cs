@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD2_0 || NET45
+﻿#if !NETSTANDARD1_4 && !NETSTANDARD1_6
 using System;
 using System.Collections.Generic;
 using System.IO;
