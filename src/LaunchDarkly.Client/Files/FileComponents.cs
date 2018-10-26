@@ -31,8 +31,9 @@
     /// this with <c>configuration.WithEventProcessor(Components.NullEventProcessor)</c>.
     /// </para>
     /// <para>
-    /// Flag data files can be either JSON or YAML. They contain an object with three possible
-    /// properties:
+    /// Flag data files are JSON by default (although it is possible to specify a parser for another format,
+    /// such as YAML; see <see cref="FileDataSourceFactory.WithParser(System.Func{string, object})"/>). They
+    /// contain an object with three possible properties:
     /// </para>
     /// <list type="bullet">
     /// <item><c>flags</c>: Feature flag definitions.</item>
@@ -81,15 +82,6 @@
     ///         "my-integer-flag-key": 3
     ///     }
     /// }
-    /// </code>
-    /// <para>
-    /// Or, in YAML:
-    /// </para>
-    /// <code>
-    /// flagValues:
-    ///   my-string-flag-key: "value-1"
-    ///   my-boolean-flag-key: true
-    ///   my-integer-flag-key: 3
     /// </code>
     /// <para>
     /// It is also possible to specify both <c>flags</c> and <c>flagValues</c>, if you want some flags
