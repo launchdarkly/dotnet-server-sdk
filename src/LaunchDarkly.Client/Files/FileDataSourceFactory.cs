@@ -88,9 +88,12 @@ namespace LaunchDarkly.Client.Files
         /// This option is off by default: unless you set this option to <c>true</c>, files will only be loaded once.
         /// </para>
         /// <para>
-        /// In .NET Standard 1.x, file changes are detected by polling the file modified times (at an interval
-        /// configurable with <see cref="WithPollInterval"/>). In all other frameworks, file changes are
-        /// detected by <c>System.IO.FileSystemWatcher</c>.
+        /// In .NET Framework, and .NET Standard 2.0, file changes are detected by <c>System.IO.FileSystemWatcher</c>.
+        /// However, in .NET Standard 1.x, this is not available and so file changes are detected by polling the file
+        /// modification times (at an interval configurable with <see cref="WithPollInterval(TimeSpan)"/>. Be aware that
+        /// the latter mechanism may not detect changes that occur very frequently, since on some operating systems
+        /// the file modification time does not have a high precision, so if you are running on .NET Standard 1.x you
+        /// should avoid test scenarios where the data files are modified immediately after startup.
         /// </para>
         /// <para>
         /// Note that auto-updating may not work if any of the files you specified has an invalid directory path.

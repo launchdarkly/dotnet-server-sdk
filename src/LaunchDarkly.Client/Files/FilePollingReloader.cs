@@ -9,7 +9,14 @@ using Common.Logging;
 namespace LaunchDarkly.Client.Files
 {
     // An unsophisticated implementation of file monitoring that we use when there's no other
-    // mechanism available.
+    // mechanism available, i.e. in .NET Standard 1.x.
+    //
+    // WARNING: Even if we're willing to poll very frequently, this logic can still miss file
+    // changes. This is because the Linux/Mac implementations of File.GetLastWriteTime() have
+    // a *one-second* resolution for the returned time value, so if a file is modified less
+    // than one second after its previous modified time, we may not detect it. I'm not aware
+    // of any workaround for this, so I've just put a warning in the documentation for the
+    // AutoUpdate setting.
     class FilePollingReloader : IDisposable
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FilePollingReloader));

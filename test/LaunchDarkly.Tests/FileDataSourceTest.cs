@@ -132,7 +132,8 @@ namespace LaunchDarkly.Tests
                     Assert.True(store.Initialized());
                     Assert.Equal(0, CountSegmentsInStore());
 
-                    Thread.Sleep(TimeSpan.FromMilliseconds(100));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                    // See FilePollingReloader for the reason behind this long sleep
 
                     File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
 
@@ -161,8 +162,9 @@ namespace LaunchDarkly.Tests
                     fp.Start();
                     Assert.False(store.Initialized());
 
-                    Thread.Sleep(TimeSpan.FromMilliseconds(100));
-                    
+                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                    // See FilePollingReloader for the reason behind this long sleep
+
                     File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
 
                     Assert.True(
