@@ -42,6 +42,10 @@ Redis integration
 
 An implementation of feature flag caching using a Redis server is available as a separate package. More information and source code [here](https://github.com/launchdarkly/dotnet-client-redis).
 
+Using flag data from a file
+---------------------------
+For testing purposes, the SDK can be made to read feature flag state from a file or files instead of connecting to LaunchDarkly. See `LaunchDarkly.Client.Files.FileComponents` for more details.
+
 Learn more
 -----------
 

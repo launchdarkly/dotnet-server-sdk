@@ -8,7 +8,7 @@ namespace LaunchDarkly.Tests
 {
     public class TestUtils
     {
-        public static void AssertJsonEqual(JToken expected, JToken  actual)
+        public static void AssertJsonEqual(JToken expected, JToken actual)
         {
             if (!JToken.DeepEquals(expected, actual))
             {
@@ -17,6 +17,11 @@ namespace LaunchDarkly.Tests
                         JsonConvert.SerializeObject(expected),
                         JsonConvert.SerializeObject(actual)));
             }
+        }
+
+        public static string TestFilePath(string name)
+        {
+            return "./TestFiles/" + name;
         }
 
         public static IFeatureStoreFactory SpecificFeatureStore(IFeatureStore store)
