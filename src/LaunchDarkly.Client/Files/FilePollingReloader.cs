@@ -14,8 +14,8 @@ namespace LaunchDarkly.Client.Files
     // WARNING: Even if we're willing to poll very frequently, this logic can still miss file
     // changes. This is because the Linux/Mac implementations of File.GetLastWriteTime() have
     // a *one-second* resolution for the returned time value, so if a file is modified less
-    // than one second after its previous modified time, we may not detect it. I'm not aware
-    // of any workaround for this, so I've just put a warning in the documentation for the
+    // than one second after its previous modified time, we may not detect it. There doesn't
+    // seem to be a workaround for this, so there's a warning in the documentation for the
     // AutoUpdate setting.
     class FilePollingReloader : IDisposable
     {
