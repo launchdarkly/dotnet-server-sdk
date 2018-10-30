@@ -38,6 +38,13 @@ namespace LaunchDarkly.Client
         /// </summary>
         public static readonly FlagsStateOption WithReasons = new FlagsStateOption("WithReasons");
 
+        /// <summary>
+        /// Specifies that any flag metadata that is normally only used for event generation - such as flag versions and
+        /// evaluation reasons - should be omitted for any flag that does not have event tracking or debugging turned on.
+        /// This reduces the size of the JSON data if you are passing the flag state to the front end.
+        /// </summary>
+        public static readonly FlagsStateOption DetailsOnlyForTrackedFlags = new FlagsStateOption("DetailsOnlyForTrackedFlags");
+
         internal static bool HasOption(FlagsStateOption[]  options, FlagsStateOption option)
         {
             foreach (var o in options)

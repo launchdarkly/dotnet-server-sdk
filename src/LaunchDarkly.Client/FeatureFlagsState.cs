@@ -41,17 +41,25 @@ namespace LaunchDarkly.Client
             _flagMetadata = metadata;
         }
 
-        internal void AddFlag(FeatureFlag flag, JToken value, int? variation, EvaluationReason reason)
+        internal void AddFlag(FeatureFlag flag, JToken value, int? variation, EvaluationReason reason,
+            bool detailsOnlyIfTracked)
         {
             _flagValues[flag.Key] = value;
-            _flagMetadata[flag.Key] = new FlagMetadata
+            var meta = new FlagMetadata
             {
                 Variation = variation,
-                Version = flag.Version,
-                TrackEvents = flag.TrackEvents,
-                DebugEventsUntilDate = flag.DebugEventsUntilDate,
-                Reason = reason
+                DebugEventsUntilDate = flag.DebugEventsUntilDate
             };
+            if (!detailsOnlyIfTracked || flag.TrackEvents || flag.DebugEventsUntilDate != null)
+            {
+                meta.Version = flag.Version;
+                meta.Reason = reason;
+            }
+            if (flag.TrackEvents)
+            {
+                meta.TrackEvents = true;
+            }
+            _flagMetadata[flag.Key] = meta;
         }
 
         /// <summary>
@@ -123,10 +131,10 @@ namespace LaunchDarkly.Client
     {
         [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
         internal int? Variation { get; set; }
-        [JsonProperty(PropertyName = "version")]
-        internal int Version { get; set; }
-        [JsonProperty(PropertyName = "trackEvents")]
-        internal bool TrackEvents { get; set; }
+        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
+        internal int? Version { get; set; }
+        [JsonProperty(PropertyName = "trackEvents", NullValueHandling = NullValueHandling.Ignore)]
+        internal bool? TrackEvents { get; set; }
         [JsonProperty(PropertyName = "debugEventsUntilDate", NullValueHandling = NullValueHandling.Ignore)]
         internal long? DebugEventsUntilDate { get; set; }
         [JsonProperty(PropertyName = "reason", NullValueHandling = NullValueHandling.Ignore)]
