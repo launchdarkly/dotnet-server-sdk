@@ -68,7 +68,9 @@ namespace LaunchDarkly.Client.Files
         /// </para>
         /// <code>
         ///     var yaml = new DeserializerBuilder().Build();
-        ///     FileComponents.FileDataSource.WithParser(s => yaml.Deserialize&lt;object&gt;(s))
+        ///     var source = FileComponents.FileDataSource()
+        ///         .WithFilePaths(myYamlFilePath)
+        ///         .WithParser(s => yaml.Deserialize&lt;object&gt;(s));
         /// </code>
         /// </remarks>
         /// <param name="parseFn">the parsing function</param>
