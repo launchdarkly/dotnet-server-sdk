@@ -165,6 +165,9 @@ namespace LaunchDarkly.Client.Utils
             if (disposing)
             {
                 _core.Dispose();
+                _itemCache?.Dispose();
+                _allCache?.Dispose();
+                _initCache?.Dispose();
             }
         }
         
