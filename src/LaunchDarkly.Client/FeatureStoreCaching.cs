@@ -42,7 +42,7 @@ namespace LaunchDarkly.Client
         public static readonly FeatureStoreCaching Disabled = new FeatureStoreCaching(TimeSpan.Zero);
 
         /// <summary>
-        /// Returns a parameter object indicating that caching should be disabled, using the
+        /// Returns a parameter object indicating that caching should be enabled, using the
         /// default TTL of <see cref="DefaultTtl"/>.
         /// </summary>
         public static readonly FeatureStoreCaching Enabled = new FeatureStoreCaching(DefaultTtl);
