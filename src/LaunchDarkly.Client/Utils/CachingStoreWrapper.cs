@@ -33,6 +33,16 @@ namespace LaunchDarkly.Client.Utils
             return new CachingStoreWrapperBuilder(core);
         }
 
+        /// <summary>
+        /// Creates a new builder using an asynchronous implementation.
+        /// </summary>
+        /// <param name="coreAsync">the <see cref="IFeatureStoreCoreAsync"/> implementation</param>
+        /// <returns>a builder</returns>
+        public static CachingStoreWrapperBuilder Builder(IFeatureStoreCoreAsync coreAsync)
+        {
+            return new CachingStoreWrapperBuilder(new FeatureStoreCoreAsyncAdapter(coreAsync));
+        }
+
         internal CachingStoreWrapper(IFeatureStoreCore core, FeatureStoreCaching caching)
         {
             this._core = core;
