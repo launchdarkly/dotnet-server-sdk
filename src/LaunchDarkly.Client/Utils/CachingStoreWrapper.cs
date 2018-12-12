@@ -6,12 +6,13 @@ namespace LaunchDarkly.Client.Utils
 {
     /// <summary>
     /// CachingStoreWrapper is a partial implementation of <see cref="IFeatureStore"/> that delegates
-    /// the basic functionality to an instance of <see cref="IFeatureStoreCore"/>. It provides optional
-    /// caching behavior and other logic that would otherwise be repeated in every feature store
-    /// implementation. This makes it easier to create new database integrations by implementing only
-    /// the database-specific logic.
+    /// the basic functionality to an instance of <see cref="IFeatureStoreCore"/> or <see cref="IFeatureStoreCoreAsync"/>.
+    /// It provides optional caching behavior and other logic that would otherwise be repeated in every
+    /// feature store implementation. This makes it easier to create new database integrations by
+    /// implementing only the database-specific logic.
     /// 
-    /// Construct instances of this class with <see cref="CachingStoreWrapper.Builder(IFeatureStoreCore)"/>.
+    /// Construct instances of this class with <see cref="CachingStoreWrapper.Builder(IFeatureStoreCore)"/>
+    /// or <see cref="CachingStoreWrapper.Builder(IFeatureStoreCoreAsync)"/>.
     /// </summary>
     public sealed class CachingStoreWrapper : IFeatureStore
     {
@@ -24,7 +25,7 @@ namespace LaunchDarkly.Client.Utils
         private volatile bool _inited;
 
         /// <summary>
-        /// Creates a new builder.
+        /// Creates a new builder using a synchronous data store implementation.
         /// </summary>
         /// <param name="core">the <see cref="IFeatureStoreCore"/> implementation</param>
         /// <returns>a builder</returns>
@@ -34,7 +35,7 @@ namespace LaunchDarkly.Client.Utils
         }
 
         /// <summary>
-        /// Creates a new builder using an asynchronous implementation.
+        /// Creates a new builder using an asynchronous data store implementation.
         /// </summary>
         /// <param name="coreAsync">the <see cref="IFeatureStoreCoreAsync"/> implementation</param>
         /// <returns>a builder</returns>
