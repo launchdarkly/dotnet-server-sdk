@@ -20,13 +20,6 @@ namespace LaunchDarkly.Client.Utils.Tests
 
         protected abstract CachingStoreWrapperBuilder MakeWrapperBase();
 
-        private CachingStoreWrapper MakeWrapper(bool cached)
-        {
-            return MakeWrapperBase()
-                .WithCaching(cached ? FeatureStoreCaching.Enabled : FeatureStoreCaching.Disabled)
-                .Build();
-        }
-
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -260,6 +253,13 @@ namespace LaunchDarkly.Client.Utils.Tests
             _core.ForceSet(MockItem.Kind, itemv3); // bypasses cache so we can verify that itemv2 is in the cache
 
             Assert.Equal(itemv2, wrapper.Get(MockItem.Kind, key));
+        }
+
+        private CachingStoreWrapper MakeWrapper(bool cached)
+        {
+            return MakeWrapperBase()
+                .WithCaching(cached ? FeatureStoreCacheConfig.Enabled : FeatureStoreCacheConfig.Disabled)
+                .Build();
         }
 
         private IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> MakeData(params MockItem[] items)
