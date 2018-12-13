@@ -246,7 +246,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         private CachingStoreWrapper MakeWrapper(bool cached)
         {
             return CachingStoreWrapper.Builder(_core)
-                .WithCaching(cached ? FeatureStoreCaching.Enabled : FeatureStoreCaching.Disabled)
+                .WithCaching(cached ? FeatureStoreCacheConfig.Enabled : FeatureStoreCacheConfig.Disabled)
                 .Build();
         }
 

@@ -10,10 +10,10 @@ namespace LaunchDarkly.Client
     /// This is an immutable class that uses a fluent interface. Obtain an instance by getting the static
     /// value Disabled or Enabled; then if desired, you can use chained methods to set other properties:
     /// <code>
-    ///     FeatureStoreCaching.Enabled.WithTtlSeconds(30);
+    ///     FeatureStoreCacheConfig.Enabled.WithTtlSeconds(30);
     /// </code>
     /// </summary>
-    public sealed class FeatureStoreCaching
+    public sealed class FeatureStoreCacheConfig
     {
         /// <summary>
         /// The default cache expiration time.
@@ -39,15 +39,15 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Returns a parameter object indicating that caching should be disabled.
         /// </summary>
-        public static readonly FeatureStoreCaching Disabled = new FeatureStoreCaching(TimeSpan.Zero);
+        public static readonly FeatureStoreCacheConfig Disabled = new FeatureStoreCacheConfig(TimeSpan.Zero);
 
         /// <summary>
         /// Returns a parameter object indicating that caching should be enabled, using the
         /// default TTL of <see cref="DefaultTtl"/>.
         /// </summary>
-        public static readonly FeatureStoreCaching Enabled = new FeatureStoreCaching(DefaultTtl);
+        public static readonly FeatureStoreCacheConfig Enabled = new FeatureStoreCacheConfig(DefaultTtl);
 
-        internal FeatureStoreCaching(TimeSpan ttl)
+        internal FeatureStoreCacheConfig(TimeSpan ttl)
         {
             Ttl = ttl;
         }
@@ -58,9 +58,9 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="ttl">the cache TTL; must be greater than zero</param>
         /// <returns>an updated parameters object</returns>
-        public FeatureStoreCaching WithTtl(TimeSpan ttl)
+        public FeatureStoreCacheConfig WithTtl(TimeSpan ttl)
         {
-            return new FeatureStoreCaching(ttl);
+            return new FeatureStoreCacheConfig(ttl);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="millis">the cache TTL in milliseconds</param>
         /// <returns>an updated paameters object</returns>
-        public FeatureStoreCaching WithTtlMillis(double millis)
+        public FeatureStoreCacheConfig WithTtlMillis(double millis)
         {
             return WithTtl(TimeSpan.FromMilliseconds(millis));
         }
@@ -78,7 +78,7 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="seconds">the cache TTL in seconds</param>
         /// <returns>an updated paameters object</returns>
-        public FeatureStoreCaching WithTtlSeconds(double seconds)
+        public FeatureStoreCacheConfig WithTtlSeconds(double seconds)
         {
             return WithTtl(TimeSpan.FromSeconds(seconds));
         }
