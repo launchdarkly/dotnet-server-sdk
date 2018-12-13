@@ -4,9 +4,21 @@ using Xunit;
 
 namespace LaunchDarkly.Client.Utils.Tests
 {
-    public class CachingStoreWrapperTest
+    // These tests verify the behavior of CachingStoreWrapper against an underlying mock
+    // data store implementation; the test subclasses provide either a sync or async version
+    // of the mock. Most of the tests are run twice ([Theory]), once with caching enabled
+    // and once not; a few of the tests are only relevant when caching is enabled and so are
+    // run only once ([Fact]).
+    public abstract class CachingStoreWrapperTestBase<T> where T : MockCoreBase
     {
-        private MockCore _core = new MockCore();
+        protected T _core;
+
+        protected CachingStoreWrapperTestBase(T core)
+        {
+            _core = core;
+        }
+
+        protected abstract CachingStoreWrapperBuilder MakeWrapperBase();
 
         [Theory]
         [InlineData(false)]
@@ -245,7 +257,7 @@ namespace LaunchDarkly.Client.Utils.Tests
 
         private CachingStoreWrapper MakeWrapper(bool cached)
         {
-            return CachingStoreWrapper.Builder(_core)
+            return MakeWrapperBase()
                 .WithCaching(cached ? FeatureStoreCacheConfig.Enabled : FeatureStoreCacheConfig.Disabled)
                 .Build();
         }
@@ -294,7 +306,7 @@ namespace LaunchDarkly.Client.Utils.Tests
 
         public override string GetStreamApiPath()
         {
-            return "/things/";
+            return "/things/"; // not used
         }
 
         public override MockItem MakeDeletedItem(string key, int version)
@@ -303,7 +315,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         }
     }
 
-    public class MockCore : IFeatureStoreCore
+    public class MockCoreBase : IDisposable
     {
         public IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> Data =
             new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
@@ -311,6 +323,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         public int InitedQueryCount;
 
         public void Dispose() { }
+
 
         public IVersionedData GetInternal(IVersionedDataKind kind, string key)
         {
@@ -328,14 +341,9 @@ namespace LaunchDarkly.Client.Utils.Tests
         {
             if (Data.TryGetValue(kind, out var items))
             {
-                var ret = new Dictionary<string, IVersionedData>();
-                foreach (var e in items)
-                {
-                    ret[e.Key] = e.Value;
-                }
-                return ret;
+                return new Dictionary<string, IVersionedData>(items);
             }
-            return null;
+            return new Dictionary<string, IVersionedData>();
         }
 
         public void InitInternal(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData)

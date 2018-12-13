@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Client.Utils
 {
     /// <summary>
-    /// IFeatureStoreCore is an interface for a simplified subset of the functionality of
+    /// IFeatureStoreCoreAsync is an interface for a simplified subset of the functionality of
     /// <see cref="IFeatureStore"/>, to be used in conjunction with <see cref="CachingStoreWrapper"/>.
     /// This allows developers of custom IFeatureStore implementations to avoid repeating logic that
     /// would commonly be needed in any such implementation, such as caching. Instead, they can
-    /// implement only IFeatureStoreCore and then create a CachingStoreWrapper.
+    /// implement only IFeatureStoreCoreAsync and then create a CachingStoreWrapper.
     /// 
-    /// This interface assumes that your code is synchronous. For asynchronous implementations,
-    /// use <see cref="IFeatureStoreCoreAsync"/> instead.
+    /// This interface assumes that your code is asynchronous. For synchronous implementations,
+    /// use <see cref="IFeatureStoreCore"/> instead.
     /// 
     /// Note that these methods do not take any generic type parameters; all storeable entities are
     /// treated as implementations of the <see cref="IVersionedData"/> interface, and an
@@ -20,7 +21,7 @@ namespace LaunchDarkly.Client.Utils
     /// reflection, using the type specified by <see cref="IVersionedDataKind.GetItemType"/>.
     /// <see cref="FeatureStoreHelpers"/> may be useful for this.
     /// </summary>
-    public interface IFeatureStoreCore : IDisposable
+    public interface IFeatureStoreCoreAsync : IDisposable
     {
         /// <summary>
         /// Initializes (or re-initializes) the store with the specified set of objects. Any existing
@@ -29,7 +30,7 @@ namespace LaunchDarkly.Client.Utils
         /// objects and the supplied data.
         /// </summary>
         /// <param name="allData">all objects to be stored</param>
-        void InitInternal(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData);
+        Task InitInternalAsync(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData);
 
         /// <summary>
         /// Returns the object to which the specified key is mapped, or null if no such item exists.
@@ -39,7 +40,7 @@ namespace LaunchDarkly.Client.Utils
         /// <param name="kind">the kind of objects to get</param>
         /// <param name="key">the key whose associated object is to be returned</param>
         /// <returns>the object to which the specified key is mapped, or null</returns>
-        IVersionedData GetInternal(IVersionedDataKind kind, string key);
+        Task<IVersionedData> GetInternalAsync(IVersionedDataKind kind, string key);
 
         /// <summary>
         /// Returns a dictionary of all associated objects of a given kind. The method should not
@@ -47,7 +48,7 @@ namespace LaunchDarkly.Client.Utils
         /// </summary>
         /// <param name="kind">the kind of objects to get</param>
         /// <returns>a dictionary of all associated objects</returns>
-        IDictionary<string, IVersionedData> GetAllInternal(IVersionedDataKind kind);
+        Task<IDictionary<string, IVersionedData>> GetAllInternalAsync(IVersionedDataKind kind);
 
         /// <summary>
         /// Updates or inserts the object associated with the specified key. If an item with
@@ -60,7 +61,7 @@ namespace LaunchDarkly.Client.Utils
         /// <param name="kind">the kind of object to update</param>
         /// <param name="item">the object to update or insert</param>
         /// <returns>the state of the object after the update</returns>
-        IVersionedData UpsertInternal(IVersionedDataKind kind, IVersionedData item);
+        Task<IVersionedData> UpsertInternalAsync(IVersionedDataKind kind, IVersionedData item);
 
         /// <summary>
         /// Returns true if this store has been initialized. In a shared data store, it should be
@@ -69,6 +70,6 @@ namespace LaunchDarkly.Client.Utils
         /// to worry about caching this value; CachingStoreWrapper will only call it when necessary.
         /// </summary>
         /// <returns>true if the store has been initialized</returns>
-        bool InitializedInternal();
+        Task<bool> InitializedInternalAsync();
     }
 }
