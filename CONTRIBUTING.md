@@ -21,7 +21,7 @@ dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
 ```
 
 To package for local use:
-1. Adjust VersionPrefix and VersionSuffix elements in `/src/LaunchDarkly.Client/LaunchDarkly.Client.csproj` and in dependency declaration in your local app
+1. Adjust Version in `/src/LaunchDarkly.Client/LaunchDarkly.Client.csproj` and in dependency declaration in your local app
 1. `dotnet pack src/LaunchDarkly.Client`
 1. Restore your app using the output directory of the previous command:
 ```
