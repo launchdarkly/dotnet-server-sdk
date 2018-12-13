@@ -26,7 +26,7 @@ namespace LaunchDarkly.Client.Files
                     {
                         return JsonConvert.DeserializeObject<FlagFileData>(content);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // we failed to parse it as JSON, so we'll just see if the alternate parser can do it
                     }
