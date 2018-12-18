@@ -14,9 +14,9 @@ namespace LaunchDarkly.Client.Utils
     /// 
     /// Null values are allowed.
     /// </summary>
-    internal sealed class LoadingCache<K, V> : IDisposable where V : class
+    internal sealed class LoadingCache<K, V> : IDisposable
     {
-        private static readonly TimeSpan DefaultPurgeInterval = TimeSpan.FromSeconds(30);
+        internal static readonly TimeSpan DefaultPurgeInterval = TimeSpan.FromSeconds(30);
 
         private readonly Func<K, V> _computeFn;
         private readonly TimeSpan? _expiration;
@@ -65,9 +65,10 @@ namespace LaunchDarkly.Client.Utils
                 // flag is set then we can read the value without acquiring a lock, since the value
                 // will never change for a CacheEntry once it's been set (and inited is not set until
                 // value has been set).
-                if (entry.inited)
+                var v = entry.value;
+                if (v != null)
                 {
-                    return entry.value;
+                    return v.Value;
                 }
                 return MaybeComputeValue(key, entry);
             }
@@ -110,14 +111,15 @@ namespace LaunchDarkly.Client.Utils
             // per-entry lock first will compute the value; the others will wait on it.
             lock (entry.entryLock)
             {
-                // Check the inited flag again in case someone got in ahead of us
-                if (!entry.inited)
+                // Check the value field in case someone got in ahead of us
+                if (entry.value != null)
                 {
-                    entry.value = _computeFn.Invoke(key);
-                    entry.inited = true;
+                    return entry.value.Value;
                 }
+                var value = _computeFn.Invoke(key);
+                entry.value = new CacheValue<V>(value);
+                return value;
             }
-            return entry.value;
         }
 
         /// <summary>
@@ -141,8 +143,7 @@ namespace LaunchDarkly.Client.Utils
                 }
                 var node = new LinkedListNode<K>(key);
                 var entry = new CacheEntry<K, V>(expTime, node);
-                entry.value = value;
-                entry.inited = true;
+                entry.value = new CacheValue<V>(value);
                 _entries[key] = entry;
                 _keysInCreationOrder.AddLast(node);
             }
@@ -228,25 +229,70 @@ namespace LaunchDarkly.Client.Utils
         }
     }
 
-    internal class CacheEntry<K, V> where V : class
+    internal class SingleValueLoadingCache<V> : IDisposable
+    {
+        private readonly LoadingCache<object, V> _cache;
+
+        public SingleValueLoadingCache(Func<V> computeFn, TimeSpan? expiration) :
+            this(computeFn, expiration, LoadingCache<object, V>.DefaultPurgeInterval) { }
+
+        public SingleValueLoadingCache(Func<V> computeFn, TimeSpan? expiration, TimeSpan purgeInterval)
+        {
+            Func<object, V> cacheComputeFn = (object o) => computeFn();
+            _cache = new LoadingCache<object, V>(cacheComputeFn, expiration, purgeInterval);
+        }
+
+        public V Get()
+        {
+            return _cache.Get(this);
+        }
+
+        public void Set(V value)
+        {
+            _cache.Set(this, value);
+        }
+
+        public void Clear()
+        {
+            _cache.Clear();
+        }
+
+        public void Dispose()
+        {
+            _cache.Dispose();
+        }
+    }
+
+    internal class CacheEntry<K, V>
     {
         public readonly DateTime? expirationTime;
         public readonly object entryLock;
         public readonly LinkedListNode<K> node;
-        public volatile V value;
-        public volatile bool inited;
+        public volatile CacheValue<V> value;
 
         public CacheEntry(DateTime? expirationTime, LinkedListNode<K> node)
         {
             this.expirationTime = expirationTime;
             this.node = node;
             entryLock = new object();
-            inited = false;
         }
 
         public bool IsExpired()
         {
             return expirationTime.HasValue && expirationTime.Value.CompareTo(DateTime.Now) <= 0;
+        }
+    }
+
+    // This wrapper class is used so that CacheEntry's value field will always be a reference type
+    // and can therefore be volatile no matter what V is. If we have an instance of CacheValue, then
+    // the cache key has a value, even if the defined value is null.
+    internal class CacheValue<V>
+    {
+        public readonly V Value;
+
+        public CacheValue(V value)
+        {
+            Value = value;
         }
     }
 }

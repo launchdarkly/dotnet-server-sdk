@@ -21,7 +21,7 @@ namespace LaunchDarkly.Client.Utils
         
         private readonly LoadingCache<CacheKey, IVersionedData> _itemCache;
         private readonly LoadingCache<IVersionedDataKind, IDictionary<string, IVersionedData>> _allCache;
-        private readonly LoadingCache<string, string> _initCache;
+        private readonly SingleValueLoadingCache<bool> _initCache;
         private volatile bool _inited;
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace LaunchDarkly.Client.Utils
             {
                 _itemCache = new LoadingCache<CacheKey, IVersionedData>(GetInternalForCache, caching.Ttl);
                 _allCache = new LoadingCache<IVersionedDataKind, IDictionary<string, IVersionedData>>(GetAllForCache, caching.Ttl);
-                _initCache = new LoadingCache<string, string>(GetInitedStateForCache, caching.Ttl);
+                _initCache = new SingleValueLoadingCache<bool>(_core.InitializedInternal, caching.Ttl);
             }
             else
             {
@@ -75,7 +75,7 @@ namespace LaunchDarkly.Client.Utils
             bool result;
             if (_initCache != null)
             {
-                result = _initCache.Get("arbitrary-key") != null;
+                result = _initCache.Get();
             }
             else
             {
@@ -195,11 +195,6 @@ namespace LaunchDarkly.Client.Utils
         private IDictionary<string, T> FilterItems<T>(IDictionary<string, IVersionedData> items) where T : IVersionedData
         {
             return items.Where(kv => !kv.Value.Deleted).ToDictionary(i => i.Key, i => (T)i.Value);
-        }
-
-        private string GetInitedStateForCache(string key)
-        {
-            return _core.InitializedInternal() ? key : null;
         }
     }
 
