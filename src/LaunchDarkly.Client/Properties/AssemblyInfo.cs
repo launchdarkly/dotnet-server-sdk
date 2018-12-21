@@ -22,9 +22,11 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("186f235c-0e7c-419a-b279-5e851e18a41a")]
 
+#if DEBUG
 // Allow unit tests to see internal classes (note, the test assembly is not signed;
 // tests must be run against the Debug configuration of this assembly)
 [assembly: InternalsVisibleTo("LaunchDarkly.Tests")]
 
 // Allow mock/proxy objects in unit tests to access internal classes
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+#endif

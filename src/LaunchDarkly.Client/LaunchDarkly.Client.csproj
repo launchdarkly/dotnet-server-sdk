@@ -15,7 +15,7 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Release'">
-    <PackageReference Include="LaunchDarkly.Common.StrongName" Version="1.2.1-beta1" />
+    <PackageReference Include="LaunchDarkly.Common.StrongName" Version="1.2.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <PackageReference Include="LaunchDarkly.Common" Version="1.2.1" />
