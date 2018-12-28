@@ -87,6 +87,13 @@ Public Key Token: f86add69004e6885
 
 Building the code locally in the default Debug configuration does not sign the assembly and does not require a key file.
 
+Development notes
+-----------------
+
+This project imports the `dotnet-base` repository as a subtree. See the `README.md` file in that directory for more information.
+
+Releases are done using the release script in `dotnet-base`. Since the published package includes a .NET Framework 4.5 build, the release must be done from Windows.
+
 About LaunchDarkly
 -----------
 
