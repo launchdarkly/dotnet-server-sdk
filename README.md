@@ -72,7 +72,7 @@ See [Contributing](https://github.com/launchdarkly/dotnet-client/blob/master/CON
 Signing
 -------
 
-The published version of the `LaunchDarkly.Client` assembly is [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies) with a digital signature from LaunchDarkly. The public key file is in this repo at `LaunchDarkly.pk` as well as here:
+The published version of the `LaunchDarkly.Client` assembly is digitally signed by LaunchDarkly. It is also [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies); the public key file is in this repo at `LaunchDarkly.pk` as well as here:
 
 ```
 Public Key:
