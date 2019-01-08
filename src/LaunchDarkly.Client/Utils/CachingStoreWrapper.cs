@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LaunchDarkly.Cache;
 
 namespace LaunchDarkly.Client.Utils
 {
@@ -19,9 +20,9 @@ namespace LaunchDarkly.Client.Utils
         private readonly IFeatureStoreCore _core;
         private readonly FeatureStoreCacheConfig _caching;
         
-        private readonly LoadingCache<CacheKey, IVersionedData> _itemCache;
-        private readonly LoadingCache<IVersionedDataKind, IDictionary<string, IVersionedData>> _allCache;
-        private readonly SingleValueLoadingCache<bool> _initCache;
+        private readonly ICache<CacheKey, IVersionedData> _itemCache;
+        private readonly ICache<IVersionedDataKind, IDictionary<string, IVersionedData>> _allCache;
+        private readonly ISingleValueCache<bool> _initCache;
         private volatile bool _inited;
 
         /// <summary>
@@ -51,9 +52,19 @@ namespace LaunchDarkly.Client.Utils
 
             if (caching.IsEnabled)
             {
-                _itemCache = new LoadingCache<CacheKey, IVersionedData>(GetInternalForCache, caching.Ttl);
-                _allCache = new LoadingCache<IVersionedDataKind, IDictionary<string, IVersionedData>>(GetAllForCache, caching.Ttl);
-                _initCache = new SingleValueLoadingCache<bool>(_core.InitializedInternal, caching.Ttl);
+                _itemCache = Caches.KeyValue<CacheKey, IVersionedData>()
+                    .WithLoader(GetInternalForCache)
+                    .WithExpiration(caching.Ttl)
+                    .WithMaximumEntries(caching.MaximumEntries)
+                    .Build();
+                _allCache = Caches.KeyValue<IVersionedDataKind, IDictionary<string, IVersionedData>>()
+                    .WithLoader(GetAllForCache)
+                    .WithExpiration(caching.Ttl)
+                    .Build();
+                _initCache = Caches.SingleValue<bool>()
+                    .WithLoader(_core.InitializedInternal)
+                    .WithExpiration(caching.Ttl)
+                    .Build();
             }
             else
             {

@@ -23,6 +23,9 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// The cache expiration time. Caching is enabled if this is greater than zero.
         /// </summary>
+        /// <seealso cref="WithTtl(TimeSpan)"/>
+        /// <seealso cref="WithTtlMillis(double)"/>
+        /// <seealso cref="WithTtlSeconds(double)"/>
         public TimeSpan Ttl { get; private set; }
 
         /// <summary>
@@ -37,19 +40,25 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
+        /// The maximum number of entries that can be held in the cache at a time.
+        /// </summary>
+        public int? MaximumEntries { get; private set; }
+
+        /// <summary>
         /// Returns a parameter object indicating that caching should be disabled.
         /// </summary>
-        public static readonly FeatureStoreCacheConfig Disabled = new FeatureStoreCacheConfig(TimeSpan.Zero);
+        public static readonly FeatureStoreCacheConfig Disabled = new FeatureStoreCacheConfig(TimeSpan.Zero, null);
 
         /// <summary>
         /// Returns a parameter object indicating that caching should be enabled, using the
         /// default TTL of <see cref="DefaultTtl"/>.
         /// </summary>
-        public static readonly FeatureStoreCacheConfig Enabled = new FeatureStoreCacheConfig(DefaultTtl);
+        public static readonly FeatureStoreCacheConfig Enabled = new FeatureStoreCacheConfig(DefaultTtl, null);
 
-        internal FeatureStoreCacheConfig(TimeSpan ttl)
+        internal FeatureStoreCacheConfig(TimeSpan ttl, int? maximumEntries)
         {
             Ttl = ttl;
+            MaximumEntries = maximumEntries;
         }
         
         /// <summary>
@@ -60,14 +69,14 @@ namespace LaunchDarkly.Client
         /// <returns>an updated parameters object</returns>
         public FeatureStoreCacheConfig WithTtl(TimeSpan ttl)
         {
-            return new FeatureStoreCacheConfig(ttl);
+            return new FeatureStoreCacheConfig(ttl, MaximumEntries);
         }
 
         /// <summary>
         /// Shortcut for calling <see cref="WithTtl"/> with a TimeSpan in milliseconds.
         /// </summary>
         /// <param name="millis">the cache TTL in milliseconds</param>
-        /// <returns>an updated paameters object</returns>
+        /// <returns>an updated parameters object</returns>
         public FeatureStoreCacheConfig WithTtlMillis(double millis)
         {
             return WithTtl(TimeSpan.FromMilliseconds(millis));
@@ -77,10 +86,28 @@ namespace LaunchDarkly.Client
         /// Shortcut for calling <see cref="WithTtl"/> with a TimeSpan in seconds.
         /// </summary>
         /// <param name="seconds">the cache TTL in seconds</param>
-        /// <returns>an updated paameters object</returns>
+        /// <returns>an updated parameters object</returns>
         public FeatureStoreCacheConfig WithTtlSeconds(double seconds)
         {
             return WithTtl(TimeSpan.FromSeconds(seconds));
+        }
+
+        /// <summary>
+        /// Specifies the maximum number of entries that can be held in the cache at a time.
+        /// If this limit is exceeded, older entries will be evicted from the cache to make room
+        /// for new ones.
+        /// 
+        /// If this is null, there is no limit on the number of entries.
+        /// </summary>
+        /// <param name="maximumEntries">the maximum number of entries, or null for no limit</param>
+        /// <returns>an updated parameters object</returns>
+        public FeatureStoreCacheConfig WithMaximumEntries(int? maximumEntries)
+        {
+            if (maximumEntries != null && maximumEntries <= 0)
+            {
+                throw new ArgumentException("must be > 0 if not null", nameof(maximumEntries));
+            }
+            return new FeatureStoreCacheConfig(Ttl, maximumEntries);
         }
     }
 }
