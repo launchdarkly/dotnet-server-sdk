@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace LaunchDarkly.Client
 {
@@ -23,6 +23,17 @@ namespace LaunchDarkly.Client
         /// Used internally to identify streaming API requests for objects of this type.
         /// </summary>
         String GetStreamApiPath();
+    }
+
+    /// <summary>
+    /// This interface is implemented by <see cref="IVersionedDataKind"/> instances that
+    /// specify a preferred ordering for data updates.
+    /// </summary>
+    public interface IVersionedDataOrdering
+    {
+        int Priority { get; }
+
+        IEnumerable<string> GetDependencyKeys(IVersionedData item);
     }
 
     /// <summary>
@@ -59,45 +70,51 @@ namespace LaunchDarkly.Client
         public abstract T MakeDeletedItem(string key, int version);
     }
 
-    internal class FeaturesVersionedDataKind : VersionedDataKind<FeatureFlag>
+    internal abstract class Impl<T> : VersionedDataKind<T>, IVersionedDataOrdering where T : IVersionedData
     {
-        override public string GetNamespace()
+        private readonly string _namespace;
+        private readonly Type _itemType;
+        private readonly string _streamApiPath;
+        private readonly int _priority;
+
+        internal Impl(string ns, Type itemType, string streamApiPath, int priority)
         {
-            return "features";
+            _namespace = ns;
+            _itemType = itemType;
+            _streamApiPath = streamApiPath;
+            _priority = priority;
         }
 
-        override public Type GetItemType()
-        {
-            return typeof(FeatureFlag);
-        }
+        public override string GetNamespace() => _namespace;
+        public override Type GetItemType() => _itemType;
+        public override string GetStreamApiPath() => _streamApiPath;
+        public int Priority => _priority;
 
-        public override string GetStreamApiPath()
+        public virtual IEnumerable<string> GetDependencyKeys(IVersionedData item)
         {
-            return "/flags/";
+            return Enumerable.Empty<string>();
         }
+    }
 
+    internal class FeaturesVersionedDataKind : Impl<FeatureFlag>
+    {
+        internal FeaturesVersionedDataKind() : base("features", typeof(FeatureFlag), "/flags/", 1) { }
+        
         public override FeatureFlag MakeDeletedItem(string key, int version)
         {
             return new FeatureFlag(key, version, false, null, "", null, null, null, null, null, false, null, true, false);
         }
+
+        public override IEnumerable<string> GetDependencyKeys(IVersionedData item)
+        {
+            var ps = ((item as FeatureFlag).Prerequisites) ?? Enumerable.Empty<Prerequisite>();
+            return from p in ps select p.Key;
+        }
     }
 
-    internal class SegmentsVersionedDataKind : VersionedDataKind<Segment>
+    internal class SegmentsVersionedDataKind : Impl<Segment>
     {
-        override public string GetNamespace()
-        {
-            return "segments";
-        }
-
-        override public Type GetItemType()
-        {
-            return typeof(Segment);
-        }
-
-        public override string GetStreamApiPath()
-        {
-            return "/segments/";
-        }
+        internal SegmentsVersionedDataKind() : base("segments", typeof(Segment), "/segments/", 0) { }
 
         public override Segment MakeDeletedItem(string key, int version)
         {
