@@ -21,12 +21,12 @@ namespace LaunchDarkly.Client
             _store.Init(FeatureStoreDataSetSorter.SortAllCollections(allData));
         }
 
-        T IFeatureStore.Get<T>(VersionedDataKind<T> kind, string key)
+        public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
         {
             return _store.Get(kind, key);
         }
 
-        IDictionary<string, T> IFeatureStore.All<T>(VersionedDataKind<T> kind)
+        public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
         {
             return _store.All(kind);
         }
