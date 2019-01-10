@@ -2,6 +2,18 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.6.0] - 2019-01-09
+### Added:
+
+- There are now helper classes that make it much simpler to write a custom `IFeatureStore` implementation. See the `LaunchDarkly.Client.Utils` namespace.
+- The new `FeatureStoreCaching` class will be used by database feature store integrations in the future. It is not used by the SDK client itself.
+- The published assemblies are now digitally signed, in addition to being strong-named. This also applies to the other three LaunchDarkly assemblies that it depends on.
+
+### Changed:
+- Some support code has been moved into a separate assembly, [`LaunchDarkly.Cache`](https://github.com/launchdarkly/dotnet-cache).
+- The published assemblies are now built in Release configuration and no longer contain debug information.
+- If you are building a copy of the SDK yourself, the Debug configuration no longer does any signing, so does not require a key file.
+
 ## [5.5.0] - 2018-10-30
 ### Added:
 - It is now possible to inject feature flags into the client from local JSON or YAML files, replacing the normal LaunchDarkly connection. This would typically be for testing purposes. See `LaunchDarkly.Client.Files.FileComponents`.
