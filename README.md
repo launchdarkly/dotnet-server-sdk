@@ -40,12 +40,12 @@ Your first feature flag
 Database integrations
 ---------------------
 
-Separate packages allow feature flag data to be cached with [Redis](https://github.com/launchdarkly/dotnet-client-redis) or [DynamoDB](https://github.com/launchdarkly/dotnet-client-dynamodb) (see links for more information and source code). Other database integrations may be available in the future; see ["Using a persistent feature store"](https://docs.launchdarkly.com/v2.0/docs/using-a-persistent-feature-store).
+Separate packages allow feature flag data to be cached with [Redis](https://github.com/launchdarkly/dotnet-client-redis), [DynamoDB](https://github.com/launchdarkly/dotnet-client-dynamodb), or [Consul](https://github.com/launchdarkly/dotnet-client-consul). See ["Using a persistent feature store"](https://docs.launchdarkly.com/v2.0/docs/using-a-persistent-feature-store) for more information.
 
 Using flag data from a file
 ---------------------------
 
-For testing purposes, the SDK can be made to read feature flag state from a file or files instead of connecting to LaunchDarkly. See `LaunchDarkly.Client.Files.FileComponents` for more details.
+For testing purposes, the SDK can be made to read feature flag state from a file or files instead of connecting to LaunchDarkly. See `LaunchDarkly.Client.Files.FileComponents` and ["Reading flags from a file"](https://docs.launchdarkly.com/docs/reading-flags-from-a-file) for more details.
 
 DNS caching issues
 ------------------
@@ -72,7 +72,7 @@ See [Contributing](https://github.com/launchdarkly/dotnet-client/blob/master/CON
 Signing
 -------
 
-The published version of the `LaunchDarkly.Client` assembly is digitally signed by LaunchDarkly. It is also [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies); the public key file is in this repo at `LaunchDarkly.pk` as well as here:
+The published version of the `LaunchDarkly.Client` assembly is [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies); the public key file is in this repo at `LaunchDarkly.pk` as well as here:
 
 ```
 Public Key:
@@ -85,7 +85,7 @@ edc64131a9efeefd20978dc58c285aa6f548a4282fc6d871fbebeacc13160e88566f427497b625
 Public Key Token: f86add69004e6885
 ```
 
-Building the code locally in the default Debug configuration does not sign the assembly and does not require a key file.
+Building the code locally in the default Debug configuration does not use strong-naming and does not require a key file.
 
 Development notes
 -----------------
