@@ -106,7 +106,7 @@ namespace LaunchDarkly.Tests
             using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
             {
                 var initTask = ((IUpdateProcessor)pp).Start();
-                bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
+                bool completed = initTask.Wait(TimeSpan.FromMilliseconds(500));
                 Assert.True(completed);
                 Assert.False(((IUpdateProcessor)pp).Initialized());
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LaunchDarkly.Client;
 using LaunchDarkly.Common;
@@ -181,5 +182,94 @@ namespace LaunchDarkly.Tests
                 Assert.Equal(new JValue(1), result["key"]);
             }
         }
+
+        [Fact]
+        public void DataSetIsPassedToFeatureStoreInCorrectOrder()
+        {
+            var mockStore = new Mock<IFeatureStore>();
+            var store = mockStore.Object;
+            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> receivedData = null;
+
+            mockStore.Setup(s => s.Init(It.IsAny<IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>>()))
+                .Callback((IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data) => {
+                    receivedData = data;
+                });
+
+            mockUpdateProcessor.Setup(up => up.Start()).Returns(initTask);
+
+            var config = Configuration.Default("SDK_KEY")
+                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(store))
+                .WithUpdateProcessorFactory(TestUtils.UpdateProcessorWithData(DependencyOrderingTestData))
+                .WithEventProcessorFactory(Components.NullEventProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                Assert.NotNull(receivedData);
+                var entries = new List<KeyValuePair<IVersionedDataKind, IDictionary<string, IVersionedData>>>(
+                    receivedData);
+                Assert.Equal(DependencyOrderingTestData.Count, entries.Count);
+
+                // Segments should always come first
+                Assert.Equal(VersionedDataKind.Segments, entries[0].Key);
+                Assert.Equal(DependencyOrderingTestData[VersionedDataKind.Segments].Count,
+                    entries[0].Value.Count);
+
+                // Features should be ordered so that a flag always appears after its prerequisites, if any
+                Assert.Equal(VersionedDataKind.Features, entries[1].Key);
+                Assert.Equal(DependencyOrderingTestData[VersionedDataKind.Features].Count,
+                    entries[1].Value.Count);
+                var flagsMap = entries[1].Value;
+                var orderedItems = new List<IVersionedData>(flagsMap.Values);
+                for (var itemIndex = 0; itemIndex < orderedItems.Count; itemIndex++)
+                {
+                    var item = orderedItems[itemIndex] as FeatureFlag;
+                    foreach (var prereq in item.Prerequisites)
+                    {
+                        var depFlag = flagsMap[prereq.Key];
+                        var depIndex = orderedItems.IndexOf(depFlag);
+                        if (depIndex > itemIndex)
+                        {
+                            var allKeys = from i in orderedItems select i.Key;
+                            Assert.True(false, String.Format("{0} depends on {1}, but {0} was listed first; keys in order are [{2}]",
+                                item.Key, prereq.Key, String.Join(", ", allKeys)));
+                        }
+                    }
+                }
+            }
+        }
+
+        private static readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>
+            DependencyOrderingTestData = new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>()
+        {
+            {
+                VersionedDataKind.Features,
+                new Dictionary<string, IVersionedData>()
+                {
+                    { "a", new FeatureFlagBuilder("a")
+                        .Prerequisites(new List<Prerequisite>() {
+                            new Prerequisite("b", 0),
+                            new Prerequisite("c", 0),
+                            })
+                        .Build() },
+                    { "b", new FeatureFlagBuilder("b")
+                        .Prerequisites(new List<Prerequisite>() {
+                            new Prerequisite("c", 0),
+                            new Prerequisite("e", 0),
+                            })
+                        .Build() },
+                    { "c", new FeatureFlagBuilder("c").Build() },
+                    { "d", new FeatureFlagBuilder("d").Build() },
+                    { "e", new FeatureFlagBuilder("e").Build() },
+                    { "f", new FeatureFlagBuilder("f").Build() }
+                }
+            },
+            {
+                VersionedDataKind.Segments,
+                new Dictionary<string, IVersionedData>()
+                {
+                    { "o", new Segment("o", 1, null, null, null, null, false) }
+                }
+            }
+        };
     }
 }

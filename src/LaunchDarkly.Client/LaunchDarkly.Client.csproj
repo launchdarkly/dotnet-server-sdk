@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>5.5.0</Version>
+    <Version>5.6.0</Version>
     <TargetFrameworks>netstandard1.4;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/.net-client/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
@@ -14,9 +14,15 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <PackageReference Include="LaunchDarkly.Common.StrongName" Version="1.2.2" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="LaunchDarkly.Common" Version="1.2.2" />
+  </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.Common.StrongName" Version="1.2.0" />
     <PackageReference Include="Common.Logging" Version="3.4.1" />
+    <PackageReference Include="LaunchDarkly.Cache" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" Condition="'$(TargetFramework)' != 'net45'" />
     <PackageReference Include="Newtonsoft.Json" Version="6.0.1" Condition="'$(TargetFramework)' == 'net45'" />
   </ItemGroup>
@@ -26,10 +32,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <AssemblyOriginatorKeyFile>../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.4|AnyCPU'">
