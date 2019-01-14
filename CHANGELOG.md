@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.6.1] - 2019-01-14
+### Fixed:
+- The assemblies in this package now have Authenticode signatures.
+
 ## [5.6.0] - 2019-01-09
 ### Added:
 - There are now helper classes that make it much simpler to write a custom `IFeatureStore` implementation. See the `LaunchDarkly.Client.Utils` namespace.

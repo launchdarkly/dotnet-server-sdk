@@ -11,6 +11,8 @@ param(
 # See README.md for more details.
 #
 
+$ErrorActionPreference = "Stop"
+
 # This helper function comes from https://github.com/psake/psake - it allows us to terminate the
 # script if any executable returns an error code, which PowerShell won't otherwise do
 function Exec {
@@ -87,7 +89,7 @@ foreach ($project in $projects) {
 
     ProgressMessage "[$project]: creating package"
     del "src\$project\bin\Release\*.nupkg"
-    Exec { dotnet pack -c Release "src\$project" }
+    Exec { dotnet pack -c Release --no-build "src\$project" }
 }
 
 foreach ($project in $projects) {

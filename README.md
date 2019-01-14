@@ -72,7 +72,7 @@ See [Contributing](https://github.com/launchdarkly/dotnet-client/blob/master/CON
 Signing
 -------
 
-The published version of the `LaunchDarkly.Client` assembly is [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies); the public key file is in this repo at `LaunchDarkly.pk` as well as here:
+The published version of the `LaunchDarkly.Client` assembly is digitally signed with Authenticode, and also [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies). The public key file is in this repo at `LaunchDarkly.pk` as well as here:
 
 ```
 Public Key:
@@ -85,7 +85,7 @@ edc64131a9efeefd20978dc58c285aa6f548a4282fc6d871fbebeacc13160e88566f427497b625
 Public Key Token: f86add69004e6885
 ```
 
-Building the code locally in the default Debug configuration does not use strong-naming and does not require a key file.
+Building the code locally in the default Debug configuration does not sign the assembly and does not require a key file.
 
 Development notes
 -----------------
@@ -95,7 +95,7 @@ This project imports the `dotnet-base` repository as a subtree. See the `README.
 Releases are done using the release script in `dotnet-base`. Since the published package includes a .NET Framework 4.5 build, the release must be done from Windows.
 
 About LaunchDarkly
------------
+------------------
 
 * LaunchDarkly is a continuous delivery platform that provides feature flags as a service and allows developers to iterate quickly and safely. We allow you to easily flag your features and manage them from the LaunchDarkly dashboard.  With LaunchDarkly, you can:
     * Roll out a new feature to a subset of your users (like a group of users who opt-in to a beta tester group), gathering feedback and bug reports from real-world use cases.
