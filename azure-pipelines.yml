@@ -1,0 +1,41 @@
+jobs:
+  - job: netstandard2_0
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+      - task: PowerShell@2
+        displayName: 'Build'
+        inputs:
+          targetType: inline
+          workingDirectory: $(System.DefaultWorkingDirectory)
+          script: |
+            dotnet --version
+            dotnet restore
+            dotnet build src/LaunchDarkly.Client -f netstandard2.0
+      - task: PowerShell@2
+        displayName: 'Test'
+        inputs:
+          targetType: inline
+          workingDirectory: $(System.DefaultWorkingDirectory)
+          script: |
+            dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f netcoreapp2.0
+  - job: net45
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+      - task: PowerShell@2
+        displayName: 'Build'
+        inputs:
+          targetType: inline
+          workingDirectory: $(System.DefaultWorkingDirectory)
+          script: |
+            dotnet --version
+            dotnet restore
+            dotnet build src/LaunchDarkly.Client -f net45
+      - task: PowerShell@2
+        displayName: 'Test'
+        inputs:
+          targetType: inline
+          workingDirectory: $(System.DefaultWorkingDirectory)
+          script: |
+            dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f net46
