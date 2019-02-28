@@ -265,7 +265,7 @@ namespace LaunchDarkly.Tests
             var segment = new Segment("segment1", 1, new List<string> { user.Key }, null, "", null, false);
             featureStore.Upsert(VersionedDataKind.Segments, segment);
 
-            var clause = new Clause("", "segmentMatch", new List<JValue> { new JValue("segment1") }, false);
+            var clause = new ClauseBuilder().Op("segmentMatch").Values(new JValue("segment1")).Build();
             var feature = new FeatureFlagBuilder("feature").BooleanWithClauses(clause).Build();
             featureStore.Upsert(VersionedDataKind.Features, feature);
 
