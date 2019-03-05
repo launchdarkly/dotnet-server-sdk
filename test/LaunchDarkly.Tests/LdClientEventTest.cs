@@ -170,20 +170,111 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void EventTrackingAndReasonCanBeForcedForRule()
+        {
+            var clause = ClauseBuilder.ShouldMatchUser(user);
+            var rule = new RuleBuilder().Id("rule-id").Variation(1).Clauses(clause).TrackEvents(true).Build();
+            var flag = new FeatureFlagBuilder("flag")
+                .On(true)
+                .Rules(rule)
+                .OffVariation(0)
+                .Variations(new JValue("off"), new JValue("on"))
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+
+            client.StringVariation("flag", user, "default");
+
+            // Note, we did not call StringVariationDetail and the flag is not tracked, but we should still get
+            // tracking and a reason, because the rule-level trackEvents flag is on for the matched rule.
+
+            Assert.Equal(1, eventSink.Events.Count);
+            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            Assert.True(e.TrackEvents);
+            Assert.Equal(new EvaluationReason.RuleMatch(0, "rule-id"), e.Reason);
+        }
+
+        [Fact]
+        public void EventTrackingAndReasonAreNotForcedIfFlagIsNotSetForMatchingRule()
+        {
+            var clause0 = ClauseBuilder.ShouldNotMatchUser(user);
+            var clause1 = ClauseBuilder.ShouldMatchUser(user);
+            var rule0 = new RuleBuilder().Id("id0").Variation(1).Clauses(clause0).TrackEvents(true).Build();
+            var rule1 = new RuleBuilder().Id("id1").Variation(1).Clauses(clause1).TrackEvents(false).Build();
+            var flag = new FeatureFlagBuilder("flag")
+                .On(true)
+                .Rules(rule0, rule1)
+                .OffVariation(0)
+                .Variations(new JValue("off"), new JValue("on"))
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+
+            client.StringVariation("flag", user, "default");
+
+            // It matched rule1, which has trackEvents: false, so we don't get the override behavior
+
+            Assert.Equal(1, eventSink.Events.Count);
+            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            Assert.False(e.TrackEvents);
+            Assert.Null(e.Reason);
+        }
+
+        [Fact]
+        public void EventTrackingAndReasonCanBeForcedForFallthrough()
+        {
+            var flag = new FeatureFlagBuilder("flag")
+                .On(true)
+                .OffVariation(1)
+                .FallthroughVariation(0)
+                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .TrackEventsFallthrough(true)
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+
+            client.StringVariation("flag", user, "default");
+
+            // Note, we did not call stringVariationDetail and the flag is not tracked, but we should still get
+            // tracking and a reason, because trackEventsFallthrough is on and the evaluation fell through.
+
+            Assert.Equal(1, eventSink.Events.Count);
+            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            Assert.True(e.TrackEvents);
+            Assert.Equal(EvaluationReason.Fallthrough.Instance, e.Reason);
+        }
+
+        [Fact]
+        public void EventTrackingAndReasonAreNotForcedForFallthroughIfFlagIsNotSet()
+        {
+            var flag = new FeatureFlagBuilder("flag")
+                .On(true)
+                .OffVariation(1)
+                .FallthroughVariation(0)
+                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+
+            client.StringVariation("flag", user, "default");
+
+            Assert.Equal(1, eventSink.Events.Count);
+            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            Assert.False(e.TrackEvents);
+            Assert.Null(e.Reason);
+        }
+
+        [Fact]
         public void EventIsSentForExistingPrerequisiteFlag()
         {
             var f0 = new FeatureFlagBuilder("feature0")
                 .On(true)
-                .Prerequisites(new List<Prerequisite> { new Prerequisite("feature1", 1) })
+                .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))
                 .OffVariation(1)
-                .Variations(new List<JToken> { new JValue("fall"), new JValue("off"), new JValue("on") })
+                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Version(1)
                 .Build();
             var f1 = new FeatureFlagBuilder("feature1")
                 .On(true)
                 .Fallthrough(new VariationOrRollout(1, null))
-                .Variations(new List<JToken> { new JValue("nogo"), new JValue("go") })
+                .Variations(new JValue("nogo"), new JValue("go"))
                 .Version(2)
                 .Build();
             featureStore.Upsert(VersionedDataKind.Features, f0);
@@ -201,10 +292,10 @@ namespace LaunchDarkly.Tests
         {
             var f0 = new FeatureFlagBuilder("feature0")
                 .On(true)
-                .Prerequisites(new List<Prerequisite> { new Prerequisite("feature1", 1) })
+                .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))
                 .OffVariation(1)
-                .Variations(new List<JToken> { new JValue("fall"), new JValue("off"), new JValue("on") })
+                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Version(1)
                 .Build();
             featureStore.Upsert(VersionedDataKind.Features, f0);

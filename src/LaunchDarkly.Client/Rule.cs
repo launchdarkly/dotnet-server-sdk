@@ -11,11 +11,15 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "clauses")]
         internal List<Clause> Clauses { get; private set; }
 
+        [JsonProperty(PropertyName = "trackEvents")]
+        internal bool TrackEvents { get; private set; }
+
         [JsonConstructor]
-        internal Rule(string id, int? variation, Rollout rollout, List<Clause> clauses) : base(variation, rollout)
+        internal Rule(string id, int? variation, Rollout rollout, List<Clause> clauses, bool trackEvents) : base(variation, rollout)
         {
             Id = id;
             Clauses = clauses;
+            TrackEvents = trackEvents;
         }
 
         internal bool MatchesUser(User user, IFeatureStore store)
