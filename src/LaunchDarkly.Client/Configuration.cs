@@ -159,7 +159,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Default value for <see cref="EventQueueCapacity"/>.
         /// </summary>
-        private static readonly int DefaultEventQueueCapacity = 500;
+        private static readonly int DefaultEventQueueCapacity = 10000;
         /// <summary>
         /// Default value for <see cref="EventQueueFrequency"/>.
         /// </summary>
