@@ -65,11 +65,14 @@ namespace LaunchDarkly.Tests
         public async Task GetAllReturnsNullIfNotModified()
         {
             var etag = @"""abc123"""; // note that etag strings must be quoted
-            _server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
-                .RespondWith(Response.Create().WithStatusCode(304));
+
             _server.Given(Request.Create().UsingGet())
                 .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
             var result1 = await _requestor.GetAllDataAsync();
+
+            _server.Reset();
+            _server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
+                .RespondWith(Response.Create().WithStatusCode(304));
             var result2 = await _requestor.GetAllDataAsync();
 
             Assert.NotNull(result1);
