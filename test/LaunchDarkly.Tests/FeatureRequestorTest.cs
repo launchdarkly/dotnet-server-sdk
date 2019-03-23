@@ -72,8 +72,6 @@ namespace LaunchDarkly.Tests
             var result1 = await _requestor.GetAllDataAsync();
             var result2 = await _requestor.GetAllDataAsync();
 
-            var reqs = new List<LogEntry>(_server.LogEntries);
-
             Assert.NotNull(result1);
             Assert.Null(result2);
         }
