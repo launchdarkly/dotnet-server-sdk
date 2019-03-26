@@ -8,6 +8,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ### Fixed:
 - Under some circumstances, a `CancellationTokenSource` might not be disposed of after making an HTTP request, which could cause a timer object to be leaked. ([#100](https://github.com/launchdarkly/dotnet-client/issues/100))
+- In polling mode, if the client received an HTTP error it would retry the same request one second later. This was inconsistent with the other SDKs; the correct behavior is for it to wait until the next scheduled poll.
 - The `HttpClientTimeout` configuration property was being ignored when making HTTP requests to send analytics events.
 
 ## [5.6.1] - 2019-01-14
