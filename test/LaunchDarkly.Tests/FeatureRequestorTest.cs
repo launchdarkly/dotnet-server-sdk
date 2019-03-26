@@ -80,6 +80,24 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public async Task GetAllDoesNotRetryFailedRequest()
+        {
+            _server.Given(Request.Create().UsingGet())
+                .RespondWith(Response.Create().WithStatusCode(503));
+            try
+            {
+                await _requestor.GetAllDataAsync();
+            }
+            catch (UnsuccessfulResponseException e)
+            {
+                Assert.Equal(503, e.StatusCode);
+            }
+
+            var reqs = new List<LogEntry>(_server.LogEntries);
+            Assert.Equal(1, reqs.Count);
+        }
+
+        [Fact]
         public async Task GetFlagUsesCorrectUriAndParsesResponseAsync()
         {
             var json = @"{""key"":""flag1"",""version"":1}";
