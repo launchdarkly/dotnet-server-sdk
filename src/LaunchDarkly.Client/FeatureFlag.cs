@@ -77,7 +77,16 @@ namespace LaunchDarkly.Client
                 PrerequisiteEvents = events;
             }
         }
-        
+
+        int IFlagEventProperties.EventVersion => Version;
+
+        // This method is called by EventFactory to determine if extra tracking should be
+        // enabled for an event, based on the evaluation reason. It is not enabled yet.
+        bool IFlagEventProperties.IsExperiment(EvaluationReason reason)
+        {
+            return false;
+        }
+
         internal EvalResult Evaluate(User user, IFeatureStore featureStore, EventFactory eventFactory)
         {
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();

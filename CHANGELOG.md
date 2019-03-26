@@ -2,6 +2,15 @@
 
 All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.6.2] - 2019-03-26
+### Changed:
+- The default value for the configuration property `capacity` (maximum number of events that can be stored at once) is now 10000, consistent with the other SDKs, rather than 500.
+
+### Fixed:
+- Under some circumstances, a `CancellationTokenSource` might not be disposed of after making an HTTP request, which could cause a timer object to be leaked. ([#100](https://github.com/launchdarkly/dotnet-client/issues/100))
+- In polling mode, if the client received an HTTP error it would retry the same request one second later. This was inconsistent with the other SDKs; the correct behavior is for it to wait until the next scheduled poll.
+- The `HttpClientTimeout` configuration property was being ignored when making HTTP requests to send analytics events.
+
 ## [5.6.1] - 2019-01-14
 ### Fixed:
 - The assemblies in this package now have Authenticode signatures.
