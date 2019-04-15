@@ -401,9 +401,10 @@ namespace LaunchDarkly.Client
         /// <see cref="ILdClient.Track(string, JToken, User)"/>
         public void Track(string name, JToken data, User user)
         {
-            if (user == null || user.Key == null)
+            if (user == null || String.IsNullOrEmpty(user.Key))
             {
                 Log.Warn("Track called with null user or null user key");
+                return;
             }
             _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data));
         }
@@ -411,9 +412,10 @@ namespace LaunchDarkly.Client
         /// <see cref="ILdClient.Identify(User)"/>
         public void Identify(User user)
         {
-            if (user == null || user.Key == null)
+            if (user == null || String.IsNullOrEmpty(user.Key))
             {
                 Log.Warn("Identify called with null user or null user key");
+                return;
             }
             _eventProcessor.SendEvent(EventFactory.Default.NewIdentifyEvent(user));
         }
