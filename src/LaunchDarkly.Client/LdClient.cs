@@ -408,6 +408,16 @@ namespace LaunchDarkly.Client
             _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data));
         }
 
+        /// <see cref="ILdClient.Track(string, JToken, User, double)"/>
+        public void Track(string name, JToken data, User user, double metricValue)
+        {
+            if (user == null || user.Key == null)
+            {
+                Log.Warn("Track called with null user or null user key");
+            }
+            _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data, metricValue));
+        }
+
         /// <see cref="ILdClient.Identify(User)"/>
         public void Identify(User user)
         {

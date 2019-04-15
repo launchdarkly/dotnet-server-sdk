@@ -153,6 +153,15 @@ namespace LaunchDarkly.Client
         // passing null for data will not be an ambiguous method call.
 
         /// <summary>
+        /// Tracks that a user performed an event.
+        /// </summary>
+        /// <param name="name">the name of the event</param>
+        /// <param name="data">a JSON element containing additional data associated with the event, or null</param>
+        /// <param name="user">the user that performed the event</param>
+        /// <param name="metricValue">An optional numeric value that can be used in analytics.</param>
+        void Track(string name, JToken data, User user, double metricValue);
+
+        /// <summary>
         /// Returns a map from feature flag keys to <see cref="JToken"/> feature flag values for a given user.
         /// If the result of a flag's evaluation would have returned the default variation, it will have a
         /// null entry in the map. If the client is offline, has not been initialized, or a null user or user
