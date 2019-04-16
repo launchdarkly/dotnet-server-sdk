@@ -32,6 +32,30 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void IdentifyWithNoUserSendsNoEvent()
+        {
+            client.Identify(null);
+
+            Assert.Equal(0, eventSink.Events.Count);
+        }
+
+        [Fact]
+        public void IdentifyWithNoUserKeySendsNoEvent()
+        {
+            client.Identify(User.WithKey(null));
+
+            Assert.Equal(0, eventSink.Events.Count);
+        }
+
+        [Fact]
+        public void IdentifyWithEmptyUserKeySendsNoEvent()
+        {
+            client.Identify(User.WithKey(""));
+
+            Assert.Equal(0, eventSink.Events.Count);
+        }
+
+        [Fact]
         public void TrackSendsEventWithoutData()
         {
             client.Track("eventkey", user);
@@ -85,6 +109,30 @@ namespace LaunchDarkly.Tests
             Assert.Equal("eventkey", ce.Key);
             Assert.Equal(data, ce.JsonData);
             Assert.Equal(1.5, ce.MetricValue);
+        }
+
+        [Fact]
+        public void TrackWithNoUserSendsNoEvent()
+        {
+            client.Track("eventkey", null);
+
+            Assert.Equal(0, eventSink.Events.Count);
+        }
+
+        [Fact]
+        public void TrackWithNullUserKeySendsNoEvent()
+        {
+            client.Track("eventkey", User.WithKey(null));
+
+            Assert.Equal(0, eventSink.Events.Count);
+        }
+
+        [Fact]
+        public void TrackWithEmptyUserKeySendsNoEvent()
+        {
+            client.Track("eventkey", User.WithKey(""));
+
+            Assert.Equal(0, eventSink.Events.Count);
         }
 
         [Fact]
