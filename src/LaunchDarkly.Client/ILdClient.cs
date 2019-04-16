@@ -153,12 +153,13 @@ namespace LaunchDarkly.Client
         // passing null for data will not be an ambiguous method call.
 
         /// <summary>
-        /// Tracks that a user performed an event.
+        /// Tracks that a user performed an event, and provides an additional numeric value for custom metrics.
         /// </summary>
         /// <param name="name">the name of the event</param>
         /// <param name="data">a JSON element containing additional data associated with the event, or null</param>
         /// <param name="user">the user that performed the event</param>
-        /// <param name="metricValue">An optional numeric value that can be used in analytics.</param>
+        /// <param name="metricValue">A numeric value used by the LaunchDarkly experimentation feature in numeric custom
+        /// metrics. This field will also be returned as part of the custom event for Data Export.</param>
         void Track(string name, JToken data, User user, double metricValue);
 
         /// <summary>
