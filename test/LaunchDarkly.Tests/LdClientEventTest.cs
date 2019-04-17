@@ -65,6 +65,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.Key);
             Assert.Null(ce.JsonData);
+            Assert.Null(ce.MetricValue);
         }
 
         [Fact]
@@ -79,6 +80,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.Key);
             Assert.Equal(data, ce.JsonData);
+            Assert.Null(ce.MetricValue);
         }
 
         [Fact]
@@ -91,6 +93,22 @@ namespace LaunchDarkly.Tests
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.Key);
             Assert.Equal(new JValue("thing"), ce.JsonData);
+            Assert.Null(ce.MetricValue);
+        }
+
+        [Fact]
+        public void TrackSendsEventWithWithMetricValue()
+        {
+            var data = new JObject();
+            data.Add("thing", new JValue("stuff"));
+            client.Track("eventkey", data, user, 1.5);
+
+            Assert.Equal(1, eventSink.Events.Count);
+            var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
+            Assert.Equal(user.Key, ce.User.Key);
+            Assert.Equal("eventkey", ce.Key);
+            Assert.Equal(data, ce.JsonData);
+            Assert.Equal(1.5, ce.MetricValue);
         }
 
         [Fact]
