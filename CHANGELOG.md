@@ -7,7 +7,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 - The default value for the configuration property `capacity` (maximum number of events that can be stored at once) is now 10000, consistent with the other SDKs, rather than 500.
 
 ### Fixed:
-- Under some circumstances, a `CancellationTokenSource` might not be disposed of after making an HTTP request, which could cause a timer object to be leaked. ([#100](https://github.com/launchdarkly/dotnet-client/issues/100))
+- Under some circumstances, a `CancellationTokenSource` might not be disposed of after making an HTTP request, which could cause a timer object to be leaked. ([#100](https://github.com/launchdarkly/dotnet-server-sdk/issues/100))
 - In polling mode, if the client received an HTTP error it would retry the same request one second later. This was inconsistent with the other SDKs; the correct behavior is for it to wait until the next scheduled poll.
 - The `HttpClientTimeout` configuration property was being ignored when making HTTP requests to send analytics events.
 
@@ -41,7 +41,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 - Fixed a `NullReferenceException` that could sometimes appear in the log if a stream connection failed.
 
-- Fixed the documentation for `Configuration.StartWaitTime` to indicate that the default is 10 seconds, not 5 seconds. (Thanks, [KimboTodd](https://github.com/launchdarkly/dotnet-client/pull/95)!)
+- Fixed the documentation for `Configuration.StartWaitTime` to indicate that the default is 10 seconds, not 5 seconds. (Thanks, [KimboTodd](https://github.com/launchdarkly/dotnet-server-sdk/pull/95)!)
 
 - JSON data from `AllFlagsState` is now slightly smaller even if you do not use the new option described above, because it completely omits the flag property for event tracking unless that property is true.
 
@@ -54,7 +54,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ## [5.3.1] - 2018-08-30
 ### Fixed:
-- Fixed a bug in streaming mode that prevented the client from reconnecting to the stream if it received an HTTP error status from the server (as opposed to simply losing the connection). ([#88](https://github.com/launchdarkly/dotnet-client/issues/88))
+- Fixed a bug in streaming mode that prevented the client from reconnecting to the stream if it received an HTTP error status from the server (as opposed to simply losing the connection). ([#88](https://github.com/launchdarkly/dotnet-server-sdk/issues/88))
 - Numeric flag values can now be queried with either `IntVariation` or `FloatVariation` and the result will be coerced to the requested type, as long as it is numeric. Previously, if the type of value that came from LaunchDarkly in JSON (or, more specifically, the type that Newtonsoft.Json decided to decode the value as) was different, it was considered an error and the default value would be returned. This change makes the .NET SDK consistent with the Go and Java SDKs.
 
 ## [5.3.0] - 2018-08-27
@@ -83,7 +83,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 - The `LaunchDarkly.Common` package, which is used by `LaunchDarkly.Client`, has been renamed to `LaunchDarkly.Common.StrongName`. Note that you should not have to explicitly install this package; it will be imported automatically.
 
 ### Fixed:
-- The SDK was referencing several system assemblies via `<PackageReference>`, which could cause dependency conflicts. These have been changed to framework `<Reference>`s. A redundant reference to `System.Runtime` was removed. ([#83](https://github.com/launchdarkly/dotnet-client/issues/83))
+- The SDK was referencing several system assemblies via `<PackageReference>`, which could cause dependency conflicts. These have been changed to framework `<Reference>`s. A redundant reference to `System.Runtime` was removed. ([#83](https://github.com/launchdarkly/dotnet-server-sdk/issues/83))
 - The client was logging (at debug level) a lengthy exception stacktrace whenever a string comparison operator was applied to a user property that was null. It no longer does this.
 
 ## [5.1.1] - 2018-07-02
@@ -97,7 +97,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 - The `User` class now implements `Equals` and `GetHashCode`, and has a copy constructor.
 
 ### Changed:
-- Some classes and interfaces have been moved into a separate assembly, `LaunchDarkly.Common` (source code [here](https://github.com/launchdarkly/dotnet-client-common/)), because they will also be used by the LaunchDarkly Xamarin SDK. The names and namespaces have not changed, so you do not need to make any code changes. `LaunchDarkly.Common` will be installed automatically when you upgrade `LaunchDarkly.Client`; all other dependencies are unchanged.
+- Some classes and interfaces have been moved into a separate assembly, `LaunchDarkly.Common` (source code [here](https://github.com/launchdarkly/dotnet-sdk-common/)), because they will also be used by the LaunchDarkly Xamarin SDK. The names and namespaces have not changed, so you do not need to make any code changes. `LaunchDarkly.Common` will be installed automatically when you upgrade `LaunchDarkly.Client`; all other dependencies are unchanged.
 - The client now treats most HTTP 4xx errors as unrecoverable: that is, after receiving such an error, it will not make any more HTTP requests for the lifetime of the client instance, in effect taking the client offline. This is because such errors indicate either a configuration problem (invalid SDK key) or a bug, which is not likely to resolve without a restart or an upgrade. This does not apply if the error is 400, 408, 429, or any 5xx error.
 - During initialization, if the client receives any of the unrecoverable errors described above, the client constructor will return immediately; previously it would continue waiting until a timeout. The `Initialized()` method will return false in this case.
 

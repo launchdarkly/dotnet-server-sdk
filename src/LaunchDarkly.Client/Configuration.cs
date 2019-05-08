@@ -449,7 +449,7 @@ namespace LaunchDarkly.Client
         /// Sets whether this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
         /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
         /// For this to work, you should also be using the
-        /// <a href="https://github.com/launchdarkly/dotnet-client-redis">LaunchDarkly Redis integration</a>.
+        /// <a href="https://github.com/launchdarkly/dotnet-server-sdk-redis">LaunchDarkly Redis integration</a>.
         /// </summary>
         /// <param name="configuration">the configuration</param>
         /// <param name="useLdd">true to use the relay in daemon mode; false to use streaming or polling</param>

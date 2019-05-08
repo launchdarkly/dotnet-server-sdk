@@ -1,78 +1,23 @@
-LaunchDarkly SDK for .NET
-===========================
-[![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-client/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/dotnet-client/tree/master)
+# LaunchDarkly Server-side SDK for .NET
 
-.NET platform compatibility
----------------------------
+[![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-server-sdk/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/dotnet-server-sdk/tree/master)
+
+## LaunchDarkly overview
+[LaunchDarkly](https://www.launchdarkly.com) is a feature management platform that serves over 100 billion feature flags daily to help teams build better software, faster. [Get started](https://docs.launchdarkly.com/docs/getting-started) using LaunchDarkly today!
+ 
+[![Twitter Follow](https://img.shields.io/twitter/follow/launchdarkly.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/intent/follow?screen_name=launchdarkly)
+
+## Supported .NET versions
 
 This version of the LaunchDarkly SDK is compatible with .NET Framework version 4.5 and above, or .NET Standard 1.4-2.0.
 
-Quick setup
------------
+## Getting started
 
-1. Use [NuGet](http://docs.nuget.org/docs/start-here/using-the-package-manager-console) to add the .NET SDK to your project:
+Refer to the [SDK documentation](https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-getting-started) for instructions on getting started with using the SDK.
 
-        Install-Package LaunchDarkly.Client
+## Signing
 
-2. Import the LaunchDarkly package:
-
-        using LaunchDarkly.Client;
-
-3. Create a new LDClient with your SDK key:
-
-        LdClient ldClient = new LdClient("YOUR_SDK_KEY");
-
-Your first feature flag
------------------------
-
-1. Create a new feature flag on your [dashboard](https://app.launchdarkly.com).
-2. In your application code, use the feature's key to check whether the flag is on for each user:
-
-        User user = User.WithKey(username);
-        bool showFeature = ldClient.BoolVariation("your.feature.key", user, false);
-        if (showFeature) {
-          // application code to show the feature 
-        }
-        else {
-          // the code to run if the feature is off
-        }
-
-Database integrations
----------------------
-
-Separate packages allow feature flag data to be cached with [Redis](https://github.com/launchdarkly/dotnet-client-redis), [DynamoDB](https://github.com/launchdarkly/dotnet-client-dynamodb), or [Consul](https://github.com/launchdarkly/dotnet-client-consul). See ["Using a persistent feature store"](https://docs.launchdarkly.com/v2.0/docs/using-a-persistent-feature-store) for more information.
-
-Using flag data from a file
----------------------------
-
-For testing purposes, the SDK can be made to read feature flag state from a file or files instead of connecting to LaunchDarkly. See `LaunchDarkly.Client.Files.FileComponents` and ["Reading flags from a file"](https://docs.launchdarkly.com/docs/reading-flags-from-a-file) for more details.
-
-DNS caching issues
-------------------
-
-LaunchDarkly servers operate in a load-balancing framework which may cause their IP addresses to change. This could result in the SDK failing to connect to LaunchDarkly if an old IP address is still in your system's DNS cache.
-
-In .NET, the DNS cache retains IP addresses for two minutes by default. If you are noticing intermittent connection failures that always resolve in two minutes, you may wish to change this setting to a lower value as described [here](https://docs.microsoft.com/en-us/dotnet/api/system.net.servicepointmanager.dnsrefreshtimeout?view=netframework-4.7.2).
-
-Learn more
------------
-
-Check out our [documentation](http://docs.launchdarkly.com) for in-depth instructions on configuring and using LaunchDarkly. You can also head straight to the [complete reference guide for this SDK](http://docs.launchdarkly.com/docs/dotnet-sdk-reference).
-
-Testing
--------
-
-We run integration tests for all our SDKs using a centralized test harness. This approach gives us the ability to test for consistency across SDKs, as well as test networking behavior in a long-running application. These tests cover each method in the SDK, and verify that event sending, flag evaluation, stream reconnection, and other aspects of the SDK all behave correctly.
-
-Contributing
-------------
-
-See [Contributing](https://github.com/launchdarkly/dotnet-client/blob/master/CONTRIBUTING.md).
-
-Signing
--------
-
-The published version of the `LaunchDarkly.Client` assembly is digitally signed with Authenticode, and also [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies). The public key file is in this repo at `LaunchDarkly.pk` as well as here:
+The published version of the `LaunchDarkly.Client` assembly is digitally signed with Authenticode and [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies). The public key file is in this repository at `LaunchDarkly.pk` as well as here:
 
 ```
 Public Key:
@@ -87,36 +32,29 @@ Public Key Token: f86add69004e6885
 
 Building the code locally in the default Debug configuration does not sign the assembly and does not require a key file.
 
-Development notes
------------------
+## Learn more
 
-This project imports the `dotnet-base` repository as a subtree. See the `README.md` file in that directory for more information.
+Check out our [documentation](https://docs.launchdarkly.com) for in-depth instructions on configuring and using LaunchDarkly. You can also head straight to the [complete reference guide for this SDK](https://docs.launchdarkly.com/docs/dotnet-sdk-reference).
 
-Releases are done using the release script in `dotnet-base`. Since the published package includes a .NET Framework 4.5 build, the release must be done from Windows.
+## Testing
+ 
+We run integration tests for all our SDKs using a centralized test harness. This approach gives us the ability to test for consistency across SDKs, as well as test networking behavior in a long-running application. These tests cover each method in the SDK, and verify that event sending, flag evaluation, stream reconnection, and other aspects of the SDK all behave correctly.
+ 
+## Contributing
+ 
+We encourage pull requests and other contributions from the community. Check out our [contributing guidelines](CONTRIBUTING.md) for instructions on how to contribute to this SDK.
 
-About LaunchDarkly
-------------------
-
+## About LaunchDarkly
+ 
 * LaunchDarkly is a continuous delivery platform that provides feature flags as a service and allows developers to iterate quickly and safely. We allow you to easily flag your features and manage them from the LaunchDarkly dashboard.  With LaunchDarkly, you can:
     * Roll out a new feature to a subset of your users (like a group of users who opt-in to a beta tester group), gathering feedback and bug reports from real-world use cases.
     * Gradually roll out a feature to an increasing percentage of users, and track the effect that the feature has on key metrics (for instance, how likely is a user to complete a purchase if they have feature A versus feature B?).
     * Turn off a feature that you realize is causing performance problems in production, without needing to re-deploy, or even restart the application with a changed configuration file.
     * Grant access to certain features based on user attributes, like payment plan (eg: users on the ‘gold’ plan get access to more features than users in the ‘silver’ plan). Disable parts of your application to facilitate maintenance, without taking everything offline.
-* LaunchDarkly provides feature flag SDKs for
-    * [Java](http://docs.launchdarkly.com/docs/java-sdk-reference "Java SDK")
-    * [JavaScript](http://docs.launchdarkly.com/docs/js-sdk-reference "LaunchDarkly JavaScript SDK")
-    * [PHP](http://docs.launchdarkly.com/docs/php-sdk-reference "LaunchDarkly PHP SDK")
-    * [Python](http://docs.launchdarkly.com/docs/python-sdk-reference "LaunchDarkly Python SDK")
-    * [Go](http://docs.launchdarkly.com/docs/go-sdk-reference "LaunchDarkly Go SDK")
-    * [Node.JS](http://docs.launchdarkly.com/docs/node-sdk-reference "LaunchDarkly Node SDK")
-    * [Electron](http://docs.launchdarkly.com/docs/electron-sdk-reference "LaunchDarkly Electron SDK")
-    * [.NET](http://docs.launchdarkly.com/docs/dotnet-sdk-reference "LaunchDarkly .Net SDK")
-    * [Ruby](http://docs.launchdarkly.com/docs/ruby-sdk-reference "LaunchDarkly Ruby SDK")
-    * [iOS](http://docs.launchdarkly.com/docs/ios-sdk-reference "LaunchDarkly iOS SDK")
-    * [Android](http://docs.launchdarkly.com/docs/android-sdk-reference "LaunchDarkly Android SDK")
+* LaunchDarkly provides feature flag SDKs for a wide variety of languages and technologies. Check out [our documentation](https://docs.launchdarkly.com/docs) for a complete list.
 * Explore LaunchDarkly
-    * [launchdarkly.com](http://www.launchdarkly.com/ "LaunchDarkly Main Website") for more information
-    * [docs.launchdarkly.com](http://docs.launchdarkly.com/  "LaunchDarkly Documentation") for our documentation and SDKs
-    * [apidocs.launchdarkly.com](http://apidocs.launchdarkly.com/  "LaunchDarkly API Documentation") for our API documentation
-    * [blog.launchdarkly.com](http://blog.launchdarkly.com/  "LaunchDarkly Blog Documentation") for the latest product updates
+    * [launchdarkly.com](https://www.launchdarkly.com/ "LaunchDarkly Main Website") for more information
+    * [docs.launchdarkly.com](https://docs.launchdarkly.com/  "LaunchDarkly Documentation") for our documentation and SDK reference guides
+    * [apidocs.launchdarkly.com](https://apidocs.launchdarkly.com/  "LaunchDarkly API Documentation") for our API documentation
+    * [blog.launchdarkly.com](https://blog.launchdarkly.com/  "LaunchDarkly Blog Documentation") for the latest product updates
     * [Feature Flagging Guide](https://github.com/launchdarkly/featureflags/  "Feature Flagging Guide") for best practices and strategies
