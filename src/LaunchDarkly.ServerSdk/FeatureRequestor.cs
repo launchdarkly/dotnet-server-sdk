@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
+using System.Collections.Generic;
 using Common.Logging;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace LaunchDarkly.Client
         private readonly Uri _segmentsUri;
         private readonly HttpClient _httpClient;
         private readonly Configuration _config;
-        private volatile EntityTagHeaderValue _etag;
+        private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
 
         internal FeatureRequestor(Configuration config)
         {
@@ -69,14 +70,17 @@ namespace LaunchDarkly.Client
         {
             return await GetAsync<Segment>(new Uri(_segmentsUri, segmentKey));
         }
-        
+
         private async Task<T> GetAsync<T>(Uri path) where T : class
         {
             Log.DebugFormat("Getting flags with uri: {0}", path.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, path);
-            if (_etag != null)
+            lock (_etags)
             {
-                request.Headers.IfNoneMatch.Add(_etag);
+                if (_etags.TryGetValue(path, out var etag))
+                {
+                    request.Headers.IfNoneMatch.Add(etag);
+                }
             }
 
             using (var cts = new CancellationTokenSource(_config.HttpClientTimeout))
@@ -90,7 +94,10 @@ namespace LaunchDarkly.Client
                             Log.Debug("Get all flags returned 304: not modified");
                             return null;
                         }
-                        _etag = response.Headers.ETag;
+                        lock (_etags)
+                        {
+                            _etags[path] = response.Headers.ETag;
+                        }
                         //We ensure the status code after checking for 304, because 304 isn't considered success
                         if (!response.IsSuccessStatusCode)
                         {

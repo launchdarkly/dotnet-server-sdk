@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LaunchDarkly.Client")]
-[assembly: AssemblyDescription("LaunchDarkly .Net Client")]
+[assembly: AssemblyTitle("LaunchDarkly.ServerSdk")]
+[assembly: AssemblyDescription("LaunchDarkly Server-Side .NET Client")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("LaunchDarkly")]
-[assembly: AssemblyProduct("LaunchDarkly.Client")]
+[assembly: AssemblyProduct("LaunchDarkly.ServerSdk")]
 [assembly: AssemblyCopyright("Copyright 2017 LaunchDarkly")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 #if DEBUG
 // Allow unit tests to see internal classes (note, the test assembly is not signed;
 // tests must be run against the Debug configuration of this assembly)
-[assembly: InternalsVisibleTo("LaunchDarkly.Tests")]
+[assembly: InternalsVisibleTo("LaunchDarkly.ServerSdk.Tests")]
 
 // Allow mock/proxy objects in unit tests to access internal classes
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

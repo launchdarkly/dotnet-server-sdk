@@ -12,14 +12,14 @@ jobs:
     steps:
       - checkout
       - run: dotnet restore
-      - run: dotnet build src/LaunchDarkly.Client -f netstandard1.4
-      - run: dotnet build src/LaunchDarkly.Client -f netstandard1.6
-      - run: dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f netcoreapp1.1
+      - run: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.4
+      - run: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.6
+      - run: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp1.1
   test-2.0:
     docker:
       - image: microsoft/dotnet:2.0-sdk-jessie
     steps:
       - checkout
       - run: dotnet restore
-      - run: dotnet build src/LaunchDarkly.Client -f netstandard2.0
-      - run: dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f netcoreapp2.0
+      - run: dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
+      - run: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp2.0

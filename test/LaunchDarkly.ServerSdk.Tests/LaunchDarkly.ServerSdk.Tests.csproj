@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp1.1;netcoreapp2.0;net46</TargetFrameworks>
-    <AssemblyName>LaunchDarkly.Tests</AssemblyName>
-    <PackageId>LaunchDarkly.Tests</PackageId>
+    <AssemblyName>LaunchDarkly.ServerSdk.Tests</AssemblyName>
+    <PackageId>LaunchDarkly.ServerSdk.Tests</PackageId>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\LaunchDarkly.Client\LaunchDarkly.Client.csproj" />
+    <ProjectReference Include="..\..\src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.Common" Version="2.1.0" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="Moq" Version="4.8.1" />
     <PackageReference Include="WireMock.Net" Version="1.0.3.8" />
