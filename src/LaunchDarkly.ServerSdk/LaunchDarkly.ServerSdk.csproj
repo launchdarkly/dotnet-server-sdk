@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>5.6.3</Version>
+    <Version>5.6.4</Version>
     <TargetFrameworks>netstandard1.4;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/dotnet-server-sdk/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
-    <AssemblyName>LaunchDarkly.Client</AssemblyName>
+    <AssemblyName>LaunchDarkly.ServerSdk</AssemblyName>
     <OutputType>Library</OutputType>
-    <PackageId>LaunchDarkly.Client</PackageId>
+    <PackageId>LaunchDarkly.ServerSdk</PackageId>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -15,10 +15,10 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Release'">
-    <PackageReference Include="LaunchDarkly.Common.StrongName" Version="2.0.0" />
+    <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
-    <PackageReference Include="LaunchDarkly.Common" Version="2.0.0" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
@@ -38,6 +38,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.4|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard1.4\LaunchDarkly.Client.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard1.4\LaunchDarkly.ServerSdk.xml</DocumentationFile>
   </PropertyGroup>
 </Project>
