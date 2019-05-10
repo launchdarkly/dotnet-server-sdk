@@ -1,29 +1,45 @@
-Contributing
-------------
+# Contributing to the LaunchDarkly Server-side SDK for .NET
 
-We encourage pull-requests and other contributions from the community. We've also published an [SDK contributor's guide](http://docs.launchdarkly.com/docs/sdk-contributors-guide) that provides a detailed explanation of how our SDKs work.
+LaunchDarkly has published an [SDK contributor's guide](https://docs.launchdarkly.com/docs/sdk-contributors-guide) that provides a detailed explanation of how our SDKs work. See below for additional information on how to contribute to this SDK.
 
+## Submitting bug reports and feature requests
 
-Getting Started
------------------
+The LaunchDarkly SDK team monitors the [issue tracker](https://github.com/launchdarkly/dotnet-server-sdk/issues) in the SDK repository. Bug reports and feature requests specific to this SDK should be filed in this issue tracker. The SDK team will respond to all newly filed issues within two business days.
+ 
+## Submitting pull requests
+ 
+We encourage pull requests and other contributions from the community. Before submitting pull requests, ensure that all temporary or unintended code is removed. Don't worry about adding reviewers to the pull request; the LaunchDarkly SDK team will add themselves. The SDK team will acknowledge all pull requests within two business days.
+ 
+## Build instructions
+ 
+### Prerequisites
 
-Mac OS:
+To set up your SDK build time environment, you must [download .NET Core and follow the instructions](https://dotnet.microsoft.com/download) (make sure you have 1.0.4 or higher).
+ 
+### Building
+ 
+To install all required packages:
 
-1. [Download .net core and follow instructions](https://www.microsoft.com/net/core#macos) (make sure you have 1.0.4 or higher)
-1. Building for the net45 target doesn't currently work with the current set of tooling... you'll have to build the nuget artifact in windows. ~~Install Mono 5.0 from [here](http://www.mono-project.com/download/)~~
-1. ~~Add `export FrameworkPathOverride=/Library/Frameworks/Mono.framework/Versions/5.0.0/lib/mono/4.5`(or similar depending on the mono version that was installed) to your profile so that `dotnet` can find the .NET Framework 4.5 assemblies. [Source](https://github.com/dotnet/netcorecli-fsc/wiki/.NET-Core-SDK-rc4#using-net-framework-as-targets-framework-the-osxunix-build-fails)~~
-1. Run ```dotnet restore``` to pull in required packages
-1. Make sure you can build and run tests from command line:
+```
+dotnet restore
+```
+
+Then, to build the SDK without running any tests:
 
 ```
 dotnet build src/LaunchDarkly.Client -f netstandard1.4
+```
+ 
+### Testing
+ 
+To run all unit tests:
+
+```
 dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
 ```
 
-To package for local use:
-1. Adjust Version in `/src/LaunchDarkly.Client/LaunchDarkly.Client.csproj` and in dependency declaration in your local app
-1. `dotnet pack src/LaunchDarkly.Client`
-1. Restore your app using the output directory of the previous command:
-```
-dotnet restore -s [.net-client repo root]/src/LaunchDarkly.Client/bin/Debug/
-```
+## Miscellaneous
+
+This project imports the `dotnet-base` repository as a subtree. See the `README.md` file in that directory for more information.
+
+Releases are done using the release script in `dotnet-base`. Since the published package includes a .NET Framework 4.5 build, the release must be done from Windows.

@@ -45,7 +45,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(1, result.Segments.Count);
             Assert.Equal(2, result.Segments["seg1"].Version);
         }
-        
+
         [Fact]
         public async Task GetAllStoresAndSendsEtag()
         {
@@ -60,7 +60,7 @@ namespace LaunchDarkly.Tests
             Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
             Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
         }
-        
+
         [Fact]
         public async Task GetAllReturnsNullIfNotModified()
         {
@@ -107,7 +107,7 @@ namespace LaunchDarkly.Tests
 
             var req = GetLastRequest();
             Assert.Equal("/sdk/latest-flags/flag1", req.Path);
-            
+
             Assert.NotNull(flag);
             Assert.Equal("flag1", flag.Key);
             Assert.Equal(1, flag.Version);
@@ -127,6 +127,50 @@ namespace LaunchDarkly.Tests
             Assert.NotNull(segment);
             Assert.Equal("seg1", segment.Key);
             Assert.Equal(2, segment.Version);
+        }
+
+        [Fact]
+        public async Task ETagsDoNotConflict()
+        {
+            var etag1 = @"""abc123""";
+            var etag2 = @"""def456""";
+            var json1 = @"{""key"":""flag1"",""version"":1}";
+            var json2 = @"{""key"":""flag2"",""version"":5}";
+
+            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag1").UsingGet().WithHeader("If-None-Match", etag1))
+                .AtPriority(1)
+                .RespondWith(Response.Create().WithStatusCode(304));
+            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag2").UsingGet().WithHeader("If-None-Match", etag2))
+                .AtPriority(1)
+                .RespondWith(Response.Create().WithStatusCode(304));
+            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag1").UsingGet())
+                .AtPriority(2)
+                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag1).WithBody(json1));
+            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag2").UsingGet())
+                .AtPriority(2)
+                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag2).WithBody(json2));
+
+            var fetch1 = await _requestor.GetFlagAsync("flag1");
+            var fetch2 = await _requestor.GetFlagAsync("flag1");
+            var fetch3 = await _requestor.GetFlagAsync("flag2");
+            var fetch4 = await _requestor.GetFlagAsync("flag2");
+            var fetch5 = await _requestor.GetFlagAsync("flag1");
+
+            Assert.NotNull(fetch1);
+            Assert.Equal("flag1", fetch1.Key);
+            Assert.Null(fetch2);
+            Assert.NotNull(fetch3);
+            Assert.Equal("flag2", fetch3.Key);
+            Assert.Null(fetch4);
+            Assert.Null(fetch5);
+
+            var reqs = new List<LogEntry>(_server.LogEntries);
+            Assert.Equal(5, reqs.Count);
+            Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
+            Assert.Equal(new List<string> { etag1 }, reqs[1].RequestMessage.Headers["If-None-Match"]);
+            Assert.False(reqs[2].RequestMessage.Headers.ContainsKey("If-None-Match"));
+            Assert.Equal(new List<string> { etag2 }, reqs[3].RequestMessage.Headers["If-None-Match"]);
+            Assert.Equal(new List<string> { etag1 }, reqs[4].RequestMessage.Headers["If-None-Match"]);
         }
 
         private RequestMessage GetLastRequest()
