@@ -1,4 +1,4 @@
-# LaunchDarkly Server-side SDK for .NET
+# LaunchDarkly Server-Side SDK for .NET
 
 [![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-server-sdk/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/dotnet-server-sdk/tree/master)
 
