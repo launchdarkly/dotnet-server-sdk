@@ -4,7 +4,7 @@ All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented 
 
 ## [5.6.4] - 2019-05-10
 ### Changed:
-- The NuGet package name and assembly name have changed: they are now `LaunchDarkly.ServerSdk` instead of `LaunchDarkly.Client`. There are no other changes in this release. Note that the namespace used in .NET code is still `LaunchDarkly.Client`.
+- The NuGet package name and assembly name have changed: they are now `LaunchDarkly.ServerSdk` instead of `LaunchDarkly.Client`. There are no other changes in this release; the namespace used in .NET code is still `LaunchDarkly.Client`. Substituting `LaunchDarkly.Client` version 5.6.3 with `LaunchDarkly.ServerSdk` version 5.6.4 will not affect functionality.
 
 ## [5.6.3] - 2019-05-10
 ### Fixed:
