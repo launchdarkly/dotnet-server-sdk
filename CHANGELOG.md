@@ -1,6 +1,16 @@
 # Change log
 
-All notable changes to the LaunchDarkly .NET SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
+All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
+
+## [5.6.3] - 2019-05-10
+### Fixed:
+- If `Track` or `Identify` is called without a user, the SDK now will not send an analytics event to LaunchDarkly (since it would not be processed without a user).
+
+# Note on future releases
+
+The LaunchDarkly SDK repositories are being renamed for consistency. This repository is now `dotnet-server-sdk` rather than `dotnet-client`.
+
+The NuGet package name and assembly name will also change. In the 5.6.3 release, it is still `LaunchDarkly.Client`; in all releases after 5.6.3, it will be `LaunchDarkly.ServerSdk`. No further updates to the `LaunchDarkly.Client` package will be published after this release.
 
 ## [5.6.2] - 2019-03-26
 ### Changed:
@@ -120,7 +130,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ## [4.1.1] - 2018-03-23
 ### Fixed
-- Fixed a [bug](https://github.com/launchdarkly/.net-client/issues/75) in the event sampling feature that was introduced in 4.1.0: sampling might not work correctly if events were generated from multiple threads.
+- Fixed a [bug](https://github.com/launchdarkly/dotnet-server-sdk/issues/75) in the event sampling feature that was introduced in 4.1.0: sampling might not work correctly if events were generated from multiple threads.
 
 ## [4.1.0] - 2018-03-05
 ### Added
@@ -229,13 +239,13 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ## [3.0.0] - 2016-10-27
 ### Changed
-- Addresses Unnecesary Lock contention when polling: https://github.com/launchdarkly/.net-client/issues/18
+- Addresses Unnecesary Lock contention when polling: https://github.com/launchdarkly/dotnet-server-sdk/issues/18
 - Logging framework: Now using Microsoft.Extensions.Logging
-- No longer depending on ASP.NET: https://github.com/launchdarkly/.net-client/issues/8
+- No longer depending on ASP.NET: https://github.com/launchdarkly/dotnet-server-sdk/issues/8
 
 ### Added
-- Support for .NET core: https://github.com/launchdarkly/.net-client/issues/9
-- Http client now has a request timeout: https://github.com/launchdarkly/.net-client/issues/27
+- Support for .NET core: https://github.com/launchdarkly/dotnet-server-sdk/issues/9
+- Http client now has a request timeout: https://github.com/launchdarkly/dotnet-server-sdk/issues/27
 
 ### Deprecated
 - File-based configuration override option has been removed
@@ -246,7 +256,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 
 ## [2.0.2] - 2016-10-06
 ### Added
-- Address https://github.com/launchdarkly/.net-client/issues/27
+- Address https://github.com/launchdarkly/dotnet-server-sdk/issues/27
 - Improve error logging- we're now logging messages from inner exceptions.
 
 ## [2.0.1] - 2016-10-05
@@ -257,7 +267,7 @@ All notable changes to the LaunchDarkly .NET SDK will be documented in this file
 ### Added
 - Support for multivariate feature flags. New methods `StringVariation`, `JsonVariation` and `IntVariation` and `FloatVariation` for multivariates.
 - New `AllFlags` method returns all flag values for a specified user.
-- New `SecureModeHash` function computes a hash suitable for the new LaunchDarkly [JavaScript client's secure mode feature](https://github.com/launchdarkly/js-client#secure-mode).
+- New `SecureModeHash` function computes a hash suitable for the new LaunchDarkly [JavaScript client's secure mode feature](https://docs.launchdarkly.com/docs/js-sdk-reference#section-secure-mode).
 
 ### Changed
 - LdClient now implements a new interface: ILdClient
