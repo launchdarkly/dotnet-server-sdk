@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.6.4] - 2019-05-10
+### Changed:
+- The NuGet package name and assembly name have changed: they are now `LaunchDarkly.ServerSdk` instead of `LaunchDarkly.Client`. There are no other changes in this release. Note that the namespace used in .NET code is still `LaunchDarkly.Client`.
+
 ## [5.6.3] - 2019-05-10
 ### Fixed:
 - If `Track` or `Identify` is called without a user, the SDK now will not send an analytics event to LaunchDarkly (since it would not be processed without a user).

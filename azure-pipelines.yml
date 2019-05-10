@@ -11,14 +11,14 @@ jobs:
           script: |
             dotnet --version
             dotnet restore
-            dotnet build src/LaunchDarkly.Client -f netstandard2.0
+            dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
       - task: PowerShell@2
         displayName: 'Test'
         inputs:
           targetType: inline
           workingDirectory: $(System.DefaultWorkingDirectory)
           script: |
-            dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f netcoreapp2.0
+            dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp2.0
   - job: net45
     pool:
       vmImage: 'vs2017-win2016'
@@ -31,11 +31,11 @@ jobs:
           script: |
             dotnet --version
             dotnet restore
-            dotnet build src/LaunchDarkly.Client -f net45
+            dotnet build src/LaunchDarkly.ServerSdk -f net45
       - task: PowerShell@2
         displayName: 'Test'
         inputs:
           targetType: inline
           workingDirectory: $(System.DefaultWorkingDirectory)
           script: |
-            dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj -f net46
+            dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f net46

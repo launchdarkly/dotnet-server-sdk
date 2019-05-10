@@ -1,4 +1,4 @@
-# Contributing to the LaunchDarkly Server-side SDK for .NET
+# Contributing to the LaunchDarkly Server-Side SDK for .NET
 
 LaunchDarkly has published an [SDK contributor's guide](https://docs.launchdarkly.com/docs/sdk-contributors-guide) that provides a detailed explanation of how our SDKs work. See below for additional information on how to contribute to this SDK.
 
@@ -27,7 +27,7 @@ dotnet restore
 Then, to build the SDK without running any tests:
 
 ```
-dotnet build src/LaunchDarkly.Client -f netstandard1.4
+dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.4
 ```
  
 ### Testing
@@ -35,10 +35,12 @@ dotnet build src/LaunchDarkly.Client -f netstandard1.4
 To run all unit tests:
 
 ```
-dotnet test test/LaunchDarkly.Tests/LaunchDarkly.Tests.csproj
+dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj
 ```
 
 ## Miscellaneous
+
+Much of the implementation of this SDK is shared with the LaunchDarkly Xamarin SDK. The common code that is used by both is in the `LaunchDarkly.CommonSdk` package, whose source code is in the [`dotnet-sdk-common`](https://github.com/launchdarkly/dotnet-sdk-common) repository.
 
 This project imports the `dotnet-base` repository as a subtree. See the `README.md` file in that directory for more information.
 
