@@ -94,14 +94,21 @@ namespace LaunchDarkly.Client
                             Log.Debug("Get all flags returned 304: not modified");
                             return null;
                         }
-                        lock (_etags)
-                        {
-                            _etags[path] = response.Headers.ETag;
-                        }
                         //We ensure the status code after checking for 304, because 304 isn't considered success
                         if (!response.IsSuccessStatusCode)
                         {
                             throw new UnsuccessfulResponseException((int)response.StatusCode);
+                        }
+                        lock (_etags)
+                        {
+                            if (response.Headers.ETag != null)
+                            {
+                                _etags[path] = response.Headers.ETag;
+                            }
+                            else
+                            {
+                                _etags.Remove(path);
+                            }
                         }
                         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         return string.IsNullOrEmpty(content) ? null : (T)JsonConvert.DeserializeObject<T>(content);
