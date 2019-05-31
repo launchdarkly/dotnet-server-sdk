@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.6.5] - 2019-05-30
+### Fixed:
+- If streaming is disabled, polling requests could stop working if the client ever received an HTTP error from LaunchDarkly. This bug was introduced in the 5.6.3 release.
+
 ## [5.6.4] - 2019-05-10
 ### Changed:
 - The NuGet package name and assembly name have changed: they are now `LaunchDarkly.ServerSdk` instead of `LaunchDarkly.Client`. There are no other changes in this release; the namespace used in .NET code is still `LaunchDarkly.Client`. Substituting `LaunchDarkly.Client` version 5.6.3 with `LaunchDarkly.ServerSdk` version 5.6.4 will not affect functionality.
