@@ -173,6 +173,34 @@ namespace LaunchDarkly.Tests
             Assert.Equal(new List<string> { etag1 }, reqs[4].RequestMessage.Headers["If-None-Match"]);
         }
 
+        [Fact]
+        public async Task ResponseWithoutEtagClearsPriorEtag()
+        {
+            var etag = @"""abc123""";
+
+            _server.Given(Request.Create().UsingGet())
+                .AtPriority(2)
+                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
+            _server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
+                .AtPriority(1)
+                .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson)); // respond with no etag
+
+            var fetch1 = await _requestor.GetAllDataAsync();
+            var fetch2 = await _requestor.GetAllDataAsync();
+
+            _server.Given(Request.Create().UsingGet())
+                .AtPriority(1)
+                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
+
+            var fetch3 = await _requestor.GetAllDataAsync();
+
+            var reqs = new List<LogEntry>(_server.LogEntries);
+            Assert.Equal(3, reqs.Count);
+            Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
+            Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
+            Assert.False(reqs[2].RequestMessage.Headers.ContainsKey("If-None-Match"));
+        }
+
         private RequestMessage GetLastRequest()
         {
             foreach (LogEntry le in _server.LogEntries)
