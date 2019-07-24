@@ -31,8 +31,16 @@ namespace LaunchDarkly.Client
     /// </summary>
     public interface IVersionedDataOrdering
     {
+        /// <summary>
+        /// Data sets with a lower value of this property will be updated first.
+        /// </summary>
         int Priority { get; }
 
+        /// <summary>
+        /// Returns the keys of items within this data set that are prerequisites of the specified item.
+        /// </summary>
+        /// <param name="item">an item that may have prerequisites</param>
+        /// <returns>prerequisite keys of the item</returns>
         IEnumerable<string> GetDependencyKeys(IVersionedData item);
     }
 
