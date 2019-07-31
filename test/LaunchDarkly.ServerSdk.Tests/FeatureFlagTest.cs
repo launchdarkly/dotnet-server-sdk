@@ -434,7 +434,7 @@ namespace LaunchDarkly.Tests
         {
             var clause = new Clause("name", "in", new List<JValue> { new JValue("Bob") }, false);
             var f = BooleanFlagWithClauses(clause);
-            var user = User.WithKey("key").AndName("Bob");
+            var user = User.Builder("key").Name("Bob").Build();
 
             Assert.Equal(new JValue(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
@@ -444,7 +444,7 @@ namespace LaunchDarkly.Tests
         {
             var clause = new Clause("legs", "in", new List<JValue> { new JValue(4) }, false);
             var f = BooleanFlagWithClauses(clause);
-            var user = User.WithKey("key").AndCustomAttribute("legs", 4);
+            var user = User.Builder("key").Custom("legs", 4).Build();
 
             Assert.Equal(new JValue(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
@@ -454,7 +454,7 @@ namespace LaunchDarkly.Tests
         {
             var clause = new Clause("legs", "in", new List<JValue> { new JValue(4) }, false);
             var f = BooleanFlagWithClauses(clause);
-            var user = User.WithKey("key").AndName("bob");
+            var user = User.Builder("key").Name("bob").Build();
 
             Assert.Equal(new JValue(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
@@ -464,7 +464,7 @@ namespace LaunchDarkly.Tests
         {
             var clause = new Clause("name", "in", new List<JValue> { new JValue("Bob") }, true);
             var f = BooleanFlagWithClauses(clause);
-            var user = User.WithKey("key").AndName("Bob");
+            var user = User.Builder("key").Name("Bob").Build();
 
             Assert.Equal(new JValue(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
@@ -474,7 +474,7 @@ namespace LaunchDarkly.Tests
         {
             var clause = new Clause("name", "invalidOp", new List<JValue> { new JValue("Bob") }, false);
             var f = BooleanFlagWithClauses(clause);
-            var user = User.WithKey("key").AndName("Bob");
+            var user = User.Builder("key").Name("Bob").Build();
 
             Assert.Equal(new JValue(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
