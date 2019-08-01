@@ -144,7 +144,7 @@ namespace LaunchDarkly.Client
         /// <param name="configuration">the configuration</param>
         /// <param name="interval">the sampling interval</param>
         /// <returns>the same <c>Configuration</c> instance</returns>
-        [Obsolete(ObsoleteMessage)]
+        [Obsolete("The SamplingInterval feature will be removed in a future version of the SDK")]
         public static Configuration WithEventSamplingInterval(this Configuration configuration, int interval)
         {
             if (interval < 0)
