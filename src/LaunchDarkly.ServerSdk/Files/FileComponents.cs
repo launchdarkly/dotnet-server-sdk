@@ -21,8 +21,8 @@
     ///     var fileSource = FileComponents.FileDataSource()
     ///         .WithFilePaths("./testData/flags.json")
     ///         .WithAutoUpdate(true);
-    ///     var config = Configuration.Default("sdkKey")
-    ///         .WithUpdateProcessorFactory(fileSource)
+    ///     var config = Configuration.Builder("sdkKey")
+    ///         .UpdateProcessorFactory(fileSource)
     ///         .Build();
     /// </code>
     /// <para>

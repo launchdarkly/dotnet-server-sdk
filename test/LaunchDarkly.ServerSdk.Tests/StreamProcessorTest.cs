@@ -37,14 +37,15 @@ namespace LaunchDarkly.Tests
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
             _featureStore = new InMemoryFeatureStore();
-            _config = Client.Configuration.Default(SDK_KEY)
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore));
+            _config = Client.Configuration.Builder(SDK_KEY)
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore))
+                .Build();
         }
 
         [Fact]
         public void StreamUriHasCorrectEndpoint()
         {
-            _config = _config.WithStreamUri(new Uri("http://stream.test.com"));
+            _config = Client.Configuration.Builder(_config).StreamUri(new Uri("http://stream.test.com")).Build();
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.Equal(new Uri("http://stream.test.com/all"),
                 _eventSourceFactory.ReceivedProperties.StreamUri);

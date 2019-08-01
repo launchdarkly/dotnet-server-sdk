@@ -21,7 +21,10 @@ namespace LaunchDarkly.Tests
         public FeatureRequestorTest()
         {
             _server = FluentMockServer.Start();
-            var config = Configuration.Default("key").WithUri(_server.Urls[0]).WithHttpClientTimeout(TimeSpan.FromDays(1));
+            var config = Configuration.Builder("key")
+                .BaseUri(new Uri(_server.Urls[0]))
+                .HttpClientTimeout(TimeSpan.FromDays(1))
+                .Build();
             _requestor = new FeatureRequestor(config);
         }
 
