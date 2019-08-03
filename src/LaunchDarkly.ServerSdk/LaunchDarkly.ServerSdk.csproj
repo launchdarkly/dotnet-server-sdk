@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>5.6.4</Version>
+    <Version>5.6.5</Version>
     <TargetFrameworks>netstandard1.4;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/dotnet-server-sdk/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
@@ -15,10 +15,10 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Release'">
-    <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.1.1" />
+    <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.4.0-beta1" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.1.1" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.4.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />

@@ -14,10 +14,11 @@ namespace LaunchDarkly.Tests
 
         public LdClientEventTest()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .WithEventProcessorFactory(TestUtils.SpecificEventProcessor(eventSink))
-                .WithUpdateProcessorFactory(Components.NullUpdateProcessor);
+            var config = Configuration.Builder("SDK_KEY")
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .EventProcessorFactory(TestUtils.SpecificEventProcessor(eventSink))
+                .UpdateProcessorFactory(Components.NullUpdateProcessor)
+                .Build();
             client = new LdClient(config);
         }
 
