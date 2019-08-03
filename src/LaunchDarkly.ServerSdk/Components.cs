@@ -88,9 +88,9 @@ namespace LaunchDarkly.Client
             }
             else
             {
-                return new DefaultEventProcessor(config,
+                return new DefaultEventProcessor(config.EventProcessorConfiguration,
                     new DefaultUserDeduplicator(config),
-                    Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance),
+                    Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
                     EventsUriPath);
             }
         }

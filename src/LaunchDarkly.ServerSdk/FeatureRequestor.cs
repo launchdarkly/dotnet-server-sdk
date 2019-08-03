@@ -27,7 +27,7 @@ namespace LaunchDarkly.Client
             _allUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-all");
             _flagsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
             _segmentsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
-            _httpClient = Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance);
+            _httpClient = Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
         }
 
         void IDisposable.Dispose()
