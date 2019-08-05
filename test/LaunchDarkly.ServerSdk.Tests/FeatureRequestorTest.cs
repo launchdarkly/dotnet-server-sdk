@@ -7,206 +7,253 @@ using WireMock.Logging;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
+using WireMock.Settings;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace LaunchDarkly.Tests
 {
-    public class FeatureRequestorTest : IDisposable
+    public class FeatureRequestorTest
     {
         private const string AllDataJson = @"{""flags"":{""flag1"":{""key"":""flag1"",""version"":1}},""segments"":{""seg1"":{""key"":""seg1"",""version"":2}}}";
-
-        private FluentMockServer _server;
-        private IFeatureRequestor _requestor;
-
-        public FeatureRequestorTest()
+        
+        private IFeatureRequestor MakeRequestor(FluentMockServer server)
         {
-            _server = FluentMockServer.Start();
             var config = Configuration.Builder("key")
-                .BaseUri(new Uri(_server.Urls[0]))
+                .BaseUri(new Uri(server.Urls[0]))
                 .HttpClientTimeout(TimeSpan.FromDays(1))
                 .Build();
-            _requestor = new FeatureRequestor(config);
-        }
-
-        void IDisposable.Dispose()
-        {
-            _server.Stop();
+            return new FeatureRequestor(config);
         }
 
         [Fact]
         public async Task GetAllUsesCorrectUriAndParsesResponseAsync()
         {
-            _server.Given(Request.Create().UsingGet())
-                .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson));
-            var result = await _requestor.GetAllDataAsync();
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                server.Given(Request.Create().UsingGet())
+                    .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson));
 
-            var req = GetLastRequest();
-            Assert.Equal("/sdk/latest-all", req.Path);
+                using (var requestor = MakeRequestor(server))
+                {
+                    var result = await requestor.GetAllDataAsync();
 
-            Assert.Equal(1, result.Flags.Count);
-            Assert.Equal(1, result.Flags["flag1"].Version);
-            Assert.Equal(1, result.Segments.Count);
-            Assert.Equal(2, result.Segments["seg1"].Version);
+                    var req = GetLastRequest(server);
+                    Assert.Equal("/sdk/latest-all", req.Path);
+
+                    Assert.Equal(1, result.Flags.Count);
+                    Assert.Equal(1, result.Flags["flag1"].Version);
+                    Assert.Equal(1, result.Segments.Count);
+                    Assert.Equal(2, result.Segments["seg1"].Version);
+                }
+            }
         }
 
         [Fact]
         public async Task GetAllStoresAndSendsEtag()
         {
-            var etag = @"""abc123"""; // note that etag strings must be quoted
-            _server.Given(Request.Create().UsingGet())
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                var etag = @"""abc123"""; // note that etag strings must be quoted
+                server.Given(Request.Create().UsingGet())
                 .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
-            await _requestor.GetAllDataAsync();
-            await _requestor.GetAllDataAsync();
 
-            var reqs = new List<LogEntry>(_server.LogEntries);
-            Assert.Equal(2, reqs.Count);
-            Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
-            Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
+                using (var requestor = MakeRequestor(server))
+                {
+                    await requestor.GetAllDataAsync();
+                    await requestor.GetAllDataAsync();
+
+                    var reqs = new List<LogEntry>(server.LogEntries);
+                    Assert.Equal(2, reqs.Count);
+                    Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
+                    Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
+                }
+            }
         }
 
         [Fact]
         public async Task GetAllReturnsNullIfNotModified()
         {
-            var etag = @"""abc123"""; // note that etag strings must be quoted
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                var etag = @"""abc123"""; // note that etag strings must be quoted
 
-            _server.Given(Request.Create().UsingGet())
-                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
-            var result1 = await _requestor.GetAllDataAsync();
+                server.Given(Request.Create().UsingGet())
+                    .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
 
-            _server.Reset();
-            _server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
-                .RespondWith(Response.Create().WithStatusCode(304));
-            var result2 = await _requestor.GetAllDataAsync();
+                using (var requestor = MakeRequestor(server))
+                {
+                    var result1 = await requestor.GetAllDataAsync();
 
-            Assert.NotNull(result1);
-            Assert.Null(result2);
+                    server.Reset();
+                    server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
+                        .RespondWith(Response.Create().WithStatusCode(304));
+                    var result2 = await requestor.GetAllDataAsync();
+
+                    Assert.NotNull(result1);
+                    Assert.Null(result2);
+                }
+            }
         }
 
         [Fact]
         public async Task GetAllDoesNotRetryFailedRequest()
         {
-            _server.Given(Request.Create().UsingGet())
-                .RespondWith(Response.Create().WithStatusCode(503));
-            try
+            using (var server = await TestHttpUtils.StartServerAsync())
             {
-                await _requestor.GetAllDataAsync();
-            }
-            catch (UnsuccessfulResponseException e)
-            {
-                Assert.Equal(503, e.StatusCode);
-            }
+                server.Given(Request.Create().UsingGet())
+                    .RespondWith(Response.Create().WithStatusCode(503));
 
-            var reqs = new List<LogEntry>(_server.LogEntries);
-            Assert.Equal(1, reqs.Count);
+                using (var requestor = MakeRequestor(server))
+                {
+                    try
+                    {
+                        await requestor.GetAllDataAsync();
+                    }
+                    catch (UnsuccessfulResponseException e)
+                    {
+                        Assert.Equal(503, e.StatusCode);
+                    }
+
+                    var reqs = new List<LogEntry>(server.LogEntries);
+                    Assert.Equal(1, reqs.Count);
+                }
+            }
         }
 
         [Fact]
         public async Task GetFlagUsesCorrectUriAndParsesResponseAsync()
         {
-            var json = @"{""key"":""flag1"",""version"":1}";
-            _server.Given(Request.Create().UsingGet())
-                .RespondWith(Response.Create().WithStatusCode(200).WithBody(json));
-            var flag = await _requestor.GetFlagAsync("flag1");
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                var json = @"{""key"":""flag1"",""version"":1}";
+                server.Given(Request.Create().UsingGet())
+                    .RespondWith(Response.Create().WithStatusCode(200).WithBody(json));
 
-            var req = GetLastRequest();
-            Assert.Equal("/sdk/latest-flags/flag1", req.Path);
+                using (var requestor = MakeRequestor(server))
+                {
+                    var flag = await requestor.GetFlagAsync("flag1");
 
-            Assert.NotNull(flag);
-            Assert.Equal("flag1", flag.Key);
-            Assert.Equal(1, flag.Version);
+                    var req = GetLastRequest(server);
+                    Assert.Equal("/sdk/latest-flags/flag1", req.Path);
+
+                    Assert.NotNull(flag);
+                    Assert.Equal("flag1", flag.Key);
+                    Assert.Equal(1, flag.Version);
+                }
+            }
         }
 
         [Fact]
         public async Task GetSegmentUsesCorrectUriAndParsesResponseAsync()
         {
-            var json = @"{""key"":""seg1"",""version"":2}";
-            _server.Given(Request.Create().UsingGet())
-                .RespondWith(Response.Create().WithStatusCode(200).WithBody(json));
-            var segment = await _requestor.GetSegmentAsync("seg1");
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                var json = @"{""key"":""seg1"",""version"":2}";
+                server.Given(Request.Create().UsingGet())
+                    .RespondWith(Response.Create().WithStatusCode(200).WithBody(json));
 
-            var req = GetLastRequest();
-            Assert.Equal("/sdk/latest-segments/seg1", req.Path);
+                using (var requestor = MakeRequestor(server))
+                {
+                    var segment = await requestor.GetSegmentAsync("seg1");
 
-            Assert.NotNull(segment);
-            Assert.Equal("seg1", segment.Key);
-            Assert.Equal(2, segment.Version);
+                    var req = GetLastRequest(server);
+                    Assert.Equal("/sdk/latest-segments/seg1", req.Path);
+
+                    Assert.NotNull(segment);
+                    Assert.Equal("seg1", segment.Key);
+                    Assert.Equal(2, segment.Version);
+                }
+            }
         }
 
         [Fact]
         public async Task ETagsDoNotConflict()
         {
-            var etag1 = @"""abc123""";
-            var etag2 = @"""def456""";
-            var json1 = @"{""key"":""flag1"",""version"":1}";
-            var json2 = @"{""key"":""flag2"",""version"":5}";
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                var etag1 = @"""abc123""";
+                var etag2 = @"""def456""";
+                var json1 = @"{""key"":""flag1"",""version"":1}";
+                var json2 = @"{""key"":""flag2"",""version"":5}";
 
-            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag1").UsingGet().WithHeader("If-None-Match", etag1))
-                .AtPriority(1)
-                .RespondWith(Response.Create().WithStatusCode(304));
-            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag2").UsingGet().WithHeader("If-None-Match", etag2))
-                .AtPriority(1)
-                .RespondWith(Response.Create().WithStatusCode(304));
-            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag1").UsingGet())
-                .AtPriority(2)
-                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag1).WithBody(json1));
-            _server.Given(Request.Create().WithPath("/sdk/latest-flags/flag2").UsingGet())
-                .AtPriority(2)
-                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag2).WithBody(json2));
+                server.Given(Request.Create().WithPath("/sdk/latest-flags/flag1").UsingGet().WithHeader("If-None-Match", etag1))
+                    .AtPriority(1)
+                    .RespondWith(Response.Create().WithStatusCode(304));
+                server.Given(Request.Create().WithPath("/sdk/latest-flags/flag2").UsingGet().WithHeader("If-None-Match", etag2))
+                    .AtPriority(1)
+                    .RespondWith(Response.Create().WithStatusCode(304));
+                server.Given(Request.Create().WithPath("/sdk/latest-flags/flag1").UsingGet())
+                    .AtPriority(2)
+                    .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag1).WithBody(json1));
+                server.Given(Request.Create().WithPath("/sdk/latest-flags/flag2").UsingGet())
+                    .AtPriority(2)
+                    .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag2).WithBody(json2));
 
-            var fetch1 = await _requestor.GetFlagAsync("flag1");
-            var fetch2 = await _requestor.GetFlagAsync("flag1");
-            var fetch3 = await _requestor.GetFlagAsync("flag2");
-            var fetch4 = await _requestor.GetFlagAsync("flag2");
-            var fetch5 = await _requestor.GetFlagAsync("flag1");
+                using (var requestor = MakeRequestor(server))
+                {
+                    var fetch1 = await requestor.GetFlagAsync("flag1");
+                    var fetch2 = await requestor.GetFlagAsync("flag1");
+                    var fetch3 = await requestor.GetFlagAsync("flag2");
+                    var fetch4 = await requestor.GetFlagAsync("flag2");
+                    var fetch5 = await requestor.GetFlagAsync("flag1");
 
-            Assert.NotNull(fetch1);
-            Assert.Equal("flag1", fetch1.Key);
-            Assert.Null(fetch2);
-            Assert.NotNull(fetch3);
-            Assert.Equal("flag2", fetch3.Key);
-            Assert.Null(fetch4);
-            Assert.Null(fetch5);
+                    Assert.NotNull(fetch1);
+                    Assert.Equal("flag1", fetch1.Key);
+                    Assert.Null(fetch2);
+                    Assert.NotNull(fetch3);
+                    Assert.Equal("flag2", fetch3.Key);
+                    Assert.Null(fetch4);
+                    Assert.Null(fetch5);
 
-            var reqs = new List<LogEntry>(_server.LogEntries);
-            Assert.Equal(5, reqs.Count);
-            Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
-            Assert.Equal(new List<string> { etag1 }, reqs[1].RequestMessage.Headers["If-None-Match"]);
-            Assert.False(reqs[2].RequestMessage.Headers.ContainsKey("If-None-Match"));
-            Assert.Equal(new List<string> { etag2 }, reqs[3].RequestMessage.Headers["If-None-Match"]);
-            Assert.Equal(new List<string> { etag1 }, reqs[4].RequestMessage.Headers["If-None-Match"]);
+                    var reqs = new List<LogEntry>(server.LogEntries);
+                    Assert.Equal(5, reqs.Count);
+                    Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
+                    Assert.Equal(new List<string> { etag1 }, reqs[1].RequestMessage.Headers["If-None-Match"]);
+                    Assert.False(reqs[2].RequestMessage.Headers.ContainsKey("If-None-Match"));
+                    Assert.Equal(new List<string> { etag2 }, reqs[3].RequestMessage.Headers["If-None-Match"]);
+                    Assert.Equal(new List<string> { etag1 }, reqs[4].RequestMessage.Headers["If-None-Match"]);
+                }
+            }
         }
 
         [Fact]
         public async Task ResponseWithoutEtagClearsPriorEtag()
         {
-            var etag = @"""abc123""";
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                var etag = @"""abc123""";
 
-            _server.Given(Request.Create().UsingGet())
-                .AtPriority(2)
-                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
-            _server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
-                .AtPriority(1)
-                .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson)); // respond with no etag
+                server.Given(Request.Create().UsingGet())
+                    .AtPriority(2)
+                    .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
+                server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
+                    .AtPriority(1)
+                    .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson)); // respond with no etag
 
-            var fetch1 = await _requestor.GetAllDataAsync();
-            var fetch2 = await _requestor.GetAllDataAsync();
+                using (var requestor = MakeRequestor(server))
+                {
+                    var fetch1 = await requestor.GetAllDataAsync();
+                    var fetch2 = await requestor.GetAllDataAsync();
 
-            _server.Given(Request.Create().UsingGet())
-                .AtPriority(1)
-                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
+                    server.Given(Request.Create().UsingGet())
+                        .AtPriority(1)
+                        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
 
-            var fetch3 = await _requestor.GetAllDataAsync();
+                    var fetch3 = await requestor.GetAllDataAsync();
 
-            var reqs = new List<LogEntry>(_server.LogEntries);
-            Assert.Equal(3, reqs.Count);
-            Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
-            Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
-            Assert.False(reqs[2].RequestMessage.Headers.ContainsKey("If-None-Match"));
+                    var reqs = new List<LogEntry>(server.LogEntries);
+                    Assert.Equal(3, reqs.Count);
+                    Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
+                    Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
+                    Assert.False(reqs[2].RequestMessage.Headers.ContainsKey("If-None-Match"));
+                }
+            }
         }
 
-        private RequestMessage GetLastRequest()
+        private RequestMessage GetLastRequest(FluentMockServer server)
         {
-            foreach (LogEntry le in _server.LogEntries)
+            foreach (LogEntry le in server.LogEntries)
             {
                 return le.RequestMessage;
             }

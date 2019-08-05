@@ -46,7 +46,7 @@ namespace LaunchDarkly.Client
 
         // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there
         // was a problem getting flags.
-        async Task<AllData> IFeatureRequestor.GetAllDataAsync()
+        public async Task<AllData> GetAllDataAsync()
         {
             var ret = await GetAsync<AllData>(_allUri);
             if (ret != null)
@@ -59,14 +59,14 @@ namespace LaunchDarkly.Client
 
         // Returns the latest version of a flag, or null if it has not been modified. Throws an exception if there
         // was a problem getting flags.
-        async Task<FeatureFlag> IFeatureRequestor.GetFlagAsync(string featureKey)
+        public async Task<FeatureFlag> GetFlagAsync(string featureKey)
         {
             return await GetAsync<FeatureFlag>(new Uri(_flagsUri, featureKey));
         }
 
         // Returns the latest version of a segment, or null if it has not been modified. Throws an exception if there
         // was a problem getting segments.
-        async Task<Segment> IFeatureRequestor.GetSegmentAsync(string segmentKey)
+        public async Task<Segment> GetSegmentAsync(string segmentKey)
         {
             return await GetAsync<Segment>(new Uri(_segmentsUri, segmentKey));
         }
