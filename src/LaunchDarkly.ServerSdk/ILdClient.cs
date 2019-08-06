@@ -8,7 +8,9 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.
     /// </summary>
+#pragma warning disable 618
     public interface ILdClient : ILdCommonClient
+#pragma warning restore 618
     {
         /// <summary>
         /// Tests whether the client is ready to be used.

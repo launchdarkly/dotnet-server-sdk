@@ -29,7 +29,7 @@ namespace LaunchDarkly.Client
         {
             _streamManager = new StreamManager(this,
                 MakeStreamProperties(config),
-                config,
+                config.StreamManagerConfiguration,
                 ServerSideClientEnvironment.Instance,
                 eventSourceCreator);
             _config = config;
@@ -128,8 +128,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                string key;
-                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out key))
+                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out var key))
                 {
                     var feature = await _featureRequestor.GetFlagAsync(key);
                     if (feature != null)
