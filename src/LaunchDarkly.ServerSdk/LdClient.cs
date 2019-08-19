@@ -130,70 +130,61 @@ namespace LaunchDarkly.Client
         /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>
         public bool BoolVariation(string key, User user, bool defaultValue = false)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.Boolean, EventFactory.Default).Value;
-            return value.Value<bool>();
+            return Evaluate(key, user, defaultValue, ValueTypes.Bool, EventFactory.Default).Value;
         }
 
         /// <see cref="ILdClient.IntVariation(string, User, int)"/>
         public int IntVariation(string key, User user, int defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.Integer, EventFactory.Default).Value;
-            return value.Value<int>();
+            return Evaluate(key, user, defaultValue, ValueTypes.Int, EventFactory.Default).Value;
         }
 
         /// <see cref="ILdClient.FloatVariation(string, User, float)"/>
         public float FloatVariation(string key, User user, float defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.Float, EventFactory.Default).Value;
-            return value.Value<float>();
+            return Evaluate(key, user, defaultValue, ValueTypes.Float, EventFactory.Default).Value;
         }
 
         /// <see cref="ILdClient.StringVariation(string, User, string)"/>
         public string StringVariation(string key, User user, string defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, JTokenType.String, EventFactory.Default).Value;
-            return value.Value<string>();
+            return Evaluate(key, user, defaultValue, ValueTypes.String, EventFactory.Default).Value;
         }
 
         /// <see cref="ILdClient.JsonVariation(string, User, JToken)"/>
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
-            var value = Evaluate(key, user, defaultValue, null, EventFactory.Default).Value;
-            return value;
+            return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.Default).Value;
         }
 
         /// <see cref="ILdClient.BoolVariationDetail(string, User, bool)"/>
         public EvaluationDetail<bool> BoolVariationDetail(string key, User user, bool defaultValue)
         {
-            var detail = Evaluate(key, user, defaultValue, JTokenType.Boolean, EventFactory.DefaultWithReasons);
-            return new EvaluationDetail<bool>((bool)detail.Value, detail.VariationIndex, detail.Reason);
+            return Evaluate(key, user, defaultValue, ValueTypes.Bool, EventFactory.DefaultWithReasons);
         }
 
         /// <see cref="ILdClient.IntVariationDetail(string, User, int)"/>
         public EvaluationDetail<int> IntVariationDetail(string key, User user, int defaultValue)
         {
-            var detail = Evaluate(key, user, defaultValue, JTokenType.Integer, EventFactory.DefaultWithReasons);
-            return new EvaluationDetail<int>((int)detail.Value, detail.VariationIndex, detail.Reason);
+            return Evaluate(key, user, defaultValue, ValueTypes.Int, EventFactory.DefaultWithReasons);
         }
 
         /// <see cref="ILdClient.FloatVariationDetail(string, User, float)"/>
         public EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue)
         {
-            var detail = Evaluate(key, user, defaultValue, JTokenType.Float, EventFactory.DefaultWithReasons);
-            return new EvaluationDetail<float>((float)detail.Value, detail.VariationIndex, detail.Reason);
+            return Evaluate(key, user, defaultValue, ValueTypes.Float, EventFactory.DefaultWithReasons);
         }
 
         /// <see cref="ILdClient.StringVariationDetail(string, User, string)"/>
         public EvaluationDetail<string> StringVariationDetail(string key, User user, string defaultValue)
         {
-            var detail = Evaluate(key, user, defaultValue, JTokenType.String, EventFactory.DefaultWithReasons);
-            return new EvaluationDetail<string>((string)detail.Value, detail.VariationIndex, detail.Reason);
+            return Evaluate(key, user, defaultValue, ValueTypes.String, EventFactory.DefaultWithReasons);
         }
 
         /// <see cref="ILdClient.JsonVariationDetail(string, User, JToken)"/>
         public EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue)
         {
-            return Evaluate(key, user, defaultValue, null, EventFactory.DefaultWithReasons);
+            return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.DefaultWithReasons);
         }
 
         /// <see cref="ILdClient.AllFlags(User)"/>
@@ -262,7 +253,7 @@ namespace LaunchDarkly.Client
             return state;
         }
 
-        private EvaluationDetail<JToken> Evaluate(string featureKey, User user, JToken defaultValue, JTokenType? expectedType,
+        private EvaluationDetail<T> Evaluate<T>(string featureKey, User user, T defaultValue, ValueType<T> expectedType,
             EventFactory eventFactory)
         {
             if (!Initialized())
@@ -274,12 +265,13 @@ namespace LaunchDarkly.Client
                 else
                 {
                     Log.Warn("Flag evaluation before client initialized; feature store unavailable, returning default value");
-                    return new EvaluationDetail<JToken>(defaultValue, null,
+                    return new EvaluationDetail<T>(defaultValue, null,
                         new EvaluationReason.Error(EvaluationErrorKind.CLIENT_NOT_READY));
                 }
             }
 
             FeatureFlag featureFlag = null;
+            JToken defaultValueJson = expectedType.ValueToJson(defaultValue);
             try
             {
                 featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
@@ -288,18 +280,18 @@ namespace LaunchDarkly.Client
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
                         featureKey);
 
-                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue,
+                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValueJson,
                         EvaluationErrorKind.FLAG_NOT_FOUND));
-                    return new EvaluationDetail<JToken>(defaultValue, null,
+                    return new EvaluationDetail<T>(defaultValue, null,
                         new EvaluationReason.Error(EvaluationErrorKind.FLAG_NOT_FOUND));
                 }
 
                 if (user == null || user.Key == null)
                 {
                     Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
+                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValueJson,
                         EvaluationErrorKind.USER_NOT_SPECIFIED));
-                    return new EvaluationDetail<JToken>(defaultValue, null,
+                    return new EvaluationDetail<T>(defaultValue, null,
                         new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
                 }
                 
@@ -311,25 +303,35 @@ namespace LaunchDarkly.Client
                         _eventProcessor.SendEvent(prereqEvent);
                     }
                 }
-                var detail = evalResult.Result;
-                if (detail.VariationIndex == null)
+                var evalDetail = evalResult.Result;
+                EvaluationDetail<T> returnDetail;
+                if (evalDetail.VariationIndex == null)
                 {
-                    detail = new EvaluationDetail<JToken>(defaultValue, null, detail.Reason);
+                    returnDetail = new EvaluationDetail<T>(defaultValue, null, evalDetail.Reason);
                 }
-                if (detail.Value != null && !CheckResultType(expectedType, detail.Value))
+                else
                 {
-                    Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
-                        expectedType,
-                        detail.Value.GetType(),
-                        featureKey);
+                    try
+                    {
+                        returnDetail = new EvaluationDetail<T>(expectedType.ValueFromJson(evalDetail.Value),
+                            evalDetail.VariationIndex, evalDetail.Reason);
+                    }
+                    catch (ValueTypeException)
+                    {
+                        Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
+                            expectedType.GetType().Name,
+                            evalDetail.Value is null ? "null" : evalDetail.Value.Type.ToString(),
+                            featureKey);
 
-                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
-                        EvaluationErrorKind.WRONG_TYPE));
-                    return new EvaluationDetail<JToken>(defaultValue, null,
-                        new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+                        _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user,
+                            defaultValueJson, EvaluationErrorKind.WRONG_TYPE));
+                        return new EvaluationDetail<T>(defaultValue, null,
+                            new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+                    }
                 }
-                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user, detail, defaultValue));
-                return detail;
+                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
+                    evalDetail, defaultValueJson));
+                return returnDetail;
             }
             catch (Exception e)
             {
@@ -338,19 +340,19 @@ namespace LaunchDarkly.Client
                      featureKey,
                      user.Key);
                 Log.Debug(e.ToString(), e);
-                var detail = new EvaluationDetail<JToken>(defaultValue, null,
-                    new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION));
+                var reason = new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION);
+                var evalDetail = new EvaluationDetail<JToken>(defaultValueJson, null, reason);
                 if (featureFlag == null)
                 {
-                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue,
-                        EvaluationErrorKind.EXCEPTION));
+                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user,
+                        defaultValueJson, EvaluationErrorKind.EXCEPTION));
                 }
                 else
                 {
                     _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                        detail, defaultValue));
+                        evalDetail, defaultValueJson));
                 }
-                return detail;
+                return new EvaluationDetail<T>(defaultValue, null, reason);
             }
         }
 

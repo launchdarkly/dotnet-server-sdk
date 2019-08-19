@@ -20,7 +20,9 @@ namespace LaunchDarkly.Client
     /// If you modify properties of a <c>Configuration</c> after creating an <see cref="LdClient"/> with that
     /// <c>Configuration</c>, the behavior is undefined.
     /// </remarks>
+#pragma warning disable 618
     public class Configuration : IBaseConfiguration
+#pragma warning restore 618
     {
         /// <summary>
         /// The base URI of the LaunchDarkly server.
@@ -331,6 +333,46 @@ namespace LaunchDarkly.Client
             UseLdd = builder._useLdd;
             UserKeysCapacity = builder._userKeysCapacity;
             UserKeysFlushInterval = builder._userKeysFlushInterval;
+        }
+        
+        internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
+        internal IHttpRequestConfiguration HttpRequestConfiguration => new HttpRequestAdapter { Config = this };
+        internal IStreamManagerConfiguration StreamManagerConfiguration => new StreamManagerAdapter { Config = this };
+
+        private struct EventProcessorAdapter : IEventProcessorConfiguration
+        {
+            internal Configuration Config { get; set; }
+            public bool AllAttributesPrivate => Config.AllAttributesPrivate;
+            public int EventCapacity => Config.EventCapacity;
+            public TimeSpan EventFlushInterval => Config.EventFlushInterval;
+#pragma warning disable 618
+            public int EventSamplingInterval => Config.EventSamplingInterval;
+#pragma warning restore 618
+            public Uri EventsUri => Config.EventsUri;
+            public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
+            public bool InlineUsersInEvents => Config.InlineUsersInEvents;
+            public ISet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
+            public TimeSpan ReadTimeout => Config.ReadTimeout;
+            public TimeSpan ReconnectTime => Config.ReconnectTime;
+            public int UserKeysCapacity => Config.UserKeysCapacity;
+            public TimeSpan UserKeysFlushInterval => Config.UserKeysFlushInterval;
+        }
+
+        private struct HttpRequestAdapter : IHttpRequestConfiguration
+        {
+            internal Configuration Config { get; set; }
+            public string HttpAuthorizationKey => Config.SdkKey;
+            public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
+        }
+
+        private struct StreamManagerAdapter : IStreamManagerConfiguration
+        {
+            internal Configuration Config { get; set; }
+            public string HttpAuthorizationKey => Config.SdkKey;
+            public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
+            public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
+            public TimeSpan ReadTimeout => Config.ReadTimeout;
+            public TimeSpan ReconnectTime => Config.ReconnectTime;
         }
     }
 }

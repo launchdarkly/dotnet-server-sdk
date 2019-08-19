@@ -72,9 +72,18 @@ namespace LaunchDarkly.Tests
         public void IntVariationReturnsFlagValueEvenIfEncodedAsFloat()
         {
             featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key").OffWithValue(new JValue(2.0f)).Build());
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(2.25f)).Build());
 
             Assert.Equal(2, client.IntVariation("key", user, 1));
+        }
+
+        [Fact]
+        public void IntVariationRoundsToNearestIntFromFloat()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue(2.75f)).Build());
+
+            Assert.Equal(3, client.IntVariation("key", user, 1));
         }
 
         [Fact]
@@ -182,8 +191,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void JsonVariationReturnsFlagValue()
         {
-            var data = new JObject();
-            data.Add("thing", new JValue("stuff"));
+            var data = new JObject() { { "thing", new JValue("stuff") } };
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data).Build());
 
@@ -200,8 +208,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void JsonVariationDetailReturnsValueAndReason()
         {
-            var data = new JObject();
-            data.Add("thing", new JValue("stuff"));
+            var data = new JObject() { { "thing", new JValue("stuff") } };
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data).Build());
 
