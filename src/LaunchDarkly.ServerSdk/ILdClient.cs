@@ -225,6 +225,13 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Tracks that a user performed an event, and provides an additional numeric value for custom metrics.
         /// </summary>
+        /// <remarks>
+        /// As of this version’s release date, the LaunchDarkly service does not support the <c>metricValue</c>
+        /// parameter. As a result, calling this overload of <c>Track</c> will not yet produce any different
+        /// behavior from calling <see cref="Track(string, JToken, User)"/> without a <c>metricValue</c>. Refer
+        /// to the SDK reference guide for the latest status:
+        /// https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-track
+        /// </remarks>
         /// <param name="name">the name of the event</param>
         /// <param name="data">a JSON element containing additional data associated with the event, or null</param>
         /// <param name="user">the user that performed the event</param>
