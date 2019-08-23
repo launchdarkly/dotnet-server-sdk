@@ -52,12 +52,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: projects-{{ checksum "src/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          keys: 
+            - net45-{{ checksum "src/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
       - run:
           name: install project dependencies
           command: dotnet restore
       - save_cache:
-          key: projects-{{ checksum "src/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          key: net45-{{ checksum "src/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
           paths:
             - C:\Users\circleci\.nuget\packages
       - run:
