@@ -1,25 +1,83 @@
-version: 2
+version: 2.1
+
 workflows:
   version: 2
   test:
     jobs:
-      - test-1.1
-      - test-2.0
+      - test-netcore-1-1
+      - test-netcore-2-0
+      - test-windows-netframework-4-5
+
+orbs:
+  win: circleci/windows@1.0.0
+
 jobs:
-  test-1.1:
+  test-netcore-1-1:
     docker:
       - image: microsoft/dotnet:1.1-sdk
     steps:
       - checkout
-      - run: dotnet restore
-      - run: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.4
-      - run: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.6
-      - run: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp1.1
-  test-2.0:
+      - restore_cache:
+          keys: 
+            - netcore11-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+      - run:
+          name: install project dependencies
+          command: dotnet restore
+      - save_cache:
+          key: netcore11-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          paths:
+            - /root/.nuget/packages
+      - run:
+          name: build SDK for .NET Standard 1.4
+          command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.4
+      - run:
+          name: build SRC for .NET Standard 1.6
+          command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.6
+      - run:
+          name: run tests in .NET Core 1.1
+          command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp1.1
+
+  test-netcore-2-0:
     docker:
       - image: microsoft/dotnet:2.0-sdk-jessie
     steps:
       - checkout
-      - run: dotnet restore
-      - run: dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
-      - run: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp2.0
+      - restore_cache:
+          keys: 
+            - netcore20-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+      - run:
+          name: install project dependencies
+          command: dotnet restore
+      - save_cache:
+          key: netcore20-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          paths:
+            - /root/.nuget/packages
+      - run:
+          name: build SDK for .NET Standard 2.0
+          command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
+      - run:
+          name: run tests in .NET Core 2.0
+          command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp2.0
+
+  test-windows-netframework-4-5:
+    executor:
+      name: win/vs2019
+      shell: powershell.exe
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - net45-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+      - run:
+          name: install project dependencies
+          command: dotnet restore
+      - save_cache:
+          key: net45-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          paths:
+            - C:\Users\circleci\.nuget\packages
+      - run:
+          name: build SDK for .NET Framework 4.5
+          command: dotnet build src/LaunchDarkly.ServerSdk -f net45
+      - run:
+          name: run tests in .NET Framework 4.6
+          command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f net46
