@@ -17,9 +17,16 @@ jobs:
       - image: microsoft/dotnet:1.1-sdk
     steps:
       - checkout
+      - restore_cache:
+          keys: 
+            - netcore11-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
       - run:
           name: install project dependencies
           command: dotnet restore
+      - save_cache:
+          key: netcore11-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          paths:
+            - /root/.nuget/packages
       - run:
           name: build SDK for .NET Standard 1.4
           command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.4
@@ -35,9 +42,16 @@ jobs:
       - image: microsoft/dotnet:2.0-sdk-jessie
     steps:
       - checkout
+      - restore_cache:
+          keys: 
+            - netcore20-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
       - run:
           name: install project dependencies
           command: dotnet restore
+      - save_cache:
+          key: netcore20-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          paths:
+            - /root/.nuget/packages
       - run:
           name: build SDK for .NET Standard 2.0
           command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
@@ -53,12 +67,12 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - net45-{{ checksum "src/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+            - net45-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
       - run:
           name: install project dependencies
           command: dotnet restore
       - save_cache:
-          key: net45-{{ checksum "src/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          key: net45-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
           paths:
             - C:\Users\circleci\.nuget\packages
       - run:
