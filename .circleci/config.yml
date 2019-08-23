@@ -66,3 +66,4 @@ jobs:
       - run:
           name: run tests in .NET Core 2.0
           command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp1.1
+
