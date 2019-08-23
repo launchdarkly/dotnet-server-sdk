@@ -4,15 +4,15 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-netcore-1.1
-      - test-netcore-2.0
-      - test-windows-netframework-45
+      - test-netcore-1-1
+      - test-netcore-2-0
+      - test-windows-netframework-4-5
 
 orbs:
   win: circleci/windows@1.0.0
 
 jobs:
-  test-netcore-1.1:
+  test-netcore-1-1:
     docker:
       - image: microsoft/dotnet:1.1-sdk
     steps:
@@ -30,7 +30,7 @@ jobs:
           name: run tests in .NET Core 1.1
           command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp1.1
 
-  test-netcore-2.0:
+  test-netcore-2-0:
     docker:
       - image: microsoft/dotnet:2.0-sdk-jessie
     steps:
@@ -45,7 +45,7 @@ jobs:
           name: run tests in .NET Core 2.0
           command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp2.0
 
-  test-windows-netframework-45:
+  test-windows-netframework-4-5:
     executor:
       name: win/vs2019
       shell: powershell.exe
@@ -66,4 +66,3 @@ jobs:
       - run:
           name: run tests in .NET Core 2.0
           command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp1.1
-
