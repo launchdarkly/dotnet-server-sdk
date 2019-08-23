@@ -79,5 +79,5 @@ jobs:
           name: build SDK for .NET Framework 4.5
           command: dotnet build src/LaunchDarkly.ServerSdk -f net45
       - run:
-          name: run tests in .NET Core 2.0
-          command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp
+          name: run tests in .NET Framework 4.6
+          command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f net46
