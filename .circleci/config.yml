@@ -22,7 +22,7 @@ jobs:
           command: dotnet restore
       - run:
           name: build SDK for .NET Standard 1.4
-          command: .dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.4
+          command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.4
       - run:
           name: build SRC for .NET Standard 1.6
           command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard1.6
