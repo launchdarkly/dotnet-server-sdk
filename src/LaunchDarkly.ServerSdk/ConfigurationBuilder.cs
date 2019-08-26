@@ -282,6 +282,23 @@ namespace LaunchDarkly.Client
         /// <param name="diagnosticOptOut">true to disable diagnostic events</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut);
+
+        /// <summary>
+        /// For use by wrapper libraries to set an identifying name for the wrapper being used. This
+        /// will be sent in request headers during requests to the LaunchDarkly servers to allow
+        /// recording metrics on the usage of these wrapper libraries.
+        /// </summary>
+        /// <param name="wrapperName">The name of the wrapper to include in request headers</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder WrapperName(string wrapperName);
+
+        /// <summary>
+        /// For use by wrapper libraries to set version to be included alongside a WrapperName. If
+        /// WrapperName is unset or null, this field will be ignored.
+        /// </summary>
+        /// <param name="wrapperVersion">The version of the wrapper to include in request headers</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder WrapperVersion(string wrapperVersion);
     }
 
     class ConfigurationBuilder : IConfigurationBuilder
@@ -315,6 +332,8 @@ namespace LaunchDarkly.Client
         internal IFeatureStore _featureStore = null; // deprecated Configuration property, settable only by copying
         internal TimeSpan _diagnosticRecordingInterval = Configuration.DefaultDiagnosticRecordingInterval;
         internal bool _diagnosticOptOut = false;
+        internal string _wrapperName = null;
+        internal string _wrapperVersion = null;
 
         public ConfigurationBuilder(string sdkKey)
         {
@@ -353,6 +372,8 @@ namespace LaunchDarkly.Client
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
             _diagnosticRecordingInterval = copyFrom.DiagnosticRecordingInterval;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
+            _wrapperName = copyFrom.WrapperName;
+            _wrapperVersion = copyFrom.WrapperVersion;
         }
 
         public Configuration Build()
@@ -519,6 +540,18 @@ namespace LaunchDarkly.Client
         public IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut)
         {
             _diagnosticOptOut = diagnosticOptOut;
+            return this;
+        }
+
+        public IConfigurationBuilder WrapperName(string wrapperName)
+        {
+            _wrapperName = wrapperName;
+            return this;
+        }
+
+        public IConfigurationBuilder WrapperVersion(string wrapperVersion)
+        {
+            _wrapperVersion = wrapperVersion;
             return this;
         }
     }

@@ -203,6 +203,14 @@ namespace LaunchDarkly.Client
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
         /// <summary>
+        /// Name specifying a wrapper library, to be included in request headers.
+        /// </summary>
+        public string WrapperName { get; internal set; }
+        /// <summary>
+        /// Version of a wrapper library, to be included in request headers.
+        /// </summary>
+        public string WrapperVersion { get; internal set; }
+        /// <summary>
         /// Default value for <see cref="PollingInterval"/>.
         /// </summary>
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(30);
@@ -347,6 +355,8 @@ namespace LaunchDarkly.Client
             UserKeysFlushInterval = builder._userKeysFlushInterval;
             DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
             DiagnosticOptOut = builder._diagnosticOptOut;
+            WrapperName = builder._wrapperName;
+            WrapperVersion = builder._wrapperVersion;
         }
         
         internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
