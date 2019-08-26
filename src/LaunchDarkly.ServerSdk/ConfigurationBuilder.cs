@@ -253,6 +253,35 @@ namespace LaunchDarkly.Client
         /// <param name="userKeysFlushInterval">the flush interval</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval);
+
+        /// <summary>
+        ///   Sets the interval at which periodic diagnostic events will be sent.
+        /// </summary>
+        /// <remarks>
+        ///   <para>
+        ///     The default is every 15 minutes and the minimum is every minute.
+        ///   </para>
+        /// </remarks>
+        /// <param name=""></param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval);
+
+        /// <summary>
+        ///   Set to true to opt out of sending diagnostic events.
+        /// </summary>
+        /// <remarks>
+        ///   <para>
+        ///     Unless the diagnosticOptOut field is set to true, the client will send some
+        ///     diagnostics data to the LaunchDarkly servers in order to assist in the development
+        ///     of future SDK improvements. These diagnostics consist of an initial payload
+        ///     containing some details of SDK in use, the SDK's configuration, and the platform the
+        ///     SDK is being run on; as well as payloads sent periodically with information on
+        ///     irregular occurrences such as dropped events
+        ///   </para>
+        /// </remarks>
+        /// <param name="diagnosticOptOut">true to disable diagnostic events</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut);
     }
 
     class ConfigurationBuilder : IConfigurationBuilder
@@ -284,6 +313,8 @@ namespace LaunchDarkly.Client
         internal TimeSpan _userKeysFlushInterval = Configuration.DefaultUserKeysFlushInterval;
         internal int _eventSamplingInterval = 0;     // deprecated Configuration property, settable only by copying
         internal IFeatureStore _featureStore = null; // deprecated Configuration property, settable only by copying
+        internal TimeSpan _diagnosticRecordingInterval = Configuration.DefaultDiagnosticRecordingInterval;
+        internal bool _diagnosticOptOut = false;
 
         public ConfigurationBuilder(string sdkKey)
         {
@@ -320,6 +351,8 @@ namespace LaunchDarkly.Client
             _useLdd = copyFrom.UseLdd;
             _userKeysCapacity = copyFrom.UserKeysCapacity;
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
+            _diagnosticRecordingInterval = copyFrom.DiagnosticRecordingInterval;
+            _diagnosticOptOut = copyFrom.DiagnosticOptOut;
         }
 
         public Configuration Build()
@@ -474,6 +507,18 @@ namespace LaunchDarkly.Client
         public IConfigurationBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval)
         {
             _userKeysFlushInterval = userKeysFlushInterval;
+            return this;
+        }
+
+        public IConfigurationBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval)
+        {
+            _diagnosticRecordingInterval = diagnosticRecordingInterval;
+            return this;
+        }
+
+        public IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut)
+        {
+            _diagnosticOptOut = diagnosticOptOut;
             return this;
         }
     }

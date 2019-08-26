@@ -191,6 +191,14 @@ namespace LaunchDarkly.Client
         /// </remarks>
         public IUpdateProcessorFactory UpdateProcessorFactory { get; internal set; }
         /// <summary>
+        /// The time between sending periodic diagnostic events.
+        /// </summary>
+        public TimeSpan DiagnosticRecordingInterval { get; internal set; }
+        /// <summary>
+        /// True if diagnostic events have been disabled
+        /// </summary>
+        public bool DiagnosticOptOut { get; internal set; }
+        /// <summary>
         /// A string that will be sent to LaunchDarkly to identify the SDK type.
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
@@ -242,7 +250,11 @@ namespace LaunchDarkly.Client
         /// Default value for <see cref="UserKeysFlushInterval"/>.
         /// </summary>
         internal static readonly TimeSpan DefaultUserKeysFlushInterval = TimeSpan.FromMinutes(5);
-        
+        /// <summary>
+        /// Default value for <see cref="DiagnosticRecordingInterval"/>.
+        /// </summary>
+        internal static readonly TimeSpan DefaultDiagnosticRecordingInterval = TimeSpan.FromMinutes(15);
+
         /// <summary>
         /// Creates a configuration with all parameters set to the default. Use extension methods
         /// to set additional parameters.
@@ -333,6 +345,8 @@ namespace LaunchDarkly.Client
             UseLdd = builder._useLdd;
             UserKeysCapacity = builder._userKeysCapacity;
             UserKeysFlushInterval = builder._userKeysFlushInterval;
+            DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
+            DiagnosticOptOut = builder._diagnosticOptOut;
         }
         
         internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
