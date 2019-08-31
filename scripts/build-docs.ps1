@@ -4,8 +4,8 @@
 # the Sandcastle software is already installed on the host. The Sandcastle GUI is not required, only the
 # core tools and the SandcastleBuilderUtils package that provides the MSBuild targets.
 #
-# The script assumes that the SDK has already been built for the net45 target in Debug configuration.
-# It takes a single parameter: the release version.
+# The script takes a single parameter: the release version. It starts by building the project in Debug
+# configuration.
 #
 # Since some public APIs are provided by the LaunchDarkly.CommonSdk package, the Sandcastle project is
 # configured to merge that package's documentation into this one, which requires some special file
@@ -32,7 +32,8 @@ function ExecuteOrFail {
     }
 }
 
-#ExecuteOrFail { dotnet build src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj -f net45 }
+ExecuteOrFail { dotnet clean }
+ExecuteOrFail { dotnet build src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj -f net45 }
 
 # Building the SDK causes the assemblies for all its package dependencies to be copied into bin\Debug\net45.
 # The .shfbproj is configured to expect them to be there. However, we also need the XML documentation file
