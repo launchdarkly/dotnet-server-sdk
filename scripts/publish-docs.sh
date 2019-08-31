@@ -3,7 +3,7 @@
 set -ue
 
 # Publishes HTML content built by build-docs.ps1 to Github Pages. If the gh-pages branch
-# doesn't already exist, we will create it. It takes a single parameter: the release version.
+# doesn't already exist, we will create it.
 
 # This logic is copied from the publish-github-pages.sh script in Releaser. Once we are able
 # to build docs in CI, this step can just be done by Releaser.
@@ -13,10 +13,12 @@ if [ ! -d ./docs/build/html ]; then
   exit 1
 fi
 
-LD_RELEASE_VERSION=$1
-if [ -z "${LD_RELEASE_VERSION}" ]; then
-  echo "Must specify release version"
-  exit 1
+if [ -z "${LD_RELEASE_VERSION:-}" ]; then
+  LD_RELEASE_VERSION=$(sed -n -e "s%.*<Version>\([^<]*\)</Version>.*%\1%p" src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj)
+  if [ -z "${LD_RELEASE_VERSION}" ]; then
+    echo "Could not find SDK version string in project file"
+    exit 1
+  fi
 fi
 
 CONTENT_PATH=$(pwd)/docs/build/html

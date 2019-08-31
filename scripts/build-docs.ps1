@@ -4,17 +4,13 @@
 # the Sandcastle software is already installed on the host. The Sandcastle GUI is not required, only the
 # core tools and the SandcastleBuilderUtils package that provides the MSBuild targets.
 #
-# The script takes a single parameter: the release version. It starts by building the project in Debug
-# configuration.
+# The script takes no parameters; it infers the project version by looking at the .csproj file. It starts
+# by building the project in Debug configuration.
 #
 # Since some public APIs are provided by the LaunchDarkly.CommonSdk package, the Sandcastle project is
 # configured to merge that package's documentation into this one, which requires some special file
 # copying as seen below.
 #
-
-param(
-    [Parameter(Mandatory=1)][string]$version
-)
 
 # Terminate the script if any PowerShell command fails
 $ErrorActionPreference = "Stop"
@@ -42,7 +38,7 @@ ExecuteOrFail { dotnet build src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.c
 $match = Select-String `
     -Path src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj `
     -Pattern "<PackageReference.*""LaunchDarkly.CommonSdk"".*""([^""]*)"""
-if ($match.Matches.Length -eq 0) {
+if ($match.Matches.Length -ne 1) {
     throw "Could not find LaunchDarkly.CommonSdk version in project file"
 }
 $commonSdkVersion = $match.Matches[0].Groups[1].Value
@@ -54,7 +50,15 @@ if (Test-Path docs\build) {
     Remove-Item -Path docs\build -Recurse -Force
 }
 
-[System.Environment]::SetEnvironmentVariable("LD_RELEASE_VERSION", $version, "Process")
+$match = Select-String `
+    -Path src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj `
+    -Pattern "<Version>([^<]*)</Version>"
+if ($match.Matches.Length -ne 1) {
+    throw "Could not find SDK version string in project file"
+}
+$sdkVersion = $match.Matches[0].Groups[1].Value
+
+[System.Environment]::SetEnvironmentVariable("LD_RELEASE_VERSION", $sdkVersion, "Process")
 
 try
 {
