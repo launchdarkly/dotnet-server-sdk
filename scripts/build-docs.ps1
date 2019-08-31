@@ -66,3 +66,8 @@ finally
 {
     Pop-Location
 }
+
+# Add our own stylesheet overrides. You're supposed to be able to put customized stylesheets in
+# ./styles (relative to the project file) and have them be automatically copied in, but that
+# doesn't seem to work, so we'll just modify the CSS file after building.
+Get-Content docs\launchdarkly.css | Add-Content docs\build\html\styles\branding-Website.css
