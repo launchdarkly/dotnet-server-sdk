@@ -7,6 +7,7 @@ namespace LaunchDarkly.Client
 {
     /// <summary>
     /// Extension methods that can be called on a <see cref="Configuration"/> to add to its properties.
+    /// It is preferable to use <see cref="Configuration.Builder(string)"/> instead.
     /// </summary>
     [Obsolete(ObsoleteMessage)]
     public static class ConfigurationExtensions

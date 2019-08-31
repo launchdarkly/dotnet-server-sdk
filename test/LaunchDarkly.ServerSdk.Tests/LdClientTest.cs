@@ -116,7 +116,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void EvaluationReturnsDefaultValueIfNeitherClientNorFeatureStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
@@ -135,7 +135,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void EvaluationUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag);
@@ -155,7 +155,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void AllFlagsReturnsNullIfNeitherClientNorFeatureStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
@@ -167,14 +167,16 @@ namespace LaunchDarkly.Tests
 
             using (var client = new LdClient(config))
             {
+#pragma warning disable 0618
                 Assert.Null(client.AllFlags(User.WithKey("user")));
+#pragma warning restore 0618
             }
         }
         
         [Fact]
         public void AllFlagsUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag);
@@ -187,7 +189,9 @@ namespace LaunchDarkly.Tests
 
             using (var client = new LdClient(config))
             {
+#pragma warning disable 0618
                 IDictionary<string, JToken> result = client.AllFlags(User.WithKey("user"));
+#pragma warning restore 0618
                 Assert.NotNull(result);
                 Assert.Equal(new JValue(1), result["key"]);
             }

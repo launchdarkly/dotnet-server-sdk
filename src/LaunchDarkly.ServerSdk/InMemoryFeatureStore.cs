@@ -6,11 +6,12 @@ using Common.Logging;
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// In-memory, thread-safe implementation of IFeatureStore.
-    /// 
-    /// Referencing this class directly is deprecated; please use <see cref="Components.InMemoryFeatureStore"/>
-    /// instead.
+    /// In-memory, thread-safe implementation of <see cref="IFeatureStore"/>.
     /// </summary>
+    /// <remarks>
+    /// Referencing this class directly is deprecated; please use <see cref="Components.InMemoryFeatureStore"/>
+    /// in <see cref="Components"/> instead.
+    /// </remarks>
     public class InMemoryFeatureStore : IFeatureStore
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryFeatureStore));
@@ -21,11 +22,13 @@ namespace LaunchDarkly.Client
         private bool _initialized = false;
 
         /// <summary>
-        /// Creates a new empty feature store instance.
+        /// Creates a new empty feature store instance. Constructing this class directly is deprecated;
+        /// please use <see cref="Components.InMemoryFeatureStore"/> in <see cref="Components"/> instead.
         /// </summary>
+        [Obsolete("Constructing this class directly is deprecated; please use Components.InMemoryFeatureStore")]
         public InMemoryFeatureStore() { }
 
-        /// <see cref="IFeatureStore.Get{T}(VersionedDataKind{T}, string)"/>
+        /// <inheritdoc/>
         public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
         {
             try
@@ -58,7 +61,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <see cref="IFeatureStore.All{T}(VersionedDataKind{T})"/>
+        /// <inheritdoc/>
         public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
         {
             try
@@ -84,7 +87,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <see cref="IFeatureStore.Init(IDictionary{IVersionedDataKind, IDictionary{string, IVersionedData}})"/>
+        /// <inheritdoc/>
         public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
         {
             try
@@ -108,7 +111,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <see cref="IFeatureStore.Delete{T}(VersionedDataKind{T}, string, int)"/>
+        /// <inheritdoc/>
         public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
         {
             try
@@ -130,7 +133,7 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <see cref="IFeatureStore.Upsert{T}(VersionedDataKind{T}, T)"/>
+        /// <inheritdoc/>
         public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
         {
             try
@@ -154,13 +157,13 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <see cref="IFeatureStore.Initialized"/>
+        /// <inheritdoc/>
         public bool Initialized()
         {
             return _initialized;
         }
 
-        /// <see cref="IDisposable.Dispose"/>
+        /// <inheritdoc/>
         public void Dispose()
         { }
     }
