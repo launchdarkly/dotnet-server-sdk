@@ -8,7 +8,7 @@ namespace LaunchDarkly.Tests
     public class LdClientEventTest
     {
         private static readonly User user = User.WithKey("userkey");
-        private IFeatureStore featureStore = new InMemoryFeatureStore();
+        private IFeatureStore featureStore = TestUtils.InMemoryFeatureStore();
         private TestEventProcessor eventSink = new TestEventProcessor();
         private ILdClient client;
 

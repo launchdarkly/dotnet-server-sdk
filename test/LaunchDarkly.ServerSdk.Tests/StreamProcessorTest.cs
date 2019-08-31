@@ -36,7 +36,7 @@ namespace LaunchDarkly.Tests
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
-            _featureStore = new InMemoryFeatureStore();
+            _featureStore = TestUtils.InMemoryFeatureStore();
             _config = Client.Configuration.Builder(SDK_KEY)
                 .FeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore))
                 .Build();

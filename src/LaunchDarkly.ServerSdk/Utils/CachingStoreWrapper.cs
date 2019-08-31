@@ -6,15 +6,20 @@ using LaunchDarkly.Cache;
 namespace LaunchDarkly.Client.Utils
 {
     /// <summary>
-    /// CachingStoreWrapper is a partial implementation of <see cref="IFeatureStore"/> that delegates
-    /// the basic functionality to an instance of <see cref="IFeatureStoreCore"/> or <see cref="IFeatureStoreCoreAsync"/>.
-    /// It provides optional caching behavior and other logic that would otherwise be repeated in every
-    /// feature store implementation. This makes it easier to create new database integrations by
+    /// A partial implementation of <see cref="IFeatureStore"/> that delegates the basic functionality to
+    /// an instance of <see cref="IFeatureStoreCore"/> or <see cref="IFeatureStoreCoreAsync"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This class provides optional caching behavior and other logic that would otherwise be repeated in
+    /// every feature store implementation. This makes it easier to create new database integrations by
     /// implementing only the database-specific logic.
-    /// 
+    /// </para>
+    /// <para>
     /// Construct instances of this class with <see cref="CachingStoreWrapper.Builder(IFeatureStoreCore)"/>
     /// or <see cref="CachingStoreWrapper.Builder(IFeatureStoreCoreAsync)"/>.
-    /// </summary>
+    /// </para>
+    /// </remarks>
     public sealed class CachingStoreWrapper : IFeatureStore
     {
         private readonly IFeatureStoreCore _core;
@@ -74,9 +79,7 @@ namespace LaunchDarkly.Client.Utils
             }
         }
 
-        /// <summary>
-        /// <see cref="IFeatureStore.Initialized"/>
-        /// </summary>
+        /// <inheritdoc/>
         public bool Initialized()
         {
             if (_inited)
@@ -99,9 +102,7 @@ namespace LaunchDarkly.Client.Utils
             return result;
         }
 
-        /// <summary>
-        /// <see cref="IFeatureStore.Init"/>
-        /// </summary>
+        /// <inheritdoc/>
         public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
         {
             _core.InitInternal(items);
@@ -122,9 +123,7 @@ namespace LaunchDarkly.Client.Utils
             }
         }
 
-        /// <summary>
-        /// <see cref="IFeatureStore.Get"/>
-        /// </summary>
+        /// <inheritdoc/>
         public T Get<T>(VersionedDataKind<T> kind, String key) where T : class, IVersionedData
         {
             T item;
@@ -139,9 +138,7 @@ namespace LaunchDarkly.Client.Utils
             return (item == null || item.Deleted) ? null : item;
         }
 
-        /// <summary>
-        /// <see cref="IFeatureStore.All"/>
-        /// </summary>
+        /// <inheritdoc/>
         public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
         {
             if (_allCache != null)
@@ -151,9 +148,7 @@ namespace LaunchDarkly.Client.Utils
             return FilterItems<T>(_core.GetAllInternal(kind));
         }
 
-        /// <summary>
-        /// <see cref="IFeatureStore.Upsert"/>
-        /// </summary>
+        /// <inheritdoc/>
         public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
         {
             IVersionedData newState = _core.UpsertInternal(kind, item);
@@ -167,15 +162,13 @@ namespace LaunchDarkly.Client.Utils
             }
         }
 
-        /// <summary>
-        /// <see cref="IFeatureStore.Delete"/>
-        /// </summary>
+        /// <inheritdoc/>
         public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
         {
             Upsert(kind, kind.MakeDeletedItem(key, version));
         }
 
-        /// <see cref="IDisposable.Dispose"/>
+        /// <inheritdoc/>
         public void Dispose()
         {
             Dispose(true);

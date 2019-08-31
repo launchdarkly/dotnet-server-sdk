@@ -25,6 +25,14 @@ namespace LaunchDarkly.Tests
             return "./TestFiles/" + name;
         }
 
+        // this just lets us avoid deprecation warnings
+        public static InMemoryFeatureStore InMemoryFeatureStore()
+        {
+#pragma warning disable 0618
+            return new InMemoryFeatureStore();
+#pragma warning restore 0618
+        }
+
         public static IFeatureStoreFactory SpecificFeatureStore(IFeatureStore store)
         {
             return new SpecificFeatureStoreFactory(store);
