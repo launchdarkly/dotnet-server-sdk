@@ -12,7 +12,7 @@ namespace LaunchDarkly.Tests
     public class LdClientEvaluationTest
     {
         private static readonly User user = User.WithKey("userkey");
-        private IFeatureStore featureStore = new InMemoryFeatureStore();
+        private IFeatureStore featureStore = TestUtils.InMemoryFeatureStore();
         private ILdClient client;
 
         public LdClientEvaluationTest()

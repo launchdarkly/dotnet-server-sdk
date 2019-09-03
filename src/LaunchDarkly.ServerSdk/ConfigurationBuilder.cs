@@ -16,14 +16,17 @@ namespace LaunchDarkly.Client
     /// </remarks>
     /// <example>
     /// <code>
-    ///     var config = Configuration.Builder("my-sdk-key").AllAttributesPrivate(true).EventCapacity(1000).Build();
+    ///     var config = Configuration.Builder("my-sdk-key")
+    ///         .AllAttributesPrivate(true)
+    ///         .EventCapacity(1000)
+    ///         .Build();
     /// </code>
     /// </example>
     public interface IConfigurationBuilder
     {
         /// <summary>
         /// Creates a <see cref="Configuration"/> based on the properties that have been set on the builder.
-        /// Modifying the builder after this point does not affect the returned <c>Configuration</c>.
+        /// Modifying the builder after this point does not affect the returned <see cref="Configuration"/>.
         /// </summary>
         /// <returns>the configured <c>Configuration</c> object</returns>
         Configuration Build();

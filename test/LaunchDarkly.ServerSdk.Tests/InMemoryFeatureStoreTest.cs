@@ -10,7 +10,7 @@ namespace LaunchDarkly.Tests
     {
         public InMemoryFeatureStoreTest()
         {
-            store = new InMemoryFeatureStore();
+            store = TestUtils.InMemoryFeatureStore();
         }
     }
 }

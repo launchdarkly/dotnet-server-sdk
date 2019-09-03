@@ -108,7 +108,9 @@ namespace LaunchDarkly.Client
     {
         IFeatureStore IFeatureStoreFactory.CreateFeatureStore()
         {
+#pragma warning disable 0618 // deprecated constructor
             return new InMemoryFeatureStore();
+#pragma warning restore 0618
         }
     }
 

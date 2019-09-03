@@ -12,7 +12,7 @@ namespace LaunchDarkly.Tests
     {
         private static readonly User baseUser = User.WithKey("userkey");
 
-        private readonly IFeatureStore featureStore = new InMemoryFeatureStore();
+        private readonly IFeatureStore featureStore = TestUtils.InMemoryFeatureStore();
 
         [Fact]
         public void FlagReturnsOffVariationIfFlagIsOff()

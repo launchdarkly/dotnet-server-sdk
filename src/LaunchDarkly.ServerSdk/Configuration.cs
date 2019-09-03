@@ -7,18 +7,23 @@ using LaunchDarkly.Common;
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// This class exposes advanced configuration options for <see cref="LdClient"/>.
+    /// Configuration options for <see cref="LdClient"/>. This class should normally be constructed with
+    /// <see cref="Configuration.Builder(string)"/>.
     /// </summary>
     /// <remarks>
-    /// Note that the <c>Configuration</c> is currently mutable: even though the properties cannot be set
+    /// <para>
+    /// Note that the <see cref="Configuration"/> is currently mutable: even though the properties cannot be set
     /// directly, using the <see cref="ConfigurationExtensions"/> methods (such as
-    /// <c>config.WithStartWithTime()</c>) modifies the original object.  In future versions of the SDK, this
-    /// class may be changed to be immutable. The preferred method of setting configuration properties is to
-    /// obtain a builder with <see cref="Configuration.Builder(string)"/>; the <see cref="ConfigurationExtensions"/>
+    /// <see cref="ConfigurationExtensions.WithStartWaitTime(Configuration, TimeSpan)"/>) modifies the
+    /// original object.  In future versions of the SDK, this class will be changed to be immutable. The
+    /// preferred method of setting configuration properties is to obtain a builder with
+    /// <see cref="Configuration.Builder(string)"/>; the <see cref="ConfigurationExtensions"/>
     /// methods are now deprecated and will be removed once <c>Configuration</c> is immutable.
-    /// 
-    /// If you modify properties of a <c>Configuration</c> after creating an <see cref="LdClient"/> with that
+    /// </para>
+    /// <para>
+    /// If you modify properties of a <see cref="Configuration"/> after creating an <see cref="LdClient"/> with that
     /// <c>Configuration</c>, the behavior is undefined.
+    /// </para>
     /// </remarks>
 #pragma warning disable 618
     public class Configuration : IBaseConfiguration
@@ -275,12 +280,12 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Creates a <see cref="ConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
+        /// Creates an <see cref="IConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
         /// </summary>
         /// <remarks>
         /// This is the preferred method for building a <c>Configuration</c> if you are setting properties
         /// besides the <c>SdkKey</c>. The <c>ConfigurationBuilder</c> has methods for setting any number of
-        /// properties, after which you call <see cref="ConfigurationBuilder.Build"/> to get the resulting
+        /// properties, after which you call <see cref="IConfigurationBuilder.Build"/> to get the resulting
         /// <c>Configuration</c> instance.
         /// 
         /// This is different from using the extension methods such as
@@ -304,7 +309,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Creates a <see cref="ConfigurationBuilder"/> based on an existing configuration.
+        /// Creates an <see cref="IConfigurationBuilder"/> based on an existing configuration.
         /// </summary>
         /// <remarks>
         /// Modifying properties of the builder will not affect the original configuration object.

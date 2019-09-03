@@ -49,7 +49,7 @@ namespace LaunchDarkly.Tests
             TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
             TestSetter(b => b.UseLdd, c => c.UseLdd, true);
             TestSetter(b => b.FeatureStoreFactory, c => c.FeatureStoreFactory,
-                TestUtils.SpecificFeatureStore(new InMemoryFeatureStore()));
+                TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
             TestSetter(b => b.EventProcessorFactory, c => c.EventProcessorFactory,
                 TestUtils.SpecificEventProcessor(new TestEventProcessor()));
             TestSetter(b => b.UpdateProcessorFactory, c => c.UpdateProcessorFactory,
