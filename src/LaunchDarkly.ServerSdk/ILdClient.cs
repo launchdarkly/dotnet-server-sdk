@@ -25,8 +25,8 @@ namespace LaunchDarkly.Client
         /// <para>
         /// If the flag variation has a numeric value that is not an integer, it is rounded to the
         /// nearest integer. This rounding behavior may be changed in a future version of the SDK (for
-        /// instance, to round down like the usual float-to-int conversion in C#), so you should avoid
-        /// relying on it.
+        /// instance, to round toward zero like the usual float-to-int conversion in C#), so you should
+        /// avoid relying on it.
         /// </para>
         /// <para>
         /// If the flag variation does not have a numeric value, <c>defaultValue</c> is returned.

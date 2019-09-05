@@ -81,9 +81,17 @@ namespace LaunchDarkly.Tests
         public void IntVariationRoundsToNearestIntFromFloat()
         {
             featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key").OffWithValue(new JValue(2.75f)).Build());
-
-            Assert.Equal(3, client.IntVariation("key", user, 1));
+                new FeatureFlagBuilder("flag1").OffWithValue(new JValue(2.25f)).Build());
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("flag2").OffWithValue(new JValue(2.75f)).Build());
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("flag3").OffWithValue(new JValue(-2.25f)).Build());
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("flag4").OffWithValue(new JValue(-2.75f)).Build());
+            Assert.Equal(2, client.IntVariation("flag1", user, 1));
+            Assert.Equal(3, client.IntVariation("flag2", user, 1));
+            Assert.Equal(-2, client.IntVariation("flag3", user, 1));
+            Assert.Equal(-3, client.IntVariation("flag4", user, 1));
         }
 
         [Fact]
