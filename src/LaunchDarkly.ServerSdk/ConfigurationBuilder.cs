@@ -308,8 +308,11 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ConfigurationBuilder));
 
+        // Let's try to keep these properties and methods alphabetical so they're easy to find
         internal bool _allAttributesPrivate = false;
         internal Uri _baseUri = Configuration.DefaultUri;
+        internal TimeSpan _diagnosticRecordingInterval = Configuration.DefaultDiagnosticRecordingInterval;
+        internal bool _diagnosticOptOut = false;
         internal int _eventCapacity = Configuration.DefaultEventQueueCapacity;
         internal TimeSpan _eventFlushInterval = Configuration.DefaultEventQueueFrequency;
         internal IEventProcessorFactory _eventProcessorFactory = null;
@@ -331,12 +334,10 @@ namespace LaunchDarkly.Client
         internal bool _useLdd = false;
         internal int _userKeysCapacity = Configuration.DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = Configuration.DefaultUserKeysFlushInterval;
-        internal int _eventSamplingInterval = 0;     // deprecated Configuration property, settable only by copying
-        internal IFeatureStore _featureStore = null; // deprecated Configuration property, settable only by copying
-        internal TimeSpan _diagnosticRecordingInterval = Configuration.DefaultDiagnosticRecordingInterval;
-        internal bool _diagnosticOptOut = false;
         internal string _wrapperName = null;
         internal string _wrapperVersion = null;
+        internal int _eventSamplingInterval = 0;     // deprecated Configuration property, settable only by copying
+        internal IFeatureStore _featureStore = null; // deprecated Configuration property, settable only by copying
 
         public ConfigurationBuilder(string sdkKey)
         {
@@ -347,6 +348,8 @@ namespace LaunchDarkly.Client
         {
             _allAttributesPrivate = copyFrom.AllAttributesPrivate;
             _baseUri = copyFrom.BaseUri;
+            _diagnosticRecordingInterval = copyFrom.DiagnosticRecordingInterval;
+            _diagnosticOptOut = copyFrom.DiagnosticOptOut;
             _eventCapacity = copyFrom.EventCapacity;
             _eventFlushInterval = copyFrom.EventFlushInterval;
             _eventProcessorFactory = copyFrom.EventProcessorFactory;
@@ -373,8 +376,6 @@ namespace LaunchDarkly.Client
             _useLdd = copyFrom.UseLdd;
             _userKeysCapacity = copyFrom.UserKeysCapacity;
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
-            _diagnosticRecordingInterval = copyFrom.DiagnosticRecordingInterval;
-            _diagnosticOptOut = copyFrom.DiagnosticOptOut;
             _wrapperName = copyFrom.WrapperName;
             _wrapperVersion = copyFrom.WrapperVersion;
         }

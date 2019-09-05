@@ -196,17 +196,16 @@ namespace LaunchDarkly.Client
         /// </remarks>
         public IUpdateProcessorFactory UpdateProcessorFactory { get; internal set; }
         /// <summary>
+        /// A string that will be sent to LaunchDarkly to identify the SDK type.
+        /// </summary>
+        public string UserAgentType { get { return "DotNetClient"; } }
         /// The time between sending periodic diagnostic events.
         /// </summary>
         public TimeSpan DiagnosticRecordingInterval { get; internal set; }
         /// <summary>
-        /// True if diagnostic events have been disabled
+        /// True if diagnostic events have been disabled.
         /// </summary>
         public bool DiagnosticOptOut { get; internal set; }
-        /// <summary>
-        /// A string that will be sent to LaunchDarkly to identify the SDK type.
-        /// </summary>
-        public string UserAgentType { get { return "DotNetClient"; } }
         /// <summary>
         /// Name specifying a wrapper library, to be included in request headers.
         /// </summary>
@@ -215,6 +214,7 @@ namespace LaunchDarkly.Client
         /// Version of a wrapper library, to be included in request headers.
         /// </summary>
         public string WrapperVersion { get; internal set; }
+
         /// <summary>
         /// Default value for <see cref="PollingInterval"/>.
         /// </summary>
@@ -330,8 +330,11 @@ namespace LaunchDarkly.Client
 
         internal Configuration(ConfigurationBuilder builder)
         {
+            // Let's try to keep these alphabetical so it's easy to see if everything is here
             AllAttributesPrivate = builder._allAttributesPrivate;
             BaseUri = builder._baseUri;
+            DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
+            DiagnosticOptOut = builder._diagnosticOptOut;
             EventCapacity = builder._eventCapacity;
             EventFlushInterval = builder._eventFlushInterval;
             EventProcessorFactory = builder._eventProcessorFactory;
@@ -358,8 +361,6 @@ namespace LaunchDarkly.Client
             UseLdd = builder._useLdd;
             UserKeysCapacity = builder._userKeysCapacity;
             UserKeysFlushInterval = builder._userKeysFlushInterval;
-            DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
-            DiagnosticOptOut = builder._diagnosticOptOut;
             WrapperName = builder._wrapperName;
             WrapperVersion = builder._wrapperVersion;
         }
