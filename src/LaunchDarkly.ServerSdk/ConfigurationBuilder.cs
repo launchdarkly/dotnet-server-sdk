@@ -265,7 +265,7 @@ namespace LaunchDarkly.Client
         ///     The default is every 15 minutes and the minimum is every minute.
         ///   </para>
         /// </remarks>
-        /// <param name=""></param>
+        /// <param name="diagnosticRecordingInterval">the diagnostic recording interval</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval);
 

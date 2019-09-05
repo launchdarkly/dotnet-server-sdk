@@ -199,6 +199,7 @@ namespace LaunchDarkly.Client
         /// A string that will be sent to LaunchDarkly to identify the SDK type.
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
+        /// <summary>
         /// The time between sending periodic diagnostic events.
         /// </summary>
         public TimeSpan DiagnosticRecordingInterval { get; internal set; }
@@ -373,6 +374,8 @@ namespace LaunchDarkly.Client
         {
             internal Configuration Config { get; set; }
             public bool AllAttributesPrivate => Config.AllAttributesPrivate;
+            public bool DiagnosticOptOut => Config.DiagnosticOptOut;
+            public TimeSpan DiagnosticRecordingInterval => Config.DiagnosticRecordingInterval;
             public int EventCapacity => Config.EventCapacity;
             public TimeSpan EventFlushInterval => Config.EventFlushInterval;
 #pragma warning disable 618
@@ -386,6 +389,42 @@ namespace LaunchDarkly.Client
             public TimeSpan ReconnectTime => Config.ReconnectTime;
             public int UserKeysCapacity => Config.UserKeysCapacity;
             public TimeSpan UserKeysFlushInterval => Config.UserKeysFlushInterval;
+            public Dictionary<String, Object> DiagnosticConfigPayload {
+                get {
+                    Dictionary<String, Object> configPayload = new Dictionary<String, Object>();
+                    configPayload["baseURI"] = Config.BaseUri;
+                    configPayload["eventsURI"] = Config.EventsUri;
+                    configPayload["streamURI"] = Config.StreamUri;
+                    configPayload["eventsCapacity"] = Config.EventCapacity;
+                    //configPayload["connectTimeoutMillis"] = Config.ConnectTimeoutMillis;
+                    //configPayload["socketTimeoutMillis"] = Config.SocketTimeoutMillis;
+                    configPayload["eventsFlushIntervalMillis"] = Config.EventFlushInterval.Milliseconds;
+                    configPayload["usingProxy"] = false;
+                    configPayload["usingProxyAuthenticator"] = false;
+                    configPayload["streamingDisabled"] = !Config.IsStreamingEnabled;
+                    configPayload["usingRelayDaemon"] = Config.UseLdd;
+                    configPayload["offline"] = Config.Offline;
+                    configPayload["allAttributesPrivate"] = Config.AllAttributesPrivate;
+                    //configPayload["eventReportingDisabled"] = Config.EventReportingDisabled;
+                    configPayload["pollingIntervalMillis"] = Config.PollingInterval.Milliseconds;
+                    configPayload["startWaitMillis"] = Config.StartWaitTime.Milliseconds;
+                    #pragma warning disable 618
+                    configPayload["samplingInterval"] = Config.EventSamplingInterval;
+                    #pragma warning restore 618
+                    configPayload["reconnectTimeMillis"] = Config.ReconnectTime.Milliseconds;
+                    configPayload["userKeysCapacity"] = Config.UserKeysCapacity;
+                    configPayload["userKeysFlushIntervalMillis"] = Config.UserKeysFlushInterval.Milliseconds;
+                    configPayload["inlineUsersInEvents"] = Config.InlineUsersInEvents;
+                    configPayload["diagnosticRecordingIntervalMillis"] = Config.DiagnosticRecordingInterval.Milliseconds;
+                    //configPayload["featureStore"] = Config.FeatureStore.ToString;
+                    return configPayload;
+                }
+            }
+            public IDiagnosticStore DiagnosticStore {
+                get {
+                    return new ServerDiagnosticStore();
+                }
+            }
         }
 
         private struct HttpRequestAdapter : IHttpRequestConfiguration
@@ -393,6 +432,8 @@ namespace LaunchDarkly.Client
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
             public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
+            public string WrapperName => Config.WrapperName;
+            public string WrapperVersion => Config.WrapperVersion;
         }
 
         private struct StreamManagerAdapter : IStreamManagerConfiguration
@@ -403,6 +444,8 @@ namespace LaunchDarkly.Client
             public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
             public TimeSpan ReadTimeout => Config.ReadTimeout;
             public TimeSpan ReconnectTime => Config.ReconnectTime;
+            public string WrapperName => Config.WrapperName;
+            public string WrapperVersion => Config.WrapperVersion;
         }
     }
 }

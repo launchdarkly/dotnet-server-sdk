@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp1.1;netcoreapp2.0;net46</TargetFrameworks>
     <AssemblyName>LaunchDarkly.ServerSdk.Tests</AssemblyName>
@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.5.1" />
+    <ProjectReference Include="..\..\dotnet-sdk-common\src\LaunchDarkly.CommonSdk\LaunchDarkly.CommonSdk.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="Moq" Version="4.8.1" />
     <PackageReference Include="WireMock.Net" Version="1.0.3.8" />
