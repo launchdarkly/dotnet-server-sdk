@@ -422,7 +422,7 @@ namespace LaunchDarkly.Client
             }
             public IDiagnosticStore DiagnosticStore {
                 get {
-                    return new ServerDiagnosticStore();
+                    return new ServerDiagnosticStore(Config.SdkKey);
                 }
             }
         }
