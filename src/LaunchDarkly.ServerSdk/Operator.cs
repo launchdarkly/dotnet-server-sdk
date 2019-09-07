@@ -6,15 +6,79 @@ using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
+    /// <summary>
+    /// This struct saves us from having to create a JValue out of every built-in user attribute when we're
+    /// evaluating a clause. Since it's a struct and not a class, it doesn't create any extra heap objects.
+    /// 
+    /// We can eventually do away with this if we enhance ImmutableJsonValue to store primitive types
+    /// directly (like we're doing here) instead of in a JValue wrapper.
+    /// </summary>
+    internal struct ExpressionValue
+    {
+        private readonly string _stringValue;
+        private readonly JToken _jsonValue;
+
+        private ExpressionValue(string stringValue, JToken jsonValue)
+        {
+            _stringValue = stringValue;
+            _jsonValue = jsonValue;
+        }
+
+        internal static ExpressionValue FromString(string s)
+        {
+            return new ExpressionValue(s, null);
+        }
+
+        internal static ExpressionValue FromJsonValue(JToken j)
+        {
+            return new ExpressionValue(null, j);
+        }
+
+        internal bool IsNull => _stringValue is null && _jsonValue is null;
+
+        internal bool IsNumber => !(_jsonValue is null) &&
+            (_jsonValue.Type == JTokenType.Integer || _jsonValue.Type == JTokenType.Float);
+
+        internal bool IsString => !(_stringValue is null) || (!(_jsonValue is null) && _jsonValue.Type == JTokenType.String);
+        
+        internal float AsFloat => IsNumber ? _jsonValue.Value<float>() : 0;
+
+        internal string AsString => _stringValue is null ?
+            (_jsonValue is null ? null : _jsonValue.Value<string>()) :
+            _stringValue;
+
+        internal DateTime? AsDate
+        {
+            get
+            {
+                if (!(_jsonValue is null) && _jsonValue.Type == JTokenType.Date)
+                {
+                    return _jsonValue.Value<DateTime>().ToUniversalTime();
+                }
+                if (IsString)
+                {
+                    string s = AsString;
+                    return DateTime.Parse(s).ToUniversalTime();
+                }
+                if (IsNumber)
+                {
+                    var value = AsFloat;
+                    return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(value);
+                }
+                return null;
+            }
+        }
+    }
+
     internal static class Operator
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Operator));
 
-        public static bool Apply(string op, JValue uValue, JValue cValue)
+        public static bool Apply(string op, ExpressionValue uValue, ExpressionValue cValue)
         {
             try
             {
-                if (uValue == null || cValue == null)
+                if (uValue.IsNull || cValue.IsNull)
                     return false;
 
                 int comparison;
@@ -27,7 +91,7 @@ namespace LaunchDarkly.Client
                             return true;
                         }
 
-                        if (uValue.Type.Equals(JTokenType.String) || cValue.Type.Equals(JTokenType.String))
+                        if (uValue.IsString || cValue.IsString)
                         {
                             return StringOperator(uValue, cValue, (a, b) => a.Equals(b));
                         }
@@ -96,15 +160,15 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        private static bool TryCompareNumericValues(JValue x, JValue y, out int result)
+        private static bool TryCompareNumericValues(ExpressionValue x, ExpressionValue y, out int result)
         {
-            if (!IsNumericValue(x) || !IsNumericValue(y))
+            if (!x.IsNumber || !y.IsNumber)
             {
                 result = default(int);
                 return false;
             }
 
-            result = x.CompareTo(y);
+            result = x.AsFloat.CompareTo(y.AsFloat);
             return true;
         }
 
@@ -113,12 +177,12 @@ namespace LaunchDarkly.Client
             return (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer));
         }
         
-        private static bool StringOperator(JValue uValue, JValue cValue, Func<string, string, bool> fn)
+        private static bool StringOperator(ExpressionValue uValue, ExpressionValue cValue, Func<string, string, bool> fn)
         {
-            if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+            if (uValue.IsString && cValue.IsString)
             {
-                string us = uValue.Value<string>();
-                string cs = cValue.Value<string>();
+                string us = uValue.AsString;
+                string cs = cValue.AsString;
                 if (us != null && cs != null)
                 {
                     return fn(us, cs);
@@ -136,52 +200,27 @@ namespace LaunchDarkly.Client
             return null;
         }
         
-        private static bool DateOperator(JValue uValue, JValue cValue, Func<DateTime, DateTime, bool> fn)
+        private static bool DateOperator(ExpressionValue uValue, ExpressionValue cValue, Func<DateTime, DateTime, bool> fn)
         {
-            var uDateTime = JValueToDateTime(uValue);
-            var cDateTime = JValueToDateTime(cValue);
+            var uDateTime = uValue.AsDate;
+            var cDateTime = cValue.AsDate;
             return uDateTime.HasValue && cDateTime.HasValue && fn(uDateTime.Value, cDateTime.Value);
         }
 
-        private static bool SemVerOperator(JValue uValue, JValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
+        private static bool SemVerOperator(ExpressionValue uValue, ExpressionValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
         {
-            var uVersion = JValueToSemVer(uValue);
-            var cVersion = JValueToSemVer(cValue);
+            var uVersion = ValueToSemVer(uValue);
+            var cVersion = ValueToSemVer(cValue);
             return uVersion != null && cVersion != null && fn(uVersion, cVersion);
         }
-
-        //Visible for testing
-        public static DateTime? JValueToDateTime(JValue jValue)
+        
+        internal static SemanticVersion ValueToSemVer(ExpressionValue value)
         {
-            switch (jValue.Type)
-            {
-                case JTokenType.Date:
-                    return jValue.Value<DateTime>().ToUniversalTime();
-                case JTokenType.String:
-                    string s = jValue.Value<string>();
-                    if (s == null)
-                    {
-                        return null;
-                    }
-                    return DateTime.Parse(s).ToUniversalTime();
-                default:
-                    var jvalueDouble = ParseDoubleFromJValue(jValue);
-                    if (jvalueDouble.HasValue)
-                    {
-                        return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(jvalueDouble.Value);
-                    }
-                    break;
-            }
-            return null;
-        }
-
-        internal static SemanticVersion JValueToSemVer(JValue jValue)
-        {
-            if (jValue.Type == JTokenType.String && jValue.Value<string>() != null)
+            if (value.IsString && value.AsString != null)
             {
                 try
                 {
-                    return SemanticVersion.Parse(jValue.Value<string>(), allowMissingMinorAndPatch: true);
+                    return SemanticVersion.Parse(value.AsString, allowMissingMinorAndPatch: true);
                 }
                 catch (ArgumentException)
                 {

@@ -66,7 +66,7 @@ namespace LaunchDarkly.Client
                             element);
                         return false;
                     }
-                    if (MatchAny(element as JValue))
+                    if (MatchAny(ExpressionValue.FromJsonValue(element as JValue)))
                     {
                         return MaybeNegate(true);
                     }
@@ -75,7 +75,7 @@ namespace LaunchDarkly.Client
             }
             else if (userValue is JValue)
             {
-                return MaybeNegate(MatchAny(userValue as JValue));
+                return MaybeNegate(MatchAny(ExpressionValue.FromJsonValue(userValue as JValue)));
             }
             Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
                 userValue.Type,
@@ -84,11 +84,50 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        private bool MatchAny(JValue userValue)
+        // these static values let us avoid creating new JValue objects for true and false
+        private static readonly JValue TrueValue = new JValue(true);
+        private static readonly JValue FalseValue = new JValue(false);
+
+        internal static ExpressionValue GetUserAttributeForEvaluation(User user, string attribute)
+        {
+            switch (attribute)
+            {
+                case "key":
+                    return ExpressionValue.FromString(user.Key);
+                case "secondary":
+                    return ExpressionValue.FromString(user.SecondaryKey);
+                case "ip":
+                    return ExpressionValue.FromString(user.IPAddress);
+                case "email":
+                    return ExpressionValue.FromString(user.Email);
+                case "avatar":
+                    return ExpressionValue.FromString(user.Avatar);
+                case "firstName":
+                    return ExpressionValue.FromString(user.FirstName);
+                case "lastName":
+                    return ExpressionValue.FromString(user.LastName);
+                case "name":
+                    return ExpressionValue.FromString(user.Name);
+                case "country":
+                    return ExpressionValue.FromString(user.Country);
+                case "anonymous":
+                    if (user.Anonymous.HasValue)
+                    {
+                        return ExpressionValue.FromJsonValue(user.Anonymous.Value ? TrueValue : FalseValue);
+                    }
+                    return ExpressionValue.FromJsonValue(null);
+                default:
+                    JToken customValue;
+                    user.Custom.TryGetValue(attribute, out customValue);
+                    return ExpressionValue.FromJsonValue(customValue);
+            }
+        }
+
+        private bool MatchAny(ExpressionValue userValue)
         {
             foreach (var v in Values)
             {
-                if (Operator.Apply(Op, userValue, v))
+                if (Operator.Apply(Op, userValue, ExpressionValue.FromJsonValue(v)))
                 {
                     return true;
                 }
