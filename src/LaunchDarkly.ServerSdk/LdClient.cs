@@ -173,6 +173,12 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
+            return Evaluate(key, user, defaultValue, ValueTypes.MutableJson, EventFactory.Default).Value;
+        }
+
+        /// <inheritdoc/>
+        public ImmutableJsonValue JsonVariation(string key, User user, ImmutableJsonValue defaultValue)
+        {
             return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.Default).Value;
         }
 
@@ -202,6 +208,12 @@ namespace LaunchDarkly.Client
 
         /// <inheritdoc/>
         public EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue)
+        {
+            return Evaluate(key, user, defaultValue, ValueTypes.MutableJson, EventFactory.DefaultWithReasons);
+        }
+
+        /// <inheritdoc/>
+        public EvaluationDetail<ImmutableJsonValue> JsonVariationDetail(string key, User user, ImmutableJsonValue defaultValue)
         {
             return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.DefaultWithReasons);
         }
@@ -259,7 +271,7 @@ namespace LaunchDarkly.Client
                 try
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, EventFactory.Default);
-                    state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
+                    state.AddFlag(flag, result.Result.Value.InnerValue, result.Result.VariationIndex,
                         withReasons ? result.Result.Reason : null, detailsOnlyIfTracked);
                 }
                 catch (Exception e)
@@ -291,7 +303,10 @@ namespace LaunchDarkly.Client
             }
 
             FeatureFlag featureFlag = null;
-            JToken defaultValueJson = expectedType.ValueToJson(defaultValue);
+            JToken defaultValueJson = expectedType.ValueToJson(defaultValue).InnerValue;
+            // defaultValueJson is still a JToken because it is used only for events, and the EventFactory
+            // methods still use JToken instead of ImmutableJsonValue because the event classes are public
+            // and can't be changed until v6.0
             try
             {
                 featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
@@ -299,7 +314,6 @@ namespace LaunchDarkly.Client
                 {
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
                         featureKey);
-
                     _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValueJson,
                         EvaluationErrorKind.FLAG_NOT_FOUND));
                     return new EvaluationDetail<T>(defaultValue, null,
@@ -340,7 +354,7 @@ namespace LaunchDarkly.Client
                     {
                         Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
                             expectedType.GetType().Name,
-                            evalDetail.Value is null ? "null" : evalDetail.Value.Type.ToString(),
+                            evalDetail.Value.Type.ToString(),
                             featureKey);
 
                         _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user,
@@ -350,7 +364,8 @@ namespace LaunchDarkly.Client
                     }
                 }
                 _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                    evalDetail, defaultValueJson));
+                    new EvaluationDetail<JToken>(evalDetail.Value.InnerValue, evalDetail.VariationIndex, evalDetail.Reason),
+                    defaultValueJson));
                 return returnDetail;
             }
             catch (Exception e)
