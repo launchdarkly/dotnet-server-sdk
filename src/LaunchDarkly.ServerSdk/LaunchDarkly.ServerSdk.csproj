@@ -18,7 +18,7 @@
     <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.5.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.6.0-beta2" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.6.0-beta3" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />

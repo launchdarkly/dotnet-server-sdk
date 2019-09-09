@@ -154,7 +154,7 @@ namespace LaunchDarkly.Client
         /// <param name="user">the end user requesting the flag</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariationDetail")]
         EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue);
 
         /// <summary>
@@ -308,7 +308,8 @@ namespace LaunchDarkly.Client
         /// <remarks>
         /// <para>
         /// This method creates a "custom" analytics event containing the specified event name (key)
-        /// and user properties.
+        /// and user properties. You may attach arbitrary data to the event by calling
+        /// <see cref="Track(string, User, ImmutableJsonValue)"/> instead.
         /// </para>
         /// <para>
         /// Note that event delivery is asynchronous, so the event may not actually be sent until
@@ -320,7 +321,7 @@ namespace LaunchDarkly.Client
         void Track(string name, User user);
 
         /// <summary>
-        /// Tracks that a user performed an event.
+        /// Tracks that a user performed an event (obsolete overload).
         /// </summary>
         /// <remarks>
         /// <para>
@@ -335,10 +336,11 @@ namespace LaunchDarkly.Client
         /// <param name="name">the name of the event</param>
         /// <param name="user">the user that performed the event</param>
         /// <param name="data">a string containing additional data associated with the event, or null</param>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         void Track(string name, User user, string data);
 
         /// <summary>
-        /// Tracks that a user performed an event.
+        /// Tracks that a user performed an event (obsolete overload).
         /// </summary>
         /// <remarks>
         /// <para>
@@ -353,13 +355,29 @@ namespace LaunchDarkly.Client
         /// <param name="name">the name of the event</param>
         /// <param name="data">a JSON element containing additional data associated with the event, or null</param>
         /// <param name="user">the user that performed the event</param>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         void Track(string name, JToken data, User user);
         // Note, the order of the parameters here is different than the other 3-parameter overload so that
         // passing null for data will not be an ambiguous method call.
 
-        // Note that there is no Flush method in this interface. That was an oversight in the original
-        // .NET SDK design. Unfortunately we cannot add it without breaking any code that creates a
-        // stub implementation of ILdClient, so it can only be added in the next major version.
+        /// <summary>
+        /// Tracks that a user performed an event.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method creates a "custom" analytics event containing the specified event name (key),
+        /// user properties, and optional custom data. If you do not need custom data, pass
+        /// <see cref="ImmutableJsonValue.Null"/> for the last parameter or simply omit the parameter.
+        /// </para>
+        /// <para>
+        /// Note that event delivery is asynchronous, so the event may not actually be sent until
+        /// later; see <see cref="LdClient.Flush"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="name">the name of the event</param>
+        /// <param name="data">additional data associated with the event, if any</param>
+        /// <param name="user">the user that performed the event</param>
+        void Track(string name, User user, ImmutableJsonValue data);
 
         /// <summary>
         /// Returns a map from feature flag keys to <see cref="JToken"/> feature flag values for a given user.

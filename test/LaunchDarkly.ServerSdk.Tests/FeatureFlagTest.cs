@@ -25,7 +25,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("off"), 1, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("off"), 1, EvaluationReason.Off.Instance);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -40,7 +40,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null, EvaluationReason.Off.Instance);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -56,7 +56,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -73,7 +73,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -90,7 +90,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -106,7 +106,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -123,7 +123,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -140,7 +140,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -157,7 +157,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -175,7 +175,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("off"), 1,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("off"), 1,
                 new EvaluationReason.PrerequisiteFailed("feature1"));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -203,14 +203,14 @@ namespace LaunchDarkly.Tests
 
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("off"), 1,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("off"), 1,
                 new EvaluationReason.PrerequisiteFailed("feature1"));
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
             FeatureRequestEvent e = result.PrerequisiteEvents[0];
             Assert.Equal(f1.Key, e.Key);
-            Assert.Equal(new JValue("go"), e.Value);
+            Assert.Equal(ImmutableJsonValue.Of("go"), e.ImmutableJsonValue);
             Assert.Equal(f1.Version, e.Version);
             Assert.Equal(f0.Key, e.PrereqOf);
         }
@@ -236,14 +236,14 @@ namespace LaunchDarkly.Tests
 
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("off"), 1,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("off"), 1,
                 new EvaluationReason.PrerequisiteFailed("feature1"));
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
             FeatureRequestEvent e = result.PrerequisiteEvents[0];
             Assert.Equal(f1.Key, e.Key);
-            Assert.Equal(new JValue("nogo"), e.Value);
+            Assert.Equal(ImmutableJsonValue.Of("nogo"), e.ImmutableJsonValue);
             Assert.Equal(f1.Version, e.Version);
             Assert.Equal(f0.Key, e.PrereqOf);
         }
@@ -269,13 +269,13 @@ namespace LaunchDarkly.Tests
 
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
             FeatureRequestEvent e = result.PrerequisiteEvents[0];
             Assert.Equal(f1.Key, e.Key);
-            Assert.Equal(new JValue("go"), e.Value);
+            Assert.Equal(ImmutableJsonValue.Of("go"), e.ImmutableJsonValue);
             Assert.Equal(f1.Version, e.Version);
             Assert.Equal(f0.Key, e.PrereqOf);
         }
@@ -309,20 +309,20 @@ namespace LaunchDarkly.Tests
 
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(2, result.PrerequisiteEvents.Count);
 
             FeatureRequestEvent e0 = result.PrerequisiteEvents[0];
             Assert.Equal(f2.Key, e0.Key);
-            Assert.Equal(new JValue("go"), e0.Value);
+            Assert.Equal(ImmutableJsonValue.Of("go"), e0.ImmutableJsonValue);
             Assert.Equal(f2.Version, e0.Version);
             Assert.Equal(f1.Key, e0.PrereqOf);
 
             FeatureRequestEvent e1 = result.PrerequisiteEvents[1];
             Assert.Equal(f1.Key, e1.Key);
-            Assert.Equal(new JValue("go"), e1.Value);
+            Assert.Equal(ImmutableJsonValue.Of("go"), e1.ImmutableJsonValue);
             Assert.Equal(f1.Version, e1.Version);
             Assert.Equal(f0.Key, e1.PrereqOf);
         }
@@ -340,7 +340,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("on"), 2, EvaluationReason.TargetMatch.Instance);
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("on"), 2, EvaluationReason.TargetMatch.Instance);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -357,7 +357,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(new JValue("on"), 2,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Of("on"), 2,
                 new EvaluationReason.RuleMatch(1, "ruleid1"));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -373,7 +373,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -389,7 +389,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -405,7 +405,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -423,7 +423,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<JToken>(null, null,
+            var expected = new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
@@ -436,7 +436,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(new JValue(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(ImmutableJsonValue.Of(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -446,7 +446,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Custom("legs", 4).Build();
 
-            Assert.Equal(new JValue(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(ImmutableJsonValue.Of(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -456,7 +456,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("bob").Build();
 
-            Assert.Equal(new JValue(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(ImmutableJsonValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -466,7 +466,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(new JValue(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(ImmutableJsonValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -476,7 +476,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(new JValue(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(ImmutableJsonValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
         
         [Fact]
@@ -489,7 +489,7 @@ namespace LaunchDarkly.Tests
             var f = SegmentMatchBooleanFlag("segkey");
             var user = User.WithKey("foo");
 
-            Assert.Equal(new JValue(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(ImmutableJsonValue.Of(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -498,7 +498,7 @@ namespace LaunchDarkly.Tests
             var f = SegmentMatchBooleanFlag("segkey");
             var user = User.WithKey("foo");
 
-            Assert.Equal(new JValue(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(ImmutableJsonValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
         }
 
         private FeatureFlag FeatureFlagWithRules(params Rule[] rules)

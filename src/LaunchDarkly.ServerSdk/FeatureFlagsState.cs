@@ -20,6 +20,7 @@ namespace LaunchDarkly.Client
         internal readonly bool _valid;
         internal readonly IDictionary<string, JToken> _flagValues;
         internal readonly IDictionary<string, FlagMetadata> _flagMetadata;
+        private volatile Dictionary<string, ImmutableJsonValue> _immutableValuesMap; // lazily created
         
         /// <summary>
         /// True if this object contains a valid snapshot of feature flag state, or false if the
@@ -69,13 +70,25 @@ namespace LaunchDarkly.Client
         /// <param name="key">the feature flag key</param>
         /// <returns>the flag's JSON value; null if the flag returned the default value, or if
         /// there was no such flag</returns>
+        [Obsolete("Use GetFlagValueJson; JToken will be removed from the public API in the future")]
         public JToken GetFlagValue(string key)
+        {
+            return GetFlagValueJson(key).InnerValue;
+        }
+
+        /// <summary>
+        /// Returns the value of an individual feature flag at the time the state was recorded.
+        /// </summary>
+        /// <param name="key">the feature flag key</param>
+        /// <returns>the flag's JSON value; <see cref="ImmutableJsonValue.Null"/> if the flag returned
+        /// the default value, or if there was no such flag</returns>
+        public ImmutableJsonValue GetFlagValueJson(string key)
         {
             if (_flagValues.TryGetValue(key, out var value))
             {
-                return value;
+                return ImmutableJsonValue.FromSafeValue(value);
             }
-            return null;
+            return ImmutableJsonValue.Null;
         }
 
         /// <summary>
@@ -96,19 +109,57 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Returns a dictionary of flag keys to flag values. If a flag would have evaluated to the
-        /// default value, its value will be null.
-        ///
-        /// Do not use this method if you are passing data to the front end to "bootstrap" the
-        /// JavaScript client. Instead, serialize the FeatureFlagsState object to JSON using
-        /// <c>JsonConvert.SerializeObject()</c>.
+        /// Returns a dictionary of flag keys to flag values.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If a flag would have evaluated to the default value, its value will be <see langword="null"/>.
+        /// </para>
+        /// <para>
+        /// Do not use this method if you are passing data to the front end to "bootstrap" the
+        /// JavaScript client. Instead, serialize the <see cref="FeatureFlagsState"/> object to JSON
+        /// using <c>JsonConvert.SerializeObject()</c>.
+        /// </para>
+        /// </remarks>
         /// <returns>a dictionary of flag keys to flag values</returns>
+        [Obsolete("Use ToJsonValuesMap")]
         public IDictionary<string, JToken> ToValuesMap()
         {
             return _flagValues;
         }
-        
+
+        /// <summary>
+        /// Returns a dictionary of flag keys to flag values.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If a flag would have evaluated to the default value, its value will be
+        /// <see cref="ImmutableJsonValue.Null"/>.
+        /// </para>
+        /// <para>
+        /// Do not use this method if you are passing data to the front end to "bootstrap" the
+        /// JavaScript client. Instead, serialize the <see cref="FeatureFlagsState"/> object to JSON
+        /// using <c>JsonConvert.SerializeObject()</c>.
+        /// </para>
+        /// </remarks>
+        /// <returns>a dictionary of flag keys to flag values</returns>
+        public IReadOnlyDictionary<string, ImmutableJsonValue> ToValuesJsonMap()
+        {
+            // In the next major version, we will store the map this way in the first place so there will
+            // be no conversion step.
+            lock (this)
+            {
+                if (_immutableValuesMap is null)
+                {
+                    // There's a potential race condition here but the result is the same either way, so 
+                    _immutableValuesMap = _flagValues.ToDictionary<KeyValuePair<string, JToken>, string, ImmutableJsonValue>(
+                        pair => pair.Key,
+                        pair => ImmutableJsonValue.FromSafeValue(pair.Value));
+                }
+                return _immutableValuesMap;
+            }
+        }
+
         /// <see cref="object.Equals(object)"/>
         public override bool Equals(object other)
         {

@@ -171,6 +171,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
             return Evaluate(key, user, defaultValue, ValueTypes.MutableJson, EventFactory.Default).Value;
@@ -207,6 +208,7 @@ namespace LaunchDarkly.Client
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
         public EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue)
         {
             return Evaluate(key, user, defaultValue, ValueTypes.MutableJson, EventFactory.DefaultWithReasons);
@@ -303,10 +305,7 @@ namespace LaunchDarkly.Client
             }
 
             FeatureFlag featureFlag = null;
-            JToken defaultValueJson = expectedType.ValueToJson(defaultValue).InnerValue;
-            // defaultValueJson is still a JToken because it is used only for events, and the EventFactory
-            // methods still use JToken instead of ImmutableJsonValue because the event classes are public
-            // and can't be changed until v6.0
+            ImmutableJsonValue defaultValueJson = expectedType.ValueToJson(defaultValue);
             try
             {
                 featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
@@ -364,8 +363,7 @@ namespace LaunchDarkly.Client
                     }
                 }
                 _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                    new EvaluationDetail<JToken>(evalDetail.Value.InnerValue, evalDetail.VariationIndex, evalDetail.Reason),
-                    defaultValueJson));
+                    evalDetail, defaultValueJson));
                 return returnDetail;
             }
             catch (Exception e)
@@ -376,7 +374,6 @@ namespace LaunchDarkly.Client
                      user.Key);
                 Log.Debug(e.ToString(), e);
                 var reason = new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION);
-                var evalDetail = new EvaluationDetail<JToken>(defaultValueJson, null, reason);
                 if (featureFlag == null)
                 {
                     _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user,
@@ -385,29 +382,12 @@ namespace LaunchDarkly.Client
                 else
                 {
                     _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                        evalDetail, defaultValueJson));
+                        new EvaluationDetail<ImmutableJsonValue>(defaultValueJson, null, reason), defaultValueJson));
                 }
                 return new EvaluationDetail<T>(defaultValue, null, reason);
             }
         }
-
-        private bool CheckResultType(JTokenType? expectedType, JToken result)
-        {
-            if (expectedType == null || result == null)
-            {
-                return true;
-            }
-            JTokenType resultType = result.Type;
-            switch (expectedType.Value)
-            {
-                case JTokenType.Integer:
-                case JTokenType.Float:
-                    return resultType == JTokenType.Integer || resultType == JTokenType.Float;
-                default:
-                    return resultType == expectedType;
-            }
-        }
-
+        
         /// <inheritdoc/>
         public string SecureModeHash(User user)
         {
@@ -426,17 +406,25 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public void Track(string name, User user)
         {
-            Track(name, null, user);
+            Track(name, user, ImmutableJsonValue.Null);
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         public void Track(string name, User user, string data)
         {
-            Track(name, data, user);
+            Track(name, user, ImmutableJsonValue.Of(data));
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         public void Track(string name, JToken data, User user)
+        {
+            Track(name, user, ImmutableJsonValue.FromSafeValue(data));
+        }
+
+        /// <inheritdoc/>
+        public void Track(string name, User user, ImmutableJsonValue data)
         {
             if (user == null || String.IsNullOrEmpty(user.Key))
             {

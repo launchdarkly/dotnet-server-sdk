@@ -178,8 +178,7 @@ namespace LaunchDarkly.Client
                         prereqOk = false;
                     }
                     events.Add(eventFactory.NewPrerequisiteFeatureRequestEvent(prereqFeatureFlag, user,
-                        new EvaluationDetail<JToken>(prereqEvalResult.Value.InnerValue, prereqEvalResult.VariationIndex, prereqEvalResult.Reason),
-                        this));
+                        prereqEvalResult, this));
                 }
                 if (!prereqOk)
                 {
