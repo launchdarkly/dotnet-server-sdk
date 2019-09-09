@@ -79,6 +79,7 @@ namespace LaunchDarkly.Client
     internal class DefaultEventProcessorFactory : IEventProcessorFactory
     {
         private const string EventsUriPath = "bulk";
+        private const string DiagnosticEventsUriPath = "diagnostic";
 
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
@@ -91,7 +92,7 @@ namespace LaunchDarkly.Client
                 return new DefaultEventProcessor(config.EventProcessorConfiguration,
                     new DefaultUserDeduplicator(config),
                     Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
-                    EventsUriPath);
+                    EventsUriPath, DiagnosticEventsUriPath);
             }
         }
     }

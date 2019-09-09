@@ -17,10 +17,10 @@ namespace LaunchDarkly.Client {
             DiagnosticId = new DiagnosticId(sdkKey, Guid.NewGuid());
         }
 
-        public DiagnosticEvent.Statistics CreateEventAndReset(long droppedEvents, long deduplicatedUsers, long eventsInQueue)
+        public StatisticsDiagnosticEvent CreateEventAndReset(long droppedEvents, long deduplicatedUsers, long eventsInQueue)
         {
             DateTime currentTime = DateTime.UtcNow;
-            DiagnosticEvent.Statistics res = new DiagnosticEvent.Statistics(Util.GetUnixTimestampMillis(currentTime), DiagnosticId,
+            StatisticsDiagnosticEvent res = new StatisticsDiagnosticEvent(Util.GetUnixTimestampMillis(currentTime), DiagnosticId,
                                                                             Util.GetUnixTimestampMillis(DataSince), droppedEvents,
                                                                             deduplicatedUsers, eventsInQueue);
             DataSince = currentTime;
