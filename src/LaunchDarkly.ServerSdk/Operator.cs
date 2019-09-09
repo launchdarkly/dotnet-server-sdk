@@ -47,6 +47,8 @@ namespace LaunchDarkly.Client
             (_jsonValue is null ? null : _jsonValue.Value<string>()) :
             _stringValue;
 
+        internal JToken JTokenValue => _jsonValue;
+
         internal DateTime? AsDate
         {
             get
@@ -73,6 +75,47 @@ namespace LaunchDarkly.Client
     internal static class Operator
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Operator));
+
+        // these static values let us avoid creating new JValue objects for true and false
+        private static readonly JValue TrueValue = new JValue(true);
+        private static readonly JValue FalseValue = new JValue(false);
+
+        // This method was formerly part of User. It has been moved here because it is only needed
+        // for server-side evaluation logic, specifically for comparing values with an Operator.
+        public static ExpressionValue GetUserAttributeForEvaluation(User user, string attribute)
+        {
+            switch (attribute)
+            {
+                case "key":
+                    return ExpressionValue.FromString(user.Key);
+                case "secondary":
+                    return ExpressionValue.FromString(user.SecondaryKey);
+                case "ip":
+                    return ExpressionValue.FromString(user.IPAddress);
+                case "email":
+                    return ExpressionValue.FromString(user.Email);
+                case "avatar":
+                    return ExpressionValue.FromString(user.Avatar);
+                case "firstName":
+                    return ExpressionValue.FromString(user.FirstName);
+                case "lastName":
+                    return ExpressionValue.FromString(user.LastName);
+                case "name":
+                    return ExpressionValue.FromString(user.Name);
+                case "country":
+                    return ExpressionValue.FromString(user.Country);
+                case "anonymous":
+                    if (user.Anonymous.HasValue)
+                    {
+                        return ExpressionValue.FromJsonValue(user.Anonymous.Value ? TrueValue : FalseValue);
+                    }
+                    return ExpressionValue.FromJsonValue(null);
+                default:
+                    JToken customValue;
+                    user.Custom.TryGetValue(attribute, out customValue);
+                    return ExpressionValue.FromJsonValue(customValue);
+            }
+        }
 
         public static bool Apply(string op, ExpressionValue uValue, ExpressionValue cValue)
         {

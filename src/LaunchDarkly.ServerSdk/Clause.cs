@@ -49,15 +49,15 @@ namespace LaunchDarkly.Client
 
         internal bool MatchesUserNoSegments(User user)
         {
-            var userValue = user.GetValueForEvaluation(Attribute);
-            if (userValue == null)
+            var userValue = Operator.GetUserAttributeForEvaluation(user, Attribute);
+            if (userValue.IsNull)
             {
                 return false;
             }
 
-            if (userValue is JArray)
+            if (userValue.JTokenValue is JArray)
             {
-                var array = userValue as JArray;
+                var array = userValue.JTokenValue as JArray;
                 foreach (var element in array)
                 {
                     if (!(element is JValue))
@@ -73,53 +73,17 @@ namespace LaunchDarkly.Client
                 }
                 return MaybeNegate(false);
             }
-            else if (userValue is JValue)
+            else if (userValue.JTokenValue is JObject)
             {
-                return MaybeNegate(MatchAny(ExpressionValue.FromJsonValue(userValue as JValue)));
-            }
-            Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
-                userValue.Type,
+                Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
+                userValue.JTokenValue.Type,
                 user.Key,
                 Attribute);
-            return false;
-        }
-
-        // these static values let us avoid creating new JValue objects for true and false
-        private static readonly JValue TrueValue = new JValue(true);
-        private static readonly JValue FalseValue = new JValue(false);
-
-        internal static ExpressionValue GetUserAttributeForEvaluation(User user, string attribute)
-        {
-            switch (attribute)
+                return false;
+            }
+            else
             {
-                case "key":
-                    return ExpressionValue.FromString(user.Key);
-                case "secondary":
-                    return ExpressionValue.FromString(user.SecondaryKey);
-                case "ip":
-                    return ExpressionValue.FromString(user.IPAddress);
-                case "email":
-                    return ExpressionValue.FromString(user.Email);
-                case "avatar":
-                    return ExpressionValue.FromString(user.Avatar);
-                case "firstName":
-                    return ExpressionValue.FromString(user.FirstName);
-                case "lastName":
-                    return ExpressionValue.FromString(user.LastName);
-                case "name":
-                    return ExpressionValue.FromString(user.Name);
-                case "country":
-                    return ExpressionValue.FromString(user.Country);
-                case "anonymous":
-                    if (user.Anonymous.HasValue)
-                    {
-                        return ExpressionValue.FromJsonValue(user.Anonymous.Value ? TrueValue : FalseValue);
-                    }
-                    return ExpressionValue.FromJsonValue(null);
-                default:
-                    JToken customValue;
-                    user.Custom.TryGetValue(attribute, out customValue);
-                    return ExpressionValue.FromJsonValue(customValue);
+                return MaybeNegate(MatchAny(userValue));
             }
         }
 
