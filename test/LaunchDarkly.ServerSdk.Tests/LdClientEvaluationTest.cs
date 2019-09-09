@@ -199,31 +199,63 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void JsonVariationReturnsFlagValue()
         {
-            var data = new JObject() { { "thing", new JValue("stuff") } };
+            var data = ImmutableJsonValue.FromDictionary(new Dictionary<string, string> { { "thing", "stuff" } });
             featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key").OffWithValue(data).Build());
+                new FeatureFlagBuilder("key").OffWithValue(data.InnerValue).Build());
 
-            Assert.Equal(data, client.JsonVariation("key", user, new JValue(42)));
+            Assert.Equal(data, client.JsonVariation("key", user, ImmutableJsonValue.Of(42)));
         }
 
         [Fact]
         public void JsonVariationReturnsDefaultValueForUnknownFlag()
         {
-            var defaultVal = new JValue(42);
+            var defaultVal = ImmutableJsonValue.Of(42);
             Assert.Equal(defaultVal, client.JsonVariation("key", user, defaultVal));
         }
 
         [Fact]
         public void JsonVariationDetailReturnsValueAndReason()
         {
+            var data = ImmutableJsonValue.FromDictionary(new Dictionary<string, string> { { "thing", "stuff" } });
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(data.InnerValue).Build());
+
+            var expected = new EvaluationDetail<ImmutableJsonValue>(data, 0, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.JsonVariationDetail("key", user, ImmutableJsonValue.Of(42)));
+        }
+
+        [Fact]
+        public void DeprecatedJsonVariationReturnsFlagValue()
+        {
             var data = new JObject() { { "thing", new JValue("stuff") } };
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data).Build());
+#pragma warning disable 0618
+            Assert.Equal(data, client.JsonVariation("key", user, new JValue(42)));
+#pragma warning restore 0618
+        }
 
+        [Fact]
+        public void DeprecatedJsonVariationReturnsDefaultValueForUnknownFlag()
+        {
+            var defaultVal = new JValue(42);
+#pragma warning disable 0618
+            Assert.Equal(defaultVal, client.JsonVariation("key", user, defaultVal));
+#pragma warning restore 0618
+        }
+
+        [Fact]
+        public void DeprecatedJsonVariationDetailReturnsValueAndReason()
+        {
+            var data = new JObject() { { "thing", new JValue("stuff") } };
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(data).Build());
+#pragma warning disable 0618
             var expected = new EvaluationDetail<JToken>(data, 0, EvaluationReason.Off.Instance);
             Assert.Equal(expected, client.JsonVariationDetail("key", user, new JValue(42)));
+#pragma warning restore 0618
         }
-        
+
         [Fact]
         public void VariationDetailReturnsDefaultForUnknownFlag()
         {
@@ -412,12 +444,12 @@ namespace LaunchDarkly.Tests
             var state = client.AllFlagsState(user, FlagsStateOption.ClientSideOnly);
             Assert.True(state.Valid);
 
-            var expectedValues = new Dictionary<string, JToken>
+            var expectedValues = new Dictionary<string, ImmutableJsonValue>
             {
-                { "client-side-1", new JValue("value1") },
-                { "client-side-2", new JValue("value2") }
+                { "client-side-1", ImmutableJsonValue.Of("value1") },
+                { "client-side-2", ImmutableJsonValue.Of("value2") }
             };
-            Assert.Equal(expectedValues, state.ToValuesMap());
+            Assert.Equal(expectedValues, state.ToValuesJsonMap());
         }
 
         [Fact]
@@ -467,7 +499,7 @@ namespace LaunchDarkly.Tests
 
             var state = client.AllFlagsState(null);
             Assert.False(state.Valid);
-            Assert.Equal(0, state.ToValuesMap().Count);
+            Assert.Equal(0, state.ToValuesJsonMap().Count);
         }
 
         [Fact]
@@ -478,7 +510,7 @@ namespace LaunchDarkly.Tests
 
             var state = client.AllFlagsState(User.WithKey(null));
             Assert.False(state.Valid);
-            Assert.Equal(0, state.ToValuesMap().Count);
+            Assert.Equal(0, state.ToValuesJsonMap().Count);
         }
     }
 }
