@@ -63,23 +63,17 @@ namespace LaunchDarkly.Client
             return 0F;
         }
 
-        private static string BucketableStringValue(ExpressionValue value)
+        private static string BucketableStringValue(ImmutableJsonValue value)
         {
             if (!value.IsNull)
             {
-                if (value.IsString)
+                if (value.Type == JsonValueType.String)
                 {
                     return value.AsString;
                 }
-                if (value.IsNumber)
+                if (value.IsInt)
                 {
-                    // can only bucket by integer values; can't rely on JTokenType to tell us that
-                    float floatValue = value.AsFloat;
-                    int intValue = (int)floatValue;
-                    if (floatValue == (float)intValue)
-                    {
-                        return Convert.ToString(intValue);
-                    }
+                    return Convert.ToString(value.AsInt);
                 }
             }
             return null;

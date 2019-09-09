@@ -54,29 +54,28 @@ namespace LaunchDarkly.Client
             {
                 return false;
             }
-
-            if (userValue.JTokenValue is JArray)
+            if (userValue.Type == JsonValueType.Array)
             {
-                var array = userValue.JTokenValue as JArray;
-                foreach (var element in array)
+                var list = userValue.AsList<ImmutableJsonValue>();
+                foreach (var element in list)
                 {
-                    if (!(element is JValue))
+                    if (element.Type == JsonValueType.Array || element.Type == JsonValueType.Object)
                     {
                         Log.ErrorFormat("Invalid custom attribute value in user object: {0}",
                             element);
                         return false;
                     }
-                    if (MatchAny(ExpressionValue.FromJsonValue(element as JValue)))
+                    if (MatchAny(element))
                     {
                         return MaybeNegate(true);
                     }
                 }
                 return MaybeNegate(false);
             }
-            else if (userValue.JTokenValue is JObject)
+            else if (userValue.Type == JsonValueType.Object)
             {
                 Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
-                userValue.JTokenValue.Type,
+                userValue.Type,
                 user.Key,
                 Attribute);
                 return false;
@@ -87,11 +86,11 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private bool MatchAny(ExpressionValue userValue)
+        private bool MatchAny(ImmutableJsonValue userValue)
         {
             foreach (var v in Values)
             {
-                if (Operator.Apply(Op, userValue, ExpressionValue.FromJsonValue(v)))
+                if (Operator.Apply(Op, userValue, ImmutableJsonValue.FromSafeValue(v)))
                 {
                     return true;
                 }

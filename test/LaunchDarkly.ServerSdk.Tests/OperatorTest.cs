@@ -1,6 +1,5 @@
 using System;
 using LaunchDarkly.Client;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
@@ -9,74 +8,31 @@ namespace LaunchDarkly.Tests
     public class OperatorTest
     {
         [Fact]
-        public void ExpressionValueCanBeStringOrJsonValueString()
-        {
-            var string1 = ExpressionValue.FromJsonValue(new JValue("x"));
-            var string2 = ExpressionValue.FromString("x");
-            var intValue = ExpressionValue.FromJsonValue(new JValue(1));
-            Assert.True(string1.IsString);
-            Assert.True(string2.IsString);
-            Assert.False(intValue.IsString);
-            Assert.Equal("x", string1.AsString);
-            Assert.Equal("x", string2.AsString);
-        }
-
-        [Fact]
-        public void ExpressionValueCanBeNumber()
-        {
-            var intValue = ExpressionValue.FromJsonValue(new JValue(1));
-            var floatValue = ExpressionValue.FromJsonValue(new JValue(1.5f));
-            var string1 = ExpressionValue.FromJsonValue(new JValue("x"));
-            var string2 = ExpressionValue.FromString("x");
-            Assert.True(intValue.IsNumber);
-            Assert.True(floatValue.IsNumber);
-            Assert.False(string1.IsNumber);
-            Assert.False(string2.IsNumber);
-            Assert.Equal(1.0f, intValue.AsFloat);
-            Assert.Equal(1.5f, floatValue.AsFloat);
-            Assert.Equal(0f, string1.AsFloat);
-            Assert.Equal(0f, string2.AsFloat);
-        }
-
-        [Fact]
-        public void ExpressionValueCanBeNull()
-        {
-            var null1 = ExpressionValue.FromString(null);
-            var null2 = ExpressionValue.FromJsonValue(null);
-            Assert.True(null1.IsNull);
-            Assert.True(null2.IsNull);
-            Assert.False(null1.IsString);
-            Assert.False(null2.IsString);
-            Assert.False(null1.IsNumber);
-            Assert.False(null2.IsNumber);
-        }
-
-        [Fact]
         public void CanParseUtcTimestamp()
         {
             var timestamp = "1970-01-01T00:00:01Z";
-            var jValueToDateTime = ExpressionValue.FromJsonValue(new JValue(timestamp)).AsDate;
+            var actualDateTime = Operator.ValueToDate(ImmutableJsonValue.Of(timestamp));
 
             var expectedDateTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc);
-            Assert.Equal(expectedDateTime, jValueToDateTime);
+            Assert.Equal(expectedDateTime, actualDateTime);
         }
 
         [Fact]
         public void CanParseTimestampFromTimezone()
         {
             var timestamp = "1970-01-01T00:00:00-01:00";
-            var jValueToDateTime = ExpressionValue.FromJsonValue(new JValue(timestamp)).AsDate;
+            var actualDateTime = Operator.ValueToDate(ImmutableJsonValue.Of(timestamp));
             var expectedDateTime = new DateTime(1970, 1, 1, 1, 0, 0, DateTimeKind.Utc);
-            Assert.Equal(expectedDateTime, jValueToDateTime);
+            Assert.Equal(expectedDateTime, actualDateTime);
         }
 
         [Fact]
         public void CanParseUnixMillis()
         {
             var timestampMillis = 1000;
-            var jValueToDateTime = ExpressionValue.FromJsonValue(new JValue(timestampMillis)).AsDate;
+            var actualDateTime = Operator.ValueToDate(ImmutableJsonValue.Of(timestampMillis));
             var expectedDateTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc);
-            Assert.Equal(expectedDateTime, jValueToDateTime);
+            Assert.Equal(expectedDateTime, actualDateTime);
         }
 
         [Fact]
@@ -85,8 +41,8 @@ namespace LaunchDarkly.Tests
             var afterTimestamp = "1970-01-01T00:00:00-01:00"; //equivalent to 1970-01-01T01:00:00Z
             var utcTimestamp = "1970-01-01T00:00:01Z";
 
-            var after = ExpressionValue.FromJsonValue(new JValue(afterTimestamp));
-            var before = ExpressionValue.FromJsonValue(new JValue(utcTimestamp));
+            var after = ImmutableJsonValue.Of(afterTimestamp);
+            var before = ImmutableJsonValue.Of(utcTimestamp);
             Assert.True(Operator.Apply("after", after, before));
             Assert.False(Operator.Apply("after", before, after));
 
@@ -100,8 +56,8 @@ namespace LaunchDarkly.Tests
             var afterTimestamp = "1970-01-01T00:00:00-01:00"; //equivalent to 1970-01-01T01:00:00Z
             var beforeMillis = 1000;
 
-            var after = ExpressionValue.FromJsonValue(new JValue(afterTimestamp));
-            var before = ExpressionValue.FromJsonValue(new JValue(beforeMillis));
+            var after = ImmutableJsonValue.Of(afterTimestamp);
+            var before = ImmutableJsonValue.Of(beforeMillis);
 
             Assert.True(Operator.Apply("after", after, before));
             Assert.False(Operator.Apply("after", before, after));
@@ -113,19 +69,19 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void Apply_UnknownOperation_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("unknown", ExpressionValue.FromJsonValue(new JValue(10)), ExpressionValue.FromJsonValue(new JValue(10))));
+            Assert.False(Operator.Apply("unknown", ImmutableJsonValue.Of(10), ImmutableJsonValue.Of(10)));
         }
 
         [Fact]
         public void Apply_UserValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", ExpressionValue.FromJsonValue(null), ExpressionValue.FromJsonValue(new JValue(10))));
+            Assert.False(Operator.Apply("in", ImmutableJsonValue.Null, ImmutableJsonValue.Of(10)));
         }
 
         [Fact]
         public void Apply_ClauseValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", ExpressionValue.FromJsonValue(new JValue(10)), ExpressionValue.FromJsonValue(null)));
+            Assert.False(Operator.Apply("in", ImmutableJsonValue.Of(10), ImmutableJsonValue.Null));
         }
 
         [Theory]
@@ -136,7 +92,7 @@ namespace LaunchDarkly.Tests
         [InlineData(11d, 11)]
         public void Apply_In_SupportedTypes_ValuesAreEqual_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("in", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.True(Operator.Apply("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -147,7 +103,7 @@ namespace LaunchDarkly.Tests
         [InlineData(11.4d, 11)]
         public void Apply_In_SupportedTypes_ValuesAreNotEqual_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("in", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -155,7 +111,7 @@ namespace LaunchDarkly.Tests
         [InlineData("userValue", "userValue")]
         public void Apply_EndsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("endsWith", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.True(Operator.Apply("endsWith", ImmutableJsonValue.Of(userValue), ImmutableJsonValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -164,7 +120,7 @@ namespace LaunchDarkly.Tests
         [InlineData(78, "userValue")]
         public void Apply_EndsWith_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("endsWith", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("endsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -172,7 +128,7 @@ namespace LaunchDarkly.Tests
         [InlineData("userValue", "user")]
         public void Apply_StartsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("startsWith", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.True(Operator.Apply("startsWith", ImmutableJsonValue.Of(userValue), ImmutableJsonValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -181,13 +137,13 @@ namespace LaunchDarkly.Tests
         [InlineData(78, "userValue")]
         public void Apply_StartsWith_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("startsWith", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("startsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Fact]
         public void Apply_Matches_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("matches", ExpressionValue.FromJsonValue(new JValue("22")), ExpressionValue.FromJsonValue(new JValue(@"\d"))));
+            Assert.True(Operator.Apply("matches", ImmutableJsonValue.Of("22"), ImmutableJsonValue.Of(@"\d")));
         }
 
         [Theory]
@@ -197,13 +153,13 @@ namespace LaunchDarkly.Tests
         [InlineData(77, "userValue")]
         public void Apply_Matches_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("matches", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("matches", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Fact]
         public void Apply_Contains_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("contains", ExpressionValue.FromJsonValue(new JValue("userValue")), ExpressionValue.FromJsonValue(new JValue("serValu"))));
+            Assert.True(Operator.Apply("contains", ImmutableJsonValue.Of("userValue"), ImmutableJsonValue.Of("serValu")));
         }
 
         [Theory]
@@ -212,7 +168,7 @@ namespace LaunchDarkly.Tests
         [InlineData(78, "userValue")]
         public void Apply_Contains_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("contains", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("contains", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -225,7 +181,7 @@ namespace LaunchDarkly.Tests
         [InlineData(555L, 566d)]
         public void Apply_LessThan_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("lessThan", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.True(Operator.Apply("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -249,7 +205,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1055L, 1054d)]
         public void Apply_LessThan_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("lessThan", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -271,7 +227,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1055L, 1055d)]
         public void Apply_LessThanOrEqual_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("lessThanOrEqual", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.True(Operator.Apply("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -287,7 +243,7 @@ namespace LaunchDarkly.Tests
         [InlineData(546L, 545d)]
         public void Apply_LessThanOrEqual_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("lessThanOrEqual", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -300,7 +256,7 @@ namespace LaunchDarkly.Tests
         [InlineData(566L, 555d)]
         public void Apply_GreaterThan_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("greaterThan", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.True(Operator.Apply("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -324,7 +280,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1055L, 1055d)]
         public void Apply_GreaterThan_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("greaterThan", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -346,7 +302,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1034L, 1033d)]
         public void Apply_GreaterThanOrEqual_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("greaterThanOrEqual", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.True(Operator.Apply("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -362,7 +318,7 @@ namespace LaunchDarkly.Tests
         [InlineData(545L, 546d)]
         public void Apply_GreaterThanOrEqual_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("greaterThanOrEqual", ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue))));
+            Assert.False(Operator.Apply("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -386,8 +342,41 @@ namespace LaunchDarkly.Tests
         [InlineData("semVerGreaterThan", "2.0.1", "xbad%ver", false)]
         public void Apply_Any_Operators(string opName, object userValue, object clauseValue, bool expected)
         {
-            var result = Operator.Apply(opName, ExpressionValue.FromJsonValue(new JValue(userValue)), ExpressionValue.FromJsonValue(new JValue(clauseValue)));
+            var result = Operator.Apply(opName, ArbitraryValue(userValue), ArbitraryValue(clauseValue));
             Assert.Equal(expected, result);
+        }
+
+        private ImmutableJsonValue ArbitraryValue(object v)
+        {
+            if (v is null)
+            {
+                return ImmutableJsonValue.Null;
+            }
+            if (v is bool b)
+            {
+                return ImmutableJsonValue.Of(b);
+            }
+            if (v is int i)
+            {
+                return ImmutableJsonValue.Of(i);
+            }
+            if (v is long l)
+            {
+                return ImmutableJsonValue.Of(l);
+            }
+            if (v is float f)
+            {
+                return ImmutableJsonValue.Of(f);
+            }
+            if (v is double d)
+            {
+                return ImmutableJsonValue.Of((float)d);
+            }
+            if (v is string s)
+            {
+                return ImmutableJsonValue.Of(s);
+            }
+            throw new InvalidCastException();
         }
     }
 }

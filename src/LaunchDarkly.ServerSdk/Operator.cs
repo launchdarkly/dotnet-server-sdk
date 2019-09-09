@@ -1,123 +1,55 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Common.Logging;
-using Newtonsoft.Json.Linq;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
-    /// <summary>
-    /// This struct saves us from having to create a JValue out of every built-in user attribute when we're
-    /// evaluating a clause. Since it's a struct and not a class, it doesn't create any extra heap objects.
-    /// 
-    /// We can eventually do away with this if we enhance ImmutableJsonValue to store primitive types
-    /// directly (like we're doing here) instead of in a JValue wrapper.
-    /// </summary>
-    internal struct ExpressionValue
-    {
-        private readonly string _stringValue;
-        private readonly JToken _jsonValue;
-
-        private ExpressionValue(string stringValue, JToken jsonValue)
-        {
-            _stringValue = stringValue;
-            _jsonValue = jsonValue;
-        }
-
-        internal static ExpressionValue FromString(string s)
-        {
-            return new ExpressionValue(s, null);
-        }
-
-        internal static ExpressionValue FromJsonValue(JToken j)
-        {
-            return new ExpressionValue(null, j);
-        }
-
-        internal bool IsNull => _stringValue is null && _jsonValue is null;
-
-        internal bool IsNumber => !(_jsonValue is null) &&
-            (_jsonValue.Type == JTokenType.Integer || _jsonValue.Type == JTokenType.Float);
-
-        internal bool IsString => !(_stringValue is null) || (!(_jsonValue is null) && _jsonValue.Type == JTokenType.String);
-        
-        internal float AsFloat => IsNumber ? _jsonValue.Value<float>() : 0;
-
-        internal string AsString => _stringValue is null ?
-            (_jsonValue is null ? null : _jsonValue.Value<string>()) :
-            _stringValue;
-
-        internal JToken JTokenValue => _jsonValue;
-
-        internal DateTime? AsDate
-        {
-            get
-            {
-                if (!(_jsonValue is null) && _jsonValue.Type == JTokenType.Date)
-                {
-                    return _jsonValue.Value<DateTime>().ToUniversalTime();
-                }
-                if (IsString)
-                {
-                    string s = AsString;
-                    return DateTime.Parse(s).ToUniversalTime();
-                }
-                if (IsNumber)
-                {
-                    var value = AsFloat;
-                    return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(value);
-                }
-                return null;
-            }
-        }
-    }
-
     internal static class Operator
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Operator));
-
-        // these static values let us avoid creating new JValue objects for true and false
-        private static readonly JValue TrueValue = new JValue(true);
-        private static readonly JValue FalseValue = new JValue(false);
-
+        
         // This method was formerly part of User. It has been moved here because it is only needed
         // for server-side evaluation logic, specifically for comparing values with an Operator.
-        public static ExpressionValue GetUserAttributeForEvaluation(User user, string attribute)
+        // Note that ImmutableJsonValue.Of(string) is an efficient operation that does not allocate
+        // a new object, but just wraps the string in a struct (or returns ImmutableJsonValue.Null
+        // if the string is null).
+        public static ImmutableJsonValue GetUserAttributeForEvaluation(User user, string attribute)
         {
             switch (attribute)
             {
                 case "key":
-                    return ExpressionValue.FromString(user.Key);
+                    return ImmutableJsonValue.Of(user.Key);
                 case "secondary":
-                    return ExpressionValue.FromString(user.SecondaryKey);
+                    return ImmutableJsonValue.Of(user.SecondaryKey);
                 case "ip":
-                    return ExpressionValue.FromString(user.IPAddress);
+                    return ImmutableJsonValue.Of(user.IPAddress);
                 case "email":
-                    return ExpressionValue.FromString(user.Email);
+                    return ImmutableJsonValue.Of(user.Email);
                 case "avatar":
-                    return ExpressionValue.FromString(user.Avatar);
+                    return ImmutableJsonValue.Of(user.Avatar);
                 case "firstName":
-                    return ExpressionValue.FromString(user.FirstName);
+                    return ImmutableJsonValue.Of(user.FirstName);
                 case "lastName":
-                    return ExpressionValue.FromString(user.LastName);
+                    return ImmutableJsonValue.Of(user.LastName);
                 case "name":
-                    return ExpressionValue.FromString(user.Name);
+                    return ImmutableJsonValue.Of(user.Name);
                 case "country":
-                    return ExpressionValue.FromString(user.Country);
+                    return ImmutableJsonValue.Of(user.Country);
                 case "anonymous":
                     if (user.Anonymous.HasValue)
                     {
-                        return ExpressionValue.FromJsonValue(user.Anonymous.Value ? TrueValue : FalseValue);
+                        return ImmutableJsonValue.Of(user.Anonymous.Value);
                     }
-                    return ExpressionValue.FromJsonValue(null);
+                    return ImmutableJsonValue.Null;
                 default:
-                    JToken customValue;
-                    user.Custom.TryGetValue(attribute, out customValue);
-                    return ExpressionValue.FromJsonValue(customValue);
+                    return user.Custom.TryGetValue(attribute, out var customValue) ?
+                        ImmutableJsonValue.FromSafeValue(customValue) :
+                        ImmutableJsonValue.Null;
             }
         }
 
-        public static bool Apply(string op, ExpressionValue uValue, ExpressionValue cValue)
+        public static bool Apply(string op, ImmutableJsonValue uValue, ImmutableJsonValue cValue)
         {
             try
             {
@@ -134,7 +66,7 @@ namespace LaunchDarkly.Client
                             return true;
                         }
 
-                        if (uValue.IsString || cValue.IsString)
+                        if (uValue.Type == JsonValueType.String || cValue.Type == JsonValueType.String)
                         {
                             return StringOperator(uValue, cValue, (a, b) => a.Equals(b));
                         }
@@ -203,7 +135,7 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        private static bool TryCompareNumericValues(ExpressionValue x, ExpressionValue y, out int result)
+        private static bool TryCompareNumericValues(ImmutableJsonValue x, ImmutableJsonValue y, out int result)
         {
             if (!x.IsNumber || !y.IsNumber)
             {
@@ -214,52 +146,48 @@ namespace LaunchDarkly.Client
             result = x.AsFloat.CompareTo(y.AsFloat);
             return true;
         }
-
-        private static bool IsNumericValue(JValue jValue)
-        {
-            return (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer));
-        }
         
-        private static bool StringOperator(ExpressionValue uValue, ExpressionValue cValue, Func<string, string, bool> fn)
+        private static bool StringOperator(ImmutableJsonValue uValue, ImmutableJsonValue cValue, Func<string, string, bool> fn)
         {
-            if (uValue.IsString && cValue.IsString)
+            if (uValue.Type == JsonValueType.String && cValue.Type == JsonValueType.String)
             {
-                string us = uValue.AsString;
-                string cs = cValue.AsString;
-                if (us != null && cs != null)
-                {
-                    return fn(us, cs);
-                }
+                // Note that AsString cannot return null for either of these, because then the Type
+                // would have been JsonValueType.Null
+                return fn(uValue.AsString, cValue.AsString);
             }
             return false;
         }
-
-        private static double? ParseDoubleFromJValue(JValue jValue)
-        {
-            if (IsNumericValue(jValue))
-            {
-                return (double) jValue;
-            }
-            return null;
-        }
         
-        private static bool DateOperator(ExpressionValue uValue, ExpressionValue cValue, Func<DateTime, DateTime, bool> fn)
+        private static bool DateOperator(ImmutableJsonValue uValue, ImmutableJsonValue cValue, Func<DateTime, DateTime, bool> fn)
         {
-            var uDateTime = uValue.AsDate;
-            var cDateTime = cValue.AsDate;
+            var uDateTime = ValueToDate(uValue);
+            var cDateTime = ValueToDate(cValue);
             return uDateTime.HasValue && cDateTime.HasValue && fn(uDateTime.Value, cDateTime.Value);
         }
 
-        private static bool SemVerOperator(ExpressionValue uValue, ExpressionValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
+        private static bool SemVerOperator(ImmutableJsonValue uValue, ImmutableJsonValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
         {
             var uVersion = ValueToSemVer(uValue);
             var cVersion = ValueToSemVer(cValue);
             return uVersion != null && cVersion != null && fn(uVersion, cVersion);
         }
-        
-        internal static SemanticVersion ValueToSemVer(ExpressionValue value)
+
+        internal static DateTime? ValueToDate(ImmutableJsonValue value)
         {
-            if (value.IsString && value.AsString != null)
+            if (value.Type == JsonValueType.String)
+            {
+                return DateTime.Parse(value.AsString).ToUniversalTime();
+            }
+            if (value.IsNumber)
+            {
+                return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(value.AsFloat);
+            }
+            return null;
+        }
+
+        internal static SemanticVersion ValueToSemVer(ImmutableJsonValue value)
+        {
+            if (value.Type == JsonValueType.String)
             {
                 try
                 {
