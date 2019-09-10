@@ -171,7 +171,14 @@ namespace LaunchDarkly.Client
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
         public JToken JsonVariation(string key, User user, JToken defaultValue)
+        {
+            return Evaluate(key, user, defaultValue, ValueTypes.MutableJson, EventFactory.Default).Value;
+        }
+
+        /// <inheritdoc/>
+        public ImmutableJsonValue JsonVariation(string key, User user, ImmutableJsonValue defaultValue)
         {
             return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.Default).Value;
         }
@@ -201,7 +208,14 @@ namespace LaunchDarkly.Client
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
         public EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue)
+        {
+            return Evaluate(key, user, defaultValue, ValueTypes.MutableJson, EventFactory.DefaultWithReasons);
+        }
+
+        /// <inheritdoc/>
+        public EvaluationDetail<ImmutableJsonValue> JsonVariationDetail(string key, User user, ImmutableJsonValue defaultValue)
         {
             return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.DefaultWithReasons);
         }
@@ -259,7 +273,7 @@ namespace LaunchDarkly.Client
                 try
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, EventFactory.Default);
-                    state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
+                    state.AddFlag(flag, result.Result.Value.InnerValue, result.Result.VariationIndex,
                         withReasons ? result.Result.Reason : null, detailsOnlyIfTracked);
                 }
                 catch (Exception e)
@@ -291,7 +305,7 @@ namespace LaunchDarkly.Client
             }
 
             FeatureFlag featureFlag = null;
-            JToken defaultValueJson = expectedType.ValueToJson(defaultValue);
+            ImmutableJsonValue defaultValueJson = expectedType.ValueToJson(defaultValue);
             try
             {
                 featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
@@ -299,7 +313,6 @@ namespace LaunchDarkly.Client
                 {
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
                         featureKey);
-
                     _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValueJson,
                         EvaluationErrorKind.FLAG_NOT_FOUND));
                     return new EvaluationDetail<T>(defaultValue, null,
@@ -340,7 +353,7 @@ namespace LaunchDarkly.Client
                     {
                         Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
                             expectedType.GetType().Name,
-                            evalDetail.Value is null ? "null" : evalDetail.Value.Type.ToString(),
+                            evalDetail.Value.Type.ToString(),
                             featureKey);
 
                         _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user,
@@ -361,7 +374,6 @@ namespace LaunchDarkly.Client
                      user.Key);
                 Log.Debug(e.ToString(), e);
                 var reason = new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION);
-                var evalDetail = new EvaluationDetail<JToken>(defaultValueJson, null, reason);
                 if (featureFlag == null)
                 {
                     _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user,
@@ -370,29 +382,12 @@ namespace LaunchDarkly.Client
                 else
                 {
                     _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                        evalDetail, defaultValueJson));
+                        new EvaluationDetail<ImmutableJsonValue>(defaultValueJson, null, reason), defaultValueJson));
                 }
                 return new EvaluationDetail<T>(defaultValue, null, reason);
             }
         }
-
-        private bool CheckResultType(JTokenType? expectedType, JToken result)
-        {
-            if (expectedType == null || result == null)
-            {
-                return true;
-            }
-            JTokenType resultType = result.Type;
-            switch (expectedType.Value)
-            {
-                case JTokenType.Integer:
-                case JTokenType.Float:
-                    return resultType == JTokenType.Integer || resultType == JTokenType.Float;
-                default:
-                    return resultType == expectedType;
-            }
-        }
-
+        
         /// <inheritdoc/>
         public string SecureModeHash(User user)
         {
@@ -411,17 +406,25 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public void Track(string name, User user)
         {
-            Track(name, null, user);
+            Track(name, user, ImmutableJsonValue.Null);
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         public void Track(string name, User user, string data)
         {
-            Track(name, data, user);
+            Track(name, user, ImmutableJsonValue.Of(data));
         }
 
         /// <inheritdoc/>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         public void Track(string name, JToken data, User user)
+        {
+            Track(name, user, ImmutableJsonValue.FromSafeValue(data));
+        }
+
+        /// <inheritdoc/>
+        public void Track(string name, User user, ImmutableJsonValue data)
         {
             if (user == null || String.IsNullOrEmpty(user.Key))
             {

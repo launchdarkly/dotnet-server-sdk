@@ -106,6 +106,63 @@ namespace LaunchDarkly.Client
         /// <remarks>
         /// <para>
         /// The Newtonsoft.Json type <see cref="JToken"/> is used to represent any of the value
+        /// types that can exist in JSON. Note that some subclasses of <see cref="JToken"/> are mutable:
+        /// it is possible to modify values within a JSON array or a JSON object. Be careful not to
+        /// modify the <see cref="JToken"/> that is returned by this method, since that could affect
+        /// data structures inside the SDK. The <see cref="ImmutableJsonValue"/> type avoids this
+        /// problem, so it is better to use the <see cref="JsonVariation(string, User, ImmutableJsonValue)"/>
+        /// overload that uses that type; in a future version of the SDK, these <see cref="JToken"/>-based
+        /// methods will be removed.
+        /// </para>
+        /// <para>
+        /// If an error makes it impossible to evaluate the flag (for instance, the feature flag key
+        /// does not match any existing flag), <c>defaultValue</c> is returned.
+        /// </para>
+        /// </remarks>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
+        /// be evaluated</returns>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
+        JToken JsonVariation(string key, User user, JToken defaultValue);
+
+        /// <summary>
+        /// Calculates the value of a feature flag for a given user as any JSON value type, and
+        /// returns an object that describes the way the value was determined.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The Newtonsoft.Json type <see cref="JToken"/> is used to represent any of the value
+        /// types that can exist in JSON. Note that some subclasses of <see cref="JToken"/> are mutable:
+        /// it is possible to modify values within a JSON array or a JSON object. Be careful not to
+        /// modify the <see cref="JToken"/> that is returned by this method, since that could affect
+        /// data structures inside the SDK. The <see cref="ImmutableJsonValue"/> type avoids this
+        /// problem, so it is better to use the <see cref="JsonVariationDetail(string, User, ImmutableJsonValue)"/>
+        /// overload that uses that type; in a future version of the SDK, these <see cref="JToken"/>-based
+        /// methods will be removed.
+        /// </para>
+        /// <para>
+        /// The <see cref="EvaluationDetail{T}.Reason"/> property in the result will also be included
+        /// in analytics events, if you are capturing detailed event data for this flag.
+        /// </para>
+        /// <para>
+        /// The behavior is otherwise identical to <see cref="JsonVariation(string, User, JToken)"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariationDetail")]
+        EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue);
+
+        /// <summary>
+        /// Calculates the value of a feature flag for a given user as any JSON value type.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The Newtonsoft.Json type <see cref="JToken"/> is used to represent any of the value
         /// types that can exist in JSON.
         /// </para>
         /// <para>
@@ -124,7 +181,7 @@ namespace LaunchDarkly.Client
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        JToken JsonVariation(string key, User user, JToken defaultValue);
+        ImmutableJsonValue JsonVariation(string key, User user, ImmutableJsonValue defaultValue);
 
         /// <summary>
         /// Calculates the value of a feature flag for a given user as any JSON value type, and
@@ -136,14 +193,14 @@ namespace LaunchDarkly.Client
         /// in analytics events, if you are capturing detailed event data for this flag.
         /// </para>
         /// <para>
-        /// The behavior is otherwise identical to <see cref="JsonVariation"/>.
+        /// The behavior is otherwise identical to <see cref="JsonVariationDetail(string, User, ImmutableJsonValue)"/>.
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
         /// <param name="user">the end user requesting the flag</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue);
+        EvaluationDetail<ImmutableJsonValue> JsonVariationDetail(string key, User user, ImmutableJsonValue defaultValue);
 
         /// <summary>
         /// Calculates the string value of a feature flag for a given user.
@@ -251,7 +308,8 @@ namespace LaunchDarkly.Client
         /// <remarks>
         /// <para>
         /// This method creates a "custom" analytics event containing the specified event name (key)
-        /// and user properties.
+        /// and user properties. You may attach arbitrary data to the event by calling
+        /// <see cref="Track(string, User, ImmutableJsonValue)"/> instead.
         /// </para>
         /// <para>
         /// Note that event delivery is asynchronous, so the event may not actually be sent until
@@ -263,7 +321,7 @@ namespace LaunchDarkly.Client
         void Track(string name, User user);
 
         /// <summary>
-        /// Tracks that a user performed an event.
+        /// Tracks that a user performed an event (obsolete overload).
         /// </summary>
         /// <remarks>
         /// <para>
@@ -278,10 +336,11 @@ namespace LaunchDarkly.Client
         /// <param name="name">the name of the event</param>
         /// <param name="user">the user that performed the event</param>
         /// <param name="data">a string containing additional data associated with the event, or null</param>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         void Track(string name, User user, string data);
 
         /// <summary>
-        /// Tracks that a user performed an event.
+        /// Tracks that a user performed an event (obsolete overload).
         /// </summary>
         /// <remarks>
         /// <para>
@@ -296,13 +355,29 @@ namespace LaunchDarkly.Client
         /// <param name="name">the name of the event</param>
         /// <param name="data">a JSON element containing additional data associated with the event, or null</param>
         /// <param name="user">the user that performed the event</param>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         void Track(string name, JToken data, User user);
         // Note, the order of the parameters here is different than the other 3-parameter overload so that
         // passing null for data will not be an ambiguous method call.
 
-        // Note that there is no Flush method in this interface. That was an oversight in the original
-        // .NET SDK design. Unfortunately we cannot add it without breaking any code that creates a
-        // stub implementation of ILdClient, so it can only be added in the next major version.
+        /// <summary>
+        /// Tracks that a user performed an event.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method creates a "custom" analytics event containing the specified event name (key),
+        /// user properties, and optional custom data. If you do not need custom data, pass
+        /// <see cref="ImmutableJsonValue.Null"/> for the last parameter or simply omit the parameter.
+        /// </para>
+        /// <para>
+        /// Note that event delivery is asynchronous, so the event may not actually be sent until
+        /// later; see <see cref="LdClient.Flush"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="name">the name of the event</param>
+        /// <param name="data">additional data associated with the event, if any</param>
+        /// <param name="user">the user that performed the event</param>
+        void Track(string name, User user, ImmutableJsonValue data);
 
         /// <summary>
         /// Returns a map from feature flag keys to <see cref="JToken"/> feature flag values for a given user.
