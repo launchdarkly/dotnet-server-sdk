@@ -124,7 +124,7 @@ namespace LaunchDarkly.Client
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
+        [Obsolete("Use JsonVariation(string, User, ImmutableJsonValue)")]
         JToken JsonVariation(string key, User user, JToken defaultValue);
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace LaunchDarkly.Client
         /// <param name="user">the end user requesting the flag</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariationDetail")]
+        [Obsolete("Use JsonVariationDetail(string, User, ImmutableJsonValue)")]
         EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue);
 
         /// <summary>
