@@ -122,7 +122,7 @@ namespace LaunchDarkly.Client
         /// </para>
         /// </remarks>
         /// <returns>a dictionary of flag keys to flag values</returns>
-        [Obsolete("Use ToJsonValuesMap")]
+        [Obsolete("Use ToValuesJsonMap")]
         public IDictionary<string, JToken> ToValuesMap()
         {
             return _flagValues;
