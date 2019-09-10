@@ -49,46 +49,48 @@ namespace LaunchDarkly.Client
 
         internal bool MatchesUserNoSegments(User user)
         {
-            var userValue = user.GetValueForEvaluation(Attribute);
-            if (userValue == null)
+            var userValue = Operator.GetUserAttributeForEvaluation(user, Attribute);
+            if (userValue.IsNull)
             {
                 return false;
             }
-
-            if (userValue is JArray)
+            if (userValue.Type == JsonValueType.Array)
             {
-                var array = userValue as JArray;
-                foreach (var element in array)
+                var list = userValue.AsList<ImmutableJsonValue>();
+                foreach (var element in list)
                 {
-                    if (!(element is JValue))
+                    if (element.Type == JsonValueType.Array || element.Type == JsonValueType.Object)
                     {
                         Log.ErrorFormat("Invalid custom attribute value in user object: {0}",
                             element);
                         return false;
                     }
-                    if (MatchAny(element as JValue))
+                    if (MatchAny(element))
                     {
                         return MaybeNegate(true);
                     }
                 }
                 return MaybeNegate(false);
             }
-            else if (userValue is JValue)
+            else if (userValue.Type == JsonValueType.Object)
             {
-                return MaybeNegate(MatchAny(userValue as JValue));
-            }
-            Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
+                Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
                 userValue.Type,
                 user.Key,
                 Attribute);
-            return false;
+                return false;
+            }
+            else
+            {
+                return MaybeNegate(MatchAny(userValue));
+            }
         }
 
-        private bool MatchAny(JValue userValue)
+        private bool MatchAny(ImmutableJsonValue userValue)
         {
             foreach (var v in Values)
             {
-                if (Operator.Apply(Op, userValue, v))
+                if (Operator.Apply(Op, userValue, ImmutableJsonValue.FromSafeValue(v)))
                 {
                     return true;
                 }
