@@ -54,12 +54,12 @@ namespace LaunchDarkly.Client
             {
                 return false;
             }
-            if (userValue.Type == JsonValueType.Array)
+            if (userValue.Type == LdValueType.Array)
             {
-                var list = userValue.AsList<ImmutableJsonValue>();
+                var list = userValue.AsList(LdValue.Convert.Json);
                 foreach (var element in list)
                 {
-                    if (element.Type == JsonValueType.Array || element.Type == JsonValueType.Object)
+                    if (element.Type == LdValueType.Array || element.Type == LdValueType.Object)
                     {
                         Log.ErrorFormat("Invalid custom attribute value in user object: {0}",
                             element);
@@ -72,7 +72,7 @@ namespace LaunchDarkly.Client
                 }
                 return MaybeNegate(false);
             }
-            else if (userValue.Type == JsonValueType.Object)
+            else if (userValue.Type == LdValueType.Object)
             {
                 Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
                 userValue.Type,
@@ -86,11 +86,11 @@ namespace LaunchDarkly.Client
             }
         }
 
-        private bool MatchAny(ImmutableJsonValue userValue)
+        private bool MatchAny(LdValue userValue)
         {
             foreach (var v in Values)
             {
-                if (Operator.Apply(Op, userValue, ImmutableJsonValue.FromSafeValue(v)))
+                if (Operator.Apply(Op, userValue, LdValue.FromSafeValue(v)))
                 {
                     return true;
                 }

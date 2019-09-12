@@ -63,11 +63,11 @@ namespace LaunchDarkly.Client
             return 0F;
         }
 
-        private static string BucketableStringValue(ImmutableJsonValue value)
+        private static string BucketableStringValue(LdValue value)
         {
             if (!value.IsNull)
             {
-                if (value.Type == JsonValueType.String)
+                if (value.IsString)
                 {
                     return value.AsString;
                 }

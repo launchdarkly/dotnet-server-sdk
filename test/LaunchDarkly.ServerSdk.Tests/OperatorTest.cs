@@ -11,7 +11,7 @@ namespace LaunchDarkly.Tests
         public void CanParseUtcTimestamp()
         {
             var timestamp = "1970-01-01T00:00:01Z";
-            var actualDateTime = Operator.ValueToDate(ImmutableJsonValue.Of(timestamp));
+            var actualDateTime = Operator.ValueToDate(LdValue.Of(timestamp));
 
             var expectedDateTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc);
             Assert.Equal(expectedDateTime, actualDateTime);
@@ -21,7 +21,7 @@ namespace LaunchDarkly.Tests
         public void CanParseTimestampFromTimezone()
         {
             var timestamp = "1970-01-01T00:00:00-01:00";
-            var actualDateTime = Operator.ValueToDate(ImmutableJsonValue.Of(timestamp));
+            var actualDateTime = Operator.ValueToDate(LdValue.Of(timestamp));
             var expectedDateTime = new DateTime(1970, 1, 1, 1, 0, 0, DateTimeKind.Utc);
             Assert.Equal(expectedDateTime, actualDateTime);
         }
@@ -30,7 +30,7 @@ namespace LaunchDarkly.Tests
         public void CanParseUnixMillis()
         {
             var timestampMillis = 1000;
-            var actualDateTime = Operator.ValueToDate(ImmutableJsonValue.Of(timestampMillis));
+            var actualDateTime = Operator.ValueToDate(LdValue.Of(timestampMillis));
             var expectedDateTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc);
             Assert.Equal(expectedDateTime, actualDateTime);
         }
@@ -41,8 +41,8 @@ namespace LaunchDarkly.Tests
             var afterTimestamp = "1970-01-01T00:00:00-01:00"; //equivalent to 1970-01-01T01:00:00Z
             var utcTimestamp = "1970-01-01T00:00:01Z";
 
-            var after = ImmutableJsonValue.Of(afterTimestamp);
-            var before = ImmutableJsonValue.Of(utcTimestamp);
+            var after = LdValue.Of(afterTimestamp);
+            var before = LdValue.Of(utcTimestamp);
             Assert.True(Operator.Apply("after", after, before));
             Assert.False(Operator.Apply("after", before, after));
 
@@ -56,8 +56,8 @@ namespace LaunchDarkly.Tests
             var afterTimestamp = "1970-01-01T00:00:00-01:00"; //equivalent to 1970-01-01T01:00:00Z
             var beforeMillis = 1000;
 
-            var after = ImmutableJsonValue.Of(afterTimestamp);
-            var before = ImmutableJsonValue.Of(beforeMillis);
+            var after = LdValue.Of(afterTimestamp);
+            var before = LdValue.Of(beforeMillis);
 
             Assert.True(Operator.Apply("after", after, before));
             Assert.False(Operator.Apply("after", before, after));
@@ -69,19 +69,19 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void Apply_UnknownOperation_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("unknown", ImmutableJsonValue.Of(10), ImmutableJsonValue.Of(10)));
+            Assert.False(Operator.Apply("unknown", LdValue.Of(10), LdValue.Of(10)));
         }
 
         [Fact]
         public void Apply_UserValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", ImmutableJsonValue.Null, ImmutableJsonValue.Of(10)));
+            Assert.False(Operator.Apply("in", LdValue.Null, LdValue.Of(10)));
         }
 
         [Fact]
         public void Apply_ClauseValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", ImmutableJsonValue.Of(10), ImmutableJsonValue.Null));
+            Assert.False(Operator.Apply("in", LdValue.Of(10), LdValue.Null));
         }
 
         [Theory]
@@ -111,7 +111,7 @@ namespace LaunchDarkly.Tests
         [InlineData("userValue", "userValue")]
         public void Apply_EndsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("endsWith", ImmutableJsonValue.Of(userValue), ImmutableJsonValue.Of(clauseValue)));
+            Assert.True(Operator.Apply("endsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -128,7 +128,7 @@ namespace LaunchDarkly.Tests
         [InlineData("userValue", "user")]
         public void Apply_StartsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("startsWith", ImmutableJsonValue.Of(userValue), ImmutableJsonValue.Of(clauseValue)));
+            Assert.True(Operator.Apply("startsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -143,7 +143,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void Apply_Matches_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("matches", ImmutableJsonValue.Of("22"), ImmutableJsonValue.Of(@"\d")));
+            Assert.True(Operator.Apply("matches", LdValue.Of("22"), LdValue.Of(@"\d")));
         }
 
         [Theory]
@@ -159,7 +159,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void Apply_Contains_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("contains", ImmutableJsonValue.Of("userValue"), ImmutableJsonValue.Of("serValu")));
+            Assert.True(Operator.Apply("contains", LdValue.Of("userValue"), LdValue.Of("serValu")));
         }
 
         [Theory]
@@ -346,35 +346,35 @@ namespace LaunchDarkly.Tests
             Assert.Equal(expected, result);
         }
 
-        private ImmutableJsonValue ArbitraryValue(object v)
+        private LdValue ArbitraryValue(object v)
         {
             if (v is null)
             {
-                return ImmutableJsonValue.Null;
+                return LdValue.Null;
             }
             if (v is bool b)
             {
-                return ImmutableJsonValue.Of(b);
+                return LdValue.Of(b);
             }
             if (v is int i)
             {
-                return ImmutableJsonValue.Of(i);
+                return LdValue.Of(i);
             }
             if (v is long l)
             {
-                return ImmutableJsonValue.Of(l);
+                return LdValue.Of(l);
             }
             if (v is float f)
             {
-                return ImmutableJsonValue.Of(f);
+                return LdValue.Of(f);
             }
             if (v is double d)
             {
-                return ImmutableJsonValue.Of((float)d);
+                return LdValue.Of((float)d);
             }
             if (v is string s)
             {
-                return ImmutableJsonValue.Of(s);
+                return LdValue.Of(s);
             }
             throw new InvalidCastException();
         }
