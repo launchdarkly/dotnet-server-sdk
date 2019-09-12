@@ -68,10 +68,10 @@ namespace LaunchDarkly.Client
 
         internal struct EvalResult
         {
-            internal EvaluationDetail<ImmutableJsonValue> Result;
+            internal EvaluationDetail<LdValue> Result;
             internal readonly IList<FeatureRequestEvent> PrerequisiteEvents;
             
-            internal EvalResult(EvaluationDetail<ImmutableJsonValue> result, IList<FeatureRequestEvent> events) : this()
+            internal EvalResult(EvaluationDetail<LdValue> result, IList<FeatureRequestEvent> events) : this()
             {
                 Result = result;
                 PrerequisiteEvents = events;
@@ -96,14 +96,14 @@ namespace LaunchDarkly.Client
                     Key);
 
                 return new EvalResult(
-                    new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null, new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED)),
+                    new EvaluationDetail<LdValue>(LdValue.Null, null, new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED)),
                     prereqEvents);
             }
             var details = Evaluate(user, featureStore, prereqEvents, eventFactory);
             return new EvalResult(details, prereqEvents);
         }
 
-        private EvaluationDetail<ImmutableJsonValue> Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
+        private EvaluationDetail<LdValue> Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
             EventFactory eventFactory)
         {
             if (!On)
@@ -188,31 +188,31 @@ namespace LaunchDarkly.Client
             return null;
         }
         
-        internal EvaluationDetail<ImmutableJsonValue> ErrorResult(EvaluationErrorKind kind)
+        internal EvaluationDetail<LdValue> ErrorResult(EvaluationErrorKind kind)
         {
-            return new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null, new EvaluationReason.Error(kind));
+            return new EvaluationDetail<LdValue>(LdValue.Null, null, new EvaluationReason.Error(kind));
         }
 
-        internal EvaluationDetail<ImmutableJsonValue> GetVariation(int variation, EvaluationReason reason)
+        internal EvaluationDetail<LdValue> GetVariation(int variation, EvaluationReason reason)
         {
             if (variation < 0 || variation >= Variations.Count)
             {
                 Log.ErrorFormat("Data inconsistency in feature flag \"{0}\": invalid variation index", Key);
                 return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
             }
-            return new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.FromSafeValue(Variations[variation]), variation, reason);
+            return new EvaluationDetail<LdValue>(LdValue.FromSafeValue(Variations[variation]), variation, reason);
         }
 
-        internal EvaluationDetail<ImmutableJsonValue> GetOffValue(EvaluationReason reason)
+        internal EvaluationDetail<LdValue> GetOffValue(EvaluationReason reason)
         {
             if (OffVariation == null) // off variation unspecified - return default value
             {
-                return new EvaluationDetail<ImmutableJsonValue>(ImmutableJsonValue.Null, null, reason);
+                return new EvaluationDetail<LdValue>(LdValue.Null, null, reason);
             }
             return GetVariation(OffVariation.Value, reason);
         }
 
-        internal EvaluationDetail<ImmutableJsonValue> GetValueForVariationOrRollout(VariationOrRollout vr,
+        internal EvaluationDetail<LdValue> GetValueForVariationOrRollout(VariationOrRollout vr,
             User user, EvaluationReason reason)
         {
             var index = vr.VariationIndexForUser(user, Key, Salt);

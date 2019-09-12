@@ -20,7 +20,7 @@ namespace LaunchDarkly.Client
         internal readonly bool _valid;
         internal readonly IDictionary<string, JToken> _flagValues;
         internal readonly IDictionary<string, FlagMetadata> _flagMetadata;
-        private volatile Dictionary<string, ImmutableJsonValue> _immutableValuesMap; // lazily created
+        private volatile Dictionary<string, LdValue> _immutableValuesMap; // lazily created
         
         /// <summary>
         /// True if this object contains a valid snapshot of feature flag state, or false if the
@@ -80,15 +80,15 @@ namespace LaunchDarkly.Client
         /// Returns the value of an individual feature flag at the time the state was recorded.
         /// </summary>
         /// <param name="key">the feature flag key</param>
-        /// <returns>the flag's JSON value; <see cref="ImmutableJsonValue.Null"/> if the flag returned
+        /// <returns>the flag's JSON value; <see cref="LdValue.Null"/> if the flag returned
         /// the default value, or if there was no such flag</returns>
-        public ImmutableJsonValue GetFlagValueJson(string key)
+        public LdValue GetFlagValueJson(string key)
         {
             if (_flagValues.TryGetValue(key, out var value))
             {
-                return ImmutableJsonValue.FromSafeValue(value);
+                return LdValue.FromSafeValue(value);
             }
-            return ImmutableJsonValue.Null;
+            return LdValue.Null;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace LaunchDarkly.Client
         /// <remarks>
         /// <para>
         /// If a flag would have evaluated to the default value, its value will be
-        /// <see cref="ImmutableJsonValue.Null"/>.
+        /// <see cref="LdValue.Null"/>.
         /// </para>
         /// <para>
         /// Do not use this method if you are passing data to the front end to "bootstrap" the
@@ -143,7 +143,7 @@ namespace LaunchDarkly.Client
         /// </para>
         /// </remarks>
         /// <returns>a dictionary of flag keys to flag values</returns>
-        public IReadOnlyDictionary<string, ImmutableJsonValue> ToValuesJsonMap()
+        public IReadOnlyDictionary<string, LdValue> ToValuesJsonMap()
         {
             // In the next major version, we will store the map this way in the first place so there will
             // be no conversion step.
@@ -152,9 +152,9 @@ namespace LaunchDarkly.Client
                 if (_immutableValuesMap is null)
                 {
                     // There's a potential race condition here but the result is the same either way, so 
-                    _immutableValuesMap = _flagValues.ToDictionary<KeyValuePair<string, JToken>, string, ImmutableJsonValue>(
+                    _immutableValuesMap = _flagValues.ToDictionary<KeyValuePair<string, JToken>, string, LdValue>(
                         pair => pair.Key,
-                        pair => ImmutableJsonValue.FromSafeValue(pair.Value));
+                        pair => LdValue.FromSafeValue(pair.Value));
                 }
                 return _immutableValuesMap;
             }

@@ -17,7 +17,7 @@ namespace LaunchDarkly.Tests
             var flag = new FeatureFlagBuilder("key").Build();
             state.AddFlag(flag, new JValue("value"), 1, null, false);
 
-            Assert.Equal(ImmutableJsonValue.Of("value"), state.GetFlagValueJson("key"));
+            Assert.Equal(LdValue.Of("value"), state.GetFlagValueJson("key"));
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace LaunchDarkly.Tests
 #pragma warning disable 0618
             Assert.Null(state.GetFlagValue("key"));
 #pragma warning restore 0618
-            Assert.Equal(ImmutableJsonValue.Null, state.GetFlagValueJson("key"));
+            Assert.Equal(LdValue.Null, state.GetFlagValueJson("key"));
         }
 
         [Fact]
@@ -78,10 +78,10 @@ namespace LaunchDarkly.Tests
             state.AddFlag(flag1, new JValue("value1"), 0, null, false);
             state.AddFlag(flag2, new JValue("value2"), 1, null, false);
 
-            var expected = new Dictionary<string, ImmutableJsonValue>
+            var expected = new Dictionary<string, LdValue>
             {
-                { "key1", ImmutableJsonValue.Of("value1") },
-                { "key2", ImmutableJsonValue.Of("value2") }
+                { "key1", LdValue.Of("value1") },
+                { "key2", LdValue.Of("value2") }
             };
             Assert.Equal(expected, state.ToValuesJsonMap());
         }
