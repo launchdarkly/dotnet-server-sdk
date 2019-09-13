@@ -18,7 +18,10 @@ Also, generated HTML documentation for all of the SDK's public types, properties
  
 ### Changed:
 - Calls to flag evaluation methods such as `BoolVariation` are now somewhat more efficient because they no longer convert the default value to a `JToken` internally; also, user attributes no longer need to be converted to `JToken` internally when evaluating flag rules. If flag evaluations are very frequent, this reduces the number of ephemeral objects created on the heap.
- 
+
+### Fixed:
+- Due to the default parsing behavior of `Newtonsoft.Json`, strings in the date/time format "1970-01-01T00:00:01Z" or "1970-01-01T00:00:01.001Z" would not be considered equal to an identical string in a flag rule.
+
 ### Deprecated:
 - All `ConfigurationExtension` methods are now deprecated.
 - `Configuration.SamplingInterval`. The intended use case for the `SamplingInterval` feature was to reduce analytics event network usage in high-traffic applications. This feature is being deprecated in favor of summary counters, which are meant to track all events.
