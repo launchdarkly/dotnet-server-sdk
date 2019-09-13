@@ -3,10 +3,9 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Common.Logging;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -111,7 +110,7 @@ namespace LaunchDarkly.Client
                             }
                         }
                         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        return string.IsNullOrEmpty(content) ? null : (T)JsonConvert.DeserializeObject<T>(content);
+                        return string.IsNullOrEmpty(content) ? null : JsonUtil.DecodeJson<T>(content);
                     }
                 }
                 catch (TaskCanceledException tce)

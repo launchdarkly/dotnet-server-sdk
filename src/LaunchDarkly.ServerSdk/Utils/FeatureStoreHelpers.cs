@@ -24,7 +24,7 @@ namespace LaunchDarkly.Client.Utils
         {
             try
             {
-                return JsonConvert.DeserializeObject<T>(data);
+                return JsonUtil.DecodeJson<T>(data);
             }
             catch (JsonException e)
             {
@@ -50,7 +50,7 @@ namespace LaunchDarkly.Client.Utils
         {
             try
             {
-                return (IVersionedData)JsonConvert.DeserializeObject(data, kind.GetItemType());
+                return (IVersionedData)JsonUtil.DecodeJson(data, kind.GetItemType());
             }
             catch (JsonException e)
             {
@@ -68,7 +68,7 @@ namespace LaunchDarkly.Client.Utils
         /// <returns>the JSON string</returns>
         public static string MarshalJson(IVersionedData item)
         {
-            return JsonConvert.SerializeObject(item);
+            return JsonUtil.EncodeJson(item);
         }
     }
 
