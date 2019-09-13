@@ -172,9 +172,24 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void StringVariationWithNullDefaultReturnsFlagValue()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
+
+            Assert.Equal("b", client.StringVariation("key", user, null));
+        }
+
+        [Fact]
         public void StringVariationReturnsDefaultValueForUnknownFlag()
         {
             Assert.Equal("a", client.StringVariation("key", user, "a"));
+        }
+
+        [Fact]
+        public void StringVariationWithNullDefaultReturnsDefaultValueForUnknownFlag()
+        {
+            Assert.Null(client.StringVariation("key", user, null));
         }
 
         [Fact]
