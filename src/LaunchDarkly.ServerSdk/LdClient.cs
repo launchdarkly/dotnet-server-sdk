@@ -341,6 +341,7 @@ namespace LaunchDarkly.Client
                 if (evalDetail.VariationIndex == null)
                 {
                     returnDetail = new EvaluationDetail<T>(defaultValueOfType, null, evalDetail.Reason);
+                    evalDetail = new EvaluationDetail<LdValue>(defaultValue, null, evalDetail.Reason);
                 }
                 else
                 {
