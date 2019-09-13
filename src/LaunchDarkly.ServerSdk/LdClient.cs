@@ -345,7 +345,7 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    if (checkType && evalDetail.Value.Type != defaultValue.Type)
+                    if (checkType && !defaultValue.IsNull && evalDetail.Value.Type != defaultValue.Type)
                     {
                         Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
                             defaultValue.Type,
