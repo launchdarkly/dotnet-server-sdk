@@ -1,0 +1,1228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpKI>
+  <HelpKINode Title="All(Of T) method">
+    <HelpKINode Title="CachingStoreWrapper.All(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_All__1.htm" />
+    <HelpKINode Title="IFeatureStore.All(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_All__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.All(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_All__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="All&lt;T&gt; method">
+    <HelpKINode Title="CachingStoreWrapper.All(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_All__1.htm" />
+    <HelpKINode Title="IFeatureStore.All(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_All__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.All(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_All__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AllAttributesPrivate method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_AllAttributesPrivate.htm" />
+  <HelpKINode Title="AllAttributesPrivate property">
+    <HelpKINode Title="Configuration.AllAttributesPrivate Property " Url="html/P_LaunchDarkly_Client_Configuration_AllAttributesPrivate.htm" />
+    <HelpKINode Title="IBaseConfiguration.AllAttributesPrivate Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_AllAttributesPrivate.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AllFlags method">
+    <HelpKINode Title="ILdClient.AllFlags Method " Url="html/M_LaunchDarkly_Client_ILdClient_AllFlags.htm" />
+    <HelpKINode Title="LdClient.AllFlags Method " Url="html/M_LaunchDarkly_Client_LdClient_AllFlags.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AllFlagsState method">
+    <HelpKINode Title="ILdClient.AllFlagsState Method " Url="html/M_LaunchDarkly_Client_ILdClient_AllFlagsState.htm" />
+    <HelpKINode Title="LdClient.AllFlagsState Method " Url="html/M_LaunchDarkly_Client_LdClient_AllFlagsState.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AndAnonymous method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndAnonymous.htm" />
+  <HelpKINode Title="AndAvatar method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndAvatar.htm" />
+  <HelpKINode Title="AndCountry method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndCountry.htm" />
+  <HelpKINode Title="AndCustomAttribute method" Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndCustomAttribute.htm" />
+  <HelpKINode Title="AndEmail method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndEmail.htm" />
+  <HelpKINode Title="AndFirstName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndFirstName.htm" />
+  <HelpKINode Title="AndIpAddress method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndIpAddress.htm" />
+  <HelpKINode Title="AndLastName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndLastName.htm" />
+  <HelpKINode Title="AndName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndName.htm" />
+  <HelpKINode Title="AndPrivateAvatar method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateAvatar.htm" />
+  <HelpKINode Title="AndPrivateCountry method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateCountry.htm" />
+  <HelpKINode Title="AndPrivateCustomAttribute method" Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndPrivateCustomAttribute.htm" />
+  <HelpKINode Title="AndPrivateEmail method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateEmail.htm" />
+  <HelpKINode Title="AndPrivateFirstName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateFirstName.htm" />
+  <HelpKINode Title="AndPrivateIpAddress method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateIpAddress.htm" />
+  <HelpKINode Title="AndPrivateLastName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateLastName.htm" />
+  <HelpKINode Title="AndPrivateName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateName.htm" />
+  <HelpKINode Title="AndSecondaryKey method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndSecondaryKey.htm" />
+  <HelpKINode Title="Anonymous method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Anonymous.htm" />
+  <HelpKINode Title="Anonymous property" Url="html/P_LaunchDarkly_Client_User_Anonymous.htm" />
+  <HelpKINode Title="Array enumeration member" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="ArrayFrom method">
+    <HelpKINode Title="LdValue.ArrayFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_ArrayFrom.htm" />
+    <HelpKINode Title="LdValue.Converter(T).ArrayFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayFrom.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ArrayOf method">
+    <HelpKINode Title="LdValue.ArrayOf Method " Url="html/M_LaunchDarkly_Client_LdValue_ArrayOf.htm" />
+    <HelpKINode Title="LdValue.Converter(T).ArrayOf Method " Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayOf.htm" />
+  </HelpKINode>
+  <HelpKINode Title="AsBool property" Url="html/P_LaunchDarkly_Client_LdValue_AsBool.htm" />
+  <HelpKINode Title="AsDictionary(Of T) method" Url="html/M_LaunchDarkly_Client_LdValue_AsDictionary__1.htm" />
+  <HelpKINode Title="AsDictionary&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_LdValue_AsDictionary__1.htm" />
+  <HelpKINode Title="AsDouble property" Url="html/P_LaunchDarkly_Client_LdValue_AsDouble.htm" />
+  <HelpKINode Title="AsFloat property" Url="html/P_LaunchDarkly_Client_LdValue_AsFloat.htm" />
+  <HelpKINode Title="AsInt property" Url="html/P_LaunchDarkly_Client_LdValue_AsInt.htm" />
+  <HelpKINode Title="AsJToken method" Url="html/M_LaunchDarkly_Client_LdValue_AsJToken.htm" />
+  <HelpKINode Title="AsList(Of T) method" Url="html/M_LaunchDarkly_Client_LdValue_AsList__1.htm" />
+  <HelpKINode Title="AsList&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_LdValue_AsList__1.htm" />
+  <HelpKINode Title="AsLong property" Url="html/P_LaunchDarkly_Client_LdValue_AsLong.htm" />
+  <HelpKINode Title="AsPrivateAttribute method" Url="html/M_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate_AsPrivateAttribute.htm" />
+  <HelpKINode Title="AsString property" Url="html/P_LaunchDarkly_Client_LdValue_AsString.htm" />
+  <HelpKINode Title="Avatar method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Avatar.htm" />
+  <HelpKINode Title="Avatar property" Url="html/P_LaunchDarkly_Client_User_Avatar.htm" />
+  <HelpKINode Title="BaseUri method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_BaseUri.htm" />
+  <HelpKINode Title="BaseUri property">
+    <HelpKINode Title="Configuration.BaseUri Property " Url="html/P_LaunchDarkly_Client_Configuration_BaseUri.htm" />
+    <HelpKINode Title="IBaseConfiguration.BaseUri Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_BaseUri.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Bool enumeration member" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="Bool field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Bool.htm" />
+  <HelpKINode Title="BoolVariation method">
+    <HelpKINode Title="ILdClient.BoolVariation Method " Url="html/M_LaunchDarkly_Client_ILdClient_BoolVariation.htm" />
+    <HelpKINode Title="LdClient.BoolVariation Method " Url="html/M_LaunchDarkly_Client_LdClient_BoolVariation.htm" />
+  </HelpKINode>
+  <HelpKINode Title="BoolVariationDetail method">
+    <HelpKINode Title="ILdClient.BoolVariationDetail Method " Url="html/M_LaunchDarkly_Client_ILdClient_BoolVariationDetail.htm" />
+    <HelpKINode Title="LdClient.BoolVariationDetail Method " Url="html/M_LaunchDarkly_Client_LdClient_BoolVariationDetail.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Build method">
+    <HelpKINode Title="CachingStoreWrapperBuilder.Build Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder_Build.htm" />
+    <HelpKINode Title="IConfigurationBuilder.Build Method " Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_Build.htm" />
+    <HelpKINode Title="IUserBuilder.Build Method " Url="html/M_LaunchDarkly_Client_IUserBuilder_Build.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Builder method">
+    <HelpKINode Title="CachingStoreWrapper.Builder Method " Url="html/Overload_LaunchDarkly_Client_Utils_CachingStoreWrapper_Builder.htm" />
+    <HelpKINode Title="Configuration.Builder Method " Url="html/Overload_LaunchDarkly_Client_Configuration_Builder.htm" />
+    <HelpKINode Title="User.Builder Method " Url="html/Overload_LaunchDarkly_Client_User_Builder.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CachingStoreWrapper class">
+    <HelpKINode Title="CachingStoreWrapper Class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapper.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_CachingStoreWrapper.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CachingStoreWrapper.All(Of T) method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_All__1.htm" />
+  <HelpKINode Title="CachingStoreWrapper.All&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_All__1.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Builder method" Url="html/Overload_LaunchDarkly_Client_Utils_CachingStoreWrapper_Builder.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Delete(Of T) method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Delete__1.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Delete&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Delete__1.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Dispose method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Dispose.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Get(Of T) method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Get__1.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Get&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Get__1.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Init method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Init.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Initialized method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Initialized.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Upsert(Of T) method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Upsert__1.htm" />
+  <HelpKINode Title="CachingStoreWrapper.Upsert&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Upsert__1.htm" />
+  <HelpKINode Title="CachingStoreWrapperBuilder class">
+    <HelpKINode Title="CachingStoreWrapperBuilder Class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CachingStoreWrapperBuilder.Build method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder_Build.htm" />
+  <HelpKINode Title="CachingStoreWrapperBuilder.WithCaching method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder_WithCaching.htm" />
+  <HelpKINode Title="ClientSideOnly field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_ClientSideOnly.htm" />
+  <HelpKINode Title="CLIENT_NOT_READY enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+  <HelpKINode Title="Components class">
+    <HelpKINode Title="Components Class" Url="html/T_LaunchDarkly_Client_Components.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_Components.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Components.DefaultEventProcessor property" Url="html/P_LaunchDarkly_Client_Components_DefaultEventProcessor.htm" />
+  <HelpKINode Title="Components.DefaultUpdateProcessor property" Url="html/P_LaunchDarkly_Client_Components_DefaultUpdateProcessor.htm" />
+  <HelpKINode Title="Components.InMemoryFeatureStore property" Url="html/P_LaunchDarkly_Client_Components_InMemoryFeatureStore.htm" />
+  <HelpKINode Title="Components.NullEventProcessor property" Url="html/P_LaunchDarkly_Client_Components_NullEventProcessor.htm" />
+  <HelpKINode Title="Components.NullUpdateProcessor property" Url="html/P_LaunchDarkly_Client_Components_NullUpdateProcessor.htm" />
+  <HelpKINode Title="Configuration class">
+    <HelpKINode Title="Configuration Class" Url="html/T_LaunchDarkly_Client_Configuration.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_LaunchDarkly_Client_Configuration.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Configuration.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_Configuration.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Configuration.AllAttributesPrivate property" Url="html/P_LaunchDarkly_Client_Configuration_AllAttributesPrivate.htm" />
+  <HelpKINode Title="Configuration.BaseUri property" Url="html/P_LaunchDarkly_Client_Configuration_BaseUri.htm" />
+  <HelpKINode Title="Configuration.Builder method" Url="html/Overload_LaunchDarkly_Client_Configuration_Builder.htm" />
+  <HelpKINode Title="Configuration.Default method" Url="html/M_LaunchDarkly_Client_Configuration_Default.htm" />
+  <HelpKINode Title="Configuration.DefaultPollingInterval field" Url="html/F_LaunchDarkly_Client_Configuration_DefaultPollingInterval.htm" />
+  <HelpKINode Title="Configuration.EventCapacity property" Url="html/P_LaunchDarkly_Client_Configuration_EventCapacity.htm" />
+  <HelpKINode Title="Configuration.EventFlushInterval property" Url="html/P_LaunchDarkly_Client_Configuration_EventFlushInterval.htm" />
+  <HelpKINode Title="Configuration.EventProcessorFactory property" Url="html/P_LaunchDarkly_Client_Configuration_EventProcessorFactory.htm" />
+  <HelpKINode Title="Configuration.EventQueueCapacity property" Url="html/P_LaunchDarkly_Client_Configuration_EventQueueCapacity.htm" />
+  <HelpKINode Title="Configuration.EventQueueFrequency property" Url="html/P_LaunchDarkly_Client_Configuration_EventQueueFrequency.htm" />
+  <HelpKINode Title="Configuration.EventSamplingInterval property" Url="html/P_LaunchDarkly_Client_Configuration_EventSamplingInterval.htm" />
+  <HelpKINode Title="Configuration.EventsUri property" Url="html/P_LaunchDarkly_Client_Configuration_EventsUri.htm" />
+  <HelpKINode Title="Configuration.FeatureStoreFactory property" Url="html/P_LaunchDarkly_Client_Configuration_FeatureStoreFactory.htm" />
+  <HelpKINode Title="Configuration.HttpClientHandler property" Url="html/P_LaunchDarkly_Client_Configuration_HttpClientHandler.htm" />
+  <HelpKINode Title="Configuration.HttpClientTimeout property" Url="html/P_LaunchDarkly_Client_Configuration_HttpClientTimeout.htm" />
+  <HelpKINode Title="Configuration.InlineUsersInEvents property" Url="html/P_LaunchDarkly_Client_Configuration_InlineUsersInEvents.htm" />
+  <HelpKINode Title="Configuration.IsStreamingEnabled property" Url="html/P_LaunchDarkly_Client_Configuration_IsStreamingEnabled.htm" />
+  <HelpKINode Title="Configuration.Offline property" Url="html/P_LaunchDarkly_Client_Configuration_Offline.htm" />
+  <HelpKINode Title="Configuration.PollingInterval property" Url="html/P_LaunchDarkly_Client_Configuration_PollingInterval.htm" />
+  <HelpKINode Title="Configuration.PrivateAttributeNames property" Url="html/P_LaunchDarkly_Client_Configuration_PrivateAttributeNames.htm" />
+  <HelpKINode Title="Configuration.ReadTimeout property" Url="html/P_LaunchDarkly_Client_Configuration_ReadTimeout.htm" />
+  <HelpKINode Title="Configuration.ReconnectTime property" Url="html/P_LaunchDarkly_Client_Configuration_ReconnectTime.htm" />
+  <HelpKINode Title="Configuration.SdkKey property" Url="html/P_LaunchDarkly_Client_Configuration_SdkKey.htm" />
+  <HelpKINode Title="Configuration.StartWaitTime property" Url="html/P_LaunchDarkly_Client_Configuration_StartWaitTime.htm" />
+  <HelpKINode Title="Configuration.StreamUri property" Url="html/P_LaunchDarkly_Client_Configuration_StreamUri.htm" />
+  <HelpKINode Title="Configuration.UpdateProcessorFactory property" Url="html/P_LaunchDarkly_Client_Configuration_UpdateProcessorFactory.htm" />
+  <HelpKINode Title="Configuration.UseLdd property" Url="html/P_LaunchDarkly_Client_Configuration_UseLdd.htm" />
+  <HelpKINode Title="Configuration.UserAgentType property" Url="html/P_LaunchDarkly_Client_Configuration_UserAgentType.htm" />
+  <HelpKINode Title="Configuration.UserKeysCapacity property" Url="html/P_LaunchDarkly_Client_Configuration_UserKeysCapacity.htm" />
+  <HelpKINode Title="Configuration.UserKeysFlushInterval property" Url="html/P_LaunchDarkly_Client_Configuration_UserKeysFlushInterval.htm" />
+  <HelpKINode Title="ConfigurationExtensions class">
+    <HelpKINode Title="ConfigurationExtensions Class" Url="html/T_LaunchDarkly_Client_ConfigurationExtensions.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_ConfigurationExtensions.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ConfigurationExtensions.WithAllAttributesPrivate method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithAllAttributesPrivate.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithEventProcessorFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventProcessorFactory.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithEventQueueCapacity method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueCapacity.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithEventQueueFrequency method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueFrequency.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithEventSamplingInterval method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventSamplingInterval.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithEventsUri method" Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithEventsUri.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithFeatureStore method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithFeatureStore.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithFeatureStoreFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithFeatureStoreFactory.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithHttpClientHandler method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithHttpClientHandler.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithHttpClientTimeout method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithHttpClientTimeout.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithInlineUsersInEvents method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithInlineUsersInEvents.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithIsStreamingEnabled method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithIsStreamingEnabled.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithOffline method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithOffline.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithPollingInterval method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithPollingInterval.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithPrivateAttributeName method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithPrivateAttributeName.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithReadTimeout method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReadTimeout.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithReconnectTime method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReconnectTime.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithStartWaitTime method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithStartWaitTime.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithStreamUri method" Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithUpdateProcessorFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUpdateProcessorFactory.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithUri method" Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithUri.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithUseLdd method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUseLdd.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithUserKeysCapacity method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUserKeysCapacity.htm" />
+  <HelpKINode Title="ConfigurationExtensions.WithUserKeysFlushInterval method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUserKeysFlushInterval.htm" />
+  <HelpKINode Title="Convert class">
+    <HelpKINode Title="fields" Url="html/Fields_T_LaunchDarkly_Client_LdValue_Convert.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Converter(Of T) class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_LdValue_Converter_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Converter&lt;T&gt; class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_LdValue_Converter_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Country method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Country.htm" />
+  <HelpKINode Title="Country property" Url="html/P_LaunchDarkly_Client_User_Country.htm" />
+  <HelpKINode Title="CreateEventProcessor method" Url="html/M_LaunchDarkly_Client_IEventProcessorFactory_CreateEventProcessor.htm" />
+  <HelpKINode Title="CreateFeatureStore method" Url="html/M_LaunchDarkly_Client_IFeatureStoreFactory_CreateFeatureStore.htm" />
+  <HelpKINode Title="CreateUpdateProcessor method">
+    <HelpKINode Title="FileDataSourceFactory.CreateUpdateProcessor Method " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_CreateUpdateProcessor.htm" />
+    <HelpKINode Title="IUpdateProcessorFactory.CreateUpdateProcessor Method " Url="html/M_LaunchDarkly_Client_IUpdateProcessorFactory_CreateUpdateProcessor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CreationDate property" Url="html/P_LaunchDarkly_Client_Event_CreationDate.htm" />
+  <HelpKINode Title="Custom method" Url="html/Overload_LaunchDarkly_Client_IUserBuilder_Custom.htm" />
+  <HelpKINode Title="Custom property" Url="html/P_LaunchDarkly_Client_User_Custom.htm" />
+  <HelpKINode Title="CustomEvent class">
+    <HelpKINode Title="CustomEvent Class" Url="html/T_LaunchDarkly_Client_CustomEvent.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_CustomEvent.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_CustomEvent.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CustomEvent.Data property" Url="html/P_LaunchDarkly_Client_CustomEvent_Data.htm" />
+  <HelpKINode Title="CustomEvent.JsonData property" Url="html/P_LaunchDarkly_Client_CustomEvent_JsonData.htm" />
+  <HelpKINode Title="CustomEvent.LdValueData property" Url="html/P_LaunchDarkly_Client_CustomEvent_LdValueData.htm" />
+  <HelpKINode Title="CustomEvent.MetricValue property" Url="html/P_LaunchDarkly_Client_CustomEvent_MetricValue.htm" />
+  <HelpKINode Title="Data property" Url="html/P_LaunchDarkly_Client_CustomEvent_Data.htm" />
+  <HelpKINode Title="Debug property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Debug.htm" />
+  <HelpKINode Title="DebugEventsUntilDate property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_DebugEventsUntilDate.htm" />
+  <HelpKINode Title="Default method" Url="html/M_LaunchDarkly_Client_Configuration_Default.htm" />
+  <HelpKINode Title="Default property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Default.htm" />
+  <HelpKINode Title="DefaultEventProcessor property" Url="html/P_LaunchDarkly_Client_Components_DefaultEventProcessor.htm" />
+  <HelpKINode Title="DefaultPollingInterval field" Url="html/F_LaunchDarkly_Client_Configuration_DefaultPollingInterval.htm" />
+  <HelpKINode Title="DefaultPollInterval field" Url="html/F_LaunchDarkly_Client_Files_FileDataSourceFactory_DefaultPollInterval.htm" />
+  <HelpKINode Title="DefaultTtl field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_DefaultTtl.htm" />
+  <HelpKINode Title="DefaultUpdateProcessor property" Url="html/P_LaunchDarkly_Client_Components_DefaultUpdateProcessor.htm" />
+  <HelpKINode Title="Delete(Of T) method">
+    <HelpKINode Title="CachingStoreWrapper.Delete(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Delete__1.htm" />
+    <HelpKINode Title="IFeatureStore.Delete(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Delete__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Delete(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Delete__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Delete&lt;T&gt; method">
+    <HelpKINode Title="CachingStoreWrapper.Delete(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Delete__1.htm" />
+    <HelpKINode Title="IFeatureStore.Delete(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Delete__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Delete(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Delete__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Deleted property" Url="html/P_LaunchDarkly_Client_IVersionedData_Deleted.htm" />
+  <HelpKINode Title="DetailsOnlyForTrackedFlags field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_DetailsOnlyForTrackedFlags.htm" />
+  <HelpKINode Title="Disabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Disabled.htm" />
+  <HelpKINode Title="Dispose method">
+    <HelpKINode Title="CachingStoreWrapper.Dispose Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Dispose.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Dispose Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Dispose.htm" />
+    <HelpKINode Title="LdClient.Dispose Method " Url="html/M_LaunchDarkly_Client_LdClient_Dispose.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Double field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Double.htm" />
+  <HelpKINode Title="Email method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Email.htm" />
+  <HelpKINode Title="Email property" Url="html/P_LaunchDarkly_Client_User_Email.htm" />
+  <HelpKINode Title="Enabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Enabled.htm" />
+  <HelpKINode Title="Equals method">
+    <HelpKINode Title="EvaluationDetail(T).Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_Equals.htm" />
+    <HelpKINode Title="EvaluationReason.Error.Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_Equals.htm" />
+    <HelpKINode Title="EvaluationReason.PrerequisiteFailed.Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_Equals.htm" />
+    <HelpKINode Title="EvaluationReason.RuleMatch.Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_Equals.htm" />
+    <HelpKINode Title="FeatureFlagsState.Equals Method " Url="html/M_LaunchDarkly_Client_FeatureFlagsState_Equals.htm" />
+    <HelpKINode Title="LdValue.Equals Method " Url="html/Overload_LaunchDarkly_Client_LdValue_Equals.htm" />
+    <HelpKINode Title="User.Equals Method " Url="html/Overload_LaunchDarkly_Client_User_Equals.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Error class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_Error.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Error.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ERROR enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="ErrorKind property" Url="html/P_LaunchDarkly_Client_EvaluationReason_Error_ErrorKind.htm" />
+  <HelpKINode Title="EvaluationDetail(Of T) class">
+    <HelpKINode Title="EvaluationDetail(T) Class" Url="html/T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EvaluationDetail(Of T).Equals method" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_Equals.htm" />
+  <HelpKINode Title="EvaluationDetail(Of T).EvaluationDetail constructor" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1__ctor.htm" />
+  <HelpKINode Title="EvaluationDetail(Of T).GetHashCode method" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_GetHashCode.htm" />
+  <HelpKINode Title="EvaluationDetail(Of T).IsDefaultValue property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_IsDefaultValue.htm" />
+  <HelpKINode Title="EvaluationDetail(Of T).Reason property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Reason.htm" />
+  <HelpKINode Title="EvaluationDetail(Of T).Value property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Value.htm" />
+  <HelpKINode Title="EvaluationDetail(Of T).VariationIndex property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_VariationIndex.htm" />
+  <HelpKINode Title="EvaluationDetail&lt;T&gt; class">
+    <HelpKINode Title="EvaluationDetail(T) Class" Url="html/T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EvaluationDetail&lt;T&gt;.Equals method" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_Equals.htm" />
+  <HelpKINode Title="EvaluationDetail&lt;T&gt;.EvaluationDetail constructor" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1__ctor.htm" />
+  <HelpKINode Title="EvaluationDetail&lt;T&gt;.GetHashCode method" Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_GetHashCode.htm" />
+  <HelpKINode Title="EvaluationDetail&lt;T&gt;.IsDefaultValue property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_IsDefaultValue.htm" />
+  <HelpKINode Title="EvaluationDetail&lt;T&gt;.Reason property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Reason.htm" />
+  <HelpKINode Title="EvaluationDetail&lt;T&gt;.Value property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Value.htm" />
+  <HelpKINode Title="EvaluationDetail&lt;T&gt;.VariationIndex property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_VariationIndex.htm" />
+  <HelpKINode Title="EvaluationErrorKind enumeration" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+  <HelpKINode Title="EvaluationReason class">
+    <HelpKINode Title="EvaluationReason Class" Url="html/T_LaunchDarkly_Client_EvaluationReason.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EvaluationReason.Error class">
+    <HelpKINode Title="EvaluationReason.Error Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Error.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_EvaluationReason_Error__ctor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EvaluationReason.Error.Equals method" Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_Equals.htm" />
+  <HelpKINode Title="EvaluationReason.Error.Error constructor" Url="html/M_LaunchDarkly_Client_EvaluationReason_Error__ctor.htm" />
+  <HelpKINode Title="EvaluationReason.Error.ErrorKind property" Url="html/P_LaunchDarkly_Client_EvaluationReason_Error_ErrorKind.htm" />
+  <HelpKINode Title="EvaluationReason.Error.GetHashCode method" Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_GetHashCode.htm" />
+  <HelpKINode Title="EvaluationReason.Error.ToString method" Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_ToString.htm" />
+  <HelpKINode Title="EvaluationReason.Fallthrough class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm" />
+  <HelpKINode Title="EvaluationReason.Fallthrough.Instance property" Url="html/P_LaunchDarkly_Client_EvaluationReason_Fallthrough_Instance.htm" />
+  <HelpKINode Title="EvaluationReason.Kind property" Url="html/P_LaunchDarkly_Client_EvaluationReason_Kind.htm" />
+  <HelpKINode Title="EvaluationReason.Off class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Off.htm" />
+  <HelpKINode Title="EvaluationReason.Off.Instance property" Url="html/P_LaunchDarkly_Client_EvaluationReason_Off_Instance.htm" />
+  <HelpKINode Title="EvaluationReason.PrerequisiteFailed class">
+    <HelpKINode Title="EvaluationReason.PrerequisiteFailed Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed__ctor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EvaluationReason.PrerequisiteFailed.Equals method" Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_Equals.htm" />
+  <HelpKINode Title="EvaluationReason.PrerequisiteFailed.GetHashCode method" Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_GetHashCode.htm" />
+  <HelpKINode Title="EvaluationReason.PrerequisiteFailed.PrerequisiteFailed constructor" Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed__ctor.htm" />
+  <HelpKINode Title="EvaluationReason.PrerequisiteFailed.PrerequisiteKey property" Url="html/P_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_PrerequisiteKey.htm" />
+  <HelpKINode Title="EvaluationReason.PrerequisiteFailed.ToString method" Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_ToString.htm" />
+  <HelpKINode Title="EvaluationReason.RuleMatch class">
+    <HelpKINode Title="EvaluationReason.RuleMatch Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch__ctor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EvaluationReason.RuleMatch.Equals method" Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_Equals.htm" />
+  <HelpKINode Title="EvaluationReason.RuleMatch.GetHashCode method" Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_GetHashCode.htm" />
+  <HelpKINode Title="EvaluationReason.RuleMatch.RuleId property" Url="html/P_LaunchDarkly_Client_EvaluationReason_RuleMatch_RuleId.htm" />
+  <HelpKINode Title="EvaluationReason.RuleMatch.RuleIndex property" Url="html/P_LaunchDarkly_Client_EvaluationReason_RuleMatch_RuleIndex.htm" />
+  <HelpKINode Title="EvaluationReason.RuleMatch.RuleMatch constructor" Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch__ctor.htm" />
+  <HelpKINode Title="EvaluationReason.RuleMatch.ToString method" Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_ToString.htm" />
+  <HelpKINode Title="EvaluationReason.TargetMatch class" Url="html/T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm" />
+  <HelpKINode Title="EvaluationReason.TargetMatch.Instance property" Url="html/P_LaunchDarkly_Client_EvaluationReason_TargetMatch_Instance.htm" />
+  <HelpKINode Title="EvaluationReason.ToString method" Url="html/M_LaunchDarkly_Client_EvaluationReason_ToString.htm" />
+  <HelpKINode Title="EvaluationReasonKind enumeration" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="Event class">
+    <HelpKINode Title="Event Class" Url="html/T_LaunchDarkly_Client_Event.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Event.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_Event.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Event.CreationDate property" Url="html/P_LaunchDarkly_Client_Event_CreationDate.htm" />
+  <HelpKINode Title="Event.Key property" Url="html/P_LaunchDarkly_Client_Event_Key.htm" />
+  <HelpKINode Title="Event.User property" Url="html/P_LaunchDarkly_Client_Event_User.htm" />
+  <HelpKINode Title="EventCapacity method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventCapacity.htm" />
+  <HelpKINode Title="EventCapacity property">
+    <HelpKINode Title="Configuration.EventCapacity Property " Url="html/P_LaunchDarkly_Client_Configuration_EventCapacity.htm" />
+    <HelpKINode Title="IBaseConfiguration.EventCapacity Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventCapacity.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EventFlushInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventFlushInterval.htm" />
+  <HelpKINode Title="EventFlushInterval property">
+    <HelpKINode Title="Configuration.EventFlushInterval Property " Url="html/P_LaunchDarkly_Client_Configuration_EventFlushInterval.htm" />
+    <HelpKINode Title="IBaseConfiguration.EventFlushInterval Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventFlushInterval.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EventProcessorFactory method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventProcessorFactory.htm" />
+  <HelpKINode Title="EventProcessorFactory property" Url="html/P_LaunchDarkly_Client_Configuration_EventProcessorFactory.htm" />
+  <HelpKINode Title="EventQueueCapacity property">
+    <HelpKINode Title="Configuration.EventQueueCapacity Property " Url="html/P_LaunchDarkly_Client_Configuration_EventQueueCapacity.htm" />
+    <HelpKINode Title="IBaseConfiguration.EventQueueCapacity Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventQueueCapacity.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EventQueueFrequency property">
+    <HelpKINode Title="Configuration.EventQueueFrequency Property " Url="html/P_LaunchDarkly_Client_Configuration_EventQueueFrequency.htm" />
+    <HelpKINode Title="IBaseConfiguration.EventQueueFrequency Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventQueueFrequency.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EventSamplingInterval property">
+    <HelpKINode Title="Configuration.EventSamplingInterval Property " Url="html/P_LaunchDarkly_Client_Configuration_EventSamplingInterval.htm" />
+    <HelpKINode Title="IBaseConfiguration.EventSamplingInterval Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventSamplingInterval.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EventsUri method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventsUri.htm" />
+  <HelpKINode Title="EventsUri property">
+    <HelpKINode Title="Configuration.EventsUri Property " Url="html/P_LaunchDarkly_Client_Configuration_EventsUri.htm" />
+    <HelpKINode Title="IBaseConfiguration.EventsUri Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventsUri.htm" />
+  </HelpKINode>
+  <HelpKINode Title="EXCEPTION enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+  <HelpKINode Title="Fallthrough class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FALLTHROUGH enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="FeatureFlagsState class">
+    <HelpKINode Title="FeatureFlagsState Class" Url="html/T_LaunchDarkly_Client_FeatureFlagsState.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureFlagsState.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureFlagsState.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FeatureFlagsState.Equals method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_Equals.htm" />
+  <HelpKINode Title="FeatureFlagsState.GetFlagReason method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagReason.htm" />
+  <HelpKINode Title="FeatureFlagsState.GetFlagValue method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagValue.htm" />
+  <HelpKINode Title="FeatureFlagsState.GetFlagValueJson method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagValueJson.htm" />
+  <HelpKINode Title="FeatureFlagsState.GetHashCode method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetHashCode.htm" />
+  <HelpKINode Title="FeatureFlagsState.ToValuesJsonMap method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_ToValuesJsonMap.htm" />
+  <HelpKINode Title="FeatureFlagsState.ToValuesMap method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_ToValuesMap.htm" />
+  <HelpKINode Title="FeatureFlagsState.Valid property" Url="html/P_LaunchDarkly_Client_FeatureFlagsState_Valid.htm" />
+  <HelpKINode Title="FeatureRequestEvent class">
+    <HelpKINode Title="FeatureRequestEvent Class" Url="html/T_LaunchDarkly_Client_FeatureRequestEvent.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureRequestEvent.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureRequestEvent.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FeatureRequestEvent.Debug property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Debug.htm" />
+  <HelpKINode Title="FeatureRequestEvent.DebugEventsUntilDate property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_DebugEventsUntilDate.htm" />
+  <HelpKINode Title="FeatureRequestEvent.Default property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Default.htm" />
+  <HelpKINode Title="FeatureRequestEvent.LdValue property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_LdValue.htm" />
+  <HelpKINode Title="FeatureRequestEvent.LdValueDefault property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_LdValueDefault.htm" />
+  <HelpKINode Title="FeatureRequestEvent.PrereqOf property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_PrereqOf.htm" />
+  <HelpKINode Title="FeatureRequestEvent.Reason property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Reason.htm" />
+  <HelpKINode Title="FeatureRequestEvent.TrackEvents property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_TrackEvents.htm" />
+  <HelpKINode Title="FeatureRequestEvent.Value property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Value.htm" />
+  <HelpKINode Title="FeatureRequestEvent.Variation property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Variation.htm" />
+  <HelpKINode Title="FeatureRequestEvent.Version property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Version.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig class">
+    <HelpKINode Title="FeatureStoreCacheConfig Class" Url="html/T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FeatureStoreCacheConfig.DefaultTtl field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_DefaultTtl.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.Disabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Disabled.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.Enabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Enabled.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.IsEnabled property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsEnabled.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.MaximumEntries property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_MaximumEntries.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.Ttl property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_Ttl.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.WithMaximumEntries method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithMaximumEntries.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.WithTtl method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtl.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.WithTtlMillis method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtlMillis.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.WithTtlSeconds method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtlSeconds.htm" />
+  <HelpKINode Title="FeatureStoreFactory method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_FeatureStoreFactory.htm" />
+  <HelpKINode Title="FeatureStoreFactory property" Url="html/P_LaunchDarkly_Client_Configuration_FeatureStoreFactory.htm" />
+  <HelpKINode Title="FeatureStoreHelpers class">
+    <HelpKINode Title="FeatureStoreHelpers Class" Url="html/T_LaunchDarkly_Client_Utils_FeatureStoreHelpers.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_FeatureStoreHelpers.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FeatureStoreHelpers.FeatureStoreHelpers constructor" Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers__ctor.htm" />
+  <HelpKINode Title="FeatureStoreHelpers.MarshalJson method" Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers_MarshalJson.htm" />
+  <HelpKINode Title="FeatureStoreHelpers.UnmarshalJson method" Url="html/Overload_LaunchDarkly_Client_Utils_FeatureStoreHelpers_UnmarshalJson.htm" />
+  <HelpKINode Title="FileComponents class">
+    <HelpKINode Title="FileComponents Class" Url="html/T_LaunchDarkly_Client_Files_FileComponents.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Files_FileComponents.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FileComponents.FileDataSource method" Url="html/M_LaunchDarkly_Client_Files_FileComponents_FileDataSource.htm" />
+  <HelpKINode Title="FileDataSource method" Url="html/M_LaunchDarkly_Client_Files_FileComponents_FileDataSource.htm" />
+  <HelpKINode Title="FileDataSourceFactory class">
+    <HelpKINode Title="FileDataSourceFactory Class" Url="html/T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory__ctor.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FileDataSourceFactory.CreateUpdateProcessor method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_CreateUpdateProcessor.htm" />
+  <HelpKINode Title="FileDataSourceFactory.DefaultPollInterval field" Url="html/F_LaunchDarkly_Client_Files_FileDataSourceFactory_DefaultPollInterval.htm" />
+  <HelpKINode Title="FileDataSourceFactory.FileDataSourceFactory constructor" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory__ctor.htm" />
+  <HelpKINode Title="FileDataSourceFactory.WithAutoUpdate method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithAutoUpdate.htm" />
+  <HelpKINode Title="FileDataSourceFactory.WithFilePaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFilePaths.htm" />
+  <HelpKINode Title="FileDataSourceFactory.WithParser method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithParser.htm" />
+  <HelpKINode Title="FileDataSourceFactory.WithPollInterval method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithPollInterval.htm" />
+  <HelpKINode Title="FirstName method" Url="html/M_LaunchDarkly_Client_IUserBuilder_FirstName.htm" />
+  <HelpKINode Title="FirstName property" Url="html/P_LaunchDarkly_Client_User_FirstName.htm" />
+  <HelpKINode Title="FlagsStateOption class">
+    <HelpKINode Title="FlagsStateOption Class" Url="html/T_LaunchDarkly_Client_FlagsStateOption.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_LaunchDarkly_Client_FlagsStateOption.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_FlagsStateOption.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FlagsStateOption.ClientSideOnly field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_ClientSideOnly.htm" />
+  <HelpKINode Title="FlagsStateOption.DetailsOnlyForTrackedFlags field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_DetailsOnlyForTrackedFlags.htm" />
+  <HelpKINode Title="FlagsStateOption.ToString method" Url="html/M_LaunchDarkly_Client_FlagsStateOption_ToString.htm" />
+  <HelpKINode Title="FlagsStateOption.WithReasons field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_WithReasons.htm" />
+  <HelpKINode Title="FLAG_NOT_FOUND enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+  <HelpKINode Title="Float field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Float.htm" />
+  <HelpKINode Title="FloatVariation method">
+    <HelpKINode Title="ILdClient.FloatVariation Method " Url="html/M_LaunchDarkly_Client_ILdClient_FloatVariation.htm" />
+    <HelpKINode Title="LdClient.FloatVariation Method " Url="html/M_LaunchDarkly_Client_LdClient_FloatVariation.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FloatVariationDetail method">
+    <HelpKINode Title="ILdClient.FloatVariationDetail Method " Url="html/M_LaunchDarkly_Client_ILdClient_FloatVariationDetail.htm" />
+    <HelpKINode Title="LdClient.FloatVariationDetail Method " Url="html/M_LaunchDarkly_Client_LdClient_FloatVariationDetail.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Flush method">
+    <HelpKINode Title="IEventProcessor.Flush Method " Url="html/M_LaunchDarkly_Client_IEventProcessor_Flush.htm" />
+    <HelpKINode Title="ILdCommonClient.Flush Method " Url="html/M_LaunchDarkly_Common_ILdCommonClient_Flush.htm" />
+    <HelpKINode Title="LdClient.Flush Method " Url="html/M_LaunchDarkly_Client_LdClient_Flush.htm" />
+  </HelpKINode>
+  <HelpKINode Title="FromJToken method" Url="html/M_LaunchDarkly_Client_LdValue_FromJToken.htm" />
+  <HelpKINode Title="FromType method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_FromType.htm" />
+  <HelpKINode Title="Get(Of T) method">
+    <HelpKINode Title="CachingStoreWrapper.Get(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Get__1.htm" />
+    <HelpKINode Title="IFeatureStore.Get(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Get__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Get(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Get__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Get&lt;T&gt; method">
+    <HelpKINode Title="CachingStoreWrapper.Get(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Get__1.htm" />
+    <HelpKINode Title="IFeatureStore.Get(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Get__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Get(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Get__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetAllInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_GetAllInternal.htm" />
+  <HelpKINode Title="GetAllInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_GetAllInternalAsync.htm" />
+  <HelpKINode Title="GetDependencyKeys method" Url="html/M_LaunchDarkly_Client_IVersionedDataOrdering_GetDependencyKeys.htm" />
+  <HelpKINode Title="GetFlagReason method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagReason.htm" />
+  <HelpKINode Title="GetFlagValue method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagValue.htm" />
+  <HelpKINode Title="GetFlagValueJson method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagValueJson.htm" />
+  <HelpKINode Title="GetHashCode method">
+    <HelpKINode Title="EvaluationDetail(T).GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_GetHashCode.htm" />
+    <HelpKINode Title="EvaluationReason.Error.GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_GetHashCode.htm" />
+    <HelpKINode Title="EvaluationReason.PrerequisiteFailed.GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_GetHashCode.htm" />
+    <HelpKINode Title="EvaluationReason.RuleMatch.GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_GetHashCode.htm" />
+    <HelpKINode Title="FeatureFlagsState.GetHashCode Method " Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetHashCode.htm" />
+    <HelpKINode Title="LdValue.GetHashCode Method " Url="html/M_LaunchDarkly_Client_LdValue_GetHashCode.htm" />
+    <HelpKINode Title="User.GetHashCode Method " Url="html/M_LaunchDarkly_Client_User_GetHashCode.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_GetInternal.htm" />
+  <HelpKINode Title="GetInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_GetInternalAsync.htm" />
+  <HelpKINode Title="GetItemType method">
+    <HelpKINode Title="IVersionedDataKind.GetItemType Method " Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetItemType.htm" />
+    <HelpKINode Title="VersionedDataKind(T).GetItemType Method " Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetItemType.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetNamespace method">
+    <HelpKINode Title="IVersionedDataKind.GetNamespace Method " Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetNamespace.htm" />
+    <HelpKINode Title="VersionedDataKind(T).GetNamespace Method " Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetNamespace.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GetStreamApiPath method">
+    <HelpKINode Title="IVersionedDataKind.GetStreamApiPath Method " Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetStreamApiPath.htm" />
+    <HelpKINode Title="VersionedDataKind(T).GetStreamApiPath Method " Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetStreamApiPath.htm" />
+  </HelpKINode>
+  <HelpKINode Title="HttpClientHandler method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_HttpClientHandler.htm" />
+  <HelpKINode Title="HttpClientHandler property">
+    <HelpKINode Title="Configuration.HttpClientHandler Property " Url="html/P_LaunchDarkly_Client_Configuration_HttpClientHandler.htm" />
+    <HelpKINode Title="IBaseConfiguration.HttpClientHandler Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_HttpClientHandler.htm" />
+  </HelpKINode>
+  <HelpKINode Title="HttpClientTimeout method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_HttpClientTimeout.htm" />
+  <HelpKINode Title="HttpClientTimeout property">
+    <HelpKINode Title="Configuration.HttpClientTimeout Property " Url="html/P_LaunchDarkly_Client_Configuration_HttpClientTimeout.htm" />
+    <HelpKINode Title="IBaseConfiguration.HttpClientTimeout Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_HttpClientTimeout.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IBaseConfiguration interface">
+    <HelpKINode Title="IBaseConfiguration Interface" Url="html/T_LaunchDarkly_Common_IBaseConfiguration.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Common_IBaseConfiguration.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IBaseConfiguration.AllAttributesPrivate property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_AllAttributesPrivate.htm" />
+  <HelpKINode Title="IBaseConfiguration.BaseUri property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_BaseUri.htm" />
+  <HelpKINode Title="IBaseConfiguration.EventCapacity property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventCapacity.htm" />
+  <HelpKINode Title="IBaseConfiguration.EventFlushInterval property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventFlushInterval.htm" />
+  <HelpKINode Title="IBaseConfiguration.EventQueueCapacity property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventQueueCapacity.htm" />
+  <HelpKINode Title="IBaseConfiguration.EventQueueFrequency property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventQueueFrequency.htm" />
+  <HelpKINode Title="IBaseConfiguration.EventSamplingInterval property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventSamplingInterval.htm" />
+  <HelpKINode Title="IBaseConfiguration.EventsUri property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventsUri.htm" />
+  <HelpKINode Title="IBaseConfiguration.HttpClientHandler property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_HttpClientHandler.htm" />
+  <HelpKINode Title="IBaseConfiguration.HttpClientTimeout property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_HttpClientTimeout.htm" />
+  <HelpKINode Title="IBaseConfiguration.InlineUsersInEvents property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_InlineUsersInEvents.htm" />
+  <HelpKINode Title="IBaseConfiguration.Offline property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_Offline.htm" />
+  <HelpKINode Title="IBaseConfiguration.PrivateAttributeNames property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_PrivateAttributeNames.htm" />
+  <HelpKINode Title="IBaseConfiguration.ReadTimeout property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_ReadTimeout.htm" />
+  <HelpKINode Title="IBaseConfiguration.ReconnectTime property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_ReconnectTime.htm" />
+  <HelpKINode Title="IBaseConfiguration.SdkKey property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_SdkKey.htm" />
+  <HelpKINode Title="IBaseConfiguration.StreamUri property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_StreamUri.htm" />
+  <HelpKINode Title="IBaseConfiguration.UserKeysCapacity property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_UserKeysCapacity.htm" />
+  <HelpKINode Title="IBaseConfiguration.UserKeysFlushInterval property" Url="html/P_LaunchDarkly_Common_IBaseConfiguration_UserKeysFlushInterval.htm" />
+  <HelpKINode Title="IConfigurationBuilder interface">
+    <HelpKINode Title="IConfigurationBuilder Interface" Url="html/T_LaunchDarkly_Client_IConfigurationBuilder.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IConfigurationBuilder.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IConfigurationBuilder.AllAttributesPrivate method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_AllAttributesPrivate.htm" />
+  <HelpKINode Title="IConfigurationBuilder.BaseUri method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_BaseUri.htm" />
+  <HelpKINode Title="IConfigurationBuilder.Build method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_Build.htm" />
+  <HelpKINode Title="IConfigurationBuilder.EventCapacity method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventCapacity.htm" />
+  <HelpKINode Title="IConfigurationBuilder.EventFlushInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventFlushInterval.htm" />
+  <HelpKINode Title="IConfigurationBuilder.EventProcessorFactory method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventProcessorFactory.htm" />
+  <HelpKINode Title="IConfigurationBuilder.EventsUri method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventsUri.htm" />
+  <HelpKINode Title="IConfigurationBuilder.FeatureStoreFactory method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_FeatureStoreFactory.htm" />
+  <HelpKINode Title="IConfigurationBuilder.HttpClientHandler method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_HttpClientHandler.htm" />
+  <HelpKINode Title="IConfigurationBuilder.HttpClientTimeout method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_HttpClientTimeout.htm" />
+  <HelpKINode Title="IConfigurationBuilder.InlineUsersInEvents method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_InlineUsersInEvents.htm" />
+  <HelpKINode Title="IConfigurationBuilder.IsStreamingEnabled method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_IsStreamingEnabled.htm" />
+  <HelpKINode Title="IConfigurationBuilder.Offline method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_Offline.htm" />
+  <HelpKINode Title="IConfigurationBuilder.PollingInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_PollingInterval.htm" />
+  <HelpKINode Title="IConfigurationBuilder.PrivateAttribute method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_PrivateAttribute.htm" />
+  <HelpKINode Title="IConfigurationBuilder.ReadTimeout method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_ReadTimeout.htm" />
+  <HelpKINode Title="IConfigurationBuilder.ReconnectTime method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_ReconnectTime.htm" />
+  <HelpKINode Title="IConfigurationBuilder.SdkKey method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_SdkKey.htm" />
+  <HelpKINode Title="IConfigurationBuilder.StartWaitTime method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_StartWaitTime.htm" />
+  <HelpKINode Title="IConfigurationBuilder.StreamUri method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_StreamUri.htm" />
+  <HelpKINode Title="IConfigurationBuilder.UpdateProcessorFactory method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UpdateProcessorFactory.htm" />
+  <HelpKINode Title="IConfigurationBuilder.UseLdd method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UseLdd.htm" />
+  <HelpKINode Title="IConfigurationBuilder.UserKeysCapacity method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UserKeysCapacity.htm" />
+  <HelpKINode Title="IConfigurationBuilder.UserKeysFlushInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UserKeysFlushInterval.htm" />
+  <HelpKINode Title="Identify method">
+    <HelpKINode Title="ILdClient.Identify Method " Url="html/M_LaunchDarkly_Client_ILdClient_Identify.htm" />
+    <HelpKINode Title="LdClient.Identify Method " Url="html/M_LaunchDarkly_Client_LdClient_Identify.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IdentifyEvent class">
+    <HelpKINode Title="IdentifyEvent Class" Url="html/T_LaunchDarkly_Client_IdentifyEvent.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IdentifyEvent.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_IdentifyEvent.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IEventProcessor interface">
+    <HelpKINode Title="IEventProcessor Interface" Url="html/T_LaunchDarkly_Client_IEventProcessor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IEventProcessor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IEventProcessor.Flush method" Url="html/M_LaunchDarkly_Client_IEventProcessor_Flush.htm" />
+  <HelpKINode Title="IEventProcessor.SendEvent method" Url="html/M_LaunchDarkly_Client_IEventProcessor_SendEvent.htm" />
+  <HelpKINode Title="IEventProcessorFactory interface">
+    <HelpKINode Title="IEventProcessorFactory Interface" Url="html/T_LaunchDarkly_Client_IEventProcessorFactory.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IEventProcessorFactory.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IEventProcessorFactory.CreateEventProcessor method" Url="html/M_LaunchDarkly_Client_IEventProcessorFactory_CreateEventProcessor.htm" />
+  <HelpKINode Title="IFeatureStore interface">
+    <HelpKINode Title="IFeatureStore Interface" Url="html/T_LaunchDarkly_Client_IFeatureStore.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStore.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IFeatureStore.All(Of T) method" Url="html/M_LaunchDarkly_Client_IFeatureStore_All__1.htm" />
+  <HelpKINode Title="IFeatureStore.All&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_IFeatureStore_All__1.htm" />
+  <HelpKINode Title="IFeatureStore.Delete(Of T) method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Delete__1.htm" />
+  <HelpKINode Title="IFeatureStore.Delete&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Delete__1.htm" />
+  <HelpKINode Title="IFeatureStore.Get(Of T) method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Get__1.htm" />
+  <HelpKINode Title="IFeatureStore.Get&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Get__1.htm" />
+  <HelpKINode Title="IFeatureStore.Init method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Init.htm" />
+  <HelpKINode Title="IFeatureStore.Initialized method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Initialized.htm" />
+  <HelpKINode Title="IFeatureStore.Upsert(Of T) method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Upsert__1.htm" />
+  <HelpKINode Title="IFeatureStore.Upsert&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_IFeatureStore_Upsert__1.htm" />
+  <HelpKINode Title="IFeatureStoreCore interface">
+    <HelpKINode Title="IFeatureStoreCore Interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCore.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_IFeatureStoreCore.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IFeatureStoreCore.GetAllInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_GetAllInternal.htm" />
+  <HelpKINode Title="IFeatureStoreCore.GetInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_GetInternal.htm" />
+  <HelpKINode Title="IFeatureStoreCore.InitializedInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_InitializedInternal.htm" />
+  <HelpKINode Title="IFeatureStoreCore.InitInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_InitInternal.htm" />
+  <HelpKINode Title="IFeatureStoreCore.UpsertInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_UpsertInternal.htm" />
+  <HelpKINode Title="IFeatureStoreCoreAsync interface">
+    <HelpKINode Title="IFeatureStoreCoreAsync Interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IFeatureStoreCoreAsync.GetAllInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_GetAllInternalAsync.htm" />
+  <HelpKINode Title="IFeatureStoreCoreAsync.GetInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_GetInternalAsync.htm" />
+  <HelpKINode Title="IFeatureStoreCoreAsync.InitializedInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_InitializedInternalAsync.htm" />
+  <HelpKINode Title="IFeatureStoreCoreAsync.InitInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_InitInternalAsync.htm" />
+  <HelpKINode Title="IFeatureStoreCoreAsync.UpsertInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_UpsertInternalAsync.htm" />
+  <HelpKINode Title="IFeatureStoreFactory interface">
+    <HelpKINode Title="IFeatureStoreFactory Interface" Url="html/T_LaunchDarkly_Client_IFeatureStoreFactory.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStoreFactory.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IFeatureStoreFactory.CreateFeatureStore method" Url="html/M_LaunchDarkly_Client_IFeatureStoreFactory_CreateFeatureStore.htm" />
+  <HelpKINode Title="ILdClient interface">
+    <HelpKINode Title="ILdClient Interface" Url="html/T_LaunchDarkly_Client_ILdClient.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_ILdClient.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_ILdClient.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ILdClient.AllFlags method" Url="html/M_LaunchDarkly_Client_ILdClient_AllFlags.htm" />
+  <HelpKINode Title="ILdClient.AllFlagsState method" Url="html/M_LaunchDarkly_Client_ILdClient_AllFlagsState.htm" />
+  <HelpKINode Title="ILdClient.BoolVariation method" Url="html/M_LaunchDarkly_Client_ILdClient_BoolVariation.htm" />
+  <HelpKINode Title="ILdClient.BoolVariationDetail method" Url="html/M_LaunchDarkly_Client_ILdClient_BoolVariationDetail.htm" />
+  <HelpKINode Title="ILdClient.FloatVariation method" Url="html/M_LaunchDarkly_Client_ILdClient_FloatVariation.htm" />
+  <HelpKINode Title="ILdClient.FloatVariationDetail method" Url="html/M_LaunchDarkly_Client_ILdClient_FloatVariationDetail.htm" />
+  <HelpKINode Title="ILdClient.Identify method" Url="html/M_LaunchDarkly_Client_ILdClient_Identify.htm" />
+  <HelpKINode Title="ILdClient.Initialized method" Url="html/M_LaunchDarkly_Client_ILdClient_Initialized.htm" />
+  <HelpKINode Title="ILdClient.IntVariation method" Url="html/M_LaunchDarkly_Client_ILdClient_IntVariation.htm" />
+  <HelpKINode Title="ILdClient.IntVariationDetail method" Url="html/M_LaunchDarkly_Client_ILdClient_IntVariationDetail.htm" />
+  <HelpKINode Title="ILdClient.JsonVariation method" Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariation.htm" />
+  <HelpKINode Title="ILdClient.JsonVariationDetail method" Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariationDetail.htm" />
+  <HelpKINode Title="ILdClient.SecureModeHash method" Url="html/M_LaunchDarkly_Client_ILdClient_SecureModeHash.htm" />
+  <HelpKINode Title="ILdClient.StringVariation method" Url="html/M_LaunchDarkly_Client_ILdClient_StringVariation.htm" />
+  <HelpKINode Title="ILdClient.StringVariationDetail method" Url="html/M_LaunchDarkly_Client_ILdClient_StringVariationDetail.htm" />
+  <HelpKINode Title="ILdClient.Track method" Url="html/Overload_LaunchDarkly_Client_ILdClient_Track.htm" />
+  <HelpKINode Title="ILdCommonClient interface">
+    <HelpKINode Title="ILdCommonClient Interface" Url="html/T_LaunchDarkly_Common_ILdCommonClient.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Common_ILdCommonClient.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Common_ILdCommonClient.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ILdCommonClient.Flush method" Url="html/M_LaunchDarkly_Common_ILdCommonClient_Flush.htm" />
+  <HelpKINode Title="ILdCommonClient.IsOffline method" Url="html/M_LaunchDarkly_Common_ILdCommonClient_IsOffline.htm" />
+  <HelpKINode Title="ILdCommonClient.Version property" Url="html/P_LaunchDarkly_Common_ILdCommonClient_Version.htm" />
+  <HelpKINode Title="Init method">
+    <HelpKINode Title="CachingStoreWrapper.Init Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Init.htm" />
+    <HelpKINode Title="IFeatureStore.Init Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Init.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Init Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Init.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Initialized method">
+    <HelpKINode Title="CachingStoreWrapper.Initialized Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Initialized.htm" />
+    <HelpKINode Title="IFeatureStore.Initialized Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Initialized.htm" />
+    <HelpKINode Title="ILdClient.Initialized Method " Url="html/M_LaunchDarkly_Client_ILdClient_Initialized.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Initialized Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Initialized.htm" />
+    <HelpKINode Title="IUpdateProcessor.Initialized Method " Url="html/M_LaunchDarkly_Client_IUpdateProcessor_Initialized.htm" />
+    <HelpKINode Title="LdClient.Initialized Method " Url="html/M_LaunchDarkly_Client_LdClient_Initialized.htm" />
+  </HelpKINode>
+  <HelpKINode Title="InitializedInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_InitializedInternal.htm" />
+  <HelpKINode Title="InitializedInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_InitializedInternalAsync.htm" />
+  <HelpKINode Title="InitInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_InitInternal.htm" />
+  <HelpKINode Title="InitInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_InitInternalAsync.htm" />
+  <HelpKINode Title="InlineUsersInEvents method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_InlineUsersInEvents.htm" />
+  <HelpKINode Title="InlineUsersInEvents property">
+    <HelpKINode Title="Configuration.InlineUsersInEvents Property " Url="html/P_LaunchDarkly_Client_Configuration_InlineUsersInEvents.htm" />
+    <HelpKINode Title="IBaseConfiguration.InlineUsersInEvents Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_InlineUsersInEvents.htm" />
+  </HelpKINode>
+  <HelpKINode Title="InMemoryFeatureStore class">
+    <HelpKINode Title="InMemoryFeatureStore Class" Url="html/T_LaunchDarkly_Client_InMemoryFeatureStore.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_InMemoryFeatureStore.htm" />
+  </HelpKINode>
+  <HelpKINode Title="InMemoryFeatureStore property" Url="html/P_LaunchDarkly_Client_Components_InMemoryFeatureStore.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.All(Of T) method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_All__1.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.All&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_All__1.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Delete(Of T) method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Delete__1.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Delete&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Delete__1.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Dispose method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Dispose.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Get(Of T) method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Get__1.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Get&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Get__1.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Init method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Init.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Initialized method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Initialized.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.InMemoryFeatureStore constructor" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore__ctor.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Upsert(Of T) method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Upsert__1.htm" />
+  <HelpKINode Title="InMemoryFeatureStore.Upsert&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Upsert__1.htm" />
+  <HelpKINode Title="Instance property">
+    <HelpKINode Title="EvaluationReason.Fallthrough.Instance Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_Fallthrough_Instance.htm" />
+    <HelpKINode Title="EvaluationReason.Off.Instance Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_Off_Instance.htm" />
+    <HelpKINode Title="EvaluationReason.TargetMatch.Instance Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_TargetMatch_Instance.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Int field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Int.htm" />
+  <HelpKINode Title="IntVariation method">
+    <HelpKINode Title="ILdClient.IntVariation Method " Url="html/M_LaunchDarkly_Client_ILdClient_IntVariation.htm" />
+    <HelpKINode Title="LdClient.IntVariation Method " Url="html/M_LaunchDarkly_Client_LdClient_IntVariation.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IntVariationDetail method">
+    <HelpKINode Title="ILdClient.IntVariationDetail Method " Url="html/M_LaunchDarkly_Client_ILdClient_IntVariationDetail.htm" />
+    <HelpKINode Title="LdClient.IntVariationDetail Method " Url="html/M_LaunchDarkly_Client_LdClient_IntVariationDetail.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IPAddress method" Url="html/M_LaunchDarkly_Client_IUserBuilder_IPAddress.htm" />
+  <HelpKINode Title="IPAddress property" Url="html/P_LaunchDarkly_Client_User_IPAddress.htm" />
+  <HelpKINode Title="IsDefaultValue property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_IsDefaultValue.htm" />
+  <HelpKINode Title="IsEnabled property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsEnabled.htm" />
+  <HelpKINode Title="IsInt property" Url="html/P_LaunchDarkly_Client_LdValue_IsInt.htm" />
+  <HelpKINode Title="IsNull property" Url="html/P_LaunchDarkly_Client_LdValue_IsNull.htm" />
+  <HelpKINode Title="IsNumber property" Url="html/P_LaunchDarkly_Client_LdValue_IsNumber.htm" />
+  <HelpKINode Title="IsOffline method">
+    <HelpKINode Title="ILdCommonClient.IsOffline Method " Url="html/M_LaunchDarkly_Common_ILdCommonClient_IsOffline.htm" />
+    <HelpKINode Title="LdClient.IsOffline Method " Url="html/M_LaunchDarkly_Client_LdClient_IsOffline.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IsStreamingEnabled method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_IsStreamingEnabled.htm" />
+  <HelpKINode Title="IsStreamingEnabled property" Url="html/P_LaunchDarkly_Client_Configuration_IsStreamingEnabled.htm" />
+  <HelpKINode Title="IsString property" Url="html/P_LaunchDarkly_Client_LdValue_IsString.htm" />
+  <HelpKINode Title="IUpdateProcessor interface">
+    <HelpKINode Title="IUpdateProcessor Interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IUpdateProcessor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IUpdateProcessor.Initialized method" Url="html/M_LaunchDarkly_Client_IUpdateProcessor_Initialized.htm" />
+  <HelpKINode Title="IUpdateProcessor.Start method" Url="html/M_LaunchDarkly_Client_IUpdateProcessor_Start.htm" />
+  <HelpKINode Title="IUpdateProcessorFactory interface">
+    <HelpKINode Title="IUpdateProcessorFactory Interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessorFactory.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IUpdateProcessorFactory.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IUpdateProcessorFactory.CreateUpdateProcessor method" Url="html/M_LaunchDarkly_Client_IUpdateProcessorFactory_CreateUpdateProcessor.htm" />
+  <HelpKINode Title="IUserBuilder interface">
+    <HelpKINode Title="IUserBuilder Interface" Url="html/T_LaunchDarkly_Client_IUserBuilder.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IUserBuilder.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IUserBuilder.Anonymous method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Anonymous.htm" />
+  <HelpKINode Title="IUserBuilder.Avatar method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Avatar.htm" />
+  <HelpKINode Title="IUserBuilder.Build method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Build.htm" />
+  <HelpKINode Title="IUserBuilder.Country method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Country.htm" />
+  <HelpKINode Title="IUserBuilder.Custom method" Url="html/Overload_LaunchDarkly_Client_IUserBuilder_Custom.htm" />
+  <HelpKINode Title="IUserBuilder.Email method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Email.htm" />
+  <HelpKINode Title="IUserBuilder.FirstName method" Url="html/M_LaunchDarkly_Client_IUserBuilder_FirstName.htm" />
+  <HelpKINode Title="IUserBuilder.IPAddress method" Url="html/M_LaunchDarkly_Client_IUserBuilder_IPAddress.htm" />
+  <HelpKINode Title="IUserBuilder.Key method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Key.htm" />
+  <HelpKINode Title="IUserBuilder.LastName method" Url="html/M_LaunchDarkly_Client_IUserBuilder_LastName.htm" />
+  <HelpKINode Title="IUserBuilder.Name method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Name.htm" />
+  <HelpKINode Title="IUserBuilder.SecondaryKey method" Url="html/M_LaunchDarkly_Client_IUserBuilder_SecondaryKey.htm" />
+  <HelpKINode Title="IUserBuilderCanMakeAttributePrivate interface">
+    <HelpKINode Title="IUserBuilderCanMakeAttributePrivate Interface" Url="html/T_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IUserBuilderCanMakeAttributePrivate.AsPrivateAttribute method" Url="html/M_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate_AsPrivateAttribute.htm" />
+  <HelpKINode Title="IVersionedData interface">
+    <HelpKINode Title="IVersionedData Interface" Url="html/T_LaunchDarkly_Client_IVersionedData.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_IVersionedData.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IVersionedData.Deleted property" Url="html/P_LaunchDarkly_Client_IVersionedData_Deleted.htm" />
+  <HelpKINode Title="IVersionedData.Key property" Url="html/P_LaunchDarkly_Client_IVersionedData_Key.htm" />
+  <HelpKINode Title="IVersionedData.Version property" Url="html/P_LaunchDarkly_Client_IVersionedData_Version.htm" />
+  <HelpKINode Title="IVersionedDataKind interface">
+    <HelpKINode Title="IVersionedDataKind Interface" Url="html/T_LaunchDarkly_Client_IVersionedDataKind.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IVersionedDataKind.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IVersionedDataKind.GetItemType method" Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetItemType.htm" />
+  <HelpKINode Title="IVersionedDataKind.GetNamespace method" Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetNamespace.htm" />
+  <HelpKINode Title="IVersionedDataKind.GetStreamApiPath method" Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetStreamApiPath.htm" />
+  <HelpKINode Title="IVersionedDataOrdering interface">
+    <HelpKINode Title="IVersionedDataOrdering Interface" Url="html/T_LaunchDarkly_Client_IVersionedDataOrdering.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IVersionedDataOrdering.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_IVersionedDataOrdering.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IVersionedDataOrdering.GetDependencyKeys method" Url="html/M_LaunchDarkly_Client_IVersionedDataOrdering_GetDependencyKeys.htm" />
+  <HelpKINode Title="IVersionedDataOrdering.Priority property" Url="html/P_LaunchDarkly_Client_IVersionedDataOrdering_Priority.htm" />
+  <HelpKINode Title="Json field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Json.htm" />
+  <HelpKINode Title="JsonData property" Url="html/P_LaunchDarkly_Client_CustomEvent_JsonData.htm" />
+  <HelpKINode Title="JsonVariation method">
+    <HelpKINode Title="ILdClient.JsonVariation Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariation.htm" />
+    <HelpKINode Title="LdClient.JsonVariation Method " Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariation.htm" />
+  </HelpKINode>
+  <HelpKINode Title="JsonVariationDetail method">
+    <HelpKINode Title="ILdClient.JsonVariationDetail Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariationDetail.htm" />
+    <HelpKINode Title="LdClient.JsonVariationDetail Method " Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariationDetail.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Key method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Key.htm" />
+  <HelpKINode Title="Key property">
+    <HelpKINode Title="Event.Key Property " Url="html/P_LaunchDarkly_Client_Event_Key.htm" />
+    <HelpKINode Title="IVersionedData.Key Property " Url="html/P_LaunchDarkly_Client_IVersionedData_Key.htm" />
+    <HelpKINode Title="User.Key Property " Url="html/P_LaunchDarkly_Client_User_Key.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Kind property" Url="html/P_LaunchDarkly_Client_EvaluationReason_Kind.htm" />
+  <HelpKINode Title="LastName method" Url="html/M_LaunchDarkly_Client_IUserBuilder_LastName.htm" />
+  <HelpKINode Title="LastName property" Url="html/P_LaunchDarkly_Client_User_LastName.htm" />
+  <HelpKINode Title="LaunchDarkly.Client namespace" Url="html/N_LaunchDarkly_Client.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Components class" Url="html/T_LaunchDarkly_Client_Components.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Configuration class" Url="html/T_LaunchDarkly_Client_Configuration.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.ConfigurationExtensions class" Url="html/T_LaunchDarkly_Client_ConfigurationExtensions.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.CustomEvent class" Url="html/T_LaunchDarkly_Client_CustomEvent.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationDetail(Of T) class" Url="html/T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationDetail&lt;T&gt; class" Url="html/T_LaunchDarkly_Client_EvaluationDetail_1.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationErrorKind enumeration" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReason class" Url="html/T_LaunchDarkly_Client_EvaluationReason.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReason.Error class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Error.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReason.Fallthrough class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReason.Off class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Off.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed class" Url="html/T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReason.RuleMatch class" Url="html/T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReason.TargetMatch class" Url="html/T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.EvaluationReasonKind enumeration" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Event class" Url="html/T_LaunchDarkly_Client_Event.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.FeatureFlagsState class" Url="html/T_LaunchDarkly_Client_FeatureFlagsState.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.FeatureRequestEvent class" Url="html/T_LaunchDarkly_Client_FeatureRequestEvent.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.FeatureStoreCacheConfig class" Url="html/T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Files namespace" Url="html/N_LaunchDarkly_Client_Files.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Files.FileComponents class" Url="html/T_LaunchDarkly_Client_Files_FileComponents.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Files.FileDataSourceFactory class" Url="html/T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.FlagsStateOption class" Url="html/T_LaunchDarkly_Client_FlagsStateOption.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IConfigurationBuilder interface" Url="html/T_LaunchDarkly_Client_IConfigurationBuilder.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IdentifyEvent class" Url="html/T_LaunchDarkly_Client_IdentifyEvent.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IEventProcessor interface" Url="html/T_LaunchDarkly_Client_IEventProcessor.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IEventProcessorFactory interface" Url="html/T_LaunchDarkly_Client_IEventProcessorFactory.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IFeatureStore interface" Url="html/T_LaunchDarkly_Client_IFeatureStore.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IFeatureStoreFactory interface" Url="html/T_LaunchDarkly_Client_IFeatureStoreFactory.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.ILdClient interface" Url="html/T_LaunchDarkly_Client_ILdClient.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.InMemoryFeatureStore class" Url="html/T_LaunchDarkly_Client_InMemoryFeatureStore.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IUpdateProcessor interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessor.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IUpdateProcessorFactory interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessorFactory.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IUserBuilder interface" Url="html/T_LaunchDarkly_Client_IUserBuilder.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IUserBuilderCanMakeAttributePrivate interface" Url="html/T_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IVersionedData interface" Url="html/T_LaunchDarkly_Client_IVersionedData.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IVersionedDataKind interface" Url="html/T_LaunchDarkly_Client_IVersionedDataKind.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.IVersionedDataOrdering interface" Url="html/T_LaunchDarkly_Client_IVersionedDataOrdering.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.LdClient class" Url="html/T_LaunchDarkly_Client_LdClient.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.LdValue structure" Url="html/T_LaunchDarkly_Client_LdValue.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.LdValue.Convert class" Url="html/T_LaunchDarkly_Client_LdValue_Convert.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.LdValue.Converter(Of T) class" Url="html/T_LaunchDarkly_Client_LdValue_Converter_1.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.LdValue.Converter&lt;T&gt; class" Url="html/T_LaunchDarkly_Client_LdValue_Converter_1.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.LdValueType enumeration" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.User class" Url="html/T_LaunchDarkly_Client_User.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.UserExtensions class" Url="html/T_LaunchDarkly_Client_UserExtensions.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Utils namespace" Url="html/N_LaunchDarkly_Client_Utils.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Utils.CachingStoreWrapper class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapper.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Utils.CachingStoreWrapperBuilder class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Utils.FeatureStoreHelpers class" Url="html/T_LaunchDarkly_Client_Utils_FeatureStoreHelpers.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Utils.IFeatureStoreCore interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCore.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Utils.IFeatureStoreCoreAsync interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Utils.UnmarshalException class" Url="html/T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.VersionedDataKind(Of T) class" Url="html/T_LaunchDarkly_Client_VersionedDataKind_1.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.VersionedDataKind&lt;T&gt; class" Url="html/T_LaunchDarkly_Client_VersionedDataKind_1.htm" />
+  <HelpKINode Title="LaunchDarkly.Common namespace" Url="html/N_LaunchDarkly_Common.htm" />
+  <HelpKINode Title="LaunchDarkly.Common.IBaseConfiguration interface" Url="html/T_LaunchDarkly_Common_IBaseConfiguration.htm" />
+  <HelpKINode Title="LaunchDarkly.Common.ILdCommonClient interface" Url="html/T_LaunchDarkly_Common_ILdCommonClient.htm" />
+  <HelpKINode Title="LdClient class">
+    <HelpKINode Title="LdClient Class" Url="html/T_LaunchDarkly_Client_LdClient.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_LaunchDarkly_Client_LdClient__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_LdClient.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_LdClient.htm" />
+  </HelpKINode>
+  <HelpKINode Title="LdClient.AllFlags method" Url="html/M_LaunchDarkly_Client_LdClient_AllFlags.htm" />
+  <HelpKINode Title="LdClient.AllFlagsState method" Url="html/M_LaunchDarkly_Client_LdClient_AllFlagsState.htm" />
+  <HelpKINode Title="LdClient.BoolVariation method" Url="html/M_LaunchDarkly_Client_LdClient_BoolVariation.htm" />
+  <HelpKINode Title="LdClient.BoolVariationDetail method" Url="html/M_LaunchDarkly_Client_LdClient_BoolVariationDetail.htm" />
+  <HelpKINode Title="LdClient.Dispose method" Url="html/M_LaunchDarkly_Client_LdClient_Dispose.htm" />
+  <HelpKINode Title="LdClient.FloatVariation method" Url="html/M_LaunchDarkly_Client_LdClient_FloatVariation.htm" />
+  <HelpKINode Title="LdClient.FloatVariationDetail method" Url="html/M_LaunchDarkly_Client_LdClient_FloatVariationDetail.htm" />
+  <HelpKINode Title="LdClient.Flush method" Url="html/M_LaunchDarkly_Client_LdClient_Flush.htm" />
+  <HelpKINode Title="LdClient.Identify method" Url="html/M_LaunchDarkly_Client_LdClient_Identify.htm" />
+  <HelpKINode Title="LdClient.Initialized method" Url="html/M_LaunchDarkly_Client_LdClient_Initialized.htm" />
+  <HelpKINode Title="LdClient.IntVariation method" Url="html/M_LaunchDarkly_Client_LdClient_IntVariation.htm" />
+  <HelpKINode Title="LdClient.IntVariationDetail method" Url="html/M_LaunchDarkly_Client_LdClient_IntVariationDetail.htm" />
+  <HelpKINode Title="LdClient.IsOffline method" Url="html/M_LaunchDarkly_Client_LdClient_IsOffline.htm" />
+  <HelpKINode Title="LdClient.JsonVariation method" Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariation.htm" />
+  <HelpKINode Title="LdClient.JsonVariationDetail method" Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariationDetail.htm" />
+  <HelpKINode Title="LdClient.LdClient constructor" Url="html/Overload_LaunchDarkly_Client_LdClient__ctor.htm" />
+  <HelpKINode Title="LdClient.SecureModeHash method" Url="html/M_LaunchDarkly_Client_LdClient_SecureModeHash.htm" />
+  <HelpKINode Title="LdClient.StringVariation method" Url="html/M_LaunchDarkly_Client_LdClient_StringVariation.htm" />
+  <HelpKINode Title="LdClient.StringVariationDetail method" Url="html/M_LaunchDarkly_Client_LdClient_StringVariationDetail.htm" />
+  <HelpKINode Title="LdClient.Track method" Url="html/Overload_LaunchDarkly_Client_LdClient_Track.htm" />
+  <HelpKINode Title="LdClient.Version property" Url="html/P_LaunchDarkly_Client_LdClient_Version.htm" />
+  <HelpKINode Title="LdValue property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_LdValue.htm" />
+  <HelpKINode Title="LdValue structure">
+    <HelpKINode Title="LdValue Structure" Url="html/T_LaunchDarkly_Client_LdValue.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_LdValue.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_LdValue.htm" />
+  </HelpKINode>
+  <HelpKINode Title="LdValue.ArrayFrom method" Url="html/M_LaunchDarkly_Client_LdValue_ArrayFrom.htm" />
+  <HelpKINode Title="LdValue.ArrayOf method" Url="html/M_LaunchDarkly_Client_LdValue_ArrayOf.htm" />
+  <HelpKINode Title="LdValue.AsBool property" Url="html/P_LaunchDarkly_Client_LdValue_AsBool.htm" />
+  <HelpKINode Title="LdValue.AsDictionary(Of T) method" Url="html/M_LaunchDarkly_Client_LdValue_AsDictionary__1.htm" />
+  <HelpKINode Title="LdValue.AsDictionary&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_LdValue_AsDictionary__1.htm" />
+  <HelpKINode Title="LdValue.AsDouble property" Url="html/P_LaunchDarkly_Client_LdValue_AsDouble.htm" />
+  <HelpKINode Title="LdValue.AsFloat property" Url="html/P_LaunchDarkly_Client_LdValue_AsFloat.htm" />
+  <HelpKINode Title="LdValue.AsInt property" Url="html/P_LaunchDarkly_Client_LdValue_AsInt.htm" />
+  <HelpKINode Title="LdValue.AsJToken method" Url="html/M_LaunchDarkly_Client_LdValue_AsJToken.htm" />
+  <HelpKINode Title="LdValue.AsList(Of T) method" Url="html/M_LaunchDarkly_Client_LdValue_AsList__1.htm" />
+  <HelpKINode Title="LdValue.AsList&lt;T&gt; method" Url="html/M_LaunchDarkly_Client_LdValue_AsList__1.htm" />
+  <HelpKINode Title="LdValue.AsLong property" Url="html/P_LaunchDarkly_Client_LdValue_AsLong.htm" />
+  <HelpKINode Title="LdValue.AsString property" Url="html/P_LaunchDarkly_Client_LdValue_AsString.htm" />
+  <HelpKINode Title="LdValue.Convert class" Url="html/T_LaunchDarkly_Client_LdValue_Convert.htm" />
+  <HelpKINode Title="LdValue.Convert.Bool field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Bool.htm" />
+  <HelpKINode Title="LdValue.Convert.Double field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Double.htm" />
+  <HelpKINode Title="LdValue.Convert.Float field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Float.htm" />
+  <HelpKINode Title="LdValue.Convert.Int field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Int.htm" />
+  <HelpKINode Title="LdValue.Convert.Json field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Json.htm" />
+  <HelpKINode Title="LdValue.Convert.Long field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Long.htm" />
+  <HelpKINode Title="LdValue.Convert.String field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_String.htm" />
+  <HelpKINode Title="LdValue.Converter(Of T) class">
+    <HelpKINode Title="LdValue.Converter(T) Class" Url="html/T_LaunchDarkly_Client_LdValue_Converter_1.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1__ctor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="LdValue.Converter(Of T).ArrayFrom method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayFrom.htm" />
+  <HelpKINode Title="LdValue.Converter(Of T).ArrayOf method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayOf.htm" />
+  <HelpKINode Title="LdValue.Converter(Of T).Converter constructor" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1__ctor.htm" />
+  <HelpKINode Title="LdValue.Converter(Of T).FromType method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_FromType.htm" />
+  <HelpKINode Title="LdValue.Converter(Of T).ObjectFrom method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ObjectFrom.htm" />
+  <HelpKINode Title="LdValue.Converter(Of T).ToType method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ToType.htm" />
+  <HelpKINode Title="LdValue.Converter&lt;T&gt; class">
+    <HelpKINode Title="LdValue.Converter(T) Class" Url="html/T_LaunchDarkly_Client_LdValue_Converter_1.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1__ctor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="LdValue.Converter&lt;T&gt;.ArrayFrom method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayFrom.htm" />
+  <HelpKINode Title="LdValue.Converter&lt;T&gt;.ArrayOf method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayOf.htm" />
+  <HelpKINode Title="LdValue.Converter&lt;T&gt;.Converter constructor" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1__ctor.htm" />
+  <HelpKINode Title="LdValue.Converter&lt;T&gt;.FromType method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_FromType.htm" />
+  <HelpKINode Title="LdValue.Converter&lt;T&gt;.ObjectFrom method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ObjectFrom.htm" />
+  <HelpKINode Title="LdValue.Converter&lt;T&gt;.ToType method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ToType.htm" />
+  <HelpKINode Title="LdValue.Equals method" Url="html/Overload_LaunchDarkly_Client_LdValue_Equals.htm" />
+  <HelpKINode Title="LdValue.FromJToken method" Url="html/M_LaunchDarkly_Client_LdValue_FromJToken.htm" />
+  <HelpKINode Title="LdValue.GetHashCode method" Url="html/M_LaunchDarkly_Client_LdValue_GetHashCode.htm" />
+  <HelpKINode Title="LdValue.IsInt property" Url="html/P_LaunchDarkly_Client_LdValue_IsInt.htm" />
+  <HelpKINode Title="LdValue.IsNull property" Url="html/P_LaunchDarkly_Client_LdValue_IsNull.htm" />
+  <HelpKINode Title="LdValue.IsNumber property" Url="html/P_LaunchDarkly_Client_LdValue_IsNumber.htm" />
+  <HelpKINode Title="LdValue.IsString property" Url="html/P_LaunchDarkly_Client_LdValue_IsString.htm" />
+  <HelpKINode Title="LdValue.Null property" Url="html/P_LaunchDarkly_Client_LdValue_Null.htm" />
+  <HelpKINode Title="LdValue.ObjectFrom method" Url="html/M_LaunchDarkly_Client_LdValue_ObjectFrom.htm" />
+  <HelpKINode Title="LdValue.Of method" Url="html/Overload_LaunchDarkly_Client_LdValue_Of.htm" />
+  <HelpKINode Title="LdValue.ToJsonString method" Url="html/M_LaunchDarkly_Client_LdValue_ToJsonString.htm" />
+  <HelpKINode Title="LdValue.ToString method" Url="html/M_LaunchDarkly_Client_LdValue_ToString.htm" />
+  <HelpKINode Title="LdValue.Type property" Url="html/P_LaunchDarkly_Client_LdValue_Type.htm" />
+  <HelpKINode Title="LdValueData property" Url="html/P_LaunchDarkly_Client_CustomEvent_LdValueData.htm" />
+  <HelpKINode Title="LdValueDefault property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_LdValueDefault.htm" />
+  <HelpKINode Title="LdValueType enumeration" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="Long field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Long.htm" />
+  <HelpKINode Title="MakeDeletedItem method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_MakeDeletedItem.htm" />
+  <HelpKINode Title="MALFORMED_FLAG enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+  <HelpKINode Title="MarshalJson method" Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers_MarshalJson.htm" />
+  <HelpKINode Title="MaximumEntries property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_MaximumEntries.htm" />
+  <HelpKINode Title="MetricValue property" Url="html/P_LaunchDarkly_Client_CustomEvent_MetricValue.htm" />
+  <HelpKINode Title="Name method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Name.htm" />
+  <HelpKINode Title="Name property" Url="html/P_LaunchDarkly_Client_User_Name.htm" />
+  <HelpKINode Title="Null enumeration member" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="Null property" Url="html/P_LaunchDarkly_Client_LdValue_Null.htm" />
+  <HelpKINode Title="NullEventProcessor property" Url="html/P_LaunchDarkly_Client_Components_NullEventProcessor.htm" />
+  <HelpKINode Title="NullUpdateProcessor property" Url="html/P_LaunchDarkly_Client_Components_NullUpdateProcessor.htm" />
+  <HelpKINode Title="Number enumeration member" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="Object enumeration member" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="ObjectFrom method">
+    <HelpKINode Title="LdValue.Converter(T).ObjectFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ObjectFrom.htm" />
+    <HelpKINode Title="LdValue.ObjectFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_ObjectFrom.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Of method" Url="html/Overload_LaunchDarkly_Client_LdValue_Of.htm" />
+  <HelpKINode Title="Off class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_Off.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Off.htm" />
+  </HelpKINode>
+  <HelpKINode Title="OFF enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="Offline method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_Offline.htm" />
+  <HelpKINode Title="Offline property">
+    <HelpKINode Title="Configuration.Offline Property " Url="html/P_LaunchDarkly_Client_Configuration_Offline.htm" />
+    <HelpKINode Title="IBaseConfiguration.Offline Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_Offline.htm" />
+  </HelpKINode>
+  <HelpKINode Title="PollingInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_PollingInterval.htm" />
+  <HelpKINode Title="PollingInterval property" Url="html/P_LaunchDarkly_Client_Configuration_PollingInterval.htm" />
+  <HelpKINode Title="PrereqOf property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_PrereqOf.htm" />
+  <HelpKINode Title="PrerequisiteFailed class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm" />
+  </HelpKINode>
+  <HelpKINode Title="PrerequisiteKey property" Url="html/P_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_PrerequisiteKey.htm" />
+  <HelpKINode Title="PREREQUISITE_FAILED enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="Priority property" Url="html/P_LaunchDarkly_Client_IVersionedDataOrdering_Priority.htm" />
+  <HelpKINode Title="PrivateAttribute method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_PrivateAttribute.htm" />
+  <HelpKINode Title="PrivateAttributeNames property">
+    <HelpKINode Title="Configuration.PrivateAttributeNames Property " Url="html/P_LaunchDarkly_Client_Configuration_PrivateAttributeNames.htm" />
+    <HelpKINode Title="IBaseConfiguration.PrivateAttributeNames Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_PrivateAttributeNames.htm" />
+    <HelpKINode Title="User.PrivateAttributeNames Property " Url="html/P_LaunchDarkly_Client_User_PrivateAttributeNames.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ReadTimeout method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_ReadTimeout.htm" />
+  <HelpKINode Title="ReadTimeout property">
+    <HelpKINode Title="Configuration.ReadTimeout Property " Url="html/P_LaunchDarkly_Client_Configuration_ReadTimeout.htm" />
+    <HelpKINode Title="IBaseConfiguration.ReadTimeout Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_ReadTimeout.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Reason property">
+    <HelpKINode Title="EvaluationDetail(T).Reason Property " Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Reason.htm" />
+    <HelpKINode Title="FeatureRequestEvent.Reason Property " Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Reason.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ReconnectTime method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_ReconnectTime.htm" />
+  <HelpKINode Title="ReconnectTime property">
+    <HelpKINode Title="Configuration.ReconnectTime Property " Url="html/P_LaunchDarkly_Client_Configuration_ReconnectTime.htm" />
+    <HelpKINode Title="IBaseConfiguration.ReconnectTime Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_ReconnectTime.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RuleId property" Url="html/P_LaunchDarkly_Client_EvaluationReason_RuleMatch_RuleId.htm" />
+  <HelpKINode Title="RuleIndex property" Url="html/P_LaunchDarkly_Client_EvaluationReason_RuleMatch_RuleIndex.htm" />
+  <HelpKINode Title="RuleMatch class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm" />
+  </HelpKINode>
+  <HelpKINode Title="RULE_MATCH enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="SdkKey method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_SdkKey.htm" />
+  <HelpKINode Title="SdkKey property">
+    <HelpKINode Title="Configuration.SdkKey Property " Url="html/P_LaunchDarkly_Client_Configuration_SdkKey.htm" />
+    <HelpKINode Title="IBaseConfiguration.SdkKey Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_SdkKey.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SecondaryKey method" Url="html/M_LaunchDarkly_Client_IUserBuilder_SecondaryKey.htm" />
+  <HelpKINode Title="SecondaryKey property" Url="html/P_LaunchDarkly_Client_User_SecondaryKey.htm" />
+  <HelpKINode Title="SecureModeHash method">
+    <HelpKINode Title="ILdClient.SecureModeHash Method " Url="html/M_LaunchDarkly_Client_ILdClient_SecureModeHash.htm" />
+    <HelpKINode Title="LdClient.SecureModeHash Method " Url="html/M_LaunchDarkly_Client_LdClient_SecureModeHash.htm" />
+  </HelpKINode>
+  <HelpKINode Title="SendEvent method" Url="html/M_LaunchDarkly_Client_IEventProcessor_SendEvent.htm" />
+  <HelpKINode Title="Start method" Url="html/M_LaunchDarkly_Client_IUpdateProcessor_Start.htm" />
+  <HelpKINode Title="StartWaitTime method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_StartWaitTime.htm" />
+  <HelpKINode Title="StartWaitTime property" Url="html/P_LaunchDarkly_Client_Configuration_StartWaitTime.htm" />
+  <HelpKINode Title="StreamUri method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_StreamUri.htm" />
+  <HelpKINode Title="StreamUri property">
+    <HelpKINode Title="Configuration.StreamUri Property " Url="html/P_LaunchDarkly_Client_Configuration_StreamUri.htm" />
+    <HelpKINode Title="IBaseConfiguration.StreamUri Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_StreamUri.htm" />
+  </HelpKINode>
+  <HelpKINode Title="String enumeration member" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
+  <HelpKINode Title="String field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_String.htm" />
+  <HelpKINode Title="StringVariation method">
+    <HelpKINode Title="ILdClient.StringVariation Method " Url="html/M_LaunchDarkly_Client_ILdClient_StringVariation.htm" />
+    <HelpKINode Title="LdClient.StringVariation Method " Url="html/M_LaunchDarkly_Client_LdClient_StringVariation.htm" />
+  </HelpKINode>
+  <HelpKINode Title="StringVariationDetail method">
+    <HelpKINode Title="ILdClient.StringVariationDetail Method " Url="html/M_LaunchDarkly_Client_ILdClient_StringVariationDetail.htm" />
+    <HelpKINode Title="LdClient.StringVariationDetail Method " Url="html/M_LaunchDarkly_Client_LdClient_StringVariationDetail.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TargetMatch class">
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TARGET_MATCH enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="ToJsonString method" Url="html/M_LaunchDarkly_Client_LdValue_ToJsonString.htm" />
+  <HelpKINode Title="ToString method">
+    <HelpKINode Title="EvaluationReason.Error.ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_ToString.htm" />
+    <HelpKINode Title="EvaluationReason.PrerequisiteFailed.ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_ToString.htm" />
+    <HelpKINode Title="EvaluationReason.RuleMatch.ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_ToString.htm" />
+    <HelpKINode Title="EvaluationReason.ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_ToString.htm" />
+    <HelpKINode Title="FlagsStateOption.ToString Method " Url="html/M_LaunchDarkly_Client_FlagsStateOption_ToString.htm" />
+    <HelpKINode Title="LdValue.ToString Method " Url="html/M_LaunchDarkly_Client_LdValue_ToString.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ToType method" Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ToType.htm" />
+  <HelpKINode Title="ToValuesJsonMap method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_ToValuesJsonMap.htm" />
+  <HelpKINode Title="ToValuesMap method" Url="html/M_LaunchDarkly_Client_FeatureFlagsState_ToValuesMap.htm" />
+  <HelpKINode Title="Track method">
+    <HelpKINode Title="ILdClient.Track Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_Track.htm" />
+    <HelpKINode Title="LdClient.Track Method " Url="html/Overload_LaunchDarkly_Client_LdClient_Track.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TrackEvents property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_TrackEvents.htm" />
+  <HelpKINode Title="Ttl property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_Ttl.htm" />
+  <HelpKINode Title="Type property" Url="html/P_LaunchDarkly_Client_LdValue_Type.htm" />
+  <HelpKINode Title="UnmarshalException class">
+    <HelpKINode Title="UnmarshalException Class" Url="html/T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_Utils_UnmarshalException__ctor.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UnmarshalException.UnmarshalException constructor" Url="html/M_LaunchDarkly_Client_Utils_UnmarshalException__ctor.htm" />
+  <HelpKINode Title="UnmarshalJson method" Url="html/Overload_LaunchDarkly_Client_Utils_FeatureStoreHelpers_UnmarshalJson.htm" />
+  <HelpKINode Title="UpdateProcessorFactory method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UpdateProcessorFactory.htm" />
+  <HelpKINode Title="UpdateProcessorFactory property" Url="html/P_LaunchDarkly_Client_Configuration_UpdateProcessorFactory.htm" />
+  <HelpKINode Title="Upsert(Of T) method">
+    <HelpKINode Title="CachingStoreWrapper.Upsert(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Upsert__1.htm" />
+    <HelpKINode Title="IFeatureStore.Upsert(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Upsert__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Upsert(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Upsert__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Upsert&lt;T&gt; method">
+    <HelpKINode Title="CachingStoreWrapper.Upsert(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Upsert__1.htm" />
+    <HelpKINode Title="IFeatureStore.Upsert(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Upsert__1.htm" />
+    <HelpKINode Title="InMemoryFeatureStore.Upsert(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Upsert__1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UpsertInternal method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_UpsertInternal.htm" />
+  <HelpKINode Title="UpsertInternalAsync method" Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_UpsertInternalAsync.htm" />
+  <HelpKINode Title="UseLdd method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UseLdd.htm" />
+  <HelpKINode Title="UseLdd property" Url="html/P_LaunchDarkly_Client_Configuration_UseLdd.htm" />
+  <HelpKINode Title="User class">
+    <HelpKINode Title="User Class" Url="html/T_LaunchDarkly_Client_User.htm" />
+    <HelpKINode Title="constructor" Url="html/Overload_LaunchDarkly_Client_User__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_User.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_LaunchDarkly_Client_User.htm" />
+  </HelpKINode>
+  <HelpKINode Title="User property" Url="html/P_LaunchDarkly_Client_Event_User.htm" />
+  <HelpKINode Title="User.Anonymous property" Url="html/P_LaunchDarkly_Client_User_Anonymous.htm" />
+  <HelpKINode Title="User.Avatar property" Url="html/P_LaunchDarkly_Client_User_Avatar.htm" />
+  <HelpKINode Title="User.Builder method" Url="html/Overload_LaunchDarkly_Client_User_Builder.htm" />
+  <HelpKINode Title="User.Country property" Url="html/P_LaunchDarkly_Client_User_Country.htm" />
+  <HelpKINode Title="User.Custom property" Url="html/P_LaunchDarkly_Client_User_Custom.htm" />
+  <HelpKINode Title="User.Email property" Url="html/P_LaunchDarkly_Client_User_Email.htm" />
+  <HelpKINode Title="User.Equals method" Url="html/Overload_LaunchDarkly_Client_User_Equals.htm" />
+  <HelpKINode Title="User.FirstName property" Url="html/P_LaunchDarkly_Client_User_FirstName.htm" />
+  <HelpKINode Title="User.GetHashCode method" Url="html/M_LaunchDarkly_Client_User_GetHashCode.htm" />
+  <HelpKINode Title="User.IPAddress property" Url="html/P_LaunchDarkly_Client_User_IPAddress.htm" />
+  <HelpKINode Title="User.Key property" Url="html/P_LaunchDarkly_Client_User_Key.htm" />
+  <HelpKINode Title="User.LastName property" Url="html/P_LaunchDarkly_Client_User_LastName.htm" />
+  <HelpKINode Title="User.Name property" Url="html/P_LaunchDarkly_Client_User_Name.htm" />
+  <HelpKINode Title="User.PrivateAttributeNames property" Url="html/P_LaunchDarkly_Client_User_PrivateAttributeNames.htm" />
+  <HelpKINode Title="User.SecondaryKey property" Url="html/P_LaunchDarkly_Client_User_SecondaryKey.htm" />
+  <HelpKINode Title="User.User constructor" Url="html/Overload_LaunchDarkly_Client_User__ctor.htm" />
+  <HelpKINode Title="User.WithKey method" Url="html/M_LaunchDarkly_Client_User_WithKey.htm" />
+  <HelpKINode Title="UserAgentType property" Url="html/P_LaunchDarkly_Client_Configuration_UserAgentType.htm" />
+  <HelpKINode Title="UserExtensions class">
+    <HelpKINode Title="UserExtensions Class" Url="html/T_LaunchDarkly_Client_UserExtensions.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_UserExtensions.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UserExtensions.AndAnonymous method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndAnonymous.htm" />
+  <HelpKINode Title="UserExtensions.AndAvatar method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndAvatar.htm" />
+  <HelpKINode Title="UserExtensions.AndCountry method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndCountry.htm" />
+  <HelpKINode Title="UserExtensions.AndCustomAttribute method" Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndCustomAttribute.htm" />
+  <HelpKINode Title="UserExtensions.AndEmail method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndEmail.htm" />
+  <HelpKINode Title="UserExtensions.AndFirstName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndFirstName.htm" />
+  <HelpKINode Title="UserExtensions.AndIpAddress method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndIpAddress.htm" />
+  <HelpKINode Title="UserExtensions.AndLastName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndLastName.htm" />
+  <HelpKINode Title="UserExtensions.AndName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndName.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateAvatar method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateAvatar.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateCountry method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateCountry.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateCustomAttribute method" Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndPrivateCustomAttribute.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateEmail method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateEmail.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateFirstName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateFirstName.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateIpAddress method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateIpAddress.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateLastName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateLastName.htm" />
+  <HelpKINode Title="UserExtensions.AndPrivateName method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateName.htm" />
+  <HelpKINode Title="UserExtensions.AndSecondaryKey method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndSecondaryKey.htm" />
+  <HelpKINode Title="UserKeysCapacity method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UserKeysCapacity.htm" />
+  <HelpKINode Title="UserKeysCapacity property">
+    <HelpKINode Title="Configuration.UserKeysCapacity Property " Url="html/P_LaunchDarkly_Client_Configuration_UserKeysCapacity.htm" />
+    <HelpKINode Title="IBaseConfiguration.UserKeysCapacity Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_UserKeysCapacity.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UserKeysFlushInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UserKeysFlushInterval.htm" />
+  <HelpKINode Title="UserKeysFlushInterval property">
+    <HelpKINode Title="Configuration.UserKeysFlushInterval Property " Url="html/P_LaunchDarkly_Client_Configuration_UserKeysFlushInterval.htm" />
+    <HelpKINode Title="IBaseConfiguration.UserKeysFlushInterval Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_UserKeysFlushInterval.htm" />
+  </HelpKINode>
+  <HelpKINode Title="USER_NOT_SPECIFIED enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+  <HelpKINode Title="Valid property" Url="html/P_LaunchDarkly_Client_FeatureFlagsState_Valid.htm" />
+  <HelpKINode Title="Value property">
+    <HelpKINode Title="EvaluationDetail(T).Value Property " Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Value.htm" />
+    <HelpKINode Title="FeatureRequestEvent.Value Property " Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Value.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Variation property" Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Variation.htm" />
+  <HelpKINode Title="VariationIndex property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_VariationIndex.htm" />
+  <HelpKINode Title="Version property">
+    <HelpKINode Title="FeatureRequestEvent.Version Property " Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Version.htm" />
+    <HelpKINode Title="ILdCommonClient.Version Property " Url="html/P_LaunchDarkly_Common_ILdCommonClient_Version.htm" />
+    <HelpKINode Title="IVersionedData.Version Property " Url="html/P_LaunchDarkly_Client_IVersionedData_Version.htm" />
+    <HelpKINode Title="LdClient.Version Property " Url="html/P_LaunchDarkly_Client_LdClient_Version.htm" />
+  </HelpKINode>
+  <HelpKINode Title="VersionedDataKind(Of T) class">
+    <HelpKINode Title="VersionedDataKind(T) Class" Url="html/T_LaunchDarkly_Client_VersionedDataKind_1.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_VersionedDataKind_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="VersionedDataKind(Of T).GetItemType method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetItemType.htm" />
+  <HelpKINode Title="VersionedDataKind(Of T).GetNamespace method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetNamespace.htm" />
+  <HelpKINode Title="VersionedDataKind(Of T).GetStreamApiPath method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetStreamApiPath.htm" />
+  <HelpKINode Title="VersionedDataKind(Of T).MakeDeletedItem method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_MakeDeletedItem.htm" />
+  <HelpKINode Title="VersionedDataKind(Of T).VersionedDataKind constructor" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1__ctor.htm" />
+  <HelpKINode Title="VersionedDataKind&lt;T&gt; class">
+    <HelpKINode Title="VersionedDataKind(T) Class" Url="html/T_LaunchDarkly_Client_VersionedDataKind_1.htm" />
+    <HelpKINode Title="constructor" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1__ctor.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_VersionedDataKind_1.htm" />
+  </HelpKINode>
+  <HelpKINode Title="VersionedDataKind&lt;T&gt;.GetItemType method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetItemType.htm" />
+  <HelpKINode Title="VersionedDataKind&lt;T&gt;.GetNamespace method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetNamespace.htm" />
+  <HelpKINode Title="VersionedDataKind&lt;T&gt;.GetStreamApiPath method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetStreamApiPath.htm" />
+  <HelpKINode Title="VersionedDataKind&lt;T&gt;.MakeDeletedItem method" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_MakeDeletedItem.htm" />
+  <HelpKINode Title="VersionedDataKind&lt;T&gt;.VersionedDataKind constructor" Url="html/M_LaunchDarkly_Client_VersionedDataKind_1__ctor.htm" />
+  <HelpKINode Title="WithAllAttributesPrivate method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithAllAttributesPrivate.htm" />
+  <HelpKINode Title="WithAutoUpdate method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithAutoUpdate.htm" />
+  <HelpKINode Title="WithCaching method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder_WithCaching.htm" />
+  <HelpKINode Title="WithEventProcessorFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventProcessorFactory.htm" />
+  <HelpKINode Title="WithEventQueueCapacity method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueCapacity.htm" />
+  <HelpKINode Title="WithEventQueueFrequency method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueFrequency.htm" />
+  <HelpKINode Title="WithEventSamplingInterval method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventSamplingInterval.htm" />
+  <HelpKINode Title="WithEventsUri method" Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithEventsUri.htm" />
+  <HelpKINode Title="WithFeatureStore method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithFeatureStore.htm" />
+  <HelpKINode Title="WithFeatureStoreFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithFeatureStoreFactory.htm" />
+  <HelpKINode Title="WithFilePaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFilePaths.htm" />
+  <HelpKINode Title="WithHttpClientHandler method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithHttpClientHandler.htm" />
+  <HelpKINode Title="WithHttpClientTimeout method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithHttpClientTimeout.htm" />
+  <HelpKINode Title="WithInlineUsersInEvents method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithInlineUsersInEvents.htm" />
+  <HelpKINode Title="WithIsStreamingEnabled method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithIsStreamingEnabled.htm" />
+  <HelpKINode Title="WithKey method" Url="html/M_LaunchDarkly_Client_User_WithKey.htm" />
+  <HelpKINode Title="WithMaximumEntries method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithMaximumEntries.htm" />
+  <HelpKINode Title="WithOffline method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithOffline.htm" />
+  <HelpKINode Title="WithParser method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithParser.htm" />
+  <HelpKINode Title="WithPollingInterval method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithPollingInterval.htm" />
+  <HelpKINode Title="WithPollInterval method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithPollInterval.htm" />
+  <HelpKINode Title="WithPrivateAttributeName method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithPrivateAttributeName.htm" />
+  <HelpKINode Title="WithReadTimeout method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReadTimeout.htm" />
+  <HelpKINode Title="WithReasons field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_WithReasons.htm" />
+  <HelpKINode Title="WithReconnectTime method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReconnectTime.htm" />
+  <HelpKINode Title="WithStartWaitTime method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithStartWaitTime.htm" />
+  <HelpKINode Title="WithStreamUri method" Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri.htm" />
+  <HelpKINode Title="WithTtl method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtl.htm" />
+  <HelpKINode Title="WithTtlMillis method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtlMillis.htm" />
+  <HelpKINode Title="WithTtlSeconds method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtlSeconds.htm" />
+  <HelpKINode Title="WithUpdateProcessorFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUpdateProcessorFactory.htm" />
+  <HelpKINode Title="WithUri method" Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithUri.htm" />
+  <HelpKINode Title="WithUseLdd method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUseLdd.htm" />
+  <HelpKINode Title="WithUserKeysCapacity method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUserKeysCapacity.htm" />
+  <HelpKINode Title="WithUserKeysFlushInterval method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUserKeysFlushInterval.htm" />
+  <HelpKINode Title="WRONG_TYPE enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
+</HelpKI>
