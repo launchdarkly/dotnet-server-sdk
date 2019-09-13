@@ -293,6 +293,25 @@ namespace LaunchDarkly.Tests
         }
         
         [Fact]
+        public void EventIsSentWithDefaultValueForFlagThatEvaluatesToNull()
+        {
+            var flag = new FeatureFlagBuilder("feature")
+                .On(false)
+                .OffVariation(null)
+                .Variations(new List<JToken> { new JValue("fall"), new JValue("off"), new JValue("on") })
+                .Version(1)
+                .Build();
+            featureStore.Upsert(VersionedDataKind.Features, flag);
+            var defaultVal = "default";
+
+            var result = client.StringVariation(flag.Key, user, defaultVal);
+            Assert.Equal(defaultVal, result);
+
+            Assert.Equal(1, eventSink.Events.Count);
+            CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(defaultVal), LdValue.Of(defaultVal), null);
+        }
+
+        [Fact]
         public void EventIsNotSentForUnknownPrerequisiteFlag()
         {
             var f0 = new FeatureFlagBuilder("feature0")
