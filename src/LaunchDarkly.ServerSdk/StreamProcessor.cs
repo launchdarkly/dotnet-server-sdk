@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using Newtonsoft.Json;
@@ -29,7 +27,7 @@ namespace LaunchDarkly.Client
         {
             _streamManager = new StreamManager(this,
                 MakeStreamProperties(config),
-                config,
+                config.StreamManagerConfiguration,
                 ServerSideClientEnvironment.Instance,
                 eventSourceCreator);
             _config = config;
@@ -64,11 +62,11 @@ namespace LaunchDarkly.Client
             switch (messageType)
             {
                 case PUT:
-                    _featureStore.Init(JsonConvert.DeserializeObject<PutData>(messageData).Data.ToGenericDictionary());
+                    _featureStore.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToGenericDictionary());
                     streamManager.Initialized = true;
                     break;
                 case PATCH:
-                    PatchData patchData = JsonConvert.DeserializeObject<PatchData>(messageData);
+                    PatchData patchData = JsonUtil.DecodeJson<PatchData>(messageData);
                     string patchKey;
                     if (GetKeyFromPath(patchData.Path, VersionedDataKind.Features, out patchKey))
                     {
@@ -86,7 +84,7 @@ namespace LaunchDarkly.Client
                     }
                     break;
                 case DELETE:
-                    DeleteData deleteData = JsonConvert.DeserializeObject<DeleteData>(messageData);
+                    DeleteData deleteData = JsonUtil.DecodeJson<DeleteData>(messageData);
                     string deleteKey;
                     if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Features, out deleteKey))
                     {
@@ -128,8 +126,7 @@ namespace LaunchDarkly.Client
         {
             try
             {
-                string key;
-                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out key))
+                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out var key))
                 {
                     var feature = await _featureRequestor.GetFlagAsync(key);
                     if (feature != null)
@@ -172,7 +169,7 @@ namespace LaunchDarkly.Client
             catch (Exception ex)
             {
                 Log.ErrorFormat("Error Updating feature: '{0}'",
-                    ex,Util.ExceptionMessage(ex));
+                    ex, Util.ExceptionMessage(ex));
             }
         }
 

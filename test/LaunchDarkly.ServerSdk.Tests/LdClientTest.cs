@@ -28,10 +28,11 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ClientHasDefaultEventProcessorByDefault()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithIsStreamingEnabled(false)
-                .WithUri(new Uri("http://fake"))
-                .WithStartWaitTime(TimeSpan.Zero);
+            var config = Configuration.Builder("SDK_KEY")
+                .IsStreamingEnabled(false)
+                .BaseUri(new Uri("http://fake"))
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<DefaultEventProcessor>(client._eventProcessor);
@@ -41,10 +42,11 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StreamingClientHasStreamProcessor()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithIsStreamingEnabled(true)
-                .WithUri(new Uri("http://fake"))
-                .WithStartWaitTime(TimeSpan.Zero);
+            var config = Configuration.Builder("SDK_KEY")
+                .IsStreamingEnabled(true)
+                .BaseUri(new Uri("http://fake"))
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<StreamProcessor>(client._updateProcessor);
@@ -54,10 +56,11 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void PollingClientHasPollingProcessor()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithIsStreamingEnabled(false)
-                .WithUri(new Uri("http://fake"))
-                .WithStartWaitTime(TimeSpan.Zero);
+            var config = Configuration.Builder("SDK_KEY")
+                .IsStreamingEnabled(false)
+                .BaseUri(new Uri("http://fake"))
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<PollingProcessor>(client._updateProcessor);
@@ -68,9 +71,10 @@ namespace LaunchDarkly.Tests
         public void NoWaitForUpdateProcessorIfWaitMillisIsZero()
         {
             mockUpdateProcessor.Setup(up => up.Initialized()).Returns(true);
-            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
-                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
+                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {
@@ -81,9 +85,10 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void UpdateProcessorCanTimeOut()
         {
-            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.FromMilliseconds(10))
-                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.FromMilliseconds(10))
+                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {
@@ -97,9 +102,10 @@ namespace LaunchDarkly.Tests
             TaskCompletionSource<bool> errorTaskSource = new TaskCompletionSource<bool>();
             mockUpdateProcessor.Setup(up => up.Start()).Returns(errorTaskSource.Task);
             errorTaskSource.SetException(new Exception("bad"));
-            var config = Configuration.Default("SDK_KEY")
-                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY")
+                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {
@@ -110,14 +116,15 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void EvaluationReturnsDefaultValueIfNeitherClientNorFeatureStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
-            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {
@@ -128,15 +135,16 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void EvaluationUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag);
 
-            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {
@@ -147,37 +155,43 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void AllFlagsReturnsNullIfNeitherClientNorFeatureStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
-            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {
+#pragma warning disable 0618
                 Assert.Null(client.AllFlags(User.WithKey("user")));
+#pragma warning restore 0618
             }
         }
         
         [Fact]
         public void AllFlagsUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
             featureStore.Upsert(VersionedDataKind.Features, flag);
 
-            var config = Configuration.Default("SDK_KEY").WithStartWaitTime(TimeSpan.Zero)
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .WithUpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {
+#pragma warning disable 0618
                 IDictionary<string, JToken> result = client.AllFlags(User.WithKey("user"));
+#pragma warning restore 0618
                 Assert.NotNull(result);
                 Assert.Equal(new JValue(1), result["key"]);
             }
@@ -197,10 +211,11 @@ namespace LaunchDarkly.Tests
 
             mockUpdateProcessor.Setup(up => up.Start()).Returns(initTask);
 
-            var config = Configuration.Default("SDK_KEY")
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(store))
-                .WithUpdateProcessorFactory(TestUtils.UpdateProcessorWithData(DependencyOrderingTestData))
-                .WithEventProcessorFactory(Components.NullEventProcessor);
+            var config = Configuration.Builder("SDK_KEY")
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(store))
+                .UpdateProcessorFactory(TestUtils.UpdateProcessorWithData(DependencyOrderingTestData))
+                .EventProcessorFactory(Components.NullEventProcessor)
+                .Build();
 
             using (var client = new LdClient(config))
             {

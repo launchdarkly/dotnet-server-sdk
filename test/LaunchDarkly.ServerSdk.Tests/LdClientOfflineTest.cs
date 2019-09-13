@@ -10,8 +10,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void OfflineClientHasNullUpdateProcessor()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithOffline(true);
+            var config = Configuration.Builder("SDK_KEY").Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<NullUpdateProcessor>(client._updateProcessor);
@@ -21,8 +20,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientHasNullEventProcessor()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithOffline(true);
+            var config = Configuration.Builder("SDK_KEY").Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<NullEventProcessor>(client._eventProcessor);
@@ -32,8 +30,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void OfflineClientIsInitialized()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithOffline(true);
+            var config = Configuration.Builder("SDK_KEY").Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.True(client.Initialized());
@@ -43,8 +40,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void OfflineReturnsDefaultValue()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithOffline(true);
+            var config = Configuration.Builder("SDK_KEY").Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.Equal("x", client.StringVariation("key", User.WithKey("user"), "x"));
@@ -54,12 +50,13 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void OfflineClientGetsFlagFromFeatureStore()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
-            var config = Configuration.Default("SDK_KEY")
-                .WithOffline(true)
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore));
+            var config = Configuration.Builder("SDK_KEY")
+                .Offline(true)
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .Build();
             using (var client = new LdClient(config))
             {
                 Assert.Equal(true, client.BoolVariation("key", User.WithKey("user"), false));
@@ -69,8 +66,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void TestSecureModeHash()
         {
-            var config = Configuration.Default("secret")
-                .WithOffline(true);
+            var config = Configuration.Builder("secret").Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.Equal("aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597",

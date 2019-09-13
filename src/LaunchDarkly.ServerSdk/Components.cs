@@ -88,9 +88,9 @@ namespace LaunchDarkly.Client
             }
             else
             {
-                return new DefaultEventProcessor(config,
+                return new DefaultEventProcessor(config.EventProcessorConfiguration,
                     new DefaultUserDeduplicator(config),
-                    Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance),
+                    Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
                     EventsUriPath);
             }
         }
@@ -108,7 +108,9 @@ namespace LaunchDarkly.Client
     {
         IFeatureStore IFeatureStoreFactory.CreateFeatureStore()
         {
+#pragma warning disable 0618 // deprecated constructor
             return new InMemoryFeatureStore();
+#pragma warning restore 0618
         }
     }
 

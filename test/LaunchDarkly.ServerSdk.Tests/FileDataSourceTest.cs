@@ -14,10 +14,11 @@ namespace LaunchDarkly.Tests
         private static readonly string ALL_DATA_JSON_FILE = TestUtils.TestFilePath("all-properties.json");
         private static readonly string ALL_DATA_YAML_FILE = TestUtils.TestFilePath("all-properties.yml");
 
-        private readonly IFeatureStore store = new InMemoryFeatureStore();
+        private readonly IFeatureStore store = TestUtils.InMemoryFeatureStore();
         private readonly FileDataSourceFactory factory = FileComponents.FileDataSource();
-        private readonly Configuration config = Configuration.Default("sdkKey")
-            .WithEventProcessorFactory(Components.NullEventProcessor);
+        private readonly Configuration config = Configuration.Builder("sdkKey")
+            .EventProcessorFactory(Components.NullEventProcessor)
+            .Build();
         private readonly User user = User.WithKey("key");
 
         [Fact]
@@ -183,8 +184,8 @@ namespace LaunchDarkly.Tests
         public void FullFlagDefinitionEvaluatesAsExpected()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE);
-            config.WithUpdateProcessorFactory(factory);
-            using (var client = new LdClient(config))
+            var config1 = Configuration.Builder(config).UpdateProcessorFactory(factory).Build();
+            using (var client = new LdClient(config1))
             {
                 Assert.Equal("on", client.StringVariation("flag1", user, ""));
             }
@@ -194,8 +195,8 @@ namespace LaunchDarkly.Tests
         public void SimplifiedFlagEvaluatesAsExpected()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE);
-            config.WithUpdateProcessorFactory(factory);
-            using (var client = new LdClient(config))
+            var config1 = Configuration.Builder(config).UpdateProcessorFactory(factory).Build();
+            using (var client = new LdClient(config1))
             {
                 Assert.Equal("value2", client.StringVariation("flag2", user, ""));
             }

@@ -49,7 +49,7 @@ namespace LaunchDarkly.Client
 
         internal static float BucketUser(User user, string featureKey, string attr, string salt)
         {
-            var idHash = BucketableStringValue(user.GetValueForEvaluation(attr));
+            var idHash = BucketableStringValue(Operator.GetUserAttributeForEvaluation(user, attr));
             if (idHash != null)
             {
                 if (!string.IsNullOrEmpty(user.SecondaryKey))
@@ -63,17 +63,17 @@ namespace LaunchDarkly.Client
             return 0F;
         }
 
-        private static string BucketableStringValue(JToken value)
+        private static string BucketableStringValue(LdValue value)
         {
-            if (value != null)
+            if (!value.IsNull)
             {
-                if (value.Type.Equals(JTokenType.String))
+                if (value.IsString)
                 {
-                    return value.Value<string>();
+                    return value.AsString;
                 }
-                if (value.Type.Equals(JTokenType.Integer))
+                if (value.IsInt)
                 {
-                    return Convert.ToString(value.Value<int>());
+                    return Convert.ToString(value.AsInt);
                 }
             }
             return null;

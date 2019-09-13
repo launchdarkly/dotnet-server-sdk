@@ -10,8 +10,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientHasNullUpdateProcessor()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithUseLdd(true);
+            var config = Configuration.Builder("SDK_KEY").UseLdd(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<NullUpdateProcessor>(client._updateProcessor);
@@ -21,8 +20,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientHasDefaultEventProcessor()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithUseLdd(true);
+            var config = Configuration.Builder("SDK_KEY").UseLdd(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<DefaultEventProcessor>(client._eventProcessor);
@@ -32,8 +30,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientIsInitialized()
         {
-            var config = Configuration.Default("SDK_KEY")
-                .WithUseLdd(true);
+            var config = Configuration.Builder("SDK_KEY").UseLdd(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.True(client.Initialized());
@@ -43,12 +40,13 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void LddModeClientGetsFlagFromFeatureStore()
         {
-            var featureStore = new InMemoryFeatureStore();
+            var featureStore = TestUtils.InMemoryFeatureStore();
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
-            var config = Configuration.Default("SDK_KEY")
-                .WithUseLdd(true)
-                .WithFeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore));
+            var config = Configuration.Builder("SDK_KEY")
+                .UseLdd(true)
+                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .Build();
             using (var client = new LdClient(config))
             {
                 Assert.True(client.BoolVariation("key", User.WithKey("user"), false));

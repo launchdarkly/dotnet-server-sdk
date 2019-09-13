@@ -22,7 +22,7 @@ namespace LaunchDarkly.Tests
         {
             _mockFeatureRequestor = new Mock<IFeatureRequestor>();
             _featureRequestor = _mockFeatureRequestor.Object;
-            _featureStore = new InMemoryFeatureStore();
+            _featureStore = TestUtils.InMemoryFeatureStore();
             _config = Configuration.Default("SDK_KEY");
         }
 

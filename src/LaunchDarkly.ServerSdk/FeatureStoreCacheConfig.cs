@@ -3,16 +3,21 @@
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// Parameters that can be used for <see cref="IFeatureStore"/> implementations that support local caching.
+    /// Parameters that can be used for <see cref="IFeatureStore"/> database integrations that support local caching.
+    /// </summary>
+    /// <remarks>
+    /// <para>
     /// The built-in <see cref="InMemoryFeatureStore"/> does not use this class; it is meant for database
     /// implementations.
-    ///
+    /// </para>
+    /// <para>
     /// This is an immutable class that uses a fluent interface. Obtain an instance by getting the static
     /// value Disabled or Enabled; then if desired, you can use chained methods to set other properties:
+    /// </para>
     /// <code>
     ///     FeatureStoreCacheConfig.Enabled.WithTtlSeconds(30);
     /// </code>
-    /// </summary>
+    /// </remarks>
     public sealed class FeatureStoreCacheConfig
     {
         /// <summary>

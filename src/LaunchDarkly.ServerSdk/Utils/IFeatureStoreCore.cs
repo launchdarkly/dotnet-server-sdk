@@ -4,22 +4,28 @@ using System.Collections.Generic;
 namespace LaunchDarkly.Client.Utils
 {
     /// <summary>
-    /// IFeatureStoreCore is an interface for a simplified subset of the functionality of
-    /// <see cref="IFeatureStore"/>, to be used in conjunction with <see cref="CachingStoreWrapper"/>.
-    /// This allows developers of custom IFeatureStore implementations to avoid repeating logic that
+    /// Interface for a simplified subset of the functionality of <see cref="IFeatureStore"/>, to be
+    /// used in conjunction with <see cref="CachingStoreWrapper"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This allows developers of custom <see cref="IFeatureStore"/> implementations to avoid repeating logic that
     /// would commonly be needed in any such implementation, such as caching. Instead, they can
-    /// implement only IFeatureStoreCore and then create a CachingStoreWrapper.
-    /// 
+    /// implement only <see cref="IFeatureStoreCore"/> and then create a <see cref="CachingStoreWrapper"/>.
+    /// </para>
+    /// <para>
     /// This interface assumes that your code is synchronous. For asynchronous implementations,
     /// use <see cref="IFeatureStoreCoreAsync"/> instead.
-    /// 
+    /// </para>
+    /// <para>
     /// Note that these methods do not take any generic type parameters; all storeable entities are
     /// treated as implementations of the <see cref="IVersionedData"/> interface, and an
     /// <see cref="IVersionedDataKind"/> instance is used to specify what kind of entity is
     /// being referenced. If entities will be marshaled and unmarshaled, this must be done via
     /// reflection, using the type specified by <see cref="IVersionedDataKind.GetItemType"/>.
     /// <see cref="FeatureStoreHelpers"/> may be useful for this.
-    /// </summary>
+    /// </para>
+    /// </remarks>
     public interface IFeatureStoreCore : IDisposable
     {
         /// <summary>
@@ -51,7 +57,7 @@ namespace LaunchDarkly.Client.Utils
 
         /// <summary>
         /// Updates or inserts the object associated with the specified key. If an item with
-        /// the same key already exists, it should update it only if the new item's getVersion()
+        /// the same key already exists, it should update it only if the new item's <see cref="IVersionedData.Version"/>
         /// value is greater than the old one. It should return the final state of the item, i.e.
         /// if the update succeeded then it returns the item that was passed in, and if the update
         /// failed due to the version check then it returns the item that is currently in the data

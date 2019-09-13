@@ -17,15 +17,28 @@ namespace LaunchDarkly.Tests
             var flag = new FeatureFlagBuilder("key").Build();
             state.AddFlag(flag, new JValue("value"), 1, null, false);
 
+            Assert.Equal(LdValue.Of("value"), state.GetFlagValueJson("key"));
+        }
+
+        [Fact]
+        public void CanGetDeprecatedFlagValue()
+        {
+            var state = new FeatureFlagsState(true);
+            var flag = new FeatureFlagBuilder("key").Build();
+            state.AddFlag(flag, new JValue("value"), 1, null, false);
+#pragma warning disable 0618
             Assert.Equal(new JValue("value"), state.GetFlagValue("key"));
+#pragma warning restore 0618
         }
 
         [Fact]
         public void UnknownFlagReturnsNullValue()
         {
             var state = new FeatureFlagsState(true);
-
+#pragma warning disable 0618
             Assert.Null(state.GetFlagValue("key"));
+#pragma warning restore 0618
+            Assert.Equal(LdValue.Null, state.GetFlagValueJson("key"));
         }
 
         [Fact]
@@ -65,12 +78,31 @@ namespace LaunchDarkly.Tests
             state.AddFlag(flag1, new JValue("value1"), 0, null, false);
             state.AddFlag(flag2, new JValue("value2"), 1, null, false);
 
+            var expected = new Dictionary<string, LdValue>
+            {
+                { "key1", LdValue.Of("value1") },
+                { "key2", LdValue.Of("value2") }
+            };
+            Assert.Equal(expected, state.ToValuesJsonMap());
+        }
+
+        [Fact]
+        public void CanConvertToDeprecatedValuesMap()
+        {
+            var state = new FeatureFlagsState(true);
+            var flag1 = new FeatureFlagBuilder("key1").Build();
+            var flag2 = new FeatureFlagBuilder("key2").Build();
+            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
+            state.AddFlag(flag2, new JValue("value2"), 1, null, false);
+
             var expected = new Dictionary<string, JToken>
             {
                 { "key1", new JValue("value1") },
                 { "key2", new JValue("value2") }
             };
+#pragma warning disable 0618
             Assert.Equal(expected, state.ToValuesMap());
+#pragma warning restore 0618
         }
 
         [Fact]

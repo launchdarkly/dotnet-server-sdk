@@ -3,10 +3,9 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Common.Logging;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -27,7 +26,7 @@ namespace LaunchDarkly.Client
             _allUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-all");
             _flagsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
             _segmentsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
-            _httpClient = Util.MakeHttpClient(config, ServerSideClientEnvironment.Instance);
+            _httpClient = Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
         }
 
         void IDisposable.Dispose()
@@ -46,7 +45,7 @@ namespace LaunchDarkly.Client
 
         // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there
         // was a problem getting flags.
-        async Task<AllData> IFeatureRequestor.GetAllDataAsync()
+        public async Task<AllData> GetAllDataAsync()
         {
             var ret = await GetAsync<AllData>(_allUri);
             if (ret != null)
@@ -59,14 +58,14 @@ namespace LaunchDarkly.Client
 
         // Returns the latest version of a flag, or null if it has not been modified. Throws an exception if there
         // was a problem getting flags.
-        async Task<FeatureFlag> IFeatureRequestor.GetFlagAsync(string featureKey)
+        public async Task<FeatureFlag> GetFlagAsync(string featureKey)
         {
             return await GetAsync<FeatureFlag>(new Uri(_flagsUri, featureKey));
         }
 
         // Returns the latest version of a segment, or null if it has not been modified. Throws an exception if there
         // was a problem getting segments.
-        async Task<Segment> IFeatureRequestor.GetSegmentAsync(string segmentKey)
+        public async Task<Segment> GetSegmentAsync(string segmentKey)
         {
             return await GetAsync<Segment>(new Uri(_segmentsUri, segmentKey));
         }
@@ -111,7 +110,7 @@ namespace LaunchDarkly.Client
                             }
                         }
                         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        return string.IsNullOrEmpty(content) ? null : (T)JsonConvert.DeserializeObject<T>(content);
+                        return string.IsNullOrEmpty(content) ? null : JsonUtil.DecodeJson<T>(content);
                     }
                 }
                 catch (TaskCanceledException tce)
