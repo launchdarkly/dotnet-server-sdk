@@ -172,9 +172,24 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void StringVariationWithNullDefaultReturnsFlagValue()
+        {
+            featureStore.Upsert(VersionedDataKind.Features,
+                new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
+
+            Assert.Equal("b", client.StringVariation("key", user, null));
+        }
+
+        [Fact]
         public void StringVariationReturnsDefaultValueForUnknownFlag()
         {
             Assert.Equal("a", client.StringVariation("key", user, "a"));
+        }
+
+        [Fact]
+        public void StringVariationWithNullDefaultReturnsDefaultValueForUnknownFlag()
+        {
+            Assert.Null(client.StringVariation("key", user, null));
         }
 
         [Fact]
@@ -199,29 +214,29 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void JsonVariationReturnsFlagValue()
         {
-            var data = ImmutableJsonValue.FromDictionary(new Dictionary<string, string> { { "thing", "stuff" } });
+            var data = LdValue.Convert.String.ObjectFrom(new Dictionary<string, string> { { "thing", "stuff" } });
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data.InnerValue).Build());
 
-            Assert.Equal(data, client.JsonVariation("key", user, ImmutableJsonValue.Of(42)));
+            Assert.Equal(data, client.JsonVariation("key", user, LdValue.Of(42)));
         }
 
         [Fact]
         public void JsonVariationReturnsDefaultValueForUnknownFlag()
         {
-            var defaultVal = ImmutableJsonValue.Of(42);
+            var defaultVal = LdValue.Of(42);
             Assert.Equal(defaultVal, client.JsonVariation("key", user, defaultVal));
         }
 
         [Fact]
         public void JsonVariationDetailReturnsValueAndReason()
         {
-            var data = ImmutableJsonValue.FromDictionary(new Dictionary<string, string> { { "thing", "stuff" } });
+            var data = LdValue.Convert.String.ObjectFrom(new Dictionary<string, string> { { "thing", "stuff" } });
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data.InnerValue).Build());
 
-            var expected = new EvaluationDetail<ImmutableJsonValue>(data, 0, EvaluationReason.Off.Instance);
-            Assert.Equal(expected, client.JsonVariationDetail("key", user, ImmutableJsonValue.Of(42)));
+            var expected = new EvaluationDetail<LdValue>(data, 0, EvaluationReason.Off.Instance);
+            Assert.Equal(expected, client.JsonVariationDetail("key", user, LdValue.Of(42)));
         }
 
         [Fact]
@@ -444,10 +459,10 @@ namespace LaunchDarkly.Tests
             var state = client.AllFlagsState(user, FlagsStateOption.ClientSideOnly);
             Assert.True(state.Valid);
 
-            var expectedValues = new Dictionary<string, ImmutableJsonValue>
+            var expectedValues = new Dictionary<string, LdValue>
             {
-                { "client-side-1", ImmutableJsonValue.Of("value1") },
-                { "client-side-2", ImmutableJsonValue.Of("value2") }
+                { "client-side-1", LdValue.Of("value1") },
+                { "client-side-2", LdValue.Of("value2") }
             };
             Assert.Equal(expectedValues, state.ToValuesJsonMap());
         }

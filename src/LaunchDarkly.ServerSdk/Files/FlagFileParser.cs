@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client.Files
 {
@@ -16,7 +15,7 @@ namespace LaunchDarkly.Client.Files
         {
             if (_alternateParser == null)
             {
-                return JsonConvert.DeserializeObject<FlagFileData>(content);
+                return JsonUtil.DecodeJson<FlagFileData>(content);
             }
             else
             {
@@ -24,7 +23,7 @@ namespace LaunchDarkly.Client.Files
                 {
                     try
                     {
-                        return JsonConvert.DeserializeObject<FlagFileData>(content);
+                        return JsonUtil.DecodeJson<FlagFileData>(content);
                     }
                     catch (Exception)
                     {
@@ -36,8 +35,8 @@ namespace LaunchDarkly.Client.Files
                 // JSON tree so we can use the JSON deserializer; this is inefficient, but we already know
                 // that Gson can deserialize our model types correctly.
                 var o = _alternateParser(content);
-                var json = JsonConvert.SerializeObject(o);
-                return JsonConvert.DeserializeObject<FlagFileData>(json);
+                var json = JsonUtil.EncodeJson(o);
+                return JsonUtil.DecodeJson<FlagFileData>(json);
             }
         }
     }

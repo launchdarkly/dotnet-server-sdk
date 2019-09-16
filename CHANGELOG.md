@@ -2,6 +2,38 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.7.1] - 2019-09-12
+_(The changes below were originally released in 5.7.0, but that release was broken; 5.7.1 is its replacement.)_
+
+This release includes new types and deprecations that correspond to upcoming changes in version 6.0.0. Developers are encouraged to start adopting these changes in their code now so that migrating to 6.0.0 in the future will be easier. Most of these changes are related to the use of mutable types, which are undesirable in a concurrent environment. `User` and `Configuration` are currently mutable types; they will be made immutable in the future, so there are now builders for them. Arbitrary JSON values are currently represented with the `Newtonsoft.Json` type `JToken`, which is mutable (if it contains an array or a JSON object); the new type `LdValue` is safer, and will eventually completely replace `JToken` in the public API.
+ 
+Also, generated HTML documentation for all of the SDK's public types, properties, and methods is now available online at https://launchdarkly.github.io/dotnet-server-sdk/. Currently this will only show the latest released version.
+ 
+### Added:
+- `Configuration.Builder` provides a fluent builder pattern for constructing `Configuration` objects. This is now the preferred method for building a user, rather than using `ConfigurationExtension` methods like `WithStartWaitTime()` that modify the existing configuration object.
+- `Configuration.EventCapacity` and `Configuration.EventFlushInterval` (new names for `EventQueueCapacity` and `EventQueueFrequency`, for consistency with other LaunchDarkly SDKs).
+- `User.Builder` provides a fluent builder pattern for constructing `User` objects. This is now the preferred method for building a user, rather than setting `User` properties directly or using `UserExtension` methods like `AndName()` that modify the existing user object.
+- `User.IPAddress` is equivalent to `User.IpAddress`, but has the standard .NET capitalization for two-letter acronyms.
+- The new `LdValue` type is a better alternative to using `JToken`, `JValue`, `JArray`, etc. for arbitrary JSON values (such as the return value of `JsonVariation`, or a custom attribute for a user).
+- There is now more debug-level logging for stream connection state changes.
+- XML documentation comments are now included in the package for all target frameworks. Previously they were only included for .NET Standard 1.4.
+ 
+### Changed:
+- Calls to flag evaluation methods such as `BoolVariation` are now somewhat more efficient because they no longer convert the default value to a `JToken` internally; also, user attributes no longer need to be converted to `JToken` internally when evaluating flag rules. If flag evaluations are very frequent, this reduces the number of ephemeral objects created on the heap.
+
+### Fixed:
+- Due to the default parsing behavior of `Newtonsoft.Json`, strings in the date/time format "1970-01-01T00:00:01Z" or "1970-01-01T00:00:01.001Z" would not be considered equal to an identical string in a flag rule.
+
+### Deprecated:
+- All `ConfigurationExtension` methods are now deprecated.
+- `Configuration.SamplingInterval`. The intended use case for the `SamplingInterval` feature was to reduce analytics event network usage in high-traffic applications. This feature is being deprecated in favor of summary counters, which are meant to track all events.
+- `Configuration.EventQueueCapacity` and `Configuration.EventQueueFrequency` (see new names above).
+- `User` constructors (use `User.WithKey` or `User.Builder`).
+- `User.IpAddress` (use `IPAddress`).
+- All `UserExtension` methods are now deprecated. The setters for all `User` properties should also be considered deprecated, although C# does not allow these to be marked with `[Obsolete]`.
+- `IBaseConfiguration` and `ICommonLdClient` interfaces.
+- The `InMemoryFeatureStore` constructor. Use `Components.InMemoryFeatureStore`.
+
 ## [5.6.5] - 2019-05-30
 ### Fixed:
 - If streaming is disabled, polling requests could stop working if the client ever received an HTTP error from LaunchDarkly. This bug was introduced in the 5.6.3 release.

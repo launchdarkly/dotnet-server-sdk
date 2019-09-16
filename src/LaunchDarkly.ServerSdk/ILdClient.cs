@@ -109,8 +109,8 @@ namespace LaunchDarkly.Client
         /// types that can exist in JSON. Note that some subclasses of <see cref="JToken"/> are mutable:
         /// it is possible to modify values within a JSON array or a JSON object. Be careful not to
         /// modify the <see cref="JToken"/> that is returned by this method, since that could affect
-        /// data structures inside the SDK. The <see cref="ImmutableJsonValue"/> type avoids this
-        /// problem, so it is better to use the <see cref="JsonVariation(string, User, ImmutableJsonValue)"/>
+        /// data structures inside the SDK. The <see cref="LdValue"/> type avoids this
+        /// problem, so it is better to use the <see cref="JsonVariation(string, User, LdValue)"/>
         /// overload that uses that type; in a future version of the SDK, these <see cref="JToken"/>-based
         /// methods will be removed.
         /// </para>
@@ -137,8 +137,8 @@ namespace LaunchDarkly.Client
         /// types that can exist in JSON. Note that some subclasses of <see cref="JToken"/> are mutable:
         /// it is possible to modify values within a JSON array or a JSON object. Be careful not to
         /// modify the <see cref="JToken"/> that is returned by this method, since that could affect
-        /// data structures inside the SDK. The <see cref="ImmutableJsonValue"/> type avoids this
-        /// problem, so it is better to use the <see cref="JsonVariationDetail(string, User, ImmutableJsonValue)"/>
+        /// data structures inside the SDK. The <see cref="LdValue"/> type avoids this
+        /// problem, so it is better to use the <see cref="JsonVariationDetail(string, User, LdValue)"/>
         /// overload that uses that type; in a future version of the SDK, these <see cref="JToken"/>-based
         /// methods will be removed.
         /// </para>
@@ -162,14 +162,8 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <remarks>
         /// <para>
-        /// The Newtonsoft.Json type <see cref="JToken"/> is used to represent any of the value
-        /// types that can exist in JSON.
-        /// </para>
-        /// <para>
-        /// Note that some subclasses of <see cref="JToken"/> are mutable: it is possible to modify values
-        /// within a JSON array or a JSON object. Be careful not to modify the <c>JToken</c> that
-        /// is returned by this method, since that could affect data structures inside the SDK. In
-        /// a future version of the SDK, this will be replaced by an immutable type.
+        /// The type <see cref="LdValue"/> is used to represent any of the value types that can
+        /// exist in JSON. Use <see cref="LdValue"/> methods to examine its type and value.
         /// </para>
         /// <para>
         /// If an error makes it impossible to evaluate the flag (for instance, the feature flag key
@@ -181,7 +175,7 @@ namespace LaunchDarkly.Client
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        ImmutableJsonValue JsonVariation(string key, User user, ImmutableJsonValue defaultValue);
+        LdValue JsonVariation(string key, User user, LdValue defaultValue);
 
         /// <summary>
         /// Calculates the value of a feature flag for a given user as any JSON value type, and
@@ -193,14 +187,14 @@ namespace LaunchDarkly.Client
         /// in analytics events, if you are capturing detailed event data for this flag.
         /// </para>
         /// <para>
-        /// The behavior is otherwise identical to <see cref="JsonVariationDetail(string, User, ImmutableJsonValue)"/>.
+        /// The behavior is otherwise identical to <see cref="JsonVariationDetail(string, User, LdValue)"/>.
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
         /// <param name="user">the end user requesting the flag</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        EvaluationDetail<ImmutableJsonValue> JsonVariationDetail(string key, User user, ImmutableJsonValue defaultValue);
+        EvaluationDetail<LdValue> JsonVariationDetail(string key, User user, LdValue defaultValue);
 
         /// <summary>
         /// Calculates the string value of a feature flag for a given user.
@@ -309,7 +303,7 @@ namespace LaunchDarkly.Client
         /// <para>
         /// This method creates a "custom" analytics event containing the specified event name (key)
         /// and user properties. You may attach arbitrary data to the event by calling
-        /// <see cref="Track(string, User, ImmutableJsonValue)"/> instead.
+        /// <see cref="Track(string, User, LdValue)"/> instead.
         /// </para>
         /// <para>
         /// Note that event delivery is asynchronous, so the event may not actually be sent until
@@ -367,7 +361,7 @@ namespace LaunchDarkly.Client
         /// <para>
         /// This method creates a "custom" analytics event containing the specified event name (key),
         /// user properties, and optional custom data. If you do not need custom data, pass
-        /// <see cref="ImmutableJsonValue.Null"/> for the last parameter or simply omit the parameter.
+        /// <see cref="LdValue.Null"/> for the last parameter or simply omit the parameter.
         /// </para>
         /// <para>
         /// Note that event delivery is asynchronous, so the event may not actually be sent until
@@ -377,7 +371,7 @@ namespace LaunchDarkly.Client
         /// <param name="name">the name of the event</param>
         /// <param name="data">additional data associated with the event, if any</param>
         /// <param name="user">the user that performed the event</param>
-        void Track(string name, User user, ImmutableJsonValue data);
+        void Track(string name, User user, LdValue data);
 
         /// <summary>
         /// Returns a map from feature flag keys to <see cref="JToken"/> feature flag values for a given user.

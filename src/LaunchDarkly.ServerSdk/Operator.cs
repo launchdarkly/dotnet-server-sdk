@@ -14,42 +14,42 @@ namespace LaunchDarkly.Client
         // Note that ImmutableJsonValue.Of(string) is an efficient operation that does not allocate
         // a new object, but just wraps the string in a struct (or returns ImmutableJsonValue.Null
         // if the string is null).
-        public static ImmutableJsonValue GetUserAttributeForEvaluation(User user, string attribute)
+        public static LdValue GetUserAttributeForEvaluation(User user, string attribute)
         {
             switch (attribute)
             {
                 case "key":
-                    return ImmutableJsonValue.Of(user.Key);
+                    return LdValue.Of(user.Key);
                 case "secondary":
-                    return ImmutableJsonValue.Of(user.SecondaryKey);
+                    return LdValue.Of(user.SecondaryKey);
                 case "ip":
-                    return ImmutableJsonValue.Of(user.IPAddress);
+                    return LdValue.Of(user.IPAddress);
                 case "email":
-                    return ImmutableJsonValue.Of(user.Email);
+                    return LdValue.Of(user.Email);
                 case "avatar":
-                    return ImmutableJsonValue.Of(user.Avatar);
+                    return LdValue.Of(user.Avatar);
                 case "firstName":
-                    return ImmutableJsonValue.Of(user.FirstName);
+                    return LdValue.Of(user.FirstName);
                 case "lastName":
-                    return ImmutableJsonValue.Of(user.LastName);
+                    return LdValue.Of(user.LastName);
                 case "name":
-                    return ImmutableJsonValue.Of(user.Name);
+                    return LdValue.Of(user.Name);
                 case "country":
-                    return ImmutableJsonValue.Of(user.Country);
+                    return LdValue.Of(user.Country);
                 case "anonymous":
                     if (user.Anonymous.HasValue)
                     {
-                        return ImmutableJsonValue.Of(user.Anonymous.Value);
+                        return LdValue.Of(user.Anonymous.Value);
                     }
-                    return ImmutableJsonValue.Null;
+                    return LdValue.Null;
                 default:
                     return user.Custom.TryGetValue(attribute, out var customValue) ?
-                        ImmutableJsonValue.FromSafeValue(customValue) :
-                        ImmutableJsonValue.Null;
+                        LdValue.FromSafeValue(customValue) :
+                        LdValue.Null;
             }
         }
 
-        public static bool Apply(string op, ImmutableJsonValue uValue, ImmutableJsonValue cValue)
+        public static bool Apply(string op, LdValue uValue, LdValue cValue)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace LaunchDarkly.Client
                             return true;
                         }
 
-                        if (uValue.Type == JsonValueType.String || cValue.Type == JsonValueType.String)
+                        if (uValue.IsString || cValue.IsString)
                         {
                             return StringOperator(uValue, cValue, (a, b) => a.Equals(b));
                         }
@@ -135,7 +135,7 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        private static bool TryCompareNumericValues(ImmutableJsonValue x, ImmutableJsonValue y, out int result)
+        private static bool TryCompareNumericValues(LdValue x, LdValue y, out int result)
         {
             if (!x.IsNumber || !y.IsNumber)
             {
@@ -143,13 +143,13 @@ namespace LaunchDarkly.Client
                 return false;
             }
 
-            result = x.AsFloat.CompareTo(y.AsFloat);
+            result = x.AsDouble.CompareTo(y.AsDouble);
             return true;
         }
         
-        private static bool StringOperator(ImmutableJsonValue uValue, ImmutableJsonValue cValue, Func<string, string, bool> fn)
+        private static bool StringOperator(LdValue uValue, LdValue cValue, Func<string, string, bool> fn)
         {
-            if (uValue.Type == JsonValueType.String && cValue.Type == JsonValueType.String)
+            if (uValue.IsString && cValue.IsString)
             {
                 // Note that AsString cannot return null for either of these, because then the Type
                 // would have been JsonValueType.Null
@@ -158,23 +158,23 @@ namespace LaunchDarkly.Client
             return false;
         }
         
-        private static bool DateOperator(ImmutableJsonValue uValue, ImmutableJsonValue cValue, Func<DateTime, DateTime, bool> fn)
+        private static bool DateOperator(LdValue uValue, LdValue cValue, Func<DateTime, DateTime, bool> fn)
         {
             var uDateTime = ValueToDate(uValue);
             var cDateTime = ValueToDate(cValue);
             return uDateTime.HasValue && cDateTime.HasValue && fn(uDateTime.Value, cDateTime.Value);
         }
 
-        private static bool SemVerOperator(ImmutableJsonValue uValue, ImmutableJsonValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
+        private static bool SemVerOperator(LdValue uValue, LdValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
         {
             var uVersion = ValueToSemVer(uValue);
             var cVersion = ValueToSemVer(cValue);
             return uVersion != null && cVersion != null && fn(uVersion, cVersion);
         }
 
-        internal static DateTime? ValueToDate(ImmutableJsonValue value)
+        internal static DateTime? ValueToDate(LdValue value)
         {
-            if (value.Type == JsonValueType.String)
+            if (value.IsString)
             {
                 return DateTime.Parse(value.AsString).ToUniversalTime();
             }
@@ -185,9 +185,9 @@ namespace LaunchDarkly.Client
             return null;
         }
 
-        internal static SemanticVersion ValueToSemVer(ImmutableJsonValue value)
+        internal static SemanticVersion ValueToSemVer(LdValue value)
         {
-            if (value.Type == JsonValueType.String)
+            if (value.IsString)
             {
                 try
                 {
