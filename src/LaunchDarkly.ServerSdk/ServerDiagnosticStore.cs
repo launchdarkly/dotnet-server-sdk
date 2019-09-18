@@ -6,32 +6,32 @@ namespace LaunchDarkly.Client {
 
     internal class ServerDiagnosticStore : IDiagnosticStore {
         private DiagnosticId DiagnosticId;
-        private DateTimeOffset DataSince;
+        private DateTime DataSince;
         private long DroppedEvents;
         private long DeduplicatedUsers;
-        private Dictionary<string, Object> InitEvent;
+        private Dictionary<string, object> InitEvent;
         private Configuration Config;
 
         // IDiagnosticStore interface properties
-        Dictionary<string, Object> IDiagnosticStore.InitEvent => InitEvent;
-        Dictionary<string, Object> IDiagnosticStore.LastStats => null;
-        DateTimeOffset IDiagnosticStore.DataSince => DataSince;
+        Dictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
+        Dictionary<string, object> IDiagnosticStore.LastStats => null;
+        DateTime IDiagnosticStore.DataSince => DataSince;
 
         internal ServerDiagnosticStore(string sdkKey, Configuration config) {
             Config = config;
-            DataSince = DateTimeOffset.Now;
+            DataSince = DateTime.Now;
             DiagnosticId = new DiagnosticId(sdkKey, Guid.NewGuid());
             InitEvent = BuildInitEvent(DataSince);
         }
 
-        private void AddDiagnosticCommonFields(Dictionary<string, Object> fieldDictionary, string kind, DateTimeOffset creationDate) {
+        private void AddDiagnosticCommonFields(Dictionary<string, object> fieldDictionary, string kind, DateTime creationDate) {
             fieldDictionary.Add("kind", kind);
             fieldDictionary.Add("id", DiagnosticId);
-            fieldDictionary.Add("creationDate", creationDate.ToUnixTimeMilliseconds());
+            fieldDictionary.Add("creationDate", Util.GetUnixTimestampMillis(creationDate));
         }
 
-        private Dictionary<string, Object> BuildInitEvent(DateTimeOffset creationDate) {
-            InitEvent = new Dictionary<string, Object>();
+        private Dictionary<string, object> BuildInitEvent(DateTime creationDate) {
+            InitEvent = new Dictionary<string, object>();
             InitEvent["configuration"] = InitEventConfig();
             InitEvent["sdk"] = InitEventSdk();
             InitEvent["platform"] = InitEventPlatform();
@@ -39,15 +39,15 @@ namespace LaunchDarkly.Client {
             return InitEvent;
         }
 
-        private Dictionary<string, Object> InitEventPlatform() {
-            Dictionary<string, Object> PlatformInfo = new Dictionary<string, Object>();
+        private Dictionary<string, object> InitEventPlatform() {
+            Dictionary<string, object> PlatformInfo = new Dictionary<string, object>();
             PlatformInfo["name"] = "dotnet";
             return PlatformInfo;
         }
 
-        private Dictionary<string, Object> InitEventSdk()
+        private Dictionary<string, object> InitEventSdk()
         {
-            Dictionary<string, Object> SdkInfo = new Dictionary<string, object>();
+            Dictionary<string, object> SdkInfo = new Dictionary<string, object>();
             SdkInfo["name"] = "dotnet-server-sdk";
             SdkInfo["version"] = ServerSideClientEnvironment.Instance.Version.ToString();
             SdkInfo["wrapperName"] = Config.WrapperName;
@@ -55,9 +55,9 @@ namespace LaunchDarkly.Client {
             return SdkInfo;
         }
 
-        private Dictionary<string, Object> InitEventConfig()
+        private Dictionary<string, object> InitEventConfig()
         {
-            Dictionary<string, Object> ConfigInfo = new Dictionary<string, Object>();
+            Dictionary<string, object> ConfigInfo = new Dictionary<string, object>();
             ConfigInfo["baseURI"] = Config.BaseUri;
             ConfigInfo["eventsURI"] = Config.EventsUri;
             ConfigInfo["streamURI"] = Config.StreamUri;
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Client {
             ConfigInfo["usingRelayDaemon"] = Config.UseLdd;
             ConfigInfo["offline"] = Config.Offline;
             ConfigInfo["allAttributesPrivate"] = Config.AllAttributesPrivate;
-            //ConfigInfo["eventReportingDisabled"] = Config.EventReportingDisabled;
+            ConfigInfo["eventReportingDisabled"] = false;
             ConfigInfo["pollingIntervalMillis"] = (long)Config.PollingInterval.TotalMilliseconds;
             ConfigInfo["startWaitMillis"] = (long)Config.StartWaitTime.TotalMilliseconds;
 #pragma warning disable 618
@@ -82,7 +82,7 @@ namespace LaunchDarkly.Client {
             ConfigInfo["userKeysFlushIntervalMillis"] = (long)Config.UserKeysFlushInterval.TotalMilliseconds;
             ConfigInfo["inlineUsersInEvents"] = Config.InlineUsersInEvents;
             ConfigInfo["diagnosticRecordingIntervalMillis"] = (long)Config.DiagnosticRecordingInterval.TotalMilliseconds;
-            //ConfigInfo["featureStore"] = Config.FeatureStore.ToString;
+            ConfigInfo["featureStore"] = Config.FeatureStore.ToString();
             return ConfigInfo;
         }
 
@@ -94,11 +94,11 @@ namespace LaunchDarkly.Client {
             this.DroppedEvents++;
         }
 
-        public Dictionary<string, Object> GetStatsAndReset(long eventsInQueue)
+        public Dictionary<string, object> CreateEventAndReset(long eventsInQueue)
         {
-            DateTimeOffset CurrentTime = DateTimeOffset.Now;
-            Dictionary<string, Object> StatEvent = new Dictionary<string, Object>();
-            StatEvent["dataSinceDate"] = DataSince.ToUnixTimeMilliseconds();
+            DateTime CurrentTime = DateTime.Now;
+            Dictionary<string, object> StatEvent = new Dictionary<string, object>();
+            StatEvent["dataSinceDate"] = Util.GetUnixTimestampMillis(DataSince);
             StatEvent["droppedEvents"] = DroppedEvents;
             StatEvent["deduplicatedUsers"] = DeduplicatedUsers;
             StatEvent["eventsInQueue"] = eventsInQueue;
