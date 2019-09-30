@@ -15,7 +15,6 @@ namespace LaunchDarkly.Client
     public class InMemoryFeatureStore : IFeatureStore
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryFeatureStore));
-        private static readonly int RwLockMaxWaitMillis = 1000;
         private readonly ReaderWriterLockSlim RwLock = new ReaderWriterLockSlim();
         private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> Items =
             new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
@@ -31,9 +30,9 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
         {
+            RwLock.EnterReadLock();
             try
             {
-                RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
                 IDictionary<string, IVersionedData> itemsOfKind;
                 IVersionedData item;
 
@@ -64,9 +63,9 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
         {
+            RwLock.EnterReadLock();
             try
             {
-                RwLock.TryEnterReadLock(RwLockMaxWaitMillis);
                 IDictionary<string, T> ret = new Dictionary<string, T>();
                 IDictionary<string, IVersionedData> itemsOfKind;
                 if (Items.TryGetValue(kind, out itemsOfKind))
@@ -90,9 +89,9 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
         {
+            RwLock.EnterWriteLock();
             try
             {
-                RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
                 Items.Clear();
                 foreach (var kindEntry in items)
                 {
@@ -114,9 +113,9 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
         {
+            RwLock.EnterWriteLock();
             try
             {
-                RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
                 IDictionary<string, IVersionedData> itemsOfKind;
                 if (Items.TryGetValue(kind, out itemsOfKind))
                 {
@@ -136,9 +135,9 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
         {
+            RwLock.EnterWriteLock();
             try
             {
-                RwLock.TryEnterWriteLock(RwLockMaxWaitMillis);
                 IDictionary<string, IVersionedData> itemsOfKind;
                 if (!Items.TryGetValue(kind, out itemsOfKind))
                 {

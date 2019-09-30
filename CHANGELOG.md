@@ -2,7 +2,7 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
-## [5.7.1] - 2019-09-12
+## [5.7.1] - 2019-09-13
 _(The changes below were originally released in 5.7.0, but that release was broken; 5.7.1 is its replacement.)_
 
 This release includes new types and deprecations that correspond to upcoming changes in version 6.0.0. Developers are encouraged to start adopting these changes in their code now so that migrating to 6.0.0 in the future will be easier. Most of these changes are related to the use of mutable types, which are undesirable in a concurrent environment. `User` and `Configuration` are currently mutable types; they will be made immutable in the future, so there are now builders for them. Arbitrary JSON values are currently represented with the `Newtonsoft.Json` type `JToken`, which is mutable (if it contains an array or a JSON object); the new type `LdValue` is safer, and will eventually completely replace `JToken` in the public API.
