@@ -19,6 +19,7 @@ namespace LaunchDarkly.Tests
         private int? _offVariation;
         private List<JToken> _variations;
         private bool _trackEvents;
+        private bool _trackEventsFallthrough;
         private long? _debugEventsUntilDate;
         private bool _deleted;
         private bool _clientSide;
@@ -41,6 +42,7 @@ namespace LaunchDarkly.Tests
             _offVariation = from.OffVariation;
             _variations = from.Variations;
             _trackEvents = from.TrackEvents;
+            _trackEventsFallthrough = from.TrackEventsFallthrough;
             _debugEventsUntilDate = from.DebugEventsUntilDate;
             _deleted = from.Deleted;
             _clientSide = from.ClientSide;
@@ -50,7 +52,7 @@ namespace LaunchDarkly.Tests
         {
             return new FeatureFlag(_key, _version, _on, _prerequisites, _salt,
                 _targets, _rules, _fallthrough, _offVariation, _variations,
-                _trackEvents, _debugEventsUntilDate, _deleted, _clientSide);
+                _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _deleted, _clientSide);
         }
 
         internal FeatureFlagBuilder Version(int version)
@@ -71,6 +73,11 @@ namespace LaunchDarkly.Tests
             return this;
         }
 
+        internal FeatureFlagBuilder Prerequisites(params Prerequisite[] prerequisites)
+        {
+            return Prerequisites(new List<Prerequisite>(prerequisites));
+        }
+
         internal FeatureFlagBuilder Salt(string salt)
         {
             _salt = salt;
@@ -83,10 +90,20 @@ namespace LaunchDarkly.Tests
             return this;
         }
 
+        internal FeatureFlagBuilder Targets(params Target[] targets)
+        {
+            return Targets(new List<Target>(targets));
+        }
+
         internal FeatureFlagBuilder Rules(List<Rule> rules)
         {
             _rules = rules;
             return this;
+        }
+
+        internal FeatureFlagBuilder Rules(params Rule[] rules)
+        {
+            return Rules(new List<Rule>(rules));
         }
 
         internal FeatureFlagBuilder Fallthrough(VariationOrRollout fallthrough)
@@ -113,9 +130,20 @@ namespace LaunchDarkly.Tests
             return this;
         }
 
+        internal FeatureFlagBuilder Variations(params JToken[] variations)
+        {
+            return Variations(new List<JToken>(variations));
+        }
+
         internal FeatureFlagBuilder TrackEvents(bool trackEvents)
         {
             _trackEvents = trackEvents;
+            return this;
+        }
+
+        internal FeatureFlagBuilder TrackEventsFallthrough(bool trackEventsFallthrough)
+        {
+            _trackEventsFallthrough = trackEventsFallthrough;
             return this;
         }
 
@@ -139,19 +167,120 @@ namespace LaunchDarkly.Tests
 
         internal FeatureFlagBuilder OffWithValue(JToken value)
         {
-            _on = false;
-            _offVariation = 0;
-            _variations = new List<JToken> { value };
-            return this;
+            return On(false).OffVariation(0).Variations(value);
         }
 
         internal FeatureFlagBuilder BooleanWithClauses(params Clause[] clauses)
         {
-            _on = true;
-            _offVariation = 0;
-            _variations = new List<JToken> { new JValue(false), new JValue(true) };
-            _rules = new List<Rule> { new Rule("id", 1, null, new List<Clause>(clauses)) };
+            return On(true).OffVariation(0)
+                .Variations(new JValue(false), new JValue(true))
+                .Rules(new RuleBuilder().Id("id").Variation(1).Clauses(clauses).Build());
+        }
+    }
+
+    internal class RuleBuilder
+    {
+        private string _id = "";
+        private int? _variation = null;
+        private Rollout _rollout = null;
+        private List<Clause> _clauses = new List<Clause>();
+        private bool _trackEvents = false;
+
+        internal Rule Build()
+        {
+            return new Rule(_id, _variation, _rollout, _clauses, _trackEvents);
+        }
+
+        internal RuleBuilder Id(string id)
+        {
+            _id = id;
             return this;
+        }
+
+        internal RuleBuilder Variation(int? variation)
+        {
+            _variation = variation;
+            return this;
+        }
+
+        internal RuleBuilder Rollout(Rollout rollout)
+        {
+            _rollout = rollout;
+            return this;
+        }
+
+        internal RuleBuilder Clauses(List<Clause> clauses)
+        {
+            _clauses = clauses;
+            return this;
+        }
+
+        internal RuleBuilder Clauses(params Clause[] clauses)
+        {
+            return Clauses(new List<Clause>(clauses));
+        }
+
+        internal RuleBuilder TrackEvents(bool trackEvents)
+        {
+            _trackEvents = trackEvents;
+            return this;
+        }
+    }
+
+    internal class ClauseBuilder
+    {
+        private string _attribute;
+        private string _op;
+        private List<JValue> _values = new List<JValue>();
+        private bool _negate;
+
+        internal Clause Build()
+        {
+            return new Clause(_attribute, _op, _values, _negate);
+        }
+
+        public ClauseBuilder Attribute(string attribute)
+        {
+            _attribute = attribute;
+            return this;
+        }
+
+        public ClauseBuilder Op(string op)
+        {
+            _op = op;
+            return this;
+        }
+
+        public ClauseBuilder Values(List<JValue> values)
+        {
+            _values = values;
+            return this;
+        }
+
+        public ClauseBuilder Values(params JValue[] values)
+        {
+            return Values(new List<JValue>(values));
+        }
+
+        public ClauseBuilder Negate(bool negate)
+        {
+            _negate = negate;
+            return this;
+        }
+
+        public ClauseBuilder KeyIs(string key)
+        {
+            return Attribute("key").Op("in").Values(new JValue(key));
+        }
+
+        public static Clause ShouldMatchUser(User user)
+        {
+            return new ClauseBuilder().KeyIs(user.Key).Build();
+        }
+
+        public static Clause ShouldNotMatchUser(User user)
+        {
+            return new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
         }
     }
 }
