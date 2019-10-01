@@ -2,6 +2,13 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.8.0] - 2019-10-01
+### Added:
+- Added support for upcoming LaunchDarkly experimentation features. See `ILdClient.Track(string, User, LdValue, double)`.
+ 
+### Fixed:
+- Fixed a bug due to incorrect use of a lock that could cause a read from `InMemoryFeatureStore` to fail if done at the same time as an update. (Thanks, [JeffAshton](https://github.com/launchdarkly/dotnet-server-sdk/pull/109)!)
+
 ## [5.7.1] - 2019-09-13
 _(The changes below were originally released in 5.7.0, but that release was broken; 5.7.1 is its replacement.)_
 
