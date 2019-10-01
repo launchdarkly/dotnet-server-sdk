@@ -129,7 +129,7 @@ namespace LaunchDarkly.Client.Files
         /// </summary>
         /// <param name="config"></param>
         /// <param name="featureStore"></param>
-        /// <returns></returns>
+        /// <returns>the component instance</returns>
         public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
             return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser);

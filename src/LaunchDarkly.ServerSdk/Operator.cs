@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Common.Logging;
-using Newtonsoft.Json.Linq;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -9,12 +8,52 @@ namespace LaunchDarkly.Client
     internal static class Operator
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Operator));
+        
+        // This method was formerly part of User. It has been moved here because it is only needed
+        // for server-side evaluation logic, specifically for comparing values with an Operator.
+        // Note that ImmutableJsonValue.Of(string) is an efficient operation that does not allocate
+        // a new object, but just wraps the string in a struct (or returns ImmutableJsonValue.Null
+        // if the string is null).
+        public static LdValue GetUserAttributeForEvaluation(User user, string attribute)
+        {
+            switch (attribute)
+            {
+                case "key":
+                    return LdValue.Of(user.Key);
+                case "secondary":
+                    return LdValue.Of(user.SecondaryKey);
+                case "ip":
+                    return LdValue.Of(user.IPAddress);
+                case "email":
+                    return LdValue.Of(user.Email);
+                case "avatar":
+                    return LdValue.Of(user.Avatar);
+                case "firstName":
+                    return LdValue.Of(user.FirstName);
+                case "lastName":
+                    return LdValue.Of(user.LastName);
+                case "name":
+                    return LdValue.Of(user.Name);
+                case "country":
+                    return LdValue.Of(user.Country);
+                case "anonymous":
+                    if (user.Anonymous.HasValue)
+                    {
+                        return LdValue.Of(user.Anonymous.Value);
+                    }
+                    return LdValue.Null;
+                default:
+                    return user.Custom.TryGetValue(attribute, out var customValue) ?
+                        LdValue.FromSafeValue(customValue) :
+                        LdValue.Null;
+            }
+        }
 
-        public static bool Apply(string op, JValue uValue, JValue cValue)
+        public static bool Apply(string op, LdValue uValue, LdValue cValue)
         {
             try
             {
-                if (uValue == null || cValue == null)
+                if (uValue.IsNull || cValue.IsNull)
                     return false;
 
                 int comparison;
@@ -27,7 +66,7 @@ namespace LaunchDarkly.Client
                             return true;
                         }
 
-                        if (uValue.Type.Equals(JTokenType.String) || cValue.Type.Equals(JTokenType.String))
+                        if (uValue.IsString || cValue.IsString)
                         {
                             return StringOperator(uValue, cValue, (a, b) => a.Equals(b));
                         }
@@ -96,92 +135,63 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        private static bool TryCompareNumericValues(JValue x, JValue y, out int result)
+        private static bool TryCompareNumericValues(LdValue x, LdValue y, out int result)
         {
-            if (!IsNumericValue(x) || !IsNumericValue(y))
+            if (!x.IsNumber || !y.IsNumber)
             {
                 result = default(int);
                 return false;
             }
 
-            result = x.CompareTo(y);
+            result = x.AsDouble.CompareTo(y.AsDouble);
             return true;
         }
-
-        private static bool IsNumericValue(JValue jValue)
-        {
-            return (jValue.Type.Equals(JTokenType.Float) || jValue.Type.Equals(JTokenType.Integer));
-        }
         
-        private static bool StringOperator(JValue uValue, JValue cValue, Func<string, string, bool> fn)
+        private static bool StringOperator(LdValue uValue, LdValue cValue, Func<string, string, bool> fn)
         {
-            if (uValue.Type.Equals(JTokenType.String) && cValue.Type.Equals(JTokenType.String))
+            if (uValue.IsString && cValue.IsString)
             {
-                string us = uValue.Value<string>();
-                string cs = cValue.Value<string>();
-                if (us != null && cs != null)
-                {
-                    return fn(us, cs);
-                }
+                // Note that AsString cannot return null for either of these, because then the Type
+                // would have been JsonValueType.Null
+                return fn(uValue.AsString, cValue.AsString);
             }
             return false;
         }
-
-        private static double? ParseDoubleFromJValue(JValue jValue)
-        {
-            if (IsNumericValue(jValue))
-            {
-                return (double) jValue;
-            }
-            return null;
-        }
         
-        private static bool DateOperator(JValue uValue, JValue cValue, Func<DateTime, DateTime, bool> fn)
+        private static bool DateOperator(LdValue uValue, LdValue cValue, Func<DateTime, DateTime, bool> fn)
         {
-            var uDateTime = JValueToDateTime(uValue);
-            var cDateTime = JValueToDateTime(cValue);
+            var uDateTime = ValueToDate(uValue);
+            var cDateTime = ValueToDate(cValue);
             return uDateTime.HasValue && cDateTime.HasValue && fn(uDateTime.Value, cDateTime.Value);
         }
 
-        private static bool SemVerOperator(JValue uValue, JValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
+        private static bool SemVerOperator(LdValue uValue, LdValue cValue, Func<SemanticVersion, SemanticVersion, bool> fn)
         {
-            var uVersion = JValueToSemVer(uValue);
-            var cVersion = JValueToSemVer(cValue);
+            var uVersion = ValueToSemVer(uValue);
+            var cVersion = ValueToSemVer(cValue);
             return uVersion != null && cVersion != null && fn(uVersion, cVersion);
         }
 
-        //Visible for testing
-        public static DateTime? JValueToDateTime(JValue jValue)
+        internal static DateTime? ValueToDate(LdValue value)
         {
-            switch (jValue.Type)
+            if (value.IsString)
             {
-                case JTokenType.Date:
-                    return jValue.Value<DateTime>().ToUniversalTime();
-                case JTokenType.String:
-                    string s = jValue.Value<string>();
-                    if (s == null)
-                    {
-                        return null;
-                    }
-                    return DateTime.Parse(s).ToUniversalTime();
-                default:
-                    var jvalueDouble = ParseDoubleFromJValue(jValue);
-                    if (jvalueDouble.HasValue)
-                    {
-                        return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(jvalueDouble.Value);
-                    }
-                    break;
+                return DateTime.Parse(value.AsString).ToUniversalTime();
+            }
+            if (value.IsNumber)
+            {
+                return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(value.AsFloat);
             }
             return null;
         }
 
-        internal static SemanticVersion JValueToSemVer(JValue jValue)
+        internal static SemanticVersion ValueToSemVer(LdValue value)
         {
-            if (jValue.Type == JTokenType.String && jValue.Value<string>() != null)
+            if (value.IsString)
             {
                 try
                 {
-                    return SemanticVersion.Parse(jValue.Value<string>(), allowMissingMinorAndPatch: true);
+                    return SemanticVersion.Parse(value.AsString, allowMissingMinorAndPatch: true);
                 }
                 catch (ArgumentException)
                 {

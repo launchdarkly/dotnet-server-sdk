@@ -10,7 +10,7 @@ namespace LaunchDarkly.Client
 {
     /// <summary>
     /// A client for the LaunchDarkly API. Client instances are thread-safe. Applications should instantiate
-    /// a single <c>LdClient</c> for the lifetime of their application.
+    /// a single <see cref="LdClient"/> for the lifetime of their application.
     /// </summary>
     public sealed class LdClient : IDisposable, ILdClient
     {
@@ -24,12 +24,8 @@ namespace LaunchDarkly.Client
         private bool _shouldDisposeFeatureStore;
 
         /// <summary>
-        /// Creates a new client to connect to LaunchDarkly with a custom configuration, and a custom
-        /// implementation of the analytics event processor.
-        /// 
-        /// This constructor is deprecated; please use
-        /// <see cref="ConfigurationExtensions.WithEventProcessorFactory(Configuration, IEventProcessorFactory)"/>
-        /// instead.
+        /// Deprecated; please use <see cref="IConfigurationBuilder.EventProcessorFactory(IEventProcessorFactory)"/>
+        /// instead if you want to specify a custom analytics event processor.
         /// </summary>
         /// <param name="config">a client configuration object</param>
         /// <param name="eventProcessor">an event processor</param>
@@ -96,98 +92,136 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
-        /// Creates a new client to connect to LaunchDarkly with a custom configuration. This constructor
-        /// can be used to configure advanced client features, such as customizing the LaunchDarkly base URL.
+        /// Creates a new client to connect to LaunchDarkly with a custom configuration.
         /// </summary>
         /// <param name="config">a client configuration object</param>
-        #pragma warning disable 618  // suppress warning for calling obsolete ctor
+        /// <example>
+        /// <code>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .AllAttributesPrivate(true)
+        ///         .EventCapacity(1000)
+        ///         .Build();
+        ///     var client = new LDClient(config);
+        /// </code>
+        /// </example>
+        /// <remarks>
+        /// The constructor will block until the client has successfully connected to LaunchDarkly
+        /// (assuming it is not in <see cref="IConfigurationBuilder.Offline(bool)"/> mode), or until
+        /// the timeout specified by <see cref="IConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
+        /// elapsed. If it times out, <see cref="LdClient.Initialized"/> will be false.
+        /// </remarks>
+#pragma warning disable 618  // suppress warning for calling obsolete ctor
         public LdClient(Configuration config) : this(config, null)
         #pragma warning restore 618
         {
         }
 
         /// <summary>
-        /// Creates a new client instance that connects to LaunchDarkly with the default configuration. In most
-        /// cases, you should use this constructor.
+        /// Creates a new client instance that connects to LaunchDarkly with the default configuration.
         /// </summary>
         /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
+        /// <example>
+        /// <code>
+        ///     var client = new LDClient("my-sdk-key");
+        /// </code>
+        /// </example>
+        /// <remarks>
+        /// The constructor will block until the client has successfully connected to LaunchDarkly, or
+        /// until the default timeout has elapsed (10 seconds). If it times out,
+        /// <see cref="LdClient.Initialized"/> will be false.
+        /// </remarks>
         public LdClient(string sdkKey) : this(Configuration.Default(sdkKey))
         {
         }
 
-        /// <see cref="ILdClient.Initialized"/>
+        /// <inheritdoc/>
         public bool Initialized()
         {
             return IsOffline() || _updateProcessor.Initialized();
         }
 
-        /// <see cref="ILdCommonClient.IsOffline"/>
+        /// <inheritdoc/>
         public bool IsOffline()
         {
             return _configuration.Offline;
         }
 
-        /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>
+        /// <inheritdoc/>
         public bool BoolVariation(string key, User user, bool defaultValue = false)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Bool, EventFactory.Default).Value;
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.Default).Value;
         }
 
-        /// <see cref="ILdClient.IntVariation(string, User, int)"/>
+        /// <inheritdoc/>
         public int IntVariation(string key, User user, int defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Int, EventFactory.Default).Value;
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.Default).Value;
         }
 
-        /// <see cref="ILdClient.FloatVariation(string, User, float)"/>
+        /// <inheritdoc/>
         public float FloatVariation(string key, User user, float defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Float, EventFactory.Default).Value;
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.Default).Value;
         }
 
-        /// <see cref="ILdClient.StringVariation(string, User, string)"/>
+        /// <inheritdoc/>
         public string StringVariation(string key, User user, string defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.String, EventFactory.Default).Value;
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
         }
 
-        /// <see cref="ILdClient.JsonVariation(string, User, JToken)"/>
+        /// <inheritdoc/>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
         public JToken JsonVariation(string key, User user, JToken defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.Default).Value;
+            return Evaluate(key, user, LdValue.FromSafeValue(defaultValue), LdValue.Convert.UnsafeJToken, false, EventFactory.Default).Value;
         }
 
-        /// <see cref="ILdClient.BoolVariationDetail(string, User, bool)"/>
+        /// <inheritdoc/>
+        public LdValue JsonVariation(string key, User user, LdValue defaultValue)
+        {
+            return Evaluate(key, user, defaultValue, LdValue.Convert.Json, false, EventFactory.Default).Value;
+        }
+
+        /// <inheritdoc/>
         public EvaluationDetail<bool> BoolVariationDetail(string key, User user, bool defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Bool, EventFactory.DefaultWithReasons);
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.DefaultWithReasons);
         }
 
-        /// <see cref="ILdClient.IntVariationDetail(string, User, int)"/>
+        /// <inheritdoc/>
         public EvaluationDetail<int> IntVariationDetail(string key, User user, int defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Int, EventFactory.DefaultWithReasons);
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.DefaultWithReasons);
         }
 
-        /// <see cref="ILdClient.FloatVariationDetail(string, User, float)"/>
+        /// <inheritdoc/>
         public EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Float, EventFactory.DefaultWithReasons);
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
         }
 
-        /// <see cref="ILdClient.StringVariationDetail(string, User, string)"/>
+        /// <inheritdoc/>
         public EvaluationDetail<string> StringVariationDetail(string key, User user, string defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.String, EventFactory.DefaultWithReasons);
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
         }
 
-        /// <see cref="ILdClient.JsonVariationDetail(string, User, JToken)"/>
+        /// <inheritdoc/>
+        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
         public EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue)
         {
-            return Evaluate(key, user, defaultValue, ValueTypes.Json, EventFactory.DefaultWithReasons);
+            return Evaluate(key, user, LdValue.FromSafeValue(defaultValue), LdValue.Convert.UnsafeJToken, false, EventFactory.DefaultWithReasons);
         }
 
-        /// <see cref="ILdClient.AllFlags(User)"/>
+        /// <inheritdoc/>
+        public EvaluationDetail<LdValue> JsonVariationDetail(string key, User user, LdValue defaultValue)
+        {
+            return Evaluate(key, user, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
+        }
+
+        /// <inheritdoc/>
+        [Obsolete("Use AllFlagsState instead. Current versions of the client-side SDK will not generate analytics events correctly if you pass the result of AllFlags.")]
         public IDictionary<string, JToken> AllFlags(User user)
         {
             var state = AllFlagsState(user);
@@ -198,7 +232,7 @@ namespace LaunchDarkly.Client
             return state.ToValuesMap();
         }
 
-        /// <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>
+        /// <inheritdoc/>
         public FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options)
         {
             if (IsOffline())
@@ -239,7 +273,7 @@ namespace LaunchDarkly.Client
                 try
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, EventFactory.Default);
-                    state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
+                    state.AddFlag(flag, result.Result.Value.InnerValue, result.Result.VariationIndex,
                         withReasons ? result.Result.Reason : null, detailsOnlyIfTracked);
                 }
                 catch (Exception e)
@@ -253,9 +287,10 @@ namespace LaunchDarkly.Client
             return state;
         }
 
-        private EvaluationDetail<T> Evaluate<T>(string featureKey, User user, T defaultValue, ValueType<T> expectedType,
-            EventFactory eventFactory)
+        private EvaluationDetail<T> Evaluate<T>(string featureKey, User user, LdValue defaultValue, LdValue.Converter<T> converter,
+            bool checkType, EventFactory eventFactory)
         {
+            T defaultValueOfType = converter.ToType(defaultValue);
             if (!Initialized())
             {
                 if (_featureStore.Initialized())
@@ -265,13 +300,12 @@ namespace LaunchDarkly.Client
                 else
                 {
                     Log.Warn("Flag evaluation before client initialized; feature store unavailable, returning default value");
-                    return new EvaluationDetail<T>(defaultValue, null,
+                    return new EvaluationDetail<T>(defaultValueOfType, null,
                         new EvaluationReason.Error(EvaluationErrorKind.CLIENT_NOT_READY));
                 }
             }
 
             FeatureFlag featureFlag = null;
-            JToken defaultValueJson = expectedType.ValueToJson(defaultValue);
             try
             {
                 featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
@@ -279,19 +313,18 @@ namespace LaunchDarkly.Client
                 {
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
                         featureKey);
-
-                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValueJson,
+                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue,
                         EvaluationErrorKind.FLAG_NOT_FOUND));
-                    return new EvaluationDetail<T>(defaultValue, null,
+                    return new EvaluationDetail<T>(defaultValueOfType, null,
                         new EvaluationReason.Error(EvaluationErrorKind.FLAG_NOT_FOUND));
                 }
 
                 if (user == null || user.Key == null)
                 {
                     Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValueJson,
+                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
                         EvaluationErrorKind.USER_NOT_SPECIFIED));
-                    return new EvaluationDetail<T>(defaultValue, null,
+                    return new EvaluationDetail<T>(defaultValueOfType, null,
                         new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
                 }
                 
@@ -307,30 +340,28 @@ namespace LaunchDarkly.Client
                 EvaluationDetail<T> returnDetail;
                 if (evalDetail.VariationIndex == null)
                 {
-                    returnDetail = new EvaluationDetail<T>(defaultValue, null, evalDetail.Reason);
+                    returnDetail = new EvaluationDetail<T>(defaultValueOfType, null, evalDetail.Reason);
+                    evalDetail = new EvaluationDetail<LdValue>(defaultValue, null, evalDetail.Reason);
                 }
                 else
                 {
-                    try
-                    {
-                        returnDetail = new EvaluationDetail<T>(expectedType.ValueFromJson(evalDetail.Value),
-                            evalDetail.VariationIndex, evalDetail.Reason);
-                    }
-                    catch (ValueTypeException)
+                    if (checkType && !defaultValue.IsNull && evalDetail.Value.Type != defaultValue.Type)
                     {
                         Log.ErrorFormat("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
-                            expectedType.GetType().Name,
-                            evalDetail.Value is null ? "null" : evalDetail.Value.Type.ToString(),
+                            defaultValue.Type,
+                            evalDetail.Value.Type,
                             featureKey);
 
                         _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user,
-                            defaultValueJson, EvaluationErrorKind.WRONG_TYPE));
-                        return new EvaluationDetail<T>(defaultValue, null,
+                            defaultValue, EvaluationErrorKind.WRONG_TYPE));
+                        return new EvaluationDetail<T>(defaultValueOfType, null,
                             new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
                     }
+                    returnDetail = new EvaluationDetail<T>(converter.ToType(evalDetail.Value),
+                        evalDetail.VariationIndex, evalDetail.Reason);
                 }
                 _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                    evalDetail, defaultValueJson));
+                    evalDetail, defaultValue));
                 return returnDetail;
             }
             catch (Exception e)
@@ -341,39 +372,21 @@ namespace LaunchDarkly.Client
                      user.Key);
                 Log.Debug(e.ToString(), e);
                 var reason = new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION);
-                var evalDetail = new EvaluationDetail<JToken>(defaultValueJson, null, reason);
                 if (featureFlag == null)
                 {
                     _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user,
-                        defaultValueJson, EvaluationErrorKind.EXCEPTION));
+                        defaultValue, EvaluationErrorKind.EXCEPTION));
                 }
                 else
                 {
                     _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
-                        evalDetail, defaultValueJson));
+                        new EvaluationDetail<LdValue>(defaultValue, null, reason), defaultValue));
                 }
-                return new EvaluationDetail<T>(defaultValue, null, reason);
+                return new EvaluationDetail<T>(defaultValueOfType, null, reason);
             }
         }
-
-        private bool CheckResultType(JTokenType? expectedType, JToken result)
-        {
-            if (expectedType == null || result == null)
-            {
-                return true;
-            }
-            JTokenType resultType = result.Type;
-            switch (expectedType.Value)
-            {
-                case JTokenType.Integer:
-                case JTokenType.Float:
-                    return resultType == JTokenType.Integer || resultType == JTokenType.Float;
-                default:
-                    return resultType == expectedType;
-            }
-        }
-
-        /// <see cref="ILdClient.SecureModeHash(User)"/>
+        
+        /// <inheritdoc/>
         public string SecureModeHash(User user)
         {
             if (user == null || string.IsNullOrEmpty(user.Key))
@@ -388,20 +401,28 @@ namespace LaunchDarkly.Client
             return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
-        /// <see cref="ILdClient.Track(string, User)"/>
+        /// <inheritdoc/>
         public void Track(string name, User user)
         {
-            Track(name, null, user);
+            Track(name, user, LdValue.Null);
         }
 
-        /// <see cref="ILdClient.Track(string, User, string)"/>
+        /// <inheritdoc/>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         public void Track(string name, User user, string data)
         {
-            Track(name, data, user);
+            Track(name, user, LdValue.Of(data));
         }
 
-        /// <see cref="ILdClient.Track(string, JToken, User)"/>
+        /// <inheritdoc/>
+        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
         public void Track(string name, JToken data, User user)
+        {
+            Track(name, user, LdValue.FromSafeValue(data));
+        }
+
+        /// <inheritdoc/>
+        public void Track(string name, User user, LdValue data)
         {
             if (user == null || String.IsNullOrEmpty(user.Key))
             {
@@ -411,8 +432,8 @@ namespace LaunchDarkly.Client
             _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data));
         }
 
-        /// <see cref="ILdClient.Track(string, JToken, User, double)"/>
-        public void Track(string name, JToken data, User user, double metricValue)
+        /// <inheritdoc/>
+        public void Track(string name, User user, LdValue data, double metricValue)
         {
             if (user == null || user.Key == null)
             {
@@ -421,7 +442,7 @@ namespace LaunchDarkly.Client
             _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data, metricValue));
         }
 
-        /// <see cref="ILdClient.Identify(User)"/>
+        /// <inheritdoc/>
         public void Identify(User user)
         {
             if (user == null || String.IsNullOrEmpty(user.Key))
@@ -432,7 +453,7 @@ namespace LaunchDarkly.Client
             _eventProcessor.SendEvent(EventFactory.Default.NewIdentifyEvent(user));
         }
 
-        /// <see cref="ILdCommonClient.Version"/>
+        /// <inheritdoc/>
         public Version Version
         {
             get
@@ -462,7 +483,13 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Shuts down the client and releases any resources it is using.
-        /// 
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Unless it is offline, the client will attempt to deliver any pending analytics events before
+        /// closing.
+        /// </para>
+        /// <para>
         /// Any components that were added by specifying a factory object
         /// (<see cref="ConfigurationExtensions.WithFeatureStore(Configuration, IFeatureStore)"/>, etc.)
         /// will also be disposed of by this method; their lifecycle is the same as the client's.
@@ -470,7 +497,8 @@ namespace LaunchDarkly.Client
         /// method <see cref="ConfigurationExtensions.WithFeatureStore(Configuration, IFeatureStore)"/>,
         /// or the deprecated <c>LdClient</c> constructor that takes an <see cref="IEventProcessor"/>),
         /// this will not happen; you are responsible for managing their lifecycle.
-        /// </summary>
+        /// </para>
+        /// </remarks>
         /// <see cref="IDisposable.Dispose"/>
         public void Dispose()
         {
@@ -479,7 +507,10 @@ namespace LaunchDarkly.Client
             GC.SuppressFinalize(this);
         }
 
-        /// <see cref="ILdCommonClient.Flush"/>
+        // Note that Flush, IsOffline, and Version are defined in ILdCommonClient, not in ILdClient. In
+        // the next major version, the base interface will go away and they will move to ILdClient.
+
+        /// <inheritdoc/>
         public void Flush()
         {
             _eventProcessor.Flush();

@@ -5,23 +5,27 @@ using System.Linq;
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// Objects used by <see cref="IFeatureStore"/> implementations to denote a specific collection of IVersionedData-derived objects.
+    /// Objects used by <see cref="IFeatureStore"/> implementations to denote a specific collection of
+    /// <see cref="IVersionedData"/>-derived objects.
     /// </summary>
     public interface IVersionedDataKind
     {
         /// <summary>
         /// An alphabetic string that distinguishes this collection from others, e.g. "features".
         /// </summary>
+        /// <returns>the namespace string</returns>
         string GetNamespace();
 
         /// <summary>
         /// The runtime class of objects in this collection, e.g. typeof(<c>FeatureFlag</c>).
         /// </summary>
+        /// <returns>the object type</returns>
         Type GetItemType();
 
         /// <summary>
         /// Used internally to identify streaming API requests for objects of this type.
         /// </summary>
+        /// <returns>the API path</returns>
         String GetStreamApiPath();
     }
 
@@ -55,17 +59,18 @@ namespace LaunchDarkly.Client
 
     /// <summary>
     /// Objects used by <see cref="IFeatureStore"/> implementations to denote a specific collection of
-    /// <c>IVersionedData</c>-derived objects.
+    /// <see cref="IVersionedData"/>-derived objects.
     /// </summary>
+    /// <typeparam name="T">type of objects in this collection</typeparam>
     public abstract class VersionedDataKind<T> : IVersionedDataKind where T : IVersionedData
     {
-        /// <see cref="IVersionedDataKind.GetNamespace"/>
+        /// <inheritdoc/>
         public abstract string GetNamespace();
 
-        /// <see cref="IVersionedDataKind.GetItemType"/>
+        /// <inheritdoc/>
         public abstract Type GetItemType();
 
-        /// <see cref="IVersionedDataKind.GetStreamApiPath"/>
+        /// <inheritdoc/>
         public abstract String GetStreamApiPath();
 
         /// <summary>

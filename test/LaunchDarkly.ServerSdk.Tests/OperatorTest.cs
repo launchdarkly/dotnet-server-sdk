@@ -1,6 +1,5 @@
 using System;
 using LaunchDarkly.Client;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
@@ -8,33 +7,32 @@ namespace LaunchDarkly.Tests
 
     public class OperatorTest
     {
-
         [Fact]
         public void CanParseUtcTimestamp()
         {
             var timestamp = "1970-01-01T00:00:01Z";
-            var jValueToDateTime = Operator.JValueToDateTime(new JValue(timestamp));
+            var actualDateTime = Operator.ValueToDate(LdValue.Of(timestamp));
 
             var expectedDateTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc);
-            Assert.Equal(expectedDateTime, jValueToDateTime);
+            Assert.Equal(expectedDateTime, actualDateTime);
         }
 
         [Fact]
         public void CanParseTimestampFromTimezone()
         {
             var timestamp = "1970-01-01T00:00:00-01:00";
-            var jValueToDateTime = Operator.JValueToDateTime(new JValue(timestamp));
+            var actualDateTime = Operator.ValueToDate(LdValue.Of(timestamp));
             var expectedDateTime = new DateTime(1970, 1, 1, 1, 0, 0, DateTimeKind.Utc);
-            Assert.Equal(expectedDateTime, jValueToDateTime);
+            Assert.Equal(expectedDateTime, actualDateTime);
         }
 
         [Fact]
         public void CanParseUnixMillis()
         {
             var timestampMillis = 1000;
-            var jValueToDateTime = Operator.JValueToDateTime(new JValue(timestampMillis));
+            var actualDateTime = Operator.ValueToDate(LdValue.Of(timestampMillis));
             var expectedDateTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc);
-            Assert.Equal(expectedDateTime, jValueToDateTime);
+            Assert.Equal(expectedDateTime, actualDateTime);
         }
 
         [Fact]
@@ -43,8 +41,8 @@ namespace LaunchDarkly.Tests
             var afterTimestamp = "1970-01-01T00:00:00-01:00"; //equivalent to 1970-01-01T01:00:00Z
             var utcTimestamp = "1970-01-01T00:00:01Z";
 
-            var after = new JValue(afterTimestamp);
-            var before = new JValue(utcTimestamp);
+            var after = LdValue.Of(afterTimestamp);
+            var before = LdValue.Of(utcTimestamp);
             Assert.True(Operator.Apply("after", after, before));
             Assert.False(Operator.Apply("after", before, after));
 
@@ -58,8 +56,8 @@ namespace LaunchDarkly.Tests
             var afterTimestamp = "1970-01-01T00:00:00-01:00"; //equivalent to 1970-01-01T01:00:00Z
             var beforeMillis = 1000;
 
-            var after = new JValue(afterTimestamp);
-            var before = new JValue(beforeMillis);
+            var after = LdValue.Of(afterTimestamp);
+            var before = LdValue.Of(beforeMillis);
 
             Assert.True(Operator.Apply("after", after, before));
             Assert.False(Operator.Apply("after", before, after));
@@ -71,19 +69,19 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void Apply_UnknownOperation_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("unknown", new JValue(10), new JValue(10)));
+            Assert.False(Operator.Apply("unknown", LdValue.Of(10), LdValue.Of(10)));
         }
 
         [Fact]
         public void Apply_UserValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", null, new JValue(10)));
+            Assert.False(Operator.Apply("in", LdValue.Null, LdValue.Of(10)));
         }
 
         [Fact]
         public void Apply_ClauseValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", new JValue(10), null));
+            Assert.False(Operator.Apply("in", LdValue.Of(10), LdValue.Null));
         }
 
         [Theory]
@@ -94,7 +92,7 @@ namespace LaunchDarkly.Tests
         [InlineData(11d, 11)]
         public void Apply_In_SupportedTypes_ValuesAreEqual_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("in", new JValue(userValue), new JValue(clauseValue)));
+            Assert.True(Operator.Apply("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -105,7 +103,7 @@ namespace LaunchDarkly.Tests
         [InlineData(11.4d, 11)]
         public void Apply_In_SupportedTypes_ValuesAreNotEqual_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("in", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -113,7 +111,7 @@ namespace LaunchDarkly.Tests
         [InlineData("userValue", "userValue")]
         public void Apply_EndsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("endsWith", new JValue(userValue), new JValue(clauseValue)));
+            Assert.True(Operator.Apply("endsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -122,7 +120,7 @@ namespace LaunchDarkly.Tests
         [InlineData(78, "userValue")]
         public void Apply_EndsWith_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("endsWith", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("endsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -130,7 +128,7 @@ namespace LaunchDarkly.Tests
         [InlineData("userValue", "user")]
         public void Apply_StartsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("startsWith", new JValue(userValue), new JValue(clauseValue)));
+            Assert.True(Operator.Apply("startsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -139,13 +137,13 @@ namespace LaunchDarkly.Tests
         [InlineData(78, "userValue")]
         public void Apply_StartsWith_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("startsWith", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("startsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Fact]
         public void Apply_Matches_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("matches", new JValue("22"), new JValue(@"\d")));
+            Assert.True(Operator.Apply("matches", LdValue.Of("22"), LdValue.Of(@"\d")));
         }
 
         [Theory]
@@ -155,13 +153,13 @@ namespace LaunchDarkly.Tests
         [InlineData(77, "userValue")]
         public void Apply_Matches_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("matches", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("matches", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Fact]
         public void Apply_Contains_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("contains", new JValue("userValue"), new JValue("serValu")));
+            Assert.True(Operator.Apply("contains", LdValue.Of("userValue"), LdValue.Of("serValu")));
         }
 
         [Theory]
@@ -170,7 +168,7 @@ namespace LaunchDarkly.Tests
         [InlineData(78, "userValue")]
         public void Apply_Contains_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("contains", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("contains", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -183,7 +181,7 @@ namespace LaunchDarkly.Tests
         [InlineData(555L, 566d)]
         public void Apply_LessThan_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("lessThan", new JValue(userValue), new JValue(clauseValue)));
+            Assert.True(Operator.Apply("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -207,7 +205,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1055L, 1054d)]
         public void Apply_LessThan_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("lessThan", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -229,7 +227,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1055L, 1055d)]
         public void Apply_LessThanOrEqual_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("lessThanOrEqual", new JValue(userValue), new JValue(clauseValue)));
+            Assert.True(Operator.Apply("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -245,7 +243,7 @@ namespace LaunchDarkly.Tests
         [InlineData(546L, 545d)]
         public void Apply_LessThanOrEqual_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("lessThanOrEqual", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -258,7 +256,7 @@ namespace LaunchDarkly.Tests
         [InlineData(566L, 555d)]
         public void Apply_GreaterThan_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("greaterThan", new JValue(userValue), new JValue(clauseValue)));
+            Assert.True(Operator.Apply("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -282,7 +280,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1055L, 1055d)]
         public void Apply_GreaterThan_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("greaterThan", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -304,7 +302,7 @@ namespace LaunchDarkly.Tests
         [InlineData(1034L, 1033d)]
         public void Apply_GreaterThanOrEqual_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("greaterThanOrEqual", new JValue(userValue), new JValue(clauseValue)));
+            Assert.True(Operator.Apply("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -320,7 +318,7 @@ namespace LaunchDarkly.Tests
         [InlineData(545L, 546d)]
         public void Apply_GreaterThanOrEqual_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("greaterThanOrEqual", new JValue(userValue), new JValue(clauseValue)));
+            Assert.False(Operator.Apply("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -344,8 +342,41 @@ namespace LaunchDarkly.Tests
         [InlineData("semVerGreaterThan", "2.0.1", "xbad%ver", false)]
         public void Apply_Any_Operators(string opName, object userValue, object clauseValue, bool expected)
         {
-            var result = Operator.Apply(opName, new JValue(userValue), new JValue(clauseValue));
+            var result = Operator.Apply(opName, ArbitraryValue(userValue), ArbitraryValue(clauseValue));
             Assert.Equal(expected, result);
+        }
+
+        private LdValue ArbitraryValue(object v)
+        {
+            if (v is null)
+            {
+                return LdValue.Null;
+            }
+            if (v is bool b)
+            {
+                return LdValue.Of(b);
+            }
+            if (v is int i)
+            {
+                return LdValue.Of(i);
+            }
+            if (v is long l)
+            {
+                return LdValue.Of(l);
+            }
+            if (v is float f)
+            {
+                return LdValue.Of(f);
+            }
+            if (v is double d)
+            {
+                return LdValue.Of((float)d);
+            }
+            if (v is string s)
+            {
+                return LdValue.Of(s);
+            }
+            throw new InvalidCastException();
         }
     }
 }
