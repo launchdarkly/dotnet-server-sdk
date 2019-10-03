@@ -84,7 +84,7 @@ namespace LaunchDarkly.Client.Files
             {
                 try
                 {
-                    var content = File.ReadAllText(path);
+                    var content = ReadFileContent(path);
                     var data = _parser.Parse(content);
                     data.AddToData(allData);
                 }
@@ -96,6 +96,50 @@ namespace LaunchDarkly.Client.Files
             }
             _featureStore.Init(allData);
             _loadedValidData = true;
+        }
+
+        private const int ReadFileRetryDelay = 200;
+        private const int ReadFileRetryAttempts = 30000 / ReadFileRetryDelay;
+
+        private static string ReadFileContent(string path)
+        {
+            int delay = 0;
+            for(int i = 0; ; i++)
+            {
+                try
+                {
+                    string content = File.ReadAllText(path);
+                    return content;
+                }
+                catch(IOException e) when (IsFileLocked(e))
+                {
+                    // Retry for approximately 30 seconds before throwing
+                    if(i > ReadFileRetryAttempts)
+                    {
+                        throw;
+                    }
+#if NETSTANDARD1_4 || NETSTANDARD1_6
+                    Task.Delay(delay).Wait();
+#else
+                    Thread.Sleep(delay);
+#endif
+                    // Retry immediately the first time but 200ms there after
+                    delay = ReadFileRetryDelay;
+                }
+            }
+        }
+
+        private static bool IsFileLocked(IOException exception)
+        {
+            int errorCode = exception.HResult & 0xffff;
+            switch(errorCode)
+            {
+                case 0x20: // ERROR_SHARING_VIOLATION
+                case 0x21: // ERROR_LOCK_VIOLATION
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private void TriggerReload()
