@@ -100,6 +100,7 @@ namespace LaunchDarkly.Client.Files
 
         private static string ReadFileContent(string path)
         {
+            int delay = 0;
             for(int i = 0; ; i++)
             {
                 try
@@ -109,16 +110,18 @@ namespace LaunchDarkly.Client.Files
                 }
                 catch(IOException e) when (IsFileLocked(e))
                 {
-                    if(i > 16)
+                    // Retry for approximately 30 seconds before throwing
+                    if(i > 150)
                     {
                         throw;
                     }
-                    int delay = 200 * i;
 #if NETSTANDARD1_4 || NETSTANDARD1_6
                     Task.Delay(delay).Wait();
 #else
                     Thread.Sleep(delay);
 #endif
+                    // Retry immediately the first time but 200ms there after
+                    delay = 200;
                 }
             }
         }
