@@ -10,8 +10,8 @@ namespace LaunchDarkly.Tests
     {
         protected IFeatureStore store;
 
-        internal FeatureFlag feature1 = MakeFeature("foo", 10);
-        internal FeatureFlag feature2 = MakeFeature("bar", 10);
+        internal readonly FeatureFlag feature1 = MakeFeature("foo", 10);
+        internal readonly FeatureFlag feature2 = MakeFeature("bar", 10);
 
         protected void InitStore()
         {
@@ -58,6 +58,15 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void GetDeletedFeature()
+        {
+            InitStore();
+            store.Delete(VersionedDataKind.Features, feature1.Key, feature1.Version + 1);
+            var result = store.Get(VersionedDataKind.Features, feature1.Key);
+            Assert.Null(result);
+        }
+
+        [Fact]
         public void GetAllFeatures()
         {
             InitStore();
@@ -65,6 +74,24 @@ namespace LaunchDarkly.Tests
             Assert.Equal(2, result.Count);
             Assert.Equal(feature1.Key, result[feature1.Key].Key);
             Assert.Equal(feature2.Key, result[feature2.Key].Key);
+        }
+
+        [Fact]
+        public void GetAllFeaturesWithDeletedItems()
+        {
+            InitStore();
+            store.Delete(VersionedDataKind.Features, feature2.Key, feature2.Version + 1);
+            var result = store.All(VersionedDataKind.Features);
+            Assert.Equal(1, result.Count);
+            Assert.Equal(feature1.Key, result[feature1.Key].Key);
+        }
+
+        [Fact]
+        public void GetAllUnknownKind()
+        {
+            InitStore();
+            var result = store.All(VersionedDataKind.Segments);
+            Assert.Equal(0, result.Count);
         }
 
         [Fact]
@@ -98,6 +125,16 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void UpsertNewKind()
+        {
+            InitStore();
+            var segment = new Segment("test", 1, new List<string> { "foo" }, null, null, null, false);
+            store.Upsert(VersionedDataKind.Segments, segment);
+            var result = store.Get(VersionedDataKind.Segments, segment.Key);
+            Assert.Same(segment, result);
+        }
+
+        [Fact]
         public void DeleteWithNewerVersion()
         {
             InitStore();
@@ -119,6 +156,14 @@ namespace LaunchDarkly.Tests
             InitStore();
             store.Delete(VersionedDataKind.Features, "biz", 11);
             Assert.Null(store.Get(VersionedDataKind.Features, "biz"));
+        }
+
+        [Fact]
+        public void DeleteUnknownKind()
+        {
+            InitStore();
+            store.Delete(VersionedDataKind.Segments, "biz", 11);
+            Assert.Null(store.Get(VersionedDataKind.Segments, "biz"));
         }
 
         [Fact]
