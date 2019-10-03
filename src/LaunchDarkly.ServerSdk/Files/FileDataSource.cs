@@ -14,15 +14,17 @@ namespace LaunchDarkly.Client.Files
         private readonly List<string> _paths;
         private readonly IDisposable _reloader;
         private readonly FlagFileParser _parser;
+        private readonly bool _skipMissingPaths;
         private volatile bool _started;
         private volatile bool _loadedValidData;
-        
+
         public FileDataSource(IFeatureStore featureStore, List<string> paths, bool autoUpdate, TimeSpan pollInterval,
-            Func<string, object> alternateParser)
+            Func<string, object> alternateParser, bool skipMissingPaths)
         {
             _featureStore = featureStore;
             _paths = new List<string>(paths);
             _parser = new FlagFileParser(alternateParser);
+            _skipMissingPaths = skipMissingPaths;
             if (autoUpdate)
             {
                 try
@@ -87,6 +89,10 @@ namespace LaunchDarkly.Client.Files
                     var content = ReadFileContent(path);
                     var data = _parser.Parse(content);
                     data.AddToData(allData);
+                }
+                catch (FileNotFoundException) when (_skipMissingPaths)
+                {
+                    Log.DebugFormat("{0}: {1}", path, "File not found");
                 }
                 catch (Exception e)
                 {
