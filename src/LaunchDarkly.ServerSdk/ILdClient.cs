@@ -371,6 +371,7 @@ namespace LaunchDarkly.Client
         /// metrics. This field will also be returned as part of the custom event for Data Export.</param>
         void Track(string name, User user, LdValue data, double metricValue);
 
+        /// <summary>
         /// Tracks that a user performed an event.
         /// </summary>
         /// <remarks>
