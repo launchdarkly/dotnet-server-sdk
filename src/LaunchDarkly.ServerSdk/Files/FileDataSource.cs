@@ -98,6 +98,9 @@ namespace LaunchDarkly.Client.Files
             _loadedValidData = true;
         }
 
+        private const int ReadFileRetryDelay = 200;
+        private const int ReadFileRetryAttempts = 30000 / ReadFileRetryDelay;
+
         private static string ReadFileContent(string path)
         {
             int delay = 0;
@@ -111,7 +114,7 @@ namespace LaunchDarkly.Client.Files
                 catch(IOException e) when (IsFileLocked(e))
                 {
                     // Retry for approximately 30 seconds before throwing
-                    if(i > 150)
+                    if(i > ReadFileRetryAttempts)
                     {
                         throw;
                     }
@@ -121,7 +124,7 @@ namespace LaunchDarkly.Client.Files
                     Thread.Sleep(delay);
 #endif
                     // Retry immediately the first time but 200ms there after
-                    delay = 200;
+                    delay = ReadFileRetryDelay;
                 }
             }
         }
