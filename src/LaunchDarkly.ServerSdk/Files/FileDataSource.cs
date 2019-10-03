@@ -104,17 +104,17 @@ namespace LaunchDarkly.Client.Files
         private static string ReadFileContent(string path)
         {
             int delay = 0;
-            for(int i = 0; ; i++)
+            for (int i = 0; ; i++)
             {
                 try
                 {
                     string content = File.ReadAllText(path);
                     return content;
                 }
-                catch(IOException e) when (IsFileLocked(e))
+                catch (IOException e) when (IsFileLocked(e))
                 {
                     // Retry for approximately 30 seconds before throwing
-                    if(i > ReadFileRetryAttempts)
+                    if (i > ReadFileRetryAttempts)
                     {
                         throw;
                     }
@@ -132,7 +132,7 @@ namespace LaunchDarkly.Client.Files
         private static bool IsFileLocked(IOException exception)
         {
             int errorCode = exception.HResult & 0xffff;
-            switch(errorCode)
+            switch (errorCode)
             {
                 case 0x20: // ERROR_SHARING_VIOLATION
                 case 0x21: // ERROR_LOCK_VIOLATION
