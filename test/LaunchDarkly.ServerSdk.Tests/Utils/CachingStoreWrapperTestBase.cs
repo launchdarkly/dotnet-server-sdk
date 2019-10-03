@@ -13,6 +13,11 @@ namespace LaunchDarkly.Client.Utils.Tests
     {
         protected T _core;
 
+        // the following are ints instead of enums because Xunit's InlineData can't use enums
+        const int Uncached = 0;
+        const int Cached = 1;
+        const int CachedIndefinitely = 2;
+    
         protected CachingStoreWrapperTestBase(T core)
         {
             _core = core;
@@ -21,11 +26,12 @@ namespace LaunchDarkly.Client.Utils.Tests
         protected abstract CachingStoreWrapperBuilder MakeWrapperBase();
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void GetItem(bool cached)
+        [InlineData(Uncached)]
+        [InlineData(Cached)]
+        [InlineData(CachedIndefinitely)]
+        public void GetItem(int mode)
         {
-            var wrapper = MakeWrapper(cached);
+            var wrapper = MakeWrapper(mode);
             var itemv1 = new MockItem("flag", 1, false);
             var itemv2 = new MockItem("flag", 2, false);
 
@@ -34,15 +40,16 @@ namespace LaunchDarkly.Client.Utils.Tests
 
             _core.ForceSet(MockItem.Kind, itemv2);
             var result = wrapper.Get(MockItem.Kind, itemv1.Key);
-            Assert.Equal(cached ? itemv1 : itemv2, result); // if cached, we will not see the new underlying value yet
+            Assert.Equal(mode == Uncached ? itemv2 : itemv1, result); // if cached, we will not see the new underlying value yet
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void GetDeletedItem(bool cached)
+        [InlineData(Uncached)]
+        [InlineData(Cached)]
+        [InlineData(CachedIndefinitely)]
+        public void GetDeletedItem(int mode)
         {
-            var wrapper = MakeWrapper(cached);
+            var wrapper = MakeWrapper(mode);
             var itemv1 = new MockItem("flag", 1, true);
             var itemv2 = new MockItem("flag", 2, false);
 
@@ -51,7 +58,7 @@ namespace LaunchDarkly.Client.Utils.Tests
 
             _core.ForceSet(MockItem.Kind, itemv2);
             var result = wrapper.Get(MockItem.Kind, itemv1.Key);
-            if (cached)
+            if (mode != Uncached)
             {
                 Assert.Null(result); // if cached, we will not see the new underlying value yet
             }
@@ -62,18 +69,19 @@ namespace LaunchDarkly.Client.Utils.Tests
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void GetMissingItem(bool cached)
+        [InlineData(Uncached)]
+        [InlineData(Cached)]
+        [InlineData(CachedIndefinitely)]
+        public void GetMissingItem(int mode)
         {
-            var wrapper = MakeWrapper(cached);
+            var wrapper = MakeWrapper(mode);
             var item = new MockItem("flag", 1, false);
 
             Assert.Null(wrapper.Get(MockItem.Kind, item.Key));
 
             _core.ForceSet(MockItem.Kind, item);
             var result = wrapper.Get(MockItem.Kind, item.Key);
-            if (cached)
+            if (mode != Uncached)
             {
                 Assert.Null(result); // the cache can retain a null result
             }
@@ -86,7 +94,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         [Fact]
         public void CachedGetUsesValuesFromInit()
         {
-            var wrapper = MakeWrapper(true);
+            var wrapper = MakeWrapper(Cached);
             var item1 = new MockItem("flag1", 1, false);
             var item2 = new MockItem("flag2", 1, false);
 
@@ -99,11 +107,12 @@ namespace LaunchDarkly.Client.Utils.Tests
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void GetAll(bool cached)
+        [InlineData(Uncached)]
+        [InlineData(Cached)]
+        [InlineData(CachedIndefinitely)]
+        public void GetAll(int mode)
         {
-            var wrapper = MakeWrapper(cached);
+            var wrapper = MakeWrapper(mode);
             var item1 = new MockItem("flag1", 1, false);
             var item2 = new MockItem("flag2", 1, false);
 
@@ -120,7 +129,7 @@ namespace LaunchDarkly.Client.Utils.Tests
 
             _core.ForceRemove(MockItem.Kind, item2.Key);
             items = wrapper.All(MockItem.Kind);
-            if (cached)
+            if (mode != Uncached)
             {
                 Assert.Equal(expected, items);
             }
@@ -135,11 +144,12 @@ namespace LaunchDarkly.Client.Utils.Tests
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void GetAllRemovesDeletedItems(bool cached)
+        [InlineData(Uncached)]
+        [InlineData(Cached)]
+        [InlineData(CachedIndefinitely)]
+        public void GetAllRemovesDeletedItems(int mode)
         {
-            var wrapper = MakeWrapper(cached);
+            var wrapper = MakeWrapper(mode);
             var item1 = new MockItem("flag1", 1, false);
             var item2 = new MockItem("flag2", 1, true);
 
@@ -157,7 +167,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         [Fact]
         public void CachedAllUsesValuesFromInit()
         {
-            var wrapper = MakeWrapper(true);
+            var wrapper = MakeWrapper(Cached);
             var item1 = new MockItem("flag1", 1, false);
             var item2 = new MockItem("flag2", 1, false);
 
@@ -177,7 +187,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         [Fact]
         public void CachedAllUsesFreshValuesIfThereHasBeenAnUpdate()
         {
-            var wrapper = MakeWrapper(true);
+            var wrapper = MakeWrapper(Cached);
             var key1 = "flag1";
             var item1 = new MockItem(key1, 1, false);
             var item1v2 = new MockItem(key1, 2, false);
@@ -205,11 +215,12 @@ namespace LaunchDarkly.Client.Utils.Tests
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void UpsertSuccessful(bool cached)
+        [InlineData(Uncached)]
+        [InlineData(Cached)]
+        [InlineData(CachedIndefinitely)]
+        public void UpsertSuccessful(int mode)
         {
-            var wrapper = MakeWrapper(cached);
+            var wrapper = MakeWrapper(mode);
             var key = "flag";
             var itemv1 = new MockItem(key, 1, false);
             var itemv2 = new MockItem(key, 2, false);
@@ -224,7 +235,7 @@ namespace LaunchDarkly.Client.Utils.Tests
 
             // if we have a cache, verify that the new item is now cached by writing a different value
             // to the underlying data - Get should still return the cached item
-            if (cached)
+            if (mode != Uncached)
             {
                 MockItem item1v3 = new MockItem(key, 3, false);
                 _core.ForceSet(MockItem.Kind, item1v3);
@@ -236,7 +247,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         [Fact]
         public void CachedUpsertUnsuccessful()
         {
-            var wrapper = MakeWrapper(true);
+            var wrapper = MakeWrapper(Cached);
             var key = "flag";
             var itemv1 = new MockItem(key, 1, false);
             var itemv2 = new MockItem(key, 2, false);
@@ -254,12 +265,23 @@ namespace LaunchDarkly.Client.Utils.Tests
 
             Assert.Equal(itemv2, wrapper.Get(MockItem.Kind, key));
         }
-
-        private CachingStoreWrapper MakeWrapper(bool cached)
+        
+        private CachingStoreWrapper MakeWrapper(int mode)
         {
-            return MakeWrapperBase()
-                .WithCaching(cached ? FeatureStoreCacheConfig.Enabled : FeatureStoreCacheConfig.Disabled)
-                .Build();
+            FeatureStoreCacheConfig config;
+            switch (mode)
+            {
+                case Cached:
+                    config = FeatureStoreCacheConfig.Enabled.WithTtlSeconds(30);
+                    break;
+                case CachedIndefinitely:
+                    config = FeatureStoreCacheConfig.Enabled.WithTtl(System.Threading.Timeout.InfiniteTimeSpan);
+                    break;
+                default:
+                    config = FeatureStoreCacheConfig.Disabled;
+                    break;
+            }
+            return MakeWrapperBase().WithCaching(config).Build();
         }
 
         private IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> MakeData(params MockItem[] items)

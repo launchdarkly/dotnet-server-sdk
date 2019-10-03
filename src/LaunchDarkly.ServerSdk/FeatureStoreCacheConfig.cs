@@ -28,6 +28,13 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// The cache expiration time. Caching is enabled if this is greater than zero.
         /// </summary>
+        /// <remarks>
+        /// If the value is negative (such as <see cref="System.Threading.Timeout.InfiniteTimeSpan"/>), data is cached
+        /// forever (i.e. it will only be read again from the database if the SDK is restarted). Use the "cached forever"
+        /// mode with caution: it means that in a scenario where multiple processes are sharing the database, and the
+        /// current process loses connectivity to LaunchDarkly while other processes are still receiving updates and
+        /// writing them to the database, the current process will have stale data.
+        /// </remarks>
         /// <seealso cref="WithTtl(TimeSpan)"/>
         /// <seealso cref="WithTtlMillis(double)"/>
         /// <seealso cref="WithTtlSeconds(double)"/>
@@ -40,7 +47,7 @@ namespace LaunchDarkly.Client
         {
             get
             {
-                return Ttl > TimeSpan.Zero;
+                return !(Ttl == TimeSpan.Zero);
             }
         }
 

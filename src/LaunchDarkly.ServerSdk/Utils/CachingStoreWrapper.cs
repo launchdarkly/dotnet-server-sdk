@@ -57,19 +57,22 @@ namespace LaunchDarkly.Client.Utils
 
             if (caching.IsEnabled)
             {
-                _itemCache = Caches.KeyValue<CacheKey, IVersionedData>()
+                var itemCacheBuilder = Caches.KeyValue<CacheKey, IVersionedData>()
                     .WithLoader(GetInternalForCache)
-                    .WithExpiration(caching.Ttl)
-                    .WithMaximumEntries(caching.MaximumEntries)
-                    .Build();
-                _allCache = Caches.KeyValue<IVersionedDataKind, IDictionary<string, IVersionedData>>()
-                    .WithLoader(GetAllForCache)
-                    .WithExpiration(caching.Ttl)
-                    .Build();
-                _initCache = Caches.SingleValue<bool>()
-                    .WithLoader(_core.InitializedInternal)
-                    .WithExpiration(caching.Ttl)
-                    .Build();
+                    .WithMaximumEntries(caching.MaximumEntries);
+                var allCacheBuilder = Caches.KeyValue<IVersionedDataKind, IDictionary<string, IVersionedData>>()
+                    .WithLoader(GetAllForCache);
+                var initCacheBuilder = Caches.SingleValue<bool>()
+                    .WithLoader(_core.InitializedInternal);
+                if (caching.Ttl.TotalMilliseconds > 0)
+                {
+                    itemCacheBuilder.WithExpiration(caching.Ttl);
+                    allCacheBuilder.WithExpiration(caching.Ttl);
+                    initCacheBuilder.WithExpiration(caching.Ttl);
+                }
+                _itemCache = itemCacheBuilder.Build();
+                _allCache = allCacheBuilder.Build();
+                _initCache = initCacheBuilder.Build();
             }
             else
             {
