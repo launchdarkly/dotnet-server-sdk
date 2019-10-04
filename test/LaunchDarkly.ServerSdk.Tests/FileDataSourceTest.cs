@@ -179,7 +179,10 @@ namespace LaunchDarkly.Tests
                     fp.Start();
                     Assert.True(store.Initialized());
                     Assert.Equal(0, CountSegmentsInStore());
-                    
+
+                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                    // See FilePollingReloader for the reason behind this long sleep
+
                     File.Delete(filename2);
                     File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
 
@@ -199,20 +202,22 @@ namespace LaunchDarkly.Tests
         {
             var filename1 = Path.GetTempFileName();
             var filename2 = Path.GetTempFileName();
+            File.Delete(filename2);
             factory.WithFilePaths(filename1, filename2)
                 .WithSkipMissingPaths(true)
                 .WithAutoUpdate(true).WithPollInterval(TimeSpan.FromMilliseconds(200));
             try
             {
                 File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
-                File.WriteAllText(filename2, "{}");
                 using (var fp = factory.CreateUpdateProcessor(config, store))
                 {
                     fp.Start();
                     Assert.True(store.Initialized());
                     Assert.Equal(0, CountSegmentsInStore());
 
-                    File.Delete(filename2);
+                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                    // See FilePollingReloader for the reason behind this long sleep
+
                     File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
 
                     Assert.True(
