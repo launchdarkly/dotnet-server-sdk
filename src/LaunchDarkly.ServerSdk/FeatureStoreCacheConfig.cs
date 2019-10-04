@@ -52,6 +52,17 @@ namespace LaunchDarkly.Client
         }
 
         /// <summary>
+        /// True if caching is enabled and does not have a finite TTL.
+        /// </summary>
+        public bool IsInfiniteTtl
+        {
+            get
+            {
+                return Ttl.TotalMilliseconds < 0;
+            }
+        }
+
+        /// <summary>
         /// The maximum number of entries that can be held in the cache at a time.
         /// </summary>
         public int? MaximumEntries { get; private set; }
