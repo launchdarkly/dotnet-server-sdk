@@ -214,7 +214,7 @@ namespace LaunchDarkly.Client.Utils
                         _allCache.Set(kind, cachedAll.SetItem(item.Key, newState));
                     }
                     catch (Exception) { }
-                    // Am exception here means that we did not have a cached value for All, so it tried to query
+                    // An exception here means that we did not have a cached value for All, so it tried to query
                     // the underlying store, which failed (not surprisingly since it just failed a moment ago
                     // when we tried to do an update). This should not happen in infinite-cache mode, but if it
                     // does happen, there isn't really anything we can do.
