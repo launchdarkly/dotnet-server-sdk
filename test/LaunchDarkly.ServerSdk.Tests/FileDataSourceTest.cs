@@ -75,12 +75,25 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StartTaskIsCompletedAndInitializedIsFalseAfterFailedLoadDueToMissingFile()
         {
-            factory.WithFilePaths("bad-file-path");
+            factory.WithFilePaths(ALL_DATA_JSON_FILE, "bad-file-path");
             using (var fp = factory.CreateUpdateProcessor(config, store))
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
                 Assert.False(fp.Initialized());
+            }
+        }
+
+        [Fact]
+        public void CanIgnoreMissingFileOnStartup()
+        {
+            factory.WithFilePaths(ALL_DATA_JSON_FILE, "bad-file-path").WithSkipMissingPaths(true);
+            using (var fp = factory.CreateUpdateProcessor(config, store))
+            {
+                var task = fp.Start();
+                Assert.True(task.IsCompleted);
+                Assert.True(fp.Initialized());
+                Assert.Equal(2, CountFlagsInStore());
             }
         }
 
@@ -147,6 +160,76 @@ namespace LaunchDarkly.Tests
             finally
             {
                 File.Delete(filename);
+            }
+        }
+
+        [Fact]
+        public void ModifiedFileIsNotReloadedIfOneFileIsMissing()
+        {
+            var filename1 = Path.GetTempFileName();
+            var filename2 = Path.GetTempFileName();
+            factory.WithFilePaths(filename1, filename2)
+                .WithAutoUpdate(true).WithPollInterval(TimeSpan.FromMilliseconds(200));
+            try
+            {
+                File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
+                File.WriteAllText(filename2, "{}");
+                using (var fp = factory.CreateUpdateProcessor(config, store))
+                {
+                    fp.Start();
+                    Assert.True(store.Initialized());
+                    Assert.Equal(0, CountSegmentsInStore());
+
+                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                    // See FilePollingReloader for the reason behind this long sleep
+
+                    File.Delete(filename2);
+                    File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
+
+                    Thread.Sleep(TimeSpan.FromMilliseconds(400));
+                    Assert.Equal(0, CountSegmentsInStore());
+                }
+            }
+            finally
+            {
+                File.Delete(filename1);
+                File.Delete(filename2);
+            }
+        }
+
+        [Fact]
+        public void ModifiedFileIsReloadedEvenIfOneFileIsMissingIfSkipMissingPathsIsSet()
+        {
+            var filename1 = Path.GetTempFileName();
+            var filename2 = Path.GetTempFileName();
+            File.Delete(filename2);
+            factory.WithFilePaths(filename1, filename2)
+                .WithSkipMissingPaths(true)
+                .WithAutoUpdate(true).WithPollInterval(TimeSpan.FromMilliseconds(200));
+            try
+            {
+                File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
+                using (var fp = factory.CreateUpdateProcessor(config, store))
+                {
+                    fp.Start();
+                    Assert.True(store.Initialized());
+                    Assert.Equal(0, CountSegmentsInStore());
+
+                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                    // See FilePollingReloader for the reason behind this long sleep
+
+                    File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
+
+                    Assert.True(
+                        WaitForCondition(TimeSpan.FromSeconds(3), () => CountSegmentsInStore() == 1),
+                        "Did not detect file modification"
+                    );
+                }
+            }
+            finally
+            {
+                File.Delete(filename1);
+                File.Delete(filename2);
             }
         }
 
