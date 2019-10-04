@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Cache;
 
@@ -26,7 +27,7 @@ namespace LaunchDarkly.Client.Utils
         private readonly FeatureStoreCacheConfig _caching;
         
         private readonly ICache<CacheKey, IVersionedData> _itemCache;
-        private readonly ICache<IVersionedDataKind, IDictionary<string, IVersionedData>> _allCache;
+        private readonly ICache<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>> _allCache;
         private readonly ISingleValueCache<bool> _initCache;
         private volatile bool _inited;
 
@@ -57,19 +58,22 @@ namespace LaunchDarkly.Client.Utils
 
             if (caching.IsEnabled)
             {
-                _itemCache = Caches.KeyValue<CacheKey, IVersionedData>()
+                var itemCacheBuilder = Caches.KeyValue<CacheKey, IVersionedData>()
                     .WithLoader(GetInternalForCache)
-                    .WithExpiration(caching.Ttl)
-                    .WithMaximumEntries(caching.MaximumEntries)
-                    .Build();
-                _allCache = Caches.KeyValue<IVersionedDataKind, IDictionary<string, IVersionedData>>()
-                    .WithLoader(GetAllForCache)
-                    .WithExpiration(caching.Ttl)
-                    .Build();
-                _initCache = Caches.SingleValue<bool>()
-                    .WithLoader(_core.InitializedInternal)
-                    .WithExpiration(caching.Ttl)
-                    .Build();
+                    .WithMaximumEntries(caching.MaximumEntries);
+                var allCacheBuilder = Caches.KeyValue<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>>()
+                    .WithLoader(GetAllForCache);
+                var initCacheBuilder = Caches.SingleValue<bool>()
+                    .WithLoader(_core.InitializedInternal);
+                if (!caching.IsInfiniteTtl)
+                {
+                    itemCacheBuilder.WithExpiration(caching.Ttl);
+                    allCacheBuilder.WithExpiration(caching.Ttl);
+                    initCacheBuilder.WithExpiration(caching.Ttl);
+                }
+                _itemCache = itemCacheBuilder.Build();
+                _allCache = allCacheBuilder.Build();
+                _initCache = initCacheBuilder.Build();
             }
             else
             {
@@ -105,21 +109,44 @@ namespace LaunchDarkly.Client.Utils
         /// <inheritdoc/>
         public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
         {
-            _core.InitInternal(items);
-            _inited = true;
+            Exception failure = null;
+            try
+            {
+                _core.InitInternal(items);
+            }
+            catch (Exception e)
+            {
+                failure = e;
+            }
             if (_itemCache != null && _allCache != null)
             {
                 _itemCache.Clear();
                 _allCache.Clear();
+                if (failure != null && !_caching.IsInfiniteTtl)
+                {
+                    // Normally, if the underlying store failed to do the update, we do not want to update the cache -
+                    // the idea being that it's better to stay in a consistent state of having old data than to act
+                    // like we have new data but then suddenly fall back to old data when the cache expires. However,
+                    // if the cache TTL is infinite, then it makes sense to update the cache always.
+                    throw failure;
+                }
                 foreach (var e0 in items)
                 {
                     var kind = e0.Key;
-                    _allCache.Set(kind, e0.Value);
+                    _allCache.Set(kind, e0.Value.ToImmutableDictionary());
                     foreach (var e1 in e0.Value)
                     {
                         _itemCache.Set(new CacheKey(kind, e1.Key), e1.Value);
                     }
                 }
+            }
+            if (failure is null || _caching.IsInfiniteTtl)
+            {
+                _inited = true;
+            }
+            if (failure != null)
+            {
+                throw failure;
             }
         }
 
@@ -151,14 +178,55 @@ namespace LaunchDarkly.Client.Utils
         /// <inheritdoc/>
         public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
         {
-            IVersionedData newState = _core.UpsertInternal(kind, item);
+            Exception failure = null;
+            IVersionedData newState = item;
+            try
+            {
+                newState = _core.UpsertInternal(kind, item);
+            }
+            catch (Exception e)
+            {
+                // Normally, if the underlying store failed to do the update, we do not want to update the cache -
+                // the idea being that it's better to stay in a consistent state of having old data than to act
+                // like we have new data but then suddenly fall back to old data when the cache expires. However,
+                // if the cache TTL is infinite, then it makes sense to update the cache always.
+                if (!_caching.IsInfiniteTtl)
+                {
+                    throw;
+                }
+                failure = e;
+            }
             if (_itemCache != null)
             {
                 _itemCache.Set(new CacheKey(kind, item.Key), newState);
             }
             if (_allCache != null)
             {
-                _allCache.Remove(kind);
+                // If the cache has a finite TTL, then we should remove the "all items" cache entry to force
+                // a reread the next time All is called. However, if it's an infinite TTL, we need to just
+                // update the item within the existing "all items" entry (since we want things to still work
+                // even if the underlying store is unavailable).
+                if (_caching.IsInfiniteTtl)
+                {
+                    try
+                    {
+                        var cachedAll = _allCache.Get(kind);
+                        _allCache.Set(kind, cachedAll.SetItem(item.Key, newState));
+                    }
+                    catch (Exception) { }
+                    // An exception here means that we did not have a cached value for All, so it tried to query
+                    // the underlying store, which failed (not surprisingly since it just failed a moment ago
+                    // when we tried to do an update). This should not happen in infinite-cache mode, but if it
+                    // does happen, there isn't really anything we can do.
+                }
+                else
+                {
+                    _allCache.Remove(kind);
+                }
+            }
+            if (failure != null)
+            {
+                throw failure;
             }
         }
 
@@ -191,9 +259,9 @@ namespace LaunchDarkly.Client.Utils
             return _core.GetInternal(key.Kind, key.Key);
         }
 
-        private IDictionary<string, IVersionedData> GetAllForCache(IVersionedDataKind kind)
+        private ImmutableDictionary<string, IVersionedData> GetAllForCache(IVersionedDataKind kind)
         {
-            return _core.GetAllInternal(kind);
+            return _core.GetAllInternal(kind).ToImmutableDictionary();
         }
 
         private IDictionary<string, T> FilterItems<T>(IDictionary<string, IVersionedData> items) where T : IVersionedData
