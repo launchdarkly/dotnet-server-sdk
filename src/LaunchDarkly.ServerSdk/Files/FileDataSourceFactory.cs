@@ -23,6 +23,7 @@ namespace LaunchDarkly.Client.Files
         private bool _autoUpdate = false;
         private TimeSpan _pollInterval = DefaultPollInterval;
         private Func<string, object> _parser = null;
+        private bool _skipMissingPaths = false;
 
         /// <summary>
         /// Adds any number of source files for loading flag data, specifying each file path as a string.
@@ -125,6 +126,18 @@ namespace LaunchDarkly.Client.Files
         }
 
         /// <summary>
+        /// Specifies to ignore missing file paths instead of treating them as an error.
+        /// </summary>
+        /// <param name="skipMissingPaths">If <c>true</c>, missing file paths will be skipped,
+        /// otherwise they will be treated as an error</param>
+        /// <returns>the same factory object</returns>
+        public FileDataSourceFactory WithSkipMissingPaths(bool skipMissingPaths)
+        {
+            _skipMissingPaths = skipMissingPaths;
+            return this;
+        }
+
+        /// <summary>
         /// Used internally by the LaunchDarkly client.
         /// </summary>
         /// <param name="config"></param>
@@ -132,7 +145,7 @@ namespace LaunchDarkly.Client.Files
         /// <returns>the component instance</returns>
         public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
-            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser);
+            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths);
         }
     }
 }
