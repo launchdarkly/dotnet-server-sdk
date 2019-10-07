@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>5.8.0</Version>
+    <Version>5.9.0</Version>
     <TargetFrameworks>netstandard1.4;netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/dotnet-server-sdk/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
@@ -15,17 +15,17 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Release'">
-    <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.6.1" />
+    <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.7.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.6.1" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.7.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" Condition="'$(TargetFramework)' != 'net45'" />
     <PackageReference Include="Newtonsoft.Json" Version="6.0.1" Condition="'$(TargetFramework)' == 'net45'" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System" />
