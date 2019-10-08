@@ -43,6 +43,7 @@
   <HelpKINode Title="AndSecondaryKey method" Url="html/M_LaunchDarkly_Client_UserExtensions_AndSecondaryKey.htm" />
   <HelpKINode Title="Anonymous method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Anonymous.htm" />
   <HelpKINode Title="Anonymous property" Url="html/P_LaunchDarkly_Client_User_Anonymous.htm" />
+  <HelpKINode Title="AnonymousOptional method" Url="html/M_LaunchDarkly_Client_IUserBuilder_AnonymousOptional.htm" />
   <HelpKINode Title="Array enumeration member" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
   <HelpKINode Title="ArrayFrom method">
     <HelpKINode Title="LdValue.ArrayFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_ArrayFrom.htm" />
@@ -415,6 +416,7 @@
   <HelpKINode Title="FeatureStoreCacheConfig.Disabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Disabled.htm" />
   <HelpKINode Title="FeatureStoreCacheConfig.Enabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Enabled.htm" />
   <HelpKINode Title="FeatureStoreCacheConfig.IsEnabled property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsEnabled.htm" />
+  <HelpKINode Title="FeatureStoreCacheConfig.IsInfiniteTtl property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsInfiniteTtl.htm" />
   <HelpKINode Title="FeatureStoreCacheConfig.MaximumEntries property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_MaximumEntries.htm" />
   <HelpKINode Title="FeatureStoreCacheConfig.Ttl property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_Ttl.htm" />
   <HelpKINode Title="FeatureStoreCacheConfig.WithMaximumEntries method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithMaximumEntries.htm" />
@@ -450,6 +452,7 @@
   <HelpKINode Title="FileDataSourceFactory.WithFilePaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFilePaths.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithParser method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithParser.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithPollInterval method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithPollInterval.htm" />
+  <HelpKINode Title="FileDataSourceFactory.WithSkipMissingPaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithSkipMissingPaths.htm" />
   <HelpKINode Title="FirstName method" Url="html/M_LaunchDarkly_Client_IUserBuilder_FirstName.htm" />
   <HelpKINode Title="FirstName property" Url="html/P_LaunchDarkly_Client_User_FirstName.htm" />
   <HelpKINode Title="FlagsStateOption class">
@@ -722,6 +725,7 @@
   <HelpKINode Title="IPAddress property" Url="html/P_LaunchDarkly_Client_User_IPAddress.htm" />
   <HelpKINode Title="IsDefaultValue property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_IsDefaultValue.htm" />
   <HelpKINode Title="IsEnabled property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsEnabled.htm" />
+  <HelpKINode Title="IsInfiniteTtl property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsInfiniteTtl.htm" />
   <HelpKINode Title="IsInt property" Url="html/P_LaunchDarkly_Client_LdValue_IsInt.htm" />
   <HelpKINode Title="IsNull property" Url="html/P_LaunchDarkly_Client_LdValue_IsNull.htm" />
   <HelpKINode Title="IsNumber property" Url="html/P_LaunchDarkly_Client_LdValue_IsNumber.htm" />
@@ -748,6 +752,7 @@
     <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IUserBuilder.htm" />
   </HelpKINode>
   <HelpKINode Title="IUserBuilder.Anonymous method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Anonymous.htm" />
+  <HelpKINode Title="IUserBuilder.AnonymousOptional method" Url="html/M_LaunchDarkly_Client_IUserBuilder_AnonymousOptional.htm" />
   <HelpKINode Title="IUserBuilder.Avatar method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Avatar.htm" />
   <HelpKINode Title="IUserBuilder.Build method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Build.htm" />
   <HelpKINode Title="IUserBuilder.Country method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Country.htm" />
@@ -1214,6 +1219,7 @@
   <HelpKINode Title="WithReadTimeout method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReadTimeout.htm" />
   <HelpKINode Title="WithReasons field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_WithReasons.htm" />
   <HelpKINode Title="WithReconnectTime method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReconnectTime.htm" />
+  <HelpKINode Title="WithSkipMissingPaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithSkipMissingPaths.htm" />
   <HelpKINode Title="WithStartWaitTime method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithStartWaitTime.htm" />
   <HelpKINode Title="WithStreamUri method" Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri.htm" />
   <HelpKINode Title="WithTtl method" Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtl.htm" />

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <HelpTOC>
 
-  <HelpTOCNode Id="f3c49d97-6bec-4066-bf93-f7aef3a8c37e" Title="Namespaces" Url="html/R_Project_Documentation.htm">
-    <HelpTOCNode Id="c0d61dfe-dae4-403e-8f32-7fbd68ef6c4b" Title="LaunchDarkly.Client" Url="html/N_LaunchDarkly_Client.htm">
-      <HelpTOCNode Id="845fd32f-c883-44ba-96ab-bfc3fbf5cdc3" Title="Components Class" Url="html/T_LaunchDarkly_Client_Components.htm">
-        <HelpTOCNode Id="d222d1c2-dd3c-4184-b5e9-ddb14de5185f" Title="Components Properties" Url="html/Properties_T_LaunchDarkly_Client_Components.htm">
+  <HelpTOCNode Id="d847778f-3732-4a91-a1df-d47f8e58d09c" Title="Namespaces" Url="html/R_Project_Documentation.htm">
+    <HelpTOCNode Id="fadda233-6329-472a-ba71-8fb754d24317" Title="LaunchDarkly.Client" Url="html/N_LaunchDarkly_Client.htm">
+      <HelpTOCNode Id="92b09a57-425d-43e9-aefb-d0cfdeb86d21" Title="Components Class" Url="html/T_LaunchDarkly_Client_Components.htm">
+        <HelpTOCNode Id="6ae474d6-3ea9-4ffe-952a-00a212ba7c53" Title="Components Properties" Url="html/Properties_T_LaunchDarkly_Client_Components.htm">
           <HelpTOCNode Title="DefaultEventProcessor Property " Url="html/P_LaunchDarkly_Client_Components_DefaultEventProcessor.htm" />
           <HelpTOCNode Title="DefaultUpdateProcessor Property " Url="html/P_LaunchDarkly_Client_Components_DefaultUpdateProcessor.htm" />
           <HelpTOCNode Title="InMemoryFeatureStore Property " Url="html/P_LaunchDarkly_Client_Components_InMemoryFeatureStore.htm" />
@@ -12,8 +12,8 @@
           <HelpTOCNode Title="NullUpdateProcessor Property " Url="html/P_LaunchDarkly_Client_Components_NullUpdateProcessor.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="a1dfdf96-4d69-4524-bc86-3fd93f926642" Title="Configuration Class" Url="html/T_LaunchDarkly_Client_Configuration.htm">
-        <HelpTOCNode Id="2376b5c9-1ed0-42f9-aafd-e5e5fe8cf2cf" Title="Configuration Properties" Url="html/Properties_T_LaunchDarkly_Client_Configuration.htm">
+      <HelpTOCNode Id="bf92d2ec-f846-49b5-b20a-ced663243dd8" Title="Configuration Class" Url="html/T_LaunchDarkly_Client_Configuration.htm">
+        <HelpTOCNode Id="150b1866-f491-43ad-a6ff-ab5ec7f0fc45" Title="Configuration Properties" Url="html/Properties_T_LaunchDarkly_Client_Configuration.htm">
           <HelpTOCNode Title="AllAttributesPrivate Property " Url="html/P_LaunchDarkly_Client_Configuration_AllAttributesPrivate.htm" />
           <HelpTOCNode Title="BaseUri Property " Url="html/P_LaunchDarkly_Client_Configuration_BaseUri.htm" />
           <HelpTOCNode Title="EventCapacity Property " Url="html/P_LaunchDarkly_Client_Configuration_EventCapacity.htm" />
@@ -42,25 +42,25 @@
           <HelpTOCNode Title="UserKeysCapacity Property " Url="html/P_LaunchDarkly_Client_Configuration_UserKeysCapacity.htm" />
           <HelpTOCNode Title="UserKeysFlushInterval Property " Url="html/P_LaunchDarkly_Client_Configuration_UserKeysFlushInterval.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="151104c6-2166-4ad7-a5b5-882ed7751528" Title="Configuration Methods" Url="html/Methods_T_LaunchDarkly_Client_Configuration.htm">
-          <HelpTOCNode Id="f69d2619-18c6-4721-9729-b681a8e6e202" Title="Builder Method " Url="html/Overload_LaunchDarkly_Client_Configuration_Builder.htm">
+        <HelpTOCNode Id="b010b161-d8f7-4058-85d6-8148efbea798" Title="Configuration Methods" Url="html/Methods_T_LaunchDarkly_Client_Configuration.htm">
+          <HelpTOCNode Id="0158f90b-4897-42c9-bad3-c6a9aed39637" Title="Builder Method " Url="html/Overload_LaunchDarkly_Client_Configuration_Builder.htm">
             <HelpTOCNode Title="Builder Method (String)" Url="html/M_LaunchDarkly_Client_Configuration_Builder_1.htm" />
             <HelpTOCNode Title="Builder Method (Configuration)" Url="html/M_LaunchDarkly_Client_Configuration_Builder.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="Default Method " Url="html/M_LaunchDarkly_Client_Configuration_Default.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="f4da6e06-f325-402a-af6d-2d1ea79a60d4" Title="Configuration Fields" Url="html/Fields_T_LaunchDarkly_Client_Configuration.htm">
+        <HelpTOCNode Id="fee2059e-f460-489a-90cf-889565469d49" Title="Configuration Fields" Url="html/Fields_T_LaunchDarkly_Client_Configuration.htm">
           <HelpTOCNode Title="DefaultPollingInterval Field" Url="html/F_LaunchDarkly_Client_Configuration_DefaultPollingInterval.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="08025017-70c1-465a-87d6-c96f12392071" Title="ConfigurationExtensions Class" Url="html/T_LaunchDarkly_Client_ConfigurationExtensions.htm">
-        <HelpTOCNode Id="aeb86ebd-5ae1-4626-ba05-c67501d0a2bd" Title="ConfigurationExtensions Methods" Url="html/Methods_T_LaunchDarkly_Client_ConfigurationExtensions.htm">
+      <HelpTOCNode Id="866396d3-26f5-402f-87d4-97b2a04d3efa" Title="ConfigurationExtensions Class" Url="html/T_LaunchDarkly_Client_ConfigurationExtensions.htm">
+        <HelpTOCNode Id="838a2fae-67d1-4ca9-8297-a96bb9be6846" Title="ConfigurationExtensions Methods" Url="html/Methods_T_LaunchDarkly_Client_ConfigurationExtensions.htm">
           <HelpTOCNode Title="WithAllAttributesPrivate Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithAllAttributesPrivate.htm" />
           <HelpTOCNode Title="WithEventProcessorFactory Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventProcessorFactory.htm" />
           <HelpTOCNode Title="WithEventQueueCapacity Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueCapacity.htm" />
           <HelpTOCNode Title="WithEventQueueFrequency Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueFrequency.htm" />
           <HelpTOCNode Title="WithEventSamplingInterval Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventSamplingInterval.htm" />
-          <HelpTOCNode Id="8287cc00-1f04-41a8-b02e-df387e29ddbb" Title="WithEventsUri Method " Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithEventsUri.htm">
+          <HelpTOCNode Id="d7ce1f43-b257-4d3f-ab89-5018d75daafc" Title="WithEventsUri Method " Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithEventsUri.htm">
             <HelpTOCNode Title="WithEventsUri Method (Configuration, String)" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventsUri.htm" />
             <HelpTOCNode Title="WithEventsUri Method (Configuration, Uri)" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventsUri_1.htm" />
           </HelpTOCNode>
@@ -76,12 +76,12 @@
           <HelpTOCNode Title="WithReadTimeout Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReadTimeout.htm" />
           <HelpTOCNode Title="WithReconnectTime Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithReconnectTime.htm" />
           <HelpTOCNode Title="WithStartWaitTime Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithStartWaitTime.htm" />
-          <HelpTOCNode Id="a6a78313-c5e7-4814-8212-5ea0403a2caa" Title="WithStreamUri Method " Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri.htm">
+          <HelpTOCNode Id="f0532c77-70f2-4229-83fe-ee2148b26231" Title="WithStreamUri Method " Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri.htm">
             <HelpTOCNode Title="WithStreamUri Method (Configuration, String)" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri.htm" />
             <HelpTOCNode Title="WithStreamUri Method (Configuration, Uri)" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri_1.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="WithUpdateProcessorFactory Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUpdateProcessorFactory.htm" />
-          <HelpTOCNode Id="b0faf15d-e070-4aa1-8f68-53aaacacf555" Title="WithUri Method " Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithUri.htm">
+          <HelpTOCNode Id="6bafbd0c-c00d-4a9e-8d46-e9238106e88b" Title="WithUri Method " Url="html/Overload_LaunchDarkly_Client_ConfigurationExtensions_WithUri.htm">
             <HelpTOCNode Title="WithUri Method (Configuration, String)" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUri.htm" />
             <HelpTOCNode Title="WithUri Method (Configuration, Uri)" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUri_1.htm" />
           </HelpTOCNode>
@@ -90,8 +90,8 @@
           <HelpTOCNode Title="WithUserKeysFlushInterval Method " Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUserKeysFlushInterval.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="a604e857-0f0f-4153-9788-6aacea69642f" Title="CustomEvent Class" Url="html/T_LaunchDarkly_Client_CustomEvent.htm">
-        <HelpTOCNode Id="8b358809-dd4a-4ded-8e9c-e89e5deff7f9" Title="CustomEvent Properties" Url="html/Properties_T_LaunchDarkly_Client_CustomEvent.htm">
+      <HelpTOCNode Id="753e2bcb-f08a-4813-87e7-32a74ff8a98c" Title="CustomEvent Class" Url="html/T_LaunchDarkly_Client_CustomEvent.htm">
+        <HelpTOCNode Id="f5928ec6-8a02-40d7-b14e-fb52da64523c" Title="CustomEvent Properties" Url="html/Properties_T_LaunchDarkly_Client_CustomEvent.htm">
           <HelpTOCNode Title="Data Property " Url="html/P_LaunchDarkly_Client_CustomEvent_Data.htm" />
           <HelpTOCNode Title="JsonData Property " Url="html/P_LaunchDarkly_Client_CustomEvent_JsonData.htm" />
           <HelpTOCNode Title="LdValueData Property " Url="html/P_LaunchDarkly_Client_CustomEvent_LdValueData.htm" />
@@ -99,94 +99,94 @@
         </HelpTOCNode>
         <HelpTOCNode Title="CustomEvent Methods" Url="html/Methods_T_LaunchDarkly_Client_CustomEvent.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="82972924-7e38-4af4-a086-9fd8bea01d24" Title="EvaluationDetail(T) Class" Url="html/T_LaunchDarkly_Client_EvaluationDetail_1.htm">
+      <HelpTOCNode Id="43ab3c58-726d-4d58-b20e-6b61d56c72e0" Title="EvaluationDetail(T) Class" Url="html/T_LaunchDarkly_Client_EvaluationDetail_1.htm">
         <HelpTOCNode Title="EvaluationDetail(T) Constructor " Url="html/M_LaunchDarkly_Client_EvaluationDetail_1__ctor.htm" />
-        <HelpTOCNode Id="20024a41-ad59-4c47-b5a1-8d41aff42b23" Title="EvaluationDetail(T) Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationDetail_1.htm">
+        <HelpTOCNode Id="cfa143eb-5d04-46c4-ad38-7df3e4fcfe41" Title="EvaluationDetail(T) Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationDetail_1.htm">
           <HelpTOCNode Title="IsDefaultValue Property " Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_IsDefaultValue.htm" />
           <HelpTOCNode Title="Reason Property " Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Reason.htm" />
           <HelpTOCNode Title="Value Property " Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_Value.htm" />
           <HelpTOCNode Title="VariationIndex Property " Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_VariationIndex.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="aed39f1c-245f-4a66-b36c-2c41b896689f" Title="EvaluationDetail(T) Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationDetail_1.htm">
+        <HelpTOCNode Id="e1cf1afd-54f0-40c5-9619-dc3bbabf2a61" Title="EvaluationDetail(T) Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationDetail_1.htm">
           <HelpTOCNode Title="Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_Equals.htm" />
           <HelpTOCNode Title="GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationDetail_1_GetHashCode.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
       <HelpTOCNode Title="EvaluationErrorKind Enumeration" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
-      <HelpTOCNode Id="39ca220b-96c4-4d41-8593-c35a290bea91" Title="EvaluationReason Class" Url="html/T_LaunchDarkly_Client_EvaluationReason.htm">
-        <HelpTOCNode Id="71b288fa-63df-4f0e-9364-89294a8cfada" Title="EvaluationReason Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason.htm">
+      <HelpTOCNode Id="0314ec21-d4f7-482c-beac-ec4547f66972" Title="EvaluationReason Class" Url="html/T_LaunchDarkly_Client_EvaluationReason.htm">
+        <HelpTOCNode Id="540d6043-38b8-4faa-b08f-5dac0145d85f" Title="EvaluationReason Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason.htm">
           <HelpTOCNode Title="Kind Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_Kind.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="8a0eca99-0e55-4968-9590-f50d681f49df" Title="EvaluationReason Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason.htm">
+        <HelpTOCNode Id="20062778-753f-4c83-9831-643907262fb0" Title="EvaluationReason Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason.htm">
           <HelpTOCNode Title="ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_ToString.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="adbe0137-b93b-4db6-9657-3b8dbbea22fc" Title="EvaluationReason.Error Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Error.htm">
+      <HelpTOCNode Id="2ca5c542-78d3-492b-a3b5-ca56f2bc5caa" Title="EvaluationReason.Error Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Error.htm">
         <HelpTOCNode Title="EvaluationReason.Error Constructor " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error__ctor.htm" />
-        <HelpTOCNode Id="a09fe8da-acd8-42ca-9c68-7873f0e14a62" Title="Error Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Error.htm">
+        <HelpTOCNode Id="8ff61bad-648c-4faf-a390-50e3d8065813" Title="Error Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Error.htm">
           <HelpTOCNode Title="ErrorKind Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_Error_ErrorKind.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="2d84a24d-e159-4dc8-acb2-eec7c84ca7e5" Title="Error Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_Error.htm">
+        <HelpTOCNode Id="40c75943-3a08-4f59-9d91-cc07b2a06837" Title="Error Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_Error.htm">
           <HelpTOCNode Title="Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_Equals.htm" />
           <HelpTOCNode Title="GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_GetHashCode.htm" />
           <HelpTOCNode Title="ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_ToString.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="37ceab14-3e03-4df6-af8f-c5b0eae6dae4" Title="EvaluationReason.Fallthrough Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm">
-        <HelpTOCNode Id="344b0d71-17c5-4fdb-b2d0-91e71557f131" Title="Fallthrough Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm">
+      <HelpTOCNode Id="9454f82c-adb8-48c1-9a78-08fc5b3d9c3a" Title="EvaluationReason.Fallthrough Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm">
+        <HelpTOCNode Id="8016bd6a-a712-4293-897f-a1d9df174c6c" Title="Fallthrough Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm">
           <HelpTOCNode Title="Instance Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_Fallthrough_Instance.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Fallthrough Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_Fallthrough.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="9d5dd712-8044-4998-8f7c-f0543aab28dc" Title="EvaluationReason.Off Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Off.htm">
-        <HelpTOCNode Id="a4578a30-12f9-47b0-aa11-bf63f469f005" Title="Off Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Off.htm">
+      <HelpTOCNode Id="bf3de808-904e-4f8e-99d9-182f67457181" Title="EvaluationReason.Off Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_Off.htm">
+        <HelpTOCNode Id="2f917780-70fb-4e2a-91a1-3ba71e7cfd93" Title="Off Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_Off.htm">
           <HelpTOCNode Title="Instance Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_Off_Instance.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Off Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_Off.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="81d0aeb9-b761-42c5-9132-4bcf9c7e6e80" Title="EvaluationReason.PrerequisiteFailed Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm">
+      <HelpTOCNode Id="998391ef-a13c-49e1-bebd-da7d4f8a3269" Title="EvaluationReason.PrerequisiteFailed Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm">
         <HelpTOCNode Title="EvaluationReason.PrerequisiteFailed Constructor " Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed__ctor.htm" />
-        <HelpTOCNode Id="1499b2d3-6bab-4d8e-b066-a3ccaa51be1e" Title="PrerequisiteFailed Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm">
+        <HelpTOCNode Id="45a00c69-03dd-4683-9849-d25f2fa6d5e7" Title="PrerequisiteFailed Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm">
           <HelpTOCNode Title="PrerequisiteKey Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_PrerequisiteKey.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="bdea2245-dc66-4ad9-aee1-99efe18a7be4" Title="PrerequisiteFailed Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm">
+        <HelpTOCNode Id="effbe2d7-6b72-4c43-8fcc-96f3b0d0ac12" Title="PrerequisiteFailed Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed.htm">
           <HelpTOCNode Title="Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_Equals.htm" />
           <HelpTOCNode Title="GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_GetHashCode.htm" />
           <HelpTOCNode Title="ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_PrerequisiteFailed_ToString.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="a3a563bc-0d74-4aaf-8ed6-932fdb48d33e" Title="EvaluationReason.RuleMatch Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm">
+      <HelpTOCNode Id="bc685518-6ac8-4f6c-ad3b-6350d4c977bc" Title="EvaluationReason.RuleMatch Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm">
         <HelpTOCNode Title="EvaluationReason.RuleMatch Constructor " Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch__ctor.htm" />
-        <HelpTOCNode Id="209dab5c-8dbe-42c4-8e8d-8475e5b4f83b" Title="RuleMatch Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm">
+        <HelpTOCNode Id="bdd315a6-9101-4790-a2d4-df3328dcb1f8" Title="RuleMatch Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm">
           <HelpTOCNode Title="RuleId Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_RuleMatch_RuleId.htm" />
           <HelpTOCNode Title="RuleIndex Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_RuleMatch_RuleIndex.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="e52051c8-c030-4c81-b0cd-7731de3cec98" Title="RuleMatch Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm">
+        <HelpTOCNode Id="87dbbd7c-8a72-461f-a74c-c84301cf26d5" Title="RuleMatch Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_RuleMatch.htm">
           <HelpTOCNode Title="Equals Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_Equals.htm" />
           <HelpTOCNode Title="GetHashCode Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_GetHashCode.htm" />
           <HelpTOCNode Title="ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_RuleMatch_ToString.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="5be49a69-c585-47e0-aac9-39f60870473e" Title="EvaluationReason.TargetMatch Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm">
-        <HelpTOCNode Id="660f8855-aeb7-40ca-a422-ef0a8146f1d1" Title="TargetMatch Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm">
+      <HelpTOCNode Id="9f0876e3-0bca-42bc-94da-9fa0a67a2926" Title="EvaluationReason.TargetMatch Class" Url="html/T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm">
+        <HelpTOCNode Id="7d28fd18-e0f0-4b96-8841-879b439b83e0" Title="TargetMatch Properties" Url="html/Properties_T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm">
           <HelpTOCNode Title="Instance Property " Url="html/P_LaunchDarkly_Client_EvaluationReason_TargetMatch_Instance.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="TargetMatch Methods" Url="html/Methods_T_LaunchDarkly_Client_EvaluationReason_TargetMatch.htm" />
       </HelpTOCNode>
       <HelpTOCNode Title="EvaluationReasonKind Enumeration" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
-      <HelpTOCNode Id="8b74523d-f106-4539-a8ca-2ba0bccf7f00" Title="Event Class" Url="html/T_LaunchDarkly_Client_Event.htm">
-        <HelpTOCNode Id="389989c6-ca64-472a-990e-653eb1df826f" Title="Event Properties" Url="html/Properties_T_LaunchDarkly_Client_Event.htm">
+      <HelpTOCNode Id="dde36ea8-7122-4405-8429-f16edb06ce27" Title="Event Class" Url="html/T_LaunchDarkly_Client_Event.htm">
+        <HelpTOCNode Id="879e2f9b-b9c7-40cb-b03e-15e5f54664ec" Title="Event Properties" Url="html/Properties_T_LaunchDarkly_Client_Event.htm">
           <HelpTOCNode Title="CreationDate Property " Url="html/P_LaunchDarkly_Client_Event_CreationDate.htm" />
           <HelpTOCNode Title="Key Property " Url="html/P_LaunchDarkly_Client_Event_Key.htm" />
           <HelpTOCNode Title="User Property " Url="html/P_LaunchDarkly_Client_Event_User.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Event Methods" Url="html/Methods_T_LaunchDarkly_Client_Event.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="f806cd61-a148-49de-94bb-cbae7718a6d1" Title="FeatureFlagsState Class" Url="html/T_LaunchDarkly_Client_FeatureFlagsState.htm">
-        <HelpTOCNode Id="03d520a0-074f-469e-909c-696018715fd1" Title="FeatureFlagsState Properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureFlagsState.htm">
+      <HelpTOCNode Id="2470d4bd-dc5e-4f78-a64d-3fc226a06df9" Title="FeatureFlagsState Class" Url="html/T_LaunchDarkly_Client_FeatureFlagsState.htm">
+        <HelpTOCNode Id="e58e4de3-ffcf-4427-a210-affcbfe45b97" Title="FeatureFlagsState Properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureFlagsState.htm">
           <HelpTOCNode Title="Valid Property " Url="html/P_LaunchDarkly_Client_FeatureFlagsState_Valid.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="26c6b984-cd8d-4067-989d-3acf60323433" Title="FeatureFlagsState Methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureFlagsState.htm">
+        <HelpTOCNode Id="8c732133-903f-4570-a1a6-43bf73b98231" Title="FeatureFlagsState Methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureFlagsState.htm">
           <HelpTOCNode Title="Equals Method " Url="html/M_LaunchDarkly_Client_FeatureFlagsState_Equals.htm" />
           <HelpTOCNode Title="GetFlagReason Method " Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagReason.htm" />
           <HelpTOCNode Title="GetFlagValue Method " Url="html/M_LaunchDarkly_Client_FeatureFlagsState_GetFlagValue.htm" />
@@ -196,8 +196,8 @@
           <HelpTOCNode Title="ToValuesMap Method " Url="html/M_LaunchDarkly_Client_FeatureFlagsState_ToValuesMap.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="5fa35627-00e5-419c-b203-6d649f920308" Title="FeatureRequestEvent Class" Url="html/T_LaunchDarkly_Client_FeatureRequestEvent.htm">
-        <HelpTOCNode Id="618759d0-d0b3-46f0-8740-243f742e1342" Title="FeatureRequestEvent Properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureRequestEvent.htm">
+      <HelpTOCNode Id="2c17f0b6-c9fd-4039-9f4d-ae09499ac163" Title="FeatureRequestEvent Class" Url="html/T_LaunchDarkly_Client_FeatureRequestEvent.htm">
+        <HelpTOCNode Id="2769fbb2-a3f3-4104-a536-ded99308cb6b" Title="FeatureRequestEvent Properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureRequestEvent.htm">
           <HelpTOCNode Title="Debug Property " Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Debug.htm" />
           <HelpTOCNode Title="DebugEventsUntilDate Property " Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_DebugEventsUntilDate.htm" />
           <HelpTOCNode Title="Default Property " Url="html/P_LaunchDarkly_Client_FeatureRequestEvent_Default.htm" />
@@ -212,36 +212,37 @@
         </HelpTOCNode>
         <HelpTOCNode Title="FeatureRequestEvent Methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureRequestEvent.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="5d532e77-bfa4-468d-b3a8-a81739ffcc1c" Title="FeatureStoreCacheConfig Class" Url="html/T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
-        <HelpTOCNode Id="cf0b4939-e012-4b9b-948c-eac079cc237a" Title="FeatureStoreCacheConfig Properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
+      <HelpTOCNode Id="cf4f323a-7f0b-4fe9-946b-eea79dc83266" Title="FeatureStoreCacheConfig Class" Url="html/T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
+        <HelpTOCNode Id="4064d05c-ee3c-4d17-8e46-5c5417f3c471" Title="FeatureStoreCacheConfig Properties" Url="html/Properties_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
           <HelpTOCNode Title="IsEnabled Property " Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsEnabled.htm" />
+          <HelpTOCNode Title="IsInfiniteTtl Property " Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsInfiniteTtl.htm" />
           <HelpTOCNode Title="MaximumEntries Property " Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_MaximumEntries.htm" />
           <HelpTOCNode Title="Ttl Property " Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_Ttl.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="17ecb461-b615-4af3-9936-8f745893eba6" Title="FeatureStoreCacheConfig Methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
+        <HelpTOCNode Id="3bdbb6ff-fc7c-4491-a37b-b5e4ea566ae9" Title="FeatureStoreCacheConfig Methods" Url="html/Methods_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
           <HelpTOCNode Title="WithMaximumEntries Method " Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithMaximumEntries.htm" />
           <HelpTOCNode Title="WithTtl Method " Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtl.htm" />
           <HelpTOCNode Title="WithTtlMillis Method " Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtlMillis.htm" />
           <HelpTOCNode Title="WithTtlSeconds Method " Url="html/M_LaunchDarkly_Client_FeatureStoreCacheConfig_WithTtlSeconds.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="c85e7197-a871-4280-b893-2c765088ead5" Title="FeatureStoreCacheConfig Fields" Url="html/Fields_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
+        <HelpTOCNode Id="fba4a73a-6095-44d9-b81c-2e8ae45bfeee" Title="FeatureStoreCacheConfig Fields" Url="html/Fields_T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm">
           <HelpTOCNode Title="DefaultTtl Field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_DefaultTtl.htm" />
           <HelpTOCNode Title="Disabled Field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Disabled.htm" />
           <HelpTOCNode Title="Enabled Field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Enabled.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="6912af01-3a4d-466e-95aa-5e6a53e38aef" Title="FlagsStateOption Class" Url="html/T_LaunchDarkly_Client_FlagsStateOption.htm">
-        <HelpTOCNode Id="751b8509-7d85-46e8-9bfc-0133aa7fb0a1" Title="FlagsStateOption Methods" Url="html/Methods_T_LaunchDarkly_Client_FlagsStateOption.htm">
+      <HelpTOCNode Id="cbb90c5a-90d4-4e91-96f0-429eafbfbe07" Title="FlagsStateOption Class" Url="html/T_LaunchDarkly_Client_FlagsStateOption.htm">
+        <HelpTOCNode Id="12fc2561-4bab-4812-bfe7-68fab464a425" Title="FlagsStateOption Methods" Url="html/Methods_T_LaunchDarkly_Client_FlagsStateOption.htm">
           <HelpTOCNode Title="ToString Method " Url="html/M_LaunchDarkly_Client_FlagsStateOption_ToString.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="12a3319d-9ce8-4837-899d-04443d0391b3" Title="FlagsStateOption Fields" Url="html/Fields_T_LaunchDarkly_Client_FlagsStateOption.htm">
+        <HelpTOCNode Id="4a65d975-4169-4b1e-9e68-ca78789d4390" Title="FlagsStateOption Fields" Url="html/Fields_T_LaunchDarkly_Client_FlagsStateOption.htm">
           <HelpTOCNode Title="ClientSideOnly Field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_ClientSideOnly.htm" />
           <HelpTOCNode Title="DetailsOnlyForTrackedFlags Field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_DetailsOnlyForTrackedFlags.htm" />
           <HelpTOCNode Title="WithReasons Field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_WithReasons.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="7b6ac9fb-b0cb-48c4-b153-ea6a04820784" Title="IConfigurationBuilder Interface" Url="html/T_LaunchDarkly_Client_IConfigurationBuilder.htm">
-        <HelpTOCNode Id="987c03fe-ab23-4840-88c9-729f86d0b74e" Title="IConfigurationBuilder Methods" Url="html/Methods_T_LaunchDarkly_Client_IConfigurationBuilder.htm">
+      <HelpTOCNode Id="d2ce77bb-4f8d-4877-9014-35ed9f4f079d" Title="IConfigurationBuilder Interface" Url="html/T_LaunchDarkly_Client_IConfigurationBuilder.htm">
+        <HelpTOCNode Id="a3219002-8edf-4e86-baf3-90f230645ada" Title="IConfigurationBuilder Methods" Url="html/Methods_T_LaunchDarkly_Client_IConfigurationBuilder.htm">
           <HelpTOCNode Title="AllAttributesPrivate Method " Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_AllAttributesPrivate.htm" />
           <HelpTOCNode Title="BaseUri Method " Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_BaseUri.htm" />
           <HelpTOCNode Title="Build Method " Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_Build.htm" />
@@ -268,23 +269,23 @@
           <HelpTOCNode Title="UserKeysFlushInterval Method " Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UserKeysFlushInterval.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="fb4746a7-fdd2-4122-b655-8a31d91c7f7c" Title="IdentifyEvent Class" Url="html/T_LaunchDarkly_Client_IdentifyEvent.htm">
+      <HelpTOCNode Id="4b53c724-d0ef-4d99-8cb8-cafdc734f73e" Title="IdentifyEvent Class" Url="html/T_LaunchDarkly_Client_IdentifyEvent.htm">
         <HelpTOCNode Title="IdentifyEvent Properties" Url="html/Properties_T_LaunchDarkly_Client_IdentifyEvent.htm" />
         <HelpTOCNode Title="IdentifyEvent Methods" Url="html/Methods_T_LaunchDarkly_Client_IdentifyEvent.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="05f8b955-0b7d-4680-958b-ff5b337b4dff" Title="IEventProcessor Interface" Url="html/T_LaunchDarkly_Client_IEventProcessor.htm">
-        <HelpTOCNode Id="cc242f7f-7d2d-4945-9433-6f81954775d5" Title="IEventProcessor Methods" Url="html/Methods_T_LaunchDarkly_Client_IEventProcessor.htm">
+      <HelpTOCNode Id="d14d6dbc-00ae-4489-aa31-efe57ee3927e" Title="IEventProcessor Interface" Url="html/T_LaunchDarkly_Client_IEventProcessor.htm">
+        <HelpTOCNode Id="1077a685-bd34-492b-a7e1-8bbb2b887c5e" Title="IEventProcessor Methods" Url="html/Methods_T_LaunchDarkly_Client_IEventProcessor.htm">
           <HelpTOCNode Title="Flush Method " Url="html/M_LaunchDarkly_Client_IEventProcessor_Flush.htm" />
           <HelpTOCNode Title="SendEvent Method " Url="html/M_LaunchDarkly_Client_IEventProcessor_SendEvent.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="ace3af80-fae5-421d-8b5e-e1602308cd24" Title="IEventProcessorFactory Interface" Url="html/T_LaunchDarkly_Client_IEventProcessorFactory.htm">
-        <HelpTOCNode Id="25ff189e-07c1-4a8f-a173-bdb79bc660f0" Title="IEventProcessorFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_IEventProcessorFactory.htm">
+      <HelpTOCNode Id="444b3414-510f-4882-b6a1-8384bc7ef6e0" Title="IEventProcessorFactory Interface" Url="html/T_LaunchDarkly_Client_IEventProcessorFactory.htm">
+        <HelpTOCNode Id="c99695bf-808b-4912-993b-389f284d0bbd" Title="IEventProcessorFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_IEventProcessorFactory.htm">
           <HelpTOCNode Title="CreateEventProcessor Method " Url="html/M_LaunchDarkly_Client_IEventProcessorFactory_CreateEventProcessor.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="30a5706c-bf8e-49d2-897a-a6f6137f0920" Title="IFeatureStore Interface" Url="html/T_LaunchDarkly_Client_IFeatureStore.htm">
-        <HelpTOCNode Id="0fb28dcb-30cb-40cb-9b2c-c55e76d211ec" Title="IFeatureStore Methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStore.htm">
+      <HelpTOCNode Id="fee42376-c2bd-4612-bda5-051140d19d9e" Title="IFeatureStore Interface" Url="html/T_LaunchDarkly_Client_IFeatureStore.htm">
+        <HelpTOCNode Id="c40d65fc-c5f8-4ec9-aaea-2b2168ee264f" Title="IFeatureStore Methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStore.htm">
           <HelpTOCNode Title="All(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_All__1.htm" />
           <HelpTOCNode Title="Delete(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Delete__1.htm" />
           <HelpTOCNode Title="Get(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Get__1.htm" />
@@ -293,14 +294,14 @@
           <HelpTOCNode Title="Upsert(T) Method " Url="html/M_LaunchDarkly_Client_IFeatureStore_Upsert__1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="b858455f-9f43-43cb-aa30-7c338e70e99a" Title="IFeatureStoreFactory Interface" Url="html/T_LaunchDarkly_Client_IFeatureStoreFactory.htm">
-        <HelpTOCNode Id="eaec8532-2dc2-42e8-a5e1-f0a0fbfd79e7" Title="IFeatureStoreFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStoreFactory.htm">
+      <HelpTOCNode Id="1f7395dc-2a2f-47ae-a50c-743e40f71eee" Title="IFeatureStoreFactory Interface" Url="html/T_LaunchDarkly_Client_IFeatureStoreFactory.htm">
+        <HelpTOCNode Id="4ab0accd-b817-411f-b514-aaace2d1deb8" Title="IFeatureStoreFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStoreFactory.htm">
           <HelpTOCNode Title="CreateFeatureStore Method " Url="html/M_LaunchDarkly_Client_IFeatureStoreFactory_CreateFeatureStore.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="81acccde-b237-4b5a-bb03-b5affdba39eb" Title="ILdClient Interface" Url="html/T_LaunchDarkly_Client_ILdClient.htm">
+      <HelpTOCNode Id="1f484199-6187-4159-9af8-f858fb611bd8" Title="ILdClient Interface" Url="html/T_LaunchDarkly_Client_ILdClient.htm">
         <HelpTOCNode Title="ILdClient Properties" Url="html/Properties_T_LaunchDarkly_Client_ILdClient.htm" />
-        <HelpTOCNode Id="cc149c59-9b36-4c0f-9568-0d203ef45193" Title="ILdClient Methods" Url="html/Methods_T_LaunchDarkly_Client_ILdClient.htm">
+        <HelpTOCNode Id="6280c20b-7991-4ce5-999a-20a2ac5fc010" Title="ILdClient Methods" Url="html/Methods_T_LaunchDarkly_Client_ILdClient.htm">
           <HelpTOCNode Title="AllFlags Method " Url="html/M_LaunchDarkly_Client_ILdClient_AllFlags.htm" />
           <HelpTOCNode Title="AllFlagsState Method " Url="html/M_LaunchDarkly_Client_ILdClient_AllFlagsState.htm" />
           <HelpTOCNode Title="BoolVariation Method " Url="html/M_LaunchDarkly_Client_ILdClient_BoolVariation.htm" />
@@ -311,18 +312,18 @@
           <HelpTOCNode Title="Initialized Method " Url="html/M_LaunchDarkly_Client_ILdClient_Initialized.htm" />
           <HelpTOCNode Title="IntVariation Method " Url="html/M_LaunchDarkly_Client_ILdClient_IntVariation.htm" />
           <HelpTOCNode Title="IntVariationDetail Method " Url="html/M_LaunchDarkly_Client_ILdClient_IntVariationDetail.htm" />
-          <HelpTOCNode Id="9e1807a6-80fd-464d-92d2-c8e86e99e3bf" Title="JsonVariation Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariation.htm">
+          <HelpTOCNode Id="cae44365-e971-4d15-a7ff-ee1c182066af" Title="JsonVariation Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariation.htm">
             <HelpTOCNode Title="JsonVariation Method (String, User, LdValue)" Url="html/M_LaunchDarkly_Client_ILdClient_JsonVariation.htm" />
             <HelpTOCNode Title="JsonVariation Method (String, User, JToken)" Url="html/M_LaunchDarkly_Client_ILdClient_JsonVariation_1.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="26d4e40b-6136-48c0-834a-152596f9d7ea" Title="JsonVariationDetail Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariationDetail.htm">
+          <HelpTOCNode Id="26ddd2d6-8dd4-4ead-8252-82e3815f8298" Title="JsonVariationDetail Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_JsonVariationDetail.htm">
             <HelpTOCNode Title="JsonVariationDetail Method (String, User, LdValue)" Url="html/M_LaunchDarkly_Client_ILdClient_JsonVariationDetail.htm" />
             <HelpTOCNode Title="JsonVariationDetail Method (String, User, JToken)" Url="html/M_LaunchDarkly_Client_ILdClient_JsonVariationDetail_1.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="SecureModeHash Method " Url="html/M_LaunchDarkly_Client_ILdClient_SecureModeHash.htm" />
           <HelpTOCNode Title="StringVariation Method " Url="html/M_LaunchDarkly_Client_ILdClient_StringVariation.htm" />
           <HelpTOCNode Title="StringVariationDetail Method " Url="html/M_LaunchDarkly_Client_ILdClient_StringVariationDetail.htm" />
-          <HelpTOCNode Id="0ceae02d-13f4-458e-80c3-f169e50bc505" Title="Track Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_Track.htm">
+          <HelpTOCNode Id="0ae6b2d3-da45-44ee-a62f-5a58ef279f7c" Title="Track Method " Url="html/Overload_LaunchDarkly_Client_ILdClient_Track.htm">
             <HelpTOCNode Title="Track Method (String, User)" Url="html/M_LaunchDarkly_Client_ILdClient_Track.htm" />
             <HelpTOCNode Title="Track Method (String, User, LdValue)" Url="html/M_LaunchDarkly_Client_ILdClient_Track_1.htm" />
             <HelpTOCNode Title="Track Method (String, User, String)" Url="html/M_LaunchDarkly_Client_ILdClient_Track_3.htm" />
@@ -331,9 +332,9 @@
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="bb66ef80-3da5-4cd8-81d7-8a29998f3b95" Title="InMemoryFeatureStore Class" Url="html/T_LaunchDarkly_Client_InMemoryFeatureStore.htm">
+      <HelpTOCNode Id="14e1a3d1-9bbf-433e-872c-06487065e4ff" Title="InMemoryFeatureStore Class" Url="html/T_LaunchDarkly_Client_InMemoryFeatureStore.htm">
         <HelpTOCNode Title="InMemoryFeatureStore Constructor " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore__ctor.htm" />
-        <HelpTOCNode Id="12f6722c-832c-4947-8bf7-87afa4ba4569" Title="InMemoryFeatureStore Methods" Url="html/Methods_T_LaunchDarkly_Client_InMemoryFeatureStore.htm">
+        <HelpTOCNode Id="b71893f6-bc56-49ba-808b-435dbac7461b" Title="InMemoryFeatureStore Methods" Url="html/Methods_T_LaunchDarkly_Client_InMemoryFeatureStore.htm">
           <HelpTOCNode Title="All(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_All__1.htm" />
           <HelpTOCNode Title="Delete(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Delete__1.htm" />
           <HelpTOCNode Title="Dispose Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Dispose.htm" />
@@ -343,24 +344,25 @@
           <HelpTOCNode Title="Upsert(T) Method " Url="html/M_LaunchDarkly_Client_InMemoryFeatureStore_Upsert__1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="494f17ac-8ca4-48f7-8efc-8aa4df549836" Title="IUpdateProcessor Interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessor.htm">
-        <HelpTOCNode Id="59eb6f00-cede-469f-8f76-7f1bdf8d7cce" Title="IUpdateProcessor Methods" Url="html/Methods_T_LaunchDarkly_Client_IUpdateProcessor.htm">
+      <HelpTOCNode Id="07a3f945-67a9-4346-a8b2-04c6134b9e14" Title="IUpdateProcessor Interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessor.htm">
+        <HelpTOCNode Id="a70c84c9-abad-4fc1-8abd-4c27f8484e05" Title="IUpdateProcessor Methods" Url="html/Methods_T_LaunchDarkly_Client_IUpdateProcessor.htm">
           <HelpTOCNode Title="Initialized Method " Url="html/M_LaunchDarkly_Client_IUpdateProcessor_Initialized.htm" />
           <HelpTOCNode Title="Start Method " Url="html/M_LaunchDarkly_Client_IUpdateProcessor_Start.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="6a6646bc-21c2-49ad-8498-c9a2943d3a21" Title="IUpdateProcessorFactory Interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessorFactory.htm">
-        <HelpTOCNode Id="c30fb2a5-7b92-4a42-95ce-5818b2931f28" Title="IUpdateProcessorFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_IUpdateProcessorFactory.htm">
+      <HelpTOCNode Id="f4409313-63b5-4d53-83bf-9d7f2263035d" Title="IUpdateProcessorFactory Interface" Url="html/T_LaunchDarkly_Client_IUpdateProcessorFactory.htm">
+        <HelpTOCNode Id="58ece818-43fa-4c7d-856b-872bac8ed0f8" Title="IUpdateProcessorFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_IUpdateProcessorFactory.htm">
           <HelpTOCNode Title="CreateUpdateProcessor Method " Url="html/M_LaunchDarkly_Client_IUpdateProcessorFactory_CreateUpdateProcessor.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="a09929ee-1f45-4389-9374-7326f1e4326c" Title="IUserBuilder Interface" Url="html/T_LaunchDarkly_Client_IUserBuilder.htm">
-        <HelpTOCNode Id="6c8454a6-0fed-44db-a102-d45397e311f8" Title="IUserBuilder Methods" Url="html/Methods_T_LaunchDarkly_Client_IUserBuilder.htm">
+      <HelpTOCNode Id="f41d8a1a-c99b-4ad6-b023-bb3190a8c472" Title="IUserBuilder Interface" Url="html/T_LaunchDarkly_Client_IUserBuilder.htm">
+        <HelpTOCNode Id="f4503fc0-ceb6-491c-8ba0-cba1f4c5be28" Title="IUserBuilder Methods" Url="html/Methods_T_LaunchDarkly_Client_IUserBuilder.htm">
           <HelpTOCNode Title="Anonymous Method " Url="html/M_LaunchDarkly_Client_IUserBuilder_Anonymous.htm" />
+          <HelpTOCNode Title="AnonymousOptional Method " Url="html/M_LaunchDarkly_Client_IUserBuilder_AnonymousOptional.htm" />
           <HelpTOCNode Title="Avatar Method " Url="html/M_LaunchDarkly_Client_IUserBuilder_Avatar.htm" />
           <HelpTOCNode Title="Build Method " Url="html/M_LaunchDarkly_Client_IUserBuilder_Build.htm" />
           <HelpTOCNode Title="Country Method " Url="html/M_LaunchDarkly_Client_IUserBuilder_Country.htm" />
-          <HelpTOCNode Id="268884b1-b937-4b4e-b552-c89946a1cb51" Title="Custom Method " Url="html/Overload_LaunchDarkly_Client_IUserBuilder_Custom.htm">
+          <HelpTOCNode Id="37b2edbb-675d-4e68-92c1-d9d4ae268b84" Title="Custom Method " Url="html/Overload_LaunchDarkly_Client_IUserBuilder_Custom.htm">
             <HelpTOCNode Title="Custom Method (String, LdValue)" Url="html/M_LaunchDarkly_Client_IUserBuilder_Custom.htm" />
             <HelpTOCNode Title="Custom Method (String, JToken)" Url="html/M_LaunchDarkly_Client_IUserBuilder_Custom_1.htm" />
             <HelpTOCNode Title="Custom Method (String, Boolean)" Url="html/M_LaunchDarkly_Client_IUserBuilder_Custom_2.htm" />
@@ -377,43 +379,43 @@
           <HelpTOCNode Title="SecondaryKey Method " Url="html/M_LaunchDarkly_Client_IUserBuilder_SecondaryKey.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="543171aa-4ece-439e-bce5-dca3705da92f" Title="IUserBuilderCanMakeAttributePrivate Interface" Url="html/T_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate.htm">
-        <HelpTOCNode Id="4d79f81f-0dcf-47e7-bd80-39b47911648b" Title="IUserBuilderCanMakeAttributePrivate Methods" Url="html/Methods_T_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate.htm">
+      <HelpTOCNode Id="d5f88ac8-0dfb-45c5-8e5d-5139e891ec13" Title="IUserBuilderCanMakeAttributePrivate Interface" Url="html/T_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate.htm">
+        <HelpTOCNode Id="0bea8792-5594-4a52-b346-ccd87bf6b91f" Title="IUserBuilderCanMakeAttributePrivate Methods" Url="html/Methods_T_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate.htm">
           <HelpTOCNode Title="AsPrivateAttribute Method " Url="html/M_LaunchDarkly_Client_IUserBuilderCanMakeAttributePrivate_AsPrivateAttribute.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="c070b681-e05c-41fd-9dff-f19daa2bfaa5" Title="IVersionedData Interface" Url="html/T_LaunchDarkly_Client_IVersionedData.htm">
-        <HelpTOCNode Id="fe09d666-be8b-4278-93c7-3affd9dfa16a" Title="IVersionedData Properties" Url="html/Properties_T_LaunchDarkly_Client_IVersionedData.htm">
+      <HelpTOCNode Id="d75f121c-86ba-40ff-b949-f5ec6257b65b" Title="IVersionedData Interface" Url="html/T_LaunchDarkly_Client_IVersionedData.htm">
+        <HelpTOCNode Id="2cb364e1-08b2-436e-b631-8050b3d1bce7" Title="IVersionedData Properties" Url="html/Properties_T_LaunchDarkly_Client_IVersionedData.htm">
           <HelpTOCNode Title="Deleted Property " Url="html/P_LaunchDarkly_Client_IVersionedData_Deleted.htm" />
           <HelpTOCNode Title="Key Property " Url="html/P_LaunchDarkly_Client_IVersionedData_Key.htm" />
           <HelpTOCNode Title="Version Property " Url="html/P_LaunchDarkly_Client_IVersionedData_Version.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="ae5ed29a-bfc6-44f9-aa38-4dd6d5e6340a" Title="IVersionedDataKind Interface" Url="html/T_LaunchDarkly_Client_IVersionedDataKind.htm">
-        <HelpTOCNode Id="41cd14b7-7ffe-48ef-b043-918520f56c41" Title="IVersionedDataKind Methods" Url="html/Methods_T_LaunchDarkly_Client_IVersionedDataKind.htm">
+      <HelpTOCNode Id="e1b636a5-271c-4a79-84a1-76540618d7f1" Title="IVersionedDataKind Interface" Url="html/T_LaunchDarkly_Client_IVersionedDataKind.htm">
+        <HelpTOCNode Id="b53595f6-3403-46db-b6b2-805e2149a84a" Title="IVersionedDataKind Methods" Url="html/Methods_T_LaunchDarkly_Client_IVersionedDataKind.htm">
           <HelpTOCNode Title="GetItemType Method " Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetItemType.htm" />
           <HelpTOCNode Title="GetNamespace Method " Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetNamespace.htm" />
           <HelpTOCNode Title="GetStreamApiPath Method " Url="html/M_LaunchDarkly_Client_IVersionedDataKind_GetStreamApiPath.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="1c33b7ba-bcee-45e7-b9f5-c87d3f687ca5" Title="IVersionedDataOrdering Interface" Url="html/T_LaunchDarkly_Client_IVersionedDataOrdering.htm">
-        <HelpTOCNode Id="d7d08683-ebae-4173-91fe-da16f4b435af" Title="IVersionedDataOrdering Properties" Url="html/Properties_T_LaunchDarkly_Client_IVersionedDataOrdering.htm">
+      <HelpTOCNode Id="d26fdeca-c7b6-44e4-9fb0-6775d054a127" Title="IVersionedDataOrdering Interface" Url="html/T_LaunchDarkly_Client_IVersionedDataOrdering.htm">
+        <HelpTOCNode Id="cf4d3b16-9427-483a-acba-61b2a9e42fb0" Title="IVersionedDataOrdering Properties" Url="html/Properties_T_LaunchDarkly_Client_IVersionedDataOrdering.htm">
           <HelpTOCNode Title="Priority Property " Url="html/P_LaunchDarkly_Client_IVersionedDataOrdering_Priority.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="caa83629-6ca3-4f9e-a78a-55bd66f37afa" Title="IVersionedDataOrdering Methods" Url="html/Methods_T_LaunchDarkly_Client_IVersionedDataOrdering.htm">
+        <HelpTOCNode Id="daa306a3-bbd1-467e-a126-c1304a5d9dee" Title="IVersionedDataOrdering Methods" Url="html/Methods_T_LaunchDarkly_Client_IVersionedDataOrdering.htm">
           <HelpTOCNode Title="GetDependencyKeys Method " Url="html/M_LaunchDarkly_Client_IVersionedDataOrdering_GetDependencyKeys.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="05337c18-6126-4890-a59e-5d70e49ee759" Title="LdClient Class" Url="html/T_LaunchDarkly_Client_LdClient.htm">
-        <HelpTOCNode Id="569fb2cd-638b-467a-bc5e-f3febe4ee306" Title="LdClient Constructor " Url="html/Overload_LaunchDarkly_Client_LdClient__ctor.htm">
+      <HelpTOCNode Id="b7ae35b2-eff7-4163-8bbe-cf64f566caa2" Title="LdClient Class" Url="html/T_LaunchDarkly_Client_LdClient.htm">
+        <HelpTOCNode Id="d7d859ed-0d82-409b-9967-190be3919db5" Title="LdClient Constructor " Url="html/Overload_LaunchDarkly_Client_LdClient__ctor.htm">
           <HelpTOCNode Title="LdClient Constructor (String)" Url="html/M_LaunchDarkly_Client_LdClient__ctor_2.htm" />
           <HelpTOCNode Title="LdClient Constructor (Configuration)" Url="html/M_LaunchDarkly_Client_LdClient__ctor.htm" />
           <HelpTOCNode Title="LdClient Constructor (Configuration, IEventProcessor)" Url="html/M_LaunchDarkly_Client_LdClient__ctor_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="9b5df12b-b558-4a2a-9a7f-4d3c334c3e5d" Title="LdClient Properties" Url="html/Properties_T_LaunchDarkly_Client_LdClient.htm">
+        <HelpTOCNode Id="449abad3-be4c-486d-b8ea-3ca4c079c0a8" Title="LdClient Properties" Url="html/Properties_T_LaunchDarkly_Client_LdClient.htm">
           <HelpTOCNode Title="Version Property " Url="html/P_LaunchDarkly_Client_LdClient_Version.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="6c41334b-0b9d-4abd-a5f1-4230309be526" Title="LdClient Methods" Url="html/Methods_T_LaunchDarkly_Client_LdClient.htm">
+        <HelpTOCNode Id="6b1bd488-cafe-488c-b65c-cd42ae0e498e" Title="LdClient Methods" Url="html/Methods_T_LaunchDarkly_Client_LdClient.htm">
           <HelpTOCNode Title="AllFlags Method " Url="html/M_LaunchDarkly_Client_LdClient_AllFlags.htm" />
           <HelpTOCNode Title="AllFlagsState Method " Url="html/M_LaunchDarkly_Client_LdClient_AllFlagsState.htm" />
           <HelpTOCNode Title="BoolVariation Method " Url="html/M_LaunchDarkly_Client_LdClient_BoolVariation.htm" />
@@ -427,18 +429,18 @@
           <HelpTOCNode Title="IntVariation Method " Url="html/M_LaunchDarkly_Client_LdClient_IntVariation.htm" />
           <HelpTOCNode Title="IntVariationDetail Method " Url="html/M_LaunchDarkly_Client_LdClient_IntVariationDetail.htm" />
           <HelpTOCNode Title="IsOffline Method " Url="html/M_LaunchDarkly_Client_LdClient_IsOffline.htm" />
-          <HelpTOCNode Id="102f3a37-52df-4013-aa83-0766e77a95ca" Title="JsonVariation Method " Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariation.htm">
+          <HelpTOCNode Id="bb98e0b4-3462-48c3-87af-7ab46d7b110e" Title="JsonVariation Method " Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariation.htm">
             <HelpTOCNode Title="JsonVariation Method (String, User, LdValue)" Url="html/M_LaunchDarkly_Client_LdClient_JsonVariation.htm" />
             <HelpTOCNode Title="JsonVariation Method (String, User, JToken)" Url="html/M_LaunchDarkly_Client_LdClient_JsonVariation_1.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="231244bf-a680-4459-897e-311bdcfcd71a" Title="JsonVariationDetail Method " Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariationDetail.htm">
+          <HelpTOCNode Id="4f11cc66-252a-41a8-ac64-3683f001605f" Title="JsonVariationDetail Method " Url="html/Overload_LaunchDarkly_Client_LdClient_JsonVariationDetail.htm">
             <HelpTOCNode Title="JsonVariationDetail Method (String, User, LdValue)" Url="html/M_LaunchDarkly_Client_LdClient_JsonVariationDetail.htm" />
             <HelpTOCNode Title="JsonVariationDetail Method (String, User, JToken)" Url="html/M_LaunchDarkly_Client_LdClient_JsonVariationDetail_1.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="SecureModeHash Method " Url="html/M_LaunchDarkly_Client_LdClient_SecureModeHash.htm" />
           <HelpTOCNode Title="StringVariation Method " Url="html/M_LaunchDarkly_Client_LdClient_StringVariation.htm" />
           <HelpTOCNode Title="StringVariationDetail Method " Url="html/M_LaunchDarkly_Client_LdClient_StringVariationDetail.htm" />
-          <HelpTOCNode Id="62fb2493-6a4d-446a-b09b-d57c18867a9d" Title="Track Method " Url="html/Overload_LaunchDarkly_Client_LdClient_Track.htm">
+          <HelpTOCNode Id="3a9029d2-ee25-40ac-8da3-3e5fa34eca9d" Title="Track Method " Url="html/Overload_LaunchDarkly_Client_LdClient_Track.htm">
             <HelpTOCNode Title="Track Method (String, User)" Url="html/M_LaunchDarkly_Client_LdClient_Track.htm" />
             <HelpTOCNode Title="Track Method (String, User, LdValue)" Url="html/M_LaunchDarkly_Client_LdClient_Track_1.htm" />
             <HelpTOCNode Title="Track Method (String, User, String)" Url="html/M_LaunchDarkly_Client_LdClient_Track_3.htm" />
@@ -447,8 +449,8 @@
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="e91329d6-9491-4fda-b1f5-8632a13ec4a4" Title="LdValue Structure" Url="html/T_LaunchDarkly_Client_LdValue.htm">
-        <HelpTOCNode Id="71b9eee9-4088-445e-8293-f6200c261cec" Title="LdValue Properties" Url="html/Properties_T_LaunchDarkly_Client_LdValue.htm">
+      <HelpTOCNode Id="9146b58e-dd66-414a-96ff-63cf4a5de089" Title="LdValue Structure" Url="html/T_LaunchDarkly_Client_LdValue.htm">
+        <HelpTOCNode Id="fdf4dbc6-cdf1-41ac-866d-1863081a0566" Title="LdValue Properties" Url="html/Properties_T_LaunchDarkly_Client_LdValue.htm">
           <HelpTOCNode Title="AsBool Property " Url="html/P_LaunchDarkly_Client_LdValue_AsBool.htm" />
           <HelpTOCNode Title="AsDouble Property " Url="html/P_LaunchDarkly_Client_LdValue_AsDouble.htm" />
           <HelpTOCNode Title="AsFloat Property " Url="html/P_LaunchDarkly_Client_LdValue_AsFloat.htm" />
@@ -462,20 +464,20 @@
           <HelpTOCNode Title="Null Property " Url="html/P_LaunchDarkly_Client_LdValue_Null.htm" />
           <HelpTOCNode Title="Type Property " Url="html/P_LaunchDarkly_Client_LdValue_Type.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="f60a1e2f-d1d7-4eb8-9942-af1896b5bf5e" Title="LdValue Methods" Url="html/Methods_T_LaunchDarkly_Client_LdValue.htm">
+        <HelpTOCNode Id="133216a3-2093-498a-af65-c715e9de76cc" Title="LdValue Methods" Url="html/Methods_T_LaunchDarkly_Client_LdValue.htm">
           <HelpTOCNode Title="ArrayFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_ArrayFrom.htm" />
           <HelpTOCNode Title="ArrayOf Method " Url="html/M_LaunchDarkly_Client_LdValue_ArrayOf.htm" />
           <HelpTOCNode Title="AsDictionary(T) Method " Url="html/M_LaunchDarkly_Client_LdValue_AsDictionary__1.htm" />
           <HelpTOCNode Title="AsJToken Method " Url="html/M_LaunchDarkly_Client_LdValue_AsJToken.htm" />
           <HelpTOCNode Title="AsList(T) Method " Url="html/M_LaunchDarkly_Client_LdValue_AsList__1.htm" />
-          <HelpTOCNode Id="e0d6cbfb-cd36-4300-8798-d8e253a56623" Title="Equals Method " Url="html/Overload_LaunchDarkly_Client_LdValue_Equals.htm">
+          <HelpTOCNode Id="3cde2373-8b0c-4434-9496-54aa32149190" Title="Equals Method " Url="html/Overload_LaunchDarkly_Client_LdValue_Equals.htm">
             <HelpTOCNode Title="Equals Method (Object)" Url="html/M_LaunchDarkly_Client_LdValue_Equals_1.htm" />
             <HelpTOCNode Title="Equals Method (LdValue)" Url="html/M_LaunchDarkly_Client_LdValue_Equals.htm" />
           </HelpTOCNode>
           <HelpTOCNode Title="FromJToken Method " Url="html/M_LaunchDarkly_Client_LdValue_FromJToken.htm" />
           <HelpTOCNode Title="GetHashCode Method " Url="html/M_LaunchDarkly_Client_LdValue_GetHashCode.htm" />
           <HelpTOCNode Title="ObjectFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_ObjectFrom.htm" />
-          <HelpTOCNode Id="ac1145be-dff7-4b0e-a00c-8adad3de50ab" Title="Of Method " Url="html/Overload_LaunchDarkly_Client_LdValue_Of.htm">
+          <HelpTOCNode Id="ef45a2c4-acbc-44b5-842d-5c892c36c6df" Title="Of Method " Url="html/Overload_LaunchDarkly_Client_LdValue_Of.htm">
             <HelpTOCNode Title="Of Method (Boolean)" Url="html/M_LaunchDarkly_Client_LdValue_Of.htm" />
             <HelpTOCNode Title="Of Method (Double)" Url="html/M_LaunchDarkly_Client_LdValue_Of_1.htm" />
             <HelpTOCNode Title="Of Method (Int32)" Url="html/M_LaunchDarkly_Client_LdValue_Of_2.htm" />
@@ -487,8 +489,8 @@
           <HelpTOCNode Title="ToString Method " Url="html/M_LaunchDarkly_Client_LdValue_ToString.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="8c0597d6-b965-487a-a681-e501c3288f6a" Title="LdValue.Convert Class" Url="html/T_LaunchDarkly_Client_LdValue_Convert.htm">
-        <HelpTOCNode Id="08a91a49-707c-4251-b90d-1c750ff9d2ab" Title="Convert Fields" Url="html/Fields_T_LaunchDarkly_Client_LdValue_Convert.htm">
+      <HelpTOCNode Id="7f56ab42-c6aa-49e5-a1c1-11c22fcfca77" Title="LdValue.Convert Class" Url="html/T_LaunchDarkly_Client_LdValue_Convert.htm">
+        <HelpTOCNode Id="bbde2482-88c4-465f-b1dd-4d79d1ee71e6" Title="Convert Fields" Url="html/Fields_T_LaunchDarkly_Client_LdValue_Convert.htm">
           <HelpTOCNode Title="Bool Field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Bool.htm" />
           <HelpTOCNode Title="Double Field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Double.htm" />
           <HelpTOCNode Title="Float Field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Float.htm" />
@@ -498,9 +500,9 @@
           <HelpTOCNode Title="String Field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_String.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="32a556ef-0811-4202-bd0d-5286213bc075" Title="LdValue.Converter(T) Class" Url="html/T_LaunchDarkly_Client_LdValue_Converter_1.htm">
+      <HelpTOCNode Id="5e0c2521-83e0-4fca-8632-c4f5b5dc0b25" Title="LdValue.Converter(T) Class" Url="html/T_LaunchDarkly_Client_LdValue_Converter_1.htm">
         <HelpTOCNode Title="LdValue.Converter(T) Constructor " Url="html/M_LaunchDarkly_Client_LdValue_Converter_1__ctor.htm" />
-        <HelpTOCNode Id="5c4e742a-87db-4dd3-be5c-2cb6fdcc1c3b" Title="Converter(T) Methods" Url="html/Methods_T_LaunchDarkly_Client_LdValue_Converter_1.htm">
+        <HelpTOCNode Id="5939e5c9-c93f-4f3d-9de4-e79fe32e7b43" Title="Converter(T) Methods" Url="html/Methods_T_LaunchDarkly_Client_LdValue_Converter_1.htm">
           <HelpTOCNode Title="ArrayFrom Method " Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayFrom.htm" />
           <HelpTOCNode Title="ArrayOf Method " Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_ArrayOf.htm" />
           <HelpTOCNode Title="FromType Method " Url="html/M_LaunchDarkly_Client_LdValue_Converter_1_FromType.htm" />
@@ -509,13 +511,13 @@
         </HelpTOCNode>
       </HelpTOCNode>
       <HelpTOCNode Title="LdValueType Enumeration" Url="html/T_LaunchDarkly_Client_LdValueType.htm" />
-      <HelpTOCNode Id="4bce722a-64cf-4550-8ab3-94960a77b54b" Title="User Class" Url="html/T_LaunchDarkly_Client_User.htm">
-        <HelpTOCNode Id="225be5cb-8695-4921-8e82-bc1a105a9b68" Title="User Constructor " Url="html/Overload_LaunchDarkly_Client_User__ctor.htm">
+      <HelpTOCNode Id="a1876420-b3fb-4f33-abb0-1fb89512663a" Title="User Class" Url="html/T_LaunchDarkly_Client_User.htm">
+        <HelpTOCNode Id="0e0a2249-015a-4201-8285-0f2554d93b35" Title="User Constructor " Url="html/Overload_LaunchDarkly_Client_User__ctor.htm">
           <HelpTOCNode Title="User Constructor (String)" Url="html/M_LaunchDarkly_Client_User__ctor_1.htm" />
           <HelpTOCNode Title="User Constructor (User)" Url="html/M_LaunchDarkly_Client_User__ctor.htm" />
           <HelpTOCNode Title="User Constructor (String, String, String, String, String, String, String, String, String, Nullable(Boolean), IDictionary(String, JToken), ISet(String))" Url="html/M_LaunchDarkly_Client_User__ctor_2.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="43df581f-d0a2-4dd3-9a22-ff35920c29df" Title="User Properties" Url="html/Properties_T_LaunchDarkly_Client_User.htm">
+        <HelpTOCNode Id="fa2cde42-869d-4024-aedc-a59fb31d6607" Title="User Properties" Url="html/Properties_T_LaunchDarkly_Client_User.htm">
           <HelpTOCNode Title="Anonymous Property " Url="html/P_LaunchDarkly_Client_User_Anonymous.htm" />
           <HelpTOCNode Title="Avatar Property " Url="html/P_LaunchDarkly_Client_User_Avatar.htm" />
           <HelpTOCNode Title="Country Property " Url="html/P_LaunchDarkly_Client_User_Country.htm" />
@@ -530,12 +532,12 @@
           <HelpTOCNode Title="PrivateAttributeNames Property " Url="html/P_LaunchDarkly_Client_User_PrivateAttributeNames.htm" />
           <HelpTOCNode Title="SecondaryKey Property " Url="html/P_LaunchDarkly_Client_User_SecondaryKey.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="4d760794-669c-41fa-849e-fb3bf61cd4e3" Title="User Methods" Url="html/Methods_T_LaunchDarkly_Client_User.htm">
-          <HelpTOCNode Id="124d1ce7-b6d3-4dae-9d3a-9e31d6c9aa7f" Title="Builder Method " Url="html/Overload_LaunchDarkly_Client_User_Builder.htm">
+        <HelpTOCNode Id="018123e2-539f-488f-8786-d830610e15cc" Title="User Methods" Url="html/Methods_T_LaunchDarkly_Client_User.htm">
+          <HelpTOCNode Id="33bdb02a-1a15-4ace-a1dc-6eeb190afdcc" Title="Builder Method " Url="html/Overload_LaunchDarkly_Client_User_Builder.htm">
             <HelpTOCNode Title="Builder Method (String)" Url="html/M_LaunchDarkly_Client_User_Builder_1.htm" />
             <HelpTOCNode Title="Builder Method (User)" Url="html/M_LaunchDarkly_Client_User_Builder.htm" />
           </HelpTOCNode>
-          <HelpTOCNode Id="37528f1e-e701-46a9-9ade-3c0cfc452d60" Title="Equals Method " Url="html/Overload_LaunchDarkly_Client_User_Equals.htm">
+          <HelpTOCNode Id="676d9fc7-b4ee-4e10-bb42-f79962da0831" Title="Equals Method " Url="html/Overload_LaunchDarkly_Client_User_Equals.htm">
             <HelpTOCNode Title="Equals Method (Object)" Url="html/M_LaunchDarkly_Client_User_Equals_1.htm" />
             <HelpTOCNode Title="Equals Method (User)" Url="html/M_LaunchDarkly_Client_User_Equals.htm" />
           </HelpTOCNode>
@@ -543,12 +545,12 @@
           <HelpTOCNode Title="WithKey Method " Url="html/M_LaunchDarkly_Client_User_WithKey.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="f25fdc64-b2c2-4696-a9ed-5e7f7798d90b" Title="UserExtensions Class" Url="html/T_LaunchDarkly_Client_UserExtensions.htm">
-        <HelpTOCNode Id="f40e1f0a-0e3f-419f-a8be-90948c06c090" Title="UserExtensions Methods" Url="html/Methods_T_LaunchDarkly_Client_UserExtensions.htm">
+      <HelpTOCNode Id="dbb8c3fe-8f22-4a90-875b-fa5fb7cbe454" Title="UserExtensions Class" Url="html/T_LaunchDarkly_Client_UserExtensions.htm">
+        <HelpTOCNode Id="37751c70-1e2a-41aa-9bc8-5e0f42fc9b08" Title="UserExtensions Methods" Url="html/Methods_T_LaunchDarkly_Client_UserExtensions.htm">
           <HelpTOCNode Title="AndAnonymous Method " Url="html/M_LaunchDarkly_Client_UserExtensions_AndAnonymous.htm" />
           <HelpTOCNode Title="AndAvatar Method " Url="html/M_LaunchDarkly_Client_UserExtensions_AndAvatar.htm" />
           <HelpTOCNode Title="AndCountry Method " Url="html/M_LaunchDarkly_Client_UserExtensions_AndCountry.htm" />
-          <HelpTOCNode Id="7031f6d8-45bf-4d70-993d-5db0f8f154c7" Title="AndCustomAttribute Method " Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndCustomAttribute.htm">
+          <HelpTOCNode Id="d020b337-89e5-49d0-80bf-3af31d9da4a0" Title="AndCustomAttribute Method " Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndCustomAttribute.htm">
             <HelpTOCNode Title="AndCustomAttribute Method (User, String, JToken)" Url="html/M_LaunchDarkly_Client_UserExtensions_AndCustomAttribute.htm" />
             <HelpTOCNode Title="AndCustomAttribute Method (User, String, Boolean)" Url="html/M_LaunchDarkly_Client_UserExtensions_AndCustomAttribute_1.htm" />
             <HelpTOCNode Title="AndCustomAttribute Method (User, String, List(Int32))" Url="html/M_LaunchDarkly_Client_UserExtensions_AndCustomAttribute_2.htm" />
@@ -565,7 +567,7 @@
           <HelpTOCNode Title="AndName Method " Url="html/M_LaunchDarkly_Client_UserExtensions_AndName.htm" />
           <HelpTOCNode Title="AndPrivateAvatar Method " Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateAvatar.htm" />
           <HelpTOCNode Title="AndPrivateCountry Method " Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateCountry.htm" />
-          <HelpTOCNode Id="ef92f2d1-8d02-402f-b308-74acd1a8b4ff" Title="AndPrivateCustomAttribute Method " Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndPrivateCustomAttribute.htm">
+          <HelpTOCNode Id="cda9c745-8e36-41cc-a97d-d8eedd7a8d71" Title="AndPrivateCustomAttribute Method " Url="html/Overload_LaunchDarkly_Client_UserExtensions_AndPrivateCustomAttribute.htm">
             <HelpTOCNode Title="AndPrivateCustomAttribute Method (User, String, JToken)" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateCustomAttribute.htm" />
             <HelpTOCNode Title="AndPrivateCustomAttribute Method (User, String, Boolean)" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateCustomAttribute_1.htm" />
             <HelpTOCNode Title="AndPrivateCustomAttribute Method (User, String, List(Int32))" Url="html/M_LaunchDarkly_Client_UserExtensions_AndPrivateCustomAttribute_2.htm" />
@@ -583,9 +585,9 @@
           <HelpTOCNode Title="AndSecondaryKey Method " Url="html/M_LaunchDarkly_Client_UserExtensions_AndSecondaryKey.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="1fd268d8-395c-4718-9535-8b95d30c2548" Title="VersionedDataKind(T) Class" Url="html/T_LaunchDarkly_Client_VersionedDataKind_1.htm">
+      <HelpTOCNode Id="df66b0e0-8390-49c0-bee1-76d4ea79f99b" Title="VersionedDataKind(T) Class" Url="html/T_LaunchDarkly_Client_VersionedDataKind_1.htm">
         <HelpTOCNode Title="VersionedDataKind(T) Constructor " Url="html/M_LaunchDarkly_Client_VersionedDataKind_1__ctor.htm" />
-        <HelpTOCNode Id="d36ebba7-746e-4294-a936-e5b325fdd11a" Title="VersionedDataKind(T) Methods" Url="html/Methods_T_LaunchDarkly_Client_VersionedDataKind_1.htm">
+        <HelpTOCNode Id="eac64dad-8215-4bea-ac41-e66c9917d0f1" Title="VersionedDataKind(T) Methods" Url="html/Methods_T_LaunchDarkly_Client_VersionedDataKind_1.htm">
           <HelpTOCNode Title="GetItemType Method " Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetItemType.htm" />
           <HelpTOCNode Title="GetNamespace Method " Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetNamespace.htm" />
           <HelpTOCNode Title="GetStreamApiPath Method " Url="html/M_LaunchDarkly_Client_VersionedDataKind_1_GetStreamApiPath.htm" />
@@ -593,31 +595,32 @@
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="1cb342e2-fd5e-4fb5-8833-47c4d59dd9a7" Title="LaunchDarkly.Client.Files" Url="html/N_LaunchDarkly_Client_Files.htm">
-      <HelpTOCNode Id="a99eb80d-43c1-41e3-9a0f-48fced6cb0a8" Title="FileComponents Class" Url="html/T_LaunchDarkly_Client_Files_FileComponents.htm">
-        <HelpTOCNode Id="f3b30cbe-3908-4a7e-8364-c3abcd926f8d" Title="FileComponents Methods" Url="html/Methods_T_LaunchDarkly_Client_Files_FileComponents.htm">
+    <HelpTOCNode Id="4935d4dc-d569-43de-a9d0-586ff9b62783" Title="LaunchDarkly.Client.Files" Url="html/N_LaunchDarkly_Client_Files.htm">
+      <HelpTOCNode Id="562fc052-796b-4ef0-be0e-7c7f43e0cfdd" Title="FileComponents Class" Url="html/T_LaunchDarkly_Client_Files_FileComponents.htm">
+        <HelpTOCNode Id="8e1a4686-13ae-47a6-b0ba-d1f920205397" Title="FileComponents Methods" Url="html/Methods_T_LaunchDarkly_Client_Files_FileComponents.htm">
           <HelpTOCNode Title="FileDataSource Method " Url="html/M_LaunchDarkly_Client_Files_FileComponents_FileDataSource.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="bd1fc45e-8597-4e44-91dd-a5eda0df6393" Title="FileDataSourceFactory Class" Url="html/T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm">
+      <HelpTOCNode Id="6005550a-99b9-433e-80df-6cbae6dc7b7f" Title="FileDataSourceFactory Class" Url="html/T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm">
         <HelpTOCNode Title="FileDataSourceFactory Constructor " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory__ctor.htm" />
-        <HelpTOCNode Id="e9ef74b8-dd6b-4bbb-bf02-1a460561001f" Title="FileDataSourceFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm">
+        <HelpTOCNode Id="757bf13b-afc2-4cf8-80f8-94fc26b2f6ee" Title="FileDataSourceFactory Methods" Url="html/Methods_T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm">
           <HelpTOCNode Title="CreateUpdateProcessor Method " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_CreateUpdateProcessor.htm" />
           <HelpTOCNode Title="WithAutoUpdate Method " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithAutoUpdate.htm" />
           <HelpTOCNode Title="WithFilePaths Method " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFilePaths.htm" />
           <HelpTOCNode Title="WithParser Method " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithParser.htm" />
           <HelpTOCNode Title="WithPollInterval Method " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithPollInterval.htm" />
+          <HelpTOCNode Title="WithSkipMissingPaths Method " Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithSkipMissingPaths.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="6cceb9de-511f-4ac3-a37f-dd52ef496252" Title="FileDataSourceFactory Fields" Url="html/Fields_T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm">
+        <HelpTOCNode Id="0a0cacc0-c342-4873-a649-a7453cbbaa5f" Title="FileDataSourceFactory Fields" Url="html/Fields_T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm">
           <HelpTOCNode Title="DefaultPollInterval Field" Url="html/F_LaunchDarkly_Client_Files_FileDataSourceFactory_DefaultPollInterval.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="03c8e68e-99a5-4357-a991-fb40d35dae87" Title="LaunchDarkly.Client.Utils" Url="html/N_LaunchDarkly_Client_Utils.htm">
-      <HelpTOCNode Id="5a61fa3f-588a-4c2a-8443-fb4717c58acb" Title="CachingStoreWrapper Class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapper.htm">
-        <HelpTOCNode Id="85cf6b02-c80d-4852-8940-0b1a1d1d9a7f" Title="CachingStoreWrapper Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_CachingStoreWrapper.htm">
+    <HelpTOCNode Id="033283bc-4f39-4435-a6d8-dc7ef59dbe04" Title="LaunchDarkly.Client.Utils" Url="html/N_LaunchDarkly_Client_Utils.htm">
+      <HelpTOCNode Id="13e039db-f8ae-4a08-a83e-696571904f99" Title="CachingStoreWrapper Class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapper.htm">
+        <HelpTOCNode Id="8c10877b-e466-4f17-8fc6-f6c68f7f3fa3" Title="CachingStoreWrapper Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_CachingStoreWrapper.htm">
           <HelpTOCNode Title="All(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_All__1.htm" />
-          <HelpTOCNode Id="bfdc5b02-c9fc-489f-9c49-8c21909fb34c" Title="Builder Method " Url="html/Overload_LaunchDarkly_Client_Utils_CachingStoreWrapper_Builder.htm">
+          <HelpTOCNode Id="6d08af84-6979-4e0e-9166-ea4872c7de8a" Title="Builder Method " Url="html/Overload_LaunchDarkly_Client_Utils_CachingStoreWrapper_Builder.htm">
             <HelpTOCNode Title="Builder Method (IFeatureStoreCore)" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Builder.htm" />
             <HelpTOCNode Title="Builder Method (IFeatureStoreCoreAsync)" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Builder_1.htm" />
           </HelpTOCNode>
@@ -629,24 +632,24 @@
           <HelpTOCNode Title="Upsert(T) Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Upsert__1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="f37ae55a-462b-4be4-a4cd-fb8b95e34b90" Title="CachingStoreWrapperBuilder Class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder.htm">
-        <HelpTOCNode Id="40375721-24b1-4507-96ff-249e57b18bc5" Title="CachingStoreWrapperBuilder Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder.htm">
+      <HelpTOCNode Id="1a9ab4fc-fc06-4ae8-b6be-42cc7dc242cb" Title="CachingStoreWrapperBuilder Class" Url="html/T_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder.htm">
+        <HelpTOCNode Id="b5885d6c-cb74-4e54-a91a-fbc471acf0f3" Title="CachingStoreWrapperBuilder Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder.htm">
           <HelpTOCNode Title="Build Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder_Build.htm" />
           <HelpTOCNode Title="WithCaching Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder_WithCaching.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="05de5072-90d9-49f4-92cc-6f0539430db7" Title="FeatureStoreHelpers Class" Url="html/T_LaunchDarkly_Client_Utils_FeatureStoreHelpers.htm">
+      <HelpTOCNode Id="7f1016ff-36e4-473c-bd42-850d51e3a651" Title="FeatureStoreHelpers Class" Url="html/T_LaunchDarkly_Client_Utils_FeatureStoreHelpers.htm">
         <HelpTOCNode Title="FeatureStoreHelpers Constructor " Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers__ctor.htm" />
-        <HelpTOCNode Id="4db708c6-39f8-4637-a626-1a6cf1d811a2" Title="FeatureStoreHelpers Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_FeatureStoreHelpers.htm">
+        <HelpTOCNode Id="00aa169e-5e4e-427a-89f4-5fb9745b13c0" Title="FeatureStoreHelpers Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_FeatureStoreHelpers.htm">
           <HelpTOCNode Title="MarshalJson Method " Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers_MarshalJson.htm" />
-          <HelpTOCNode Id="a1cf3b29-dbfa-4fb1-a1a9-108c66b1b4f1" Title="UnmarshalJson Method " Url="html/Overload_LaunchDarkly_Client_Utils_FeatureStoreHelpers_UnmarshalJson.htm">
+          <HelpTOCNode Id="0dc7c459-bfaa-4c22-8bb7-59dd0befc9ec" Title="UnmarshalJson Method " Url="html/Overload_LaunchDarkly_Client_Utils_FeatureStoreHelpers_UnmarshalJson.htm">
             <HelpTOCNode Title="UnmarshalJson Method (IVersionedDataKind, String)" Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers_UnmarshalJson.htm" />
             <HelpTOCNode Title="UnmarshalJson(T) Method (VersionedDataKind(T), String)" Url="html/M_LaunchDarkly_Client_Utils_FeatureStoreHelpers_UnmarshalJson__1.htm" />
           </HelpTOCNode>
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="aa52f118-8aaf-40cb-be48-deb995e4e0a3" Title="IFeatureStoreCore Interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCore.htm">
-        <HelpTOCNode Id="c5e2c1a2-a31a-4fa2-b072-38695ea6f5e9" Title="IFeatureStoreCore Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_IFeatureStoreCore.htm">
+      <HelpTOCNode Id="fa7ab72e-1297-4032-9f62-79419e43d88b" Title="IFeatureStoreCore Interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCore.htm">
+        <HelpTOCNode Id="382b09fd-d067-462e-9a48-1bd29b1c4f31" Title="IFeatureStoreCore Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_IFeatureStoreCore.htm">
           <HelpTOCNode Title="GetAllInternal Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_GetAllInternal.htm" />
           <HelpTOCNode Title="GetInternal Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_GetInternal.htm" />
           <HelpTOCNode Title="InitializedInternal Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_InitializedInternal.htm" />
@@ -654,8 +657,8 @@
           <HelpTOCNode Title="UpsertInternal Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCore_UpsertInternal.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="4112b96c-28b2-44c0-b9a4-99c12be92684" Title="IFeatureStoreCoreAsync Interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync.htm">
-        <HelpTOCNode Id="197a34cd-fa81-4123-8942-d368ed440621" Title="IFeatureStoreCoreAsync Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync.htm">
+      <HelpTOCNode Id="832639f2-ad3f-4074-bc19-e12e3fbd6988" Title="IFeatureStoreCoreAsync Interface" Url="html/T_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync.htm">
+        <HelpTOCNode Id="56f6da8d-5ced-4bab-a15e-a0d99158331b" Title="IFeatureStoreCoreAsync Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync.htm">
           <HelpTOCNode Title="GetAllInternalAsync Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_GetAllInternalAsync.htm" />
           <HelpTOCNode Title="GetInternalAsync Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_GetInternalAsync.htm" />
           <HelpTOCNode Title="InitializedInternalAsync Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_InitializedInternalAsync.htm" />
@@ -663,16 +666,16 @@
           <HelpTOCNode Title="UpsertInternalAsync Method " Url="html/M_LaunchDarkly_Client_Utils_IFeatureStoreCoreAsync_UpsertInternalAsync.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="3e0bccbe-e371-4bf9-ba40-ec8c31b3263f" Title="UnmarshalException Class" Url="html/T_LaunchDarkly_Client_Utils_UnmarshalException.htm">
+      <HelpTOCNode Id="44cc2e03-b228-4b54-a074-1ef89b940c5f" Title="UnmarshalException Class" Url="html/T_LaunchDarkly_Client_Utils_UnmarshalException.htm">
         <HelpTOCNode Title="UnmarshalException Constructor " Url="html/M_LaunchDarkly_Client_Utils_UnmarshalException__ctor.htm" />
         <HelpTOCNode Title="UnmarshalException Properties" Url="html/Properties_T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
         <HelpTOCNode Title="UnmarshalException Methods" Url="html/Methods_T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
         <HelpTOCNode Title="UnmarshalException Events" Url="html/Events_T_LaunchDarkly_Client_Utils_UnmarshalException.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="cf8dcb14-c043-4735-8596-932d275aacad" Title="LaunchDarkly.Common" Url="html/N_LaunchDarkly_Common.htm">
-      <HelpTOCNode Id="63bd1239-2708-4661-a003-8a9a7b90df0d" Title="IBaseConfiguration Interface" Url="html/T_LaunchDarkly_Common_IBaseConfiguration.htm">
-        <HelpTOCNode Id="3eaac123-2b74-455a-96c2-2c548b70ffd3" Title="IBaseConfiguration Properties" Url="html/Properties_T_LaunchDarkly_Common_IBaseConfiguration.htm">
+    <HelpTOCNode Id="4c022bd7-165e-49ac-886c-47a497720ac8" Title="LaunchDarkly.Common" Url="html/N_LaunchDarkly_Common.htm">
+      <HelpTOCNode Id="e6c8c3bd-f6b1-4a4e-aebf-fe0231dd8331" Title="IBaseConfiguration Interface" Url="html/T_LaunchDarkly_Common_IBaseConfiguration.htm">
+        <HelpTOCNode Id="47e98901-40b0-4446-80c9-839d0a28fbd4" Title="IBaseConfiguration Properties" Url="html/Properties_T_LaunchDarkly_Common_IBaseConfiguration.htm">
           <HelpTOCNode Title="AllAttributesPrivate Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_AllAttributesPrivate.htm" />
           <HelpTOCNode Title="BaseUri Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_BaseUri.htm" />
           <HelpTOCNode Title="EventCapacity Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_EventCapacity.htm" />
@@ -694,11 +697,11 @@
           <HelpTOCNode Title="UserKeysFlushInterval Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_UserKeysFlushInterval.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="f83f734a-dc60-4671-b02c-a92d60392458" Title="ILdCommonClient Interface" Url="html/T_LaunchDarkly_Common_ILdCommonClient.htm">
-        <HelpTOCNode Id="33e3bde5-36d8-4ec1-83bc-efc35224d530" Title="ILdCommonClient Properties" Url="html/Properties_T_LaunchDarkly_Common_ILdCommonClient.htm">
+      <HelpTOCNode Id="a5928328-b160-49e1-a17f-defbd74a5fe2" Title="ILdCommonClient Interface" Url="html/T_LaunchDarkly_Common_ILdCommonClient.htm">
+        <HelpTOCNode Id="fe1e7f71-7e99-4e3b-88d0-ccbd586f2285" Title="ILdCommonClient Properties" Url="html/Properties_T_LaunchDarkly_Common_ILdCommonClient.htm">
           <HelpTOCNode Title="Version Property " Url="html/P_LaunchDarkly_Common_ILdCommonClient_Version.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="ff1a70bb-2337-443b-b2f8-6d1a738e2a45" Title="ILdCommonClient Methods" Url="html/Methods_T_LaunchDarkly_Common_ILdCommonClient.htm">
+        <HelpTOCNode Id="cd06342d-6a1c-404d-9393-0b097a363971" Title="ILdCommonClient Methods" Url="html/Methods_T_LaunchDarkly_Common_ILdCommonClient.htm">
           <HelpTOCNode Title="Flush Method " Url="html/M_LaunchDarkly_Common_ILdCommonClient_Flush.htm" />
           <HelpTOCNode Title="IsOffline Method " Url="html/M_LaunchDarkly_Common_ILdCommonClient_IsOffline.htm" />
         </HelpTOCNode>

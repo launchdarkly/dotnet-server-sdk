@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shfbBuild product="Sandcastle Help File Builder and Tools" version="2019.6.24.0" projectFile="Y:\dotnet-server-sdk-private\docs\project.shfbproj" started="10/2/2019 7:25:22 PM">
+<shfbBuild product="Sandcastle Help File Builder and Tools" version="2019.6.24.0" projectFile="Y:\dotnet-server-sdk\docs\project.shfbproj" started="10/7/2019 6:38:59 PM">
 <buildStep step="Initializing">
 Finding tools...
 The Sandcastle tools are located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\&#39;
 Locating components in the following folder(s):
-    Y:\dotnet-server-sdk-private\docs
+    Y:\dotnet-server-sdk\docs
     C:\ProgramData\EWSoftware\Sandcastle Help File Builder\Components and Plug-Ins\
     C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\
 Using framework reflection data for &#39;.NET Framework 4.5&#39; located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\Data\.NETFramework&#39;
@@ -18,12 +18,12 @@ Clearing any prior web/markdown output...
 </buildStep>
 <buildStep step="ValidatingDocumentationSources">
 Validating and copying documentation source information
-Source: Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.xml
-Source: Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.dll
-    Found assembly &#39;Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.dll&#39;
-Source: Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.xml
-Source: Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.dll
-    Found assembly &#39;Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.dll&#39;
+Source: Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.xml
+Source: Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.dll
+    Found assembly &#39;Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.dll&#39;
+Source: Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.xml
+Source: Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.dll
+    Found assembly &#39;Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.dll&#39;
 
 References to include:
     Common.Logging
@@ -33,23 +33,23 @@ References to include:
     Newtonsoft.Json
 
 Copying XML comments files
-    Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.xml -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\LaunchDarkly.ServerSdk.xml
-    Y:\dotnet-server-sdk-private\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.xml -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\LaunchDarkly.CommonSdk.xml
+    Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.xml -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\LaunchDarkly.ServerSdk.xml
+    Y:\dotnet-server-sdk\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.xml -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\LaunchDarkly.CommonSdk.xml
 </buildStep>
 <buildStep step="GenerateSharedContent">
 Generating shared content files (en-US, English (United States))...
 <plugIn name="Lightweight Website Style" behavior="After" priority="1000">
-</plugIn>    Last step completed in 00:00:00.0350
+</plugIn>    Last step completed in 00:00:00.0260
 </buildStep>
 <buildStep step="GenerateApiFilter">
 Generating API filter for MRefBuilder...
-    Last step completed in 00:00:00.0160
+    Last step completed in 00:00:00.0090
 </buildStep>
 <buildStep step="GenerateReflectionInfo">
 Generating reflection information...
 [C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\bin\MSBuild.exe - GenerateRefInfo.proj]
-Build started 10/2/2019 7:25:26 PM.
-Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\GenerateRefInfo.proj&quot; on node 1 (default targets).
+Build started 10/7/2019 6:39:03 PM.
+Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\GenerateRefInfo.proj&quot; on node 1 (default targets).
 PrepareForBuild:
   Creating directory &quot;obj\Debug\&quot;.
 GenerateRefInfo:
@@ -58,20 +58,20 @@ GenerateRefInfo:
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   No source code context base path specified.  Source context information is unavailable.
   Loaded 2 assemblies for reflection and 6 dependency assemblies.
-  Wrote information on 4 namespaces, 52 types, and 429 members
+  Wrote information on 4 namespaces, 52 types, and 432 members
   Copying file from &quot;reflection.org&quot; to &quot;reflection.all&quot;.
   XslTransform (v2019.6.24.0)
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\MergeDuplicates.xsl&#39;.
-Done Building Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\GenerateRefInfo.proj&quot; (default targets).
-    Last step completed in 00:00:01.5340
+Done Building Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\GenerateRefInfo.proj&quot; (default targets).
+    Last step completed in 00:00:07.4580
 </buildStep>
 <buildStep step="TransformReflectionInfo">
 Transforming reflection output...
 [C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\bin\MSBuild.exe - TransformManifest.proj]
-Build started 10/2/2019 7:25:28 PM.
-Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\TransformManifest.proj&quot; on node 1 (default targets).
+Build started 10/7/2019 6:39:11 PM.
+Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\TransformManifest.proj&quot; on node 1 (default targets).
 TransformManifest:
   XslTransform (v2019.6.24.0)
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
@@ -134,12 +134,12 @@ TransformManifest:
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\ReflectionToManifest.xsl&#39;.
-Done Building Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\TransformManifest.proj&quot; (default targets).
-    Last step completed in 00:00:00.9322
+Done Building Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\TransformManifest.proj&quot; (default targets).
+    Last step completed in 00:00:07.7920
 </buildStep>
 <buildStep step="GenerateNamespaceSummaries">
 Generating namespace summary information...
-    Last step completed in 00:00:00.0578
+    Last step completed in 00:00:00.0510
 </buildStep>
 <buildStep step="GenerateInheritedDocumentation">
 Generating inherited documentation...
@@ -151,14 +151,14 @@ E-Mail: Eric@EWoodruff.us
 Reflection information will be retrieved from &#39;reflection.xml&#39;
 Inherited documentation will be written to &#39;_InheritedDocs_.xml&#39;
 Indexing C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\*.xml
-Indexing Y:\dotnet-server-sdk-private\docs\build\html\Working\LaunchDarkly.ServerSdk.xml
-Indexing Y:\dotnet-server-sdk-private\docs\build\html\Working\LaunchDarkly.CommonSdk.xml
-Indexed 158186 members in 122 file(s).  2 file(s) to scan for &lt;inheritdoc /&gt; tags.
+Indexing Y:\dotnet-server-sdk\docs\build\html\Working\LaunchDarkly.ServerSdk.xml
+Indexing Y:\dotnet-server-sdk\docs\build\html\Working\LaunchDarkly.CommonSdk.xml
+Indexed 158189 members in 122 file(s).  2 file(s) to scan for &lt;inheritdoc /&gt; tags.
 Merging inherited documentation...
 
 
 Documentation merged successfully
-    Last step completed in 00:00:03.0794
+    Last step completed in 00:00:05.9620
 </buildStep>
 <buildStep step="CopyAdditionalContent">
 Copying additional content files...
@@ -167,183 +167,185 @@ No additional content to copy
 </buildStep>
 <buildStep step="MergeTablesOfContents">
 Merging conceptual and additional tables of contents...
-    Last step completed in 00:00:00.0050
+    Last step completed in 00:00:00.0010
 </buildStep>
 <buildStep step="GenerateIntermediateTableOfContents">
 Generating intermediate table of contents file...
 [C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\bin\MSBuild.exe - GenerateIntermediateTOC.proj]
-Build started 10/2/2019 7:25:32 PM.
-Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\GenerateIntermediateTOC.proj&quot; on node 1 (default targets).
+Build started 10/7/2019 6:39:24 PM.
+Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\GenerateIntermediateTOC.proj&quot; on node 1 (default targets).
 GenerateIntermediateTOC:
   XslTransform (v2019.6.24.0)
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\ProductionTransforms\CreateVSToc.xsl&#39;.
-Done Building Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\GenerateIntermediateTOC.proj&quot; (default targets).
+Done Building Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\GenerateIntermediateTOC.proj&quot; (default targets).
 Generating conceptual content intermediate TOC file...
-    Last step completed in 00:00:00.4290
+    Last step completed in 00:00:00.4120
 </buildStep>
 <buildStep step="CreateBuildAssemblerConfigs">
 Creating Sandcastle configuration files...
     sandcastle.config
-    Last step completed in 00:00:00.2820
+    Last step completed in 00:00:01.8581
 </buildStep>
 <buildStep step="MergeCustomConfigs">
 Merging custom build component configurations
-Y:\dotnet-server-sdk-private\docs\build\html\Working\sandcastle.config
+Y:\dotnet-server-sdk\docs\build\html\Working\sandcastle.config
   Updating reference topic configurations.
   No conceptual content.  Removing conceptual content components.
-    Last step completed in 00:00:00.0100
+    Last step completed in 00:00:00.0119
 </buildStep>
 <buildStep step="BuildTopics">
 Building help topics...
 [C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\bin\MSBuild.exe - BuildTopics.proj]
-Build started 10/2/2019 7:25:32 PM.
-Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj&quot; on node 1 (default targets).
+Build started 10/7/2019 6:39:27 PM.
+Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj&quot; on node 1 (default targets).
 BuildTopics:
   BuildAssembler (v2019.6.24.0)
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Loading configuration...
   Processing topics...
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;param name=&quot;configuration&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;param name=&quot;featureStore&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.CustomEvent.JsonData] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.Equals(System.Object)] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.Equals(System.Object)] Missing &lt;param name=&quot;obj&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.GetHashCode] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.GetHashCode] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.ToString] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.ToString] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.Equals(System.Object)] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.Equals(System.Object)] Missing &lt;param name=&quot;obj&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.GetHashCode] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.GetHashCode] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.ToString] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.ToString] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.Equals(System.Object)] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.Equals(System.Object)] Missing &lt;param name=&quot;other&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetFlagValue(System.String)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetHashCode] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetHashCode] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.FeatureFlagsState.ToValuesMap] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Default] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Value] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UpdateProcessorFactory(LaunchDarkly.Client.IUpdateProcessorFactory)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.ILdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.ILdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.Track(System.String,Newtonsoft.Json.Linq.JToken,LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.InMemoryFeatureStore.Init(System.Collections.Generic.IDictionary{LaunchDarkly.Client.IVersionedDataKind,System.Collections.Generic.IDictionary{System.String,LaunchDarkly.Client.IVersionedData}})] Missing &lt;param name=&quot;items&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,LaunchDarkly.Client.LdValue)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,LaunchDarkly.Client.LdValue)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.Track(System.String,Newtonsoft.Json.Linq.JToken,LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Overload:LaunchDarkly.Client.LdValue.Equals] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [Overload:LaunchDarkly.Client.LdValue.Equals] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.AsDictionary``1(LaunchDarkly.Client.LdValue.Converter{``0})] Missing &lt;typeparam name=&quot;T&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.AsDictionary``1(LaunchDarkly.Client.LdValue.Converter{``0})] Missing &lt;param name=&quot;desiredType&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.LdValue.AsInt] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JObject&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JArray&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.AsList``1(LaunchDarkly.Client.LdValue.Converter{``0})] Missing &lt;param name=&quot;desiredType&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.LdValue.AsLong] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(LaunchDarkly.Client.LdValue)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(LaunchDarkly.Client.LdValue)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.Equals(LaunchDarkly.Client.LdValue)] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.Equals(System.Object)] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JObject&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JArray&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;key&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;secondaryKey&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;ip&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;country&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;firstName&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;lastName&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;name&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;avatar&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;email&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;anonymous&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;custom&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;privateAttributeNames&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.User.Custom] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.Equals(LaunchDarkly.Client.User)] Missing &lt;param name=&quot;u&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.UserExtensions.AndAnonymous(LaunchDarkly.Client.User,System.Boolean)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.UserExtensions.AndCustomAttribute(LaunchDarkly.Client.User,System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.UserExtensions.AndPrivateCustomAttribute(LaunchDarkly.Client.User,System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.UserExtensions.AndSecondaryKey(LaunchDarkly.Client.User,System.String)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Files.FileDataSourceFactory] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.UpdateProcessorFactory(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.Utils.CachingStoreWrapper.Init(System.Collections.Generic.IDictionary{LaunchDarkly.Client.IVersionedDataKind,System.Collections.Generic.IDictionary{System.String,LaunchDarkly.Client.IVersionedData}})] Missing &lt;param name=&quot;items&quot;/&gt; documentation [Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj]
-  Processed 565 topic(s)
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;param name=&quot;configuration&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;param name=&quot;featureStore&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.CustomEvent.JsonData] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.Equals(System.Object)] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.Equals(System.Object)] Missing &lt;param name=&quot;obj&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.GetHashCode] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.GetHashCode] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.ToString] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.PrerequisiteFailed.ToString] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.Equals(System.Object)] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.Equals(System.Object)] Missing &lt;param name=&quot;obj&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.GetHashCode] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.GetHashCode] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.ToString] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.EvaluationReason.RuleMatch.ToString] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.Equals(System.Object)] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.Equals(System.Object)] Missing &lt;param name=&quot;other&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetFlagValue(System.String)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetHashCode] Missing &lt;summary&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetHashCode] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.FeatureFlagsState.ToValuesMap] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Default] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Value] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UpdateProcessorFactory(LaunchDarkly.Client.IUpdateProcessorFactory)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.ILdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.ILdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.Track(System.String,Newtonsoft.Json.Linq.JToken,LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.InMemoryFeatureStore.Init(System.Collections.Generic.IDictionary{LaunchDarkly.Client.IVersionedDataKind,System.Collections.Generic.IDictionary{System.String,LaunchDarkly.Client.IVersionedData}})] Missing &lt;param name=&quot;items&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,LaunchDarkly.Client.LdValue)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,LaunchDarkly.Client.LdValue)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.IUserBuilder.Custom(System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariation(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Client.User,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdClient.Track(System.String,Newtonsoft.Json.Linq.JToken,LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.LdValue] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Overload:LaunchDarkly.Client.LdValue.Equals] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [Overload:LaunchDarkly.Client.LdValue.Equals] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.AsDictionary``1(LaunchDarkly.Client.LdValue.Converter{``0})] Missing &lt;typeparam name=&quot;T&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.AsDictionary``1(LaunchDarkly.Client.LdValue.Converter{``0})] Missing &lt;param name=&quot;desiredType&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.LdValue.AsInt] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JObject&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JArray&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.AsJToken] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.AsList``1(LaunchDarkly.Client.LdValue.Converter{``0})] Missing &lt;param name=&quot;desiredType&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.LdValue.AsLong] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(LaunchDarkly.Client.LdValue)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(LaunchDarkly.Client.LdValue)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.Equals(LaunchDarkly.Client.LdValue)] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(System.Object)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.LdValue.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.Equals(System.Object)] Unknown reference link target &#39;M:Newtonsoft.Json.Linq.JToken.DeepEquals(Newtonsoft.Json.Linq.JToken)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;N:Newtonsoft.Json&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JObject&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JArray&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.LdValue.FromJToken(Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;key&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;secondaryKey&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;ip&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;country&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;firstName&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;lastName&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;name&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;avatar&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;email&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;anonymous&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;custom&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Missing &lt;param name=&quot;privateAttributeNames&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.User.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,Newtonsoft.Json.Linq.JToken},System.Collections.Generic.ISet{System.String})] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.User.Custom] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.User.Equals(LaunchDarkly.Client.User)] Missing &lt;param name=&quot;u&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.UserExtensions.AndAnonymous(LaunchDarkly.Client.User,System.Boolean)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.UserExtensions.AndCustomAttribute(LaunchDarkly.Client.User,System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.UserExtensions.AndPrivateCustomAttribute(LaunchDarkly.Client.User,System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.UserExtensions.AndSecondaryKey(LaunchDarkly.Client.User,System.String)] Missing &lt;returns&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Files.FileDataSourceFactory] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.UpdateProcessorFactory(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.Utils.CachingStoreWrapper.Init(System.Collections.Generic.IDictionary{LaunchDarkly.Client.IVersionedDataKind,System.Collections.Generic.IDictionary{System.String,LaunchDarkly.Client.IVersionedData}})] Missing &lt;param name=&quot;items&quot;/&gt; documentation [Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj]
+  Processed 568 topic(s)
   128 warning(s)
   CopyFromIndexComponent: &quot;reflection&quot; in-memory cache entries used: 5 of 15.
   CopyFromIndexComponent: &quot;comments&quot; in-memory cache entries used: 4 of 30.
-Done Building Project &quot;Y:\dotnet-server-sdk-private\docs\build\html\Working\BuildTopics.proj&quot; (default targets).
-    Last step completed in 00:00:12.8741
+  ResolveReferenceLinksComponent: 1 entries added to the MSDN content ID cache.  New cache size: 59 entries
+  SaveComponent: Waiting for the document writer task to finish (85 Website API file(s) remaining)...
+Done Building Project &quot;Y:\dotnet-server-sdk\docs\build\html\Working\BuildTopics.proj&quot; (default targets).
+    Last step completed in 00:00:30.3330
 </buildStep>
 <buildStep step="CombiningIntermediateTocFiles">
 Combining conceptual and API intermediate TOC files...
-    Last step completed in 00:00:00.0350
+    Last step completed in 00:00:00.0400
 </buildStep>
 <buildStep step="ExtractingHtmlInfo">
 Extracting HTML info for HTML Help 1 and/or website...
@@ -354,120 +356,120 @@ E-Mail: Eric@EWoodruff.us
 
 Using LCID &#39;1033&#39;, code page &#39;65001&#39;, encoding charset &#39;UTF-8&#39;.
 
-Processing website files in Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website
-Processed 564 HTML files
+Processing website files in Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website
+Processed 567 HTML files
 Sorting keywords and generating See Also indices
-Saving website keyword index to Y:\dotnet-server-sdk-private\docs\build\html\Working\WebKI.xml
-Saving website table of contents to Y:\dotnet-server-sdk-private\docs\build\html\Working\WebTOC.xml
-    Last step completed in 00:00:01.4760
+Saving website keyword index to Y:\dotnet-server-sdk\docs\build\html\Working\WebKI.xml
+Saving website table of contents to Y:\dotnet-server-sdk\docs\build\html\Working\WebTOC.xml
+    Last step completed in 00:00:11.2300
 </buildStep>
 <buildStep step="CopyStandardHelpContent">
 Copying standard help content...
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertCaution.png -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\AlertCaution.png
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertNote.png -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\AlertNote.png
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertSecurity.png -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\AlertSecurity.png
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\CFW.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\CFW.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\CodeExample.png -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\CodeExample.png
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\favicon.ico -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\favicon.ico
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privclass.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privclass.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privdelegate.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privdelegate.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privenumeration.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privenumeration.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privevent.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privevent.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privextension.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privextension.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privfield.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privfield.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privinterface.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privinterface.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privmethod.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privmethod.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privproperty.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privproperty.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privstructure.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\privstructure.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protclass.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protclass.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protdelegate.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protdelegate.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protenumeration.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protenumeration.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protevent.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protevent.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protextension.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protextension.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protfield.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protfield.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protinterface.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protinterface.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protmethod.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protmethod.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protoperator.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protoperator.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protproperty.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protproperty.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protstructure.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\protstructure.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubclass.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubclass.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubdelegate.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubdelegate.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubenumeration.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubenumeration.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubevent.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubevent.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubextension.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubextension.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubfield.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubfield.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubinterface.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubinterface.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubmethod.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubmethod.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\puboperator.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\puboperator.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubproperty.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubproperty.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubstructure.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\pubstructure.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\SectionCollapsed.png -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\SectionCollapsed.png
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\SectionExpanded.png -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\SectionExpanded.png
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\slMobile.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\slMobile.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\static.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\static.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\xna.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\xna.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\scripts\branding.js -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\scripts\branding.js
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-cs-CZ.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-cs-CZ.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-de-DE.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-de-DE.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-en-US.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-en-US.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-es-ES.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-es-ES.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-fr-FR.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-fr-FR.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-Help1.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-Help1.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-HelpViewer.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-HelpViewer.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-it-IT.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-it-IT.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ja-JP.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-ja-JP.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ko-KR.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-ko-KR.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pl-PL.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-pl-PL.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pt-BR.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-pt-BR.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ru-RU.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-ru-RU.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-tr-TR.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-tr-TR.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-Website.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-Website.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-CN.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-zh-CN.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-TW.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding-zh-TW.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding.css -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\styles\branding.css
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\index.html -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\index.html
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\search.html -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\search.html
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.aspx -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\SearchHelp.aspx
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.inc.php -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\SearchHelp.inc.php
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.php -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\SearchHelp.php
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\Web.Config -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\Web.Config
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\html\GeneralError.htm -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\html\GeneralError.htm
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\html\PageNotFound.htm -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\html\PageNotFound.htm
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\Search.png -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\Search.png
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocClose.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\TocClose.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocCollapsed.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\TocCollapsed.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocExpanded.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\TocExpanded.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocOpen.gif -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\icons\TocOpen.gif
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\branding-Website.js -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\scripts\branding-Website.js
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\clipboard.min.js -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\scripts\clipboard.min.js
-C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\jquery-3.3.1.min.js -&gt; Y:\dotnet-server-sdk-private\docs\build\html\Working\Output\Website\scripts\jquery-3.3.1.min.js
-    Last step completed in 00:00:01.5032
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertCaution.png -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\AlertCaution.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertNote.png -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\AlertNote.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertSecurity.png -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\AlertSecurity.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\CFW.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\CFW.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\CodeExample.png -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\CodeExample.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\favicon.ico -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\favicon.ico
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privclass.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privdelegate.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privenumeration.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privevent.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privextension.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privfield.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privinterface.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privmethod.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privproperty.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privstructure.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\privstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protclass.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protdelegate.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protenumeration.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protevent.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protextension.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protfield.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protinterface.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protmethod.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protoperator.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protoperator.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protproperty.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protstructure.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\protstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubclass.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubdelegate.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubenumeration.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubevent.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubextension.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubfield.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubinterface.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubmethod.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\puboperator.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\puboperator.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubproperty.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubstructure.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\pubstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\SectionCollapsed.png -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\SectionCollapsed.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\SectionExpanded.png -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\SectionExpanded.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\slMobile.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\slMobile.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\static.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\static.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\xna.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\xna.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\scripts\branding.js -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\scripts\branding.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-cs-CZ.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-cs-CZ.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-de-DE.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-de-DE.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-en-US.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-en-US.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-es-ES.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-es-ES.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-fr-FR.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-fr-FR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-Help1.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-Help1.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-HelpViewer.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-HelpViewer.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-it-IT.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-it-IT.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ja-JP.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-ja-JP.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ko-KR.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-ko-KR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pl-PL.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-pl-PL.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pt-BR.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-pt-BR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ru-RU.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-ru-RU.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-tr-TR.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-tr-TR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-Website.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-Website.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-CN.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-zh-CN.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-TW.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding-zh-TW.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding.css -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\styles\branding.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\index.html -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\index.html
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\search.html -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\search.html
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.aspx -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\SearchHelp.aspx
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.inc.php -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\SearchHelp.inc.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.php -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\SearchHelp.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\Web.Config -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\Web.Config
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\html\GeneralError.htm -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\html\GeneralError.htm
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\html\PageNotFound.htm -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\html\PageNotFound.htm
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\Search.png -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\Search.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocClose.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\TocClose.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocCollapsed.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\TocCollapsed.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocExpanded.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\TocExpanded.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocOpen.gif -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\icons\TocOpen.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\branding-Website.js -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\scripts\branding-Website.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\clipboard.min.js -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\scripts\clipboard.min.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\jquery-3.3.1.min.js -&gt; Y:\dotnet-server-sdk\docs\build\html\Working\Output\Website\scripts\jquery-3.3.1.min.js
+    Last step completed in 00:00:00.9430
 </buildStep>
 <buildStep step="GenerateHelpFormatTableOfContents">
 Generating website table of contents file...
-    Last step completed in 00:00:00.0008
+    Last step completed in 00:00:00.0010
 </buildStep>
 <buildStep step="GenerateFullTextIndex">
 Generating full-text index for the website...
 
 <plugIn name="Lightweight Website Style" behavior="After" priority="1000">
 Adding lightweight search and TOC elements to each topic...
-</plugIn>    Last step completed in 00:00:03.2732
+</plugIn>    Last step completed in 00:00:04.6020
 </buildStep>
 <buildStep step="CopyingWebsiteFiles">
 Copying website files to output folder...
 
 Copied 500 files
-Copied 793 files for the website content
-    Last step completed in 00:00:11.8638
+Copied 796 files for the website content
+    Last step completed in 00:00:17.1210
 </buildStep>
 <buildStep step="CleanIntermediates">
 Removing intermediate files...
-    Last step completed in 00:00:01.8040
+    Last step completed in 00:00:05.2280
 </buildStep>
 <buildStep step="Completed">
 
-Build completed successfully at 10/2/2019 7:26:05 PM.  Total time: 00:00:43.2660
+Build completed successfully at 10/7/2019 6:40:36 PM.  Total time: 00:01:36.4960
 
 </buildStep>
 </shfbBuild>
