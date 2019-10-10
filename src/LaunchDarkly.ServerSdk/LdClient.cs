@@ -19,7 +19,6 @@ namespace LaunchDarkly.Client
         private readonly IFeatureStore _featureStore;
         internal readonly IUpdateProcessor _updateProcessor;
         private bool _shouldDisposeEventProcessor;
-        private bool _shouldDisposeFeatureStore;
 
         /// <summary>
         /// Deprecated; please use <see cref="IConfigurationBuilder.EventProcessorFactory(IEventProcessorFactory)"/>
@@ -421,10 +420,7 @@ namespace LaunchDarkly.Client
                 {
                     _eventProcessor.Dispose();
                 }
-                if (_shouldDisposeFeatureStore)
-                {
-                    _featureStore.Dispose();
-                }
+                _featureStore.Dispose();
                 _updateProcessor.Dispose();
             }
         }

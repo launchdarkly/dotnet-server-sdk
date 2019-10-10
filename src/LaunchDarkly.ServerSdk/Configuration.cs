@@ -139,8 +139,6 @@ namespace LaunchDarkly.Client
         /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
         /// </summary>
         public bool UseLdd { get; internal set; }
-        // (Used internally, was never public, will remove when WithFeatureStore is removed)
-        internal IFeatureStore FeatureStore { get; set; }
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IFeatureStore"/>, to be used
         /// for holding feature flags and related data received from LaunchDarkly.
@@ -284,7 +282,6 @@ namespace LaunchDarkly.Client
             EventFlushInterval = builder._eventFlushInterval;
             EventProcessorFactory = builder._eventProcessorFactory;
             EventsUri = builder._eventsUri;
-            FeatureStore = builder._featureStore;
             FeatureStoreFactory = builder._featureStoreFactory;
             HttpMessageHandler = builder._httpMessageHandler;
             InlineUsersInEvents = builder._inlineUsersInEvents;
