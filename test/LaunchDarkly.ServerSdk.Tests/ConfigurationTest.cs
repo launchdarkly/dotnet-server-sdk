@@ -40,7 +40,7 @@ namespace LaunchDarkly.Tests
             TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
             TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
             TestSetter(b => b.ReconnectTime, c => c.ReconnectTime, time);
-            TestSetter(b => b.HttpClientTimeout, c => c.HttpClientTimeout, time);
+            TestSetter(b => b.ConnectionTimeout, c => c.ConnectionTimeout, time);
             TestSetter(b => b.HttpMessageHandler, c => c.HttpMessageHandler, new HttpClientHandler());
             TestSetter(b => b.Offline, c => c.Offline, true);
             TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);

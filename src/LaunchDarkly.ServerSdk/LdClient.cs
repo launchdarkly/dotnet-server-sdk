@@ -52,18 +52,8 @@ namespace LaunchDarkly.Client
                 _shouldDisposeEventProcessor = false;
             }
 
-            IFeatureStore store;
-            if (_configuration.FeatureStore == null)
-            {
-                store = (_configuration.FeatureStoreFactory ??
-                    Components.InMemoryFeatureStore).CreateFeatureStore();
-                _shouldDisposeFeatureStore = true;
-            }
-            else
-            {
-                store = _configuration.FeatureStore;
-                _shouldDisposeFeatureStore = false; // see previous comment
-            }
+            IFeatureStore store = (_configuration.FeatureStoreFactory ??
+                Components.InMemoryFeatureStore).CreateFeatureStore();
             _featureStore = new FeatureStoreClientWrapper(store);
 
             _updateProcessor = (_configuration.UpdateProcessorFactory ??

@@ -90,7 +90,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// The connection timeout. The default value is 10 seconds.
         /// </summary>
-        public TimeSpan HttpClientTimeout { get; internal set; }
+        public TimeSpan ConnectionTimeout { get; internal set; }
         /// <summary>
         /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
         /// </summary>
@@ -209,9 +209,9 @@ namespace LaunchDarkly.Client
         /// </summary>
         internal static readonly TimeSpan DefaultReconnectTime = TimeSpan.FromSeconds(1);
         /// <summary>
-        /// Default value for <see cref="HttpClientTimeout"/>.
+        /// Default value for <see cref="ConnectionTimeout"/>.
         /// </summary>
-        internal static readonly TimeSpan DefaultHttpClientTimeout = TimeSpan.FromSeconds(10);
+        internal static readonly TimeSpan DefaultConnectionTimeout = TimeSpan.FromSeconds(10);
         /// <summary>
         /// Default value for <see cref="UserKeysCapacity"/>.
         /// </summary>
@@ -279,6 +279,7 @@ namespace LaunchDarkly.Client
         {
             AllAttributesPrivate = builder._allAttributesPrivate;
             BaseUri = builder._baseUri;
+            ConnectionTimeout = builder._connectionTimeout;
             EventCapacity = builder._eventCapacity;
             EventFlushInterval = builder._eventFlushInterval;
             EventProcessorFactory = builder._eventProcessorFactory;
@@ -286,7 +287,6 @@ namespace LaunchDarkly.Client
             FeatureStore = builder._featureStore;
             FeatureStoreFactory = builder._featureStoreFactory;
             HttpMessageHandler = builder._httpMessageHandler;
-            HttpClientTimeout = builder._httpClientTimeout;
             InlineUsersInEvents = builder._inlineUsersInEvents;
             IsStreamingEnabled = builder._isStreamingEnabled;
             Offline = builder._offline;
@@ -316,7 +316,7 @@ namespace LaunchDarkly.Client
             public int EventCapacity => Config.EventCapacity;
             public TimeSpan EventFlushInterval => Config.EventFlushInterval;
             public Uri EventsUri => Config.EventsUri;
-            public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
+            public TimeSpan HttpClientTimeout => Config.ConnectionTimeout;
             public bool InlineUsersInEvents => Config.InlineUsersInEvents;
             public IImmutableSet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
             public TimeSpan ReadTimeout => Config.ReadTimeout;
@@ -337,7 +337,7 @@ namespace LaunchDarkly.Client
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
             public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
-            public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
+            public TimeSpan HttpClientTimeout => Config.ConnectionTimeout;
             public TimeSpan ReadTimeout => Config.ReadTimeout;
             public TimeSpan ReconnectTime => Config.ReconnectTime;
             public Exception TranslateHttpException(Exception e) => e;

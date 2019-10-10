@@ -82,7 +82,7 @@ namespace LaunchDarkly.Client
                 }
             }
 
-            using (var cts = new CancellationTokenSource(_config.HttpClientTimeout))
+            using (var cts = new CancellationTokenSource(_config.ConnectionTimeout))
             {
                 try
                 {
@@ -122,7 +122,7 @@ namespace LaunchDarkly.Client
                     }
                     //Otherwise this was a request timeout.
                     throw new TimeoutException("Get item with URL: " + path.AbsoluteUri +
-                                                " timed out after : " + _config.HttpClientTimeout);
+                                                " timed out after : " + _config.ConnectionTimeout);
                 }
             }
         }

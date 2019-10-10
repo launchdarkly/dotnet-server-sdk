@@ -51,6 +51,13 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder BaseUri(Uri baseUri);
 
         /// <summary>
+        /// Sets the connection timeout. The default value is 10 seconds.
+        /// </summary>
+        /// <param name="connectionTimeout">the connection timeout</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout);
+
+        /// <summary>
         /// Sets the capacity of the events buffer.
         /// </summary>
         /// <remarks>
@@ -109,13 +116,6 @@ namespace LaunchDarkly.Client
         /// <param name="httpMessageHandler">the <c>HttpMessageHandler</c> to use</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder HttpMessageHandler(HttpMessageHandler httpMessageHandler);
-
-        /// <summary>
-        /// Sets the connection timeout. The default value is 10 seconds.
-        /// </summary>
-        /// <param name="httpClientTimeout">the connection timeout</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder HttpClientTimeout(TimeSpan httpClientTimeout);
 
         /// <summary>
         /// Sets whether to include full user details in every analytics event.
@@ -264,12 +264,12 @@ namespace LaunchDarkly.Client
 
         internal bool _allAttributesPrivate = false;
         internal Uri _baseUri = Configuration.DefaultUri;
+        internal TimeSpan _connectionTimeout = Configuration.DefaultConnectionTimeout;
         internal int _eventCapacity = Configuration.DefaultEventCapacity;
         internal TimeSpan _eventFlushInterval = Configuration.DefaultEventFlushInterval;
         internal IEventProcessorFactory _eventProcessorFactory = null;
         internal Uri _eventsUri = Configuration.DefaultEventsUri;
         internal IFeatureStoreFactory _featureStoreFactory = null;
-        internal TimeSpan _httpClientTimeout = Configuration.DefaultHttpClientTimeout;
         internal HttpMessageHandler _httpMessageHandler = new HttpClientHandler();
         internal bool _inlineUsersInEvents = false;
         internal bool _isStreamingEnabled = true;
@@ -285,8 +285,6 @@ namespace LaunchDarkly.Client
         internal bool _useLdd = false;
         internal int _userKeysCapacity = Configuration.DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = Configuration.DefaultUserKeysFlushInterval;
-        internal int _eventSamplingInterval = 0;     // deprecated Configuration property, settable only by copying
-        internal IFeatureStore _featureStore = null; // deprecated Configuration property, settable only by copying
 
         public ConfigurationBuilder(string sdkKey)
         {
@@ -297,13 +295,12 @@ namespace LaunchDarkly.Client
         {
             _allAttributesPrivate = copyFrom.AllAttributesPrivate;
             _baseUri = copyFrom.BaseUri;
+            _connectionTimeout = copyFrom.ConnectionTimeout;
             _eventCapacity = copyFrom.EventCapacity;
             _eventFlushInterval = copyFrom.EventFlushInterval;
             _eventProcessorFactory = copyFrom.EventProcessorFactory;
             _eventsUri = copyFrom.EventsUri;
-            _featureStore = copyFrom.FeatureStore;
             _featureStoreFactory = copyFrom.FeatureStoreFactory;
-            _httpClientTimeout = copyFrom.HttpClientTimeout;
             _httpMessageHandler = copyFrom.HttpMessageHandler;
             _inlineUsersInEvents = copyFrom.InlineUsersInEvents;
             _isStreamingEnabled = copyFrom.IsStreamingEnabled;
@@ -336,6 +333,12 @@ namespace LaunchDarkly.Client
         public IConfigurationBuilder BaseUri(Uri baseUri)
         {
             _baseUri = baseUri;
+            return this;
+        }
+
+        public IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout)
+        {
+            _connectionTimeout = connectionTimeout;
             return this;
         }
 
@@ -372,12 +375,6 @@ namespace LaunchDarkly.Client
         public IConfigurationBuilder HttpMessageHandler(HttpMessageHandler httpMessageHandler)
         {
             _httpMessageHandler = httpMessageHandler;
-            return this;
-        }
-
-        public IConfigurationBuilder HttpClientTimeout(TimeSpan httpClientTimeout)
-        {
-            _httpClientTimeout = httpClientTimeout;
             return this;
         }
 
