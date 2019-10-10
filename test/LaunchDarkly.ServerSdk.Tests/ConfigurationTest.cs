@@ -41,7 +41,7 @@ namespace LaunchDarkly.Tests
             TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
             TestSetter(b => b.ReconnectTime, c => c.ReconnectTime, time);
             TestSetter(b => b.HttpClientTimeout, c => c.HttpClientTimeout, time);
-            TestSetter(b => b.HttpClientHandler, c => c.HttpClientHandler, new HttpClientHandler());
+            TestSetter(b => b.HttpMessageHandler, c => c.HttpMessageHandler, new HttpClientHandler());
             TestSetter(b => b.Offline, c => c.Offline, true);
             TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);
             TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
@@ -94,10 +94,6 @@ namespace LaunchDarkly.Tests
 
             Assert.Equal(99, config.EventCapacity);
             Assert.Equal(TimeSpan.FromSeconds(90), config.EventFlushInterval);
-#pragma warning disable 618
-            Assert.Equal(config.EventCapacity, config.EventQueueCapacity);
-            Assert.Equal(config.EventFlushInterval, config.EventQueueFrequency);
-#pragma warning restore 618
         }
     }
 }

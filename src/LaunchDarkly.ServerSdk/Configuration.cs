@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Net.Http;
-using Common.Logging;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -11,23 +11,11 @@ namespace LaunchDarkly.Client
     /// <see cref="Configuration.Builder(string)"/>.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// Note that the <see cref="Configuration"/> is currently mutable: even though the properties cannot be set
-    /// directly, using the <see cref="ConfigurationExtensions"/> methods (such as
-    /// <see cref="ConfigurationExtensions.WithStartWaitTime(Configuration, TimeSpan)"/>) modifies the
-    /// original object.  In future versions of the SDK, this class will be changed to be immutable. The
-    /// preferred method of setting configuration properties is to obtain a builder with
-    /// <see cref="Configuration.Builder(string)"/>; the <see cref="ConfigurationExtensions"/>
-    /// methods are now deprecated and will be removed once <c>Configuration</c> is immutable.
-    /// </para>
-    /// <para>
-    /// If you modify properties of a <see cref="Configuration"/> after creating an <see cref="LdClient"/> with that
-    /// <c>Configuration</c>, the behavior is undefined.
-    /// </para>
+    /// Instances of <see cref="Configuration"/> are immutable once created. They can be created with the factory method
+    /// <see cref="Configuration.Default(string)"/>, or using a builder pattern with <see cref="Configuration.Builder(string)"/>
+    /// or <see cref="Configuration.Builder(Configuration)"/>.
     /// </remarks>
-#pragma warning disable 618
-    public class Configuration : IBaseConfiguration
-#pragma warning restore 618
+    public class Configuration
     {
         /// <summary>
         /// The base URI of the LaunchDarkly server.
@@ -75,21 +63,6 @@ namespace LaunchDarkly.Client
         /// </remarks>
         public TimeSpan EventFlushInterval { get; internal set; }
         /// <summary>
-        /// Deprecated name for <see cref="EventFlushInterval"/>.
-        /// </summary>
-        [Obsolete("Use EventFlushInterval")]
-        public TimeSpan EventQueueFrequency => EventFlushInterval;
-        /// <summary>
-        /// Enables event sampling if non-zero.
-        /// </summary>
-        /// <remarks>
-        /// When set to the default of zero, all analytics events are sent back to LaunchDarkly. When greater
-        /// than zero, there is a 1 in <c>EventSamplingInterval</c> chance that events will be sent (example:
-        /// if the interval is 20, on average 5% of events will be sent).
-        /// </remarks>
-        [Obsolete("This feature will be removed in a future version.")]
-        public int EventSamplingInterval { get; internal set; }
-        /// <summary>
         /// Set the polling interval (when streaming is disabled). The default value is 30 seconds.
         /// </summary>
         public TimeSpan PollingInterval { get; internal set; }
@@ -121,7 +94,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
         /// </summary>
-        public HttpClientHandler HttpClientHandler { get; internal set; }
+        public HttpMessageHandler HttpMessageHandler { get; internal set; }
         /// <summary>
         /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
         /// </summary>
@@ -142,7 +115,7 @@ namespace LaunchDarkly.Client
         /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
         /// names removed, even if you did specify them as private on the <see cref="User"/> object.
         /// </remarks>
-        public ISet<string> PrivateAttributeNames { get; internal set; }
+        public IImmutableSet<string> PrivateAttributeNames { get; internal set; }
         /// <summary>
         /// The number of user keys that the event processor can remember at any one time, so that
         /// duplicate user details will not be sent in analytics events.
@@ -216,13 +189,13 @@ namespace LaunchDarkly.Client
         /// </summary>
         internal static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
         /// <summary>
-        /// Default value for <see cref="EventQueueCapacity"/>.
+        /// Default value for <see cref="EventCapacity"/>.
         /// </summary>
-        internal static readonly int DefaultEventQueueCapacity = 10000;
+        internal static readonly int DefaultEventCapacity = 10000;
         /// <summary>
-        /// Default value for <see cref="EventQueueFrequency"/>.
+        /// Default value for <see cref="EventFlushInterval"/>.
         /// </summary>
-        internal static readonly TimeSpan DefaultEventQueueFrequency = TimeSpan.FromSeconds(5);
+        internal static readonly TimeSpan DefaultEventFlushInterval = TimeSpan.FromSeconds(5);
         /// <summary>
         /// Default value for <see cref="StartWaitTime"/>.
         /// </summary>
@@ -249,8 +222,7 @@ namespace LaunchDarkly.Client
         internal static readonly TimeSpan DefaultUserKeysFlushInterval = TimeSpan.FromMinutes(5);
         
         /// <summary>
-        /// Creates a configuration with all parameters set to the default. Use extension methods
-        /// to set additional parameters.
+        /// Creates a configuration with all parameters set to the default.
         /// </summary>
         /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
         /// <returns>a <c>Configuration</c> instance</returns>
@@ -263,15 +235,10 @@ namespace LaunchDarkly.Client
         /// Creates an <see cref="IConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
         /// </summary>
         /// <remarks>
-        /// This is the preferred method for building a <c>Configuration</c> if you are setting properties
-        /// besides the <c>SdkKey</c>. The <c>ConfigurationBuilder</c> has methods for setting any number of
+        /// This is the only method for building a <see cref="Configuration"/> if you are setting properties
+        /// besides the <c>SdkKey</c>. The <see cref="IConfigurationBuilder"/> has methods for setting any number of
         /// properties, after which you call <see cref="IConfigurationBuilder.Build"/> to get the resulting
         /// <c>Configuration</c> instance.
-        /// 
-        /// This is different from using the extension methods such as
-        /// <see cref="ConfigurationExtensions.WithStartWaitTime(Configuration, TimeSpan)"/>, which modify the properties
-        /// of an existing <c>Configuration</c> instance. Those methods are now deprecated, because in a future
-        /// version of the SDK, <c>Configuration</c> will be an immutable object.
         /// </remarks>
         /// <example>
         /// <code>
@@ -315,20 +282,18 @@ namespace LaunchDarkly.Client
             EventCapacity = builder._eventCapacity;
             EventFlushInterval = builder._eventFlushInterval;
             EventProcessorFactory = builder._eventProcessorFactory;
-#pragma warning disable 618
-            EventSamplingInterval = builder._eventSamplingInterval;
-#pragma warning restore 618
             EventsUri = builder._eventsUri;
             FeatureStore = builder._featureStore;
             FeatureStoreFactory = builder._featureStoreFactory;
-            HttpClientHandler = builder._httpClientHandler;
+            HttpMessageHandler = builder._httpMessageHandler;
             HttpClientTimeout = builder._httpClientTimeout;
             InlineUsersInEvents = builder._inlineUsersInEvents;
             IsStreamingEnabled = builder._isStreamingEnabled;
             Offline = builder._offline;
             PollingInterval = builder._pollingInterval;
             PrivateAttributeNames = builder._privateAttributeNames is null ?
-                new HashSet<string>() : new HashSet<string>(builder._privateAttributeNames);
+                ImmutableHashSet.Create<string>() :
+                builder._privateAttributeNames.ToImmutableHashSet();
             ReadTimeout = builder._readTimeout;
             ReconnectTime = builder._reconnectTime;
             SdkKey = builder._sdkKey;
@@ -350,13 +315,10 @@ namespace LaunchDarkly.Client
             public bool AllAttributesPrivate => Config.AllAttributesPrivate;
             public int EventCapacity => Config.EventCapacity;
             public TimeSpan EventFlushInterval => Config.EventFlushInterval;
-#pragma warning disable 618
-            public int EventSamplingInterval => Config.EventSamplingInterval;
-#pragma warning restore 618
             public Uri EventsUri => Config.EventsUri;
             public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
             public bool InlineUsersInEvents => Config.InlineUsersInEvents;
-            public ISet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
+            public IImmutableSet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
             public TimeSpan ReadTimeout => Config.ReadTimeout;
             public TimeSpan ReconnectTime => Config.ReconnectTime;
             public int UserKeysCapacity => Config.UserKeysCapacity;
@@ -367,17 +329,18 @@ namespace LaunchDarkly.Client
         {
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
-            public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
+            public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
         }
 
         private struct StreamManagerAdapter : IStreamManagerConfiguration
         {
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
-            public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
+            public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
             public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
             public TimeSpan ReadTimeout => Config.ReadTimeout;
             public TimeSpan ReconnectTime => Config.ReconnectTime;
+            public Exception TranslateHttpException(Exception e) => e;
         }
     }
 }

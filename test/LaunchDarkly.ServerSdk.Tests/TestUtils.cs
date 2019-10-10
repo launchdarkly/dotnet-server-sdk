@@ -151,6 +151,8 @@ namespace LaunchDarkly.Tests
             Events.Add(e);
         }
 
+        public void SetOffline(bool offline) { }
+
         public void Flush() { }
 
         public void Dispose() { }

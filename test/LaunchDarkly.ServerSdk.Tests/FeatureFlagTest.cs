@@ -210,7 +210,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(1, result.PrerequisiteEvents.Count);
             FeatureRequestEvent e = result.PrerequisiteEvents[0];
             Assert.Equal(f1.Key, e.Key);
-            Assert.Equal(LdValue.Of("go"), e.LdValue);
+            Assert.Equal(LdValue.Of("go"), e.Value);
             Assert.Equal(f1.Version, e.Version);
             Assert.Equal(f0.Key, e.PrereqOf);
         }
@@ -243,7 +243,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(1, result.PrerequisiteEvents.Count);
             FeatureRequestEvent e = result.PrerequisiteEvents[0];
             Assert.Equal(f1.Key, e.Key);
-            Assert.Equal(LdValue.Of("nogo"), e.LdValue);
+            Assert.Equal(LdValue.Of("nogo"), e.Value);
             Assert.Equal(f1.Version, e.Version);
             Assert.Equal(f0.Key, e.PrereqOf);
         }
@@ -275,7 +275,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(1, result.PrerequisiteEvents.Count);
             FeatureRequestEvent e = result.PrerequisiteEvents[0];
             Assert.Equal(f1.Key, e.Key);
-            Assert.Equal(LdValue.Of("go"), e.LdValue);
+            Assert.Equal(LdValue.Of("go"), e.Value);
             Assert.Equal(f1.Version, e.Version);
             Assert.Equal(f0.Key, e.PrereqOf);
         }
@@ -316,13 +316,13 @@ namespace LaunchDarkly.Tests
 
             FeatureRequestEvent e0 = result.PrerequisiteEvents[0];
             Assert.Equal(f2.Key, e0.Key);
-            Assert.Equal(LdValue.Of("go"), e0.LdValue);
+            Assert.Equal(LdValue.Of("go"), e0.Value);
             Assert.Equal(f2.Version, e0.Version);
             Assert.Equal(f1.Key, e0.PrereqOf);
 
             FeatureRequestEvent e1 = result.PrerequisiteEvents[1];
             Assert.Equal(f1.Key, e1.Key);
-            Assert.Equal(LdValue.Of("go"), e1.LdValue);
+            Assert.Equal(LdValue.Of("go"), e1.Value);
             Assert.Equal(f1.Version, e1.Version);
             Assert.Equal(f0.Key, e1.PrereqOf);
         }

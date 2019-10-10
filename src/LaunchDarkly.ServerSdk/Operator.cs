@@ -37,15 +37,14 @@ namespace LaunchDarkly.Client
                 case "country":
                     return LdValue.Of(user.Country);
                 case "anonymous":
-                    if (user.Anonymous.HasValue)
+                    if (user.AnonymousOptional.HasValue)
                     {
-                        return LdValue.Of(user.Anonymous.Value);
+                        return LdValue.Of(user.AnonymousOptional.Value);
                     }
                     return LdValue.Null;
                 default:
                     return user.Custom.TryGetValue(attribute, out var customValue) ?
-                        LdValue.FromSafeValue(customValue) :
-                        LdValue.Null;
+                        customValue : LdValue.Null;
             }
         }
 
