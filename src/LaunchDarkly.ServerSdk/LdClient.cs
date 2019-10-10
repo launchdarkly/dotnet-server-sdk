@@ -18,39 +18,36 @@ namespace LaunchDarkly.Client
         internal readonly IEventProcessor _eventProcessor;
         private readonly IFeatureStore _featureStore;
         internal readonly IUpdateProcessor _updateProcessor;
-        private bool _shouldDisposeEventProcessor;
 
         /// <summary>
-        /// Deprecated; please use <see cref="IConfigurationBuilder.EventProcessorFactory(IEventProcessorFactory)"/>
-        /// instead if you want to specify a custom analytics event processor.
+        /// Creates a new client to connect to LaunchDarkly with a custom configuration.
         /// </summary>
         /// <param name="config">a client configuration object</param>
-        /// <param name="eventProcessor">an event processor</param>
-        [Obsolete("Deprecated, please use Configuration.WithEventProcessorFactory")]
-        public LdClient(Configuration config, IEventProcessor eventProcessor)
+        /// <example>
+        /// <code>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .AllAttributesPrivate(true)
+        ///         .EventCapacity(1000)
+        ///         .Build();
+        ///     var client = new LDClient(config);
+        /// </code>
+        /// </example>
+        /// <remarks>
+        /// The constructor will block until the client has successfully connected to LaunchDarkly
+        /// (assuming it is not in <see cref="IConfigurationBuilder.Offline(bool)"/> mode), or until
+        /// the timeout specified by <see cref="IConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
+        /// elapsed. If it times out, <see cref="LdClient.Initialized"/> will be false.
+        /// </remarks>
+        public LdClient(Configuration config)
         {
             Log.InfoFormat("Starting LaunchDarkly Client {0}",
                 ServerSideClientEnvironment.Instance.Version);
 
             _configuration = config;
-
-            if (eventProcessor == null)
-            {
-                _eventProcessor = (_configuration.EventProcessorFactory ??
-                    Components.DefaultEventProcessor).CreateEventProcessor(_configuration);
-                _shouldDisposeEventProcessor = true;
-            }
-            else
-            {
-                _eventProcessor = eventProcessor;
-                // The following line is for backward compatibility with the obsolete mechanism by which the
-                // caller could pass in an IStoreEvents implementation instance that we did not create.  We
-                // were not disposing of that instance when the client was closed, so we should continue not
-                // doing so until the next major version eliminates that mechanism.  We will always dispose
-                // of instances that we created ourselves from a factory.
-                _shouldDisposeEventProcessor = false;
-            }
-
+            
+            _eventProcessor = (_configuration.EventProcessorFactory ??
+                Components.DefaultEventProcessor).CreateEventProcessor(_configuration);
+        
             IFeatureStore store = (_configuration.FeatureStoreFactory ??
                 Components.InMemoryFeatureStore).CreateFeatureStore();
             _featureStore = new FeatureStoreClientWrapper(store);
@@ -76,31 +73,6 @@ namespace LaunchDarkly.Client
                 // in the Xamarin client. However, for backward compatibility we do not want to throw exceptions
                 // from the LdClient constructor in the .NET client, so we'll just swallow this.
             }
-        }
-
-        /// <summary>
-        /// Creates a new client to connect to LaunchDarkly with a custom configuration.
-        /// </summary>
-        /// <param name="config">a client configuration object</param>
-        /// <example>
-        /// <code>
-        ///     var config = Configuration.Builder("my-sdk-key")
-        ///         .AllAttributesPrivate(true)
-        ///         .EventCapacity(1000)
-        ///         .Build();
-        ///     var client = new LDClient(config);
-        /// </code>
-        /// </example>
-        /// <remarks>
-        /// The constructor will block until the client has successfully connected to LaunchDarkly
-        /// (assuming it is not in <see cref="IConfigurationBuilder.Offline(bool)"/> mode), or until
-        /// the timeout specified by <see cref="IConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
-        /// elapsed. If it times out, <see cref="LdClient.Initialized"/> will be false.
-        /// </remarks>
-#pragma warning disable 618  // suppress warning for calling obsolete ctor
-        public LdClient(Configuration config) : this(config, null)
-        #pragma warning restore 618
-        {
         }
 
         /// <summary>
@@ -414,12 +386,7 @@ namespace LaunchDarkly.Client
             if (disposing) // follow standard IDisposable pattern
             {
                 Log.Info("Closing LaunchDarkly client.");
-                // See comments in LdClient constructor: eventually all of these implementation objects
-                // will be factory-created and will have the same lifecycle as the client.
-                if (_shouldDisposeEventProcessor)
-                {
-                    _eventProcessor.Dispose();
-                }
+                _eventProcessor.Dispose();
                 _featureStore.Dispose();
                 _updateProcessor.Dispose();
             }
