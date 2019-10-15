@@ -33,6 +33,8 @@ namespace LaunchDarkly.Client
         internal List<JToken> Variations { get; private set; }
         [JsonProperty(PropertyName = "trackEvents")]
         public bool TrackEvents { get; private set; }
+        [JsonProperty(PropertyName = "trackEventsFallthrough")]
+        public bool TrackEventsFallthrough { get; private set; }
         [JsonProperty(PropertyName = "debugEventsUntilDate")]
         public long? DebugEventsUntilDate { get; private set; }
         [JsonProperty(PropertyName = "deleted")]
@@ -43,7 +45,7 @@ namespace LaunchDarkly.Client
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
             List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation,
-            List<JToken> variations, bool trackEvents, long? debugEventsUntilDate,
+            List<JToken> variations, bool trackEvents, bool trackEventsFallthrough, long? debugEventsUntilDate,
             bool deleted, bool clientSide)
         {
             Key = key;
@@ -57,6 +59,7 @@ namespace LaunchDarkly.Client
             OffVariation = offVariation;
             Variations = variations;
             TrackEvents = trackEvents;
+            TrackEventsFallthrough = trackEventsFallthrough;
             DebugEventsUntilDate = debugEventsUntilDate;
             Deleted = deleted;
             ClientSide = clientSide;
@@ -66,6 +69,13 @@ namespace LaunchDarkly.Client
         {
         }
 
+        internal FeatureFlag(string key, int version, bool deleted)
+        {
+            Key = key;
+            Version = version;
+            Deleted = deleted;
+        }
+        
         internal struct EvalResult
         {
             internal EvaluationDetail<LdValue> Result;
@@ -77,13 +87,21 @@ namespace LaunchDarkly.Client
                 PrerequisiteEvents = events;
             }
         }
-
+        
         int IFlagEventProperties.EventVersion => Version;
 
         // This method is called by EventFactory to determine if extra tracking should be
-        // enabled for an event, based on the evaluation reason. It is not enabled yet.
+        // enabled for an event, based on the evaluation reason.
         bool IFlagEventProperties.IsExperiment(EvaluationReason reason)
         {
+            switch (reason)
+            {
+                case EvaluationReason.Fallthrough _:
+                    return TrackEventsFallthrough;
+                case EvaluationReason.RuleMatch r:
+                    return r.RuleIndex >= 0 && Rules != null && r.RuleIndex < Rules.Count &&
+                        Rules[r.RuleIndex].TrackEvents;
+            }
             return false;
         }
 

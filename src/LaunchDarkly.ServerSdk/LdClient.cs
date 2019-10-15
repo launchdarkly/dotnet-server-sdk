@@ -433,6 +433,16 @@ namespace LaunchDarkly.Client
         }
 
         /// <inheritdoc/>
+        public void Track(string name, User user, LdValue data, double metricValue)
+        {
+            if (user == null || user.Key == null)
+            {
+                Log.Warn("Track called with null user or null user key");
+            }
+            _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data, metricValue));
+        }
+
+        /// <inheritdoc/>
         public void Identify(User user)
         {
             if (user == null || String.IsNullOrEmpty(user.Key))

@@ -36,7 +36,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void MatchingRuleWithFullRollout()
         {
-            var clause = new Clause("email", "in", new List<JValue> { JValue.CreateString("test@example.com") }, false);
+            var clause = new ClauseBuilder().Attribute("email").Op("in").Values(JValue.CreateString("test@example.com")).Build();
             var rule = new SegmentRule(new List<Clause> { clause }, 100000, null);
             var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
             var u = User.Builder("foo").Email("test@example.com").Build();
@@ -46,7 +46,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void MatchingRuleWithZeroRollout()
         {
-            var clause = new Clause("email", "in", new List<JValue> { JValue.CreateString("test@example.com") }, false);
+            var clause = new ClauseBuilder().Attribute("email").Op("in").Values(JValue.CreateString("test@example.com")).Build();
             var rule = new SegmentRule(new List<Clause> { clause }, 0, null);
             var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
             var u = User.Builder("foo").Email("test@example.com").Build();
@@ -56,8 +56,8 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void MatchingRuleWithMultipleClauses()
         {
-            var clause1 = new Clause("email", "in", new List<JValue> { JValue.CreateString("test@example.com") }, false);
-            var clause2 = new Clause("name", "in", new List<JValue> { JValue.CreateString("bob") }, false);
+            var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(JValue.CreateString("test@example.com")).Build();
+            var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(JValue.CreateString("bob")).Build();
             var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null);
             var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
             var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();
@@ -67,8 +67,8 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void NonMatchingRuleWithMultipleClauses()
         {
-            var clause1 = new Clause("email", "in", new List<JValue> { JValue.CreateString("test@example.com") }, false);
-            var clause2 = new Clause("name", "in", new List<JValue> { JValue.CreateString("bill") }, false);
+            var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(JValue.CreateString("test@example.com")).Build();
+            var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(JValue.CreateString("bill")).Build();
             var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null);
             var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
             var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();

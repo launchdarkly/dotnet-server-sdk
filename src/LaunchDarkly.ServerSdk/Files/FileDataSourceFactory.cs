@@ -23,6 +23,7 @@ namespace LaunchDarkly.Client.Files
         private bool _autoUpdate = false;
         private TimeSpan _pollInterval = DefaultPollInterval;
         private Func<string, object> _parser = null;
+        private bool _skipMissingPaths = false;
 
         /// <summary>
         /// Adds any number of source files for loading flag data, specifying each file path as a string.
@@ -98,6 +99,12 @@ namespace LaunchDarkly.Client.Files
         /// should avoid test scenarios where the data files are modified immediately after startup.
         /// </para>
         /// <para>
+        /// Whenever possible, you should update a file's entire contents in one atomic operation; in Unix-like OSes,
+        /// that can be done by creating a temporary file, writing to it, and then renaming it to replace the original
+        /// file. In Windows, that is not always possible, so FileDataSource might detect an update before the file has
+        /// been fully written; in that case it will retry until it succeeds.
+        /// </para>
+        /// <para>
         /// Note that auto-updating may not work if any of the files you specified has an invalid directory path.
         /// </para>
         /// </remarks>
@@ -125,6 +132,18 @@ namespace LaunchDarkly.Client.Files
         }
 
         /// <summary>
+        /// Specifies to ignore missing file paths instead of treating them as an error.
+        /// </summary>
+        /// <param name="skipMissingPaths">If <c>true</c>, missing file paths will be skipped,
+        /// otherwise they will be treated as an error</param>
+        /// <returns>the same factory object</returns>
+        public FileDataSourceFactory WithSkipMissingPaths(bool skipMissingPaths)
+        {
+            _skipMissingPaths = skipMissingPaths;
+            return this;
+        }
+
+        /// <summary>
         /// Used internally by the LaunchDarkly client.
         /// </summary>
         /// <param name="config"></param>
@@ -132,7 +151,7 @@ namespace LaunchDarkly.Client.Files
         /// <returns>the component instance</returns>
         public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
-            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser);
+            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths);
         }
     }
 }

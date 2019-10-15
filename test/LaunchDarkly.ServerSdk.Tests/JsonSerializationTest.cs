@@ -53,10 +53,11 @@ namespace LaunchDarkly.Tests
 
         private FeatureFlag BuildFlag()
         {
-            var clause = new Clause("name", "in", new List<JValue> { new JValue("x") }, true);
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(new JValue("x")).Negate(true).Build();
             var wv = new WeightedVariation(0, 50);
             var rollout = new Rollout(new List<WeightedVariation> { wv }, "key");
-            var rule = new Rule("ruleid", 0, rollout, new List<Clause> { clause });
+            var rule = new RuleBuilder().Id("ruleid").Variation(0).Rollout(rollout).Clauses(clause)
+                .TrackEvents(true).Build();
             var target = new Target(new List<string> { "userkey" }, 0);
             return new FeatureFlagBuilder("flagkey")
                 .DebugEventsUntilDate(100000)
@@ -64,12 +65,13 @@ namespace LaunchDarkly.Tests
                 .Fallthrough(new VariationOrRollout(0, rollout))
                 .OffVariation(0)
                 .On(true)
-                .Prerequisites(new List<Prerequisite> { new Prerequisite("prereq", 1) })
-                .Rules(new List<Rule> { rule })
+                .Prerequisites(new Prerequisite("prereq", 1))
+                .Rules(rule)
                 .Salt("NaCl")
-                .Targets(new List<Target> { target })
+                .Targets(target)
                 .TrackEvents(true)
-                .Variations(new List<JToken> { new JValue("value") })
+                .TrackEventsFallthrough(true)
+                .Variations(new JValue("value"))
                 .Version(100)
                 .Build();
         }
@@ -101,12 +103,14 @@ namespace LaunchDarkly.Tests
                             },
                             ""clauses"": [
                                 { ""attribute"": ""name"", ""op"": ""in"", ""values"": [ ""x"" ], ""negate"": true }
-                            ]
+                            ],
+                            ""trackEvents"": true
                         }
                     ],
                     ""salt"": ""NaCl"",
                     ""targets"": [ { ""values"": [ ""userkey"" ], ""variation"": 0 } ],
                     ""trackEvents"": true,
+                    ""trackEventsFallthrough"": true,
                     ""variations"": [ ""value"" ],
                     ""version"": 100,
                     ""clientSide"": false
@@ -116,7 +120,7 @@ namespace LaunchDarkly.Tests
 
         private Segment BuildSegment()
         {
-            var clause = new Clause("name", "in", new List<JValue> { new JValue("x") }, true);
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(new JValue("x")).Negate(true).Build();
             var rule = new SegmentRule(new List<Clause> { clause }, 50, "key");
             return new Segment(
                 "segkey",

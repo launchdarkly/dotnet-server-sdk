@@ -355,6 +355,23 @@ namespace LaunchDarkly.Client
         // passing null for data will not be an ambiguous method call.
 
         /// <summary>
+        /// Tracks that a user performed an event, and provides an additional numeric value for custom metrics.
+        /// </summary>
+        /// <remarks>
+        /// As of this version’s release date, the LaunchDarkly service does not support the <c>metricValue</c>
+        /// parameter. As a result, calling this overload of <c>Track</c> will not yet produce any different
+        /// behavior from calling <see cref="Track(string, JToken, User)"/> without a <c>metricValue</c>. Refer
+        /// to the SDK reference guide for the latest status:
+        /// https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-track
+        /// </remarks>
+        /// <param name="name">the name of the event</param>
+        /// <param name="user">the user that performed the event</param>
+        /// <param name="data">additional data associated with the event, or null</param>
+        /// <param name="metricValue">A numeric value used by the LaunchDarkly experimentation feature in numeric custom
+        /// metrics. This field will also be returned as part of the custom event for Data Export.</param>
+        void Track(string name, User user, LdValue data, double metricValue);
+
+        /// <summary>
         /// Tracks that a user performed an event.
         /// </summary>
         /// <remarks>
