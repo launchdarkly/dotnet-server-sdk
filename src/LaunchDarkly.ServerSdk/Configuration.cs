@@ -376,12 +376,14 @@ namespace LaunchDarkly.Client
             public bool AllAttributesPrivate => Config.AllAttributesPrivate;
             public bool DiagnosticOptOut => Config.DiagnosticOptOut;
             public TimeSpan DiagnosticRecordingInterval => Config.DiagnosticRecordingInterval;
+            public string DiagnosticUriPath => "diagnostic";
             public int EventCapacity => Config.EventCapacity;
             public TimeSpan EventFlushInterval => Config.EventFlushInterval;
 #pragma warning disable 618
             public int EventSamplingInterval => Config.EventSamplingInterval;
 #pragma warning restore 618
-            public Uri EventsUri => Config.EventsUri;
+            public Uri EventsUri => new Uri(Config.EventsUri, "bulk");
+            public Uri DiagnosticUri => new Uri(Config.EventsUri, "diagnostic");
             public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
             public bool InlineUsersInEvents => Config.InlineUsersInEvents;
             public ISet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
@@ -389,11 +391,6 @@ namespace LaunchDarkly.Client
             public TimeSpan ReconnectTime => Config.ReconnectTime;
             public int UserKeysCapacity => Config.UserKeysCapacity;
             public TimeSpan UserKeysFlushInterval => Config.UserKeysFlushInterval;
-            public IDiagnosticStore DiagnosticStore {
-                get {
-                    return new ServerDiagnosticStore(Config.SdkKey, Config);
-                }
-            }
         }
 
         private struct HttpRequestAdapter : IHttpRequestConfiguration

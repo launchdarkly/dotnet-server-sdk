@@ -209,7 +209,7 @@ namespace LaunchDarkly.Tests
         private StreamProcessor CreateProcessor()
         {
             return new StreamProcessor(_config, _requestor, _featureStore,
-                _eventSourceFactory.Create());
+                _eventSourceFactory.Create(), null);
         }
 
         private StreamProcessor CreateAndStartProcessor()

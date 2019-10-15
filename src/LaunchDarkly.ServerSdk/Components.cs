@@ -78,11 +78,12 @@ namespace LaunchDarkly.Client
 
     internal class DefaultEventProcessorFactory : IEventProcessorFactory
     {
-        private const string EventsUriPath = "bulk";
-        private const string DiagnosticEventsUriPath = "diagnostic";
-
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
+            return CreateEventProcessor(config, null);
+        }
+
+        IEventProcessor CreateEventProcessor(Configuration config, ServerDiagnosticStore diagnosticStore) {
             if (config.Offline)
             {
                 return new NullEventProcessor();
@@ -92,7 +93,7 @@ namespace LaunchDarkly.Client
                 return new DefaultEventProcessor(config.EventProcessorConfiguration,
                     new DefaultUserDeduplicator(config),
                     Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
-                    EventsUriPath, DiagnosticEventsUriPath);
+                    diagnosticStore, null);
             }
         }
     }
@@ -122,6 +123,11 @@ namespace LaunchDarkly.Client
 
         IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
+            return CreateUpdateProcessor(config, featureStore, null);
+        }
+
+        IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, ServerDiagnosticStore diagnosticStore)
+        {
             if (config.Offline)
             {
                 Log.Info("Starting Launchdarkly client in offline mode.");
@@ -137,7 +143,7 @@ namespace LaunchDarkly.Client
                 FeatureRequestor requestor = new FeatureRequestor(config);
                 if (config.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(config, requestor, featureStore, null);
+                    return new StreamProcessor(config, requestor, featureStore, null, diagnosticStore);
                 }
                 else
                 {

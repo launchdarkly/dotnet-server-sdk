@@ -9,18 +9,19 @@ namespace LaunchDarkly.Client {
         private DateTime DataSince;
         private long DroppedEvents;
         private long DeduplicatedUsers;
+        private List<Dictionary<string, object>> StreamInits = new List<Dictionary<string, object>>();
         private Dictionary<string, object> InitEvent;
         private Configuration Config;
 
         // IDiagnosticStore interface properties
-        Dictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
-        Dictionary<string, object> IDiagnosticStore.LastStats => null;
+        IReadOnlyDictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
+        IReadOnlyDictionary<string, object> IDiagnosticStore.LastStats => null;
         DateTime IDiagnosticStore.DataSince => DataSince;
 
-        internal ServerDiagnosticStore(string sdkKey, Configuration config) {
+        internal ServerDiagnosticStore(Configuration config) {
             Config = config;
             DataSince = DateTime.Now;
-            DiagnosticId = new DiagnosticId(sdkKey, Guid.NewGuid());
+            DiagnosticId = new DiagnosticId(config.SdkKey, Guid.NewGuid());
             InitEvent = BuildInitEvent(DataSince);
         }
 
@@ -82,7 +83,7 @@ namespace LaunchDarkly.Client {
             ConfigInfo["userKeysFlushIntervalMillis"] = (long)Config.UserKeysFlushInterval.TotalMilliseconds;
             ConfigInfo["inlineUsersInEvents"] = Config.InlineUsersInEvents;
             ConfigInfo["diagnosticRecordingIntervalMillis"] = (long)Config.DiagnosticRecordingInterval.TotalMilliseconds;
-            ConfigInfo["featureStore"] = Config.FeatureStore.ToString();
+            // ConfigInfo["featureStore"] = Config.FeatureStore.ToString();
             return ConfigInfo;
         }
 
@@ -94,7 +95,15 @@ namespace LaunchDarkly.Client {
             this.DroppedEvents++;
         }
 
-        public Dictionary<string, object> CreateEventAndReset(long eventsInQueue)
+        public void AddStreamInit(long timestamp, int durationMillis, bool failed) {
+            Dictionary<string, object> StreamInitObject = new Dictionary<string, object>();
+            StreamInitObject.Add("timestamp", timestamp);
+            StreamInitObject.Add("durationMillis", durationMillis);
+            StreamInitObject.Add("failed", failed);
+            StreamInits.Add(StreamInitObject);
+        }
+
+        public IReadOnlyDictionary<string, object> CreateEventAndReset(long eventsInQueue)
         {
             DateTime CurrentTime = DateTime.Now;
             Dictionary<string, object> StatEvent = new Dictionary<string, object>();
@@ -102,11 +111,13 @@ namespace LaunchDarkly.Client {
             StatEvent["droppedEvents"] = DroppedEvents;
             StatEvent["deduplicatedUsers"] = DeduplicatedUsers;
             StatEvent["eventsInQueue"] = eventsInQueue;
+            StatEvent["streamInits"] = StreamInits;
             AddDiagnosticCommonFields(StatEvent, "diagnostic", CurrentTime);
 
             DataSince = CurrentTime;
             DroppedEvents = 0;
             DeduplicatedUsers = 0;
+            StreamInits.Clear();
 
             return StatEvent;
         }
