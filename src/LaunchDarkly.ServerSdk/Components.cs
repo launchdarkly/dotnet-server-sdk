@@ -83,7 +83,7 @@ namespace LaunchDarkly.Client
             return CreateEventProcessor(config, null);
         }
 
-        IEventProcessor CreateEventProcessor(Configuration config, ServerDiagnosticStore diagnosticStore) {
+        internal IEventProcessor CreateEventProcessor(Configuration config, ServerDiagnosticStore diagnosticStore) {
             if (config.Offline)
             {
                 return new NullEventProcessor();
@@ -126,7 +126,7 @@ namespace LaunchDarkly.Client
             return CreateUpdateProcessor(config, featureStore, null);
         }
 
-        IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, ServerDiagnosticStore diagnosticStore)
+        internal IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, ServerDiagnosticStore diagnosticStore)
         {
             if (config.Offline)
             {
