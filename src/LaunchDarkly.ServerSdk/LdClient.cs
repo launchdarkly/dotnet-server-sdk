@@ -36,6 +36,7 @@ namespace LaunchDarkly.Client
                 ServerSideClientEnvironment.Instance.Version);
 
             _configuration = config;
+            ServerDiagnosticStore DiagnosticStore = new ServerDiagnosticStore(_configuration); 
 
             if (eventProcessor == null)
             {
@@ -45,7 +46,7 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    _eventProcessor = new DefaultEventProcessorFactory().CreateEventProcessor(_configuration, null);
+                    _eventProcessor = new DefaultEventProcessorFactory().CreateEventProcessor(_configuration, DiagnosticStore);
                 }
                 _shouldDisposeEventProcessor = true;
             }
@@ -79,7 +80,7 @@ namespace LaunchDarkly.Client
                 _updateProcessor = _configuration.UpdateProcessorFactory.CreateUpdateProcessor(_configuration, _featureStore);
             }
             else {
-                _updateProcessor = new DefaultUpdateProcessorFactory().CreateUpdateProcessor(_configuration, _featureStore, null);
+                _updateProcessor = new DefaultUpdateProcessorFactory().CreateUpdateProcessor(_configuration, _featureStore, DiagnosticStore);
             }
             _updateProcessor = (_configuration.UpdateProcessorFactory ??
                 Components.DefaultUpdateProcessor).CreateUpdateProcessor(_configuration, _featureStore);
