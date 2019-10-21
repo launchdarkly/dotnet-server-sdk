@@ -334,8 +334,8 @@ namespace LaunchDarkly.Client
             // Let's try to keep these alphabetical so it's easy to see if everything is here
             AllAttributesPrivate = builder._allAttributesPrivate;
             BaseUri = builder._baseUri;
-            DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
             DiagnosticOptOut = builder._diagnosticOptOut;
+            DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
             EventCapacity = builder._eventCapacity;
             EventFlushInterval = builder._eventFlushInterval;
             EventProcessorFactory = builder._eventProcessorFactory;

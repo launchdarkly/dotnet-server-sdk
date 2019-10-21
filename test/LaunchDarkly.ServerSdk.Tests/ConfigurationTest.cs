@@ -29,31 +29,35 @@ namespace LaunchDarkly.Tests
         {
             var uri = new Uri("http://fake");
             var time = TimeSpan.FromDays(3);
+            TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);
             TestSetter(b => b.BaseUri, c => c.BaseUri, uri);
             TestSetter(b => b.StreamUri, c => c.StreamUri, uri);
-            TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
-            TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
-            TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
+            TestSetter(b => b.DiagnosticOptOut, c => c.DiagnosticOptOut, true);
+            TestSetter(b => b.DiagnosticRecordingInterval, c => c.DiagnosticRecordingInterval, time);
             TestSetter(b => b.EventCapacity, c => c.EventCapacity, 999);
             TestSetter(b => b.EventFlushInterval, c => c.EventFlushInterval, time);
-            TestSetter(b => b.PollingInterval, c => c.PollingInterval, time);
-            TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
-            TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
-            TestSetter(b => b.ReconnectTime, c => c.ReconnectTime, time);
-            TestSetter(b => b.HttpClientTimeout, c => c.HttpClientTimeout, time);
-            TestSetter(b => b.HttpClientHandler, c => c.HttpClientHandler, new HttpClientHandler());
-            TestSetter(b => b.Offline, c => c.Offline, true);
-            TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);
-            TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
-            TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
-            TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
-            TestSetter(b => b.UseLdd, c => c.UseLdd, true);
-            TestSetter(b => b.FeatureStoreFactory, c => c.FeatureStoreFactory,
-                TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
             TestSetter(b => b.EventProcessorFactory, c => c.EventProcessorFactory,
                 TestUtils.SpecificEventProcessor(new TestEventProcessor()));
+            TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
+            TestSetter(b => b.FeatureStoreFactory, c => c.FeatureStoreFactory,
+                TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
+            TestSetter(b => b.HttpClientHandler, c => c.HttpClientHandler, new HttpClientHandler());
+            TestSetter(b => b.HttpClientTimeout, c => c.HttpClientTimeout, time);
+            TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
+            TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
+            TestSetter(b => b.Offline, c => c.Offline, true);
+            TestSetter(b => b.PollingInterval, c => c.PollingInterval, time);
+            TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
+            TestSetter(b => b.ReconnectTime, c => c.ReconnectTime, time);
+            TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
+            TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
             TestSetter(b => b.UpdateProcessorFactory, c => c.UpdateProcessorFactory,
                 Components.NullUpdateProcessor);
+            TestSetter(b => b.UseLdd, c => c.UseLdd, true);
+            TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
+            TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
+            TestSetter(b => b.WrapperName, c => c.WrapperName, "name");
+            TestSetter(b => b.WrapperVersion, c => c.WrapperVersion, "version");
         }
 
         private void TestSetter<T>(Func<IConfigurationBuilder, Func<T, IConfigurationBuilder>> setter,
