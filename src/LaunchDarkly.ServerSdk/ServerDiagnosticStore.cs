@@ -2,36 +2,41 @@ using System;
 using System.Collections.Generic;
 using LaunchDarkly.Common;
 
-namespace LaunchDarkly.Client {
+namespace LaunchDarkly.Client
+{
 
-    internal class ServerDiagnosticStore : IDiagnosticStore {
+    internal class ServerDiagnosticStore : IDiagnosticStore
+    {
+        private readonly Configuration Config;
         private DiagnosticId DiagnosticId;
         private DateTime DataSince;
         private long DroppedEvents;
         private long DeduplicatedUsers;
         private List<Dictionary<string, object>> StreamInits = new List<Dictionary<string, object>>();
         private Dictionary<string, object> InitEvent;
-        private Configuration Config;
 
         // IDiagnosticStore interface properties
         IReadOnlyDictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
         IReadOnlyDictionary<string, object> IDiagnosticStore.LastStats => null;
         DateTime IDiagnosticStore.DataSince => DataSince;
 
-        internal ServerDiagnosticStore(Configuration config) {
+        internal ServerDiagnosticStore(Configuration config)
+        {
             Config = config;
             DataSince = DateTime.Now;
             DiagnosticId = new DiagnosticId(config.SdkKey, Guid.NewGuid());
             InitEvent = BuildInitEvent(DataSince);
         }
 
-        private void AddDiagnosticCommonFields(Dictionary<string, object> fieldDictionary, string kind, DateTime creationDate) {
+        private void AddDiagnosticCommonFields(Dictionary<string, object> fieldDictionary, string kind, DateTime creationDate)
+        {
             fieldDictionary.Add("kind", kind);
             fieldDictionary.Add("id", DiagnosticId);
             fieldDictionary.Add("creationDate", Util.GetUnixTimestampMillis(creationDate));
         }
 
-        private Dictionary<string, object> BuildInitEvent(DateTime creationDate) {
+        private Dictionary<string, object> BuildInitEvent(DateTime creationDate)
+        {
             InitEvent = new Dictionary<string, object>();
             InitEvent["configuration"] = InitEventConfig();
             InitEvent["sdk"] = InitEventSdk();
@@ -40,7 +45,8 @@ namespace LaunchDarkly.Client {
             return InitEvent;
         }
 
-        private Dictionary<string, object> InitEventPlatform() {
+        private Dictionary<string, object> InitEventPlatform()
+        {
             Dictionary<string, object> PlatformInfo = new Dictionary<string, object>();
             PlatformInfo["name"] = "dotnet";
             return PlatformInfo;
@@ -63,8 +69,8 @@ namespace LaunchDarkly.Client {
             ConfigInfo["eventsURI"] = Config.EventsUri;
             ConfigInfo["streamURI"] = Config.StreamUri;
             ConfigInfo["eventsCapacity"] = Config.EventCapacity;
-            //ConfigInfo["connectTimeoutMillis"] = Config.ConnectTimeoutMillis;
-            //ConfigInfo["socketTimeoutMillis"] = Config.SocketTimeoutMillis;
+            ConfigInfo["connectTimeoutMillis"] = (long)Config.HttpClientTimeout.TotalMilliseconds;
+            ConfigInfo["socketTimeoutMillis"] = (long)Config.ReadTimeout.TotalMilliseconds;
             ConfigInfo["eventsFlushIntervalMillis"] = (long)Config.EventFlushInterval.TotalMilliseconds;
             ConfigInfo["usingProxy"] = false;
             ConfigInfo["usingProxyAuthenticator"] = false;
@@ -87,15 +93,18 @@ namespace LaunchDarkly.Client {
             return ConfigInfo;
         }
 
-        public void IncrementDeduplicatedUsers() {
+        public void IncrementDeduplicatedUsers()
+        {
             this.DeduplicatedUsers++;
         }
 
-        public void IncrementDroppedEvents() {
+        public void IncrementDroppedEvents()
+        {
             this.DroppedEvents++;
         }
 
-        public void AddStreamInit(long timestamp, int durationMillis, bool failed) {
+        public void AddStreamInit(long timestamp, int durationMillis, bool failed)
+        {
             Dictionary<string, object> StreamInitObject = new Dictionary<string, object>();
             StreamInitObject.Add("timestamp", timestamp);
             StreamInitObject.Add("durationMillis", durationMillis);

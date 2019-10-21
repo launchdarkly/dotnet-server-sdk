@@ -93,7 +93,7 @@ namespace LaunchDarkly.Client
                 return new DefaultEventProcessor(config.EventProcessorConfiguration,
                     new DefaultUserDeduplicator(config),
                     Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
-                    diagnosticStore, null);
+                    diagnosticStore, null, null);
             }
         }
     }
