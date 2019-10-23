@@ -38,8 +38,9 @@ namespace LaunchDarkly.Tests
             clientMock.Setup(c => c.StringVariation("key", defaultUser, "Blue")).Returns("not-a-color");
             var client = clientMock.Object;
 
-            var result = client.EnumVariation("key", defaultUser, MyEnum.Blue);
-            Assert.Equal(MyEnum.Blue, result);
+            var defaultValue = MyEnum.Blue;
+            var result = client.EnumVariation("key", defaultUser, defaultValue);
+            Assert.Equal(MyEnum.Blue, defaultValue);
         }
 
         [Fact]
@@ -49,8 +50,21 @@ namespace LaunchDarkly.Tests
             clientMock.Setup(c => c.StringVariation("key", defaultUser, "Blue")).Returns((string)null);
             var client = clientMock.Object;
 
-            var result = client.EnumVariation("key", defaultUser, MyEnum.Blue);
-            Assert.Equal(MyEnum.Blue, result);
+            var defaultValue = MyEnum.Blue;
+            var result = client.EnumVariation("key", defaultUser, defaultValue);
+            Assert.Equal(defaultValue, result);
+        }
+
+        [Fact]
+        public void EnumVariationReturnsDefaultValueForNonEnumType()
+        {
+            var clientMock = new Mock<ILdClient>();
+            clientMock.Setup(c => c.StringVariation("key", defaultUser, "Blue")).Returns("Green");
+            var client = clientMock.Object;
+
+            var defaultValue = "this is a string, not an enum";
+            var result = client.EnumVariation("key", defaultUser, defaultValue);
+            Assert.Equal(defaultValue, result);
         }
 
         [Fact]
@@ -91,5 +105,20 @@ namespace LaunchDarkly.Tests
             var expected = new EvaluationDetail<MyEnum>(MyEnum.Blue, 1, EvaluationReason.Fallthrough.Instance);
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void EnumVariationDetailReturnsDefaultValueForNonEnumType()
+        {
+            var defaultValue = "this is a string, not an enum";
+            var clientMock = new Mock<ILdClient>();
+            clientMock.Setup(c => c.StringVariationDetail("key", defaultUser, defaultValue))
+                .Returns(new EvaluationDetail<string>("Green", 1, EvaluationReason.Fallthrough.Instance));
+            var client = clientMock.Object;
+
+            var result = client.EnumVariationDetail("key", defaultUser, defaultValue);
+            var expected = new EvaluationDetail<string>(defaultValue, 1, new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+            Assert.Equal(expected, result);
+        }
+
     }
 }

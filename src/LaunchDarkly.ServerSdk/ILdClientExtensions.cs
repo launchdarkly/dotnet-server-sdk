@@ -17,7 +17,14 @@ namespace LaunchDarkly.Client
         /// flag's string value to an enum value.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// If the flag has a value that is not one of the allowed enum value names, <c>defaultValue</c> is returned.
+        /// </para>
+        /// <para>
+        /// Note that there is no type constraint to guarantee that T really is an enum type, because that is
+        /// a C# 7.3 feature that is unavailable in older versions of .NET Standard. If you try to use a
+        /// non-enum type, you will simply receive the default value back.
+        /// </para>
         /// </remarks>
         /// <typeparam name="T">the enum type</typeparam>
         /// <param name="client">the client instance</param>
@@ -26,7 +33,7 @@ namespace LaunchDarkly.Client
         /// <param name="defaultValue">the default value of the flag (as an enum value)</param>
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
         /// be evaluated or does not have a valid enum value</returns>
-        public static T EnumVariation<T>(this ILdClient client, string key, User user, T defaultValue) where T : Enum
+        public static T EnumVariation<T>(this ILdClient client, string key, User user, T defaultValue)
         {
             var stringVal = client.StringVariation(key, user, defaultValue.ToString());
             if (stringVal != null)
@@ -54,7 +61,7 @@ namespace LaunchDarkly.Client
         /// <param name="user">the end user requesting the flag</param>
         /// <param name="defaultValue">the default value of the flag (as an enum value)</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        public static EvaluationDetail<T> EnumVariationDetail<T>(this ILdClient client, string key, User user, T defaultValue) where T : Enum
+        public static EvaluationDetail<T> EnumVariationDetail<T>(this ILdClient client, string key, User user, T defaultValue)
         {
             var stringDetail = client.StringVariationDetail(key, user, defaultValue.ToString());
             if (stringDetail.Value != null)
