@@ -8,6 +8,10 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.
     /// </summary>
+    /// <remarks>
+    /// See also <see cref="ILdClientExtensions"/>, which provides convenience methods that build upon
+    /// this interface.
+    /// </remarks>
 #pragma warning disable 618
     public interface ILdClient : ILdCommonClient
 #pragma warning restore 618
