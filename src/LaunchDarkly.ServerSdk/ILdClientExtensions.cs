@@ -53,7 +53,14 @@ namespace LaunchDarkly.Client
         /// flag's string value to an enum value.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// If the flag has a value that is not one of the allowed enum value names, <c>defaultValue</c> is returned.
+        /// </para>
+        /// <para>
+        /// Note that there is no type constraint to guarantee that T really is an enum type, because that is
+        /// a C# 7.3 feature that is unavailable in older versions of .NET Standard. If you try to use a
+        /// non-enum type, you will simply receive the default value back.
+        /// </para>
         /// </remarks>
         /// <typeparam name="T">the enum type</typeparam>
         /// <param name="client">the client instance</param>
