@@ -8,17 +8,20 @@ namespace LaunchDarkly.Client
     internal class ServerDiagnosticStore : IDiagnosticStore
     {
         private readonly Configuration Config;
-        private DiagnosticId DiagnosticId;
+        private readonly Dictionary<string, object> InitEvent;
+        private readonly DiagnosticId DiagnosticId;
+
+        private readonly object UpdateLock = new object();
         private DateTime DataSince;
         private long DroppedEvents;
         private long DeduplicatedUsers;
         private List<Dictionary<string, object>> StreamInits = new List<Dictionary<string, object>>();
-        private Dictionary<string, object> InitEvent;
 
-        // IDiagnosticStore interface properties
+        #region IDiagnosticStore interface properties
         IReadOnlyDictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
         IReadOnlyDictionary<string, object> IDiagnosticStore.LastStats => null;
         DateTime IDiagnosticStore.DataSince => DataSince;
+        #endregion
 
         internal ServerDiagnosticStore(Configuration config)
         {
@@ -35,9 +38,11 @@ namespace LaunchDarkly.Client
             fieldDictionary.Add("creationDate", Util.GetUnixTimestampMillis(creationDate));
         }
 
+        #region Init event builders
+
         private Dictionary<string, object> BuildInitEvent(DateTime creationDate)
         {
-            InitEvent = new Dictionary<string, object>();
+            Dictionary<string, object> InitEvent = new Dictionary<string, object>();
             InitEvent["configuration"] = InitEventConfig();
             InitEvent["sdk"] = InitEventSdk();
             InitEvent["platform"] = InitEventPlatform();
@@ -89,18 +94,31 @@ namespace LaunchDarkly.Client
             ConfigInfo["userKeysFlushIntervalMillis"] = (long)Config.UserKeysFlushInterval.TotalMilliseconds;
             ConfigInfo["inlineUsersInEvents"] = Config.InlineUsersInEvents;
             ConfigInfo["diagnosticRecordingIntervalMillis"] = (long)Config.DiagnosticRecordingInterval.TotalMilliseconds;
-            // ConfigInfo["featureStore"] = Config.FeatureStore.ToString();
+            if (Config.FeatureStoreFactory != null)
+            {
+                ConfigInfo["featureStoreFactory"] = Config.FeatureStoreFactory.GetType().Name;
+            }
             return ConfigInfo;
         }
 
+        #endregion
+
+        #region Periodic event update and builder methods
+
         public void IncrementDeduplicatedUsers()
         {
-            this.DeduplicatedUsers++;
+            lock (UpdateLock)
+            {
+                this.DeduplicatedUsers++;
+            }
         }
 
         public void IncrementDroppedEvents()
         {
-            this.DroppedEvents++;
+            lock (UpdateLock)
+            {
+                this.DroppedEvents++;
+            }
         }
 
         public void AddStreamInit(long timestamp, int durationMillis, bool failed)
@@ -109,26 +127,33 @@ namespace LaunchDarkly.Client
             StreamInitObject.Add("timestamp", timestamp);
             StreamInitObject.Add("durationMillis", durationMillis);
             StreamInitObject.Add("failed", failed);
-            StreamInits.Add(StreamInitObject);
+            lock (UpdateLock)
+            {
+                StreamInits.Add(StreamInitObject);
+            }
         }
 
         public IReadOnlyDictionary<string, object> CreateEventAndReset(long eventsInQueue)
         {
             DateTime CurrentTime = DateTime.Now;
             Dictionary<string, object> StatEvent = new Dictionary<string, object>();
-            StatEvent["dataSinceDate"] = Util.GetUnixTimestampMillis(DataSince);
-            StatEvent["droppedEvents"] = DroppedEvents;
-            StatEvent["deduplicatedUsers"] = DeduplicatedUsers;
-            StatEvent["eventsInQueue"] = eventsInQueue;
-            StatEvent["streamInits"] = StreamInits;
             AddDiagnosticCommonFields(StatEvent, "diagnostic", CurrentTime);
+            StatEvent["eventsInQueue"] = eventsInQueue;
+            lock (UpdateLock) {
+                StatEvent["dataSinceDate"] = Util.GetUnixTimestampMillis(DataSince);
+                StatEvent["droppedEvents"] = DroppedEvents;
+                StatEvent["deduplicatedUsers"] = DeduplicatedUsers;
+                StatEvent["streamInits"] = StreamInits;
 
-            DataSince = CurrentTime;
-            DroppedEvents = 0;
-            DeduplicatedUsers = 0;
-            StreamInits.Clear();
+                DataSince = CurrentTime;
+                DroppedEvents = 0;
+                DeduplicatedUsers = 0;
+                StreamInits = new List<Dictionary<string, object>>();
+            }
 
             return StatEvent;
         }
+
+        #endregion
     }
 }
