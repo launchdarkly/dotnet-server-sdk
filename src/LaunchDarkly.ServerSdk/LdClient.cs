@@ -36,7 +36,11 @@ namespace LaunchDarkly.Client
                 ServerSideClientEnvironment.Instance.Version);
 
             _configuration = config;
-            ServerDiagnosticStore DiagnosticStore = new ServerDiagnosticStore(_configuration); 
+            ServerDiagnosticStore DiagnosticStore = null;
+            if (!_configuration.DiagnosticOptOut)
+            {
+                DiagnosticStore = new ServerDiagnosticStore(_configuration); 
+            }
 
             if (eventProcessor == null)
             {
