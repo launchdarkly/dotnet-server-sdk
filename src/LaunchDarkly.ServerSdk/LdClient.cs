@@ -86,8 +86,6 @@ namespace LaunchDarkly.Client
             else {
                 _updateProcessor = new DefaultUpdateProcessorFactory().CreateUpdateProcessor(_configuration, _featureStore, DiagnosticStore);
             }
-            _updateProcessor = (_configuration.UpdateProcessorFactory ??
-                Components.DefaultUpdateProcessor).CreateUpdateProcessor(_configuration, _featureStore);
 
             var initTask = _updateProcessor.Start();
 
