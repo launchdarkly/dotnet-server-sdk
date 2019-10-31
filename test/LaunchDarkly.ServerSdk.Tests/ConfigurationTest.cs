@@ -25,7 +25,7 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void CanSetProperties()
+        public void CanSetAndCopyProperties()
         {
             var uri = new Uri("http://fake");
             var time = TimeSpan.FromDays(3);
@@ -65,8 +65,10 @@ namespace LaunchDarkly.Tests
         {
             var config = setter(Configuration.Builder(sdkKey))(value).Build();
             Assert.Equal(value, getter(config));
+            var copy = Configuration.Builder(config).Build();
+            Assert.Equal(value, getter(copy));
         }
-        
+
         [Fact]
         public void CanSetPrivateAttributes()
         {
