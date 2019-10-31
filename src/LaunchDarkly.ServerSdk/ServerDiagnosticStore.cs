@@ -19,7 +19,7 @@ namespace LaunchDarkly.Client
 
         #region IDiagnosticStore interface properties
         IReadOnlyDictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
-        IReadOnlyDictionary<string, object> IDiagnosticStore.LastStats => null;
+        IReadOnlyDictionary<string, object> IDiagnosticStore.PersistedUnsentEvent => null;
         DateTime IDiagnosticStore.DataSince => DataSince;
         #endregion
 
