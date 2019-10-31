@@ -151,52 +151,7 @@ namespace LaunchDarkly.Tests
                 Assert.Equal(1, client.IntVariation("key", User.WithKey("user"), 0));
             }
         }
-
-        [Fact]
-        public void AllFlagsReturnsNullIfNeitherClientNorFeatureStoreIsInited()
-        {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
-
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
-                .Build();
-
-            using (var client = new LdClient(config))
-            {
-#pragma warning disable 0618
-                Assert.Null(client.AllFlags(User.WithKey("user")));
-#pragma warning restore 0618
-            }
-        }
         
-        [Fact]
-        public void AllFlagsUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
-        {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
-
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
-                .Build();
-
-            using (var client = new LdClient(config))
-            {
-#pragma warning disable 0618
-                IDictionary<string, JToken> result = client.AllFlags(User.WithKey("user"));
-#pragma warning restore 0618
-                Assert.NotNull(result);
-                Assert.Equal(new JValue(1), result["key"]);
-            }
-        }
-
         [Fact]
         public void DataSetIsPassedToFeatureStoreInCorrectOrder()
         {

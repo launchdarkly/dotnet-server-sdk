@@ -65,7 +65,7 @@ namespace LaunchDarkly.Tests
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.Key);
-            Assert.Equal(LdValue.Null, ce.LdValueData);
+            Assert.Equal(LdValue.Null, ce.Data);
             Assert.Null(ce.MetricValue);
         }
 
@@ -79,43 +79,9 @@ namespace LaunchDarkly.Tests
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.Key);
-            Assert.Equal(data, ce.LdValueData);
+            Assert.Equal(data, ce.Data);
         }
-
-        [Fact]
-        public void TrackSendsEventWithDataDeprecatedMethod()
-        {
-            var data = new JObject();
-            data.Add("thing", new JValue("stuff"));
-#pragma warning disable 0618
-            client.Track("eventkey", data, user);
-#pragma warning restore 0618
-
-            Assert.Equal(1, eventSink.Events.Count);
-            var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
-            Assert.Equal("eventkey", ce.Key);
-#pragma warning disable 0618
-            Assert.Equal(data, ce.LdValueData.AsJToken());
-#pragma warning restore 0618
-            Assert.Null(ce.MetricValue);
-        }
-
-        [Fact]
-        public void TrackSendsEventWithStringData()
-        {
-#pragma warning disable 0618
-            client.Track("eventkey", user, "thing");
-#pragma warning restore 0618
-
-            Assert.Equal(1, eventSink.Events.Count);
-            var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
-            Assert.Equal("eventkey", ce.Key);
-            Assert.Equal(LdValue.Of("thing"), ce.LdValueData);
-            Assert.Null(ce.MetricValue);
-        }
-
+        
         [Fact]
         public void TrackSendsEventWithWithMetricValue()
         {
@@ -126,7 +92,7 @@ namespace LaunchDarkly.Tests
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.Key);
-            Assert.Equal(data, ce.LdValueData);
+            Assert.Equal(data, ce.Data);
             Assert.Equal(1.5, ce.MetricValue);
         }
 
@@ -252,36 +218,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(1, eventSink.Events.Count);
             CheckUnknownFeatureEvent(eventSink.Events[0], "key", defaultVal, null);
         }
-
-        [Fact]
-        public void DeprecatedJsonVariationSendsEvent()
-        {
-            var data = new JObject();
-            data.Add("thing", new JValue("stuff"));
-            var flag = new FeatureFlagBuilder("key").OffWithValue(data).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
-            var defaultVal = new JValue(42);
-
-#pragma warning disable 0618
-            client.JsonVariation("key", user, defaultVal);
-            Assert.Equal(1, eventSink.Events.Count);
-            CheckFeatureEvent(eventSink.Events[0], flag, LdValue.FromJToken(data),
-                LdValue.FromJToken(defaultVal), null);
-#pragma warning restore 0618
-        }
-
-        [Fact]
-        public void DeprecatedJsonVariationSendsEventForUnknownFlag()
-        {
-            var defaultVal = LdValue.Of(42);
-
-#pragma warning disable 0618
-            client.JsonVariation("key", user, defaultVal);
-#pragma warning restore 0618
-            Assert.Equal(1, eventSink.Events.Count);
-            CheckUnknownFeatureEvent(eventSink.Events[0], "key", defaultVal, null);
-        }
-
+        
         [Fact]
         public void EventTrackingAndReasonCanBeForcedForRule()
         {
@@ -444,8 +381,8 @@ namespace LaunchDarkly.Tests
             Assert.Equal(flag.Key, fe.Key);
             Assert.Equal(user.Key, fe.User.Key);
             Assert.Equal(flag.Version, fe.Version);
-            Assert.Equal(value, fe.LdValue);
-            Assert.Equal(defaultVal, fe.LdValueDefault);
+            Assert.Equal(value, fe.Value);
+            Assert.Equal(defaultVal, fe.Default);
             Assert.Equal(prereqOf, fe.PrereqOf);
         }
 
@@ -455,8 +392,8 @@ namespace LaunchDarkly.Tests
             Assert.Equal(key, fe.Key);
             Assert.Equal(user.Key, fe.User.Key);
             Assert.Null(fe.Version);
-            Assert.Equal(defaultVal, fe.LdValue);
-            Assert.Equal(defaultVal, fe.LdValueDefault);
+            Assert.Equal(defaultVal, fe.Value);
+            Assert.Equal(defaultVal, fe.Default);
             Assert.Equal(prereqOf, fe.PrereqOf);
         }
     }

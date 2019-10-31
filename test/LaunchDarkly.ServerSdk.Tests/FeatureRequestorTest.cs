@@ -21,7 +21,7 @@ namespace LaunchDarkly.Tests
         {
             var config = Configuration.Builder("key")
                 .BaseUri(new Uri(server.Urls[0]))
-                .HttpClientTimeout(TimeSpan.FromDays(1))
+                .ConnectionTimeout(TimeSpan.FromDays(1))
                 .Build();
             return new FeatureRequestor(config);
         }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Security.Cryptography;
 using Common.Logging;
-using Newtonsoft.Json.Linq;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -20,52 +18,38 @@ namespace LaunchDarkly.Client
         internal readonly IEventProcessor _eventProcessor;
         private readonly IFeatureStore _featureStore;
         internal readonly IUpdateProcessor _updateProcessor;
-        private bool _shouldDisposeEventProcessor;
-        private bool _shouldDisposeFeatureStore;
 
         /// <summary>
-        /// Deprecated; please use <see cref="IConfigurationBuilder.EventProcessorFactory(IEventProcessorFactory)"/>
-        /// instead if you want to specify a custom analytics event processor.
+        /// Creates a new client to connect to LaunchDarkly with a custom configuration.
         /// </summary>
         /// <param name="config">a client configuration object</param>
-        /// <param name="eventProcessor">an event processor</param>
-        [Obsolete("Deprecated, please use Configuration.WithEventProcessorFactory")]
-        public LdClient(Configuration config, IEventProcessor eventProcessor)
+        /// <example>
+        /// <code>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .AllAttributesPrivate(true)
+        ///         .EventCapacity(1000)
+        ///         .Build();
+        ///     var client = new LDClient(config);
+        /// </code>
+        /// </example>
+        /// <remarks>
+        /// The constructor will block until the client has successfully connected to LaunchDarkly
+        /// (assuming it is not in <see cref="IConfigurationBuilder.Offline(bool)"/> mode), or until
+        /// the timeout specified by <see cref="IConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
+        /// elapsed. If it times out, <see cref="LdClient.Initialized"/> will be false.
+        /// </remarks>
+        public LdClient(Configuration config)
         {
             Log.InfoFormat("Starting LaunchDarkly Client {0}",
                 ServerSideClientEnvironment.Instance.Version);
 
             _configuration = config;
-
-            if (eventProcessor == null)
-            {
-                _eventProcessor = (_configuration.EventProcessorFactory ??
-                    Components.DefaultEventProcessor).CreateEventProcessor(_configuration);
-                _shouldDisposeEventProcessor = true;
-            }
-            else
-            {
-                _eventProcessor = eventProcessor;
-                // The following line is for backward compatibility with the obsolete mechanism by which the
-                // caller could pass in an IStoreEvents implementation instance that we did not create.  We
-                // were not disposing of that instance when the client was closed, so we should continue not
-                // doing so until the next major version eliminates that mechanism.  We will always dispose
-                // of instances that we created ourselves from a factory.
-                _shouldDisposeEventProcessor = false;
-            }
-
-            IFeatureStore store;
-            if (_configuration.FeatureStore == null)
-            {
-                store = (_configuration.FeatureStoreFactory ??
-                    Components.InMemoryFeatureStore).CreateFeatureStore();
-                _shouldDisposeFeatureStore = true;
-            }
-            else
-            {
-                store = _configuration.FeatureStore;
-                _shouldDisposeFeatureStore = false; // see previous comment
-            }
+            
+            _eventProcessor = (_configuration.EventProcessorFactory ??
+                Components.DefaultEventProcessor).CreateEventProcessor(_configuration);
+        
+            IFeatureStore store = (_configuration.FeatureStoreFactory ??
+                Components.InMemoryFeatureStore).CreateFeatureStore();
             _featureStore = new FeatureStoreClientWrapper(store);
 
             _updateProcessor = (_configuration.UpdateProcessorFactory ??
@@ -89,31 +73,6 @@ namespace LaunchDarkly.Client
                 // in the Xamarin client. However, for backward compatibility we do not want to throw exceptions
                 // from the LdClient constructor in the .NET client, so we'll just swallow this.
             }
-        }
-
-        /// <summary>
-        /// Creates a new client to connect to LaunchDarkly with a custom configuration.
-        /// </summary>
-        /// <param name="config">a client configuration object</param>
-        /// <example>
-        /// <code>
-        ///     var config = Configuration.Builder("my-sdk-key")
-        ///         .AllAttributesPrivate(true)
-        ///         .EventCapacity(1000)
-        ///         .Build();
-        ///     var client = new LDClient(config);
-        /// </code>
-        /// </example>
-        /// <remarks>
-        /// The constructor will block until the client has successfully connected to LaunchDarkly
-        /// (assuming it is not in <see cref="IConfigurationBuilder.Offline(bool)"/> mode), or until
-        /// the timeout specified by <see cref="IConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
-        /// elapsed. If it times out, <see cref="LdClient.Initialized"/> will be false.
-        /// </remarks>
-#pragma warning disable 618  // suppress warning for calling obsolete ctor
-        public LdClient(Configuration config) : this(config, null)
-        #pragma warning restore 618
-        {
         }
 
         /// <summary>
@@ -169,14 +128,7 @@ namespace LaunchDarkly.Client
         {
             return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
         }
-
-        /// <inheritdoc/>
-        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
-        public JToken JsonVariation(string key, User user, JToken defaultValue)
-        {
-            return Evaluate(key, user, LdValue.FromSafeValue(defaultValue), LdValue.Convert.UnsafeJToken, false, EventFactory.Default).Value;
-        }
-
+        
         /// <inheritdoc/>
         public LdValue JsonVariation(string key, User user, LdValue defaultValue)
         {
@@ -206,32 +158,13 @@ namespace LaunchDarkly.Client
         {
             return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
         }
-
-        /// <inheritdoc/>
-        [Obsolete("Use the ImmutableJsonValue-based overload of JsonVariation")]
-        public EvaluationDetail<JToken> JsonVariationDetail(string key, User user, JToken defaultValue)
-        {
-            return Evaluate(key, user, LdValue.FromSafeValue(defaultValue), LdValue.Convert.UnsafeJToken, false, EventFactory.DefaultWithReasons);
-        }
-
+        
         /// <inheritdoc/>
         public EvaluationDetail<LdValue> JsonVariationDetail(string key, User user, LdValue defaultValue)
         {
             return Evaluate(key, user, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
         }
-
-        /// <inheritdoc/>
-        [Obsolete("Use AllFlagsState instead. Current versions of the client-side SDK will not generate analytics events correctly if you pass the result of AllFlags.")]
-        public IDictionary<string, JToken> AllFlags(User user)
-        {
-            var state = AllFlagsState(user);
-            if (!state.Valid)
-            {
-                return null;
-            }
-            return state.ToValuesMap();
-        }
-
+        
         /// <inheritdoc/>
         public FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options)
         {
@@ -406,21 +339,7 @@ namespace LaunchDarkly.Client
         {
             Track(name, user, LdValue.Null);
         }
-
-        /// <inheritdoc/>
-        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
-        public void Track(string name, User user, string data)
-        {
-            Track(name, user, LdValue.Of(data));
-        }
-
-        /// <inheritdoc/>
-        [Obsolete("Use Track(string, User, ImmutableJsonValue")]
-        public void Track(string name, JToken data, User user)
-        {
-            Track(name, user, LdValue.FromSafeValue(data));
-        }
-
+        
         /// <inheritdoc/>
         public void Track(string name, User user, LdValue data)
         {
@@ -467,16 +386,8 @@ namespace LaunchDarkly.Client
             if (disposing) // follow standard IDisposable pattern
             {
                 Log.Info("Closing LaunchDarkly client.");
-                // See comments in LdClient constructor: eventually all of these implementation objects
-                // will be factory-created and will have the same lifecycle as the client.
-                if (_shouldDisposeEventProcessor)
-                {
-                    _eventProcessor.Dispose();
-                }
-                if (_shouldDisposeFeatureStore)
-                {
-                    _featureStore.Dispose();
-                }
+                _eventProcessor.Dispose();
+                _featureStore.Dispose();
                 _updateProcessor.Dispose();
             }
         }
@@ -491,12 +402,8 @@ namespace LaunchDarkly.Client
         /// </para>
         /// <para>
         /// Any components that were added by specifying a factory object
-        /// (<see cref="ConfigurationExtensions.WithFeatureStore(Configuration, IFeatureStore)"/>, etc.)
+        /// (<see cref="IConfigurationBuilder.FeatureStoreFactory(IFeatureStoreFactory)"/>, etc.)
         /// will also be disposed of by this method; their lifecycle is the same as the client's.
-        /// However, for any components that you constructed yourself and passed in (via the deprecated
-        /// method <see cref="ConfigurationExtensions.WithFeatureStore(Configuration, IFeatureStore)"/>,
-        /// or the deprecated <c>LdClient</c> constructor that takes an <see cref="IEventProcessor"/>),
-        /// this will not happen; you are responsible for managing their lifecycle.
         /// </para>
         /// </remarks>
         /// <see cref="IDisposable.Dispose"/>

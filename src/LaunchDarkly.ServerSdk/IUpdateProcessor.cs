@@ -44,7 +44,7 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Interface for a factory that creates some implementation of <see cref="IUpdateProcessor"/>.
     /// </summary>
-    /// <seealso cref="ConfigurationExtensions.WithUpdateProcessorFactory"/>
+    /// <seealso cref="IConfigurationBuilder.UpdateProcessorFactory"/>
     /// <seealso cref="Components"/>
     public interface IUpdateProcessorFactory
     {

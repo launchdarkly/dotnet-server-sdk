@@ -238,39 +238,7 @@ namespace LaunchDarkly.Tests
             var expected = new EvaluationDetail<LdValue>(data, 0, EvaluationReason.Off.Instance);
             Assert.Equal(expected, client.JsonVariationDetail("key", user, LdValue.Of(42)));
         }
-
-        [Fact]
-        public void DeprecatedJsonVariationReturnsFlagValue()
-        {
-            var data = new JObject() { { "thing", new JValue("stuff") } };
-            featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key").OffWithValue(data).Build());
-#pragma warning disable 0618
-            Assert.Equal(data, client.JsonVariation("key", user, new JValue(42)));
-#pragma warning restore 0618
-        }
-
-        [Fact]
-        public void DeprecatedJsonVariationReturnsDefaultValueForUnknownFlag()
-        {
-            var defaultVal = new JValue(42);
-#pragma warning disable 0618
-            Assert.Equal(defaultVal, client.JsonVariation("key", user, defaultVal));
-#pragma warning restore 0618
-        }
-
-        [Fact]
-        public void DeprecatedJsonVariationDetailReturnsValueAndReason()
-        {
-            var data = new JObject() { { "thing", new JValue("stuff") } };
-            featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key").OffWithValue(data).Build());
-#pragma warning disable 0618
-            var expected = new EvaluationDetail<JToken>(data, 0, EvaluationReason.Off.Instance);
-            Assert.Equal(expected, client.JsonVariationDetail("key", user, new JValue(42)));
-#pragma warning restore 0618
-        }
-
+        
         [Fact]
         public void VariationDetailReturnsDefaultForUnknownFlag()
         {
@@ -334,50 +302,7 @@ namespace LaunchDarkly.Tests
 
             Assert.True(client.BoolVariation("feature", user, false));
         }
-
-        [Fact]
-        public void AllFlagsReturnsFlagValues()
-        {
-            featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build());
-            featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key2").OffWithValue(new JValue("value2")).Build());
-
-#pragma warning disable 618
-            var values = client.AllFlags(user);
-#pragma warning restore 618
-            var expected = new Dictionary<string, JToken>
-            {
-                { "key1", "value1" },
-                { "key2", "value2"}
-            };
-            Assert.Equal(expected, values);
-        }
-
-        [Fact]
-        public void AllFlagsReturnsNullForNulluser()
-        {
-            featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build());
-            
-#pragma warning disable 618
-            var values = client.AllFlags(null);
-#pragma warning restore 618
-            Assert.Null(values);
-        }
-
-        [Fact]
-        public void AllFlagsReturnsNullForUserWithNullKey()
-        {
-            featureStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build());
-
-#pragma warning disable 618
-            var values = client.AllFlags(User.WithKey(null));
-#pragma warning restore 618
-            Assert.Null(values);
-        }
-
+        
         [Fact]
         public void AllFlagsStateReturnsState()
         {
