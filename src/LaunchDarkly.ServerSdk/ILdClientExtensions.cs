@@ -18,7 +18,8 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <remarks>
         /// <para>
-        /// If the flag has a value that is not one of the allowed enum value names, <c>defaultValue</c> is returned.
+        /// If the flag has a value that is not one of the allowed enum value names, or is not a string,
+        /// <c>defaultValue</c> is returned.
         /// </para>
         /// <para>
         /// Note that there is no type constraint to guarantee that T really is an enum type, because that is
@@ -54,7 +55,8 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <remarks>
         /// <para>
-        /// If the flag has a value that is not one of the allowed enum value names, <c>defaultValue</c> is returned.
+        /// If the flag has a value that is not one of the allowed enum value names, or is not a string,
+        /// <c>defaultValue</c> is returned.
         /// </para>
         /// <para>
         /// Note that there is no type constraint to guarantee that T really is an enum type, because that is
