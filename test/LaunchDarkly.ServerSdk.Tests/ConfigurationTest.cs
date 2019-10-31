@@ -87,6 +87,14 @@ namespace LaunchDarkly.Tests
 
             Assert.Equal(TimeSpan.FromSeconds(30), config.PollingInterval);
         }
+
+        [Fact]
+        public void CannotOverrideTooSmallDiagnosticRecordingInterval()
+        {
+            var config = Configuration.Builder(sdkKey).DiagnosticRecordingInterval(TimeSpan.FromSeconds(59)).Build();
+
+            Assert.Equal(TimeSpan.FromMinutes(1), config.DiagnosticRecordingInterval);
+        }
         
         [Fact]
         public void DeprecatedPropertiesAreEquivalentToNewOnes()
