@@ -18,11 +18,11 @@ namespace LaunchDarkly.Tests
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             IDiagnosticStore _serverDiagnosticStore = new ServerDiagnosticStore(config);
-            IReadOnlyDictionary<string, object> InitEvent = _serverDiagnosticStore.InitEvent;
-            Assert.Equal("diagnostic-init", InitEvent["kind"]);
-            DiagnosticId Id = (DiagnosticId) InitEvent["id"];
-            Assert.Equal("DK_KEY", Id._sdkKeySuffix);
-            long TimeDifference = Util.GetUnixTimestampMillis(DateTime.Now) - (long) InitEvent["creationDate"];
+            IReadOnlyDictionary<string, object> initEvent = _serverDiagnosticStore.InitEvent;
+            Assert.Equal("diagnostic-init", initEvent["kind"]);
+            DiagnosticId id = (DiagnosticId) initEvent["id"];
+            Assert.Equal("DK_KEY", id._sdkKeySuffix);
+            long TimeDifference = Util.GetUnixTimestampMillis(DateTime.Now) - (long) initEvent["creationDate"];
             Assert.True(TimeDifference < 50 && TimeDifference >= 0);
         }
 
@@ -34,18 +34,18 @@ namespace LaunchDarkly.Tests
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             IDiagnosticStore _serverDiagnosticStore = new ServerDiagnosticStore(config);
-            IReadOnlyDictionary<string, object> PeriodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            IReadOnlyDictionary<string, object> periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
 
-            Assert.Equal("diagnostic", PeriodicEvent["kind"]);
-            DiagnosticId Id = (DiagnosticId) PeriodicEvent["id"];
-            Assert.Equal("DK_KEY", Id._sdkKeySuffix);
-            long TimeDifference = Util.GetUnixTimestampMillis(DateTime.Now) - (long) PeriodicEvent["creationDate"];
+            Assert.Equal("diagnostic", periodicEvent["kind"]);
+            DiagnosticId id = (DiagnosticId) periodicEvent["id"];
+            Assert.Equal("DK_KEY", id._sdkKeySuffix);
+            long TimeDifference = Util.GetUnixTimestampMillis(DateTime.Now) - (long) periodicEvent["creationDate"];
             Assert.True(TimeDifference < 50 && TimeDifference >= 0);
 
-            Assert.Equal(4L, PeriodicEvent["eventsInQueue"]);
-            Assert.Equal(0L, PeriodicEvent["droppedEvents"]);
-            Assert.Equal(0L, PeriodicEvent["deduplicatedUsers"]);
-            List<Dictionary<string, object>> StreamInits = (List<Dictionary<string, object>>) PeriodicEvent["streamInits"];
+            Assert.Equal(4L, periodicEvent["eventsInQueue"]);
+            Assert.Equal(0L, periodicEvent["droppedEvents"]);
+            Assert.Equal(0L, periodicEvent["deduplicatedUsers"]);
+            List<Dictionary<string, object>> StreamInits = (List<Dictionary<string, object>>) periodicEvent["streamInits"];
             Assert.True(StreamInits.Count == 0);
         }
     }
