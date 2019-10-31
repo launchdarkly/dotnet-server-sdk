@@ -268,6 +268,10 @@ namespace LaunchDarkly.Client
         /// Default value for <see cref="DiagnosticRecordingInterval"/>.
         /// </summary>
         internal static readonly TimeSpan DefaultDiagnosticRecordingInterval = TimeSpan.FromMinutes(15);
+        /// <summary>
+        /// Minimum value for <see cref="DiagnosticRecordingInterval"/>.
+        /// </summary>
+        internal static readonly TimeSpan MinimumDiagnosticRecordingInterval = TimeSpan.FromMinutes(1);
 
         /// <summary>
         /// Creates a configuration with all parameters set to the default. Use extension methods

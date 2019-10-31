@@ -537,7 +537,15 @@ namespace LaunchDarkly.Client
 
         public IConfigurationBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval)
         {
-            _diagnosticRecordingInterval = diagnosticRecordingInterval;
+            if (diagnosticRecordingInterval.CompareTo(Configuration.MinimumDiagnosticRecordingInterval) < 0)
+            {
+                Log.Warn("DiagnosticRecordingInterval cannot be less than the minimum of 1 minute.");
+                _diagnosticRecordingInterval = Configuration.MinimumDiagnosticRecordingInterval;
+            }
+            else
+            {
+                _diagnosticRecordingInterval = diagnosticRecordingInterval;
+            }
             return this;
         }
 
