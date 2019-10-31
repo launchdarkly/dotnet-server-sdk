@@ -17,29 +17,53 @@ namespace LaunchDarkly.Client
     /// </remarks>
     public class Configuration
     {
+        private readonly bool _allAttributesPrivate;
+        private readonly Uri _baseUri;
+        private readonly TimeSpan _connectionTimeout;
+        private readonly TimeSpan _eventFlushInterval;
+        private readonly int _eventCapacity;
+        private readonly IEventProcessorFactory _eventProcessorFactory;
+        private readonly Uri _eventsUri;
+        private readonly IFeatureStoreFactory _featureStoreFactory;
+        private readonly HttpMessageHandler _httpMessageHandler;
+        private readonly bool _inlineUsersInEvents;
+        private readonly bool _isStreamingEnabled;
+        private readonly bool _offline;
+        private readonly TimeSpan _pollingInterval;
+        private readonly ImmutableHashSet<string> _privateAttributeNames;
+        private readonly TimeSpan _readTimeout;
+        private readonly TimeSpan _reconnectTime;
+        private readonly string _sdkKey;
+        private readonly TimeSpan _startWaitTime;
+        private readonly Uri _streamUri;
+        private readonly IUpdateProcessorFactory _updateProcessorFactory;
+        private readonly bool _useLdd;
+        private readonly int _userKeysCapacity;
+        private readonly TimeSpan _userKeysFlushInterval;
+
         /// <summary>
         /// The base URI of the LaunchDarkly server.
         /// </summary>
-        public Uri BaseUri { get; internal set; }
+        public Uri BaseUri => _baseUri;
         /// <summary>
         /// The base URL of the LaunchDarkly streaming server.
         /// </summary>
-        public Uri StreamUri { get; internal set; }
+        public Uri StreamUri => _streamUri;
         /// <summary>
         /// The base URL of the LaunchDarkly analytics event server.
         /// </summary>
-        public Uri EventsUri { get; internal set; }
+        public Uri EventsUri => _eventsUri;
         /// <summary>
         /// The SDK key for your LaunchDarkly environment.
         /// </summary>
-        public string SdkKey { get; internal set; }
+        public string SdkKey => _sdkKey;
         /// <summary>
         /// Whether or not the streaming API should be used to receive flag updates.
         /// </summary>
         /// <remarks>
         /// This is true by default. Streaming should only be disabled on the advice of LaunchDarkly support.
         /// </remarks>
-        public bool IsStreamingEnabled { get; internal set; }
+        public bool IsStreamingEnabled => _isStreamingEnabled;
         /// <summary>
         /// The capacity of the events buffer.
         /// </summary>
@@ -48,12 +72,7 @@ namespace LaunchDarkly.Client
         /// before the buffer is flushed, events will be discarded. Increasing the capacity means that events
         /// are less likely to be discarded, at the cost of consuming more memory.
         /// </remarks>
-        public int EventCapacity { get; internal set; }
-        /// <summary>
-        /// Deprecated name for <see cref="EventCapacity"/>.
-        /// </summary>
-        [Obsolete("Use EventCapacity")]
-        public int EventQueueCapacity => EventCapacity;
+        public int EventCapacity => _eventCapacity;
         /// <summary>
         /// The time between flushes of the event buffer.
         /// </summary>
@@ -61,11 +80,11 @@ namespace LaunchDarkly.Client
         /// Decreasing the flush interval means that the event buffer is less likely to reach capacity.
         /// The default value is 5 seconds.
         /// </remarks>
-        public TimeSpan EventFlushInterval { get; internal set; }
+        public TimeSpan EventFlushInterval => _eventFlushInterval;
         /// <summary>
         /// Set the polling interval (when streaming is disabled). The default value is 30 seconds.
         /// </summary>
-        public TimeSpan PollingInterval { get; internal set; }
+        public TimeSpan PollingInterval => _pollingInterval;
         /// <summary>
         /// How long the client constructor will block awaiting a successful connection to
         /// LaunchDarkly.
@@ -74,11 +93,11 @@ namespace LaunchDarkly.Client
         /// Setting this to 0 will not block and will cause the constructor to return immediately. The
         /// default value is 10 seconds.
         /// </remarks>
-        public TimeSpan StartWaitTime { get; internal set; }
+        public TimeSpan StartWaitTime => _startWaitTime;
         /// <summary>
         /// The timeout when reading data from the EventSource API. The default value is 5 minutes.
         /// </summary>
-        public TimeSpan ReadTimeout { get; internal set; }
+        public TimeSpan ReadTimeout => _readTimeout;
         /// <summary>
         /// The reconnect base time for the streaming connection.
         /// </summary>
@@ -86,19 +105,19 @@ namespace LaunchDarkly.Client
         /// The streaming connection uses an exponential backoff algorithm (with jitter) for reconnects,
         /// but will start the backoff with a value near the value specified here. The default value is 1 second.
         /// </remarks>
-        public TimeSpan ReconnectTime { get; internal set; }
+        public TimeSpan ReconnectTime => _reconnectTime;
         /// <summary>
         /// The connection timeout. The default value is 10 seconds.
         /// </summary>
-        public TimeSpan ConnectionTimeout { get; internal set; }
+        public TimeSpan ConnectionTimeout => _connectionTimeout;
         /// <summary>
         /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
         /// </summary>
-        public HttpMessageHandler HttpMessageHandler { get; internal set; }
+        public HttpMessageHandler HttpMessageHandler => _httpMessageHandler;
         /// <summary>
         /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
         /// </summary>
-        public bool Offline { get; internal set; }
+        public bool Offline => _offline;
         /// <summary>
         /// Whether or not user attributes (other than the key) should be private (not sent to
         /// the LaunchDarkly server).
@@ -107,7 +126,7 @@ namespace LaunchDarkly.Client
         /// If this is true, all of the user attributes will be private, not just attributes that are
         /// marked as private  on the <see cref="User"/> object. By default, this is false.
         /// </remarks>
-        public bool AllAttributesPrivate { get; internal set; }
+        public bool AllAttributesPrivate => _allAttributesPrivate;
         /// <summary>
         /// Marks a set of attribute names as private.
         /// </summary>
@@ -115,17 +134,17 @@ namespace LaunchDarkly.Client
         /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
         /// names removed, even if you did specify them as private on the <see cref="User"/> object.
         /// </remarks>
-        public IImmutableSet<string> PrivateAttributeNames { get; internal set; }
+        public IImmutableSet<string> PrivateAttributeNames => _privateAttributeNames;
         /// <summary>
         /// The number of user keys that the event processor can remember at any one time, so that
         /// duplicate user details will not be sent in analytics events.
         /// </summary>
-        public int UserKeysCapacity { get; internal set; }
+        public int UserKeysCapacity => _userKeysCapacity;
         /// <summary>
         /// The interval at which the event processor will reset its set of known user keys. The
         /// default value is five minutes.
         /// </summary>
-        public TimeSpan UserKeysFlushInterval { get; internal set; }
+        public TimeSpan UserKeysFlushInterval => _userKeysFlushInterval;
         /// <summary>
         /// True if full user details should be included in every analytics event.
         /// </summary>
@@ -133,12 +152,12 @@ namespace LaunchDarkly.Client
         /// The default is false (events will only include the user key, except for one "index" event
         /// that provides the full details for the user).
         /// </remarks>
-        public bool InlineUsersInEvents { get; internal set; }
+        public bool InlineUsersInEvents => _inlineUsersInEvents;
         /// <summary>
         /// True if this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
         /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
         /// </summary>
-        public bool UseLdd { get; internal set; }
+        public bool UseLdd => _useLdd;
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IFeatureStore"/>, to be used
         /// for holding feature flags and related data received from LaunchDarkly.
@@ -147,7 +166,7 @@ namespace LaunchDarkly.Client
         /// The default is <see cref="Components.InMemoryFeatureStore"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
-        public IFeatureStoreFactory FeatureStoreFactory { get; internal set; }
+        public IFeatureStoreFactory FeatureStoreFactory => _featureStoreFactory;
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IEventProcessor"/>, which will
         /// process all analytics events.
@@ -156,7 +175,7 @@ namespace LaunchDarkly.Client
         /// The default is <see cref="Components.DefaultEventProcessor"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
-        public IEventProcessorFactory EventProcessorFactory { get; internal set; }
+        public IEventProcessorFactory EventProcessorFactory => _eventProcessorFactory;
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IUpdateProcessor"/>, which will
         /// receive feature flag data.
@@ -165,7 +184,7 @@ namespace LaunchDarkly.Client
         /// The default is <see cref="Components.DefaultUpdateProcessor"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
-        public IUpdateProcessorFactory UpdateProcessorFactory { get; internal set; }
+        public IUpdateProcessorFactory UpdateProcessorFactory => _updateProcessorFactory;
         /// <summary>
         /// A string that will be sent to LaunchDarkly to identify the SDK type.
         /// </summary>
@@ -275,31 +294,31 @@ namespace LaunchDarkly.Client
 
         internal Configuration(ConfigurationBuilder builder)
         {
-            AllAttributesPrivate = builder._allAttributesPrivate;
-            BaseUri = builder._baseUri;
-            ConnectionTimeout = builder._connectionTimeout;
-            EventCapacity = builder._eventCapacity;
-            EventFlushInterval = builder._eventFlushInterval;
-            EventProcessorFactory = builder._eventProcessorFactory;
-            EventsUri = builder._eventsUri;
-            FeatureStoreFactory = builder._featureStoreFactory;
-            HttpMessageHandler = builder._httpMessageHandler;
-            InlineUsersInEvents = builder._inlineUsersInEvents;
-            IsStreamingEnabled = builder._isStreamingEnabled;
-            Offline = builder._offline;
-            PollingInterval = builder._pollingInterval;
-            PrivateAttributeNames = builder._privateAttributeNames is null ?
+            _allAttributesPrivate = builder._allAttributesPrivate;
+            _baseUri = builder._baseUri;
+            _connectionTimeout = builder._connectionTimeout;
+            _eventCapacity = builder._eventCapacity;
+            _eventFlushInterval = builder._eventFlushInterval;
+            _eventProcessorFactory = builder._eventProcessorFactory;
+            _eventsUri = builder._eventsUri;
+            _featureStoreFactory = builder._featureStoreFactory;
+            _httpMessageHandler = builder._httpMessageHandler;
+            _inlineUsersInEvents = builder._inlineUsersInEvents;
+            _isStreamingEnabled = builder._isStreamingEnabled;
+            _offline = builder._offline;
+            _pollingInterval = builder._pollingInterval;
+            _privateAttributeNames = builder._privateAttributeNames is null ?
                 ImmutableHashSet.Create<string>() :
                 builder._privateAttributeNames.ToImmutableHashSet();
-            ReadTimeout = builder._readTimeout;
-            ReconnectTime = builder._reconnectTime;
-            SdkKey = builder._sdkKey;
-            StreamUri = builder._streamUri;
-            StartWaitTime = builder._startWaitTime;
-            UpdateProcessorFactory = builder._updateProcessorFactory;
-            UseLdd = builder._useLdd;
-            UserKeysCapacity = builder._userKeysCapacity;
-            UserKeysFlushInterval = builder._userKeysFlushInterval;
+            _readTimeout = builder._readTimeout;
+            _reconnectTime = builder._reconnectTime;
+            _sdkKey = builder._sdkKey;
+            _streamUri = builder._streamUri;
+            _startWaitTime = builder._startWaitTime;
+            _updateProcessorFactory = builder._updateProcessorFactory;
+            _useLdd = builder._useLdd;
+            _userKeysCapacity = builder._userKeysCapacity;
+            _userKeysFlushInterval = builder._userKeysFlushInterval;
         }
         
         internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
