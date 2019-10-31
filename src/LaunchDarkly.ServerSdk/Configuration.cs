@@ -376,7 +376,6 @@ namespace LaunchDarkly.Client
             public bool AllAttributesPrivate => Config.AllAttributesPrivate;
             public bool DiagnosticOptOut => Config.DiagnosticOptOut;
             public TimeSpan DiagnosticRecordingInterval => Config.DiagnosticRecordingInterval;
-            public string DiagnosticUriPath => "diagnostic";
             public int EventCapacity => Config.EventCapacity;
             public TimeSpan EventFlushInterval => Config.EventFlushInterval;
 #pragma warning disable 618
