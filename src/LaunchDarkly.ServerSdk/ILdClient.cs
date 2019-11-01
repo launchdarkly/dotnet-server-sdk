@@ -4,6 +4,10 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.
     /// </summary>
+    /// <remarks>
+    /// See also <see cref="ILdClientExtensions"/>, which provides convenience methods that build upon
+    /// this interface.
+    /// </remarks>
     public interface ILdClient
     {
         /// <summary>
