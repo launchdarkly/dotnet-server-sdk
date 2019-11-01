@@ -10,12 +10,22 @@ namespace LaunchDarkly.Tests
 {
     public class ServerDiagnosticStoreTest
     {
+        private Dictionary<string, object> _expectedPlatform = new Dictionary<string, object> { { "name", "dotnet" } };
+        private Dictionary<string, object> _expectedSdk = new Dictionary<string, object> {
+            { "name", "dotnet-server-sdk" },
+            { "version", ServerSideClientEnvironment.Instance.Version.ToString() },
+            { "wrapperName", "Xamarin" },
+            { "wrapperVersion", "1.0.0" }
+        };
+
         [Fact]
         public void InitEventFieldsAreCorrect() {
             Configuration config = Configuration.Builder("SDK_KEY")
                 .IsStreamingEnabled(false)
                 .BaseUri(new Uri("http://fake"))
                 .StartWaitTime(TimeSpan.Zero)
+                .WrapperName("Xamarin")
+                .WrapperVersion("1.0.0")
                 .Build();
             IDiagnosticStore _serverDiagnosticStore = new ServerDiagnosticStore(config);
             IReadOnlyDictionary<string, object> initEvent = _serverDiagnosticStore.InitEvent;
@@ -24,6 +34,9 @@ namespace LaunchDarkly.Tests
             Assert.Equal("DK_KEY", id._sdkKeySuffix);
             long TimeDifference = Util.GetUnixTimestampMillis(DateTime.Now) - (long) initEvent["creationDate"];
             Assert.True(TimeDifference < 50 && TimeDifference >= 0);
+
+            Assert.Equal(_expectedPlatform, initEvent["platform"]);
+            Assert.Equal(_expectedSdk, initEvent["sdk"]);
         }
 
         [Fact]
