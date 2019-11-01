@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -11,24 +12,25 @@ namespace LaunchDarkly.Client
         private readonly Dictionary<string, object> InitEvent;
         private readonly DiagnosticId DiagnosticId;
 
-        private readonly object UpdateLock = new object();
-        private DateTime DataSince;
+        private long DataSince;
         private long DroppedEvents;
         private long DeduplicatedUsers;
+        private readonly object StreamInitsLock = new object();
         private List<Dictionary<string, object>> StreamInits = new List<Dictionary<string, object>>();
 
         #region IDiagnosticStore interface properties
         IReadOnlyDictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
         IReadOnlyDictionary<string, object> IDiagnosticStore.PersistedUnsentEvent => null;
-        DateTime IDiagnosticStore.DataSince => DataSince;
+        DateTime IDiagnosticStore.DataSince => DateTime.FromBinary(Interlocked.Read(ref DataSince));
         #endregion
 
         internal ServerDiagnosticStore(Configuration config)
         {
+            DateTime currentTime = DateTime.Now;
             Config = config;
-            DataSince = DateTime.Now;
+            DataSince = currentTime.ToBinary();
             DiagnosticId = new DiagnosticId(config.SdkKey, Guid.NewGuid());
-            InitEvent = BuildInitEvent(DataSince);
+            InitEvent = BuildInitEvent(currentTime);
         }
 
         private void AddDiagnosticCommonFields(Dictionary<string, object> fieldDictionary, string kind, DateTime creationDate)
@@ -107,18 +109,12 @@ namespace LaunchDarkly.Client
 
         public void IncrementDeduplicatedUsers()
         {
-            lock (UpdateLock)
-            {
-                this.DeduplicatedUsers++;
-            }
+            Interlocked.Increment(ref DeduplicatedUsers);
         }
 
         public void IncrementDroppedEvents()
         {
-            lock (UpdateLock)
-            {
-                this.DroppedEvents++;
-            }
+            Interlocked.Increment(ref DroppedEvents);
         }
 
         public void AddStreamInit(long timestamp, int durationMillis, bool failed)
@@ -127,7 +123,7 @@ namespace LaunchDarkly.Client
             streamInitObject.Add("timestamp", timestamp);
             streamInitObject.Add("durationMillis", durationMillis);
             streamInitObject.Add("failed", failed);
-            lock (UpdateLock)
+            lock (StreamInitsLock)
             {
                 StreamInits.Add(streamInitObject);
             }
@@ -136,18 +132,18 @@ namespace LaunchDarkly.Client
         public IReadOnlyDictionary<string, object> CreateEventAndReset(long eventsInQueue)
         {
             DateTime currentTime = DateTime.Now;
+            long droppedEvents = Interlocked.Exchange(ref DroppedEvents, 0);
+            long deduplicatedUsers = Interlocked.Exchange(ref DeduplicatedUsers, 0);
+            long dataSince = Interlocked.Exchange(ref DataSince, currentTime.ToBinary());
+
             Dictionary<string, object> statEvent = new Dictionary<string, object>();
             AddDiagnosticCommonFields(statEvent, "diagnostic", currentTime);
             statEvent["eventsInQueue"] = eventsInQueue;
-            lock (UpdateLock) {
-                statEvent["dataSinceDate"] = Util.GetUnixTimestampMillis(DataSince);
-                statEvent["droppedEvents"] = DroppedEvents;
-                statEvent["deduplicatedUsers"] = DeduplicatedUsers;
+            statEvent["dataSinceDate"] = Util.GetUnixTimestampMillis(DateTime.FromBinary(dataSince));
+            statEvent["droppedEvents"] = droppedEvents;
+            statEvent["deduplicatedUsers"] = deduplicatedUsers;
+            lock (StreamInitsLock) {
                 statEvent["streamInits"] = StreamInits;
-
-                DataSince = currentTime;
-                DroppedEvents = 0;
-                DeduplicatedUsers = 0;
                 StreamInits = new List<Dictionary<string, object>>();
             }
 
