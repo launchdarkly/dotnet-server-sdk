@@ -41,7 +41,3 @@ dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.cspro
 ## Miscellaneous
 
 Much of the implementation of this SDK is shared with the LaunchDarkly Xamarin SDK. The common code that is used by both is in the `LaunchDarkly.CommonSdk` package, whose source code is in the [`dotnet-sdk-common`](https://github.com/launchdarkly/dotnet-sdk-common) repository.
-
-This project imports the `dotnet-base` repository as a subtree. See the `README.md` file in that directory for more information.
-
-Releases are done using the release script in `dotnet-base`. Since the published package includes a .NET Framework 4.5 build, the release must be done from Windows.
