@@ -1,0 +1,20 @@
+repo:
+  public: dotnet-server-sdk
+  private: dotnet-server-sdk-private
+
+publications:
+  - url: https://nuget.org/packages/LaunchDarkly.ServerSdk
+    description: NuGet
+
+circleci:
+  windows: {}
+
+template:
+  name: dotnet-windows
+  env:
+    # See Releaser docs - this causes the generated documentation to include all public APIs from CommonSdk
+    LD_RELEASE_DOCS_ASSEMBLIES: LaunchDarkly.ServerSdk LaunchDarkly.CommonSdk
+
+documentation:
+  title: LaunchDarkly Server-Side SDK for .NET
+  githubPages: true
