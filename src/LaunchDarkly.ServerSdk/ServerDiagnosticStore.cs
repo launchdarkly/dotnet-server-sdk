@@ -117,11 +117,11 @@ namespace LaunchDarkly.Client
             Interlocked.Increment(ref DroppedEvents);
         }
 
-        public void AddStreamInit(long timestamp, int durationMillis, bool failed)
+        public void AddStreamInit(DateTime timestamp, TimeSpan duration, bool failed)
         {
             Dictionary<string, object> streamInitObject = new Dictionary<string, object>();
-            streamInitObject.Add("timestamp", timestamp);
-            streamInitObject.Add("durationMillis", durationMillis);
+            streamInitObject.Add("timestamp", Util.GetUnixTimestampMillis(timestamp));
+            streamInitObject.Add("durationMillis", duration.TotalMilliseconds);
             streamInitObject.Add("failed", failed);
             lock (StreamInitsLock)
             {
