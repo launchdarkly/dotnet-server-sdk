@@ -12,6 +12,7 @@ namespace LaunchDarkly.Client
         private readonly Dictionary<string, object> InitEvent;
         private readonly DiagnosticId DiagnosticId;
 
+        // DataSince is stored in the "binary" long format so Interlocked.Exchange can be used
         private long DataSince;
         private long DroppedEvents;
         private long DeduplicatedUsers;
@@ -72,9 +73,9 @@ namespace LaunchDarkly.Client
         private Dictionary<string, object> InitEventConfig()
         {
             Dictionary<string, object> configInfo = new Dictionary<string, object>();
-            configInfo["baseURI"] = Config.BaseUri;
-            configInfo["eventsURI"] = Config.EventsUri;
-            configInfo["streamURI"] = Config.StreamUri;
+            configInfo["baseURI"] = Config.BaseUri.ToString();
+            configInfo["eventsURI"] = Config.EventsUri.ToString();
+            configInfo["streamURI"] = Config.StreamUri.ToString();
             configInfo["eventsCapacity"] = Config.EventCapacity;
             configInfo["connectTimeoutMillis"] = (long)Config.HttpClientTimeout.TotalMilliseconds;
             configInfo["socketTimeoutMillis"] = (long)Config.ReadTimeout.TotalMilliseconds;
