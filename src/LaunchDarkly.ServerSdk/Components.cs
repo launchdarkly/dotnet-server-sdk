@@ -76,14 +76,14 @@ namespace LaunchDarkly.Client
         }
     }
 
-    internal class DefaultEventProcessorFactory : IEventProcessorFactory
+    internal class DefaultEventProcessorFactory : IEventProcessorFactoryWithDiagnostics
     {
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
             return CreateEventProcessor(config, null);
         }
 
-        internal IEventProcessor CreateEventProcessor(Configuration config, ServerDiagnosticStore diagnosticStore) {
+        public IEventProcessor CreateEventProcessor(Configuration config, IDiagnosticStore diagnosticStore) {
             if (config.Offline)
             {
                 return new NullEventProcessor();
@@ -116,7 +116,7 @@ namespace LaunchDarkly.Client
         }
     }
 
-    internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactory
+    internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactoryWithDiagnostics
     {
         // Note, logger uses LDClient class name for backward compatibility
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
@@ -126,7 +126,7 @@ namespace LaunchDarkly.Client
             return CreateUpdateProcessor(config, featureStore, null);
         }
 
-        internal IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, ServerDiagnosticStore diagnosticStore)
+        public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, IDiagnosticStore diagnosticStore)
         {
             if (config.Offline)
             {

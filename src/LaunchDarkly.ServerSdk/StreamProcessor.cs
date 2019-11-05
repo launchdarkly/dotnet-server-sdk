@@ -23,7 +23,7 @@ namespace LaunchDarkly.Client
         private readonly IFeatureStore _featureStore;
 
         internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor,
-            IFeatureStore featureStore, StreamManager.EventSourceCreator eventSourceCreator, ServerDiagnosticStore diagnosticStore)
+            IFeatureStore featureStore, StreamManager.EventSourceCreator eventSourceCreator, IDiagnosticStore diagnosticStore)
         {
             _streamManager = new StreamManager(this,
                 MakeStreamProperties(config),

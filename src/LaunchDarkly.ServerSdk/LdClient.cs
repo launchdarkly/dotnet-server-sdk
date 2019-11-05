@@ -44,13 +44,14 @@ namespace LaunchDarkly.Client
 
             if (eventProcessor == null)
             {
-                if (_configuration.EventProcessorFactory != null)
+                IEventProcessorFactory eventProcessorFactory = _configuration.EventProcessorFactory ?? Components.DefaultEventProcessor;
+                if (eventProcessorFactory is IEventProcessorFactoryWithDiagnostics)
                 {
-                    _eventProcessor = _configuration.EventProcessorFactory.CreateEventProcessor(_configuration);
+                    _eventProcessor = ((IEventProcessorFactoryWithDiagnostics)eventProcessorFactory).CreateEventProcessor(_configuration, diagnosticStore);
                 }
                 else
                 {
-                    _eventProcessor = new DefaultEventProcessorFactory().CreateEventProcessor(_configuration, diagnosticStore);
+                    _eventProcessor = eventProcessorFactory.CreateEventProcessor(_configuration);
                 }
                 _shouldDisposeEventProcessor = true;
             }
@@ -79,12 +80,14 @@ namespace LaunchDarkly.Client
             }
             _featureStore = new FeatureStoreClientWrapper(store);
 
-            if (_configuration.UpdateProcessorFactory != null)
+            IUpdateProcessorFactory updateProcessorFactory = _configuration.UpdateProcessorFactory ?? Components.DefaultUpdateProcessor;
+            if (updateProcessorFactory is IUpdateProcessorFactoryWithDiagnostics)
             {
-                _updateProcessor = _configuration.UpdateProcessorFactory.CreateUpdateProcessor(_configuration, _featureStore);
+                _updateProcessor = ((IUpdateProcessorFactoryWithDiagnostics)updateProcessorFactory).CreateUpdateProcessor(_configuration, _featureStore, diagnosticStore);
             }
-            else {
-                _updateProcessor = new DefaultUpdateProcessorFactory().CreateUpdateProcessor(_configuration, _featureStore, diagnosticStore);
+            else
+            {
+                _updateProcessor = updateProcessorFactory.CreateUpdateProcessor(_configuration, _featureStore);
             }
 
             var initTask = _updateProcessor.Start();
