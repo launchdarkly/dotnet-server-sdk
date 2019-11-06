@@ -45,9 +45,9 @@ namespace LaunchDarkly.Client
             if (eventProcessor == null)
             {
                 IEventProcessorFactory eventProcessorFactory = _configuration.EventProcessorFactory ?? Components.DefaultEventProcessor;
-                if (eventProcessorFactory is IEventProcessorFactoryWithDiagnostics)
+                if (eventProcessorFactory is IEventProcessorFactoryWithDiagnostics epfwd)
                 {
-                    _eventProcessor = ((IEventProcessorFactoryWithDiagnostics)eventProcessorFactory).CreateEventProcessor(_configuration, diagnosticStore);
+                    _eventProcessor = epfwd.CreateEventProcessor(_configuration, diagnosticStore);
                 }
                 else
                 {
@@ -81,9 +81,9 @@ namespace LaunchDarkly.Client
             _featureStore = new FeatureStoreClientWrapper(store);
 
             IUpdateProcessorFactory updateProcessorFactory = _configuration.UpdateProcessorFactory ?? Components.DefaultUpdateProcessor;
-            if (updateProcessorFactory is IUpdateProcessorFactoryWithDiagnostics)
+            if (updateProcessorFactory is IUpdateProcessorFactoryWithDiagnostics upfwd)
             {
-                _updateProcessor = ((IUpdateProcessorFactoryWithDiagnostics)updateProcessorFactory).CreateUpdateProcessor(_configuration, _featureStore, diagnosticStore);
+                _updateProcessor = upfwd.CreateUpdateProcessor(_configuration, _featureStore, diagnosticStore);
             }
             else
             {
