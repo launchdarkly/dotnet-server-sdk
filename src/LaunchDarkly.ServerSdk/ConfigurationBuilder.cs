@@ -59,8 +59,8 @@ namespace LaunchDarkly.Client
         ///     diagnostics data to the LaunchDarkly servers in order to assist in the development
         ///     of future SDK improvements. These diagnostics consist of an initial payload
         ///     containing some details of SDK in use, the SDK's configuration, and the platform the
-        ///     SDK is being run on; as well as payloads sent periodically with information on
-        ///     irregular occurrences such as dropped events
+        ///     SDK is being run on, as well as payloads sent periodically with information on
+        ///     irregular occurrences such as dropped events.
         ///   </para>
         /// </remarks>
         /// <param name="diagnosticOptOut">true to disable diagnostic events</param>
