@@ -9,7 +9,7 @@ namespace LaunchDarkly.Client
     internal class ServerDiagnosticStore : IDiagnosticStore
     {
         private readonly Configuration Config;
-        private readonly Dictionary<string, object> InitEvent;
+        private readonly DiagnosticEvent InitEvent;
         private readonly DiagnosticId DiagnosticId;
 
         // DataSince is stored in the "binary" long format so Interlocked.Exchange can be used
@@ -17,11 +17,11 @@ namespace LaunchDarkly.Client
         private long DroppedEvents;
         private long DeduplicatedUsers;
         private readonly object StreamInitsLock = new object();
-        private List<Dictionary<string, object>> StreamInits = new List<Dictionary<string, object>>();
+        private LdValue.ArrayBuilder StreamInits = LdValue.BuildArray();
 
         #region IDiagnosticStore interface properties
-        IReadOnlyDictionary<string, object> IDiagnosticStore.InitEvent => InitEvent;
-        IReadOnlyDictionary<string, object> IDiagnosticStore.PersistedUnsentEvent => null;
+        DiagnosticEvent? IDiagnosticStore.InitEvent => InitEvent;
+        DiagnosticEvent? IDiagnosticStore.PersistedUnsentEvent => null;
         DateTime IDiagnosticStore.DataSince => DateTime.FromBinary(Interlocked.Read(ref DataSince));
         #endregion
 
@@ -34,74 +34,86 @@ namespace LaunchDarkly.Client
             InitEvent = BuildInitEvent(currentTime);
         }
 
-        private void AddDiagnosticCommonFields(Dictionary<string, object> fieldDictionary, string kind, DateTime creationDate)
+        private void AddDiagnosticCommonFields(LdValue.ObjectBuilder fieldsBuilder, string kind, DateTime creationDate)
         {
-            fieldDictionary.Add("kind", kind);
-            fieldDictionary.Add("id", DiagnosticId);
-            fieldDictionary.Add("creationDate", Util.GetUnixTimestampMillis(creationDate));
+            fieldsBuilder.Add("kind", kind);
+            fieldsBuilder.Add("id", EncodeDiagnosticId(DiagnosticId));
+            fieldsBuilder.Add("creationDate", Util.GetUnixTimestampMillis(creationDate));
+        }
+
+        private LdValue EncodeDiagnosticId(DiagnosticId id)
+        {
+            var o = LdValue.BuildObject().Add("diagnosticId", id._diagnosticId.ToString());
+            if (id._sdkKeySuffix != null)
+            {
+                o.Add("sdkKeySuffix", id._sdkKeySuffix);
+            }
+            return o.Build();
         }
 
         #region Init event builders
 
-        private Dictionary<string, object> BuildInitEvent(DateTime creationDate)
+        private DiagnosticEvent BuildInitEvent(DateTime creationDate)
         {
-            Dictionary<string, object> initEvent = new Dictionary<string, object>();
-            initEvent["configuration"] = InitEventConfig();
-            initEvent["sdk"] = InitEventSdk();
-            initEvent["platform"] = InitEventPlatform();
+            var initEvent = LdValue.BuildObject();
+            initEvent.Add("configuration", InitEventConfig());
+            initEvent.Add("sdk", InitEventSdk());
+            initEvent.Add("platform", InitEventPlatform());
             AddDiagnosticCommonFields(initEvent, "diagnostic-init", creationDate);
-            return initEvent;
+            return new DiagnosticEvent(initEvent.Build());
         }
 
-        private Dictionary<string, object> InitEventPlatform()
+        private LdValue InitEventPlatform() =>
+            LdValue.BuildObject().Add("name", "dotnet").Build();
+
+        private LdValue InitEventSdk()
         {
-            Dictionary<string, object> platformInfo = new Dictionary<string, object>();
-            platformInfo["name"] = "dotnet";
-            return platformInfo;
+            var sdkInfo = LdValue.BuildObject()
+                .Add("name", "dotnet-server-sdk")
+                .Add("version", ServerSideClientEnvironment.Instance.Version.ToString());
+            if (Config.WrapperName != null)
+            {
+                sdkInfo.Add("wrapperName", Config.WrapperName);
+            }
+            if (Config.WrapperVersion != null)
+            {
+                sdkInfo.Add("wrapperVersion", Config.WrapperVersion);
+            }
+            return sdkInfo.Build();
         }
 
-        private Dictionary<string, object> InitEventSdk()
+        private LdValue InitEventConfig()
         {
-            Dictionary<string, object> sdkInfo = new Dictionary<string, object>();
-            sdkInfo["name"] = "dotnet-server-sdk";
-            sdkInfo["version"] = ServerSideClientEnvironment.Instance.Version.ToString();
-            sdkInfo["wrapperName"] = Config.WrapperName;
-            sdkInfo["wrapperVersion"] = Config.WrapperVersion;
-            return sdkInfo;
-        }
-
-        private Dictionary<string, object> InitEventConfig()
-        {
-            Dictionary<string, object> configInfo = new Dictionary<string, object>();
-            configInfo["baseURI"] = Config.BaseUri.ToString();
-            configInfo["eventsURI"] = Config.EventsUri.ToString();
-            configInfo["streamURI"] = Config.StreamUri.ToString();
-            configInfo["eventsCapacity"] = Config.EventCapacity;
-            configInfo["connectTimeoutMillis"] = (long)Config.HttpClientTimeout.TotalMilliseconds;
-            configInfo["socketTimeoutMillis"] = (long)Config.ReadTimeout.TotalMilliseconds;
-            configInfo["eventsFlushIntervalMillis"] = (long)Config.EventFlushInterval.TotalMilliseconds;
-            configInfo["usingProxy"] = false;
-            configInfo["usingProxyAuthenticator"] = false;
-            configInfo["streamingDisabled"] = !Config.IsStreamingEnabled;
-            configInfo["usingRelayDaemon"] = Config.UseLdd;
-            configInfo["offline"] = Config.Offline;
-            configInfo["allAttributesPrivate"] = Config.AllAttributesPrivate;
-            configInfo["eventReportingDisabled"] = false;
-            configInfo["pollingIntervalMillis"] = (long)Config.PollingInterval.TotalMilliseconds;
-            configInfo["startWaitMillis"] = (long)Config.StartWaitTime.TotalMilliseconds;
+            var configInfo = LdValue.BuildObject();
+            configInfo.Add("baseURI", Config.BaseUri.ToString());
+            configInfo.Add("eventsURI", Config.EventsUri.ToString());
+            configInfo.Add("streamURI", Config.StreamUri.ToString());
+            configInfo.Add("eventsCapacity", Config.EventCapacity);
+            configInfo.Add("connectTimeoutMillis", Config.HttpClientTimeout.TotalMilliseconds);
+            configInfo.Add("socketTimeoutMillis", Config.ReadTimeout.TotalMilliseconds);
+            configInfo.Add("eventsFlushIntervalMillis", Config.EventFlushInterval.TotalMilliseconds);
+            configInfo.Add("usingProxy", false);
+            configInfo.Add("usingProxyAuthenticator", false);
+            configInfo.Add("streamingDisabled", !Config.IsStreamingEnabled);
+            configInfo.Add("usingRelayDaemon", Config.UseLdd);
+            configInfo.Add("offline", Config.Offline);
+            configInfo.Add("allAttributesPrivate", Config.AllAttributesPrivate);
+            configInfo.Add("eventReportingDisabled", false);
+            configInfo.Add("pollingIntervalMillis", (long)Config.PollingInterval.TotalMilliseconds);
+            configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
 #pragma warning disable 618
-            configInfo["samplingInterval"] = Config.EventSamplingInterval;
+            configInfo.Add("samplingInterval", Config.EventSamplingInterval);
 #pragma warning restore 618
-            configInfo["reconnectTimeMillis"] = (long)Config.ReconnectTime.TotalMilliseconds;
-            configInfo["userKeysCapacity"] = Config.UserKeysCapacity;
-            configInfo["userKeysFlushIntervalMillis"] = (long)Config.UserKeysFlushInterval.TotalMilliseconds;
-            configInfo["inlineUsersInEvents"] = Config.InlineUsersInEvents;
-            configInfo["diagnosticRecordingIntervalMillis"] = (long)Config.DiagnosticRecordingInterval.TotalMilliseconds;
+            configInfo.Add("reconnectTimeMillis", (long)Config.ReconnectTime.TotalMilliseconds);
+            configInfo.Add("userKeysCapacity", Config.UserKeysCapacity);
+            configInfo.Add("userKeysFlushIntervalMillis", (long)Config.UserKeysFlushInterval.TotalMilliseconds);
+            configInfo.Add("inlineUsersInEvents", Config.InlineUsersInEvents);
+            configInfo.Add("diagnosticRecordingIntervalMillis", (long)Config.DiagnosticRecordingInterval.TotalMilliseconds);
             if (Config.FeatureStoreFactory != null)
             {
-                configInfo["featureStoreFactory"] = Config.FeatureStoreFactory.GetType().Name;
+                configInfo.Add("featureStoreFactory", Config.FeatureStoreFactory.GetType().Name);
             }
-            return configInfo;
+            return configInfo.Build();
         }
 
         #endregion
@@ -120,35 +132,35 @@ namespace LaunchDarkly.Client
 
         public void AddStreamInit(DateTime timestamp, TimeSpan duration, bool failed)
         {
-            Dictionary<string, object> streamInitObject = new Dictionary<string, object>();
+            var streamInitObject = LdValue.BuildObject();
             streamInitObject.Add("timestamp", Util.GetUnixTimestampMillis(timestamp));
             streamInitObject.Add("durationMillis", duration.TotalMilliseconds);
             streamInitObject.Add("failed", failed);
             lock (StreamInitsLock)
             {
-                StreamInits.Add(streamInitObject);
+                StreamInits.Add(streamInitObject.Build());
             }
         }
 
-        public IReadOnlyDictionary<string, object> CreateEventAndReset(long eventsInQueue)
+        public DiagnosticEvent CreateEventAndReset(long eventsInQueue)
         {
             DateTime currentTime = DateTime.Now;
             long droppedEvents = Interlocked.Exchange(ref DroppedEvents, 0);
             long deduplicatedUsers = Interlocked.Exchange(ref DeduplicatedUsers, 0);
             long dataSince = Interlocked.Exchange(ref DataSince, currentTime.ToBinary());
 
-            Dictionary<string, object> statEvent = new Dictionary<string, object>();
+            var statEvent = LdValue.BuildObject();
             AddDiagnosticCommonFields(statEvent, "diagnostic", currentTime);
-            statEvent["eventsInQueue"] = eventsInQueue;
-            statEvent["dataSinceDate"] = Util.GetUnixTimestampMillis(DateTime.FromBinary(dataSince));
-            statEvent["droppedEvents"] = droppedEvents;
-            statEvent["deduplicatedUsers"] = deduplicatedUsers;
+            statEvent.Add("eventsInQueue", eventsInQueue);
+            statEvent.Add("dataSinceDate", Util.GetUnixTimestampMillis(DateTime.FromBinary(dataSince)));
+            statEvent.Add("droppedEvents", droppedEvents);
+            statEvent.Add("deduplicatedUsers", deduplicatedUsers);
             lock (StreamInitsLock) {
-                statEvent["streamInits"] = StreamInits;
-                StreamInits = new List<Dictionary<string, object>>();
+                statEvent.Add("streamInits", StreamInits.Build());
+                StreamInits = LdValue.BuildArray();
             }
 
-            return statEvent;
+            return new DiagnosticEvent(statEvent.Build());
         }
 
         #endregion

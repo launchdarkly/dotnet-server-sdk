@@ -10,37 +10,37 @@ namespace LaunchDarkly.Tests
 {
     public class ServerDiagnosticStoreTest
     {
-        private Dictionary<string, object> _expectedPlatform = new Dictionary<string, object> { { "name", "dotnet" } };
-        private Dictionary<string, object> _expectedSdk = new Dictionary<string, object> {
-            { "name", "dotnet-server-sdk" },
-            { "version", ServerSideClientEnvironment.Instance.Version.ToString() },
-            { "wrapperName", "Xamarin" },
-            { "wrapperVersion", "1.0.0" }
-        };
-        private Dictionary<string, object> _expectedConfig = new Dictionary<string, object> {
-            { "baseURI", "http://fake/" },
-            { "eventsURI", "https://events.launchdarkly.com/" },
-            { "streamURI", "https://stream.launchdarkly.com/" },
-            { "eventsCapacity", 10000 },
-            { "connectTimeoutMillis", 10000L },
-            { "socketTimeoutMillis", 300000L },
-            { "eventsFlushIntervalMillis", 5000L },
-            { "usingProxy", false },
-            { "usingProxyAuthenticator", false },
-            { "streamingDisabled", true },
-            { "usingRelayDaemon", false },
-            { "offline", false },
-            { "allAttributesPrivate", false },
-            { "eventReportingDisabled", false },
-            { "pollingIntervalMillis", 30000L },
-            { "startWaitMillis", 0L },
-            { "samplingInterval", 0 },
-            { "reconnectTimeMillis", 1000L },
-            { "userKeysCapacity", 1000 },
-            { "userKeysFlushIntervalMillis", 300000L },
-            { "inlineUsersInEvents", false },
-            { "diagnosticRecordingIntervalMillis", 900000L }
-        };
+        private LdValue _expectedPlatform = LdValue.BuildObject().Add("name", "dotnet").Build();
+        private LdValue _expectedSdk = LdValue.BuildObject()
+            .Add("name", "dotnet-server-sdk")
+            .Add("version", ServerSideClientEnvironment.Instance.Version.ToString())
+            .Add("wrapperName", "Xamarin")
+            .Add("wrapperVersion", "1.0.0")
+            .Build();
+        private LdValue _expectedConfig = LdValue.BuildObject()
+            .Add("baseURI", "http://fake/")
+            .Add("eventsURI", "https://events.launchdarkly.com/")
+            .Add("streamURI", "https://stream.launchdarkly.com/")
+            .Add("eventsCapacity", 10000)
+            .Add("connectTimeoutMillis", 10000L)
+            .Add("socketTimeoutMillis", 300000L)
+            .Add("eventsFlushIntervalMillis", 5000L)
+            .Add("usingProxy", false)
+            .Add("usingProxyAuthenticator", false)
+            .Add("streamingDisabled", true)
+            .Add("usingRelayDaemon", false)
+            .Add("offline", false)
+            .Add("allAttributesPrivate", false)
+            .Add("eventReportingDisabled", false)
+            .Add("pollingIntervalMillis", 30000L)
+            .Add("startWaitMillis", 0L)
+            .Add("samplingInterval", 0)
+            .Add("reconnectTimeMillis", 1000L)
+            .Add("userKeysCapacity", 1000)
+            .Add("userKeysFlushIntervalMillis", 300000L)
+            .Add("inlineUsersInEvents", false)
+            .Add("diagnosticRecordingIntervalMillis", 900000L)
+            .Build();
 
         private IDiagnosticStore CreateDiagnosticStore() {
             Configuration config = Configuration.Builder("SDK_KEY")
@@ -57,7 +57,7 @@ namespace LaunchDarkly.Tests
         public void PersistedEventIsNull()
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
-            IReadOnlyDictionary<string, object> persistedEvent = _serverDiagnosticStore.PersistedUnsentEvent;
+            var persistedEvent = _serverDiagnosticStore.PersistedUnsentEvent;
             Assert.Null(persistedEvent);
         }
 
@@ -73,14 +73,15 @@ namespace LaunchDarkly.Tests
         public void InitEventFieldsAreCorrect()
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
-            IReadOnlyDictionary<string, object> initEvent = _serverDiagnosticStore.InitEvent;
+            Assert.NotNull(_serverDiagnosticStore.InitEvent);
+            LdValue initEvent = _serverDiagnosticStore.InitEvent.Value.JsonValue;
 
-            Assert.Equal("diagnostic-init", initEvent["kind"]);
-            Assert.Equal(_expectedPlatform, initEvent["platform"]);
-            Assert.Equal(_expectedSdk, initEvent["sdk"]);
-            Assert.Equal(_expectedConfig, initEvent["configuration"]);
-            Assert.Equal("DK_KEY", ((DiagnosticId) initEvent["id"])._sdkKeySuffix);
-            Assert.Equal(Util.GetUnixTimestampMillis(_serverDiagnosticStore.DataSince), initEvent["creationDate"]);
+            Assert.Equal("diagnostic-init", initEvent.Get("kind").AsString);
+            Assert.Equal(_expectedPlatform, initEvent.Get("platform"));
+            Assert.Equal(_expectedSdk, initEvent.Get("sdk"));
+            Assert.Equal(_expectedConfig, initEvent.Get("configuration"));
+            Assert.Equal("DK_KEY", initEvent.Get("id").Get("sdkKeySuffix").AsString);
+            Assert.Equal(Util.GetUnixTimestampMillis(_serverDiagnosticStore.DataSince), initEvent.Get("creationDate").AsLong);
         }
 
         [Fact]
@@ -88,25 +89,26 @@ namespace LaunchDarkly.Tests
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             DateTime dataSince = _serverDiagnosticStore.DataSince;
-            IReadOnlyDictionary<string, object> periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            LdValue periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4).JsonValue;
 
-            Assert.Equal("diagnostic", periodicEvent["kind"]);
-            Assert.Equal(Util.GetUnixTimestampMillis(dataSince), periodicEvent["dataSinceDate"]);
-            Assert.Equal(4L, periodicEvent["eventsInQueue"]);
-            Assert.Equal(0L, periodicEvent["droppedEvents"]);
-            Assert.Equal(0L, periodicEvent["deduplicatedUsers"]);
+            Assert.Equal("diagnostic", periodicEvent.Get("kind").AsString);
+            Assert.Equal(Util.GetUnixTimestampMillis(dataSince), periodicEvent.Get("dataSinceDate").AsLong);
+            Assert.Equal(4, periodicEvent.Get("eventsInQueue").AsInt);
+            Assert.Equal(0, periodicEvent.Get("droppedEvents").AsInt);
+            Assert.Equal(0, periodicEvent.Get("deduplicatedUsers").AsInt);
 
-            List<Dictionary<string, object>> streamInits = (List<Dictionary<string, object>>) periodicEvent["streamInits"];
-            Assert.True(streamInits.Count == 0);
+            LdValue streamInits = periodicEvent.Get("streamInits");
+            Assert.Equal(0, streamInits.Count);
         }
 
         [Fact]
         public void PeriodicEventUsesIdFromInit()
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
-            IReadOnlyDictionary<string, object> initEvent = _serverDiagnosticStore.InitEvent;
-            IReadOnlyDictionary<string, object> periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
-            Assert.Equal(initEvent["id"], periodicEvent["id"]);
+            DiagnosticEvent? initEvent = _serverDiagnosticStore.InitEvent;
+            Assert.True(initEvent.HasValue);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            Assert.Equal(initEvent.Value.JsonValue.Get("id"), periodicEvent.JsonValue.Get("id"));
         }
 
         [Fact]
@@ -114,8 +116,8 @@ namespace LaunchDarkly.Tests
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             _serverDiagnosticStore.IncrementDeduplicatedUsers();
-            IReadOnlyDictionary<string, object> periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
-            Assert.Equal(1L, periodicEvent["deduplicatedUsers"]);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            Assert.Equal(1, periodicEvent.JsonValue.Get("deduplicatedUsers").AsInt);
         }
 
         [Fact]
@@ -123,8 +125,8 @@ namespace LaunchDarkly.Tests
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             _serverDiagnosticStore.IncrementDroppedEvents();
-            IReadOnlyDictionary<string, object> periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
-            Assert.Equal(1L, periodicEvent["droppedEvents"]);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            Assert.Equal(1, periodicEvent.JsonValue.Get("droppedEvents").AsInt);
         }
 
         [Fact]
@@ -133,23 +135,24 @@ namespace LaunchDarkly.Tests
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             DateTime timestamp = DateTime.Now;
             _serverDiagnosticStore.AddStreamInit(timestamp, TimeSpan.FromMilliseconds(200.0), true);
-            IReadOnlyDictionary<string, object> periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
 
-            List<Dictionary<string, object>> streamInits = (List<Dictionary<string, object>>) periodicEvent["streamInits"];
-            Assert.True(streamInits.Count == 1);
+            LdValue streamInits = periodicEvent.JsonValue.Get("streamInits");
+            Assert.Equal(1, streamInits.Count);
 
-            Dictionary<string, object> streamInit = streamInits[0];
-            Assert.Equal(Util.GetUnixTimestampMillis(timestamp), (long)streamInit["timestamp"]);
-            Assert.Equal(200.0, streamInit["durationMillis"]);
-            Assert.Equal(true, streamInit["failed"]);
+            LdValue streamInit = streamInits.Get(0);
+            Assert.Equal(Util.GetUnixTimestampMillis(timestamp), streamInit.Get("timestamp").AsLong);
+            Assert.Equal(200, streamInit.Get("durationMillis").AsInt);
+            Assert.Equal(true, streamInit.Get("failed").AsBool);
         }
 
         [Fact]
         public void DataSinceFromLastDiagnostic()
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
-            IReadOnlyDictionary<string, object> periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
-            Assert.Equal(periodicEvent["creationDate"], Util.GetUnixTimestampMillis(_serverDiagnosticStore.DataSince));
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            Assert.Equal(periodicEvent.JsonValue.Get("creationDate").AsLong,
+                Util.GetUnixTimestampMillis(_serverDiagnosticStore.DataSince));
         }
 
         [Fact]
@@ -159,16 +162,16 @@ namespace LaunchDarkly.Tests
             _serverDiagnosticStore.IncrementDroppedEvents();
             _serverDiagnosticStore.IncrementDeduplicatedUsers();
             _serverDiagnosticStore.AddStreamInit(DateTime.Now, TimeSpan.FromMilliseconds(200.0), true);
-            IReadOnlyDictionary<string, object> firstPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
-            IReadOnlyDictionary<string, object> nextPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset(0);
+            LdValue firstPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset(4).JsonValue;
+            LdValue nextPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset(0).JsonValue;
 
-            Assert.Equal(firstPeriodicEvent["creationDate"], nextPeriodicEvent["dataSinceDate"]);
-            Assert.Equal(0L, nextPeriodicEvent["eventsInQueue"]);
-            Assert.Equal(0L, nextPeriodicEvent["droppedEvents"]);
-            Assert.Equal(0L, nextPeriodicEvent["deduplicatedUsers"]);
+            Assert.Equal(firstPeriodicEvent.Get("creationDate"), nextPeriodicEvent.Get("dataSinceDate"));
+            Assert.Equal(0, nextPeriodicEvent.Get("eventsInQueue").AsInt);
+            Assert.Equal(0, nextPeriodicEvent.Get("droppedEvents").AsInt);
+            Assert.Equal(0, nextPeriodicEvent.Get("deduplicatedUsers").AsInt);
 
-            List<Dictionary<string, object>> streamInits = (List<Dictionary<string, object>>) nextPeriodicEvent["streamInits"];
-            Assert.True(streamInits.Count == 0);
+            LdValue streamInits = nextPeriodicEvent.Get("streamInits");
+            Assert.Equal(0, streamInits.Count);
         }
     }
 }
