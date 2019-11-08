@@ -25,7 +25,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1, EvaluationReason.OffReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -40,7 +40,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.OffReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -57,7 +57,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -74,7 +74,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -90,7 +90,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -107,7 +107,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -124,7 +124,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -141,7 +141,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -158,7 +158,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -176,7 +176,7 @@ namespace LaunchDarkly.Tests
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
-                new EvaluationReason.PrerequisiteFailed("feature1"));
+                EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -204,7 +204,7 @@ namespace LaunchDarkly.Tests
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
-                new EvaluationReason.PrerequisiteFailed("feature1"));
+                EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
@@ -237,7 +237,7 @@ namespace LaunchDarkly.Tests
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
-                new EvaluationReason.PrerequisiteFailed("feature1"));
+                EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
@@ -269,7 +269,7 @@ namespace LaunchDarkly.Tests
 
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
@@ -309,7 +309,7 @@ namespace LaunchDarkly.Tests
 
             var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(2, result.PrerequisiteEvents.Count);
@@ -340,7 +340,7 @@ namespace LaunchDarkly.Tests
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2, EvaluationReason.TargetMatch.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2, EvaluationReason.TargetMatchReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -358,7 +358,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2,
-                new EvaluationReason.RuleMatch(1, "ruleid1"));
+                EvaluationReason.RuleMatchReason(1, "ruleid1"));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -374,7 +374,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -390,7 +390,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -406,7 +406,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -423,7 +423,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, featureStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }

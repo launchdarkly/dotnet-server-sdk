@@ -303,7 +303,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(1, eventSink.Events.Count);
             var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
             Assert.True(e.TrackEvents);
-            Assert.Equal(new EvaluationReason.RuleMatch(0, "rule-id"), e.Reason);
+            Assert.Equal(EvaluationReason.RuleMatchReason(0, "rule-id"), e.Reason);
         }
 
         [Fact]
@@ -351,7 +351,7 @@ namespace LaunchDarkly.Tests
             Assert.Equal(1, eventSink.Events.Count);
             var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
             Assert.True(e.TrackEvents);
-            Assert.Equal(EvaluationReason.Fallthrough.Instance, e.Reason);
+            Assert.Equal(EvaluationReason.FallthroughReason, e.Reason);
         }
 
         [Fact]
