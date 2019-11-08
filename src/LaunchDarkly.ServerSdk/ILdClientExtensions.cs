@@ -82,7 +82,7 @@ namespace LaunchDarkly.Client
                 }
                 catch (System.ArgumentException)
                 {
-                    return new EvaluationDetail<T>(defaultValue, stringDetail.VariationIndex, new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+                    return new EvaluationDetail<T>(defaultValue, stringDetail.VariationIndex, EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
                 }
             }
             return new EvaluationDetail<T>(defaultValue, stringDetail.VariationIndex, stringDetail.Reason);

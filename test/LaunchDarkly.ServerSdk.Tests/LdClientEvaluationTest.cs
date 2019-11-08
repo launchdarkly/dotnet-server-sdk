@@ -55,7 +55,7 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
 
-            var expected = new EvaluationDetail<bool>(true, 0, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<bool>(true, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.BoolVariationDetail("key", user, false));
         }
         
@@ -115,7 +115,7 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2)).Build());
 
-            var expected = new EvaluationDetail<int>(2, 0, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<int>(2, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.IntVariationDetail("key", user, 1));
         }
 
@@ -158,7 +158,7 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2.5f)).Build());
 
-            var expected = new EvaluationDetail<float>(2.5f, 0, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<float>(2.5f, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.FloatVariationDetail("key", user, 1.0f));
         }
 
@@ -207,7 +207,7 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
-            var expected = new EvaluationDetail<string>("b", 0, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<string>("b", 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.StringVariationDetail("key", user, "a"));
         }
 
@@ -235,7 +235,7 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data.InnerValue).Build());
 
-            var expected = new EvaluationDetail<LdValue>(data, 0, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<LdValue>(data, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.JsonVariationDetail("key", user, LdValue.Of(42)));
         }
 
@@ -266,7 +266,7 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data).Build());
 #pragma warning disable 0618
-            var expected = new EvaluationDetail<JToken>(data, 0, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<JToken>(data, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.JsonVariationDetail("key", user, new JValue(42)));
 #pragma warning restore 0618
         }
@@ -275,7 +275,7 @@ namespace LaunchDarkly.Tests
         public void VariationDetailReturnsDefaultForUnknownFlag()
         {
             var expected = new EvaluationDetail<string>("default", null,
-                new EvaluationReason.Error(EvaluationErrorKind.FLAG_NOT_FOUND));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.FLAG_NOT_FOUND));
             Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
         }
         
@@ -286,7 +286,7 @@ namespace LaunchDarkly.Tests
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
-                new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
             Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
         }
 
@@ -297,7 +297,7 @@ namespace LaunchDarkly.Tests
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
-                new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
             Assert.Equal(expected, client.StringVariationDetail("key", User.WithKey(null), "default"));
         }
 
@@ -307,7 +307,7 @@ namespace LaunchDarkly.Tests
             featureStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").On(false).OffVariation(null).Build());
 
-            var expected = new EvaluationDetail<string>("default", null, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<string>("default", null, EvaluationReason.OffReason);
             Assert.Equal(expected, client.StringVariationDetail("key", user, "default"));
         }
 
@@ -318,7 +318,7 @@ namespace LaunchDarkly.Tests
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
 
             var expected = new EvaluationDetail<int>(1, null,
-                new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
             Assert.Equal(expected, client.IntVariationDetail("key", user, 1));
         }
 

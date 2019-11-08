@@ -46,9 +46,9 @@ namespace LaunchDarkly.Tests
         {
             var state = new FeatureFlagsState(true);
             var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, EvaluationReason.Fallthrough.Instance, false);
+            state.AddFlag(flag, new JValue("value"), 1, EvaluationReason.FallthroughReason, false);
 
-            Assert.Equal(EvaluationReason.Fallthrough.Instance, state.GetFlagReason("key"));
+            Assert.Equal(EvaluationReason.FallthroughReason, state.GetFlagReason("key"));
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace LaunchDarkly.Tests
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .TrackEvents(true).DebugEventsUntilDate(1000).Build();
             state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.Fallthrough.Instance, false);
+            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.FallthroughReason, false);
 
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
                 ""$flagsState"":{
@@ -139,7 +139,7 @@ namespace LaunchDarkly.Tests
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .TrackEvents(true).DebugEventsUntilDate(1000).Build();
             state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.Fallthrough.Instance, false);
+            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.FallthroughReason, false);
 
             var jsonString = JsonConvert.SerializeObject(state);
             var state1 = JsonConvert.DeserializeObject<FeatureFlagsState>(jsonString);
