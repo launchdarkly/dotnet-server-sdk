@@ -36,11 +36,23 @@ namespace LaunchDarkly.Client
                 ServerSideClientEnvironment.Instance.Version);
 
             _configuration = config;
+            ServerDiagnosticStore diagnosticStore = null;
+            if (!_configuration.DiagnosticOptOut)
+            {
+                diagnosticStore = new ServerDiagnosticStore(_configuration); 
+            }
 
             if (eventProcessor == null)
             {
-                _eventProcessor = (_configuration.EventProcessorFactory ??
-                    Components.DefaultEventProcessor).CreateEventProcessor(_configuration);
+                IEventProcessorFactory eventProcessorFactory = _configuration.EventProcessorFactory ?? Components.DefaultEventProcessor;
+                if (eventProcessorFactory is IEventProcessorFactoryWithDiagnostics epfwd)
+                {
+                    _eventProcessor = epfwd.CreateEventProcessor(_configuration, diagnosticStore);
+                }
+                else
+                {
+                    _eventProcessor = eventProcessorFactory.CreateEventProcessor(_configuration);
+                }
                 _shouldDisposeEventProcessor = true;
             }
             else
@@ -68,8 +80,15 @@ namespace LaunchDarkly.Client
             }
             _featureStore = new FeatureStoreClientWrapper(store);
 
-            _updateProcessor = (_configuration.UpdateProcessorFactory ??
-                Components.DefaultUpdateProcessor).CreateUpdateProcessor(_configuration, _featureStore);
+            IUpdateProcessorFactory updateProcessorFactory = _configuration.UpdateProcessorFactory ?? Components.DefaultUpdateProcessor;
+            if (updateProcessorFactory is IUpdateProcessorFactoryWithDiagnostics upfwd)
+            {
+                _updateProcessor = upfwd.CreateUpdateProcessor(_configuration, _featureStore, diagnosticStore);
+            }
+            else
+            {
+                _updateProcessor = updateProcessorFactory.CreateUpdateProcessor(_configuration, _featureStore);
+            }
 
             var initTask = _updateProcessor.Start();
 

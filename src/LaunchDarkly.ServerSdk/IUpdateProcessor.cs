@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
@@ -55,5 +56,23 @@ namespace LaunchDarkly.Client
         /// <param name="featureStore">the store that holds feature flags and related data</param>
         /// <returns>an <c>IUpdateProcessor</c> instance</returns>
         IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore);
+    }
+
+    /// <summary>
+    /// Interface for a factory that creates some implementation of <see cref="IUpdateProcessor"/>,
+    /// with support for interfacing with a diagnostic store.
+    /// </summary>
+    /// <seealso cref="ConfigurationExtensions.WithUpdateProcessorFactory"/>
+    /// <seealso cref="Components"/>
+    internal interface IUpdateProcessorFactoryWithDiagnostics : IUpdateProcessorFactory
+    {
+        /// <summary>
+        /// Creates an implementation instance.
+        /// </summary>
+        /// <param name="config">the LaunchDarkly configuration</param>
+        /// <param name="featureStore">the store that holds feature flags and related data</param>
+        /// <param name="diagnosticStore">the diagnostic store</param>
+        /// <returns>an <c>IUpdateProcessor</c> instance</returns>
+        IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, IDiagnosticStore diagnosticStore);
     }
 }

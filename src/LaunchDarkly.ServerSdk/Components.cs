@@ -76,12 +76,14 @@ namespace LaunchDarkly.Client
         }
     }
 
-    internal class DefaultEventProcessorFactory : IEventProcessorFactory
+    internal class DefaultEventProcessorFactory : IEventProcessorFactoryWithDiagnostics
     {
-        private const string EventsUriPath = "bulk";
-
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
+            return CreateEventProcessor(config, null);
+        }
+
+        public IEventProcessor CreateEventProcessor(Configuration config, IDiagnosticStore diagnosticStore) {
             if (config.Offline)
             {
                 return new NullEventProcessor();
@@ -91,7 +93,7 @@ namespace LaunchDarkly.Client
                 return new DefaultEventProcessor(config.EventProcessorConfiguration,
                     new DefaultUserDeduplicator(config),
                     Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
-                    EventsUriPath);
+                    diagnosticStore, null, null);
             }
         }
     }
@@ -114,12 +116,17 @@ namespace LaunchDarkly.Client
         }
     }
 
-    internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactory
+    internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactoryWithDiagnostics
     {
         // Note, logger uses LDClient class name for backward compatibility
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
         IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
+        {
+            return CreateUpdateProcessor(config, featureStore, null);
+        }
+
+        public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, IDiagnosticStore diagnosticStore)
         {
             if (config.Offline)
             {
@@ -136,7 +143,7 @@ namespace LaunchDarkly.Client
                 FeatureRequestor requestor = new FeatureRequestor(config);
                 if (config.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(config, requestor, featureStore, null);
+                    return new StreamProcessor(config, requestor, featureStore, null, diagnosticStore);
                 }
                 else
                 {
