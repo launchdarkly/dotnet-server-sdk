@@ -94,13 +94,13 @@ namespace LaunchDarkly.Client
         // enabled for an event, based on the evaluation reason.
         bool IFlagEventProperties.IsExperiment(EvaluationReason reason)
         {
-            switch (reason)
+            switch (reason.Kind)
             {
-                case EvaluationReason.Fallthrough _:
+                case EvaluationReasonKind.FALLTHROUGH:
                     return TrackEventsFallthrough;
-                case EvaluationReason.RuleMatch r:
-                    return r.RuleIndex >= 0 && Rules != null && r.RuleIndex < Rules.Count &&
-                        Rules[r.RuleIndex].TrackEvents;
+                case EvaluationReasonKind.RULE_MATCH:
+                    return reason.RuleIndex >= 0 && Rules != null && reason.RuleIndex < Rules.Count &&
+                        Rules[reason.RuleIndex].TrackEvents;
             }
             return false;
         }
@@ -114,7 +114,7 @@ namespace LaunchDarkly.Client
                     Key);
 
                 return new EvalResult(
-                    new EvaluationDetail<LdValue>(LdValue.Null, null, new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED)),
+                    new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED)),
                     prereqEvents);
             }
             var details = Evaluate(user, featureStore, prereqEvents, eventFactory);
@@ -126,7 +126,7 @@ namespace LaunchDarkly.Client
         {
             if (!On)
             {
-                return GetOffValue(EvaluationReason.Off.Instance);
+                return GetOffValue(EvaluationReason.OffReason);
             }
 
             var prereqFailureReason = CheckPrerequisites(user, featureStore, events, eventFactory);
@@ -144,7 +144,7 @@ namespace LaunchDarkly.Client
                     {
                         if (user.Key == v)
                         {
-                            return GetVariation(target.Variation, EvaluationReason.TargetMatch.Instance);
+                            return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
                         }
                     }
                 }
@@ -158,12 +158,12 @@ namespace LaunchDarkly.Client
                     if (rule.MatchesUser(user, featureStore))
                     {
                         return GetValueForVariationOrRollout(rule, user,
-                            new EvaluationReason.RuleMatch(i, rule.Id));
+                            EvaluationReason.RuleMatchReason(i, rule.Id));
                     }
                 }
             }
             // Walk through the fallthrough and see if it matches
-            return GetValueForVariationOrRollout(Fallthrough, user, EvaluationReason.Fallthrough.Instance);
+            return GetValueForVariationOrRollout(Fallthrough, user, EvaluationReason.FallthroughReason);
         }
 
         // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
@@ -200,7 +200,7 @@ namespace LaunchDarkly.Client
                 }
                 if (!prereqOk)
                 {
-                    return new EvaluationReason.PrerequisiteFailed(prereq.Key);
+                    return EvaluationReason.PrerequisiteFailedReason(prereq.Key);
                 }
             }
             return null;
@@ -208,7 +208,7 @@ namespace LaunchDarkly.Client
         
         internal EvaluationDetail<LdValue> ErrorResult(EvaluationErrorKind kind)
         {
-            return new EvaluationDetail<LdValue>(LdValue.Null, null, new EvaluationReason.Error(kind));
+            return new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(kind));
         }
 
         internal EvaluationDetail<LdValue> GetVariation(int variation, EvaluationReason reason)
