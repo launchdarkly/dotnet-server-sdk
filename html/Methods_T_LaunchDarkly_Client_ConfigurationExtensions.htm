@@ -4,9 +4,9 @@
             Sets whether or not user attributes (other than the key) should be private (not sent to
             the LaunchDarkly server). If this is true, all of the user attributes will be private,
             not just the attributes specified with the <span class="code">AndPrivate...</span> methods on the
-            <span class="nolink">User</span> object. By default, this is false.
+            <a href="T_LaunchDarkly_Client_User.htm">User</a> object. By default, this is false.
             </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="M_LaunchDarkly_Client_ConfigurationExtensions_WithEventProcessorFactory.htm">WithEventProcessorFactory</a></td><td> <strong>Obsolete. </strong><div class="summary">
-            Sets the implementation of <span class="nolink">IEventProcessor</span> to be used for processing analytics events,
+            Sets the implementation of <a href="T_LaunchDarkly_Client_IEventProcessor.htm">IEventProcessor</a> to be used for processing analytics events,
             using a factory object. The default is <a href="P_LaunchDarkly_Client_Components_DefaultEventProcessor.htm">DefaultEventProcessor</a>, but
             you may choose to use a custom implementation (for instance, a test fixture).
             </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueCapacity.htm">WithEventQueueCapacity</a></td><td> <strong>Obsolete. </strong><div class="summary">
@@ -50,7 +50,7 @@
             </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="M_LaunchDarkly_Client_ConfigurationExtensions_WithPrivateAttributeName.htm">WithPrivateAttributeName</a></td><td> <strong>Obsolete. </strong><div class="summary">
             Marks an attribute name as private. Any users sent to LaunchDarkly with this
             configuration active will have attributes with this name removed, even if you did
-            not use the <span class="code">AndPrivate...</span> methods on the <span class="nolink">User</span> object. You may
+            not use the <span class="code">AndPrivate...</span> methods on the <a href="T_LaunchDarkly_Client_User.htm">User</a> object. You may
             call this method repeatedly to mark multiple attributes as private.
             </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="M_LaunchDarkly_Client_ConfigurationExtensions_WithReadTimeout.htm">WithReadTimeout</a></td><td> <strong>Obsolete. </strong><div class="summary">
             Sets the timeout when reading data from the EventSource API. The default value is 5 minutes.
