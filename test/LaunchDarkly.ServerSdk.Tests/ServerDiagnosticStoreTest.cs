@@ -18,9 +18,9 @@ namespace LaunchDarkly.Tests
             .Add("wrapperVersion", "1.0.0")
             .Build();
         private LdValue _expectedConfig = LdValue.BuildObject()
-            .Add("baseURI", "http://fake/")
-            .Add("eventsURI", "https://events.launchdarkly.com/")
-            .Add("streamURI", "https://stream.launchdarkly.com/")
+            .Add("customBaseURI", true)
+            .Add("customEventsURI", false)
+            .Add("customStreamURI", false)
             .Add("eventsCapacity", 10000)
             .Add("connectTimeoutMillis", 10000L)
             .Add("socketTimeoutMillis", 300000L)
@@ -59,14 +59,6 @@ namespace LaunchDarkly.Tests
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             var persistedEvent = _serverDiagnosticStore.PersistedUnsentEvent;
             Assert.Null(persistedEvent);
-        }
-
-        [Fact]
-        public void DataSinceIsRecent()
-        {
-            IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
-            DateTime dataSince = _serverDiagnosticStore.DataSince;
-            Assert.True((DateTime.Now - dataSince).Duration().TotalMilliseconds < 10);
         }
 
         [Fact]

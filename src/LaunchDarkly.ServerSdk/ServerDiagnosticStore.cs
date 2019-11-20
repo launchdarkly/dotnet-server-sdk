@@ -85,9 +85,9 @@ namespace LaunchDarkly.Client
         private LdValue InitEventConfig()
         {
             var configInfo = LdValue.BuildObject();
-            configInfo.Add("baseURI", Config.BaseUri.ToString());
-            configInfo.Add("eventsURI", Config.EventsUri.ToString());
-            configInfo.Add("streamURI", Config.StreamUri.ToString());
+            configInfo.Add("customBaseURI", !(Configuration.DefaultUri.Equals(Config.BaseUri)));
+            configInfo.Add("customEventsURI", !(Configuration.DefaultEventsUri.Equals(Config.EventsUri)));
+            configInfo.Add("customStreamURI", !(Configuration.DefaultStreamUri.Equals(Config.StreamUri)));
             configInfo.Add("eventsCapacity", Config.EventCapacity);
             configInfo.Add("connectTimeoutMillis", Config.HttpClientTimeout.TotalMilliseconds);
             configInfo.Add("socketTimeoutMillis", Config.ReadTimeout.TotalMilliseconds);
