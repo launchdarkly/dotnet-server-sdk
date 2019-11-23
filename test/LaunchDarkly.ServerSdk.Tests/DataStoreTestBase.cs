@@ -6,9 +6,9 @@ using LaunchDarkly.Client;
 
 namespace LaunchDarkly.Tests
 {
-    public abstract class FeatureStoreTestBase
+    public abstract class DataStoreTestBase
     {
-        protected IFeatureStore store;
+        protected IDataStore store;
 
         internal readonly FeatureFlag feature1 = MakeFeature("foo", 10);
         internal readonly FeatureFlag feature2 = MakeFeature("bar", 10);

@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 namespace LaunchDarkly.Client.Files
 {
     // Represents the data structure that we parse files into, and provides the logic for
-    // transferring its contents into the format used by the feature store.
+    // transferring its contents into the format used by the data store.
     class FlagFileData
     {
         [JsonProperty(PropertyName = "flags", NullValueHandling = NullValueHandling.Ignore)]

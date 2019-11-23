@@ -20,11 +20,12 @@ namespace LaunchDarkly.Client
         private readonly bool _allAttributesPrivate;
         private readonly Uri _baseUri;
         private readonly TimeSpan _connectionTimeout;
+        private readonly IDataSourceFactory _dataSourceFactory;
+        private readonly IDataStoreFactory _dataStoreFactory;
         private readonly TimeSpan _eventFlushInterval;
         private readonly int _eventCapacity;
         private readonly IEventProcessorFactory _eventProcessorFactory;
         private readonly Uri _eventsUri;
-        private readonly IFeatureStoreFactory _featureStoreFactory;
         private readonly HttpMessageHandler _httpMessageHandler;
         private readonly bool _inlineUsersInEvents;
         private readonly bool _isStreamingEnabled;
@@ -36,7 +37,6 @@ namespace LaunchDarkly.Client
         private readonly string _sdkKey;
         private readonly TimeSpan _startWaitTime;
         private readonly Uri _streamUri;
-        private readonly IDataSourceFactory _dataSourceFactory;
         private readonly bool _useLdd;
         private readonly int _userKeysCapacity;
         private readonly TimeSpan _userKeysFlushInterval;
@@ -159,14 +159,14 @@ namespace LaunchDarkly.Client
         /// </summary>
         public bool UseLdd => _useLdd;
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="IFeatureStore"/>, to be used
+        /// A factory object that creates an implementation of <see cref="IDataStore"/>, to be used
         /// for holding feature flags and related data received from LaunchDarkly.
         /// </summary>
         /// <remarks>
-        /// The default is <see cref="Components.InMemoryFeatureStore"/>, but you may provide a custom
+        /// The default is <see cref="Components.InMemoryDataStore"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
-        public IFeatureStoreFactory FeatureStoreFactory => _featureStoreFactory;
+        public IDataStoreFactory DataStoreFactory => _dataStoreFactory;
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IEventProcessor"/>, which will
         /// process all analytics events.
@@ -297,11 +297,12 @@ namespace LaunchDarkly.Client
             _allAttributesPrivate = builder._allAttributesPrivate;
             _baseUri = builder._baseUri;
             _connectionTimeout = builder._connectionTimeout;
+            _dataSourceFactory = builder._dataSourceFactory;
+            _dataStoreFactory = builder._dataStoreFactory;
             _eventCapacity = builder._eventCapacity;
             _eventFlushInterval = builder._eventFlushInterval;
             _eventProcessorFactory = builder._eventProcessorFactory;
             _eventsUri = builder._eventsUri;
-            _featureStoreFactory = builder._featureStoreFactory;
             _httpMessageHandler = builder._httpMessageHandler;
             _inlineUsersInEvents = builder._inlineUsersInEvents;
             _isStreamingEnabled = builder._isStreamingEnabled;
@@ -315,7 +316,6 @@ namespace LaunchDarkly.Client
             _sdkKey = builder._sdkKey;
             _streamUri = builder._streamUri;
             _startWaitTime = builder._startWaitTime;
-            _dataSourceFactory = builder._dataSourceFactory;
             _useLdd = builder._useLdd;
             _userKeysCapacity = builder._userKeysCapacity;
             _userKeysFlushInterval = builder._userKeysFlushInterval;

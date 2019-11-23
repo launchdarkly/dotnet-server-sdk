@@ -3,11 +3,11 @@
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// Parameters that can be used for <see cref="IFeatureStore"/> database integrations that support local caching.
+    /// Parameters that can be used for <see cref="IDataStore"/> database integrations that support local caching.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The built-in <see cref="InMemoryFeatureStore"/> does not use this class; it is meant for database
+    /// The built-in <see cref="InMemoryDataStore"/> does not use this class; it is meant for database
     /// implementations.
     /// </para>
     /// <para>
@@ -15,10 +15,10 @@ namespace LaunchDarkly.Client
     /// value Disabled or Enabled; then if desired, you can use chained methods to set other properties:
     /// </para>
     /// <code>
-    ///     FeatureStoreCacheConfig.Enabled.WithTtlSeconds(30);
+    ///     DataStoreCacheConfig.Enabled.WithTtlSeconds(30);
     /// </code>
     /// </remarks>
-    public sealed class FeatureStoreCacheConfig
+    public sealed class DataStoreCacheConfig
     {
         /// <summary>
         /// The default cache expiration time.
@@ -70,15 +70,15 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Returns a parameter object indicating that caching should be disabled.
         /// </summary>
-        public static readonly FeatureStoreCacheConfig Disabled = new FeatureStoreCacheConfig(TimeSpan.Zero, null);
+        public static readonly DataStoreCacheConfig Disabled = new DataStoreCacheConfig(TimeSpan.Zero, null);
 
         /// <summary>
         /// Returns a parameter object indicating that caching should be enabled, using the
         /// default TTL of <see cref="DefaultTtl"/>.
         /// </summary>
-        public static readonly FeatureStoreCacheConfig Enabled = new FeatureStoreCacheConfig(DefaultTtl, null);
+        public static readonly DataStoreCacheConfig Enabled = new DataStoreCacheConfig(DefaultTtl, null);
 
-        internal FeatureStoreCacheConfig(TimeSpan ttl, int? maximumEntries)
+        internal DataStoreCacheConfig(TimeSpan ttl, int? maximumEntries)
         {
             Ttl = ttl;
             MaximumEntries = maximumEntries;
@@ -90,9 +90,9 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="ttl">the cache TTL; must be greater than zero</param>
         /// <returns>an updated parameters object</returns>
-        public FeatureStoreCacheConfig WithTtl(TimeSpan ttl)
+        public DataStoreCacheConfig WithTtl(TimeSpan ttl)
         {
-            return new FeatureStoreCacheConfig(ttl, MaximumEntries);
+            return new DataStoreCacheConfig(ttl, MaximumEntries);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="millis">the cache TTL in milliseconds</param>
         /// <returns>an updated parameters object</returns>
-        public FeatureStoreCacheConfig WithTtlMillis(double millis)
+        public DataStoreCacheConfig WithTtlMillis(double millis)
         {
             return WithTtl(TimeSpan.FromMilliseconds(millis));
         }
@@ -110,7 +110,7 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="seconds">the cache TTL in seconds</param>
         /// <returns>an updated parameters object</returns>
-        public FeatureStoreCacheConfig WithTtlSeconds(double seconds)
+        public DataStoreCacheConfig WithTtlSeconds(double seconds)
         {
             return WithTtl(TimeSpan.FromSeconds(seconds));
         }
@@ -124,13 +124,13 @@ namespace LaunchDarkly.Client
         /// </summary>
         /// <param name="maximumEntries">the maximum number of entries, or null for no limit</param>
         /// <returns>an updated parameters object</returns>
-        public FeatureStoreCacheConfig WithMaximumEntries(int? maximumEntries)
+        public DataStoreCacheConfig WithMaximumEntries(int? maximumEntries)
         {
             if (maximumEntries != null && maximumEntries <= 0)
             {
                 throw new ArgumentException("must be > 0 if not null", nameof(maximumEntries));
             }
-            return new FeatureStoreCacheConfig(Ttl, maximumEntries);
+            return new DataStoreCacheConfig(Ttl, maximumEntries);
         }
     }
 }

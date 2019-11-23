@@ -25,7 +25,7 @@ namespace LaunchDarkly.Tests
         TestEventSourceFactory _eventSourceFactory;
         Mock<IFeatureRequestor> _mockRequestor;
         IFeatureRequestor _requestor;
-        InMemoryFeatureStore _featureStore;
+        InMemoryDataStore _dataStore;
         Client.Configuration _config;
 
         public StreamProcessorTest()
@@ -36,9 +36,9 @@ namespace LaunchDarkly.Tests
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
-            _featureStore = TestUtils.InMemoryFeatureStore();
+            _dataStore = new InMemoryDataStore();
             _config = Client.Configuration.Builder(SDK_KEY)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore))
+                .DataStore(TestUtils.SpecificDataStore(_dataStore))
                 .Build();
         }
 
@@ -79,7 +79,7 @@ namespace LaunchDarkly.Tests
         public void StoreNotInitializedByDefault()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            Assert.False(_featureStore.Initialized());
+            Assert.False(_dataStore.Initialized());
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace LaunchDarkly.Tests
         {
             StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
-            Assert.True(_featureStore.Initialized());
+            Assert.True(_dataStore.Initialized());
         }
 
         [Fact]
@@ -155,14 +155,14 @@ namespace LaunchDarkly.Tests
         {
             StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
-            _featureStore.Upsert(VersionedDataKind.Features, FEATURE);
+            _dataStore.Upsert(VersionedDataKind.Features, FEATURE);
 
             string path = "/flags/" + FEATURE_KEY;
             string data = "{\"path\":\"" + path + "\",\"version\":" + (FEATURE_VERSION + 1) + "}";
             MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "delete");
             _mockEventSource.Raise(es => es.MessageReceived += null, e);
 
-            Assert.Null(_featureStore.Get(VersionedDataKind.Features, FEATURE_KEY));
+            Assert.Null(_dataStore.Get(VersionedDataKind.Features, FEATURE_KEY));
         }
 
         [Fact]
@@ -170,14 +170,14 @@ namespace LaunchDarkly.Tests
         {
             StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
-            _featureStore.Upsert(VersionedDataKind.Segments, SEGMENT);
+            _dataStore.Upsert(VersionedDataKind.Segments, SEGMENT);
 
             string path = "/segments/" + SEGMENT_KEY;
             string data = "{\"path\":\"" + path + "\",\"version\":" + (SEGMENT_VERSION + 1) + "}";
             MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "delete");
             _mockEventSource.Raise(es => es.MessageReceived += null, e);
 
-            Assert.Null(_featureStore.Get(VersionedDataKind.Segments, SEGMENT_KEY));
+            Assert.Null(_dataStore.Get(VersionedDataKind.Segments, SEGMENT_KEY));
         }
 
         [Fact]
@@ -208,7 +208,7 @@ namespace LaunchDarkly.Tests
         
         private StreamProcessor CreateProcessor()
         {
-            return new StreamProcessor(_config, _requestor, _featureStore,
+            return new StreamProcessor(_config, _requestor, _dataStore,
                 _eventSourceFactory.Create());
         }
 
@@ -243,12 +243,12 @@ namespace LaunchDarkly.Tests
         
         private void AssertFeatureInStore(FeatureFlag f)
         {
-            Assert.Equal(f.Version, _featureStore.Get(VersionedDataKind.Features, f.Key).Version);
+            Assert.Equal(f.Version, _dataStore.Get(VersionedDataKind.Features, f.Key).Version);
         }
 
         private void AssertSegmentInStore(Segment s)
         {
-            Assert.Equal(s.Version, _featureStore.Get(VersionedDataKind.Segments, s.Key).Version);
+            Assert.Equal(s.Version, _dataStore.Get(VersionedDataKind.Segments, s.Key).Version);
         }
 
         private MessageReceivedEventArgs EmptyPutEvent()

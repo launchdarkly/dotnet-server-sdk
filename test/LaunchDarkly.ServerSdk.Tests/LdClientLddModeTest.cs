@@ -38,14 +38,14 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void LddModeClientGetsFlagFromFeatureStore()
+        public void LddModeClientGetsFlagFromDataStore()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            featureStore.Upsert(VersionedDataKind.Features,
+            var dataStore = new InMemoryDataStore();
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
             var config = Configuration.Builder("SDK_KEY")
                 .UseLdd(true)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .Build();
             using (var client = new LdClient(config))
             {

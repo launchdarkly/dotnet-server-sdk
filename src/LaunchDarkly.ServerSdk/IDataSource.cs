@@ -52,8 +52,8 @@ namespace LaunchDarkly.Client
         /// Creates an implementation instance.
         /// </summary>
         /// <param name="config">the LaunchDarkly configuration</param>
-        /// <param name="featureStore">the store that holds feature flags and related data</param>
+        /// <param name="dataStore">the store that holds feature flags and related data</param>
         /// <returns>an <see cref="IDataSource"/> instance</returns>
-        IDataSource CreateDataSource(Configuration config, IDataStore featureStore);
+        IDataSource CreateDataSource(Configuration config, IDataStore dataStore);
     }
 }

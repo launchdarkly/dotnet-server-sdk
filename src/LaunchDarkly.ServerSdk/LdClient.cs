@@ -16,7 +16,7 @@ namespace LaunchDarkly.Client
 
         private readonly Configuration _configuration;
         internal readonly IEventProcessor _eventProcessor;
-        private readonly IFeatureStore _featureStore;
+        private readonly IDataStore _dataStore;
         internal readonly IDataSource _dataSource;
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace LaunchDarkly.Client
             _eventProcessor = (_configuration.EventProcessorFactory ??
                 Components.DefaultEventProcessor).CreateEventProcessor(_configuration);
         
-            IFeatureStore store = (_configuration.FeatureStoreFactory ??
-                Components.InMemoryFeatureStore).CreateFeatureStore();
-            _featureStore = new FeatureStoreClientWrapper(store);
+            IDataStore store = (_configuration.DataStoreFactory ??
+                Components.InMemoryDataStore).CreateDataStore();
+            _dataStore = new DataStoreClientWrapper(store);
 
             _dataSource = (_configuration.DataSourceFactory ??
-                Components.DefaultDataSource).CreateDataSource(_configuration, _featureStore);
+                Components.DefaultDataSource).CreateDataSource(_configuration, _dataStore);
 
             var initTask = _dataSource.Start();
 
@@ -175,13 +175,13 @@ namespace LaunchDarkly.Client
             }
             if (!Initialized())
             {
-                if (_featureStore.Initialized())
+                if (_dataStore.Initialized())
                 {
-                    Log.Warn("AllFlagsState() called before client initialized; using last known values from feature store");
+                    Log.Warn("AllFlagsState() called before client initialized; using last known values from data store");
                 }
                 else
                 {
-                    Log.Warn("AllFlagsState() called before client initialized; feature store unavailable, returning empty state");
+                    Log.Warn("AllFlagsState() called before client initialized; data store unavailable, returning empty state");
                     return new FeatureFlagsState(false);
                 }
             }
@@ -195,7 +195,7 @@ namespace LaunchDarkly.Client
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
-            IDictionary<string, FeatureFlag> flags = _featureStore.All(VersionedDataKind.Features);
+            IDictionary<string, FeatureFlag> flags = _dataStore.All(VersionedDataKind.Features);
             foreach (KeyValuePair<string, FeatureFlag> pair in flags)
             {
                 var flag = pair.Value;
@@ -205,7 +205,7 @@ namespace LaunchDarkly.Client
                 }
                 try
                 {
-                    FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, EventFactory.Default);
+                    FeatureFlag.EvalResult result = flag.Evaluate(user, _dataStore, EventFactory.Default);
                     state.AddFlag(flag, result.Result.Value.InnerValue, result.Result.VariationIndex,
                         withReasons ? result.Result.Reason : null, detailsOnlyIfTracked);
                 }
@@ -226,13 +226,13 @@ namespace LaunchDarkly.Client
             T defaultValueOfType = converter.ToType(defaultValue);
             if (!Initialized())
             {
-                if (_featureStore.Initialized())
+                if (_dataStore.Initialized())
                 {
-                    Log.Warn("Flag evaluation before client initialized; using last known values from feature store");
+                    Log.Warn("Flag evaluation before client initialized; using last known values from data store");
                 }
                 else
                 {
-                    Log.Warn("Flag evaluation before client initialized; feature store unavailable, returning default value");
+                    Log.Warn("Flag evaluation before client initialized; data store unavailable, returning default value");
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         new EvaluationReason.Error(EvaluationErrorKind.CLIENT_NOT_READY));
                 }
@@ -241,7 +241,7 @@ namespace LaunchDarkly.Client
             FeatureFlag featureFlag = null;
             try
             {
-                featureFlag = _featureStore.Get(VersionedDataKind.Features, featureKey);
+                featureFlag = _dataStore.Get(VersionedDataKind.Features, featureKey);
                 if (featureFlag == null)
                 {
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
@@ -261,7 +261,7 @@ namespace LaunchDarkly.Client
                         new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
                 }
                 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _featureStore, eventFactory);
+                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _dataStore, eventFactory);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
@@ -387,7 +387,7 @@ namespace LaunchDarkly.Client
             {
                 Log.Info("Closing LaunchDarkly client.");
                 _eventProcessor.Dispose();
-                _featureStore.Dispose();
+                _dataStore.Dispose();
                 _dataSource.Dispose();
             }
         }
@@ -402,7 +402,7 @@ namespace LaunchDarkly.Client
         /// </para>
         /// <para>
         /// Any components that were added by specifying a factory object
-        /// (<see cref="IConfigurationBuilder.FeatureStoreFactory(IFeatureStoreFactory)"/>, etc.)
+        /// (<see cref="IConfigurationBuilder.DataStore(IDataStoreFactory)"/>, etc.)
         /// will also be disposed of by this method; their lifecycle is the same as the client's.
         /// </para>
         /// </remarks>

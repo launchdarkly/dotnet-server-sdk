@@ -24,18 +24,10 @@ namespace LaunchDarkly.Tests
         {
             return "./TestFiles/" + name;
         }
-
-        // this just lets us avoid deprecation warnings
-        public static InMemoryFeatureStore InMemoryFeatureStore()
+        
+        public static IDataStoreFactory SpecificDataStore(IDataStore store)
         {
-#pragma warning disable 0618
-            return new InMemoryFeatureStore();
-#pragma warning restore 0618
-        }
-
-        public static IFeatureStoreFactory SpecificFeatureStore(IFeatureStore store)
-        {
-            return new SpecificFeatureStoreFactory(store);
+            return new SpecificDataStoreFactory(store);
         }
 
         public static IEventProcessorFactory SpecificEventProcessor(IEventProcessor ep)
@@ -55,16 +47,16 @@ namespace LaunchDarkly.Tests
         }
     }
 
-    public class SpecificFeatureStoreFactory : IFeatureStoreFactory
+    public class SpecificDataStoreFactory : IDataStoreFactory
     {
-        private readonly IFeatureStore _store;
+        private readonly IDataStore _store;
 
-        public SpecificFeatureStoreFactory(IFeatureStore store)
+        public SpecificDataStoreFactory(IDataStore store)
         {
             _store = store;
         }
 
-        IFeatureStore IFeatureStoreFactory.CreateFeatureStore()
+        IDataStore IDataStoreFactory.CreateDataStore()
         {
             return _store;
         }
@@ -87,16 +79,16 @@ namespace LaunchDarkly.Tests
 
     public class SpecificDataSourceFactory : IDataSourceFactory
     {
-        private readonly IDataSource _up;
+        private readonly IDataSource _ds;
 
-        public SpecificDataSourceFactory(IDataSource up)
+        public SpecificDataSourceFactory(IDataSource ds)
         {
-            _up = up;
+            _ds = ds;
         }
 
-        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IFeatureStore featureStore)
+        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IDataStore dataStore)
         {
-            return _up;
+            return _ds;
         }
     }
 
@@ -110,18 +102,18 @@ namespace LaunchDarkly.Tests
             _data = data;
         }
 
-        public IDataSource CreateDataSource(Configuration config, IFeatureStore featureStore)
+        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore)
         {
-            return new DataSourceWithData(featureStore, _data);
+            return new DataSourceWithData(dataStore, _data);
         }
     }
 
     public class DataSourceWithData : IDataSource
     {
-        private readonly IFeatureStore _store;
+        private readonly IDataStore _store;
         private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> _data;
 
-        public DataSourceWithData(IFeatureStore store,
+        public DataSourceWithData(IDataStore store,
             IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data)
         {
             _store = store;

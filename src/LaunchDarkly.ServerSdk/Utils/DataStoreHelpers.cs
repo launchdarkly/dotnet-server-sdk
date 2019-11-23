@@ -4,14 +4,14 @@ using Newtonsoft.Json;
 namespace LaunchDarkly.Client.Utils
 {
     /// <summary>
-    /// Helper methods that may be useful for implementing <see cref="IFeatureStore"/> or
-    /// <see cref="IFeatureStoreCore"/>.
+    /// Helper methods that may be useful for implementing <see cref="IDataStore"/> or
+    /// <see cref="IDataStoreCore"/>.
     /// </summary>
-    public abstract class FeatureStoreHelpers
+    public abstract class DataStoreHelpers
     {
         /// <summary>
-        /// Unmarshals a feature store item from a JSON string. This is a convenience method for
-        /// feature store implementations, so that they can use the same JSON library that is used
+        /// Unmarshals a data store item from a JSON string. This is a convenience method for
+        /// data store implementations, so that they can use the same JSON library that is used
         /// within the LaunchDarkly SDK rather than importing one themselves. All of the storeable
         /// classes used by the SDK are guaranteed to support this type of deserialization.
         /// </summary>
@@ -33,14 +33,14 @@ namespace LaunchDarkly.Client.Utils
         }
 
         /// <summary>
-        /// Unmarshals a feature store item from a JSON string. This is a convenience method for
-        /// feature store implementations, so that they can use the same JSON library that is used
+        /// Unmarshals a data store item from a JSON string. This is a convenience method for
+        /// data store implementations, so that they can use the same JSON library that is used
         /// within the LaunchDarkly SDK rather than importing one themselves. All of the storeable
         /// classes used by the SDK are guaranteed to support this type of deserialization.
         /// 
         /// This is the same as the other UnmarshalJson method, except that it returns an
         /// <see cref="IVersionedData"/> rather than a more specific type. This is more likely
-        /// to be useful if you are implementing <see cref="IFeatureStoreCore"/>.
+        /// to be useful if you are implementing <see cref="IDataStoreCore"/>.
         /// </summary>
         /// <param name="kind">specifies the type of item being decoded</param>
         /// <param name="data">the JSON string</param>
@@ -59,8 +59,8 @@ namespace LaunchDarkly.Client.Utils
         }
 
         /// <summary>
-        /// Marshals a feature store item into a JSON string. This is a convenience method for
-        /// feature store implementations, so that they can use the same JSON library that is used
+        /// Marshals a data store item into a JSON string. This is a convenience method for
+        /// data store implementations, so that they can use the same JSON library that is used
         /// within the LaunchDarkly SDK rather than importing one themselves. All of the storeable
         /// classes used by the SDK are guaranteed to support this type of serialization.
         /// </summary>
@@ -73,7 +73,7 @@ namespace LaunchDarkly.Client.Utils
     }
 
     /// <summary>
-    /// This exception is thrown by <see cref="FeatureStoreHelpers.UnmarshalJson(IVersionedDataKind, string)"/>
+    /// This exception is thrown by <see cref="DataStoreHelpers.UnmarshalJson(IVersionedDataKind, string)"/>
     /// if unmarshaling fails. It will normally contain an inner exception that is the underlying
     /// error from the deserialization method.
     /// </summary>

@@ -12,13 +12,13 @@ namespace LaunchDarkly.Tests
     public class LdClientEvaluationTest
     {
         private static readonly User user = User.WithKey("userkey");
-        private IFeatureStore featureStore = TestUtils.InMemoryFeatureStore();
+        private IDataStore dataStore = new InMemoryDataStore();
         private ILdClient client;
 
         public LdClientEvaluationTest()
         {
             var config = Configuration.Builder("SDK_KEY")
-                .FeatureStoreFactory(new SpecificFeatureStoreFactory(featureStore))
+                .DataStore(new SpecificDataStoreFactory(dataStore))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .DataSource(Components.NullDataSource)
                 .Build();
@@ -28,7 +28,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void BoolVariationReturnsFlagValue()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
 
             Assert.True(client.BoolVariation("key", user, false));
@@ -43,7 +43,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void BoolVariationReturnsDefaultValueForWrongType()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
 
             Assert.Equal(false, client.BoolVariation("key", user, false));
@@ -52,7 +52,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void BoolVariationDetailReturnsValueAndReason()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
 
             var expected = new EvaluationDetail<bool>(true, 0, EvaluationReason.Off.Instance);
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IntVariationReturnsFlagValue()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2)).Build());
 
             Assert.Equal(2, client.IntVariation("key", user, 1));
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IntVariationReturnsFlagValueEvenIfEncodedAsFloat()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2.25f)).Build());
 
             Assert.Equal(2, client.IntVariation("key", user, 1));
@@ -80,13 +80,13 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IntVariationRoundsToNearestIntFromFloat()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("flag1").OffWithValue(new JValue(2.25f)).Build());
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("flag2").OffWithValue(new JValue(2.75f)).Build());
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("flag3").OffWithValue(new JValue(-2.25f)).Build());
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("flag4").OffWithValue(new JValue(-2.75f)).Build());
             Assert.Equal(2, client.IntVariation("flag1", user, 1));
             Assert.Equal(3, client.IntVariation("flag2", user, 1));
@@ -103,7 +103,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IntVariationReturnsDefaultValueForWrongType()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
 
             Assert.Equal(1, client.IntVariation("key", user, 1));
@@ -112,7 +112,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void IntVariationDetailReturnsValueAndReason()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2)).Build());
 
             var expected = new EvaluationDetail<int>(2, 0, EvaluationReason.Off.Instance);
@@ -122,7 +122,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FloatVariationReturnsFlagValue()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2.5f)).Build());
 
             Assert.Equal(2.5f, client.FloatVariation("key", user, 1.0f));
@@ -131,7 +131,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FloatVariationReturnsFlagValueEvenIfEncodedAsInt()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2)).Build());
 
             Assert.Equal(2.0f, client.FloatVariation("key", user, 1.0f));
@@ -146,7 +146,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FloatVariationReturnsDefaultValueForWrongType()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
 
             Assert.Equal(1.0f, client.FloatVariation("key", user, 1.0f));
@@ -155,7 +155,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void FloatVariationDetailReturnsValueAndReason()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(2.5f)).Build());
 
             var expected = new EvaluationDetail<float>(2.5f, 0, EvaluationReason.Off.Instance);
@@ -165,7 +165,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StringVariationReturnsFlagValue()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
             Assert.Equal("b", client.StringVariation("key", user, "a"));
@@ -174,7 +174,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StringVariationWithNullDefaultReturnsFlagValue()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
             Assert.Equal("b", client.StringVariation("key", user, null));
@@ -195,7 +195,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StringVariationReturnsDefaultValueForWrongType()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build());
 
             Assert.Equal("a", client.StringVariation("key", user, "a"));
@@ -204,7 +204,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StringVariationDetailReturnsValueAndReason()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
             var expected = new EvaluationDetail<string>("b", 0, EvaluationReason.Off.Instance);
@@ -215,7 +215,7 @@ namespace LaunchDarkly.Tests
         public void JsonVariationReturnsFlagValue()
         {
             var data = LdValue.Convert.String.ObjectFrom(new Dictionary<string, string> { { "thing", "stuff" } });
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data.InnerValue).Build());
 
             Assert.Equal(data, client.JsonVariation("key", user, LdValue.Of(42)));
@@ -232,7 +232,7 @@ namespace LaunchDarkly.Tests
         public void JsonVariationDetailReturnsValueAndReason()
         {
             var data = LdValue.Convert.String.ObjectFrom(new Dictionary<string, string> { { "thing", "stuff" } });
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(data.InnerValue).Build());
 
             var expected = new EvaluationDetail<LdValue>(data, 0, EvaluationReason.Off.Instance);
@@ -250,7 +250,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void VariationDetailReturnsDefaultForNullUser()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
@@ -261,7 +261,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void VariationDetailReturnsDefaultForUserWithNullKey()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
@@ -272,7 +272,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void VariationDetailReturnsDefaultForFlagThatEvaluatesToNull()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").On(false).OffVariation(null).Build());
 
             var expected = new EvaluationDetail<string>("default", null, EvaluationReason.Off.Instance);
@@ -282,7 +282,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void VariationDetailReturnsDefaultForWrongType()
         {
-            featureStore.Upsert(VersionedDataKind.Features,
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue("wrong")).Build());
 
             var expected = new EvaluationDetail<int>(1, null,
@@ -294,11 +294,11 @@ namespace LaunchDarkly.Tests
         public void CanMatchUserBySegment()
         {
             var segment = new Segment("segment1", 1, new List<string> { user.Key }, null, "", null, false);
-            featureStore.Upsert(VersionedDataKind.Segments, segment);
+            dataStore.Upsert(VersionedDataKind.Segments, segment);
 
             var clause = new ClauseBuilder().Op("segmentMatch").Values(new JValue("segment1")).Build();
             var feature = new FeatureFlagBuilder("feature").BooleanWithClauses(clause).Build();
-            featureStore.Upsert(VersionedDataKind.Features, feature);
+            dataStore.Upsert(VersionedDataKind.Features, feature);
 
             Assert.True(client.BoolVariation("feature", user, false));
         }
@@ -313,8 +313,8 @@ namespace LaunchDarkly.Tests
                 .OffVariation(1).Variations(new List<JToken> { new JValue("x"), new JValue("value2") })
                 .TrackEvents(true).DebugEventsUntilDate(1000)
                 .Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag1);
-            featureStore.Upsert(VersionedDataKind.Features, flag2);
+            dataStore.Upsert(VersionedDataKind.Features, flag1);
+            dataStore.Upsert(VersionedDataKind.Features, flag2);
 
             var state = client.AllFlagsState(user);
             Assert.True(state.Valid);
@@ -345,8 +345,8 @@ namespace LaunchDarkly.Tests
                 .OffVariation(1).Variations(new List<JToken> { new JValue("x"), new JValue("value2") })
                 .TrackEvents(true).DebugEventsUntilDate(1000)
                 .Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag1);
-            featureStore.Upsert(VersionedDataKind.Features, flag2);
+            dataStore.Upsert(VersionedDataKind.Features, flag1);
+            dataStore.Upsert(VersionedDataKind.Features, flag2);
 
             var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
             Assert.True(state.Valid);
@@ -376,10 +376,10 @@ namespace LaunchDarkly.Tests
                 .OffWithValue("value1").Build();
             var flag4 = new FeatureFlagBuilder("client-side-2").ClientSide(true)
                 .OffWithValue("value2").Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag1);
-            featureStore.Upsert(VersionedDataKind.Features, flag2);
-            featureStore.Upsert(VersionedDataKind.Features, flag3);
-            featureStore.Upsert(VersionedDataKind.Features, flag4);
+            dataStore.Upsert(VersionedDataKind.Features, flag1);
+            dataStore.Upsert(VersionedDataKind.Features, flag2);
+            dataStore.Upsert(VersionedDataKind.Features, flag3);
+            dataStore.Upsert(VersionedDataKind.Features, flag4);
 
             var state = client.AllFlagsState(user, FlagsStateOption.ClientSideOnly);
             Assert.True(state.Valid);
@@ -406,9 +406,9 @@ namespace LaunchDarkly.Tests
                 .OffVariation(1).Variations(new List<JToken> { new JValue("x"), new JValue("value3") })
                 .DebugEventsUntilDate(1000)
                 .Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag1);
-            featureStore.Upsert(VersionedDataKind.Features, flag2);
-            featureStore.Upsert(VersionedDataKind.Features, flag3);
+            dataStore.Upsert(VersionedDataKind.Features, flag1);
+            dataStore.Upsert(VersionedDataKind.Features, flag2);
+            dataStore.Upsert(VersionedDataKind.Features, flag3);
 
             var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
             Assert.True(state.Valid);
@@ -435,7 +435,7 @@ namespace LaunchDarkly.Tests
         public void AllFlagsStateReturnsEmptyStateForNullUser()
         {
             var flag = new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
+            dataStore.Upsert(VersionedDataKind.Features, flag);
 
             var state = client.AllFlagsState(null);
             Assert.False(state.Valid);
@@ -446,7 +446,7 @@ namespace LaunchDarkly.Tests
         public void AllFlagsStateReturnsEmptyStateForUserWithNullKey()
         {
             var flag = new FeatureFlagBuilder("key1").OffWithValue(new JValue("value1")).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
+            dataStore.Upsert(VersionedDataKind.Features, flag);
 
             var state = client.AllFlagsState(User.WithKey(null));
             Assert.False(state.Valid);

@@ -147,11 +147,11 @@ namespace LaunchDarkly.Client.Files
         /// Used internally by the LaunchDarkly client.
         /// </summary>
         /// <param name="config"></param>
-        /// <param name="featureStore"></param>
+        /// <param name="dataStore"></param>
         /// <returns>the component instance</returns>
-        public IDataSource CreateDataSource(Configuration config, IFeatureStore featureStore)
+        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore)
         {
-            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths);
+            return new FileDataSource(dataStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths);
         }
     }
 }

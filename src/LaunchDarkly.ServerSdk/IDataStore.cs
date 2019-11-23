@@ -6,8 +6,8 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Interface for a data store that holds feature flags and related data received by the streaming client.
     /// </summary>
-    /// <seealso cref="IFeatureStoreFactory"/>
-    public interface IFeatureStore : IDisposable
+    /// <seealso cref="IDataStoreFactory"/>
+    public interface IDataStore : IDisposable
     {
         /// <summary>
         /// Retrieve an object from the specified collection, or return null if not found.
@@ -60,16 +60,16 @@ namespace LaunchDarkly.Client
     }
 
     /// <summary>
-    /// Interface for a factory that creates some implementation of <see cref="IFeatureStore"/>.
+    /// Interface for a factory that creates some implementation of <see cref="IDataStore"/>.
     /// </summary>
-    /// <seealso cref="IConfigurationBuilder.FeatureStoreFactory(IFeatureStoreFactory)"/>
+    /// <seealso cref="IConfigurationBuilder.DataStore(IDataStoreFactory)"/>
     /// <seealso cref="Components"/>
-    public interface IFeatureStoreFactory
+    public interface IDataStoreFactory
     {
         /// <summary>
         /// Creates an implementation instance.
         /// </summary>
-        /// <returns>an <c>IStoreEvents</c> instance</returns>
-        IFeatureStore CreateFeatureStore();
+        /// <returns>a <see cref="IDataStore"/> instance</returns>
+        IDataStore CreateDataStore();
     }
 }

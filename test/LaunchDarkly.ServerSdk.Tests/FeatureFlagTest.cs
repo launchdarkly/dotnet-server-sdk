@@ -12,7 +12,7 @@ namespace LaunchDarkly.Tests
     {
         private static readonly User baseUser = User.WithKey("userkey");
 
-        private readonly IFeatureStore featureStore = TestUtils.InMemoryFeatureStore();
+        private readonly IDataStore dataStore = new InMemoryDataStore();
 
         [Fact]
         public void FlagReturnsOffVariationIfFlagIsOff()
@@ -23,7 +23,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(0)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1, EvaluationReason.Off.Instance);
             Assert.Equal(expected, result.Result);
@@ -38,7 +38,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(0)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.Off.Instance);
             Assert.Equal(expected, result.Result);
@@ -54,7 +54,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(0)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(0)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -88,7 +88,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(0)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
             Assert.Equal(expected, result.Result);
@@ -104,7 +104,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(999)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -121,7 +121,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(-1)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -138,7 +138,7 @@ namespace LaunchDarkly.Tests
                 .Fallthrough(new VariationOrRollout(null, null))
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -155,7 +155,7 @@ namespace LaunchDarkly.Tests
                 .Fallthrough(new VariationOrRollout(null, new Rollout(new List<WeightedVariation>(), null)))
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -173,7 +173,7 @@ namespace LaunchDarkly.Tests
                 .FallthroughVariation(0)
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
-            var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
                 new EvaluationReason.PrerequisiteFailed("feature1"));
@@ -199,9 +199,9 @@ namespace LaunchDarkly.Tests
                 .Variations(new JValue("nogo"), new JValue("go"))
                 .Version(2)
                 .Build();
-            featureStore.Upsert(VersionedDataKind.Features, f1);
+            dataStore.Upsert(VersionedDataKind.Features, f1);
 
-            var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
                 new EvaluationReason.PrerequisiteFailed("feature1"));
@@ -232,9 +232,9 @@ namespace LaunchDarkly.Tests
                 .Variations(new JValue("nogo"), new JValue("go"))
                 .Version(2)
                 .Build();
-            featureStore.Upsert(VersionedDataKind.Features, f1);
+            dataStore.Upsert(VersionedDataKind.Features, f1);
 
-            var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
                 new EvaluationReason.PrerequisiteFailed("feature1"));
@@ -265,9 +265,9 @@ namespace LaunchDarkly.Tests
                 .Variations(new JValue("nogo"), new JValue("go"))
                 .Version(2)
                 .Build();
-            featureStore.Upsert(VersionedDataKind.Features, f1);
+            dataStore.Upsert(VersionedDataKind.Features, f1);
 
-            var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
             Assert.Equal(expected, result.Result);
@@ -304,10 +304,10 @@ namespace LaunchDarkly.Tests
                 .Variations(new JValue("nogo"), new JValue("go"))
                 .Version(3)
                 .Build();
-            featureStore.Upsert(VersionedDataKind.Features, f1);
-            featureStore.Upsert(VersionedDataKind.Features, f2);
+            dataStore.Upsert(VersionedDataKind.Features, f1);
+            dataStore.Upsert(VersionedDataKind.Features, f2);
 
-            var result = f0.Evaluate(baseUser, featureStore, EventFactory.Default);
+            var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
             Assert.Equal(expected, result.Result);
@@ -338,7 +338,7 @@ namespace LaunchDarkly.Tests
                 .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
                 .Build();
             var user = User.WithKey("userkey");
-            var result = f.Evaluate(user, featureStore, EventFactory.Default);
+            var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2, EvaluationReason.TargetMatch.Instance);
             Assert.Equal(expected, result.Result);
@@ -355,7 +355,7 @@ namespace LaunchDarkly.Tests
             var rule1 = new RuleBuilder().Id("ruleid1").Variation(2).Clauses(clause1).Build();
             var f = FeatureFlagWithRules(rule0, rule1);
 
-            var result = f.Evaluate(user, featureStore, EventFactory.Default);
+            var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2,
                 new EvaluationReason.RuleMatch(1, "ruleid1"));
@@ -371,7 +371,7 @@ namespace LaunchDarkly.Tests
             var rule = new RuleBuilder().Id("ruleid").Variation(999).Clauses(clause).Build();
             var f = FeatureFlagWithRules(rule);
             
-            var result = f.Evaluate(user, featureStore, EventFactory.Default);
+            var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -387,7 +387,7 @@ namespace LaunchDarkly.Tests
             var rule = new RuleBuilder().Id("ruleid").Variation(-1).Clauses(clause).Build();
             var f = FeatureFlagWithRules(rule);
             
-            var result = f.Evaluate(user, featureStore, EventFactory.Default);
+            var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -403,7 +403,7 @@ namespace LaunchDarkly.Tests
             var rule = new RuleBuilder().Id("ruleid").Clauses(clause).Build();
             var f = FeatureFlagWithRules(rule);
 
-            var result = f.Evaluate(user, featureStore, EventFactory.Default);
+            var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -420,7 +420,7 @@ namespace LaunchDarkly.Tests
                 .Rollout(new Rollout(new List<WeightedVariation>(), null)).Build();
             var f = FeatureFlagWithRules(rule);
 
-            var result = f.Evaluate(user, featureStore, EventFactory.Default);
+            var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
@@ -435,7 +435,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(LdValue.Of(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(true), f.Evaluate(user, dataStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -445,7 +445,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Custom("legs", 4).Build();
 
-            Assert.Equal(LdValue.Of(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(true), f.Evaluate(user, dataStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -455,7 +455,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("bob").Build();
 
-            Assert.Equal(LdValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), f.Evaluate(user, dataStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -466,7 +466,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(LdValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), f.Evaluate(user, dataStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -476,7 +476,7 @@ namespace LaunchDarkly.Tests
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(LdValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), f.Evaluate(user, dataStore, EventFactory.Default).Result.Value);
         }
         
         [Fact]
@@ -484,12 +484,12 @@ namespace LaunchDarkly.Tests
         {
             var segment = new Segment("segkey", 1, new List<string> { "foo" }, new List<string>(), "",
                 new List<SegmentRule>(), false);
-            featureStore.Upsert(VersionedDataKind.Segments, segment);
+            dataStore.Upsert(VersionedDataKind.Segments, segment);
 
             var f = SegmentMatchBooleanFlag("segkey");
             var user = User.WithKey("foo");
 
-            Assert.Equal(LdValue.Of(true), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(true), f.Evaluate(user, dataStore, EventFactory.Default).Result.Value);
         }
 
         [Fact]
@@ -498,7 +498,7 @@ namespace LaunchDarkly.Tests
             var f = SegmentMatchBooleanFlag("segkey");
             var user = User.WithKey("foo");
 
-            Assert.Equal(LdValue.Of(false), f.Evaluate(user, featureStore, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), f.Evaluate(user, dataStore, EventFactory.Default).Result.Value);
         }
 
         private FeatureFlag FeatureFlagWithRules(params Rule[] rules)

@@ -1,33 +1,25 @@
 ﻿using Common.Logging;
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// In-memory, thread-safe implementation of <see cref="IFeatureStore"/>.
+    /// In-memory, thread-safe implementation of <see cref="IDataStore"/>.
     /// </summary>
-    /// <remarks>
-    /// Referencing this class directly is deprecated; please use <see cref="Components.InMemoryFeatureStore"/>
-    /// in <see cref="Components"/> instead.
-    /// </remarks>
-    public class InMemoryFeatureStore : IFeatureStore
+    internal class InMemoryDataStore : IDataStore
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryFeatureStore));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryDataStore));
         private readonly object WriterLock = new object();
         private volatile ImmutableDictionary<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>> Items =
             ImmutableDictionary<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>>.Empty;
         private volatile bool _initialized = false;
 
         /// <summary>
-        /// Creates a new empty feature store instance. Constructing this class directly is deprecated;
-        /// please use <see cref="Components.InMemoryFeatureStore"/> in <see cref="Components"/> instead.
+        /// Creates a new empty data store instance.
         /// </summary>
-        [Obsolete("Constructing this class directly is deprecated; please use Components.InMemoryFeatureStore")]
-        public InMemoryFeatureStore() { }
+        public InMemoryDataStore() { }
 
-        /// <inheritdoc/>
         public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
         {
             ImmutableDictionary<string, IVersionedData> itemsOfKind;
@@ -52,7 +44,6 @@ namespace LaunchDarkly.Client
             return (T)item;
         }
 
-        /// <inheritdoc/>
         public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
         {
             IDictionary<string, T> ret = new Dictionary<string, T>();
@@ -70,7 +61,6 @@ namespace LaunchDarkly.Client
             return ret;
         }
 
-        /// <inheritdoc/>
         public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
         {
             lock (WriterLock)
@@ -80,7 +70,6 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <inheritdoc/>
         public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
         {
             lock (WriterLock)
@@ -98,7 +87,6 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <inheritdoc/>
         public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
         {
             lock (WriterLock)
@@ -117,13 +105,11 @@ namespace LaunchDarkly.Client
             }
         }
 
-        /// <inheritdoc/>
         public bool Initialized()
         {
             return _initialized;
         }
 
-        /// <inheritdoc/>
         public void Dispose() { }
 
         private static ImmutableDictionary<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>> CreateImmutableItems(

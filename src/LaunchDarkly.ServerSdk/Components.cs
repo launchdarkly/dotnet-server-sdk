@@ -8,20 +8,20 @@ namespace LaunchDarkly.Client
     /// </summary>
     public static class Components
     {
-        private static IFeatureStoreFactory _inMemoryFeatureStoreFactory = new InMemoryFeatureStoreFactory();
+        private static IDataStoreFactory _inMemoryDataStoreFactory = new InMemoryDataStoreFactory();
         private static IEventProcessorFactory _eventProcessorFactory = new DefaultEventProcessorFactory();
         private static IEventProcessorFactory _nullEventProcessorFactory = new NullEventProcessorFactory();
         private static IDataSourceFactory _dataSourceFactory = new DefaultDataSourceFactory();
         private static IDataSourceFactory _nullDataSourceFactory = new NullDataSourceFactory();
         
         /// <summary>
-        /// Returns a factory for the default in-memory implementation of <see cref="IFeatureStore"/>.
+        /// Returns a factory for the default in-memory implementation of <see cref="IDataStore"/>.
         /// </summary>
-        public static IFeatureStoreFactory InMemoryFeatureStore
+        public static IDataStoreFactory InMemoryDataStore
         {
             get
             {
-                return _inMemoryFeatureStoreFactory;
+                return _inMemoryDataStoreFactory;
             }
         }
 
@@ -104,13 +104,11 @@ namespace LaunchDarkly.Client
         }
     }
 
-    internal class InMemoryFeatureStoreFactory : IFeatureStoreFactory
+    internal class InMemoryDataStoreFactory : IDataStoreFactory
     {
-        IFeatureStore IFeatureStoreFactory.CreateFeatureStore()
+        IDataStore IDataStoreFactory.CreateDataStore()
         {
-#pragma warning disable 0618 // deprecated constructor
-            return new InMemoryFeatureStore();
-#pragma warning restore 0618
+            return new InMemoryDataStore();
         }
     }
 
@@ -119,7 +117,7 @@ namespace LaunchDarkly.Client
         // Note, logger uses LDClient class name for backward compatibility
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
-        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IFeatureStore featureStore)
+        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IDataStore dataStore)
         {
             if (config.Offline)
             {
@@ -136,12 +134,12 @@ namespace LaunchDarkly.Client
                 FeatureRequestor requestor = new FeatureRequestor(config);
                 if (config.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(config, requestor, featureStore, null);
+                    return new StreamProcessor(config, requestor, dataStore, null);
                 }
                 else
                 {
                     Log.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
-                    return new PollingProcessor(config, requestor, featureStore);
+                    return new PollingProcessor(config, requestor, dataStore);
                 }
             }
         }
@@ -149,7 +147,7 @@ namespace LaunchDarkly.Client
 
     internal class NullDataSourceFactory : IDataSourceFactory
     {
-        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IFeatureStore featureStore)
+        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IDataStore dataStore)
         {
             return new NullDataSource();
         }

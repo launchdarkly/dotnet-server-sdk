@@ -114,14 +114,14 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void EvaluationReturnsDefaultValueIfNeitherClientNorFeatureStoreIsInited()
+        public void EvaluationReturnsDefaultValueIfNeitherClientNorDataStoreIsInited()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
+            var dataStore = new InMemoryDataStore();
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
+            dataStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
@@ -133,15 +133,15 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void EvaluationUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
+        public void EvaluationUsesDataStoreIfClientIsNotInitedButStoreIsInited()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
+            var dataStore = new InMemoryDataStore();
+            dataStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
+            dataStore.Upsert(VersionedDataKind.Features, flag);
 
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
@@ -153,9 +153,9 @@ namespace LaunchDarkly.Tests
         }
         
         [Fact]
-        public void DataSetIsPassedToFeatureStoreInCorrectOrder()
+        public void DataSetIsPassedToDataStoreInCorrectOrder()
         {
-            var mockStore = new Mock<IFeatureStore>();
+            var mockStore = new Mock<IDataStore>();
             var store = mockStore.Object;
             IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> receivedData = null;
 
@@ -167,7 +167,7 @@ namespace LaunchDarkly.Tests
             mockDataSource.Setup(up => up.Start()).Returns(initTask);
 
             var config = Configuration.Builder("SDK_KEY")
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(store))
+                .DataStore(TestUtils.SpecificDataStore(store))
                 .DataSource(TestUtils.DataSourceWithData(DependencyOrderingTestData))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();

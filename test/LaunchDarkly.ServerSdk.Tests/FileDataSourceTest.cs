@@ -14,7 +14,7 @@ namespace LaunchDarkly.Tests
         private static readonly string ALL_DATA_JSON_FILE = TestUtils.TestFilePath("all-properties.json");
         private static readonly string ALL_DATA_YAML_FILE = TestUtils.TestFilePath("all-properties.yml");
 
-        private readonly IFeatureStore store = TestUtils.InMemoryFeatureStore();
+        private readonly IDataStore store = new InMemoryDataStore();
         private readonly FileDataSourceFactory factory = FileComponents.FileDataSource();
         private readonly Configuration config = Configuration.Builder("sdkKey")
             .EventProcessorFactory(Components.NullEventProcessor)

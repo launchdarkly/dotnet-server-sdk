@@ -58,6 +58,28 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout);
 
         /// <summary>
+        /// Sets the implementation of <see cref="IDataSource"/> to be used for receiving feature flag data.
+        /// </summary>
+        /// <remarks>
+        /// The default is <see cref="Components.DefaultDataSource"/>, but you may choose to use a custom
+        /// implementation (for instance, a test fixture).
+        /// </remarks>
+        /// <param name="dataSourceFactory">the factory object</param>
+        IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory);
+
+        /// <summary>
+        /// Sets the implementation of <see cref="IDataStore"/> to be used for holding feature flags
+        /// and related data received from LaunchDarkly.
+        /// </summary>
+        /// <remarks>
+        /// The default is <see cref="Components.InMemoryDataStore"/>, but you may choose to use a custom
+        /// implementation.
+        /// </remarks>
+        /// <param name="dataStoreFactory">the factory object</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder DataStore(IDataStoreFactory dataStoreFactory);
+
+        /// <summary>
         /// Sets the capacity of the events buffer.
         /// </summary>
         /// <remarks>
@@ -97,18 +119,6 @@ namespace LaunchDarkly.Client
         /// <param name="eventsUri">the events URI</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder EventsUri(Uri eventsUri);
-
-        /// <summary>
-        /// Sets the implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
-        /// and related data received from LaunchDarkly.
-        /// </summary>
-        /// <remarks>
-        /// The default is <see cref="Components.InMemoryFeatureStore"/>, but you may choose to use a custom
-        /// implementation.
-        /// </remarks>
-        /// <param name="featureStoreFactory">the factory object</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder FeatureStoreFactory(IFeatureStoreFactory featureStoreFactory);
 
         /// <summary>
         /// Sets the object to be used for sending HTTP requests. This is exposed for testing purposes.
@@ -215,22 +225,12 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder StreamUri(Uri streamUri);
 
         /// <summary>
-        /// Sets the implementation of <see cref="IDataSource"/> to be used for receiving feature flag data.
-        /// </summary>
-        /// <remarks>
-        /// The default is <see cref="Components.DefaultDataSource"/>, but you may choose to use a custom
-        /// implementation (for instance, a test fixture).
-        /// </remarks>
-        /// <param name="dataSourceFactory">the factory object</param>
-        IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory);
-
-        /// <summary>
         /// Sets whether this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
         /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
         /// </summary>
         /// <remarks>
         /// For this to work, you must also be using a
-        /// <a href="https://docs.launchdarkly.com/docs/using-a-persistent-feature-store">persistent feature store</a>.
+        /// <a href="https://docs.launchdarkly.com/docs/using-a-persistent-feature-store">persistent data store</a>.
         /// </remarks>
         /// <param name="useLdd">true to use the relay in daemon mode; false to use streaming or polling</param>
         /// <returns>the same builder</returns>
@@ -265,11 +265,12 @@ namespace LaunchDarkly.Client
         internal bool _allAttributesPrivate = false;
         internal Uri _baseUri = Configuration.DefaultUri;
         internal TimeSpan _connectionTimeout = Configuration.DefaultConnectionTimeout;
+        internal IDataSourceFactory _dataSourceFactory = null;
+        internal IDataStoreFactory _dataStoreFactory = null;
         internal int _eventCapacity = Configuration.DefaultEventCapacity;
         internal TimeSpan _eventFlushInterval = Configuration.DefaultEventFlushInterval;
         internal IEventProcessorFactory _eventProcessorFactory = null;
         internal Uri _eventsUri = Configuration.DefaultEventsUri;
-        internal IFeatureStoreFactory _featureStoreFactory = null;
         internal HttpMessageHandler _httpMessageHandler = new HttpClientHandler();
         internal bool _inlineUsersInEvents = false;
         internal bool _isStreamingEnabled = true;
@@ -281,7 +282,6 @@ namespace LaunchDarkly.Client
         internal string _sdkKey;
         internal TimeSpan _startWaitTime = Configuration.DefaultStartWaitTime;
         internal Uri _streamUri = Configuration.DefaultStreamUri;
-        internal IDataSourceFactory _dataSourceFactory = null;
         internal bool _useLdd = false;
         internal int _userKeysCapacity = Configuration.DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = Configuration.DefaultUserKeysFlushInterval;
@@ -296,11 +296,12 @@ namespace LaunchDarkly.Client
             _allAttributesPrivate = copyFrom.AllAttributesPrivate;
             _baseUri = copyFrom.BaseUri;
             _connectionTimeout = copyFrom.ConnectionTimeout;
+            _dataSourceFactory = copyFrom.DataSourceFactory;
+            _dataStoreFactory = copyFrom.DataStoreFactory;
             _eventCapacity = copyFrom.EventCapacity;
             _eventFlushInterval = copyFrom.EventFlushInterval;
             _eventProcessorFactory = copyFrom.EventProcessorFactory;
             _eventsUri = copyFrom.EventsUri;
-            _featureStoreFactory = copyFrom.FeatureStoreFactory;
             _httpMessageHandler = copyFrom.HttpMessageHandler;
             _inlineUsersInEvents = copyFrom.InlineUsersInEvents;
             _isStreamingEnabled = copyFrom.IsStreamingEnabled;
@@ -313,7 +314,6 @@ namespace LaunchDarkly.Client
             _sdkKey = copyFrom.SdkKey;
             _startWaitTime = copyFrom.StartWaitTime;
             _streamUri = copyFrom.StreamUri;
-            _dataSourceFactory = copyFrom.DataSourceFactory;
             _useLdd = copyFrom.UseLdd;
             _userKeysCapacity = copyFrom.UserKeysCapacity;
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
@@ -342,6 +342,18 @@ namespace LaunchDarkly.Client
             return this;
         }
 
+        public IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory)
+        {
+            _dataSourceFactory = dataSourceFactory;
+            return this;
+        }
+
+        public IConfigurationBuilder DataStore(IDataStoreFactory dataStoreFactory)
+        {
+            _dataStoreFactory = dataStoreFactory;
+            return this;
+        }
+
         public IConfigurationBuilder EventCapacity(int eventCapacity)
         {
             _eventCapacity = eventCapacity;
@@ -363,12 +375,6 @@ namespace LaunchDarkly.Client
         public IConfigurationBuilder EventsUri(Uri eventsUri)
         {
             _eventsUri = eventsUri;
-            return this;
-        }
-
-        public IConfigurationBuilder FeatureStoreFactory(IFeatureStoreFactory featureStoreFactory)
-        {
-            _featureStoreFactory = featureStoreFactory;
             return this;
         }
 
@@ -447,12 +453,6 @@ namespace LaunchDarkly.Client
         public IConfigurationBuilder StreamUri(Uri streamUri)
         {
             _streamUri = streamUri;
-            return this;
-        }
-
-        public IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory)
-        {
-            _dataSourceFactory = dataSourceFactory;
             return this;
         }
 

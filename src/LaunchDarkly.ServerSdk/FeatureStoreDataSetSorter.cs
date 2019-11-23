@@ -2,7 +2,7 @@
 
 namespace LaunchDarkly.Client
 {
-    internal abstract class FeatureStoreDataSetSorter
+    internal abstract class DataStoreDataSetSorter
     {
         public static IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> SortAllCollections(
             IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData)
