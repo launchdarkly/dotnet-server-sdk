@@ -5,7 +5,7 @@ namespace LaunchDarkly.Client
 {
     /// <summary>
     /// Interface for an object that receives updates to feature flags, user segments, and anything
-    /// else that might come from LaunchDarkly, and passes them to an <see cref="IFeatureStore"/>.
+    /// else that might come from LaunchDarkly, and passes them to an <see cref="IDataStore"/>.
     /// </summary>
     /// <seealso cref="IDataSourceFactory"/>
     public interface IDataSource : IDisposable
@@ -54,6 +54,6 @@ namespace LaunchDarkly.Client
         /// <param name="config">the LaunchDarkly configuration</param>
         /// <param name="featureStore">the store that holds feature flags and related data</param>
         /// <returns>an <see cref="IDataSource"/> instance</returns>
-        IDataSource CreateDataSource(Configuration config, IFeatureStore featureStore);
+        IDataSource CreateDataSource(Configuration config, IDataStore featureStore);
     }
 }
