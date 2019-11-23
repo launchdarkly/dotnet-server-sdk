@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using LaunchDarkly.Client;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 using Newtonsoft.Json.Linq;
 using Xunit;

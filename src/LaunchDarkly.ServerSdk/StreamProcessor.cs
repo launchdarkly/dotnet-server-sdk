@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client

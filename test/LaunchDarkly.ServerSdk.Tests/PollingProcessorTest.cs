@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using LaunchDarkly.Client;
-using LaunchDarkly.Common;
+using LaunchDarkly.Client.Interfaces;
 using Moq;
 using Xunit;
 
@@ -13,10 +12,10 @@ namespace LaunchDarkly.Tests
         private readonly FeatureFlag Flag = new FeatureFlagBuilder("flagkey").Build();
         private readonly Segment Segment = new Segment("segkey", 1, null, null, "", null, false);
 
-        Mock<IFeatureRequestor> _mockFeatureRequestor;
-        IFeatureRequestor _featureRequestor;
-        InMemoryDataStore _dataStore;
-        Configuration _config;
+        readonly Mock<IFeatureRequestor> _mockFeatureRequestor;
+        readonly IFeatureRequestor _featureRequestor;
+        readonly InMemoryDataStore _dataStore;
+        readonly Configuration _config;
 
         public PollingProcessorTest()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Client.Interfaces;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Client.Utils

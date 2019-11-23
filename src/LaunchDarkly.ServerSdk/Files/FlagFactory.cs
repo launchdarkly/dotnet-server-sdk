@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using LaunchDarkly.Client.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client.Files
 {

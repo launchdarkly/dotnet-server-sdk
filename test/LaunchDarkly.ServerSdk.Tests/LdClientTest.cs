@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LaunchDarkly.Client;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -13,9 +14,9 @@ namespace LaunchDarkly.Tests
     // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
     public class LdClientTest
     {
-        private Mock<IDataSource> mockDataSource;
-        private IDataSource dataSource;
-        private Task<bool> initTask;
+        private readonly Mock<IDataSource> mockDataSource;
+        private readonly IDataSource dataSource;
+        private readonly Task<bool> initTask;
 
         public LdClientTest()
         {

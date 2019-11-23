@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client
 {

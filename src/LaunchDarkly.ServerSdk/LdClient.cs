@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Common.Logging;
 using LaunchDarkly.Common;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client
 {

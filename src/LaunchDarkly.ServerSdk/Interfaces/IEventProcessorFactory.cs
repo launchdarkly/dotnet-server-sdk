@@ -1,5 +1,5 @@
 ﻿
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Client.Interfaces
 {
     /// <summary>
     /// Interface for a factory that creates some implementation of <see cref="IEventProcessor"/>.

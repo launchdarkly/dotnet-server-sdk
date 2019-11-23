@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Client.Interfaces
 {
     /// <summary>
-    /// Objects used by <see cref="IDataStore"/> implementations to denote a specific collection of
+    /// Objects used by data store implementations to denote a specific collection of
     /// <see cref="IVersionedData"/>-derived objects.
     /// </summary>
     public interface IVersionedDataKind
@@ -58,7 +58,7 @@ namespace LaunchDarkly.Client
     }
 
     /// <summary>
-    /// Objects used by <see cref="IDataStore"/> implementations to denote a specific collection of
+    /// Objects used by data store implementations to denote a specific collection of
     /// <see cref="IVersionedData"/>-derived objects.
     /// </summary>
     /// <typeparam name="T">type of objects in this collection</typeparam>
