@@ -94,7 +94,7 @@ namespace LaunchDarkly.Tests
         public void ProcessorNotInitializedByDefault()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            Assert.False(((IUpdateProcessor)sp).Initialized());
+            Assert.False(((IDataSource)sp).Initialized());
         }
 
         [Fact]
@@ -102,14 +102,14 @@ namespace LaunchDarkly.Tests
         {
             StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
-            Assert.True(((IUpdateProcessor)sp).Initialized());
+            Assert.True(((IDataSource)sp).Initialized());
         }
 
         [Fact]
         public void TaskIsNotCompletedByDefault()
         {
             StreamProcessor sp = CreateProcessor();
-            Task<bool> task = ((IUpdateProcessor)sp).Start();
+            Task<bool> task = ((IDataSource)sp).Start();
             Assert.False(task.IsCompleted);
         }
         
@@ -117,7 +117,7 @@ namespace LaunchDarkly.Tests
         public void PutCausesTaskToBeCompleted()
         {
             StreamProcessor sp = CreateProcessor();
-            Task<bool> task = ((IUpdateProcessor)sp).Start();
+            Task<bool> task = ((IDataSource)sp).Start();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
             Assert.True(task.IsCompleted);
         }
@@ -215,7 +215,7 @@ namespace LaunchDarkly.Tests
         private StreamProcessor CreateAndStartProcessor()
         {
             StreamProcessor sp = CreateProcessor();
-            ((IUpdateProcessor)sp).Start();
+            ((IDataSource)sp).Start();
             return sp;
         }
 

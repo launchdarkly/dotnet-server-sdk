@@ -7,8 +7,8 @@ namespace LaunchDarkly.Client
     /// Interface for an object that receives updates to feature flags, user segments, and anything
     /// else that might come from LaunchDarkly, and passes them to an <see cref="IFeatureStore"/>.
     /// </summary>
-    /// <seealso cref="IUpdateProcessorFactory"/>
-    public interface IUpdateProcessor : IDisposable
+    /// <seealso cref="IDataSourceFactory"/>
+    public interface IDataSource : IDisposable
     {
         /// <summary>
         /// Initializes the processor. This is called once from the <see cref="LdClient"/> constructor.
@@ -26,14 +26,14 @@ namespace LaunchDarkly.Client
     /// <summary>
     /// Used when the client is offline or in LDD mode.
     /// </summary>
-    internal class NullUpdateProcessor : IUpdateProcessor
+    internal class NullDataSource : IDataSource
     {
-        Task<bool> IUpdateProcessor.Start()
+        Task<bool> IDataSource.Start()
         {
             return Task.FromResult(true);
         }
 
-        bool IUpdateProcessor.Initialized()
+        bool IDataSource.Initialized()
         {
             return true;
         }
@@ -42,18 +42,18 @@ namespace LaunchDarkly.Client
     }
 
     /// <summary>
-    /// Interface for a factory that creates some implementation of <see cref="IUpdateProcessor"/>.
+    /// Interface for a factory that creates some implementation of <see cref="IDataSource"/>.
     /// </summary>
-    /// <seealso cref="IConfigurationBuilder.UpdateProcessorFactory"/>
+    /// <seealso cref="IConfigurationBuilder.DataSource"/>
     /// <seealso cref="Components"/>
-    public interface IUpdateProcessorFactory
+    public interface IDataSourceFactory
     {
         /// <summary>
         /// Creates an implementation instance.
         /// </summary>
         /// <param name="config">the LaunchDarkly configuration</param>
         /// <param name="featureStore">the store that holds feature flags and related data</param>
-        /// <returns>an <c>IUpdateProcessor</c> instance</returns>
-        IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore);
+        /// <returns>an <see cref="IDataSource"/> instance</returns>
+        IDataSource CreateDataSource(Configuration config, IFeatureStore featureStore);
     }
 }

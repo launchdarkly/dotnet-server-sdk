@@ -52,8 +52,8 @@ namespace LaunchDarkly.Tests
                 TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
             TestSetter(b => b.EventProcessorFactory, c => c.EventProcessorFactory,
                 TestUtils.SpecificEventProcessor(new TestEventProcessor()));
-            TestSetter(b => b.UpdateProcessorFactory, c => c.UpdateProcessorFactory,
-                Components.NullUpdateProcessor);
+            TestSetter(b => b.DataSource, c => c.DataSourceFactory,
+                Components.NullDataSource);
         }
 
         private void TestSetter<T>(Func<IConfigurationBuilder, Func<T, IConfigurationBuilder>> setter,

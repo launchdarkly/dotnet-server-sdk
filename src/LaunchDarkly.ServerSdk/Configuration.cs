@@ -36,7 +36,7 @@ namespace LaunchDarkly.Client
         private readonly string _sdkKey;
         private readonly TimeSpan _startWaitTime;
         private readonly Uri _streamUri;
-        private readonly IUpdateProcessorFactory _updateProcessorFactory;
+        private readonly IDataSourceFactory _dataSourceFactory;
         private readonly bool _useLdd;
         private readonly int _userKeysCapacity;
         private readonly TimeSpan _userKeysFlushInterval;
@@ -177,14 +177,14 @@ namespace LaunchDarkly.Client
         /// </remarks>
         public IEventProcessorFactory EventProcessorFactory => _eventProcessorFactory;
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="IUpdateProcessor"/>, which will
+        /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
         /// receive feature flag data.
         /// </summary>
         /// <remarks>
-        /// The default is <see cref="Components.DefaultUpdateProcessor"/>, but you may provide a custom
+        /// The default is <see cref="Components.DefaultDataSource"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
-        public IUpdateProcessorFactory UpdateProcessorFactory => _updateProcessorFactory;
+        public IDataSourceFactory DataSourceFactory => _dataSourceFactory;
         /// <summary>
         /// A string that will be sent to LaunchDarkly to identify the SDK type.
         /// </summary>
@@ -315,7 +315,7 @@ namespace LaunchDarkly.Client
             _sdkKey = builder._sdkKey;
             _streamUri = builder._streamUri;
             _startWaitTime = builder._startWaitTime;
-            _updateProcessorFactory = builder._updateProcessorFactory;
+            _dataSourceFactory = builder._dataSourceFactory;
             _useLdd = builder._useLdd;
             _userKeysCapacity = builder._userKeysCapacity;
             _userKeysFlushInterval = builder._userKeysFlushInterval;

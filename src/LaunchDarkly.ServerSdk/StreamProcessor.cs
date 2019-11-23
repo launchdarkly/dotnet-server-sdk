@@ -8,7 +8,7 @@ using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
-    internal class StreamProcessor : IUpdateProcessor, IStreamProcessor
+    internal class StreamProcessor : IDataSource, IStreamProcessor
     {
         private const String PUT = "put";
         private const String PATCH = "patch";
@@ -41,14 +41,14 @@ namespace LaunchDarkly.Client
                 HttpMethod.Get, null);
         }
 
-        #region IUpdateProcessor
+        #region IDataSource
 
-        bool IUpdateProcessor.Initialized()
+        bool IDataSource.Initialized()
         {
             return _streamManager.Initialized;
         }
 
-        Task<bool> IUpdateProcessor.Start()
+        Task<bool> IDataSource.Start()
         {
             return _streamManager.Start();
         }

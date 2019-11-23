@@ -17,7 +17,7 @@ namespace LaunchDarkly.Client
         private readonly Configuration _configuration;
         internal readonly IEventProcessor _eventProcessor;
         private readonly IFeatureStore _featureStore;
-        internal readonly IUpdateProcessor _updateProcessor;
+        internal readonly IDataSource _dataSource;
 
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration.
@@ -52,12 +52,12 @@ namespace LaunchDarkly.Client
                 Components.InMemoryFeatureStore).CreateFeatureStore();
             _featureStore = new FeatureStoreClientWrapper(store);
 
-            _updateProcessor = (_configuration.UpdateProcessorFactory ??
-                Components.DefaultUpdateProcessor).CreateUpdateProcessor(_configuration, _featureStore);
+            _dataSource = (_configuration.DataSourceFactory ??
+                Components.DefaultDataSource).CreateDataSource(_configuration, _featureStore);
 
-            var initTask = _updateProcessor.Start();
+            var initTask = _dataSource.Start();
 
-            if (!(_updateProcessor is NullUpdateProcessor))
+            if (!(_dataSource is NullDataSource))
             {
                 Log.InfoFormat("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
                     _configuration.StartWaitTime.TotalMilliseconds);
@@ -96,7 +96,7 @@ namespace LaunchDarkly.Client
         /// <inheritdoc/>
         public bool Initialized()
         {
-            return IsOffline() || _updateProcessor.Initialized();
+            return IsOffline() || _dataSource.Initialized();
         }
 
         /// <inheritdoc/>
@@ -388,7 +388,7 @@ namespace LaunchDarkly.Client
                 Log.Info("Closing LaunchDarkly client.");
                 _eventProcessor.Dispose();
                 _featureStore.Dispose();
-                _updateProcessor.Dispose();
+                _dataSource.Dispose();
             }
         }
 

@@ -22,7 +22,7 @@
     ///         .WithFilePaths("./testData/flags.json")
     ///         .WithAutoUpdate(true);
     ///     var config = Configuration.Builder("sdkKey")
-    ///         .UpdateProcessorFactory(fileSource)
+    ///         .DataSource(fileSource)
     ///         .Build();
     /// </code>
     /// <para>

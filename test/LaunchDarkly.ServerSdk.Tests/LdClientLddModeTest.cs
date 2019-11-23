@@ -8,12 +8,12 @@ namespace LaunchDarkly.Tests
     public class LdClientLddModeTest
     {
         [Fact]
-        public void LddModeClientHasNullUpdateProcessor()
+        public void LddModeClientHasNullDataSource()
         {
             var config = Configuration.Builder("SDK_KEY").UseLdd(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<NullUpdateProcessor>(client._updateProcessor);
+                Assert.IsType<NullDataSource>(client._dataSource);
             }
         }
 

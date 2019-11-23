@@ -215,14 +215,14 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder StreamUri(Uri streamUri);
 
         /// <summary>
-        /// Sets the implementation of <see cref="IUpdateProcessor"/> to be used for receiving feature flag data.
+        /// Sets the implementation of <see cref="IDataSource"/> to be used for receiving feature flag data.
         /// </summary>
         /// <remarks>
-        /// The default is <see cref="Components.DefaultUpdateProcessor"/>, but you may choose to use a custom
+        /// The default is <see cref="Components.DefaultDataSource"/>, but you may choose to use a custom
         /// implementation (for instance, a test fixture).
         /// </remarks>
-        /// <param name="updateProcessorFactory">the factory object</param>
-        IConfigurationBuilder UpdateProcessorFactory(IUpdateProcessorFactory updateProcessorFactory);
+        /// <param name="dataSourceFactory">the factory object</param>
+        IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory);
 
         /// <summary>
         /// Sets whether this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
@@ -281,7 +281,7 @@ namespace LaunchDarkly.Client
         internal string _sdkKey;
         internal TimeSpan _startWaitTime = Configuration.DefaultStartWaitTime;
         internal Uri _streamUri = Configuration.DefaultStreamUri;
-        internal IUpdateProcessorFactory _updateProcessorFactory = null;
+        internal IDataSourceFactory _dataSourceFactory = null;
         internal bool _useLdd = false;
         internal int _userKeysCapacity = Configuration.DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = Configuration.DefaultUserKeysFlushInterval;
@@ -313,7 +313,7 @@ namespace LaunchDarkly.Client
             _sdkKey = copyFrom.SdkKey;
             _startWaitTime = copyFrom.StartWaitTime;
             _streamUri = copyFrom.StreamUri;
-            _updateProcessorFactory = copyFrom.UpdateProcessorFactory;
+            _dataSourceFactory = copyFrom.DataSourceFactory;
             _useLdd = copyFrom.UseLdd;
             _userKeysCapacity = copyFrom.UserKeysCapacity;
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
@@ -450,9 +450,9 @@ namespace LaunchDarkly.Client
             return this;
         }
 
-        public IConfigurationBuilder UpdateProcessorFactory(IUpdateProcessorFactory updateProcessorFactory)
+        public IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory)
         {
-            _updateProcessorFactory = updateProcessorFactory;
+            _dataSourceFactory = dataSourceFactory;
             return this;
         }
 

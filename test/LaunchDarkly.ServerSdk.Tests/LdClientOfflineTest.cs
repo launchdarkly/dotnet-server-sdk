@@ -8,12 +8,12 @@ namespace LaunchDarkly.Tests
     public class LdClientOfflineTest
     {
         [Fact]
-        public void OfflineClientHasNullUpdateProcessor()
+        public void OfflineClientHasNullDataSource()
         {
             var config = Configuration.Builder("SDK_KEY").Offline(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<NullUpdateProcessor>(client._updateProcessor);
+                Assert.IsType<NullDataSource>(client._dataSource);
             }
         }
 

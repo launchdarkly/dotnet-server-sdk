@@ -7,7 +7,7 @@ using Common.Logging;
 
 namespace LaunchDarkly.Client.Files
 {
-    internal class FileDataSource : IUpdateProcessor
+    internal class FileDataSource : IDataSource
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FileDataSource));
         private readonly IFeatureStore _featureStore;

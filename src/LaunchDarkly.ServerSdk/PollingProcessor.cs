@@ -6,7 +6,7 @@ using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
-    internal sealed class PollingProcessor : IUpdateProcessor
+    internal sealed class PollingProcessor : IDataSource
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PollingProcessor));
         private static int UNINITIALIZED = 0;
@@ -27,12 +27,12 @@ namespace LaunchDarkly.Client
             _initTask = new TaskCompletionSource<bool>();
         }
 
-        bool IUpdateProcessor.Initialized()
+        bool IDataSource.Initialized()
         {
             return _initialized == INITIALIZED;
         }
 
-        Task<bool> IUpdateProcessor.Start()
+        Task<bool> IDataSource.Start()
         {
             Log.InfoFormat("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
                 _config.PollingInterval.TotalMilliseconds);

@@ -17,7 +17,7 @@ namespace LaunchDarkly.Tests
             var config = Configuration.Builder("SDK_KEY")
                 .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
                 .EventProcessorFactory(TestUtils.SpecificEventProcessor(eventSink))
-                .UpdateProcessorFactory(Components.NullUpdateProcessor)
+                .DataSource(Components.NullDataSource)
                 .Build();
             client = new LdClient(config);
         }
