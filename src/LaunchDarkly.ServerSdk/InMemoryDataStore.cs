@@ -18,7 +18,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Creates a new empty data store instance.
         /// </summary>
-        public InMemoryDataStore() { }
+        internal InMemoryDataStore() { }
 
         public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
         {
