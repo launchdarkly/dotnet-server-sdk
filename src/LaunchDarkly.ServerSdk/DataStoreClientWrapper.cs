@@ -3,22 +3,22 @@
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// Provides additional behavior that the client requires before or after feature store operations.
+    /// Provides additional behavior that the client requires before or after data store operations.
     /// Currently this just means sorting the data set for Init(). In the future we may also use this
     /// to provide an update listener capability.
     /// </summary>
-    internal class FeatureStoreClientWrapper : IFeatureStore
+    internal class DataStoreClientWrapper : IDataStore
     {
-        private readonly IFeatureStore _store;
+        private readonly IDataStore _store;
 
-        internal FeatureStoreClientWrapper(IFeatureStore store)
+        internal DataStoreClientWrapper(IDataStore store)
         {
             _store = store;
         }
 
         public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData)
         {
-            _store.Init(FeatureStoreDataSetSorter.SortAllCollections(allData));
+            _store.Init(DataStoreDataSetSorter.SortAllCollections(allData));
         }
 
         public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData

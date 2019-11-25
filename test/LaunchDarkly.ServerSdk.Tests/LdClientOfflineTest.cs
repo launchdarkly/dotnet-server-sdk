@@ -8,12 +8,12 @@ namespace LaunchDarkly.Tests
     public class LdClientOfflineTest
     {
         [Fact]
-        public void OfflineClientHasNullUpdateProcessor()
+        public void OfflineClientHasNullDataSource()
         {
             var config = Configuration.Builder("SDK_KEY").Offline(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<NullUpdateProcessor>(client._updateProcessor);
+                Assert.IsType<NullDataSource>(client._dataSource);
             }
         }
 
@@ -48,14 +48,14 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void OfflineClientGetsFlagFromFeatureStore()
+        public void OfflineClientGetsFlagFromDataStore()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            featureStore.Upsert(VersionedDataKind.Features,
+            var dataStore = new InMemoryDataStore();
+            dataStore.Upsert(VersionedDataKind.Features,
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
             var config = Configuration.Builder("SDK_KEY")
                 .Offline(true)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .Build();
             using (var client = new LdClient(config))
             {

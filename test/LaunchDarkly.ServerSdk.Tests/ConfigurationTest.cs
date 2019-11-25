@@ -48,12 +48,12 @@ namespace LaunchDarkly.Tests
             TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
             TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
             TestSetter(b => b.UseLdd, c => c.UseLdd, true);
-            TestSetter(b => b.FeatureStoreFactory, c => c.FeatureStoreFactory,
-                TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
+            TestSetter(b => b.DataStore, c => c.DataStoreFactory,
+                TestUtils.SpecificDataStore(new InMemoryDataStore()));
             TestSetter(b => b.EventProcessorFactory, c => c.EventProcessorFactory,
                 TestUtils.SpecificEventProcessor(new TestEventProcessor()));
-            TestSetter(b => b.UpdateProcessorFactory, c => c.UpdateProcessorFactory,
-                Components.NullUpdateProcessor);
+            TestSetter(b => b.DataSource, c => c.DataSourceFactory,
+                Components.NullDataSource);
         }
 
         private void TestSetter<T>(Func<IConfigurationBuilder, Func<T, IConfigurationBuilder>> setter,

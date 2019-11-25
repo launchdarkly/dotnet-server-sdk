@@ -16,7 +16,7 @@ namespace LaunchDarkly.Client.Utils.Tests
         }
     }
     
-    public class MockCoreAsync : MockCoreBase, IFeatureStoreCoreAsync
+    public class MockCoreAsync : MockCoreBase, IDataStoreCoreAsync
     {
         // This just ensures that we're really running an asynchronous task, even though we
         // aren't doing any I/O. If we just wrapped everything in Task.CompletedTask(), the

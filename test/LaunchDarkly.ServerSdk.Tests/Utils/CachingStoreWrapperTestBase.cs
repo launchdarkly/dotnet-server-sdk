@@ -379,17 +379,17 @@ namespace LaunchDarkly.Client.Utils.Tests
 
         private CachingStoreWrapper MakeWrapper(string mode)
         {
-            FeatureStoreCacheConfig config;
+            DataStoreCacheConfig config;
             switch (mode)
             {
                 case Cached:
-                    config = FeatureStoreCacheConfig.Enabled.WithTtlSeconds(30);
+                    config = DataStoreCacheConfig.Enabled.WithTtlSeconds(30);
                     break;
                 case CachedIndefinitely:
-                    config = FeatureStoreCacheConfig.Enabled.WithTtl(System.Threading.Timeout.InfiniteTimeSpan);
+                    config = DataStoreCacheConfig.Enabled.WithTtl(System.Threading.Timeout.InfiniteTimeSpan);
                     break;
                 default:
-                    config = FeatureStoreCacheConfig.Disabled;
+                    config = DataStoreCacheConfig.Disabled;
                     break;
             }
             return MakeWrapperBase().WithCaching(config).Build();

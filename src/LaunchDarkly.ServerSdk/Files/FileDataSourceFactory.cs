@@ -10,9 +10,9 @@ namespace LaunchDarkly.Client.Files
     /// To use the file data source, obtain a new instance of this class with
     /// <see cref="FileComponents.FileDataSource"/>, call the builder method
     /// <see cref="WithFilePaths(string[])"/>, then pass the resulting object to
-    /// <see cref="ConfigurationBuilder.UpdateProcessorFactory(IUpdateProcessorFactory)"/>.
+    /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
     /// </remarks>
-    public class FileDataSourceFactory : IUpdateProcessorFactory
+    public class FileDataSourceFactory : IDataSourceFactory
     {
         /// <summary>
         /// The default value for <see cref="WithPollInterval(TimeSpan)"/>.
@@ -147,11 +147,11 @@ namespace LaunchDarkly.Client.Files
         /// Used internally by the LaunchDarkly client.
         /// </summary>
         /// <param name="config"></param>
-        /// <param name="featureStore"></param>
+        /// <param name="dataStore"></param>
         /// <returns>the component instance</returns>
-        public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
+        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore)
         {
-            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths);
+            return new FileDataSource(dataStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths);
         }
     }
 }

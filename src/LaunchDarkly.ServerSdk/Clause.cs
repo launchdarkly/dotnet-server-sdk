@@ -27,7 +27,7 @@ namespace LaunchDarkly.Client
             Negate = negate;
         }
 
-        internal bool MatchesUser(User user, IFeatureStore store)
+        internal bool MatchesUser(User user, IDataStore store)
         {
             if (Op == "segmentMatch")
             {

@@ -6,33 +6,33 @@ using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
-    internal sealed class PollingProcessor : IUpdateProcessor
+    internal sealed class PollingProcessor : IDataSource
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PollingProcessor));
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
         private readonly IFeatureRequestor _featureRequestor;
-        private readonly IFeatureStore _featureStore;
+        private readonly IDataStore _dataStore;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
         private volatile bool _disposed;
 
 
-        internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IFeatureStore featureStore)
+        internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IDataStore dataStore)
         {
             _config = config;
             _featureRequestor = featureRequestor;
-            _featureStore = featureStore;
+            _dataStore = dataStore;
             _initTask = new TaskCompletionSource<bool>();
         }
 
-        bool IUpdateProcessor.Initialized()
+        bool IDataSource.Initialized()
         {
             return _initialized == INITIALIZED;
         }
 
-        Task<bool> IUpdateProcessor.Start()
+        Task<bool> IDataSource.Start()
         {
             Log.InfoFormat("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
                 _config.PollingInterval.TotalMilliseconds);
@@ -57,7 +57,7 @@ namespace LaunchDarkly.Client
                 var allData = await _featureRequestor.GetAllDataAsync();
                 if (allData != null)
                 {
-                    _featureStore.Init(allData.ToGenericDictionary());
+                    _dataStore.Init(allData.ToGenericDictionary());
 
                     //We can't use bool in CompareExchange because it is not a reference type.
                     if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)

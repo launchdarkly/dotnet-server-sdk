@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 namespace LaunchDarkly.Client.Utils
 {
     /// <summary>
-    /// Used internally by CachingStoreWrapper to call asynchronous IFeatureStoreCoreAsync
+    /// Used internally by CachingStoreWrapper to call asynchronous IDataStoreCoreAsync
     /// methods from synchronous code. In the future, if the SDK internals are rewritten to
     /// use async/await, we may reverse this and instead put an adapter around synchronous
     /// methods.
     /// </summary>
-    internal class FeatureStoreCoreAsyncAdapter : IFeatureStoreCore
+    internal class DataStoreCoreAsyncAdapter : IDataStoreCore
     {
-        private readonly IFeatureStoreCoreAsync _coreAsync;
+        private readonly IDataStoreCoreAsync _coreAsync;
         private static readonly TaskFactory _taskFactory = new TaskFactory(CancellationToken.None,
             TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
-        internal FeatureStoreCoreAsyncAdapter(IFeatureStoreCoreAsync coreAsync)
+        internal DataStoreCoreAsyncAdapter(IDataStoreCoreAsync coreAsync)
         {
             _coreAsync = coreAsync;
         }
@@ -58,7 +58,7 @@ namespace LaunchDarkly.Client.Utils
         // deadlocks. See: https://stackoverflow.com/questions/9343594/how-to-call-asynchronous-method-from-synchronous-method-in-c
         // Task.Wait would only be safe if we could guarantee that every intermediate Task within the async
         // code had been modified with ConfigureAwait(false), but that is very error-prone and we can't depend
-        // on feature store implementors doing so.
+        // on data store implementors doing so.
 
         private void WaitSafely(Func<Task> taskFn)
         {

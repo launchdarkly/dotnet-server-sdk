@@ -2,7 +2,7 @@
 namespace LaunchDarkly.Client
 {
     /// <summary>
-    /// Common interface for string-keyed, versioned objects that can be kept in an <see cref="IFeatureStore"/>.
+    /// Common interface for string-keyed, versioned objects that can be kept in an <see cref="IDataStore"/>.
     /// </summary>
     public interface IVersionedData
     {

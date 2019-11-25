@@ -22,7 +22,7 @@ namespace LaunchDarkly.Client
             TrackEvents = trackEvents;
         }
 
-        internal bool MatchesUser(User user, IFeatureStore store)
+        internal bool MatchesUser(User user, IDataStore store)
         {
             foreach (var c in Clauses)
             {

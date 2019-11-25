@@ -6,7 +6,7 @@ using Xunit;
 
 namespace LaunchDarkly.Tests
 {
-    public class FeatureStoreHelpersTest
+    public class DataStoreHelpersTest
     {
         // Note that we already have tests in JsonSerializationTest that verify that our
         // Newtonsoft.Json serialization works for all the properties of FeatureFlag and
@@ -16,7 +16,7 @@ namespace LaunchDarkly.Tests
         public void MarshalEntity()
         {
             var flag = new FeatureFlagBuilder("flag").Build();
-            var actualStr = FeatureStoreHelpers.MarshalJson(flag);
+            var actualStr = DataStoreHelpers.MarshalJson(flag);
             var actualJson = JsonConvert.DeserializeObject<JObject>(actualStr);
             Assert.Equal("flag", (string)actualJson.GetValue("key"));
         }
@@ -25,7 +25,7 @@ namespace LaunchDarkly.Tests
         public void UnmarshalAsSpecificType()
         {
             var jsonStr = "{\"key\":\"flag\",\"on\":false}";
-            var flag = FeatureStoreHelpers.UnmarshalJson(VersionedDataKind.Features, jsonStr);
+            var flag = DataStoreHelpers.UnmarshalJson(VersionedDataKind.Features, jsonStr);
             Assert.Equal("flag", flag.Key);
         }
 
@@ -34,7 +34,7 @@ namespace LaunchDarkly.Tests
         {
             var jsonStr = "{\"key\":\"flag\",\"on\":false}";
             IVersionedDataKind kind = VersionedDataKind.Features;
-            var flag = FeatureStoreHelpers.UnmarshalJson(kind, jsonStr);
+            var flag = DataStoreHelpers.UnmarshalJson(kind, jsonStr);
             Assert.Equal("flag", flag.Key);
         }
     }

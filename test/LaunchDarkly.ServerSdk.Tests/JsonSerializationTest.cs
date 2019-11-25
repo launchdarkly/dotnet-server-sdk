@@ -12,7 +12,7 @@ namespace LaunchDarkly.Tests
     {
         // These tests verify that Newtonsoft.Json can correctly serialize and deserialize all
         // properties of the FeatureFlag and Segment classes. That's not used in this library,
-        // but is a requirement for any JSON-and-reflection-based implementation of IFeatureStore.
+        // but is a requirement for any JSON-and-reflection-based implementation of IDataStore.
 
         [Fact]
         public void CanSerializeAndDeserializeFeatureFlag()

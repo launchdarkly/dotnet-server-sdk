@@ -7,24 +7,24 @@ using LaunchDarkly.Cache;
 namespace LaunchDarkly.Client.Utils
 {
     /// <summary>
-    /// A partial implementation of <see cref="IFeatureStore"/> that delegates the basic functionality to
-    /// an instance of <see cref="IFeatureStoreCore"/> or <see cref="IFeatureStoreCoreAsync"/>.
+    /// A partial implementation of <see cref="IDataStore"/> that delegates the basic functionality to
+    /// an instance of <see cref="IDataStoreCore"/> or <see cref="IDataStoreCoreAsync"/>.
     /// </summary>
     /// <remarks>
     /// <para>
     /// This class provides optional caching behavior and other logic that would otherwise be repeated in
-    /// every feature store implementation. This makes it easier to create new database integrations by
+    /// every data store implementation. This makes it easier to create new database integrations by
     /// implementing only the database-specific logic.
     /// </para>
     /// <para>
-    /// Construct instances of this class with <see cref="CachingStoreWrapper.Builder(IFeatureStoreCore)"/>
-    /// or <see cref="CachingStoreWrapper.Builder(IFeatureStoreCoreAsync)"/>.
+    /// Construct instances of this class with <see cref="CachingStoreWrapper.Builder(IDataStoreCore)"/>
+    /// or <see cref="CachingStoreWrapper.Builder(IDataStoreCoreAsync)"/>.
     /// </para>
     /// </remarks>
-    public sealed class CachingStoreWrapper : IFeatureStore
+    public sealed class CachingStoreWrapper : IDataStore
     {
-        private readonly IFeatureStoreCore _core;
-        private readonly FeatureStoreCacheConfig _caching;
+        private readonly IDataStoreCore _core;
+        private readonly DataStoreCacheConfig _caching;
         
         private readonly ICache<CacheKey, IVersionedData> _itemCache;
         private readonly ICache<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>> _allCache;
@@ -34,9 +34,9 @@ namespace LaunchDarkly.Client.Utils
         /// <summary>
         /// Creates a new builder using a synchronous data store implementation.
         /// </summary>
-        /// <param name="core">the <see cref="IFeatureStoreCore"/> implementation</param>
+        /// <param name="core">the <see cref="IDataStoreCore"/> implementation</param>
         /// <returns>a builder</returns>
-        public static CachingStoreWrapperBuilder Builder(IFeatureStoreCore core)
+        public static CachingStoreWrapperBuilder Builder(IDataStoreCore core)
         {
             return new CachingStoreWrapperBuilder(core);
         }
@@ -44,14 +44,14 @@ namespace LaunchDarkly.Client.Utils
         /// <summary>
         /// Creates a new builder using an asynchronous data store implementation.
         /// </summary>
-        /// <param name="coreAsync">the <see cref="IFeatureStoreCoreAsync"/> implementation</param>
+        /// <param name="coreAsync">the <see cref="IDataStoreCoreAsync"/> implementation</param>
         /// <returns>a builder</returns>
-        public static CachingStoreWrapperBuilder Builder(IFeatureStoreCoreAsync coreAsync)
+        public static CachingStoreWrapperBuilder Builder(IDataStoreCoreAsync coreAsync)
         {
-            return new CachingStoreWrapperBuilder(new FeatureStoreCoreAsyncAdapter(coreAsync));
+            return new CachingStoreWrapperBuilder(new DataStoreCoreAsyncAdapter(coreAsync));
         }
 
-        internal CachingStoreWrapper(IFeatureStoreCore core, FeatureStoreCacheConfig caching)
+        internal CachingStoreWrapper(IDataStoreCore core, DataStoreCacheConfig caching)
         {
             this._core = core;
             this._caching = caching;
@@ -275,10 +275,10 @@ namespace LaunchDarkly.Client.Utils
     /// </summary>
     public class CachingStoreWrapperBuilder
     {
-        private readonly IFeatureStoreCore _core;
-        private FeatureStoreCacheConfig _caching = FeatureStoreCacheConfig.Enabled;
+        private readonly IDataStoreCore _core;
+        private DataStoreCacheConfig _caching = DataStoreCacheConfig.Enabled;
 
-        internal CachingStoreWrapperBuilder(IFeatureStoreCore core)
+        internal CachingStoreWrapperBuilder(IDataStoreCore core)
         {
             _core = core;
         }
@@ -295,9 +295,9 @@ namespace LaunchDarkly.Client.Utils
         /// <summary>
         /// Sets the local caching properties.
         /// </summary>
-        /// <param name="caching">a <see cref="FeatureStoreCacheConfig"/> object</param>
+        /// <param name="caching">a <see cref="DataStoreCacheConfig"/> object</param>
         /// <returns>the builder</returns>
-        public CachingStoreWrapperBuilder WithCaching(FeatureStoreCacheConfig caching)
+        public CachingStoreWrapperBuilder WithCaching(DataStoreCacheConfig caching)
         {
             _caching = caching;
             return this;

@@ -7,10 +7,10 @@ using Common.Logging;
 
 namespace LaunchDarkly.Client.Files
 {
-    internal class FileDataSource : IUpdateProcessor
+    internal class FileDataSource : IDataSource
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FileDataSource));
-        private readonly IFeatureStore _featureStore;
+        private readonly IDataStore _dataStore;
         private readonly List<string> _paths;
         private readonly IDisposable _reloader;
         private readonly FlagFileParser _parser;
@@ -18,10 +18,10 @@ namespace LaunchDarkly.Client.Files
         private volatile bool _started;
         private volatile bool _loadedValidData;
 
-        public FileDataSource(IFeatureStore featureStore, List<string> paths, bool autoUpdate, TimeSpan pollInterval,
+        public FileDataSource(IDataStore dataStore, List<string> paths, bool autoUpdate, TimeSpan pollInterval,
             Func<string, object> alternateParser, bool skipMissingPaths)
         {
-            _featureStore = featureStore;
+            _dataStore = dataStore;
             _paths = new List<string>(paths);
             _parser = new FlagFileParser(alternateParser);
             _skipMissingPaths = skipMissingPaths;
@@ -100,7 +100,7 @@ namespace LaunchDarkly.Client.Files
                     return;
                 }
             }
-            _featureStore.Init(allData);
+            _dataStore.Init(allData);
             _loadedValidData = true;
         }
 

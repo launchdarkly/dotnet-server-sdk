@@ -13,9 +13,9 @@ namespace LaunchDarkly.Client.Utils.Tests
         }
     }
     
-    public class MockCoreSync : MockCoreBase, IFeatureStoreCore
+    public class MockCoreSync : MockCoreBase, IDataStoreCore
     {
-        // The IFeatureStoreCore methods are already implemented in the base class,
+        // The IDataStoreCore methods are already implemented in the base class,
         // we're just adding the interface to mark this as the sync implementation
     }
 }

@@ -24,18 +24,10 @@ namespace LaunchDarkly.Tests
         {
             return "./TestFiles/" + name;
         }
-
-        // this just lets us avoid deprecation warnings
-        public static InMemoryFeatureStore InMemoryFeatureStore()
+        
+        public static IDataStoreFactory SpecificDataStore(IDataStore store)
         {
-#pragma warning disable 0618
-            return new InMemoryFeatureStore();
-#pragma warning restore 0618
-        }
-
-        public static IFeatureStoreFactory SpecificFeatureStore(IFeatureStore store)
-        {
-            return new SpecificFeatureStoreFactory(store);
+            return new SpecificDataStoreFactory(store);
         }
 
         public static IEventProcessorFactory SpecificEventProcessor(IEventProcessor ep)
@@ -43,28 +35,28 @@ namespace LaunchDarkly.Tests
             return new SpecificEventProcessorFactory(ep);
         }
 
-        public static IUpdateProcessorFactory SpecificUpdateProcessor(IUpdateProcessor up)
+        public static IDataSourceFactory SpecificDataSource(IDataSource up)
         {
-            return new SpecificUpdateProcessorFactory(up);
+            return new SpecificDataSourceFactory(up);
         }
 
-        public static IUpdateProcessorFactory UpdateProcessorWithData(
+        public static IDataSourceFactory DataSourceWithData(
             IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data)
         {
-            return new UpdateProcessorFactoryWithData(data);
+            return new DataSourceFactoryWithData(data);
         }
     }
 
-    public class SpecificFeatureStoreFactory : IFeatureStoreFactory
+    public class SpecificDataStoreFactory : IDataStoreFactory
     {
-        private readonly IFeatureStore _store;
+        private readonly IDataStore _store;
 
-        public SpecificFeatureStoreFactory(IFeatureStore store)
+        public SpecificDataStoreFactory(IDataStore store)
         {
             _store = store;
         }
 
-        IFeatureStore IFeatureStoreFactory.CreateFeatureStore()
+        IDataStore IDataStoreFactory.CreateDataStore()
         {
             return _store;
         }
@@ -85,43 +77,43 @@ namespace LaunchDarkly.Tests
         }
     }
 
-    public class SpecificUpdateProcessorFactory : IUpdateProcessorFactory
+    public class SpecificDataSourceFactory : IDataSourceFactory
     {
-        private readonly IUpdateProcessor _up;
+        private readonly IDataSource _ds;
 
-        public SpecificUpdateProcessorFactory(IUpdateProcessor up)
+        public SpecificDataSourceFactory(IDataSource ds)
         {
-            _up = up;
+            _ds = ds;
         }
 
-        IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
+        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IDataStore dataStore)
         {
-            return _up;
+            return _ds;
         }
     }
 
-    public class UpdateProcessorFactoryWithData : IUpdateProcessorFactory
+    public class DataSourceFactoryWithData : IDataSourceFactory
     {
         private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> _data;
 
-        public UpdateProcessorFactoryWithData(
+        public DataSourceFactoryWithData(
             IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data)
         {
             _data = data;
         }
 
-        public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
+        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore)
         {
-            return new UpdateProcessorWithData(featureStore, _data);
+            return new DataSourceWithData(dataStore, _data);
         }
     }
 
-    public class UpdateProcessorWithData : IUpdateProcessor
+    public class DataSourceWithData : IDataSource
     {
-        private readonly IFeatureStore _store;
+        private readonly IDataStore _store;
         private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> _data;
 
-        public UpdateProcessorWithData(IFeatureStore store,
+        public DataSourceWithData(IDataStore store,
             IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data)
         {
             _store = store;

@@ -13,16 +13,16 @@ namespace LaunchDarkly.Tests
     // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
     public class LdClientTest
     {
-        private Mock<IUpdateProcessor> mockUpdateProcessor;
-        private IUpdateProcessor updateProcessor;
+        private Mock<IDataSource> mockDataSource;
+        private IDataSource dataSource;
         private Task<bool> initTask;
 
         public LdClientTest()
         {
-            mockUpdateProcessor = new Mock<IUpdateProcessor>();
-            updateProcessor = mockUpdateProcessor.Object;
+            mockDataSource = new Mock<IDataSource>();
+            dataSource = mockDataSource.Object;
             initTask = Task.FromResult(true);
-            mockUpdateProcessor.Setup(up => up.Start()).Returns(initTask);
+            mockDataSource.Setup(up => up.Start()).Returns(initTask);
         }
         
         [Fact]
@@ -49,7 +49,7 @@ namespace LaunchDarkly.Tests
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<StreamProcessor>(client._updateProcessor);
+                Assert.IsType<StreamProcessor>(client._dataSource);
             }
         }
 
@@ -63,16 +63,16 @@ namespace LaunchDarkly.Tests
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<PollingProcessor>(client._updateProcessor);
+                Assert.IsType<PollingProcessor>(client._dataSource);
             }
         }
 
         [Fact]
-        public void NoWaitForUpdateProcessorIfWaitMillisIsZero()
+        public void NoWaitForDataSourceIfWaitMillisIsZero()
         {
-            mockUpdateProcessor.Setup(up => up.Initialized()).Returns(true);
+            mockDataSource.Setup(up => up.Initialized()).Returns(true);
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
 
@@ -83,10 +83,10 @@ namespace LaunchDarkly.Tests
         }
         
         [Fact]
-        public void UpdateProcessorCanTimeOut()
+        public void DataSourceCanTimeOut()
         {
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.FromMilliseconds(10))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
 
@@ -97,13 +97,13 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void ExceptionFromUpdateProcessorTaskDoesNotCauseExceptionInInit()
+        public void ExceptionFromDataSourceTaskDoesNotCauseExceptionInInit()
         {
             TaskCompletionSource<bool> errorTaskSource = new TaskCompletionSource<bool>();
-            mockUpdateProcessor.Setup(up => up.Start()).Returns(errorTaskSource.Task);
+            mockDataSource.Setup(up => up.Start()).Returns(errorTaskSource.Task);
             errorTaskSource.SetException(new Exception("bad"));
             var config = Configuration.Builder("SDK_KEY")
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
 
@@ -114,15 +114,15 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void EvaluationReturnsDefaultValueIfNeitherClientNorFeatureStoreIsInited()
+        public void EvaluationReturnsDefaultValueIfNeitherClientNorDataStoreIsInited()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
+            var dataStore = new InMemoryDataStore();
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
+            dataStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
 
@@ -133,16 +133,16 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void EvaluationUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
+        public void EvaluationUsesDataStoreIfClientIsNotInitedButStoreIsInited()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
+            var dataStore = new InMemoryDataStore();
+            dataStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
             var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
+            dataStore.Upsert(VersionedDataKind.Features, flag);
 
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
 
@@ -153,9 +153,9 @@ namespace LaunchDarkly.Tests
         }
         
         [Fact]
-        public void DataSetIsPassedToFeatureStoreInCorrectOrder()
+        public void DataSetIsPassedToDataStoreInCorrectOrder()
         {
-            var mockStore = new Mock<IFeatureStore>();
+            var mockStore = new Mock<IDataStore>();
             var store = mockStore.Object;
             IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> receivedData = null;
 
@@ -164,11 +164,11 @@ namespace LaunchDarkly.Tests
                     receivedData = data;
                 });
 
-            mockUpdateProcessor.Setup(up => up.Start()).Returns(initTask);
+            mockDataSource.Setup(up => up.Start()).Returns(initTask);
 
             var config = Configuration.Builder("SDK_KEY")
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(store))
-                .UpdateProcessorFactory(TestUtils.UpdateProcessorWithData(DependencyOrderingTestData))
+                .DataStore(TestUtils.SpecificDataStore(store))
+                .DataSource(TestUtils.DataSourceWithData(DependencyOrderingTestData))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
 

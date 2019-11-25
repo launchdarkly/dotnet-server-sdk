@@ -105,7 +105,7 @@ namespace LaunchDarkly.Client
             return false;
         }
 
-        internal EvalResult Evaluate(User user, IFeatureStore featureStore, EventFactory eventFactory)
+        internal EvalResult Evaluate(User user, IDataStore dataStore, EventFactory eventFactory)
         {
             IList<FeatureRequestEvent> prereqEvents = new List<FeatureRequestEvent>();
             if (user == null || user.Key == null)
@@ -117,11 +117,11 @@ namespace LaunchDarkly.Client
                     new EvaluationDetail<LdValue>(LdValue.Null, null, new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED)),
                     prereqEvents);
             }
-            var details = Evaluate(user, featureStore, prereqEvents, eventFactory);
+            var details = Evaluate(user, dataStore, prereqEvents, eventFactory);
             return new EvalResult(details, prereqEvents);
         }
 
-        private EvaluationDetail<LdValue> Evaluate(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
+        private EvaluationDetail<LdValue> Evaluate(User user, IDataStore dataStore, IList<FeatureRequestEvent> events,
             EventFactory eventFactory)
         {
             if (!On)
@@ -129,7 +129,7 @@ namespace LaunchDarkly.Client
                 return GetOffValue(EvaluationReason.Off.Instance);
             }
 
-            var prereqFailureReason = CheckPrerequisites(user, featureStore, events, eventFactory);
+            var prereqFailureReason = CheckPrerequisites(user, dataStore, events, eventFactory);
             if (prereqFailureReason != null)
             {
                 return GetOffValue(prereqFailureReason);
@@ -155,7 +155,7 @@ namespace LaunchDarkly.Client
                 for (int i = 0; i < Rules.Count; i++)
                 {
                     Rule rule = Rules[i];
-                    if (rule.MatchesUser(user, featureStore))
+                    if (rule.MatchesUser(user, dataStore))
                     {
                         return GetValueForVariationOrRollout(rule, user,
                             new EvaluationReason.RuleMatch(i, rule.Id));
@@ -168,7 +168,7 @@ namespace LaunchDarkly.Client
 
         // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
         // short-circuit due to a prerequisite failure.
-        private EvaluationReason CheckPrerequisites(User user, IFeatureStore featureStore, IList<FeatureRequestEvent> events,
+        private EvaluationReason CheckPrerequisites(User user, IDataStore dataStore, IList<FeatureRequestEvent> events,
             EventFactory eventFactory)
         {
             if (Prerequisites == null || Prerequisites.Count == 0)
@@ -178,7 +178,7 @@ namespace LaunchDarkly.Client
             foreach (var prereq in Prerequisites)
             {
                 var prereqOk = true;
-                var prereqFeatureFlag = featureStore.Get(VersionedDataKind.Features, prereq.Key);
+                var prereqFeatureFlag = dataStore.Get(VersionedDataKind.Features, prereq.Key);
                 if (prereqFeatureFlag == null)
                 {
                     Log.ErrorFormat("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
@@ -187,7 +187,7 @@ namespace LaunchDarkly.Client
                 }
                 else
                 {
-                    var prereqEvalResult = prereqFeatureFlag.Evaluate(user, featureStore, events, eventFactory);
+                    var prereqEvalResult = prereqFeatureFlag.Evaluate(user, dataStore, events, eventFactory);
                     // Note that if the prerequisite flag is off, we don't consider it a match no matter
                     // what its off variation was. But we still need to evaluate it in order to generate
                     // an event.

@@ -8,7 +8,7 @@ using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
-    internal class StreamProcessor : IUpdateProcessor, IStreamProcessor
+    internal class StreamProcessor : IDataSource, IStreamProcessor
     {
         private const String PUT = "put";
         private const String PATCH = "patch";
@@ -20,10 +20,10 @@ namespace LaunchDarkly.Client
         private readonly Configuration _config;
         private readonly StreamManager _streamManager;
         private readonly IFeatureRequestor _featureRequestor;
-        private readonly IFeatureStore _featureStore;
+        private readonly IDataStore _dataStore;
 
         internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor,
-            IFeatureStore featureStore, StreamManager.EventSourceCreator eventSourceCreator)
+            IDataStore dataStore, StreamManager.EventSourceCreator eventSourceCreator)
         {
             _streamManager = new StreamManager(this,
                 MakeStreamProperties(config),
@@ -32,7 +32,7 @@ namespace LaunchDarkly.Client
                 eventSourceCreator);
             _config = config;
             _featureRequestor = featureRequestor;
-            _featureStore = featureStore;
+            _dataStore = dataStore;
         }
 
         private StreamProperties MakeStreamProperties(Configuration config)
@@ -41,14 +41,14 @@ namespace LaunchDarkly.Client
                 HttpMethod.Get, null);
         }
 
-        #region IUpdateProcessor
+        #region IDataSource
 
-        bool IUpdateProcessor.Initialized()
+        bool IDataSource.Initialized()
         {
             return _streamManager.Initialized;
         }
 
-        Task<bool> IUpdateProcessor.Start()
+        Task<bool> IDataSource.Start()
         {
             return _streamManager.Start();
         }
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Client
             switch (messageType)
             {
                 case PUT:
-                    _featureStore.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToGenericDictionary());
+                    _dataStore.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToGenericDictionary());
                     streamManager.Initialized = true;
                     break;
                 case PATCH:
@@ -71,12 +71,12 @@ namespace LaunchDarkly.Client
                     if (GetKeyFromPath(patchData.Path, VersionedDataKind.Features, out patchKey))
                     {
                         FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
-                        _featureStore.Upsert(VersionedDataKind.Features, flag);
+                        _dataStore.Upsert(VersionedDataKind.Features, flag);
                     }
                     else if (GetKeyFromPath(patchData.Path, VersionedDataKind.Segments, out patchKey))
                     {
                         Segment segment = patchData.Data.ToObject<Segment>();
-                        _featureStore.Upsert(VersionedDataKind.Segments, segment);
+                        _dataStore.Upsert(VersionedDataKind.Segments, segment);
                     }
                     else
                     {
@@ -88,11 +88,11 @@ namespace LaunchDarkly.Client
                     string deleteKey;
                     if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Features, out deleteKey))
                     {
-                        _featureStore.Delete(VersionedDataKind.Features, deleteKey, deleteData.Version);
+                        _dataStore.Delete(VersionedDataKind.Features, deleteKey, deleteData.Version);
                     }
                     else if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Segments, out deleteKey))
                     {
-                        _featureStore.Delete(VersionedDataKind.Segments, deleteKey, deleteData.Version);
+                        _dataStore.Delete(VersionedDataKind.Segments, deleteKey, deleteData.Version);
                     }
                     else
                     {
@@ -131,7 +131,7 @@ namespace LaunchDarkly.Client
                     var feature = await _featureRequestor.GetFlagAsync(key);
                     if (feature != null)
                     {
-                        _featureStore.Upsert(VersionedDataKind.Features, feature);
+                        _dataStore.Upsert(VersionedDataKind.Features, feature);
                     }
                 }
                 else if (GetKeyFromPath(objectPath, VersionedDataKind.Segments, out key))
@@ -139,7 +139,7 @@ namespace LaunchDarkly.Client
                     var segment = await _featureRequestor.GetSegmentAsync(key);
                     if (segment != null)
                     {
-                        _featureStore.Upsert(VersionedDataKind.Segments, segment);
+                        _dataStore.Upsert(VersionedDataKind.Segments, segment);
                     }
                 }
                 else
