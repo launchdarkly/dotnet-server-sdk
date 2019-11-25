@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client
 {

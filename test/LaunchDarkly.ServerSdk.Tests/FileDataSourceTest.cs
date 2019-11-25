@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Xunit;
 using LaunchDarkly.Client;
 using LaunchDarkly.Client.Files;
+using LaunchDarkly.Client.Interfaces;
 using YamlDotNet.Serialization;
 
 namespace LaunchDarkly.Tests

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Client.Interfaces
 {
     /// <summary>
     /// Interface for a data store that holds feature flags and related data received by the streaming client.

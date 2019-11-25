@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client

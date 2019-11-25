@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Xunit;
 using LaunchDarkly.Client;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Tests
 {

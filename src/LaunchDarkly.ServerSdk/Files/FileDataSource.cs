@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client.Files
 {

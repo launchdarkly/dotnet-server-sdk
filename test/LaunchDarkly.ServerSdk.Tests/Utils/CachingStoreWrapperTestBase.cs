@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LaunchDarkly.Client.Interfaces;
 using Xunit;
 
 namespace LaunchDarkly.Client.Utils.Tests

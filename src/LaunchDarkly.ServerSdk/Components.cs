@@ -1,5 +1,6 @@
 ﻿using Common.Logging;
 using LaunchDarkly.Common;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client
 {
@@ -8,11 +9,11 @@ namespace LaunchDarkly.Client
     /// </summary>
     public static class Components
     {
-        private static IDataStoreFactory _inMemoryDataStoreFactory = new InMemoryDataStoreFactory();
-        private static IEventProcessorFactory _eventProcessorFactory = new DefaultEventProcessorFactory();
-        private static IEventProcessorFactory _nullEventProcessorFactory = new NullEventProcessorFactory();
-        private static IDataSourceFactory _dataSourceFactory = new DefaultDataSourceFactory();
-        private static IDataSourceFactory _nullDataSourceFactory = new NullDataSourceFactory();
+        private static readonly IDataStoreFactory _inMemoryDataStoreFactory = new InMemoryDataStoreFactory();
+        private static readonly IEventProcessorFactory _eventProcessorFactory = new DefaultEventProcessorFactory();
+        private static readonly IEventProcessorFactory _nullEventProcessorFactory = new NullEventProcessorFactory();
+        private static readonly IDataSourceFactory _dataSourceFactory = new DefaultDataSourceFactory();
+        private static readonly IDataSourceFactory _nullDataSourceFactory = new NullDataSourceFactory();
         
         /// <summary>
         /// Returns a factory for the default in-memory implementation of <see cref="IDataStore"/>.

@@ -1,6 +1,7 @@
-﻿using Common.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using Common.Logging;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client
 {

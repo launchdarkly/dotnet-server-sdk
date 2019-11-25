@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Cache;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client.Utils
 {

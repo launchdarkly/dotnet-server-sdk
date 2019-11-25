@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Client;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 using LaunchDarkly.EventSource;
 using Moq;
@@ -12,20 +13,20 @@ namespace LaunchDarkly.Tests
 {
     public class StreamProcessorTest
     {
-        private static string SDK_KEY = "sdk_key";
-        private static string FEATURE_KEY = "feature";
-        private static int FEATURE_VERSION = 11;
-        private static FeatureFlag FEATURE = new FeatureFlagBuilder(FEATURE_KEY).Version(FEATURE_VERSION).On(true).Build();
-        private static string SEGMENT_KEY = "segment";
-        private static int SEGMENT_VERSION = 22;
-        private static Segment SEGMENT = new Segment(SEGMENT_KEY, SEGMENT_VERSION, null, null, null, null, false);
+        private const string SDK_KEY = "sdk_key";
+        private const string FEATURE_KEY = "feature";
+        private const int FEATURE_VERSION = 11;
+        private static readonly FeatureFlag FEATURE = new FeatureFlagBuilder(FEATURE_KEY).Version(FEATURE_VERSION).On(true).Build();
+        private const string SEGMENT_KEY = "segment";
+        private const int SEGMENT_VERSION = 22;
+        private static readonly Segment SEGMENT = new Segment(SEGMENT_KEY, SEGMENT_VERSION, null, null, null, null, false);
 
-        Mock<IEventSource> _mockEventSource;
-        IEventSource _eventSource;
-        TestEventSourceFactory _eventSourceFactory;
-        Mock<IFeatureRequestor> _mockRequestor;
-        IFeatureRequestor _requestor;
-        InMemoryDataStore _dataStore;
+        readonly Mock<IEventSource> _mockEventSource;
+        readonly IEventSource _eventSource;
+        readonly TestEventSourceFactory _eventSourceFactory;
+        readonly Mock<IFeatureRequestor> _mockRequestor;
+        readonly IFeatureRequestor _requestor;
+        readonly InMemoryDataStore _dataStore;
         Client.Configuration _config;
 
         public StreamProcessorTest()
@@ -223,7 +224,7 @@ namespace LaunchDarkly.Tests
         {
             public StreamProperties ReceivedProperties { get; private set; }
             public IDictionary<string, string> ReceivedHeaders { get; private set; }
-            IEventSource _eventSource;
+            readonly IEventSource _eventSource;
 
             public TestEventSourceFactory(IEventSource eventSource)
             {

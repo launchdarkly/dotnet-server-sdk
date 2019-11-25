@@ -1,4 +1,5 @@
 ﻿using LaunchDarkly.Client;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 using Newtonsoft.Json.Linq;
 using Xunit;

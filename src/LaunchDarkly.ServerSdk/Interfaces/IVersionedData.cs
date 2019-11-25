@@ -1,8 +1,8 @@
-﻿using System;
-namespace LaunchDarkly.Client
+﻿
+namespace LaunchDarkly.Client.Interfaces
 {
     /// <summary>
-    /// Common interface for string-keyed, versioned objects that can be kept in an <see cref="IDataStore"/>.
+    /// Common interface for string-keyed, versioned objects that can be kept in the SDK's data store.
     /// </summary>
     public interface IVersionedData
     {
