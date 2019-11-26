@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class SemanticVersion
+    internal struct SemanticVersion
     {
-        static Regex VERSION_REGEX = new Regex(
+        static readonly Regex VERSION_REGEX = new Regex(
             @"^(?<major>0|[1-9]\d*)(\.(?<minor>0|[1-9]\d*))?(\.(?<patch>0|[1-9]\d*))?" +
             @"(\-(?<prerel>[0-9A-Za-z\-\.]+))?(\+(?<build>[0-9A-Za-z\-\.]+))?$",
             RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
@@ -61,10 +59,6 @@ namespace LaunchDarkly.Sdk.Server.Model
         /// <returns>0 if equal, -1 if the current object has lower precedence, or 1 if the current object has higher precedence</returns>
         public int ComparePrecedence(SemanticVersion other)
         {
-            if (other is null)
-            {
-                return 1;
-            }
             if (Major != other.Major)
             {
                 return Major.CompareTo(other.Major);

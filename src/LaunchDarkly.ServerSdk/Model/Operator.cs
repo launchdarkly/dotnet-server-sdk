@@ -168,7 +168,7 @@ namespace LaunchDarkly.Sdk.Server.Model
         {
             var uVersion = ValueToSemVer(uValue);
             var cVersion = ValueToSemVer(cValue);
-            return uVersion != null && cVersion != null && fn(uVersion, cVersion);
+            return uVersion.HasValue && cVersion.HasValue && fn(uVersion.Value, cVersion.Value);
         }
 
         internal static DateTime? ValueToDate(LdValue value)
@@ -184,7 +184,7 @@ namespace LaunchDarkly.Sdk.Server.Model
             return null;
         }
 
-        internal static SemanticVersion ValueToSemVer(LdValue value)
+        internal static SemanticVersion? ValueToSemVer(LdValue value)
         {
             if (value.IsString)
             {

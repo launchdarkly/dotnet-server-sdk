@@ -37,31 +37,5 @@ namespace LaunchDarkly.Sdk.Server.Model
         internal Segment()
         {
         }
-
-        public bool MatchesUser(User user)
-        {
-            if (user.Key != null)
-            {
-                if (Included != null && Included.Contains(user.Key))
-                {
-                    return true;
-                }
-                if (Excluded != null && Excluded.Contains(user.Key))
-                {
-                    return false;
-                }
-                if (Rules != null)
-                {
-                    foreach (var rule in Rules)
-                    {
-                        if (rule.MatchesUser(user, this.Key, this.Salt))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Model
@@ -21,18 +20,6 @@ namespace LaunchDarkly.Sdk.Server.Model
             Id = id;
             Clauses = clauses;
             TrackEvents = trackEvents;
-        }
-
-        internal bool MatchesUser(User user, IDataStore store)
-        {
-            foreach (var c in Clauses)
-            {
-                if (!c.MatchesUser(user, store))
-                {
-                    return false;
-                }
-            }
-            return true;
         }
     }
 }

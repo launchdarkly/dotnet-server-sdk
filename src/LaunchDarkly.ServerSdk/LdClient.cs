@@ -22,6 +22,7 @@ namespace LaunchDarkly.Sdk.Server
         internal readonly IEventProcessor _eventProcessor;
         private readonly IDataStore _dataStore;
         internal readonly IDataSource _dataSource;
+        internal readonly Evaluator _evaluator;
 
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration.
@@ -58,6 +59,10 @@ namespace LaunchDarkly.Sdk.Server
 
             _dataSource = (_configuration.DataSourceFactory ??
                 Components.DefaultDataSource).CreateDataSource(_configuration, _dataStore);
+
+            _evaluator = new Evaluator(
+                key => _dataStore.Get(VersionedDataKind.Features, key),
+                key => _dataStore.Get(VersionedDataKind.Segments, key));
 
             var initTask = _dataSource.Start();
 
@@ -209,7 +214,7 @@ namespace LaunchDarkly.Sdk.Server
                 }
                 try
                 {
-                    FeatureFlag.EvalResult result = flag.Evaluate(user, _dataStore, EventFactory.Default);
+                    Evaluator.EvalResult result = _evaluator.Evaluate(flag, user, EventFactory.Default);
                     state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
                         withReasons ? (EvaluationReason?)result.Result.Reason : null, detailsOnlyIfTracked);
                 }
@@ -243,6 +248,7 @@ namespace LaunchDarkly.Sdk.Server
             }
 
             FeatureFlag featureFlag = null;
+            FeatureFlagEventProperties? flagEventProperties = null;
             try
             {
                 featureFlag = _dataStore.Get(VersionedDataKind.Features, featureKey);
@@ -255,17 +261,18 @@ namespace LaunchDarkly.Sdk.Server
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.FLAG_NOT_FOUND));
                 }
+                flagEventProperties = new FeatureFlagEventProperties(featureFlag);
 
                 if (user == null || user.Key == null)
                 {
                     Log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
+                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(flagEventProperties, user, defaultValue,
                         EvaluationErrorKind.USER_NOT_SPECIFIED));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
                 }
                 
-                FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _dataStore, eventFactory);
+                Evaluator.EvalResult evalResult = _evaluator.Evaluate(featureFlag, user, eventFactory);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
@@ -289,7 +296,7 @@ namespace LaunchDarkly.Sdk.Server
                             evalDetail.Value.Type,
                             featureKey);
 
-                        _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user,
+                        _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(flagEventProperties, user,
                             defaultValue, EvaluationErrorKind.WRONG_TYPE));
                         return new EvaluationDetail<T>(defaultValueOfType, null,
                             EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
@@ -297,7 +304,7 @@ namespace LaunchDarkly.Sdk.Server
                     returnDetail = new EvaluationDetail<T>(converter.ToType(evalDetail.Value),
                         evalDetail.VariationIndex, evalDetail.Reason);
                 }
-                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
+                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(flagEventProperties, user,
                     evalDetail, defaultValue));
                 return returnDetail;
             }
@@ -316,7 +323,7 @@ namespace LaunchDarkly.Sdk.Server
                 }
                 else
                 {
-                    _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(featureFlag, user,
+                    _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(flagEventProperties, user,
                         new EvaluationDetail<LdValue>(defaultValue, null, reason), defaultValue));
                 }
                 return new EvaluationDetail<T>(defaultValueOfType, null, reason);
