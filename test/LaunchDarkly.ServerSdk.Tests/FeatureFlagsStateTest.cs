@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using LaunchDarkly.Client;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
@@ -15,29 +12,15 @@ namespace LaunchDarkly.Tests
         {
             var state = new FeatureFlagsState(true);
             var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, null, false);
+            state.AddFlag(flag, LdValue.Of("value"), 1, null, false);
 
             Assert.Equal(LdValue.Of("value"), state.GetFlagValueJson("key"));
-        }
-
-        [Fact]
-        public void CanGetDeprecatedFlagValue()
-        {
-            var state = new FeatureFlagsState(true);
-            var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, null, false);
-#pragma warning disable 0618
-            Assert.Equal(new JValue("value"), state.GetFlagValue("key"));
-#pragma warning restore 0618
         }
 
         [Fact]
         public void UnknownFlagReturnsNullValue()
         {
             var state = new FeatureFlagsState(true);
-#pragma warning disable 0618
-            Assert.Null(state.GetFlagValue("key"));
-#pragma warning restore 0618
             Assert.Equal(LdValue.Null, state.GetFlagValueJson("key"));
         }
 
@@ -46,9 +29,9 @@ namespace LaunchDarkly.Tests
         {
             var state = new FeatureFlagsState(true);
             var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, EvaluationReason.Fallthrough.Instance, false);
+            state.AddFlag(flag, LdValue.Of("value"), 1, EvaluationReason.FallthroughReason, false);
 
-            Assert.Equal(EvaluationReason.Fallthrough.Instance, state.GetFlagReason("key"));
+            Assert.Equal(EvaluationReason.FallthroughReason, state.GetFlagReason("key"));
         }
 
         [Fact]
@@ -64,7 +47,7 @@ namespace LaunchDarkly.Tests
         {
             var state = new FeatureFlagsState(true);
             var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, null, false);
+            state.AddFlag(flag, LdValue.Of("value"), 1, null, false);
 
             Assert.Null(state.GetFlagReason("key"));
         }
@@ -75,8 +58,8 @@ namespace LaunchDarkly.Tests
             var state = new FeatureFlagsState(true);
             var flag1 = new FeatureFlagBuilder("key1").Build();
             var flag2 = new FeatureFlagBuilder("key2").Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, null, false);
+            state.AddFlag(flag1, LdValue.Of("value1"), 0, null, false);
+            state.AddFlag(flag2, LdValue.Of("value2"), 1, null, false);
 
             var expected = new Dictionary<string, LdValue>
             {
@@ -85,26 +68,7 @@ namespace LaunchDarkly.Tests
             };
             Assert.Equal(expected, state.ToValuesJsonMap());
         }
-
-        [Fact]
-        public void CanConvertToDeprecatedValuesMap()
-        {
-            var state = new FeatureFlagsState(true);
-            var flag1 = new FeatureFlagBuilder("key1").Build();
-            var flag2 = new FeatureFlagBuilder("key2").Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, null, false);
-
-            var expected = new Dictionary<string, JToken>
-            {
-                { "key1", new JValue("value1") },
-                { "key2", new JValue("value2") }
-            };
-#pragma warning disable 0618
-            Assert.Equal(expected, state.ToValuesMap());
-#pragma warning restore 0618
-        }
-
+        
         [Fact]
         public void CanSerializeToJson()
         {
@@ -112,8 +76,8 @@ namespace LaunchDarkly.Tests
             var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .TrackEvents(true).DebugEventsUntilDate(1000).Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.Fallthrough.Instance, false);
+            state.AddFlag(flag1, LdValue.Of("value1"), 0, null, false);
+            state.AddFlag(flag2, LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, false);
 
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
                 ""$flagsState"":{
@@ -125,10 +89,10 @@ namespace LaunchDarkly.Tests
                 },
                 ""$valid"":true
             }";
-            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var expectedValue = LdValue.Parse(expectedString);
             var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
-            TestUtils.AssertJsonEqual(expectedValue, actualValue);
+            var actualValue = LdValue.Parse(actualString);
+            Assert.Equal(expectedValue, actualValue);
         }
 
         [Fact]
@@ -138,8 +102,8 @@ namespace LaunchDarkly.Tests
             var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .TrackEvents(true).DebugEventsUntilDate(1000).Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.Fallthrough.Instance, false);
+            state.AddFlag(flag1, LdValue.Of("value1"), 0, null, false);
+            state.AddFlag(flag2, LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, false);
 
             var jsonString = JsonConvert.SerializeObject(state);
             var state1 = JsonConvert.DeserializeObject<FeatureFlagsState>(jsonString);

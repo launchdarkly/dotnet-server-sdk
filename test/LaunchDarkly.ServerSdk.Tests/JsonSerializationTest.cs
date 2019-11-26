@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using LaunchDarkly.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -53,7 +51,7 @@ namespace LaunchDarkly.Tests
 
         private FeatureFlag BuildFlag()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(new JValue("x")).Negate(true).Build();
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("x")).Negate(true).Build();
             var wv = new WeightedVariation(0, 50);
             var rollout = new Rollout(new List<WeightedVariation> { wv }, "key");
             var rule = new RuleBuilder().Id("ruleid").Variation(0).Rollout(rollout).Clauses(clause)
@@ -71,7 +69,7 @@ namespace LaunchDarkly.Tests
                 .Targets(target)
                 .TrackEvents(true)
                 .TrackEventsFallthrough(true)
-                .Variations(new JValue("value"))
+                .Variations(LdValue.Of("value"))
                 .Version(100)
                 .Build();
         }
@@ -120,7 +118,7 @@ namespace LaunchDarkly.Tests
 
         private Segment BuildSegment()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(new JValue("x")).Negate(true).Build();
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("x")).Negate(true).Build();
             var rule = new SegmentRule(new List<Clause> { clause }, 50, "key");
             return new Segment(
                 "segkey",

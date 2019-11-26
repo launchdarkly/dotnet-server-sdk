@@ -6,7 +6,6 @@ using LaunchDarkly.Client;
 using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
@@ -118,7 +117,7 @@ namespace LaunchDarkly.Tests
         public void EvaluationReturnsDefaultValueIfNeitherClientNorDataStoreIsInited()
         {
             var dataStore = new InMemoryDataStore();
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
+            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(1)).Build();
             dataStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
 
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
@@ -138,7 +137,7 @@ namespace LaunchDarkly.Tests
         {
             var dataStore = new InMemoryDataStore();
             dataStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
+            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(1)).Build();
             dataStore.Upsert(VersionedDataKind.Features, flag);
 
             var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)

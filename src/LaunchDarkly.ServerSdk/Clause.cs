@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Common.Logging;
 using LaunchDarkly.Client.Interfaces;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
@@ -15,12 +14,12 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "op")]
         internal string Op { get; private set; }
         [JsonProperty(PropertyName = "values")]
-        internal List<JValue> Values { get; private set; }
+        internal List<LdValue> Values { get; private set; }
         [JsonProperty(PropertyName = "negate")]
         internal bool Negate { get; private set; }
 
         [JsonConstructor]
-        internal Clause(string attribute, string op, List<JValue> values, bool negate)
+        internal Clause(string attribute, string op, List<LdValue> values, bool negate)
         {
             Attribute = attribute;
             Op = op;
@@ -34,7 +33,7 @@ namespace LaunchDarkly.Client
             {
                 foreach (var value in Values)
                 {
-                    Segment segment = store.Get(VersionedDataKind.Segments, value.Value<string>());
+                    Segment segment = store.Get(VersionedDataKind.Segments, value.AsString);
                     if (segment != null && segment.MatchesUser(user))
                     {
                         return MaybeNegate(true);
@@ -91,7 +90,7 @@ namespace LaunchDarkly.Client
         {
             foreach (var v in Values)
             {
-                if (Operator.Apply(Op, userValue, LdValue.FromSafeValue(v)))
+                if (Operator.Apply(Op, userValue, v))
                 {
                     return true;
                 }

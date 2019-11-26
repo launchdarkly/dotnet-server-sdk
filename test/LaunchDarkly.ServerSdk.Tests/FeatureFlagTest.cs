@@ -2,7 +2,6 @@
 using LaunchDarkly.Client;
 using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
@@ -20,11 +19,11 @@ namespace LaunchDarkly.Tests
                 .On(false)
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1, EvaluationReason.OffReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -35,11 +34,11 @@ namespace LaunchDarkly.Tests
             var f = new FeatureFlagBuilder("feature")
                 .On(false)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.Off.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.OffReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -51,12 +50,12 @@ namespace LaunchDarkly.Tests
                 .On(false)
                 .OffVariation(999)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -68,12 +67,12 @@ namespace LaunchDarkly.Tests
                 .On(false)
                 .OffVariation(-1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -85,11 +84,11 @@ namespace LaunchDarkly.Tests
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -101,12 +100,12 @@ namespace LaunchDarkly.Tests
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(999)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -118,12 +117,12 @@ namespace LaunchDarkly.Tests
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(-1)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -135,12 +134,12 @@ namespace LaunchDarkly.Tests
                 .On(true)
                 .OffVariation(1)
                 .Fallthrough(new VariationOrRollout(null, null))
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -152,12 +151,12 @@ namespace LaunchDarkly.Tests
                 .On(true)
                 .OffVariation(1)
                 .Fallthrough(new VariationOrRollout(null, new Rollout(new List<WeightedVariation>(), null)))
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -170,12 +169,12 @@ namespace LaunchDarkly.Tests
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
-                new EvaluationReason.PrerequisiteFailed("feature1"));
+                EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -188,14 +187,14 @@ namespace LaunchDarkly.Tests
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Version(1)
                 .Build();
             var f1 = new FeatureFlagBuilder("feature1")
                 .On(false)
                 .OffVariation(1)
                 // note that even though it returns the desired variation, it is still off and therefore not a match
-                .Variations(new JValue("nogo"), new JValue("go"))
+                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
                 .Version(2)
                 .Build();
             dataStore.Upsert(VersionedDataKind.Features, f1);
@@ -203,7 +202,7 @@ namespace LaunchDarkly.Tests
             var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
-                new EvaluationReason.PrerequisiteFailed("feature1"));
+                EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
@@ -222,13 +221,13 @@ namespace LaunchDarkly.Tests
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Version(1)
                 .Build();
             var f1 = new FeatureFlagBuilder("feature1")
                 .On(true)
                 .FallthroughVariation(0)
-                .Variations(new JValue("nogo"), new JValue("go"))
+                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
                 .Version(2)
                 .Build();
             dataStore.Upsert(VersionedDataKind.Features, f1);
@@ -236,7 +235,7 @@ namespace LaunchDarkly.Tests
             var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("off"), 1,
-                new EvaluationReason.PrerequisiteFailed("feature1"));
+                EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
@@ -255,20 +254,20 @@ namespace LaunchDarkly.Tests
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Version(1)
                 .Build();
             var f1 = new FeatureFlagBuilder("feature1")
                 .On(true)
                 .FallthroughVariation(1) // this is what makes the prerequisite pass
-                .Variations(new JValue("nogo"), new JValue("go"))
+                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
                 .Version(2)
                 .Build();
             dataStore.Upsert(VersionedDataKind.Features, f1);
 
             var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
@@ -287,20 +286,20 @@ namespace LaunchDarkly.Tests
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Version(1)
                 .Build();
             var f1 = new FeatureFlagBuilder("feature1")
                 .On(true)
                 .Prerequisites(new Prerequisite("feature2", 1))
                 .FallthroughVariation(1)
-                .Variations(new JValue("nogo"), new JValue("go"))
+                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
                 .Version(2)
                 .Build();
             var f2 = new FeatureFlagBuilder("feature2")
                 .On(true)
                 .FallthroughVariation(1)
-                .Variations(new JValue("nogo"), new JValue("go"))
+                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
                 .Version(3)
                 .Build();
             dataStore.Upsert(VersionedDataKind.Features, f1);
@@ -308,7 +307,7 @@ namespace LaunchDarkly.Tests
 
             var result = f0.Evaluate(baseUser, dataStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("fall"), 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(2, result.PrerequisiteEvents.Count);
@@ -334,12 +333,12 @@ namespace LaunchDarkly.Tests
                 .Targets(new Target(new List<string> { "whoever", "userkey" }, 2))
                 .FallthroughVariation(0)
                 .OffVariation(1)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
             var user = User.WithKey("userkey");
             var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
-            var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2, EvaluationReason.TargetMatch.Instance);
+            var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2, EvaluationReason.TargetMatchReason);
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -357,7 +356,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Of("on"), 2,
-                new EvaluationReason.RuleMatch(1, "ruleid1"));
+                EvaluationReason.RuleMatchReason(1, "ruleid1"));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -373,7 +372,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -389,7 +388,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -405,7 +404,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -422,7 +421,7 @@ namespace LaunchDarkly.Tests
             var result = f.Evaluate(user, dataStore, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                new EvaluationReason.Error(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -430,7 +429,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ClauseCanMatchBuiltInAttribute()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(new JValue("Bob")).Build();
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("Bob")).Build();
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
@@ -440,7 +439,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ClauseCanMatchCustomAttribute()
         {
-            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(new JValue(4)).Build();
+            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(LdValue.Of(4)).Build();
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Custom("legs", 4).Build();
 
@@ -450,7 +449,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ClauseReturnsFalseForMissingAttribute()
         {
-            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(new JValue(4)).Build();
+            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(LdValue.Of(4)).Build();
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("bob").Build();
 
@@ -460,7 +459,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ClauseCanBeNegated()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(new JValue("Bob"))
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("Bob"))
                 .Negate(true).Build();
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
@@ -471,7 +470,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ClauseWithUnknownOperatorDoesNotMatch()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("invalidOp").Values(new JValue("Bob")).Build();
+            var clause = new ClauseBuilder().Attribute("name").Op("invalidOp").Values(LdValue.Of("Bob")).Build();
             var f = BooleanFlagWithClauses(clause);
             var user = User.Builder("key").Name("Bob").Build();
 
@@ -506,7 +505,7 @@ namespace LaunchDarkly.Tests
                 .On(true)
                 .Rules(rules)
                 .FallthroughVariation(0)
-                .Variations(new JValue("fall"), new JValue("off"), new JValue("on"))
+                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
         }
 
@@ -517,13 +516,13 @@ namespace LaunchDarkly.Tests
                 .On(true)
                 .Rules(rule)
                 .FallthroughVariation(0)
-                .Variations(new JValue(false), new JValue(true))
+                .Variations(LdValue.Of(false), LdValue.Of(true))
                 .Build();
         }
 
         private FeatureFlag SegmentMatchBooleanFlag(string segmentKey)
         {
-            var clause = new ClauseBuilder().Op("segmentMatch").Values(new JValue(segmentKey)).Build();
+            var clause = new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segmentKey)).Build();
             return BooleanFlagWithClauses(clause);
         }
     }
