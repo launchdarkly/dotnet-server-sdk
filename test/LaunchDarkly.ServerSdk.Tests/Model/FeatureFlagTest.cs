@@ -4,7 +4,7 @@ using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Model
 {
     public class FeatureFlagTest
     {

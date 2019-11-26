@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Model
 {
     public class SemanticVersionTest
     {

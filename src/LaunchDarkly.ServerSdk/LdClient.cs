@@ -6,6 +6,7 @@ using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Model;
 
 namespace LaunchDarkly.Sdk.Server
 {

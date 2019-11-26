@@ -6,7 +6,7 @@ using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Model
 {
     internal class FeatureFlag : IVersionedData, IFlagEventProperties
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Xunit;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Model;
 
 namespace LaunchDarkly.Sdk.Server
 {

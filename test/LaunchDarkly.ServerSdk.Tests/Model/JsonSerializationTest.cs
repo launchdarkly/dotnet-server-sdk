@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Model
 {
     public class JsonSerializationTest
     {
