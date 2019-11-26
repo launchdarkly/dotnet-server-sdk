@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Moq;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class PollingProcessorTest
     {

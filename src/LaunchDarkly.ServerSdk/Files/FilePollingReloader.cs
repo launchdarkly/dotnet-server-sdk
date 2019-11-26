@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 
-namespace LaunchDarkly.Client.Files
+namespace LaunchDarkly.Sdk.Server.Files
 {
     // An unsophisticated implementation of file monitoring that we use when there's no other
     // mechanism available, i.e. in .NET Standard 1.x.

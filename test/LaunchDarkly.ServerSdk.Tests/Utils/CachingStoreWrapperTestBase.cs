@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 
-namespace LaunchDarkly.Client.Utils.Tests
+namespace LaunchDarkly.Sdk.Server.Utils
 {
     // These tests verify the behavior of CachingStoreWrapper against an underlying mock
     // data store implementation; the test subclasses provide either a sync or async version

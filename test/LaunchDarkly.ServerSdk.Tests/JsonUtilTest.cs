@@ -1,8 +1,7 @@
-﻿using LaunchDarkly.Client;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class JsonUtilTest
     {

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using LaunchDarkly.Client;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class ConfigurationTest
     {

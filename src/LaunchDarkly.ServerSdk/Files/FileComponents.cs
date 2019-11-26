@@ -1,4 +1,4 @@
-﻿namespace LaunchDarkly.Client.Files
+﻿namespace LaunchDarkly.Sdk.Server.Files
 {
     /// <summary>
     /// The entry point for the file data source, which allows you to use local files as a source of

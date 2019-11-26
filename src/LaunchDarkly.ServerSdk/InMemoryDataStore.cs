@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using Common.Logging;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// In-memory, thread-safe implementation of <see cref="IDataStore"/>.

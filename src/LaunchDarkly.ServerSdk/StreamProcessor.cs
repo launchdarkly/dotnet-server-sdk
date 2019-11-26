@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Helpers;
+using LaunchDarkly.Sdk.Internal.Stream;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal class StreamProcessor : IDataSource, IStreamProcessor
     {

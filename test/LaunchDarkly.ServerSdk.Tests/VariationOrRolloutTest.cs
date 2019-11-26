@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
-using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class VariationOrRolloutTest
     {

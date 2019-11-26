@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal class SemanticVersion
     {

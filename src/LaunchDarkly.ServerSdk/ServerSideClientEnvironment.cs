@@ -1,6 +1,6 @@
-﻿using LaunchDarkly.Common;
+﻿using LaunchDarkly.Sdk.Internal;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal class ServerSideClientEnvironment : ClientEnvironment
     {

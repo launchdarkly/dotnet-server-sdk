@@ -6,9 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Common.Logging;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Helpers;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal class FeatureRequestor : IFeatureRequestor
     {

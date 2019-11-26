@@ -1,7 +1,7 @@
 ﻿using System;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal.Events;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal class DefaultUserDeduplicator : IUserDeduplicator
     {

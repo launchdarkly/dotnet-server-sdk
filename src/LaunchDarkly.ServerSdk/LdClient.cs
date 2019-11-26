@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Common.Logging;
-using LaunchDarkly.Common;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Internal.Helpers;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// A client for the LaunchDarkly API. Client instances are thread-safe. Applications should instantiate
@@ -208,14 +210,14 @@ namespace LaunchDarkly.Client
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _dataStore, EventFactory.Default);
                     state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
-                        withReasons ? result.Result.Reason : null, detailsOnlyIfTracked);
+                        withReasons ? (EvaluationReason?)result.Result.Reason : null, detailsOnlyIfTracked);
                 }
                 catch (Exception e)
                 {
                     Log.ErrorFormat("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key, Util.ExceptionMessage(e));
                     Log.Debug(e.ToString(), e);
                     EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
-                    state.AddFlag(flag, LdValue.Null, null, withReasons ? reason : null, detailsOnlyIfTracked);
+                    state.AddFlag(flag, LdValue.Null, null, withReasons ? (EvaluationReason?)reason : null, detailsOnlyIfTracked);
                 }
             }
             return state;

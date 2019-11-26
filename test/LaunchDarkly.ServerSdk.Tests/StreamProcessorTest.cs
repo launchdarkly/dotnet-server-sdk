@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal.Stream;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.EventSource;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class StreamProcessorTest
     {
@@ -27,7 +26,7 @@ namespace LaunchDarkly.Tests
         readonly Mock<IFeatureRequestor> _mockRequestor;
         readonly IFeatureRequestor _requestor;
         readonly InMemoryDataStore _dataStore;
-        Client.Configuration _config;
+        Server.Configuration _config;
 
         public StreamProcessorTest()
         {
@@ -38,7 +37,7 @@ namespace LaunchDarkly.Tests
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
             _dataStore = new InMemoryDataStore();
-            _config = Client.Configuration.Builder(SDK_KEY)
+            _config = Server.Configuration.Builder(SDK_KEY)
                 .DataStore(TestUtils.SpecificDataStore(_dataStore))
                 .Build();
         }
@@ -46,7 +45,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void StreamUriHasCorrectEndpoint()
         {
-            _config = Client.Configuration.Builder(_config).StreamUri(new Uri("http://stream.test.com")).Build();
+            _config = Server.Configuration.Builder(_config).StreamUri(new Uri("http://stream.test.com")).Build();
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.Equal(new Uri("http://stream.test.com/all"),
                 _eventSourceFactory.ReceivedProperties.StreamUri);

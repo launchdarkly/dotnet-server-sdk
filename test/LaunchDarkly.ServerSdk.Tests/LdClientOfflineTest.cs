@@ -1,8 +1,8 @@
-﻿using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
+﻿using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientOfflineTest
     {

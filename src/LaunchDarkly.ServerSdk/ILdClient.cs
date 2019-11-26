@@ -1,5 +1,5 @@
 ﻿
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.

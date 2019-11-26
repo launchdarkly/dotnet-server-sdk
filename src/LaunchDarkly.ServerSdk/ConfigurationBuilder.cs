@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using Common.Logging;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// A mutable object that uses the Builder pattern to specify properties for a <see cref="Configuration"/> object.

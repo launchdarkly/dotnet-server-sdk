@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LaunchDarkly.Client;
-using Newtonsoft.Json.Linq;
-using Moq;
+﻿using Moq;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class ILdClientExtensionsTests
     {

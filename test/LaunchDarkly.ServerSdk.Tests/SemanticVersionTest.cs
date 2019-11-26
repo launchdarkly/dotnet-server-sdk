@@ -1,10 +1,9 @@
-﻿using LaunchDarkly.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class SemanticVersionTest
     {

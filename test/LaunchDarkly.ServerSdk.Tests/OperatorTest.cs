@@ -1,8 +1,7 @@
 using System;
-using LaunchDarkly.Client;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
 
     public class OperatorTest

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// Optional parameters that can be passed to <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>.

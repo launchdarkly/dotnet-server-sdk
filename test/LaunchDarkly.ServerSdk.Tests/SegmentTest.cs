@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Xunit;
-using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class SegmentTest
     {

@@ -1,10 +1,9 @@
-﻿using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Client.Utils;
+﻿using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server.Utils
 {
     public class DataStoreHelpersTest
     {

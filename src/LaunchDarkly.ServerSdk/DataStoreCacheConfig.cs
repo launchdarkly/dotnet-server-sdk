@@ -1,7 +1,7 @@
 ﻿using System;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// Parameters that can be used for <see cref="IDataStore"/> database integrations that support local caching.

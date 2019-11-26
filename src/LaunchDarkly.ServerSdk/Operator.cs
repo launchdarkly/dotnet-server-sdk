@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Common.Logging;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal.Helpers;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal static class Operator
     {
@@ -21,7 +21,7 @@ namespace LaunchDarkly.Client
                 case "key":
                     return LdValue.Of(user.Key);
                 case "secondary":
-                    return LdValue.Of(user.SecondaryKey);
+                    return LdValue.Of(user.Secondary);
                 case "ip":
                     return LdValue.Of(user.IPAddress);
                 case "email":

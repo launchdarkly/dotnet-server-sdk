@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// Convenience methods that extend the <see cref="ILdClient"/> interface.

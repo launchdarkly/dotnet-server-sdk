@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Threading;
-using LaunchDarkly.Client;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientManualTest
     {

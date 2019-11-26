@@ -1,6 +1,5 @@
-﻿using LaunchDarkly.Client;
-
-namespace LaunchDarkly.Tests
+﻿
+namespace LaunchDarkly.Sdk.Server
 {
     public class InMemoryDataStoreTest : DataStoreTestBase
     {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class FeatureFlagsStateTest
     {
