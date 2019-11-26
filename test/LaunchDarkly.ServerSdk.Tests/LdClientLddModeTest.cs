@@ -1,5 +1,6 @@
 ﻿using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Model;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server

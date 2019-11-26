@@ -2,7 +2,7 @@
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Model
 {
     internal class Segment : IVersionedData
     {

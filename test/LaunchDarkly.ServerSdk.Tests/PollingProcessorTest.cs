@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Model;
 using Moq;
 using Xunit;
 

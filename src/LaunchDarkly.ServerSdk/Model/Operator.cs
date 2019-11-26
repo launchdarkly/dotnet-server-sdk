@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Common.Logging;
 using LaunchDarkly.Sdk.Internal.Helpers;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Model
 {
     internal static class Operator
     {

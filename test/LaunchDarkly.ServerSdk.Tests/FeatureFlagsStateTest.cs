@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LaunchDarkly.Sdk.Server.Model;
 using Newtonsoft.Json;
 using Xunit;
 
