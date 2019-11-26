@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class Bucketing
+    internal static class Bucketing
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 

@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Model
     // so we'd like to minimize heap churn from things like that; hence we're avoiding lambdas here, and also using
     // structs rather than classes for intermediate state.
 
-    internal class Evaluator
+    internal sealed class Evaluator
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Evaluator));
 

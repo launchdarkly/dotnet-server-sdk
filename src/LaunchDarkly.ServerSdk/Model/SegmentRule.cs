@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class SegmentRule
+    internal sealed class SegmentRule
     {
         [JsonProperty(PropertyName = "clauses")]
         internal List<Clause> Clauses { get; private set; }

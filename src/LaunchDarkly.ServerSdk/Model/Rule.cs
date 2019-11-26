@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class Rule : VariationOrRollout
+    internal sealed class Rule : VariationOrRollout
     {
         [JsonProperty(PropertyName = "id")]
         internal string Id { get; private set; }

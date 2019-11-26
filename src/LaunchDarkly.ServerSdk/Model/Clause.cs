@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class Clause
+    internal sealed class Clause
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Clause));
 

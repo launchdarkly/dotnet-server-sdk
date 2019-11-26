@@ -6,7 +6,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class FeatureFlag : IVersionedData
+    internal sealed class FeatureFlag : IVersionedData
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureFlag));
 
