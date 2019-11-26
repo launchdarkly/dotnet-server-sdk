@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace LaunchDarkly.Client.Files
+namespace LaunchDarkly.Sdk.Server.Files
 {
     /// <summary>
     /// Implementation of file monitoring using FileSystemWatcher. In .NET Standard 1.x, that class

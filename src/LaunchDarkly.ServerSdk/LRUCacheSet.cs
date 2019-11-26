@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     // Simple, non-thread-safe LRU cache implementation used by DefaultEventProcessor.
     internal class LRUCacheSet<A>

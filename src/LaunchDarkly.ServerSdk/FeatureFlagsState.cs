@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using LaunchDarkly.Sdk.Internal.Helpers;
 using Newtonsoft.Json;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// A snapshot of the state of all feature flags with regard to a specific user. See
@@ -43,7 +44,7 @@ namespace LaunchDarkly.Client
             _flagMetadata = metadata;
         }
 
-        internal void AddFlag(FeatureFlag flag, LdValue value, int? variation, EvaluationReason reason,
+        internal void AddFlag(FeatureFlag flag, LdValue value, int? variation, EvaluationReason? reason,
             bool detailsOnlyIfTracked)
         {
             _flagValues[flag.Key] = value;
@@ -87,7 +88,7 @@ namespace LaunchDarkly.Client
         /// <param name="key">the feature flag key</param>
         /// <returns>the evaluation reason; null if reasons were not recorded, or if there was no
         /// such flag</returns>
-        public EvaluationReason GetFlagReason(string key)
+        public EvaluationReason? GetFlagReason(string key)
         {
             if (_flagMetadata.TryGetValue(key, out var meta))
             {
@@ -142,7 +143,7 @@ namespace LaunchDarkly.Client
 
         public override int GetHashCode()
         {
-            return ((_flagValues.GetHashCode() * 17) + _flagMetadata.GetHashCode()) * 17 + (_valid ? 1 : 0);
+            return Util.Hash().With(_flagValues).With(_flagMetadata).With(_valid).Value;
         }
         
         private static bool DictionariesEqual<T, U>(IDictionary<T, U> d0, IDictionary<T, U> d1)
@@ -163,7 +164,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "debugEventsUntilDate", NullValueHandling = NullValueHandling.Ignore)]
         internal long? DebugEventsUntilDate { get; set; }
         [JsonProperty(PropertyName = "reason", NullValueHandling = NullValueHandling.Ignore)]
-        internal EvaluationReason Reason { get; set; }
+        internal EvaluationReason? Reason { get; set; }
 
         public override bool Equals(object other)
         {
@@ -180,8 +181,7 @@ namespace LaunchDarkly.Client
 
         public override int GetHashCode()
         {
-            return (((((Variation.GetHashCode() * 17) + Version.GetHashCode()) * 17) + TrackEvents.GetHashCode()) * 17 +
-                DebugEventsUntilDate.GetHashCode()) * 17 + (Reason == null ? 0 : Reason.GetHashCode());
+            return Util.Hash().With(Variation).With(Version).With(TrackEvents).With(DebugEventsUntilDate).With(Reason).Value;
         }
     }
 

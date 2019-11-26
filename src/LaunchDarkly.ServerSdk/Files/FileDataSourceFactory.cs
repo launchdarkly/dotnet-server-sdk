@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client.Files
+namespace LaunchDarkly.Sdk.Server.Files
 {
     /// <summary>
     /// A factory for the file data source described in <see cref="FileComponents"/>.

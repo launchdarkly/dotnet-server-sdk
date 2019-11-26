@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using WireMock.Server;
 using WireMock.Settings;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     internal static class TestHttpUtils
     {

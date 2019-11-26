@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LaunchDarkly.Client.Files
+namespace LaunchDarkly.Sdk.Server.Files
 {
     internal class FlagFileParser
     {

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     // Note, exhaustive coverage of all the code paths for evaluation is in FeatureFlagTest.
     // LdClientEvaluationTest verifies that the LdClient evaluation methods do what they're

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Common.Logging;
 using Newtonsoft.Json;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal class FeatureFlag : IVersionedData, IFlagEventProperties
     {
@@ -92,15 +93,20 @@ namespace LaunchDarkly.Client
 
         // This method is called by EventFactory to determine if extra tracking should be
         // enabled for an event, based on the evaluation reason.
-        bool IFlagEventProperties.IsExperiment(EvaluationReason reason)
+        bool IFlagEventProperties.IsExperiment(EvaluationReason? reason)
         {
-            switch (reason.Kind)
+            if (!reason.HasValue)
+            {
+                return false;
+            }
+            var r = reason.Value;
+            switch (r.Kind)
             {
                 case EvaluationReasonKind.FALLTHROUGH:
                     return TrackEventsFallthrough;
                 case EvaluationReasonKind.RULE_MATCH:
-                    return reason.RuleIndex >= 0 && Rules != null && reason.RuleIndex < Rules.Count &&
-                        Rules[reason.RuleIndex].TrackEvents;
+                    return r.RuleIndex >= 0 && Rules != null && r.RuleIndex < Rules.Count &&
+                        Rules[r.RuleIndex].TrackEvents;
             }
             return false;
         }
@@ -130,9 +136,9 @@ namespace LaunchDarkly.Client
             }
 
             var prereqFailureReason = CheckPrerequisites(user, dataStore, events, eventFactory);
-            if (prereqFailureReason != null)
+            if (prereqFailureReason.HasValue)
             {
-                return GetOffValue(prereqFailureReason);
+                return GetOffValue(prereqFailureReason.Value);
             }
             
             // Check to see if targets match
@@ -168,7 +174,7 @@ namespace LaunchDarkly.Client
 
         // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
         // short-circuit due to a prerequisite failure.
-        private EvaluationReason CheckPrerequisites(User user, IDataStore dataStore, IList<FeatureRequestEvent> events,
+        private EvaluationReason? CheckPrerequisites(User user, IDataStore dataStore, IList<FeatureRequestEvent> events,
             EventFactory eventFactory)
         {
             if (Prerequisites == null || Prerequisites.Count == 0)

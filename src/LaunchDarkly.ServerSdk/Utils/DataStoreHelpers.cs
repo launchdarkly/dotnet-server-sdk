@@ -1,8 +1,8 @@
 ﻿using System;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 
-namespace LaunchDarkly.Client.Utils
+namespace LaunchDarkly.Sdk.Server.Utils
 {
     /// <summary>
     /// Helper methods that may be useful for implementing <see cref="IDataStore"/> or

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client.Utils.Tests
+namespace LaunchDarkly.Sdk.Server.Utils
 {
     // Runs all the CachingStoreWrapper tests with an async data store implementation.
     public class CachingStoreWrapperTestAsync : CachingStoreWrapperTestBase<MockCoreAsync>

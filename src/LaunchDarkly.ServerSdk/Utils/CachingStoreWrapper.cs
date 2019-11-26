@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Cache;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client.Utils
+namespace LaunchDarkly.Sdk.Server.Utils
 {
     /// <summary>
     /// A partial implementation of <see cref="IDataStore"/> that delegates the basic functionality to

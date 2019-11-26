@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Moq;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
     public class LdClientTest

@@ -1,5 +1,5 @@
 ﻿
-namespace LaunchDarkly.Client.Interfaces
+namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Common interface for string-keyed, versioned objects that can be kept in the SDK's data store.

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Common.Logging;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal class Clause
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// Provides additional behavior that the client requires before or after data store operations.

@@ -2,12 +2,11 @@
 using System.IO;
 using System.Threading;
 using Xunit;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Files;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Files;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using YamlDotNet.Serialization;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class FileDataSourceTest
     {

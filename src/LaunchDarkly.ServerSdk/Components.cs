@@ -1,8 +1,10 @@
 ﻿using Common.Logging;
-using LaunchDarkly.Common;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Internal.Helpers;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// Provides factories for the standard implementations of LaunchDarkly component interfaces.

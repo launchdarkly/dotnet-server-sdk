@@ -2,14 +2,14 @@
 // for the namespace. The other way to document a namespace is to add this XML to the .shfbproj file:
 //
 // <NamespaceSummaries>
-//   <NamespaceSummaryItem name="LaunchDarkly.Client.Interfaces" isDocumented="True" xmlns="">
+//   <NamespaceSummaryItem name="LaunchDarkly.Sdk.Server.Interfaces" isDocumented="True" xmlns="">
 //     ...summary here...
 //   </NamespaceSummaryItem
 // </NamespaceSummaries>
 //
 // However, currently Sandcastle does not correctly resolve links if you use that method.
 
-namespace LaunchDarkly.Client.Interfaces
+namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Namespace for interfaces that allow customization of LaunchDarkly components.

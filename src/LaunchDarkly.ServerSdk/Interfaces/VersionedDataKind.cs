@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LaunchDarkly.Client.Interfaces
+namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Objects used by data store implementations to denote a specific collection of

@@ -1,7 +1,7 @@
-﻿using LaunchDarkly.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LaunchDarkly.Sdk.Internal;
 using WireMock;
 using WireMock.Logging;
 using WireMock.RequestBuilders;
@@ -11,7 +11,7 @@ using WireMock.Settings;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class FeatureRequestorTest
     {

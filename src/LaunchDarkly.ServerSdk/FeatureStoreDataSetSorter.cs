@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+namespace LaunchDarkly.Sdk.Server
 {
     internal abstract class DataStoreDataSetSorter
     {
@@ -21,8 +21,7 @@ namespace LaunchDarkly.Client
         private static IDictionary<string, IVersionedData> SortCollection(IVersionedDataKind kind,
             IDictionary<string, IVersionedData> input)
         {
-            var ordering = kind as IVersionedDataOrdering;
-            if (ordering == null)
+            if (!(kind is IVersionedDataOrdering ordering))
             {
                 return input;
             }

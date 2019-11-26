@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class FeatureFlagTest
     {

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class TestUtils
     {

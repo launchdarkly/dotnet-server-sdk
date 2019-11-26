@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Xunit;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public abstract class DataStoreTestBase
     {

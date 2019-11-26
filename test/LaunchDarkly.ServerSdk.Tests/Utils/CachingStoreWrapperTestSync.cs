@@ -1,6 +1,6 @@
-﻿using LaunchDarkly.Client.Interfaces;
+﻿using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client.Utils.Tests
+namespace LaunchDarkly.Sdk.Server.Utils
 {
     // Runs all the CachingStoreWrapper tests with a synchronous data store implementation.
     public class CachingStoreWrapperTestSync : CachingStoreWrapperTestBase<MockCoreSync>

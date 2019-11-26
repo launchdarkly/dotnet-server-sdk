@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client.Utils
+namespace LaunchDarkly.Sdk.Server.Utils
 {
     /// <summary>
     /// Used internally by CachingStoreWrapper to call asynchronous IDataStoreCoreAsync

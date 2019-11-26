@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LaunchDarkly.Client.Files
+namespace LaunchDarkly.Sdk.Server.Files
 {
     // Represents the data structure that we parse files into, and provides the logic for
     // transferring its contents into the format used by the data store.

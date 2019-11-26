@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Client;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     internal class FeatureFlagBuilder
     {

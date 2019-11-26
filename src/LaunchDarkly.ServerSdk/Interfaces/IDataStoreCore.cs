@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Client.Utils;
+using LaunchDarkly.Sdk.Server.Utils;
 
-namespace LaunchDarkly.Client.Interfaces
+namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Interface for a simplified subset of the functionality of <see cref="IDataStore"/>, to be
