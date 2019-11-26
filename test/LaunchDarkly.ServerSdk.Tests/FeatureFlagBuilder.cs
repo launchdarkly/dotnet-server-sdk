@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using LaunchDarkly.Client;
-using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Tests
 {
@@ -17,7 +14,7 @@ namespace LaunchDarkly.Tests
         private List<Rule> _rules = new List<Rule>();
         private VariationOrRollout _fallthrough;
         private int? _offVariation;
-        private List<JToken> _variations;
+        private List<LdValue> _variations;
         private bool _trackEvents;
         private bool _trackEventsFallthrough;
         private long? _debugEventsUntilDate;
@@ -124,15 +121,15 @@ namespace LaunchDarkly.Tests
             return this;
         }
 
-        internal FeatureFlagBuilder Variations(List<JToken> variations)
+        internal FeatureFlagBuilder Variations(List<LdValue> variations)
         {
             _variations = variations;
             return this;
         }
 
-        internal FeatureFlagBuilder Variations(params JToken[] variations)
+        internal FeatureFlagBuilder Variations(params LdValue[] variations)
         {
-            return Variations(new List<JToken>(variations));
+            return Variations(new List<LdValue>(variations));
         }
 
         internal FeatureFlagBuilder TrackEvents(bool trackEvents)
@@ -165,7 +162,7 @@ namespace LaunchDarkly.Tests
             return this;
         }
 
-        internal FeatureFlagBuilder OffWithValue(JToken value)
+        internal FeatureFlagBuilder OffWithValue(LdValue value)
         {
             return On(false).OffVariation(0).Variations(value);
         }
@@ -173,7 +170,7 @@ namespace LaunchDarkly.Tests
         internal FeatureFlagBuilder BooleanWithClauses(params Clause[] clauses)
         {
             return On(true).OffVariation(0)
-                .Variations(new JValue(false), new JValue(true))
+                .Variations(LdValue.Of(false), LdValue.Of(true))
                 .Rules(new RuleBuilder().Id("id").Variation(1).Clauses(clauses).Build());
         }
     }
@@ -231,7 +228,7 @@ namespace LaunchDarkly.Tests
     {
         private string _attribute;
         private string _op;
-        private List<JValue> _values = new List<JValue>();
+        private List<LdValue> _values = new List<LdValue>();
         private bool _negate;
 
         internal Clause Build()
@@ -251,15 +248,15 @@ namespace LaunchDarkly.Tests
             return this;
         }
 
-        public ClauseBuilder Values(List<JValue> values)
+        public ClauseBuilder Values(List<LdValue> values)
         {
             _values = values;
             return this;
         }
 
-        public ClauseBuilder Values(params JValue[] values)
+        public ClauseBuilder Values(params LdValue[] values)
         {
-            return Values(new List<JValue>(values));
+            return Values(new List<LdValue>(values));
         }
 
         public ClauseBuilder Negate(bool negate)
@@ -270,7 +267,7 @@ namespace LaunchDarkly.Tests
 
         public ClauseBuilder KeyIs(string key)
         {
-            return Attribute("key").Op("in").Values(new JValue(key));
+            return Attribute("key").Op("in").Values(LdValue.Of(key));
         }
 
         public static Clause ShouldMatchUser(User user)

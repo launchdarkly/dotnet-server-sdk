@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Common.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
@@ -31,7 +30,7 @@ namespace LaunchDarkly.Client
         [JsonProperty(PropertyName = "offVariation")]
         internal int? OffVariation { get; private set; }
         [JsonProperty(PropertyName = "variations")]
-        internal List<JToken> Variations { get; private set; }
+        internal List<LdValue> Variations { get; private set; }
         [JsonProperty(PropertyName = "trackEvents")]
         public bool TrackEvents { get; private set; }
         [JsonProperty(PropertyName = "trackEventsFallthrough")]
@@ -46,7 +45,7 @@ namespace LaunchDarkly.Client
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
             List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation,
-            List<JToken> variations, bool trackEvents, bool trackEventsFallthrough, long? debugEventsUntilDate,
+            List<LdValue> variations, bool trackEvents, bool trackEventsFallthrough, long? debugEventsUntilDate,
             bool deleted, bool clientSide)
         {
             Key = key;
@@ -95,13 +94,13 @@ namespace LaunchDarkly.Client
         // enabled for an event, based on the evaluation reason.
         bool IFlagEventProperties.IsExperiment(EvaluationReason reason)
         {
-            switch (reason)
+            switch (reason.Kind)
             {
-                case EvaluationReason.Fallthrough _:
+                case EvaluationReasonKind.FALLTHROUGH:
                     return TrackEventsFallthrough;
-                case EvaluationReason.RuleMatch r:
-                    return r.RuleIndex >= 0 && Rules != null && r.RuleIndex < Rules.Count &&
-                        Rules[r.RuleIndex].TrackEvents;
+                case EvaluationReasonKind.RULE_MATCH:
+                    return reason.RuleIndex >= 0 && Rules != null && reason.RuleIndex < Rules.Count &&
+                        Rules[reason.RuleIndex].TrackEvents;
             }
             return false;
         }
@@ -115,7 +114,7 @@ namespace LaunchDarkly.Client
                     Key);
 
                 return new EvalResult(
-                    new EvaluationDetail<LdValue>(LdValue.Null, null, new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED)),
+                    new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED)),
                     prereqEvents);
             }
             var details = Evaluate(user, dataStore, prereqEvents, eventFactory);
@@ -127,7 +126,7 @@ namespace LaunchDarkly.Client
         {
             if (!On)
             {
-                return GetOffValue(EvaluationReason.Off.Instance);
+                return GetOffValue(EvaluationReason.OffReason);
             }
 
             var prereqFailureReason = CheckPrerequisites(user, dataStore, events, eventFactory);
@@ -145,7 +144,7 @@ namespace LaunchDarkly.Client
                     {
                         if (user.Key == v)
                         {
-                            return GetVariation(target.Variation, EvaluationReason.TargetMatch.Instance);
+                            return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
                         }
                     }
                 }
@@ -159,12 +158,12 @@ namespace LaunchDarkly.Client
                     if (rule.MatchesUser(user, dataStore))
                     {
                         return GetValueForVariationOrRollout(rule, user,
-                            new EvaluationReason.RuleMatch(i, rule.Id));
+                            EvaluationReason.RuleMatchReason(i, rule.Id));
                     }
                 }
             }
             // Walk through the fallthrough and see if it matches
-            return GetValueForVariationOrRollout(Fallthrough, user, EvaluationReason.Fallthrough.Instance);
+            return GetValueForVariationOrRollout(Fallthrough, user, EvaluationReason.FallthroughReason);
         }
 
         // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
@@ -201,7 +200,7 @@ namespace LaunchDarkly.Client
                 }
                 if (!prereqOk)
                 {
-                    return new EvaluationReason.PrerequisiteFailed(prereq.Key);
+                    return EvaluationReason.PrerequisiteFailedReason(prereq.Key);
                 }
             }
             return null;
@@ -209,7 +208,7 @@ namespace LaunchDarkly.Client
         
         internal EvaluationDetail<LdValue> ErrorResult(EvaluationErrorKind kind)
         {
-            return new EvaluationDetail<LdValue>(LdValue.Null, null, new EvaluationReason.Error(kind));
+            return new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(kind));
         }
 
         internal EvaluationDetail<LdValue> GetVariation(int variation, EvaluationReason reason)
@@ -219,7 +218,7 @@ namespace LaunchDarkly.Client
                 Log.ErrorFormat("Data inconsistency in feature flag \"{0}\": invalid variation index", Key);
                 return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
             }
-            return new EvaluationDetail<LdValue>(LdValue.FromSafeValue(Variations[variation]), variation, reason);
+            return new EvaluationDetail<LdValue>(Variations[variation], variation, reason);
         }
 
         internal EvaluationDetail<LdValue> GetOffValue(EvaluationReason reason)

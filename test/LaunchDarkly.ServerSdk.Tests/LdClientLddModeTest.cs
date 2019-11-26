@@ -1,7 +1,6 @@
 ﻿using LaunchDarkly.Client;
 using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Tests
@@ -43,7 +42,7 @@ namespace LaunchDarkly.Tests
         {
             var dataStore = new InMemoryDataStore();
             dataStore.Upsert(VersionedDataKind.Features,
-                new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
+                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
             var config = Configuration.Builder("SDK_KEY")
                 .UseLdd(true)
                 .DataStore(TestUtils.SpecificDataStore(dataStore))

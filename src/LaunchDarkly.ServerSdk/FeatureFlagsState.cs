@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Client
 {
@@ -18,9 +18,9 @@ namespace LaunchDarkly.Client
     public class FeatureFlagsState
     {
         internal readonly bool _valid;
-        internal readonly IDictionary<string, JToken> _flagValues;
+        internal readonly IDictionary<string, LdValue> _flagValues;
         internal readonly IDictionary<string, FlagMetadata> _flagMetadata;
-        private volatile Dictionary<string, LdValue> _immutableValuesMap; // lazily created
+        private volatile ImmutableDictionary<string, LdValue> _immutableValuesMap; // lazily created
         
         /// <summary>
         /// True if this object contains a valid snapshot of feature flag state, or false if the
@@ -31,11 +31,11 @@ namespace LaunchDarkly.Client
         internal FeatureFlagsState(bool valid)
         {
             _valid = valid;
-            _flagValues = new Dictionary<string, JToken>();
+            _flagValues = new Dictionary<string, LdValue>();
             _flagMetadata = new Dictionary<string, FlagMetadata>();
         }
 
-        internal FeatureFlagsState(bool valid, IDictionary<string, JToken> values,
+        internal FeatureFlagsState(bool valid, IDictionary<string, LdValue> values,
             IDictionary<string, FlagMetadata> metadata)
         {
             _valid = valid;
@@ -43,7 +43,7 @@ namespace LaunchDarkly.Client
             _flagMetadata = metadata;
         }
 
-        internal void AddFlag(FeatureFlag flag, JToken value, int? variation, EvaluationReason reason,
+        internal void AddFlag(FeatureFlag flag, LdValue value, int? variation, EvaluationReason reason,
             bool detailsOnlyIfTracked)
         {
             _flagValues[flag.Key] = value;
@@ -63,19 +63,7 @@ namespace LaunchDarkly.Client
             }
             _flagMetadata[flag.Key] = meta;
         }
-
-        /// <summary>
-        /// Returns the value of an individual feature flag at the time the state was recorded.
-        /// </summary>
-        /// <param name="key">the feature flag key</param>
-        /// <returns>the flag's JSON value; null if the flag returned the default value, or if
-        /// there was no such flag</returns>
-        [Obsolete("Use GetFlagValueJson; JToken will be removed from the public API in the future")]
-        public JToken GetFlagValue(string key)
-        {
-            return GetFlagValueJson(key).InnerValue;
-        }
-
+        
         /// <summary>
         /// Returns the value of an individual feature flag at the time the state was recorded.
         /// </summary>
@@ -86,7 +74,7 @@ namespace LaunchDarkly.Client
         {
             if (_flagValues.TryGetValue(key, out var value))
             {
-                return LdValue.FromSafeValue(value);
+                return value;
             }
             return LdValue.Null;
         }
@@ -107,27 +95,7 @@ namespace LaunchDarkly.Client
             }
             return null;
         }
-
-        /// <summary>
-        /// Returns a dictionary of flag keys to flag values.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// If a flag would have evaluated to the default value, its value will be <see langword="null"/>.
-        /// </para>
-        /// <para>
-        /// Do not use this method if you are passing data to the front end to "bootstrap" the
-        /// JavaScript client. Instead, serialize the <see cref="FeatureFlagsState"/> object to JSON
-        /// using <c>JsonConvert.SerializeObject()</c>.
-        /// </para>
-        /// </remarks>
-        /// <returns>a dictionary of flag keys to flag values</returns>
-        [Obsolete("Use ToValuesJsonMap")]
-        public IDictionary<string, JToken> ToValuesMap()
-        {
-            return _flagValues;
-        }
-
+        
         /// <summary>
         /// Returns a dictionary of flag keys to flag values.
         /// </summary>
@@ -152,30 +120,35 @@ namespace LaunchDarkly.Client
                 if (_immutableValuesMap is null)
                 {
                     // There's a potential race condition here but the result is the same either way, so 
-                    _immutableValuesMap = _flagValues.ToDictionary<KeyValuePair<string, JToken>, string, LdValue>(
-                        pair => pair.Key,
-                        pair => LdValue.FromSafeValue(pair.Value));
+                    _immutableValuesMap = _flagValues.ToImmutableDictionary();
                 }
                 return _immutableValuesMap;
             }
         }
 
-        /// <see cref="object.Equals(object)"/>
+        /// <inheritdoc/>
         public override bool Equals(object other)
         {
             if (other is FeatureFlagsState o)
             {
                 return _valid == o._valid &&
-                    _flagValues.SequenceEqual(o._flagValues) &&
-                    _flagMetadata.SequenceEqual(o._flagMetadata);
+                    DictionariesEqual(_flagValues, o._flagValues) &&
+                    DictionariesEqual(_flagMetadata, o._flagMetadata);
             }
             return false;
         }
 
-        /// <see cref="object.GetHashCode()"/>
+        /// <inheritdoc/>
+
         public override int GetHashCode()
         {
             return ((_flagValues.GetHashCode() * 17) + _flagMetadata.GetHashCode()) * 17 + (_valid ? 1 : 0);
+        }
+        
+        private static bool DictionariesEqual<T, U>(IDictionary<T, U> d0, IDictionary<T, U> d1)
+        {
+            return d0.Count == d1.Count && d0.All(kv =>
+                d1.TryGetValue(kv.Key, out var v) && kv.Value.Equals(v));
         }
     }
 
@@ -241,29 +214,28 @@ namespace LaunchDarkly.Client
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var valid = true;
-            var flagValues = new Dictionary<string, JToken>();
+            var flagValues = new Dictionary<string, LdValue>();
             var flagMetadata = new Dictionary<string, FlagMetadata>();
             // This is somewhat inefficient, compared to interacting with the JsonReader directly, but
             // it's much easier to write this way. Deserialization isn't a typical use case for this
             // class anyway.
-            JObject o = serializer.Deserialize<JObject>(reader);
-            foreach (var prop in o.Properties())
+            LdValue o = serializer.Deserialize<LdValue>(reader);
+            foreach (var kv in o.AsDictionary(LdValue.Convert.Json))
             {
-                if (prop.Name == "$flagsState")
+                if (kv.Key == "$flagsState")
                 {
-                    var o1 = (JObject)prop.Value;
-                    foreach (var prop1 in o1.Properties())
+                    foreach (var prop1 in kv.Value.AsDictionary(LdValue.Convert.Json))
                     {
-                        flagMetadata[prop1.Name] = o1.GetValue(prop1.Name).ToObject<FlagMetadata>();
+                        flagMetadata[prop1.Key] = JsonConvert.DeserializeObject<FlagMetadata>(prop1.Value.ToJsonString());
                     }
                 }
-                else if (prop.Name == "$valid")
+                else if (kv.Key == "$valid")
                 {
-                    valid = (bool)prop.Value;
+                    valid = kv.Value.AsBool;
                 }
                 else
                 {
-                    flagValues[prop.Name] = prop.Value;
+                    flagValues[kv.Key] = kv.Value;
                 }
             }
             return new FeatureFlagsState(valid, flagValues, flagMetadata);

@@ -207,15 +207,15 @@ namespace LaunchDarkly.Client
                 try
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _dataStore, EventFactory.Default);
-                    state.AddFlag(flag, result.Result.Value.InnerValue, result.Result.VariationIndex,
+                    state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
                         withReasons ? result.Result.Reason : null, detailsOnlyIfTracked);
                 }
                 catch (Exception e)
                 {
                     Log.ErrorFormat("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key, Util.ExceptionMessage(e));
                     Log.Debug(e.ToString(), e);
-                    EvaluationReason reason = new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION);
-                    state.AddFlag(flag, null, null, withReasons ? reason : null, detailsOnlyIfTracked);
+                    EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
+                    state.AddFlag(flag, LdValue.Null, null, withReasons ? reason : null, detailsOnlyIfTracked);
                 }
             }
             return state;
@@ -235,7 +235,7 @@ namespace LaunchDarkly.Client
                 {
                     Log.Warn("Flag evaluation before client initialized; data store unavailable, returning default value");
                     return new EvaluationDetail<T>(defaultValueOfType, null,
-                        new EvaluationReason.Error(EvaluationErrorKind.CLIENT_NOT_READY));
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.CLIENT_NOT_READY));
                 }
             }
 
@@ -250,7 +250,7 @@ namespace LaunchDarkly.Client
                     _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue,
                         EvaluationErrorKind.FLAG_NOT_FOUND));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
-                        new EvaluationReason.Error(EvaluationErrorKind.FLAG_NOT_FOUND));
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.FLAG_NOT_FOUND));
                 }
 
                 if (user == null || user.Key == null)
@@ -259,7 +259,7 @@ namespace LaunchDarkly.Client
                     _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user, defaultValue,
                         EvaluationErrorKind.USER_NOT_SPECIFIED));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
-                        new EvaluationReason.Error(EvaluationErrorKind.USER_NOT_SPECIFIED));
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
                 }
                 
                 FeatureFlag.EvalResult evalResult = featureFlag.Evaluate(user, _dataStore, eventFactory);
@@ -289,7 +289,7 @@ namespace LaunchDarkly.Client
                         _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(featureFlag, user,
                             defaultValue, EvaluationErrorKind.WRONG_TYPE));
                         return new EvaluationDetail<T>(defaultValueOfType, null,
-                            new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+                            EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
                     }
                     returnDetail = new EvaluationDetail<T>(converter.ToType(evalDetail.Value),
                         evalDetail.VariationIndex, evalDetail.Reason);
@@ -305,7 +305,7 @@ namespace LaunchDarkly.Client
                      featureKey,
                      user.Key);
                 Log.Debug(e.ToString(), e);
-                var reason = new EvaluationReason.Error(EvaluationErrorKind.EXCEPTION);
+                var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
                 if (featureFlag == null)
                 {
                     _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user,

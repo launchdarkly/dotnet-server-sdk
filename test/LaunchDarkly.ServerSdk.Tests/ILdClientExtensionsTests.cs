@@ -72,11 +72,11 @@ namespace LaunchDarkly.Tests
         {
             var clientMock = new Mock<ILdClient>();
             clientMock.Setup(c => c.StringVariationDetail("key", defaultUser, "Blue"))
-                .Returns(new EvaluationDetail<string>("Green", 1, EvaluationReason.Fallthrough.Instance));
+                .Returns(new EvaluationDetail<string>("Green", 1, EvaluationReason.FallthroughReason));
             var client = clientMock.Object;
 
             var result = client.EnumVariationDetail("key", defaultUser, MyEnum.Blue);
-            var expected = new EvaluationDetail<MyEnum>(MyEnum.Green, 1, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<MyEnum>(MyEnum.Green, 1, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result);
         }
 
@@ -85,11 +85,11 @@ namespace LaunchDarkly.Tests
         {
             var clientMock = new Mock<ILdClient>();
             clientMock.Setup(c => c.StringVariationDetail("key", defaultUser, "Blue"))
-                .Returns(new EvaluationDetail<string>("not-a-color", 1, EvaluationReason.Fallthrough.Instance));
+                .Returns(new EvaluationDetail<string>("not-a-color", 1, EvaluationReason.FallthroughReason));
             var client = clientMock.Object;
 
             var result = client.EnumVariationDetail("key", defaultUser, MyEnum.Blue);
-            var expected = new EvaluationDetail<MyEnum>(MyEnum.Blue, 1, new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+            var expected = new EvaluationDetail<MyEnum>(MyEnum.Blue, 1, EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
             Assert.Equal(expected, result);
         }
 
@@ -98,11 +98,11 @@ namespace LaunchDarkly.Tests
         {
             var clientMock = new Mock<ILdClient>();
             clientMock.Setup(c => c.StringVariationDetail("key", defaultUser, "Blue"))
-                .Returns(new EvaluationDetail<string>(null, 1, EvaluationReason.Fallthrough.Instance));
+                .Returns(new EvaluationDetail<string>(null, 1, EvaluationReason.FallthroughReason));
             var client = clientMock.Object;
 
             var result = client.EnumVariationDetail("key", defaultUser, MyEnum.Blue);
-            var expected = new EvaluationDetail<MyEnum>(MyEnum.Blue, 1, EvaluationReason.Fallthrough.Instance);
+            var expected = new EvaluationDetail<MyEnum>(MyEnum.Blue, 1, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result);
         }
 
@@ -112,11 +112,11 @@ namespace LaunchDarkly.Tests
             var defaultValue = "this is a string, not an enum";
             var clientMock = new Mock<ILdClient>();
             clientMock.Setup(c => c.StringVariationDetail("key", defaultUser, defaultValue))
-                .Returns(new EvaluationDetail<string>("Green", 1, EvaluationReason.Fallthrough.Instance));
+                .Returns(new EvaluationDetail<string>("Green", 1, EvaluationReason.FallthroughReason));
             var client = clientMock.Object;
 
             var result = client.EnumVariationDetail("key", defaultUser, defaultValue);
-            var expected = new EvaluationDetail<string>(defaultValue, 1, new EvaluationReason.Error(EvaluationErrorKind.WRONG_TYPE));
+            var expected = new EvaluationDetail<string>(defaultValue, 1, EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
             Assert.Equal(expected, result);
         }
 
