@@ -5,6 +5,7 @@ using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -27,13 +28,13 @@ namespace LaunchDarkly.Sdk.Server
         private readonly IDataStore _dataStore;
 
         internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor,
-            IDataStore dataStore, StreamManager.EventSourceCreator eventSourceCreator)
+            IDataStore dataStore, StreamManager.EventSourceCreator eventSourceCreator, IDiagnosticStore diagnosticStore)
         {
             _streamManager = new StreamManager(this,
                 MakeStreamProperties(config),
                 config.StreamManagerConfiguration,
                 ServerSideClientEnvironment.Instance,
-                eventSourceCreator);
+                eventSourceCreator, diagnosticStore);
             _config = config;
             _featureRequestor = featureRequestor;
             _dataStore = dataStore;

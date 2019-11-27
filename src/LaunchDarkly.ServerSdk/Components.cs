@@ -79,12 +79,14 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    internal class DefaultEventProcessorFactory : IEventProcessorFactory
+    internal class DefaultEventProcessorFactory : IEventProcessorFactoryWithDiagnostics
     {
-        private const string EventsUriPath = "bulk";
-
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
         {
+            return CreateEventProcessor(config, null);
+        }
+
+        public IEventProcessor CreateEventProcessor(Configuration config, IDiagnosticStore diagnosticStore) {
             if (config.Offline)
             {
                 return new NullEventProcessor();
@@ -94,7 +96,7 @@ namespace LaunchDarkly.Sdk.Server
                 return new DefaultEventProcessor(config.EventProcessorConfiguration,
                     new DefaultUserDeduplicator(config),
                     Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
-                    EventsUriPath);
+                    diagnosticStore, null, null);
             }
         }
     }
@@ -115,12 +117,17 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    internal class DefaultDataSourceFactory : IDataSourceFactory
+    internal class DefaultDataSourceFactory : IDataSourceFactoryWithDiagnostics
     {
         // Note, logger uses LDClient class name for backward compatibility
         private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
-        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IDataStore dataStore)
+        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore)
+        {
+            return CreateDataSource(config, dataStore, null);
+        }
+
+        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore, IDiagnosticStore diagnosticStore)
         {
             if (config.Offline)
             {
@@ -137,7 +144,7 @@ namespace LaunchDarkly.Sdk.Server
                 FeatureRequestor requestor = new FeatureRequestor(config);
                 if (config.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(config, requestor, dataStore, null);
+                    return new StreamProcessor(config, requestor, dataStore, null, diagnosticStore);
                 }
                 else
                 {
