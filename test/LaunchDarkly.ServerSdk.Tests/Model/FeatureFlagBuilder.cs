@@ -169,8 +169,14 @@ namespace LaunchDarkly.Sdk.Server.Model
         internal FeatureFlagBuilder BooleanWithClauses(params Clause[] clauses)
         {
             return On(true).OffVariation(0)
+                .FallthroughVariation(0)
                 .Variations(LdValue.Of(false), LdValue.Of(true))
                 .Rules(new RuleBuilder().Id("id").Variation(1).Clauses(clauses).Build());
+        }
+
+        internal FeatureFlagBuilder BooleanMatchingSegment(string segmentKey)
+        {
+            return BooleanWithClauses(ClauseBuilder.ShouldMatchSegment(segmentKey));
         }
     }
 
@@ -277,6 +283,11 @@ namespace LaunchDarkly.Sdk.Server.Model
         public static Clause ShouldNotMatchUser(User user)
         {
             return new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
+        }
+
+        public static Clause ShouldMatchSegment(string segmentKey)
+        {
+            return new ClauseBuilder().Attribute("").Op("segmentMatch").Values(LdValue.Of(segmentKey)).Build();
         }
     }
 }

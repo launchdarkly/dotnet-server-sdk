@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class Segment : IVersionedData
+    internal sealed class Segment : IVersionedData
     {
         [JsonProperty(PropertyName = "key")]
         public string Key { get; private set; }
@@ -36,32 +36,6 @@ namespace LaunchDarkly.Sdk.Server.Model
 
         internal Segment()
         {
-        }
-
-        public bool MatchesUser(User user)
-        {
-            if (user.Key != null)
-            {
-                if (Included != null && Included.Contains(user.Key))
-                {
-                    return true;
-                }
-                if (Excluded != null && Excluded.Contains(user.Key))
-                {
-                    return false;
-                }
-                if (Rules != null)
-                {
-                    foreach (var rule in Rules)
-                    {
-                        if (rule.MatchesUser(user, this.Key, this.Salt))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
         }
     }
 }

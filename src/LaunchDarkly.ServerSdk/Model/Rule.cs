@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {
-    internal class Rule : VariationOrRollout
+    internal sealed class Rule : VariationOrRollout
     {
         [JsonProperty(PropertyName = "id")]
         internal string Id { get; private set; }
@@ -21,18 +20,6 @@ namespace LaunchDarkly.Sdk.Server.Model
             Id = id;
             Clauses = clauses;
             TrackEvents = trackEvents;
-        }
-
-        internal bool MatchesUser(User user, IDataStore store)
-        {
-            foreach (var c in Clauses)
-            {
-                if (!c.MatchesUser(user, store))
-                {
-                    return false;
-                }
-            }
-            return true;
         }
     }
 }
