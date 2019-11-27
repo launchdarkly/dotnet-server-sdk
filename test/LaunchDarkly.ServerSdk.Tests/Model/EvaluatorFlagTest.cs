@@ -176,7 +176,8 @@ namespace LaunchDarkly.Sdk.Server.Model
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f0, baseUser, EventFactory.Default);
+            var evaluator = BasicEvaluator.WithNonexistentFlag("feature1");
+            var result = evaluator.Evaluate(f0, baseUser, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(offValue, 1,
                 EvaluationReason.PrerequisiteFailedReason("feature1"));

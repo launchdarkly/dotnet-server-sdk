@@ -84,8 +84,9 @@ namespace LaunchDarkly.Sdk.Server.Model
         {
             var f = new FeatureFlagBuilder("key").BooleanMatchingSegment("segkey").Build();
             var user = User.WithKey("foo");
+            var evaluator = BasicEvaluator.WithNonexistentSegment("segkey");
 
-            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), evaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
         }
     }
 }
