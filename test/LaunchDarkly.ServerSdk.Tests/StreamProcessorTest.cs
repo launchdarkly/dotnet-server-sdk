@@ -217,7 +217,7 @@ namespace LaunchDarkly.Sdk.Server
         private StreamProcessor CreateProcessor()
         {
             return new StreamProcessor(_config, _requestor, _dataStore,
-                _eventSourceFactory.Create());
+                _eventSourceFactory.Create(), null);
         }
 
         private StreamProcessor CreateAndStartProcessor()

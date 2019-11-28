@@ -71,6 +71,67 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void DiagnosticStorePassedToFactoriesWhenSupported()
+        {
+            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
+            var dsfwd = new Mock<IDataSourceFactoryWithDiagnostics>();
+            var config = Configuration.Builder("SDK_KEY")
+                .IsStreamingEnabled(false)
+                .BaseUri(new Uri("http://fake"))
+                .StartWaitTime(TimeSpan.Zero)
+                .EventProcessorFactory(epfwd.Object)
+                .DataSource(dsfwd.Object)
+                .Build();
+
+            IDiagnosticStore eventProcessorDiagnosticStore = null;
+            IDiagnosticStore updateProcessorDiagnosticStore = null;
+
+            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
+                .Callback<Configuration, IDiagnosticStore>((c, ds) => eventProcessorDiagnosticStore = ds)
+                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
+            dsfwd.Setup(dsf => dsf.CreateDataSource(config, It.IsAny<IDataStore>(), It.IsAny<IDiagnosticStore>()))
+                .Callback<Configuration, IDataStore, IDiagnosticStore>((c, fs, ds) => updateProcessorDiagnosticStore = ds)
+                .Returns(dataSource);
+
+            using (var client = new LdClient(config))
+            {
+                epfwd.Verify(epf => epf.CreateEventProcessor(config, It.IsNotNull<IDiagnosticStore>()), Times.Once());
+                epfwd.VerifyNoOtherCalls();
+                dsfwd.Verify(dsf => dsf.CreateDataSource(config, It.IsNotNull<IDataStore>(), It.IsNotNull<IDiagnosticStore>()), Times.Once());
+                dsfwd.VerifyNoOtherCalls();
+                Assert.True(eventProcessorDiagnosticStore == updateProcessorDiagnosticStore);
+            }
+        }
+
+        [Fact]
+        public void DiagnosticStoreNotPassedToFactoriesWhenOptedOut()
+        {
+            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
+            var dsfwd = new Mock<IDataSourceFactoryWithDiagnostics>();
+            var config = Configuration.Builder("SDK_KEY")
+                .IsStreamingEnabled(false)
+                .BaseUri(new Uri("http://fake"))
+                .StartWaitTime(TimeSpan.Zero)
+                .EventProcessorFactory(epfwd.Object)
+                .DataSource(dsfwd.Object)
+                .DiagnosticOptOut(true)
+                .Build();
+
+            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
+                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
+            dsfwd.Setup(upf => upf.CreateDataSource(config, It.IsAny<IDataStore>(), It.IsAny<IDiagnosticStore>()))
+                .Returns(dataSource);
+
+            using (var client = new LdClient(config))
+            {
+                epfwd.Verify(epf => epf.CreateEventProcessor(config, null), Times.Once());
+                epfwd.VerifyNoOtherCalls();
+                dsfwd.Verify(dsf => dsf.CreateDataSource(config, It.IsNotNull<IDataStore>(), null), Times.Once());
+                dsfwd.VerifyNoOtherCalls();
+            }
+        }
+
+        [Fact]
         public void NoWaitForDataSourceIfWaitMillisIsZero()
         {
             mockDataSource.Setup(up => up.Initialized()).Returns(true);
