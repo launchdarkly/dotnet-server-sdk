@@ -1,7 +1,7 @@
 ﻿using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Model;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server
@@ -125,7 +125,7 @@ namespace LaunchDarkly.Sdk.Server
         public void BoolVariationSendsEvent()
         {
             var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.BoolVariation("key", user, false);
             Assert.Equal(1, eventSink.Events.Count);
@@ -144,7 +144,7 @@ namespace LaunchDarkly.Sdk.Server
         public void IntVariationSendsEvent()
         {
             var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.IntVariation("key", user, 1);
             Assert.Equal(1, eventSink.Events.Count);
@@ -163,7 +163,7 @@ namespace LaunchDarkly.Sdk.Server
         public void FloatVariationSendsEvent()
         {
             var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5f)).Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.FloatVariation("key", user, 1.0f);
             Assert.Equal(1, eventSink.Events.Count);
@@ -182,7 +182,7 @@ namespace LaunchDarkly.Sdk.Server
         public void StringVariationSendsEvent()
         {
             var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.StringVariation("key", user, "a");
             Assert.Equal(1, eventSink.Events.Count);
@@ -202,7 +202,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var data = LdValue.BuildObject().Add("thing", "stuff").Build();
             var flag = new FeatureFlagBuilder("key").OffWithValue(data).Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
             var defaultVal = LdValue.Of(42);
 
             client.JsonVariation("key", user, defaultVal);
@@ -231,7 +231,7 @@ namespace LaunchDarkly.Sdk.Server
                 .OffVariation(0)
                 .Variations(LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.StringVariation("flag", user, "default");
 
@@ -257,7 +257,7 @@ namespace LaunchDarkly.Sdk.Server
                 .OffVariation(0)
                 .Variations(LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.StringVariation("flag", user, "default");
 
@@ -279,7 +279,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .TrackEventsFallthrough(true)
                 .Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.StringVariation("flag", user, "default");
 
@@ -301,7 +301,7 @@ namespace LaunchDarkly.Sdk.Server
                 .FallthroughVariation(0)
                 .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
 
             client.StringVariation("flag", user, "default");
 
@@ -328,8 +328,8 @@ namespace LaunchDarkly.Sdk.Server
                 .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
                 .Version(2)
                 .Build();
-            dataStore.Upsert(VersionedDataKind.Features, f0);
-            dataStore.Upsert(VersionedDataKind.Features, f1);
+            TestUtils.UpsertFlag(dataStore, f0);
+            TestUtils.UpsertFlag(dataStore, f1);
 
             client.StringVariation("feature0", user, "default");
 
@@ -347,7 +347,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Version(1)
                 .Build();
-            dataStore.Upsert(VersionedDataKind.Features, flag);
+            TestUtils.UpsertFlag(dataStore, flag);
             var defaultVal = "default";
 
             var result = client.StringVariation(flag.Key, user, defaultVal);
@@ -368,7 +368,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Version(1)
                 .Build();
-            dataStore.Upsert(VersionedDataKind.Features, f0);
+            TestUtils.UpsertFlag(dataStore, f0);
 
             client.StringVariation("feature0", user, "default");
 

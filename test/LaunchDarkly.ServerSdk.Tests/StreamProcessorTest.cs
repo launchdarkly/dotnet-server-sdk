@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Model;
 using LaunchDarkly.EventSource;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -156,14 +159,16 @@ namespace LaunchDarkly.Sdk.Server
         {
             StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
-            _dataStore.Upsert(VersionedDataKind.Features, FEATURE);
+            TestUtils.UpsertFlag(_dataStore, FEATURE);
 
             string path = "/flags/" + FEATURE_KEY;
-            string data = "{\"path\":\"" + path + "\",\"version\":" + (FEATURE_VERSION + 1) + "}";
+            int deletedVersion = FEATURE.Version + 1;
+            string data = "{\"path\":\"" + path + "\",\"version\":" + deletedVersion + "}";
             MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "delete");
             _mockEventSource.Raise(es => es.MessageReceived += null, e);
 
-            Assert.Null(_dataStore.Get(VersionedDataKind.Features, FEATURE_KEY));
+            Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
+                _dataStore.Get(DataKinds.Features, FEATURE_KEY));
         }
 
         [Fact]
@@ -171,14 +176,16 @@ namespace LaunchDarkly.Sdk.Server
         {
             StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
-            _dataStore.Upsert(VersionedDataKind.Segments, SEGMENT);
+            TestUtils.UpsertSegment(_dataStore, SEGMENT);
 
             string path = "/segments/" + SEGMENT_KEY;
-            string data = "{\"path\":\"" + path + "\",\"version\":" + (SEGMENT_VERSION + 1) + "}";
+            int deletedVersion = SEGMENT.Version + 1;
+            string data = "{\"path\":\"" + path + "\",\"version\":" + deletedVersion + "}";
             MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "delete");
             _mockEventSource.Raise(es => es.MessageReceived += null, e);
 
-            Assert.Null(_dataStore.Get(VersionedDataKind.Segments, SEGMENT_KEY));
+            Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
+                _dataStore.Get(DataKinds.Segments, SEGMENT_KEY));
         }
 
         [Fact]
@@ -244,12 +251,12 @@ namespace LaunchDarkly.Sdk.Server
         
         private void AssertFeatureInStore(FeatureFlag f)
         {
-            Assert.Equal(f.Version, _dataStore.Get(VersionedDataKind.Features, f.Key).Version);
+            Assert.Equal(f.Version, _dataStore.Get(DataKinds.Features, f.Key).Value.Version);
         }
 
         private void AssertSegmentInStore(Segment s)
         {
-            Assert.Equal(s.Version, _dataStore.Get(VersionedDataKind.Segments, s.Key).Version);
+            Assert.Equal(s.Version, _dataStore.Get(DataKinds.Segments, s.Key).Value.Version);
         }
 
         private MessageReceivedEventArgs EmptyPutEvent()

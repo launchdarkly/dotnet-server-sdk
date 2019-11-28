@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Model;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Files
 {
@@ -81,15 +85,15 @@ namespace LaunchDarkly.Sdk.Server.Files
 
         private void LoadAll()
         {
-            Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData =
-                new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
+            var flags = new Dictionary<string, ItemDescriptor>();
+            var segments = new Dictionary<string, ItemDescriptor>();
             foreach (var path in _paths)
             {
                 try
                 {
                     var content = ReadFileContent(path);
                     var data = _parser.Parse(content);
-                    data.AddToData(allData);
+                    data.AddToData(flags, segments);
                 }
                 catch (FileNotFoundException) when (_skipMissingPaths)
                 {
@@ -101,7 +105,11 @@ namespace LaunchDarkly.Sdk.Server.Files
                     return;
                 }
             }
-            _dataStore.Init(allData);
+            var allData = ImmutableList.Create(
+                new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Features, flags),
+                new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Segments, segments)
+            );
+            _dataStore.Init(new FullDataSet<ItemDescriptor>(allData));
             _loadedValidData = true;
         }
 

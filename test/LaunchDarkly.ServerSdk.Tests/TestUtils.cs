@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using Xunit;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -26,6 +29,16 @@ namespace LaunchDarkly.Sdk.Server
             return "./TestFiles/" + name;
         }
         
+        internal static bool UpsertFlag(IDataStore store, FeatureFlag item)
+        {
+            return store.Upsert(DataKinds.Features, item.Key, new ItemDescriptor(item.Version, item));
+        }
+
+        internal static bool UpsertSegment(IDataStore store, IVersionedData item)
+        {
+            return store.Upsert(DataKinds.Segments, item.Key, new ItemDescriptor(item.Version, item));
+        }
+
         public static IDataStoreFactory SpecificDataStore(IDataStore store)
         {
             return new SpecificDataStoreFactory(store);
@@ -41,8 +54,7 @@ namespace LaunchDarkly.Sdk.Server
             return new SpecificDataSourceFactory(up);
         }
 
-        public static IDataSourceFactory DataSourceWithData(
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data)
+        internal static IDataSourceFactory DataSourceWithData(FullDataSet<ItemDescriptor> data)
         {
             return new DataSourceFactoryWithData(data);
         }
@@ -95,10 +107,9 @@ namespace LaunchDarkly.Sdk.Server
 
     public class DataSourceFactoryWithData : IDataSourceFactory
     {
-        private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> _data;
+        private readonly FullDataSet<ItemDescriptor> _data;
 
-        public DataSourceFactoryWithData(
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data)
+        public DataSourceFactoryWithData(FullDataSet<ItemDescriptor> data)
         {
             _data = data;
         }
@@ -112,10 +123,9 @@ namespace LaunchDarkly.Sdk.Server
     public class DataSourceWithData : IDataSource
     {
         private readonly IDataStore _store;
-        private readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> _data;
+        private readonly FullDataSet<ItemDescriptor> _data;
 
-        public DataSourceWithData(IDataStore store,
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data)
+        public DataSourceWithData(IDataStore store, FullDataSet<ItemDescriptor> data)
         {
             _store = store;
             _data = data;

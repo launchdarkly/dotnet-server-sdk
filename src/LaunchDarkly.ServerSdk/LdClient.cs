@@ -6,7 +6,10 @@ using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Model;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -60,9 +63,7 @@ namespace LaunchDarkly.Sdk.Server
             _dataSource = (_configuration.DataSourceFactory ??
                 Components.DefaultDataSource).CreateDataSource(_configuration, _dataStore);
 
-            _evaluator = new Evaluator(
-                key => _dataStore.Get(VersionedDataKind.Features, key),
-                key => _dataStore.Get(VersionedDataKind.Segments, key));
+            _evaluator = new Evaluator(GetFlag, GetSegment);
 
             var initTask = _dataSource.Start();
 
@@ -204,10 +205,13 @@ namespace LaunchDarkly.Sdk.Server
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
-            IDictionary<string, FeatureFlag> flags = _dataStore.All(VersionedDataKind.Features);
-            foreach (KeyValuePair<string, FeatureFlag> pair in flags)
+            IEnumerable<KeyValuePair<string, ItemDescriptor>> flags = _dataStore.GetAll(DataKinds.Features);
+            foreach (var pair in flags)
             {
-                var flag = pair.Value;
+                if (pair.Value.Item is null || !(pair.Value.Item is FeatureFlag flag))
+                {
+                    continue;
+                }
                 if (clientSideOnly && !flag.ClientSide)
                 {
                     continue;
@@ -251,7 +255,7 @@ namespace LaunchDarkly.Sdk.Server
             FeatureFlagEventProperties? flagEventProperties = null;
             try
             {
-                featureFlag = _dataStore.Get(VersionedDataKind.Features, featureKey);
+                featureFlag = GetFlag(featureKey);
                 if (featureFlag == null)
                 {
                     Log.InfoFormat("Unknown feature flag {0}; returning default value",
@@ -432,6 +436,26 @@ namespace LaunchDarkly.Sdk.Server
         public void Flush()
         {
             _eventProcessor.Flush();
+        }
+
+        private FeatureFlag GetFlag(string key)
+        {
+            var maybeItem = _dataStore.Get(DataKinds.Features, key);
+            if (maybeItem.HasValue && maybeItem.Value.Item != null && maybeItem.Value.Item is FeatureFlag f)
+            {
+                return f;
+            }
+            return null;
+        }
+
+        private Segment GetSegment(string key)
+        {
+            var maybeItem = _dataStore.Get(DataKinds.Segments, key);
+            if (maybeItem.HasValue && maybeItem.Value.Item != null && maybeItem.Value.Item is Segment s)
+            {
+                return s;
+            }
+            return null;
         }
     }
 }

@@ -2,7 +2,9 @@
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -26,6 +28,16 @@ namespace LaunchDarkly.Sdk.Server
             {
                 return _inMemoryDataStoreFactory;
             }
+        }
+
+        public static PersistentDataStoreFactory PersistentStore(IPersistentDataStoreFactory storeFactory)
+        {
+            return new PersistentDataStoreFactory(storeFactory);
+        }
+
+        public static PersistentDataStoreFactory PersistentStore(IPersistentDataStoreAsyncFactory storeFactory)
+        {
+            return new PersistentDataStoreFactory(storeFactory);
         }
 
         /// <summary>

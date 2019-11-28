@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LaunchDarkly.Sdk.Server.Utils;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -13,11 +14,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <para>
     /// This allows developers of custom <see cref="IDataStore"/> implementations to avoid repeating logic that
     /// would commonly be needed in any such implementation, such as caching. Instead, they can
-    /// implement only <see cref="IDataStoreCoreAsync"/> and then create a <see cref="CachingStoreWrapper"/>.
+    /// implement only <see cref="IDataStoreCore"/> and then create a <see cref="CachingStoreWrapper"/>.
     /// </para>
     /// <para>
-    /// This interface assumes that your code is asynchronous. For synchronous implementations,
-    /// use <see cref="IDataStoreCore"/> instead.
+    /// This interface assumes that your code is synchronous. For asynchronous implementations,
+    /// use <see cref="IDataStoreCoreAsync"/> instead.
     /// </para>
     /// <para>
     /// Note that these methods do not take any generic type parameters; all storeable entities are
@@ -28,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <see cref="DataStoreHelpers"/> may be useful for this.
     /// </para>
     /// </remarks>
-    public interface IDataStoreCoreAsync : IDisposable
+    public interface IPersistentDataStoreAsync : IDisposable
     {
         /// <summary>
         /// Initializes (or re-initializes) the store with the specified set of objects. Any existing
@@ -37,8 +38,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// objects and the supplied data.
         /// </summary>
         /// <param name="allData">all objects to be stored</param>
-        /// <returns>a task</returns>
-        Task InitInternalAsync(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData);
+        Task InitAsync(FullDataSet<SerializedItemDescriptor> allData);
 
         /// <summary>
         /// Returns the object to which the specified key is mapped, or null if no such item exists.
@@ -47,16 +47,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <param name="kind">the kind of objects to get</param>
         /// <param name="key">the key whose associated object is to be returned</param>
-        /// <returns>a task yielding the object to which the specified key is mapped, or null</returns>
-        Task<IVersionedData> GetInternalAsync(IVersionedDataKind kind, string key);
+        /// <returns>the object to which the specified key is mapped, or null</returns>
+        Task<SerializedItemDescriptor?> GetAsync(DataKind kind, string key);
 
         /// <summary>
-        /// Returns a dictionary of all associated objects of a given kind. The method should not
+        /// Returns all associated objects of a given kind. The method should not
         /// attempt to filter out any items based on their Deleted property, nor to cache any items.
         /// </summary>
         /// <param name="kind">the kind of objects to get</param>
-        /// <returns>a task yielding a dictionary of all associated objects</returns>
-        Task<IDictionary<string, IVersionedData>> GetAllInternalAsync(IVersionedDataKind kind);
+        /// <returns>all associated objects</returns>
+        Task<IEnumerable<KeyValuePair<string, SerializedItemDescriptor>>> GetAllAsync(DataKind kind);
 
         /// <summary>
         /// Updates or inserts the object associated with the specified key. If an item with
@@ -68,8 +68,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <param name="kind">the kind of object to update</param>
         /// <param name="item">the object to update or insert</param>
-        /// <returns>a task yielding the state of the object after the update</returns>
-        Task<IVersionedData> UpsertInternalAsync(IVersionedDataKind kind, IVersionedData item);
+        /// <returns>the state of the object after the update</returns>
+        Task<bool> UpsertAsync(DataKind kind, string key, SerializedItemDescriptor item);
 
         /// <summary>
         /// Returns true if this store has been initialized. In a shared data store, it should be
@@ -77,7 +77,21 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// test should be based on looking at what is in the data store. The method does not need
         /// to worry about caching this value; CachingStoreWrapper will only call it when necessary.
         /// </summary>
-        /// <returns>a task yielding true if the store has been initialized</returns>
-        Task<bool> InitializedInternalAsync();
+        /// <returns>true if the store has been initialized</returns>
+        Task<bool> InitializedAsync();
+    }
+
+    /// <summary>
+    /// Interface for a factory that creates some implementation of <see cref="IPersistentDataStoreAsync"/>.
+    /// </summary>
+    /// <seealso cref="IConfigurationBuilder.DataStore(IPersistentDataStoreAsyncFactory)"/>
+    /// <seealso cref="Components"/>
+    public interface IPersistentDataStoreAsyncFactory
+    {
+        /// <summary>
+        /// Creates an implementation instance.
+        /// </summary>
+        /// <returns>a <see cref="IPersistentDataStoreAsync"/> instance</returns>
+        IPersistentDataStoreAsync CreatePersistentDataStore();
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Model

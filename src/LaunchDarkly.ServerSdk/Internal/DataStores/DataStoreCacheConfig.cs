@@ -1,7 +1,7 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
     /// <summary>
     /// Parameters that can be used for <see cref="IDataStore"/> database integrations that support local caching.
@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server
     ///     DataStoreCacheConfig.Enabled.WithTtlSeconds(30);
     /// </code>
     /// </remarks>
-    public sealed class DataStoreCacheConfig
+    internal sealed class DataStoreCacheConfig
     {
         /// <summary>
         /// The default cache expiration time.

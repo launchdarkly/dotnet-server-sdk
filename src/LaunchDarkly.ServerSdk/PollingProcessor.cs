@@ -59,7 +59,7 @@ namespace LaunchDarkly.Sdk.Server
                 var allData = await _featureRequestor.GetAllDataAsync();
                 if (allData != null)
                 {
-                    _dataStore.Init(allData.ToGenericDictionary());
+                    _dataStore.Init(allData.ToInitData());
 
                     //We can't use bool in CompareExchange because it is not a reference type.
                     if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)

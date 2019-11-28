@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -10,47 +11,34 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IDataStore : IDisposable
     {
         /// <summary>
-        /// Retrieve an object from the specified collection, or return null if not found.
-        /// </summary>
-        /// <typeparam name="T">the returned object class</typeparam>
-        /// <param name="kind">specifies which collection to use</param>
-        /// <param name="key">the unique string key of the object</param>
-        /// <returns>the found object or null</returns>
-        T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData;
-
-        /// <summary>
-        /// Retrieve all objects from the specified collection.
-        /// </summary>
-        /// <typeparam name="T">the returned object class</typeparam>
-        /// <param name="kind">specifies which collection to use</param>
-        /// <returns>a dictionary of string keys to objects</returns>
-        IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData;
-
-        /// <summary>
         /// Overwrite the store's contents with a set of objects for each collection.
         /// </summary>
         /// <param name="allData">a dictionary where each key specifies a collection, and each value
         /// is a map of string keys to objects in that collection</param>
-        void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData);
+        void Init(FullDataSet<ItemDescriptor> allData);
 
         /// <summary>
-        /// Delete an object if its version is less than the specified version.
+        /// Retrieve an object from the specified collection, or return null if not found.
         /// </summary>
-        /// <typeparam name="T">the object class</typeparam>
         /// <param name="kind">specifies which collection to use</param>
         /// <param name="key">the unique string key of the object</param>
-        /// <param name="version">the version number of the deletion; the object will only be deleted if
-        /// its existing version is less than this</param>
-        void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData;
+        /// <returns>the found object or null</returns>
+        ItemDescriptor? Get(DataKind kind, string key);
+
+        /// <summary>
+        /// Retrieve all objects from the specified collection.
+        /// </summary>
+        /// <param name="kind">specifies which collection to use</param>
+        /// <returns>a dictionary of string keys to objects</returns>
+        IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind);
 
         /// <summary>
         /// Update or insert an object in the specified collection. For updates, the object will only be
         /// updated if the existing version is less than the new version.
         /// </summary>
-        /// <typeparam name="T">the object class</typeparam>
         /// <param name="kind">specifies which collection to use</param>
         /// <param name="item">the item to insert or update</param>
-        void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData;
+        bool Upsert(DataKind kind, string key, ItemDescriptor item);
 
         /// <summary>
         /// Check whether this store has been initialized with any data yet.

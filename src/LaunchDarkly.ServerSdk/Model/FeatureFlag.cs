@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Common.Logging;
 using Newtonsoft.Json;
-using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Model
 {

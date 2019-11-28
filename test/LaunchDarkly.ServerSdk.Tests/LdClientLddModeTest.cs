@@ -1,5 +1,6 @@
 ﻿using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Model;
 using Xunit;
 
@@ -41,7 +42,7 @@ namespace LaunchDarkly.Sdk.Server
         public void LddModeClientGetsFlagFromDataStore()
         {
             var dataStore = new InMemoryDataStore();
-            dataStore.Upsert(VersionedDataKind.Features,
+            TestUtils.UpsertFlag(dataStore,
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
             var config = Configuration.Builder("SDK_KEY")
                 .UseLdd(true)

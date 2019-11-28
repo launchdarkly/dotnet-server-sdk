@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Utils;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -27,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <see cref="DataStoreHelpers"/> may be useful for this.
     /// </para>
     /// </remarks>
-    public interface IDataStoreCore : IDisposable
+    public interface IPersistentDataStore : IDisposable
     {
         /// <summary>
         /// Initializes (or re-initializes) the store with the specified set of objects. Any existing
@@ -36,7 +37,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// objects and the supplied data.
         /// </summary>
         /// <param name="allData">all objects to be stored</param>
-        void InitInternal(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData);
+        void Init(FullDataSet<SerializedItemDescriptor> allData);
 
         /// <summary>
         /// Returns the object to which the specified key is mapped, or null if no such item exists.
@@ -46,15 +47,15 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="kind">the kind of objects to get</param>
         /// <param name="key">the key whose associated object is to be returned</param>
         /// <returns>the object to which the specified key is mapped, or null</returns>
-        IVersionedData GetInternal(IVersionedDataKind kind, string key);
+        SerializedItemDescriptor? Get(DataKind kind, string key);
 
         /// <summary>
-        /// Returns a dictionary of all associated objects of a given kind. The method should not
+        /// Returns all associated objects of a given kind. The method should not
         /// attempt to filter out any items based on their Deleted property, nor to cache any items.
         /// </summary>
         /// <param name="kind">the kind of objects to get</param>
-        /// <returns>a dictionary of all associated objects</returns>
-        IDictionary<string, IVersionedData> GetAllInternal(IVersionedDataKind kind);
+        /// <returns>all associated objects</returns>
+        IEnumerable<KeyValuePair<string, SerializedItemDescriptor>> GetAll(DataKind kind);
 
         /// <summary>
         /// Updates or inserts the object associated with the specified key. If an item with
@@ -67,7 +68,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="kind">the kind of object to update</param>
         /// <param name="item">the object to update or insert</param>
         /// <returns>the state of the object after the update</returns>
-        IVersionedData UpsertInternal(IVersionedDataKind kind, IVersionedData item);
+        bool Upsert(DataKind kind, string key, SerializedItemDescriptor item);
 
         /// <summary>
         /// Returns true if this store has been initialized. In a shared data store, it should be
@@ -76,6 +77,20 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// to worry about caching this value; CachingStoreWrapper will only call it when necessary.
         /// </summary>
         /// <returns>true if the store has been initialized</returns>
-        bool InitializedInternal();
+        bool Initialized();
+    }
+
+    /// <summary>
+    /// Interface for a factory that creates some implementation of <see cref="IPersistentDataStore"/>.
+    /// </summary>
+    /// <seealso cref="IConfigurationBuilder.DataStore(IPersistentDataStoreFactory)"/>
+    /// <seealso cref="Components"/>
+    public interface IPersistentDataStoreFactory
+    {
+        /// <summary>
+        /// Creates an implementation instance.
+        /// </summary>
+        /// <returns>a <see cref="IPersistentDataStore"/> instance</returns>
+        IPersistentDataStore CreatePersistentDataStore();
     }
 }

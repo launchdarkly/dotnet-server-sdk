@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Internal
 {
     public class JsonUtilTest
     {
@@ -15,6 +15,9 @@ namespace LaunchDarkly.Sdk.Server
 
             // ensure that a date-like string is *not* parsed as anything other than a string (ch49343)
             Assert.Equal(new JValue("1970-01-01T00:00:01.001Z"), JsonUtil.DecodeJson<JToken>("\"1970-01-01T00:00:01.001Z\""));
+
+            // ensure that a date-like string is *not* parsed as anything other than a string (ch49343)
+            Assert.Equal(LdValue.Of("1970-01-01T00:00:01.001Z"), JsonUtil.DecodeJson<LdValue>("\"1970-01-01T00:00:01.001Z\""));
         }
     }
 }

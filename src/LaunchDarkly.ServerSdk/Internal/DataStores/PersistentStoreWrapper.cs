@@ -5,11 +5,13 @@ using System.Linq;
 using LaunchDarkly.Cache;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Sdk.Server.Utils
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+
+namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
     /// <summary>
     /// A partial implementation of <see cref="IDataStore"/> that delegates the basic functionality to
-    /// an instance of <see cref="IDataStoreCore"/> or <see cref="IDataStoreCoreAsync"/>.
+    /// an instance of <see cref="IPersistentDataStore"/> or <see cref="IPersistentDataStoreAsync"/>.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -22,50 +24,34 @@ namespace LaunchDarkly.Sdk.Server.Utils
     /// or <see cref="CachingStoreWrapper.Builder(IDataStoreCoreAsync)"/>.
     /// </para>
     /// </remarks>
-    public sealed class CachingStoreWrapper : IDataStore
+    internal sealed class PersistentStoreWrapper : IDataStore
     {
-        private readonly IDataStoreCore _core;
+        private readonly IPersistentDataStore _core;
         private readonly DataStoreCacheConfig _caching;
         
-        private readonly ICache<CacheKey, IVersionedData> _itemCache;
-        private readonly ICache<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>> _allCache;
+        private readonly ICache<CacheKey, ItemDescriptor?> _itemCache;
+        private readonly ICache<DataKind, ImmutableDictionary<string, ItemDescriptor>> _allCache;
         private readonly ISingleValueCache<bool> _initCache;
         private volatile bool _inited;
+        
+        internal PersistentStoreWrapper(IPersistentDataStoreAsync coreAsync, DataStoreCacheConfig caching) :
+            this(new PersistentStoreAsyncAdapter(coreAsync), caching)
+        { }
 
-        /// <summary>
-        /// Creates a new builder using a synchronous data store implementation.
-        /// </summary>
-        /// <param name="core">the <see cref="IDataStoreCore"/> implementation</param>
-        /// <returns>a builder</returns>
-        public static CachingStoreWrapperBuilder Builder(IDataStoreCore core)
-        {
-            return new CachingStoreWrapperBuilder(core);
-        }
-
-        /// <summary>
-        /// Creates a new builder using an asynchronous data store implementation.
-        /// </summary>
-        /// <param name="coreAsync">the <see cref="IDataStoreCoreAsync"/> implementation</param>
-        /// <returns>a builder</returns>
-        public static CachingStoreWrapperBuilder Builder(IDataStoreCoreAsync coreAsync)
-        {
-            return new CachingStoreWrapperBuilder(new DataStoreCoreAsyncAdapter(coreAsync));
-        }
-
-        internal CachingStoreWrapper(IDataStoreCore core, DataStoreCacheConfig caching)
+        internal PersistentStoreWrapper(IPersistentDataStore core, DataStoreCacheConfig caching)
         {
             this._core = core;
             this._caching = caching;
 
             if (caching.IsEnabled)
             {
-                var itemCacheBuilder = Caches.KeyValue<CacheKey, IVersionedData>()
+                var itemCacheBuilder = Caches.KeyValue<CacheKey, ItemDescriptor?>()
                     .WithLoader(GetInternalForCache)
                     .WithMaximumEntries(caching.MaximumEntries);
-                var allCacheBuilder = Caches.KeyValue<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>>()
-                    .WithLoader(GetAllForCache);
+                var allCacheBuilder = Caches.KeyValue<DataKind, ImmutableDictionary<string, ItemDescriptor>>()
+                    .WithLoader(GetAllAndDeserialize);
                 var initCacheBuilder = Caches.SingleValue<bool>()
-                    .WithLoader(_core.InitializedInternal);
+                    .WithLoader(_core.Initialized);
                 if (!caching.IsInfiniteTtl)
                 {
                     itemCacheBuilder.WithExpiration(caching.Ttl);
@@ -98,7 +84,7 @@ namespace LaunchDarkly.Sdk.Server.Utils
             }
             else
             {
-                result = _core.InitializedInternal();
+                result = _core.Initialized();
             }
             if (result)
             {
@@ -107,13 +93,20 @@ namespace LaunchDarkly.Sdk.Server.Utils
             return result;
         }
 
-        /// <inheritdoc/>
-        public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
+        public void Init(FullDataSet<ItemDescriptor> items)
         {
             Exception failure = null;
+            var serializedItems = items.Data.ToImmutableDictionary(
+                kindAndItems => kindAndItems.Key,
+                kindAndItems => (IEnumerable<KeyValuePair<string, SerializedItemDescriptor>>)
+                    kindAndItems.Value.ToImmutableDictionary(
+                        keyAndItem => keyAndItem.Key,
+                        keyAndItem => Serialize(kindAndItems.Key, keyAndItem.Value)
+                    )
+            );
             try
             {
-                _core.InitInternal(items);
+                _core.Init(new FullDataSet<SerializedItemDescriptor>(serializedItems));
             }
             catch (Exception e)
             {
@@ -131,7 +124,7 @@ namespace LaunchDarkly.Sdk.Server.Utils
                     // if the cache TTL is infinite, then it makes sense to update the cache always.
                     throw failure;
                 }
-                foreach (var e0 in items)
+                foreach (var e0 in items.Data)
                 {
                     var kind = e0.Key;
                     _allCache.Set(kind, e0.Value.ToImmutableDictionary());
@@ -150,40 +143,24 @@ namespace LaunchDarkly.Sdk.Server.Utils
                 throw failure;
             }
         }
+        
+        public ItemDescriptor? Get(DataKind kind, string key) =>
+            _itemCache is null ? GetAndDeserializeItem(kind, key) :
+                _itemCache.Get(new CacheKey(kind, key));
+
+        public IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind) =>
+            _allCache is null ? GetAllAndDeserialize(kind) : _allCache.Get(kind);
 
         /// <inheritdoc/>
-        public T Get<T>(VersionedDataKind<T> kind, String key) where T : class, IVersionedData
+        public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
-            T item;
-            if (_itemCache != null)
-            {
-                item = (T)_itemCache.Get(new CacheKey(kind, key));
-            }
-            else
-            {
-                item = (T)_core.GetInternal(kind, key);
-            }
-            return (item == null || item.Deleted) ? null : item;
-        }
-
-        /// <inheritdoc/>
-        public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
-        {
-            if (_allCache != null)
-            {
-                return FilterItems<T>(_allCache.Get(kind));
-            }
-            return FilterItems<T>(_core.GetAllInternal(kind));
-        }
-
-        /// <inheritdoc/>
-        public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
-        {
+            var serializedItem = new SerializedItemDescriptor(item.Version,
+                item.Item is null ? null : kind.Serialize(item.Item));
+            bool updated = false;
             Exception failure = null;
-            IVersionedData newState = item;
             try
             {
-                newState = _core.UpsertInternal(kind, item);
+                updated = _core.Upsert(kind, key, serializedItem);
             }
             catch (Exception e)
             {
@@ -199,7 +176,24 @@ namespace LaunchDarkly.Sdk.Server.Utils
             }
             if (_itemCache != null)
             {
-                _itemCache.Set(new CacheKey(kind, item.Key), newState);
+                var cacheKey = new CacheKey(kind, key);
+                if (failure is null)
+                {
+                    if (updated)
+                    {
+                        _itemCache.Set(cacheKey, item);
+                    }
+                    else
+                    {
+                        // there was a concurrent modification elsewhere - update the cache to get the new state
+                        _itemCache.Remove(cacheKey);
+                        _itemCache.Get(cacheKey);
+                    }
+                }
+                else
+                {
+                    // TODO
+                }
             }
             if (_allCache != null)
             {
@@ -212,7 +206,7 @@ namespace LaunchDarkly.Sdk.Server.Utils
                     try
                     {
                         var cachedAll = _allCache.Get(kind);
-                        _allCache.Set(kind, cachedAll.SetItem(item.Key, newState));
+                        _allCache.Set(kind, cachedAll.SetItem(key, item));
                     }
                     catch (Exception) { }
                     // An exception here means that we did not have a cached value for All, so it tried to query
@@ -229,14 +223,9 @@ namespace LaunchDarkly.Sdk.Server.Utils
             {
                 throw failure;
             }
+            return updated;
         }
-
-        /// <inheritdoc/>
-        public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
-        {
-            Upsert(kind, kind.MakeDeletedItem(key, version));
-        }
-
+        
         /// <inheritdoc/>
         public void Dispose()
         {
@@ -254,32 +243,52 @@ namespace LaunchDarkly.Sdk.Server.Utils
                 _initCache?.Dispose();
             }
         }
+
+        private ItemDescriptor? GetInternalForCache(CacheKey key) =>
+            GetAndDeserializeItem(key.Kind, key.Key);
+
+        private ItemDescriptor? GetAndDeserializeItem(DataKind kind, string key)
+        {
+            var maybeSerializedItem = _core.Get(kind, key);
+            if (!maybeSerializedItem.HasValue)
+            {
+                return null;
+            }
+            return Deserialize(kind, maybeSerializedItem.Value);
+        }
         
-        private IVersionedData GetInternalForCache(CacheKey key)
+        private ImmutableDictionary<string, ItemDescriptor> GetAllAndDeserialize(DataKind kind)
         {
-            return _core.GetInternal(key.Kind, key.Key);
+            return _core.GetAll(kind).ToImmutableDictionary(
+                kv => kv.Key,
+                kv => Deserialize(kind, kv.Value));
+
         }
 
-        private ImmutableDictionary<string, IVersionedData> GetAllForCache(IVersionedDataKind kind)
+        private SerializedItemDescriptor Serialize(DataKind kind, ItemDescriptor itemDesc)
         {
-            return _core.GetAllInternal(kind).ToImmutableDictionary();
+            var item = itemDesc.Item;
+            return new SerializedItemDescriptor(itemDesc.Version,
+                item is null ? null : kind.Serialize(item));
         }
 
-        private IDictionary<string, T> FilterItems<T>(IDictionary<string, IVersionedData> items) where T : IVersionedData
+        private ItemDescriptor Deserialize(DataKind kind, SerializedItemDescriptor serializedItemDesc)
         {
-            return items.Where(kv => !kv.Value.Deleted).ToDictionary(i => i.Key, i => (T)i.Value);
+            var serializedItem = serializedItemDesc.SerializedItem;
+            return new ItemDescriptor(serializedItemDesc.Version,
+                serializedItem is null ? null : kind.Deserialize(serializedItem));
         }
     }
 
     /// <summary>
-    /// Builder class for <see cref="CachingStoreWrapper"/>.
+    /// Builder class for <see cref="PersistentStoreWrapper"/>.
     /// </summary>
-    public class CachingStoreWrapperBuilder
+    internal class PersistentStoreWrapperBuilder
     {
-        private readonly IDataStoreCore _core;
+        private readonly IPersistentDataStore _core;
         private DataStoreCacheConfig _caching = DataStoreCacheConfig.Enabled;
 
-        internal CachingStoreWrapperBuilder(IDataStoreCore core)
+        internal PersistentStoreWrapperBuilder(IPersistentDataStore core)
         {
             _core = core;
         }
@@ -288,9 +297,9 @@ namespace LaunchDarkly.Sdk.Server.Utils
         /// Creates and configures the wrapper object.
         /// </summary>
         /// <returns>a <see cref="CachingStoreWrapper"/> instance</returns>
-        public CachingStoreWrapper Build()
+        internal PersistentStoreWrapper Build()
         {
-            return new CachingStoreWrapper(_core, _caching);
+            return new PersistentStoreWrapper(_core, _caching);
         }
 
         /// <summary>
@@ -298,7 +307,7 @@ namespace LaunchDarkly.Sdk.Server.Utils
         /// </summary>
         /// <param name="caching">a <see cref="DataStoreCacheConfig"/> object</param>
         /// <returns>the builder</returns>
-        public CachingStoreWrapperBuilder WithCaching(DataStoreCacheConfig caching)
+        public PersistentStoreWrapperBuilder WithCaching(DataStoreCacheConfig caching)
         {
             _caching = caching;
             return this;
@@ -307,10 +316,10 @@ namespace LaunchDarkly.Sdk.Server.Utils
 
     internal struct CacheKey : IEquatable<CacheKey>
     {
-        public readonly IVersionedDataKind Kind;
+        public readonly DataKind Kind;
         public readonly string Key;
 
-        public CacheKey(IVersionedDataKind kind, string key)
+        public CacheKey(DataKind kind, string key)
         {
             Kind = kind;
             Key = key;

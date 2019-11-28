@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Common.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Helpers;
+using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Model;
 
 namespace LaunchDarkly.Sdk.Server

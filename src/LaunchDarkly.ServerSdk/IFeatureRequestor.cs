@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Model;
 using Newtonsoft.Json;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -27,24 +29,14 @@ namespace LaunchDarkly.Sdk.Server
             Segments = segments;
         }
 
-        internal IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> ToGenericDictionary()
+        internal FullDataSet<ItemDescriptor> ToInitData()
         {
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> ret =
-                new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
-            // sadly the following is necessary because IDictionary has invariant type parameters...
-            IDictionary<string, IVersionedData> items = new Dictionary<string, IVersionedData>();
-            foreach (var entry in Flags)
-            {
-                items[entry.Key] = entry.Value;
-            }
-            ret.Add(VersionedDataKind.Features, items);
-            items = new Dictionary<string, IVersionedData>();
-            foreach (var entry in Segments)
-            {
-                items[entry.Key] = entry.Value;
-            }
-            ret.Add(VersionedDataKind.Segments, items);
-            return ret;
+            return new FullDataSet<ItemDescriptor>(ImmutableList.Create(
+                new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Features,
+                    Flags.ToImmutableDictionary(kv => kv.Key, kv => new ItemDescriptor(kv.Value.Version, kv.Value))),
+                new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Segments,
+                    Flags.ToImmutableDictionary(kv => kv.Key, kv => new ItemDescriptor(kv.Value.Version, kv.Value)))
+            ));
         }
     }
 }
