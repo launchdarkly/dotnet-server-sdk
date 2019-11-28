@@ -82,6 +82,35 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder DataStore(IDataStoreFactory dataStoreFactory);
 
         /// <summary>
+        ///   Set to true to opt out of sending diagnostic events.
+        /// </summary>
+        /// <remarks>
+        ///   <para>
+        ///     Unless the diagnosticOptOut field is set to true, the client will send some
+        ///     diagnostics data to the LaunchDarkly servers in order to assist in the development
+        ///     of future SDK improvements. These diagnostics consist of an initial payload
+        ///     containing some details of SDK in use, the SDK's configuration, and the platform the
+        ///     SDK is being run on, as well as payloads sent periodically with information on
+        ///     irregular occurrences such as dropped events.
+        ///   </para>
+        /// </remarks>
+        /// <param name="diagnosticOptOut">true to disable diagnostic events</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut);
+
+        /// <summary>
+        ///   Sets the interval at which periodic diagnostic events will be sent.
+        /// </summary>
+        /// <remarks>
+        ///   <para>
+        ///     The default is every 15 minutes and the minimum is every minute.
+        ///   </para>
+        /// </remarks>
+        /// <param name="diagnosticRecordingInterval">the diagnostic recording interval</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval);
+
+        /// <summary>
         /// Sets the capacity of the events buffer.
         /// </summary>
         /// <remarks>
@@ -258,17 +287,37 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="userKeysFlushInterval">the flush interval</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval);
+
+        /// <summary>
+        /// For use by wrapper libraries to set an identifying name for the wrapper being used. This
+        /// will be sent in request headers during requests to the LaunchDarkly servers to allow
+        /// recording metrics on the usage of these wrapper libraries.
+        /// </summary>
+        /// <param name="wrapperName">The name of the wrapper to include in request headers</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder WrapperName(string wrapperName);
+
+        /// <summary>
+        /// For use by wrapper libraries to set version to be included alongside a WrapperName. If
+        /// WrapperName is unset or null, this field will be ignored.
+        /// </summary>
+        /// <param name="wrapperVersion">The version of the wrapper to include in request headers</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder WrapperVersion(string wrapperVersion);
     }
 
     class ConfigurationBuilder : IConfigurationBuilder
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ConfigurationBuilder));
 
+        // Let's try to keep these properties and methods alphabetical so they're easy to find
         internal bool _allAttributesPrivate = false;
         internal Uri _baseUri = Configuration.DefaultUri;
         internal TimeSpan _connectionTimeout = Configuration.DefaultConnectionTimeout;
         internal IDataSourceFactory _dataSourceFactory = null;
         internal IDataStoreFactory _dataStoreFactory = null;
+        internal bool _diagnosticOptOut = false;
+        internal TimeSpan _diagnosticRecordingInterval = Configuration.DefaultDiagnosticRecordingInterval;
         internal int _eventCapacity = Configuration.DefaultEventCapacity;
         internal TimeSpan _eventFlushInterval = Configuration.DefaultEventFlushInterval;
         internal IEventProcessorFactory _eventProcessorFactory = null;
@@ -287,6 +336,8 @@ namespace LaunchDarkly.Sdk.Server
         internal bool _useLdd = false;
         internal int _userKeysCapacity = Configuration.DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = Configuration.DefaultUserKeysFlushInterval;
+        internal string _wrapperName = null;
+        internal string _wrapperVersion = null;
 
         public ConfigurationBuilder(string sdkKey)
         {
@@ -300,6 +351,8 @@ namespace LaunchDarkly.Sdk.Server
             _connectionTimeout = copyFrom.ConnectionTimeout;
             _dataSourceFactory = copyFrom.DataSourceFactory;
             _dataStoreFactory = copyFrom.DataStoreFactory;
+            _diagnosticOptOut = copyFrom.DiagnosticOptOut;
+            _diagnosticRecordingInterval = copyFrom.DiagnosticRecordingInterval;
             _eventCapacity = copyFrom.EventCapacity;
             _eventFlushInterval = copyFrom.EventFlushInterval;
             _eventProcessorFactory = copyFrom.EventProcessorFactory;
@@ -319,6 +372,8 @@ namespace LaunchDarkly.Sdk.Server
             _useLdd = copyFrom.UseLdd;
             _userKeysCapacity = copyFrom.UserKeysCapacity;
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
+            _wrapperName = copyFrom.WrapperName;
+            _wrapperVersion = copyFrom.WrapperVersion;
         }
 
         public Configuration Build()
@@ -337,7 +392,7 @@ namespace LaunchDarkly.Sdk.Server
             _baseUri = baseUri;
             return this;
         }
-
+        
         public IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout)
         {
             _connectionTimeout = connectionTimeout;
@@ -353,6 +408,26 @@ namespace LaunchDarkly.Sdk.Server
         public IConfigurationBuilder DataStore(IDataStoreFactory dataStoreFactory)
         {
             _dataStoreFactory = dataStoreFactory;
+            return this;
+        }
+
+        public IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut)
+        {
+            _diagnosticOptOut = diagnosticOptOut;
+            return this;
+        }
+
+        public IConfigurationBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval)
+        {
+            if (diagnosticRecordingInterval.CompareTo(Configuration.MinimumDiagnosticRecordingInterval) < 0)
+            {
+                Log.Warn("DiagnosticRecordingInterval cannot be less than the minimum of 1 minute.");
+                _diagnosticRecordingInterval = Configuration.MinimumDiagnosticRecordingInterval;
+            }
+            else
+            {
+                _diagnosticRecordingInterval = diagnosticRecordingInterval;
+            }
             return this;
         }
 
@@ -473,6 +548,18 @@ namespace LaunchDarkly.Sdk.Server
         public IConfigurationBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval)
         {
             _userKeysFlushInterval = userKeysFlushInterval;
+            return this;
+        }
+
+        public IConfigurationBuilder WrapperName(string wrapperName)
+        {
+            _wrapperName = wrapperName;
+            return this;
+        }
+
+        public IConfigurationBuilder WrapperVersion(string wrapperVersion)
+        {
+            _wrapperVersion = wrapperVersion;
             return this;
         }
     }

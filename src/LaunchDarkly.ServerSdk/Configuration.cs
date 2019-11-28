@@ -25,6 +25,8 @@ namespace LaunchDarkly.Sdk.Server
         private readonly TimeSpan _connectionTimeout;
         private readonly IDataSourceFactory _dataSourceFactory;
         private readonly IDataStoreFactory _dataStoreFactory;
+        private readonly bool _diagnosticOptOut;
+        private readonly TimeSpan _diagnosticRecordingInterval;
         private readonly TimeSpan _eventFlushInterval;
         private readonly int _eventCapacity;
         private readonly IEventProcessorFactory _eventProcessorFactory;
@@ -43,6 +45,8 @@ namespace LaunchDarkly.Sdk.Server
         private readonly bool _useLdd;
         private readonly int _userKeysCapacity;
         private readonly TimeSpan _userKeysFlushInterval;
+        private readonly string _wrapperName;
+        private readonly string _wrapperVersion;
 
         /// <summary>
         /// The base URI of the LaunchDarkly server.
@@ -193,6 +197,23 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
         /// <summary>
+        /// The time between sending periodic diagnostic events.
+        /// </summary>
+        public TimeSpan DiagnosticRecordingInterval => _diagnosticRecordingInterval;
+        /// <summary>
+        /// True if diagnostic events have been disabled.
+        /// </summary>
+        public bool DiagnosticOptOut => _diagnosticOptOut;
+        /// <summary>
+        /// Name specifying a wrapper library, to be included in request headers.
+        /// </summary>
+        public string WrapperName => _wrapperName;
+        /// <summary>
+        /// Version of a wrapper library, to be included in request headers.
+        /// </summary>
+        public string WrapperVersion => _wrapperVersion;
+
+        /// <summary>
         /// Default value for <see cref="PollingInterval"/>.
         /// </summary>
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(30);
@@ -240,7 +261,15 @@ namespace LaunchDarkly.Sdk.Server
         /// Default value for <see cref="UserKeysFlushInterval"/>.
         /// </summary>
         internal static readonly TimeSpan DefaultUserKeysFlushInterval = TimeSpan.FromMinutes(5);
-        
+        /// <summary>
+        /// Default value for <see cref="DiagnosticRecordingInterval"/>.
+        /// </summary>
+        internal static readonly TimeSpan DefaultDiagnosticRecordingInterval = TimeSpan.FromMinutes(15);
+        /// <summary>
+        /// Minimum value for <see cref="DiagnosticRecordingInterval"/>.
+        /// </summary>
+        internal static readonly TimeSpan MinimumDiagnosticRecordingInterval = TimeSpan.FromMinutes(1);
+
         /// <summary>
         /// Creates a configuration with all parameters set to the default.
         /// </summary>
@@ -302,6 +331,8 @@ namespace LaunchDarkly.Sdk.Server
             _connectionTimeout = builder._connectionTimeout;
             _dataSourceFactory = builder._dataSourceFactory;
             _dataStoreFactory = builder._dataStoreFactory;
+            _diagnosticOptOut = builder._diagnosticOptOut;
+            _diagnosticRecordingInterval = builder._diagnosticRecordingInterval;
             _eventCapacity = builder._eventCapacity;
             _eventFlushInterval = builder._eventFlushInterval;
             _eventProcessorFactory = builder._eventProcessorFactory;
@@ -322,6 +353,8 @@ namespace LaunchDarkly.Sdk.Server
             _useLdd = builder._useLdd;
             _userKeysCapacity = builder._userKeysCapacity;
             _userKeysFlushInterval = builder._userKeysFlushInterval;
+            _wrapperName = builder._wrapperName;
+            _wrapperVersion = builder._wrapperVersion;
         }
         
         internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
@@ -332,9 +365,12 @@ namespace LaunchDarkly.Sdk.Server
         {
             internal Configuration Config { get; set; }
             public bool AllAttributesPrivate => Config.AllAttributesPrivate;
+            public bool DiagnosticOptOut => Config.DiagnosticOptOut;
+            public TimeSpan DiagnosticRecordingInterval => Config.DiagnosticRecordingInterval;
             public int EventCapacity => Config.EventCapacity;
             public TimeSpan EventFlushInterval => Config.EventFlushInterval;
-            public Uri EventsUri => Config.EventsUri;
+            public Uri EventsUri => new Uri(Config.EventsUri, "bulk");
+            public Uri DiagnosticUri => new Uri(Config.EventsUri, "diagnostic");
             public TimeSpan HttpClientTimeout => Config.ConnectionTimeout;
             public bool InlineUsersInEvents => Config.InlineUsersInEvents;
             public IImmutableSet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
@@ -349,6 +385,8 @@ namespace LaunchDarkly.Sdk.Server
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
             public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
+            public string WrapperName => Config.WrapperName;
+            public string WrapperVersion => Config.WrapperVersion;
         }
 
         private struct StreamManagerAdapter : IStreamManagerConfiguration
@@ -360,6 +398,8 @@ namespace LaunchDarkly.Sdk.Server
             public TimeSpan ReadTimeout => Config.ReadTimeout;
             public TimeSpan ReconnectTime => Config.ReconnectTime;
             public Exception TranslateHttpException(Exception e) => e;
+            public string WrapperName => Config.WrapperName;
+            public string WrapperVersion => Config.WrapperVersion;
         }
     }
 }

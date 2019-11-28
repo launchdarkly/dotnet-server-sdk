@@ -1,4 +1,4 @@
-﻿using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {

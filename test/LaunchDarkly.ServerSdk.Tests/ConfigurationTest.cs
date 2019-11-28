@@ -24,35 +24,38 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void CanSetProperties()
+        public void CanSetAndCopyProperties()
         {
             var uri = new Uri("http://fake");
             var time = TimeSpan.FromDays(3);
-            TestSetter(b => b.BaseUri, c => c.BaseUri, uri);
-            TestSetter(b => b.StreamUri, c => c.StreamUri, uri);
-            TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
-            TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
-            TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
-            TestSetter(b => b.EventCapacity, c => c.EventCapacity, 999);
-            TestSetter(b => b.EventFlushInterval, c => c.EventFlushInterval, time);
-            TestSetter(b => b.PollingInterval, c => c.PollingInterval, time);
-            TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
-            TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
-            TestSetter(b => b.ReconnectTime, c => c.ReconnectTime, time);
-            TestSetter(b => b.ConnectionTimeout, c => c.ConnectionTimeout, time);
-            TestSetter(b => b.HttpMessageHandler, c => c.HttpMessageHandler, new HttpClientHandler());
-            TestSetter(b => b.Offline, c => c.Offline, true);
             TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);
-            TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
-            TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
-            TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
-            TestSetter(b => b.UseLdd, c => c.UseLdd, true);
+            TestSetter(b => b.BaseUri, c => c.BaseUri, uri);
+            TestSetter(b => b.DataSource, c => c.DataSourceFactory, Components.NullDataSource);
             TestSetter(b => b.DataStore, c => c.DataStoreFactory,
                 TestUtils.SpecificDataStore(new InMemoryDataStore()));
+            TestSetter(b => b.ConnectionTimeout, c => c.ConnectionTimeout, time);
+            TestSetter(b => b.DiagnosticOptOut, c => c.DiagnosticOptOut, true);
+            TestSetter(b => b.DiagnosticRecordingInterval, c => c.DiagnosticRecordingInterval, time);
+            TestSetter(b => b.EventCapacity, c => c.EventCapacity, 999);
+            TestSetter(b => b.EventFlushInterval, c => c.EventFlushInterval, time);
             TestSetter(b => b.EventProcessorFactory, c => c.EventProcessorFactory,
                 TestUtils.SpecificEventProcessor(new TestEventProcessor()));
-            TestSetter(b => b.DataSource, c => c.DataSourceFactory,
-                Components.NullDataSource);
+            TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
+            TestSetter(b => b.HttpMessageHandler, c => c.HttpMessageHandler, new HttpClientHandler());
+            TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
+            TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
+            TestSetter(b => b.Offline, c => c.Offline, true);
+            TestSetter(b => b.PollingInterval, c => c.PollingInterval, time);
+            TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
+            TestSetter(b => b.ReconnectTime, c => c.ReconnectTime, time);
+            TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
+            TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
+            TestSetter(b => b.StreamUri, c => c.StreamUri, uri);
+            TestSetter(b => b.UseLdd, c => c.UseLdd, true);
+            TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
+            TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
+            TestSetter(b => b.WrapperName, c => c.WrapperName, "name");
+            TestSetter(b => b.WrapperVersion, c => c.WrapperVersion, "version");
         }
 
         private void TestSetter<T>(Func<IConfigurationBuilder, Func<T, IConfigurationBuilder>> setter,
@@ -60,8 +63,10 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = setter(Configuration.Builder(sdkKey))(value).Build();
             Assert.Equal(value, getter(config));
+            var copy = Configuration.Builder(config).Build();
+            Assert.Equal(value, getter(copy));
         }
-        
+
         [Fact]
         public void CanSetPrivateAttributes()
         {
@@ -81,6 +86,14 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey).PollingInterval(TimeSpan.FromSeconds(29)).Build();
 
             Assert.Equal(TimeSpan.FromSeconds(30), config.PollingInterval);
+        }
+
+        [Fact]
+        public void CannotOverrideTooSmallDiagnosticRecordingInterval()
+        {
+            var config = Configuration.Builder(sdkKey).DiagnosticRecordingInterval(TimeSpan.FromSeconds(59)).Build();
+
+            Assert.Equal(TimeSpan.FromMinutes(1), config.DiagnosticRecordingInterval);
         }
         
         [Fact]
