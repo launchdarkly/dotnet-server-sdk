@@ -3,6 +3,10 @@ using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.DataSources;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server
 {

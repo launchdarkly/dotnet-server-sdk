@@ -1,5 +1,6 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Utils
