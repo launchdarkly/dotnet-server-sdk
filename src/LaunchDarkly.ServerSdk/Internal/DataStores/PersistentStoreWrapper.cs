@@ -10,18 +10,13 @@ using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
     /// <summary>
-    /// A partial implementation of <see cref="IDataStore"/> that delegates the basic functionality to
-    /// an instance of <see cref="IPersistentDataStore"/> or <see cref="IPersistentDataStoreAsync"/>.
+    /// The SDK's internal implementation <see cref="IDataStore"/> for persistent data stores.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This class provides optional caching behavior and other logic that would otherwise be repeated in
-    /// every data store implementation. This makes it easier to create new database integrations by
-    /// implementing only the database-specific logic.
-    /// </para>
-    /// <para>
-    /// Construct instances of this class with <see cref="CachingStoreWrapper.Builder(IDataStoreCore)"/>
-    /// or <see cref="CachingStoreWrapper.Builder(IDataStoreCoreAsync)"/>.
+    /// The basic data store behavior is provided by some implementation of
+    /// <see cref="IPersistentDataStore"/> or <see cref="IPersistentDataStoreAsync"/>. This
+    /// class adds the caching behavior that we normally want for any persistent data store.
     /// </para>
     /// </remarks>
     internal sealed class PersistentStoreWrapper : IDataStore
@@ -69,8 +64,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 _initCache = null;
             }
         }
-
-        /// <inheritdoc/>
+        
         public bool Initialized()
         {
             if (_inited)
@@ -199,7 +193,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                             _itemCache.Set(cacheKey, item);
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // An exception here means that the underlying database is down *and* there was no
                         // cached item; in that case we just go ahead and update the cache.
@@ -238,7 +232,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return updated;
         }
         
-        /// <inheritdoc/>
         public void Dispose()
         {
             Dispose(true);
@@ -291,41 +284,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 serializedItem is null ? null : kind.Deserialize(serializedItem));
         }
     }
-
-    /// <summary>
-    /// Builder class for <see cref="PersistentStoreWrapper"/>.
-    /// </summary>
-    internal class PersistentStoreWrapperBuilder
-    {
-        private readonly IPersistentDataStore _core;
-        private DataStoreCacheConfig _caching = DataStoreCacheConfig.Enabled;
-
-        internal PersistentStoreWrapperBuilder(IPersistentDataStore core)
-        {
-            _core = core;
-        }
-
-        /// <summary>
-        /// Creates and configures the wrapper object.
-        /// </summary>
-        /// <returns>a <see cref="CachingStoreWrapper"/> instance</returns>
-        internal PersistentStoreWrapper Build()
-        {
-            return new PersistentStoreWrapper(_core, _caching);
-        }
-
-        /// <summary>
-        /// Sets the local caching properties.
-        /// </summary>
-        /// <param name="caching">a <see cref="DataStoreCacheConfig"/> object</param>
-        /// <returns>the builder</returns>
-        public PersistentStoreWrapperBuilder WithCaching(DataStoreCacheConfig caching)
-        {
-            _caching = caching;
-            return this;
-        }
-    }
-
+    
     internal struct CacheKey : IEquatable<CacheKey>
     {
         public readonly DataKind Kind;

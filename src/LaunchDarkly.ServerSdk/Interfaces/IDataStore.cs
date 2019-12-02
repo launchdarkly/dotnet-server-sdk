@@ -5,43 +5,84 @@ using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
-    /// Interface for a data store that holds feature flags and related data received by the streaming client.
+    /// Interface for a data store that holds feature flags and related data received by the SDK.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Ordinarily, the only implementation of this interface is the default in-memory
+    /// implementation, which holds references to actual SDK data model objects. Any data store
+    /// implementation that uses an external store, such as a database, should instead use
+    /// <see cref="IPersistentDataStore"/> or <see cref="IPersistentDataStoreAsync"/>.
+    /// </para>
+    /// <para>
+    /// Implementations must be thread-safe.
+    /// </para>
+    /// </remarks>
     /// <seealso cref="IDataStoreFactory"/>
+    /// <seealso cref="IPersistentDataStore"/>
+    /// <seealso cref="IPersistentDataStoreAsync"/>
     public interface IDataStore : IDisposable
     {
         /// <summary>
-        /// Overwrite the store's contents with a set of objects for each collection.
+        /// Overwrites the store's contents with a set of items for each collection.
         /// </summary>
-        /// <param name="allData">a dictionary where each key specifies a collection, and each value
-        /// is a map of string keys to objects in that collection</param>
+        /// <remarks>
+        /// <para>
+        /// All previous data should be discarded, regardless of versioning.
+        /// </para>
+        /// <para>
+        /// The update should be done atomically. If it cannot be done atomically, then the store
+        /// must first add or update each item in the same order that they are given in the input
+        /// data, and then delete any previously stored items that were not in the input data.
+        /// </para>
+        /// </remarks>
+        /// <param name="allData">a list of <see cref="DataKind"/> instances and their
+        /// corresponding data sets</param>
         void Init(FullDataSet<ItemDescriptor> allData);
 
         /// <summary>
-        /// Retrieve an object from the specified collection, or return null if not found.
+        /// Retrieves an item from the specified collection, if available.
         /// </summary>
+        /// <remarks>
+        /// If the item has been deleted and the store contains a placeholder, it should
+        /// return that placeholder rather than null.
+        /// </remarks>
         /// <param name="kind">specifies which collection to use</param>
-        /// <param name="key">the unique string key of the object</param>
-        /// <returns>the found object or null</returns>
+        /// <param name="key">the unique key of the item within that collection</param>
+        /// <returns>a versioned item that contains the stored data (or placeholder for
+        /// deleted data); null if the key is unknown</returns>
         ItemDescriptor? Get(DataKind kind, string key);
 
         /// <summary>
-        /// Retrieve all objects from the specified collection.
+        /// Retrieves all items from the specified collection.
         /// </summary>
+        /// <remarks>
+        /// If the store contains placeholders for deleted items, it should include them in
+        /// the results, not filter them out.
+        /// </remarks>
         /// <param name="kind">specifies which collection to use</param>
-        /// <returns>a dictionary of string keys to objects</returns>
+        /// <returns>a mapping of string keys to items</returns>
         IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind);
 
         /// <summary>
-        /// Update or insert an object in the specified collection. For updates, the object will only be
+        /// Updates or inserts an item in the specified collection. For updates, the object will only be
         /// updated if the existing version is less than the new version.
         /// </summary>
+        /// <remarks>
+        /// The SDK may pass an <see cref="ItemDescriptor"/> that contains a null, to
+        /// represent a placeholder for a deleted item. In that case, assuming the version
+        /// is greater than any existing version of that item, the store should retain that
+        /// placeholder rather than simply not storing anything.
+        /// </remarks>
         /// <param name="kind">specifies which collection to use</param>
+        /// <param name="key">the unique key for the item within that collection</param>
         /// <param name="item">the item to insert or update</param>
+        /// <returns>true if the item was updated; false if it was not updated because the
+        /// store contains an equal or greater version</returns>
         bool Upsert(DataKind kind, string key, ItemDescriptor item);
 
         /// <summary>
-        /// Check whether this store has been initialized with any data yet.
+        /// Checks whether this store has been initialized with any data yet.
         /// </summary>
         /// <returns>true if the store contains data</returns>
         bool Initialized();

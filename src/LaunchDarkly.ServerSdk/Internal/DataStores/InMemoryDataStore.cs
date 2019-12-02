@@ -10,6 +10,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     /// <summary>
     /// In-memory, thread-safe implementation of <see cref="IDataStore"/>.
     /// </summary>
+    /// <remarks>
+    /// Application code cannot see this implementation class and uses
+    /// <see cref="Components.InMemoryDataStore"/> instead.
+    /// </remarks>
     internal class InMemoryDataStore : IDataStore
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryDataStore));

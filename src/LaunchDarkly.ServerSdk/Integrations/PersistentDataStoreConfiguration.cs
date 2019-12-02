@@ -5,9 +5,26 @@ using LaunchDarkly.Sdk.Server.Internal.DataStores;
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
-    /// 
+    /// A configurable data store factory that adds caching behavior to a persistent data
+    /// store implementation.
     /// </summary>
-    public class PersistentDataStoreFactory : IDataStoreFactory
+    /// <remarks>
+    /// <para>
+    /// For a persistent data store (e.g. a database integration), the store implementation will
+    /// provide an <see cref="IPersistentDataStoreFactory"/> or <see cref="IPersistentDataStoreAsyncFactory"/>
+    /// that implements the specific data store behavior. The SDK then provides additional
+    /// options for caching; thos are defined by this type, which is returned by
+    /// <see cref="Components.PersistentStore(IPersistentDataStoreFactory)"/>. Example usage:
+    /// </para>
+    /// <code>
+    ///     var myStore = Components.PersistentStore(Redis.FeatureStore())
+    ///         .CacheTtl(TimeSpan.FromSeconds(45));
+    ///     var config = Configuration.Builder(sdkKey)
+    ///         .DataStore(myStore)
+    ///         .Build();
+    /// </code>
+    /// </remarks>
+    public class PersistentDataStoreConfiguration : IDataStoreFactory
     {
         private readonly IPersistentDataStoreFactory _coreFactory;
         private readonly IPersistentDataStoreAsyncFactory _coreAsyncFactory;
@@ -18,13 +35,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan DefaultTtl = DataStoreCacheConfig.DefaultTtl;
 
-        internal PersistentDataStoreFactory(IPersistentDataStoreFactory coreFactory)
+        internal PersistentDataStoreConfiguration(IPersistentDataStoreFactory coreFactory)
         {
             _coreFactory = coreFactory;
             _coreAsyncFactory = null;
         }
 
-        internal PersistentDataStoreFactory(IPersistentDataStoreAsyncFactory coreAsyncFactory)
+        internal PersistentDataStoreConfiguration(IPersistentDataStoreAsyncFactory coreAsyncFactory)
         {
             _coreFactory = null;
             _coreAsyncFactory = coreAsyncFactory;
@@ -50,7 +67,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </remarks>
         /// <param name="ttl">the cache TTL</param>
         /// <returns>an updated factory object</returns>
-        public PersistentDataStoreFactory CacheTtl(TimeSpan ttl)
+        public PersistentDataStoreConfiguration CacheTtl(TimeSpan ttl)
         {
             _cacheConfig = _cacheConfig.WithTtl(ttl);
             return this;
@@ -70,16 +87,16 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </remarks>
         /// <param name="maximumEntries">the maximum number of entries, or null for no limit</param>
         /// <returns>an updated factory object</returns>
-        public PersistentDataStoreFactory CacheMaximumEntries(int? maximumEntries)
+        public PersistentDataStoreConfiguration CacheMaximumEntries(int? maximumEntries)
         {
             _cacheConfig = _cacheConfig.WithMaximumEntries(maximumEntries);
             return this;
         }
 
         /// <summary>
-        /// Called by the SDK to create the data store instance.
+        /// Called by the SDK to create the data store instance for a specific <see cref="LdClient"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>the data store instanc</returns>
         public IDataStore CreateDataStore()
         {
             if (_coreFactory != null)

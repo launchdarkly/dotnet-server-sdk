@@ -70,17 +70,26 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory);
 
         /// <summary>
-        /// Sets the implementation of <see cref="IDataStore"/> to be used for holding feature flags
+        /// Sets the data store implementation to be used for holding feature flags
         /// and related data received from LaunchDarkly.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// The default is <see cref="Components.InMemoryDataStore"/>, but you may choose to use a custom
-        /// implementation.
+        /// implementation such as a database integration. For the latter, you will normally
+        /// use <see cref="Components.PersistentStore(IPersistentDataStoreFactory)"/> in
+        /// conjunction with some specific type for that integration.
+        /// </para>
+        /// <para>
+        /// This is specified as a factory because the SDK normally manages the lifecycle of the
+        /// data store; it will create an instance from the factory when an <see cref="LdClient"/>
+        /// is created, and dispose of that instance when disposing of the client.
+        /// </para>
         /// </remarks>
         /// <param name="dataStoreFactory">the factory object</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder DataStore(IDataStoreFactory dataStoreFactory);
-
+        
         /// <summary>
         ///   Set to true to opt out of sending diagnostic events.
         /// </summary>
@@ -410,7 +419,7 @@ namespace LaunchDarkly.Sdk.Server
             _dataStoreFactory = dataStoreFactory;
             return this;
         }
-
+        
         public IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut)
         {
             _diagnosticOptOut = diagnosticOptOut;

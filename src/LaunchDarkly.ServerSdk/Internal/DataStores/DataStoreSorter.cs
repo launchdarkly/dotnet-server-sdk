@@ -7,6 +7,17 @@ using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
+    /// <summary>
+    /// Uses a dependency graph to determine the preferred ordering for feature flag updates.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Some persistent data store implementations may not support atomic updates. In that case,
+    /// it is desirable to add or update items in an order that will minimize the chance of an
+    /// invalid intermediate state of the overall data set: for instance, if flag A has flag B
+    /// as a prerequisite, then B should be added/updated before A.
+    /// </para>
+    /// </remarks>
     internal abstract class DataStoreSorter
     {
         public static FullDataSet<ItemDescriptor> SortAllCollections(FullDataSet<ItemDescriptor> allData)
