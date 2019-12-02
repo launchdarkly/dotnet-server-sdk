@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Sdk.Server.Internal;
 
 namespace LaunchDarkly.Sdk.Server.Files
 {

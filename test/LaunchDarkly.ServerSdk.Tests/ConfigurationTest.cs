@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server
