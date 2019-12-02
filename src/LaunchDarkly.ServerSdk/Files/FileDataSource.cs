@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Model;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 

@@ -1,4 +1,4 @@
-﻿using LaunchDarkly.Sdk.Server.Model;
+﻿using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Sdk.Server.Files

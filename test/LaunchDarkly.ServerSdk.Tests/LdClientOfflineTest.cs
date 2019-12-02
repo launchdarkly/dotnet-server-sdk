@@ -1,7 +1,7 @@
 ﻿using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
-using LaunchDarkly.Sdk.Server.Model;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server

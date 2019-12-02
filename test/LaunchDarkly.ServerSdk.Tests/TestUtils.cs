@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Model;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;

@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
-using LaunchDarkly.Sdk.Server.Model;
+using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Moq;
 using Xunit;
 

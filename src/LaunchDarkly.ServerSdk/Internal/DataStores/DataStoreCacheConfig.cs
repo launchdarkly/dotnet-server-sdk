@@ -8,7 +8,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The built-in <see cref="InMemoryDataStore"/> does not use this class; it is meant for database
+    /// The built-in <see cref="Components.InMemoryDataStore"/> does not use this class; it is meant for database
     /// implementations.
     /// </para>
     /// <para>
