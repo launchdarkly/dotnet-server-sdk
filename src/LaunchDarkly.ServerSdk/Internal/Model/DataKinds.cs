@@ -1,5 +1,4 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Server.Internal;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 

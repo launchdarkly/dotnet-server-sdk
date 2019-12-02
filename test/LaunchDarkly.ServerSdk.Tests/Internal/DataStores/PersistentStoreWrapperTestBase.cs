@@ -100,18 +100,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public void CachedGetUsesValuesFromInit()
         {
             var wrapper = MakeWrapper(Cached);
-            var item1 = new TestItem("item1");
-            var item2 = new TestItem("item2");
+            var itemA = new TestItem("itemA");
+            var itemB = new TestItem("itemB");
 
             var allData = new TestDataBuilder()
-                .Add(TestDataKind, "key1", 1, item1)
-                .Add(TestDataKind, "key2", 1, item2)
+                .Add(TestDataKind, "keyA", 1, itemA)
+                .Add(TestDataKind, "keyB", 1, itemA)
                 .Build();
             wrapper.Init(allData);
 
-            _core.ForceRemove(TestDataKind, "key1");
+            _core.ForceRemove(TestDataKind, "keyA");
 
-            Assert.Equal(item1.WithVersion(1), wrapper.Get(TestDataKind, "key1"));
+            Assert.Equal(itemA.WithVersion(1), wrapper.Get(TestDataKind, "keyA"));
         }
 
         [Theory]
@@ -121,19 +121,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public void GetAll(string mode)
         {
             var wrapper = MakeWrapper(mode);
-            var item1 = new TestItem("item1");
-            var item2 = new TestItem("item2");
+            var itemA = new TestItem("itemA");
+            var itemB = new TestItem("itemB");
 
-            _core.ForceSet(TestDataKind, "key1", 1, item1);
-            _core.ForceSet(TestDataKind, "key2", 2, item2);
+            _core.ForceSet(TestDataKind, "keyA", 1, itemA);
+            _core.ForceSet(TestDataKind, "keyB", 2, itemB);
 
             var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
-                .Add("key1", item1.WithVersion(1))
-                .Add("key2", item2.WithVersion(2));
+                .Add("keyA", itemA.WithVersion(1))
+                .Add("keyB", itemB.WithVersion(2));
             Assert.Equal(expected, items);
 
-            _core.ForceRemove(TestDataKind, "key2");
+            _core.ForceRemove(TestDataKind, "keyB");
             items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             if (mode != Uncached)
             {
@@ -142,7 +142,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             else
             {
                 var expected1 = ImmutableDictionary.Create<string, ItemDescriptor>()
-                    .Add("key1", item1.WithVersion(1));
+                    .Add("keyA", itemA.WithVersion(1));
                 Assert.Equal(expected1, items);
             }
         }
@@ -154,15 +154,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public void GetAllDoesNotRemoveDeletedItems(string mode)
         {
             var wrapper = MakeWrapper(mode);
-            var item1 = new TestItem("item1");
+            var itemA = new TestItem("itemA");
 
-            _core.ForceSet(TestDataKind, "key1", 1, item1);
-            _core.ForceSet(TestDataKind, "key2", 2, null);
+            _core.ForceSet(TestDataKind, "keyA", 1, itemA);
+            _core.ForceSet(TestDataKind, "keyB", 2, null); // deleted item
 
             var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
-                .Add("key1", item1.WithVersion(1))
-                .Add("key2", ItemDescriptor.Deleted(2));
+                .Add("keyA", itemA.WithVersion(1))
+                .Add("keyB", ItemDescriptor.Deleted(2));
             Assert.Equal(expected, items);
         }
 
@@ -170,21 +170,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public void CachedAllUsesValuesFromInit()
         {
             var wrapper = MakeWrapper(Cached);
-            var item1 = new TestItem("item1");
-            var item2 = new TestItem("item2");
+            var itemA = new TestItem("itemA");
 
             var allData = new TestDataBuilder()
-                .Add(TestDataKind, "key1", 1, item1)
-                .Add(TestDataKind, "key2", 2, item2)
+                .Add(TestDataKind, "keyA", 1, itemA)
+                .Add(TestDataKind, "keyB", 2, null) // deleted item
                 .Build();
             wrapper.Init(allData);
             
-            _core.ForceRemove(TestDataKind, "key1");
+            _core.ForceRemove(TestDataKind, "keyA");
 
             var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
-                .Add("key1", item1.WithVersion(1))
-                .Add("key2", ItemDescriptor.Deleted(2));
+                .Add("keyA", itemA.WithVersion(1))
+                .Add("keyB", ItemDescriptor.Deleted(2));
             Assert.Equal(expected, items);
         }
 
@@ -192,28 +191,28 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public void CachedAllUsesFreshValuesIfThereHasBeenAnUpdate()
         {
             var wrapper = MakeWrapper(Cached);
-            var item1 = new TestItem("item1");
-            var item2 = new TestItem("item2");
+            var itemA = new TestItem("itemA");
+            var itemB = new TestItem("itemB");
 
             var allData = new TestDataBuilder()
-                .Add(TestDataKind, "key1", 1, item1)
-                .Add(TestDataKind, "key2", 2, item2)
+                .Add(TestDataKind, "keyA", 1, itemA)
+                .Add(TestDataKind, "keyB", 2, itemB)
                 .Build();
             wrapper.Init(allData);
             
-            // make a change to item1 via the wrapper - this should flush the cache
-            var item1v2 = new TestItem("item1v2");
-            wrapper.Upsert(TestDataKind, "key1", item1v2.WithVersion(2));
+            // make a change to itemA via the wrapper - this should flush the cache
+            var itemAv2 = new TestItem("itemAv2");
+            wrapper.Upsert(TestDataKind, "keyA", itemAv2.WithVersion(2));
 
-            // make a change to item2 that bypasses the cache
-            var item2v3 = new TestItem("item2v3");
-            _core.ForceSet(TestDataKind, "key2", 3, item2v3);
+            // make a change to itemB that bypasses the cache
+            var itemBv3 = new TestItem("itemBv3");
+            _core.ForceSet(TestDataKind, "keyB", 3, itemBv3);
 
             // we should now see both changes since the cache was flushed
             var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
-                .Add("key1", item1v2.WithVersion(2))
-                .Add("key2", item2v3.WithVersion(3));
+                .Add("keyA", itemAv2.WithVersion(2))
+                .Add("keyB", itemBv3.WithVersion(3));
             Assert.Equal(expected, items);
         }
 
@@ -352,65 +351,65 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public void CachedStoreWithFiniteTtlRemovesCachedAllDataIfOneItemIsUpdated()
         {
             var wrapper = MakeWrapper(Cached);
-            var key1 = "flag1";
-            var item1v1 = new TestItem("item1v1");
-            var item1v2 = new TestItem("item1v2");
-            var key2 = "flag2";
-            var item2v1 = new TestItem("item2v1");
-            var item2v2 = new TestItem("item2v2");
+            var keyA = "keyA";
+            var itemAv1 = new TestItem("itemAv1");
+            var itemAv2 = new TestItem("itemAv2");
+            var keyB = "keyB";
+            var itemBv1 = new TestItem("itemBv1");
+            var itemBv2 = new TestItem("itemBv2");
 
             var allData = new TestDataBuilder()
-                .Add(TestDataKind, key1, 1, item1v1)
-                .Add(TestDataKind, key2, 1, item2v1)
+                .Add(TestDataKind, keyA, 1, itemAv1)
+                .Add(TestDataKind, keyB, 1, itemBv1)
                 .Build();
             wrapper.Init(allData);
 
             wrapper.GetAll(TestDataKind); // now the All data is cached
 
-            // do an Upsert for item1 - this should drop the previous All data from the cache
-            wrapper.Upsert(TestDataKind, key1, item1v2.WithVersion(2));
+            // do an Upsert for itemA - this should drop the previous All data from the cache
+            wrapper.Upsert(TestDataKind, keyA, itemAv2.WithVersion(2));
 
-            // modify item2 directly in the underlying data
-            _core.ForceSet(TestDataKind, key2, 2, item2v2);
+            // modify itemB directly in the underlying data
+            _core.ForceSet(TestDataKind, keyB, 2, itemBv2);
 
             // now, All should reread the underlying data so we see both changes
             var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
-                .Add(key1, item1v1.WithVersion(2))
-                .Add(key2, item2v2.WithVersion(2));
+                .Add(keyA, itemAv2.WithVersion(2))
+                .Add(keyB, itemBv2.WithVersion(2));
             Assert.Equal(expected, items);
         }
 
         [Fact]
-        public void CachedStoreWithFiniteTtlUpdatesCachedAllDataIfOneItemIsUpdated()
+        public void CachedStoreWithInfiniteTtlUpdatesCachedAllDataIfOneItemIsUpdated()
         {
             var wrapper = MakeWrapper(CachedIndefinitely);
-            var key1 = "flag1";
-            var item1v1 = new TestItem("item1v1");
-            var item1v2 = new TestItem("item1v2");
-            var key2 = "flag2";
-            var item2v1 = new TestItem("item2v1");
-            var item2v2 = new TestItem("item2v2");
+            var keyA = "keyA";
+            var itemAv1 = new TestItem("itemAv1");
+            var itemAv2 = new TestItem("itemAv2");
+            var keyB = "keyB";
+            var itemBv1 = new TestItem("itemBv1");
+            var itemBv2 = new TestItem("itemBv2");
 
             var allData = new TestDataBuilder()
-                .Add(TestDataKind, key1, 1, item1v1)
-                .Add(TestDataKind, key2, 1, item2v1)
+                .Add(TestDataKind, keyA, 1, itemAv1)
+                .Add(TestDataKind, keyB, 1, itemBv1)
                 .Build();
             wrapper.Init(allData);
             
             wrapper.GetAll(TestDataKind); // now the All data is cached
 
-            // do an Upsert for item1 - this should update the underlying data *and* the cached All data
-            wrapper.Upsert(TestDataKind, key1, item1v2.WithVersion(2));
+            // do an Upsert for itemA - this should update the underlying data *and* the cached All data
+            wrapper.Upsert(TestDataKind, keyA, itemAv2.WithVersion(2));
 
-            // modify item2 directly in the underlying data
-            _core.ForceSet(TestDataKind, key2, 2, item2v2);
+            // modify itemB directly in the underlying data
+            _core.ForceSet(TestDataKind, keyB, 2, itemBv2);
 
-            // now, All should *not* reread the underlying data - we should only see the change to item1
+            // now, All should *not* reread the underlying data - we should only see the change to itemA
             var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
-                .Add(key1, item1v1.WithVersion(2))
-                .Add(key2, item2v1.WithVersion(1));
+                .Add(keyA, itemAv1.WithVersion(2))
+                .Add(keyB, itemBv1.WithVersion(1));
             Assert.Equal(expected, items);
         }
 

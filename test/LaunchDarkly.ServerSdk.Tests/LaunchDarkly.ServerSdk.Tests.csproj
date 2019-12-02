@@ -41,6 +41,5 @@
 
   <ItemGroup>
     <Folder Include="Integrations\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
 </Project>
