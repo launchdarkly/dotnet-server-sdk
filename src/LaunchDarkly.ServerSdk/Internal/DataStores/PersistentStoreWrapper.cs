@@ -151,7 +151,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind) =>
             _allCache is null ? GetAllAndDeserialize(kind) : _allCache.Get(kind);
 
-        /// <inheritdoc/>
         public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
             var serializedItem = new SerializedItemDescriptor(item.Version,
@@ -192,7 +191,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 }
                 else
                 {
-                    // TODO
+                    try
+                    {
+                        var oldItem = _itemCache.Get(cacheKey);
+                        if (!oldItem.HasValue || oldItem.Value.Version < item.Version)
+                        {
+                            _itemCache.Set(cacheKey, item);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // An exception here means that the underlying database is down *and* there was no
+                        // cached item; in that case we just go ahead and update the cache.
+                        _itemCache.Set(cacheKey, item);
+                    }
                 }
             }
             if (_allCache != null)

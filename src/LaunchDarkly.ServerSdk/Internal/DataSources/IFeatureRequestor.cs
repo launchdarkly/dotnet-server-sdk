@@ -35,7 +35,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Features,
                     Flags.ToImmutableDictionary(kv => kv.Key, kv => new ItemDescriptor(kv.Value.Version, kv.Value))),
                 new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Segments,
-                    Flags.ToImmutableDictionary(kv => kv.Key, kv => new ItemDescriptor(kv.Value.Version, kv.Value)))
+                    Segments.ToImmutableDictionary(kv => kv.Key, kv => new ItemDescriptor(kv.Value.Version, kv.Value)))
             ));
         }
     }

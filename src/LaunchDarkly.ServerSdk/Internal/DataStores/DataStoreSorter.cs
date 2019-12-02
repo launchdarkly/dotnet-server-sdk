@@ -37,11 +37,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             while (remainingItems.Count > 0)
             {
                 // pick a random item that hasn't been updated yet
-                foreach (var entry in remainingItems)
-                {
-                    AddWithDependenciesFirst(entry.Key, entry.Value, remainingItems, dependencyKeysFn, outputOrdering);
-                    break;
-                }
+                var entry = remainingItems.First();
+                AddWithDependenciesFirst(entry.Key, entry.Value, remainingItems, dependencyKeysFn, outputOrdering);
             }
 
             var ret = new SortedDictionary<string, ItemDescriptor>(outputOrdering);
@@ -87,7 +84,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             OutputOrdering output)
         {
             remainingItems.Remove(key);  // we won't need to visit this item again
-            foreach (var prereqKey in dependencyKeysFn(item))
+            foreach (var prereqKey in dependencyKeysFn(item.Item))
             {
                 if (remainingItems.TryGetValue(prereqKey, out var prereqItem))
                 {

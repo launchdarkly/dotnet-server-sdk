@@ -25,6 +25,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
                 _serializer = serializer;
                 _deserializer = deserializer;
             }
+
+            public override string ToString()
+            {
+                return "DataKind(" + _name + ")";
+            }
         }
         
         public struct ItemDescriptor

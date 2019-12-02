@@ -408,7 +408,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             // now, All should *not* reread the underlying data - we should only see the change to itemA
             var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
-                .Add(keyA, itemAv1.WithVersion(2))
+                .Add(keyA, itemAv2.WithVersion(2))
                 .Add(keyB, itemBv1.WithVersion(1));
             Assert.Equal(expected, items);
         }

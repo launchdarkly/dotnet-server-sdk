@@ -222,6 +222,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void DataSetIsPassedToDataStoreInCorrectOrder()
         {
+            // The underlying functionality here is also covered in DataStoreSorterTest, but we want to verify that the
+            // client object is actually *using* DataStoreSorter.
+
             var mockStore = new Mock<IDataStore>();
             var store = mockStore.Object;
             FullDataSet<ItemDescriptor> receivedData;
@@ -235,77 +238,16 @@ namespace LaunchDarkly.Sdk.Server
 
             var config = Configuration.Builder("SDK_KEY")
                 .DataStore(TestUtils.SpecificDataStore(store))
-                .DataSource(TestUtils.DataSourceWithData(new FullDataSet<ItemDescriptor>(DependencyOrderingTestData)))
+                .DataSource(TestUtils.DataSourceWithData(DataStoreSorterTest.DependencyOrderingTestData))
                 .EventProcessorFactory(Components.NullEventProcessor)
                 .Build();
 
             using (var client = new LdClient(config))
             {
                 Assert.NotNull(receivedData);
-                var entries = receivedData.Data.ToList();
-                Assert.Equal(DependencyOrderingTestData.Count, entries.Count);
-
-                // Segments should always come first
-                Assert.Equal(DataKinds.Segments, entries[0].Key);
-                Assert.Equal(DependencyOrderingTestData[DataKinds.Segments].Count(),
-                    entries[0].Value.Count());
-
-                // Features should be ordered so that a flag always appears after its prerequisites, if any
-                Assert.Equal(DataKinds.Features, entries[1].Key);
-                Assert.Equal(DependencyOrderingTestData[DataKinds.Features].Count(),
-                    entries[1].Value.Count());
-                var flags = entries[1].Value;
-                var orderedItems = new List<FeatureFlag>(flags.Select(kv => kv.Value.Item as FeatureFlag));
-                for (var itemIndex = 0; itemIndex < orderedItems.Count; itemIndex++)
-                {
-                    var item = orderedItems[itemIndex];
-                    foreach (var prereq in item.Prerequisites)
-                    {
-                        var depFlag = flags.First(kv => kv.Key == prereq.Key).Value.Item as FeatureFlag;
-                        var depIndex = orderedItems.IndexOf(depFlag);
-                        if (depIndex > itemIndex)
-                        {
-                            var allKeys = from i in orderedItems select i.Key;
-                            Assert.True(false, String.Format("{0} depends on {1}, but {0} was listed first; keys in order are [{2}]",
-                                item.Key, prereq.Key, String.Join(", ", allKeys)));
-                        }
-                    }
-                }
+                DataStoreSorterTest.VerifyDataSetOrder(receivedData, DataStoreSorterTest.DependencyOrderingTestData,
+                    DataStoreSorterTest.ExpectedOrderingForSortedDataSet);
             }
         }
-
-        private static readonly Dictionary<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>> DependencyOrderingTestData =
-            new Dictionary<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>()
-        {
-            {
-                DataKinds.Features,
-                new Dictionary<string, ItemDescriptor>()
-                {
-                    { "a", new ItemDescriptor(1, new FeatureFlagBuilder("a")
-                        .Prerequisites(new List<Prerequisite>() {
-                            new Prerequisite("b", 0),
-                            new Prerequisite("c", 0),
-                            })
-                        .Build()) },
-                    { "b", new ItemDescriptor(1, new FeatureFlagBuilder("b")
-                        .Prerequisites(new List<Prerequisite>() {
-                            new Prerequisite("c", 0),
-                            new Prerequisite("e", 0),
-                            })
-                        .Build()) },
-                    { "c", new ItemDescriptor(1, new FeatureFlagBuilder("c").Build()) },
-                    { "d", new ItemDescriptor(1, new FeatureFlagBuilder("d").Build()) },
-                    { "e", new ItemDescriptor(1, new FeatureFlagBuilder("e").Build()) },
-                    { "f", new ItemDescriptor(1, new FeatureFlagBuilder("f").Build()) }
-                }
-            },
-            {
-                DataKinds.Segments,
-                new Dictionary<string, ItemDescriptor>()
-                {
-                    { "o", new ItemDescriptor(1, new Segment("o", 1, null, null, null, null, false)) }
-                }
-            }
-        };
     }
 }
