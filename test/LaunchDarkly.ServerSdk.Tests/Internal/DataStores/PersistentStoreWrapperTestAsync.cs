@@ -34,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return Get(kind, key);
         }
 
-        public async Task<IEnumerable<KeyValuePair<string, SerializedItemDescriptor>>> GetAllAsync(DataKind kind)
+        public async Task<KeyedItems<SerializedItemDescriptor>> GetAllAsync(DataKind kind)
         {
             await ArbitraryTask();
             return GetAll(kind);

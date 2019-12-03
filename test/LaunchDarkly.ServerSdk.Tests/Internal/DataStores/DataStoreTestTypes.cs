@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             public FullDataSet<ItemDescriptor> Build()
             {
                 return new FullDataSet<ItemDescriptor>(_data.ToImmutableDictionary(kv => kv.Key,
-                    kv => (IEnumerable<KeyValuePair<string, ItemDescriptor>>)kv.Value.ToImmutableDictionary()));
+                    kv => new KeyedItems<ItemDescriptor>(kv.Value.ToImmutableDictionary())));
             }
 
             public TestDataBuilder Add(DataKind kind, string key, int version, object item)

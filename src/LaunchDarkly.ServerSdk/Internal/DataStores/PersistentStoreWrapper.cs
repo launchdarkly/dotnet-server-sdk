@@ -92,11 +92,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             Exception failure = null;
             var serializedItems = items.Data.ToImmutableDictionary(
                 kindAndItems => kindAndItems.Key,
-                kindAndItems => (IEnumerable<KeyValuePair<string, SerializedItemDescriptor>>)
-                    kindAndItems.Value.ToImmutableDictionary(
+                kindAndItems => new KeyedItems<SerializedItemDescriptor>(
+                    kindAndItems.Value.Items.ToImmutableDictionary(
                         keyAndItem => keyAndItem.Key,
                         keyAndItem => Serialize(kindAndItems.Key, keyAndItem.Value)
-                    )
+                    ))
             );
             try
             {
@@ -121,8 +121,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 foreach (var e0 in items.Data)
                 {
                     var kind = e0.Key;
-                    _allCache.Set(kind, e0.Value.ToImmutableDictionary());
-                    foreach (var e1 in e0.Value)
+                    _allCache.Set(kind, e0.Value.Items.ToImmutableDictionary());
+                    foreach (var e1 in e0.Value.Items)
                     {
                         _itemCache.Set(new CacheKey(kind, e1.Key), e1.Value);
                     }
@@ -142,8 +142,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _itemCache is null ? GetAndDeserializeItem(kind, key) :
                 _itemCache.Get(new CacheKey(kind, key));
 
-        public IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind) =>
-            _allCache is null ? GetAllAndDeserialize(kind) : _allCache.Get(kind);
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind) =>
+            new KeyedItems<ItemDescriptor>(_allCache is null ?
+                GetAllAndDeserialize(kind) : _allCache.Get(kind));
 
         public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
@@ -264,7 +265,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         
         private ImmutableDictionary<string, ItemDescriptor> GetAllAndDeserialize(DataKind kind)
         {
-            return _core.GetAll(kind).ToImmutableDictionary(
+            return _core.GetAll(kind).Items.ToImmutableDictionary(
                 kv => kv.Key,
                 kv => Deserialize(kind, kv.Value));
 

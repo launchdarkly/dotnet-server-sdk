@@ -22,12 +22,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     {
         public static FullDataSet<ItemDescriptor> SortAllCollections(FullDataSet<ItemDescriptor> allData)
         {
-            var dataOut = new SortedDictionary<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(
+            var dataOut = new SortedDictionary<DataKind, KeyedItems<ItemDescriptor>>(
                 PriorityComparer.Instance);
             foreach (var entry in allData.Data)
             {
                 var kind = entry.Key;
-                dataOut.Add(kind, SortCollection(kind, entry.Value));
+                dataOut.Add(kind, new KeyedItems<ItemDescriptor>(SortCollection(kind, entry.Value.Items)));
             }
             return new FullDataSet<ItemDescriptor>(dataOut);
         }

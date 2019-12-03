@@ -23,7 +23,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public void PrerequisiteFlagsAreUpdatedBeforeFlagsThatUseThemWhenInputDataIsReversed()
         {
             var inputDataWithReverseOrder = new FullDataSet<ItemDescriptor>(DependencyOrderingTestData.Data.Reverse().Select(kv =>
-                new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(kv.Key, kv.Value.Reverse())
+                new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(kv.Key,
+                    new KeyedItems<ItemDescriptor>(kv.Value.Items.Reverse()))
             ));
             var sortedData = DataStoreSorter.SortAllCollections(inputDataWithReverseOrder);
             VerifyDataSetOrder(sortedData, DependencyOrderingTestData, ExpectedOrderingForSortedDataSet);
@@ -88,14 +89,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 var inputItemsForKind = inputData.Data.First(kv => kv.Key == kindAndItems.Key).Value;
 
                 // Verify that all of the input items are present, regardless of order
-                Assert.Equal(new HashSet<KeyValuePair<string, ItemDescriptor>>(kindAndItems.Value),
-                    new HashSet<KeyValuePair<string, ItemDescriptor>>(inputItemsForKind));
+                Assert.Equal(new HashSet<KeyValuePair<string, ItemDescriptor>>(kindAndItems.Value.Items),
+                    new HashSet<KeyValuePair<string, ItemDescriptor>>(inputItemsForKind.Items));
 
                 // Verify that for any two keys where we care about their relative ordering, they are in the right order
                 // (keys where the relative ordering doesn't matter, i.e. there are no prerequisites involved, are simply
                 // omitted from the constraint list)
                 var constraints = expectedOrdering.Where(kv => kv.Key == kindAndItems.Key).Select(kv => kv.Value).FirstOrDefault();
-                var resultKeys = kindAndItems.Value.Select(kv => kv.Key).ToList();
+                var resultKeys = kindAndItems.Value.Items.Select(kv => kv.Key).ToList();
                 foreach (var constraint in constraints ?? new List<KeyOrderConstraint>())
                 {
                     int indexOfEarlierKey = resultKeys.IndexOf(constraint.EarlierKey);

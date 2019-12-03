@@ -35,7 +35,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return WaitSafely(() => _coreAsync.GetAsync(kind, key));
         }
         
-        public IEnumerable<KeyValuePair<string, SerializedItemDescriptor>> GetAll(DataKind kind)
+        public KeyedItems<SerializedItemDescriptor> GetAll(DataKind kind)
         {
             return WaitSafely(() => _coreAsync.GetAllAsync(kind));
         }

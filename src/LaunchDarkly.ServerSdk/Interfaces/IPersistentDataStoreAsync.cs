@@ -36,8 +36,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Equivalent to <see cref="IPersistentDataStore.GetAll(DataKind)"/>.
         /// </summary>
         /// <param name="kind">specifies which collection to use</param>
-        /// <returns>a mapping of string keys to items</returns>
-        Task<IEnumerable<KeyValuePair<string, SerializedItemDescriptor>>> GetAllAsync(DataKind kind);
+        /// <returns>a collection of key-value pairs; the ordering is not significant</returns>
+        Task<KeyedItems<SerializedItemDescriptor>> GetAllAsync(DataKind kind);
 
         /// <summary>
         /// Equivalent to <see cref="IPersistentDataStore.Upsert(DataKind, string, SerializedItemDescriptor)"/>.

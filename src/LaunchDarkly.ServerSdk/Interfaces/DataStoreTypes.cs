@@ -185,28 +185,64 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <see cref="SerializedItemDescriptor"/></typeparam>
         public struct FullDataSet<TDescriptor>
         {
-            private readonly IEnumerable<KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, TDescriptor>>>> _data;
+            private readonly IEnumerable<KeyValuePair<DataKind, KeyedItems<TDescriptor>>> _data;
 
             /// <summary>
-            /// The wrapped data set.
+            /// The wrapped data set; may be empty, but will not be null.
             /// </summary>
-            public IEnumerable<KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, TDescriptor>>>> Data => _data;
+            public IEnumerable<KeyValuePair<DataKind, KeyedItems<TDescriptor>>> Data => _data;
 
             /// <summary>
             /// Constructs an instance of this wrapper type.
             /// </summary>
             /// <param name="data">the data set</param>
-            public FullDataSet(IEnumerable<KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, TDescriptor>>>> data)
+            public FullDataSet(IEnumerable<KeyValuePair<DataKind, KeyedItems<TDescriptor>>> data)
             {
-                _data = data;
+                _data = data ??
+                    Enumerable.Empty<KeyValuePair<DataKind, KeyedItems<TDescriptor>>>();
             }
 
             /// <summary>
             /// Shortcut for constructing an empty data set.
             /// </summary>
             /// <returns>an instance containing no data</returns>
-            public static FullDataSet<TDescriptor> Empty() => new FullDataSet<TDescriptor>(
-                Enumerable.Empty<KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, TDescriptor>>>>());
+            public static FullDataSet<TDescriptor> Empty() => new FullDataSet<TDescriptor>(null);                
+        }
+
+        /// <summary>
+        /// Wrapper for a set of storable items being passed to a data store, within a
+        /// single <see cref="DataKind"/>.
+        /// </summary>
+        /// <remarks>
+        /// This type exists only to provide a simpler type signature for data store methods, and to
+        /// make it easier to see what the type represents. In particular, unlike an
+        /// <see cref="IDictionary{TKey, TValue}"/>, the ordering of items may be significant
+        /// (in the case of updates).
+        /// </remarks>
+        public struct KeyedItems<TDescriptor>
+        {
+            private readonly IEnumerable<KeyValuePair<string, TDescriptor>> _items;
+
+            /// <summary>
+            /// The wrapped data set; may be empty, but will not be null.
+            /// </summary>
+            public IEnumerable<KeyValuePair<string, TDescriptor>> Items => _items;
+
+            /// <summary>
+            /// Constructs an instance of this wrapper type.
+            /// </summary>
+            /// <param name="items">the data set</param>
+            public KeyedItems(IEnumerable<KeyValuePair<string, TDescriptor>> items)
+            {
+                _items = items ??
+                    Enumerable.Empty<KeyValuePair<string, TDescriptor>>();
+            }
+
+            /// <summary>
+            /// Shortcut for constructing an empty data set.
+            /// </summary>
+            /// <returns>an instance containing no data</returns>
+            public static KeyedItems<TDescriptor> Empty() => new KeyedItems<TDescriptor>(null);
         }
     }
 }

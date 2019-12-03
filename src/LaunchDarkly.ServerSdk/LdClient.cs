@@ -224,8 +224,8 @@ namespace LaunchDarkly.Sdk.Server
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
-            IEnumerable<KeyValuePair<string, ItemDescriptor>> flags = _dataStore.GetAll(DataKinds.Features);
-            foreach (var pair in flags)
+            KeyedItems<ItemDescriptor> flags = _dataStore.GetAll(DataKinds.Features);
+            foreach (var pair in flags.Items)
             {
                 if (pair.Value.Item is null || !(pair.Value.Item is FeatureFlag flag))
                 {

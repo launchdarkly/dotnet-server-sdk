@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return _store.Get(kind, key);
         }
 
-        public IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind)
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind)
         {
             return _store.GetAll(kind);
         }

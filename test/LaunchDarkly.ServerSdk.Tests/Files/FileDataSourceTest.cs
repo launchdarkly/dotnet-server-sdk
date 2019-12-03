@@ -288,12 +288,12 @@ namespace LaunchDarkly.Sdk.Server.Files
         
         private int CountFlagsInStore()
         {
-            return store.GetAll(DataKinds.Features).Count();
+            return store.GetAll(DataKinds.Features).Items.Count();
         }
 
         private int CountSegmentsInStore()
         {
-            return store.GetAll(DataKinds.Segments).Count();
+            return store.GetAll(DataKinds.Segments).Items.Count();
         }
 
         private bool WaitForCondition(TimeSpan maxTime, Func<bool> test)

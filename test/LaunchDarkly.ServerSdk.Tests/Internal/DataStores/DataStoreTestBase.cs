@@ -56,9 +56,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         {
             InitStore();
             var result = store.GetAll(TestDataKind);
-            Assert.Equal(2, result.Count());
-            Assert.Contains(KeyAndItemDescriptor(item1Key, item1Version, item1), result);
-            Assert.Contains(KeyAndItemDescriptor(item2Key, item2Version, item2), result);
+            Assert.Equal(2, result.Items.Count());
+            Assert.Contains(KeyAndItemDescriptor(item1Key, item1Version, item1), result.Items);
+            Assert.Contains(KeyAndItemDescriptor(item2Key, item2Version, item2), result.Items);
         }
 
         [Fact]
@@ -67,9 +67,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             InitStore();
             store.Upsert(TestDataKind, item1Key, new ItemDescriptor(item1Version + 1, null));
             var result = store.GetAll(TestDataKind);
-            Assert.Equal(2, result.Count());
-            Assert.Contains(KeyAndItemDescriptor(item1Key, item1Version + 1, null), result);
-            Assert.Contains(KeyAndItemDescriptor(item2Key, item2Version, item2), result);
+            Assert.Equal(2, result.Items.Count());
+            Assert.Contains(KeyAndItemDescriptor(item1Key, item1Version + 1, null), result.Items);
+            Assert.Contains(KeyAndItemDescriptor(item2Key, item2Version, item2), result.Items);
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         {
             InitStore();
             var result = store.GetAll(OtherDataKind);
-            Assert.Equal(0, result.Count());
+            Assert.Equal(0, result.Items.Count());
         }
 
         [Fact]

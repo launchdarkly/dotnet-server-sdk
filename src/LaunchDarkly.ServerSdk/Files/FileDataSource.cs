@@ -105,11 +105,12 @@ namespace LaunchDarkly.Sdk.Server.Files
                     return;
                 }
             }
-            var allData = ImmutableList.Create(
-                new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Features, flags),
-                new KeyValuePair<DataKind, IEnumerable<KeyValuePair<string, ItemDescriptor>>>(DataKinds.Segments, segments)
+            var allData = new FullDataSet<ItemDescriptor>(
+                ImmutableDictionary.Create<DataKind, KeyedItems<ItemDescriptor>>()
+                    .SetItem(DataKinds.Features, new KeyedItems<ItemDescriptor>(flags))
+                    .SetItem(DataKinds.Segments, new KeyedItems<ItemDescriptor>(segments))
             );
-            _dataStore.Init(new FullDataSet<ItemDescriptor>(allData));
+            _dataStore.Init(allData);
             _loadedValidData = true;
         }
 

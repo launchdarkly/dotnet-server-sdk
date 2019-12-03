@@ -61,8 +61,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// the results, not filter them out.
         /// </remarks>
         /// <param name="kind">specifies which collection to use</param>
-        /// <returns>a mapping of string keys to items</returns>
-        IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind);
+        /// <returns>a collection of key-value pairs; the ordering is not significant</returns>
+        KeyedItems<ItemDescriptor> GetAll(DataKind kind);
 
         /// <summary>
         /// Updates or inserts an item in the specified collection. For updates, the object will only be

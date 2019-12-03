@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             foreach (var kindEntry in data.Data)
             {
                 var kindItemsBuilder = ImmutableDictionary.CreateBuilder<string, ItemDescriptor>();
-                foreach (var e1 in kindEntry.Value)
+                foreach (var e1 in kindEntry.Value.Items)
                 {
                     kindItemsBuilder.Add(e1.Key, e1.Value);
                 }
@@ -61,13 +61,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return item;
         }
 
-        public IEnumerable<KeyValuePair<string, ItemDescriptor>> GetAll(DataKind kind)
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind)
         {
             if (Items.TryGetValue(kind, out var itemsOfKind))
             {
-                return itemsOfKind;
+                return new KeyedItems<ItemDescriptor>(itemsOfKind);
             }
-            return ImmutableList<KeyValuePair<string, ItemDescriptor>>.Empty;
+            return KeyedItems<ItemDescriptor>.Empty();
         }
         
         public bool Upsert(DataKind kind, string key, ItemDescriptor item)

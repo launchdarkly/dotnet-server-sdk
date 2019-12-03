@@ -127,14 +127,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _core.ForceSet(TestDataKind, "keyA", 1, itemA);
             _core.ForceSet(TestDataKind, "keyB", 2, itemB);
 
-            var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
                 .Add("keyA", itemA.WithVersion(1))
                 .Add("keyB", itemB.WithVersion(2));
             Assert.Equal(expected, items);
 
             _core.ForceRemove(TestDataKind, "keyB");
-            items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             if (mode != Uncached)
             {
                 Assert.Equal(expected, items);
@@ -159,7 +159,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _core.ForceSet(TestDataKind, "keyA", 1, itemA);
             _core.ForceSet(TestDataKind, "keyB", 2, null); // deleted item
 
-            var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
                 .Add("keyA", itemA.WithVersion(1))
                 .Add("keyB", ItemDescriptor.Deleted(2));
@@ -180,7 +180,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             
             _core.ForceRemove(TestDataKind, "keyA");
 
-            var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
                 .Add("keyA", itemA.WithVersion(1))
                 .Add("keyB", ItemDescriptor.Deleted(2));
@@ -209,7 +209,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _core.ForceSet(TestDataKind, "keyB", 3, itemBv3);
 
             // we should now see both changes since the cache was flushed
-            var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
                 .Add("keyA", itemAv2.WithVersion(2))
                 .Add("keyB", itemBv3.WithVersion(3));
@@ -324,7 +324,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             Assert.Throws(FakeError.GetType(), () => wrapper.Init(allData));
 
             _core.Error = null;
-            Assert.Empty(wrapper.GetAll(TestDataKind));
+            Assert.Empty(wrapper.GetAll(TestDataKind).Items);
         }
 
         [Fact]
@@ -341,7 +341,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             Assert.Throws(FakeError.GetType(), () => wrapper.Init(allData));
 
             _core.Error = null;
-            var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
                 .Add(key, item.WithVersion(1));
             Assert.Equal(expected, items);
@@ -373,7 +373,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _core.ForceSet(TestDataKind, keyB, 2, itemBv2);
 
             // now, All should reread the underlying data so we see both changes
-            var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
                 .Add(keyA, itemAv2.WithVersion(2))
                 .Add(keyB, itemBv2.WithVersion(2));
@@ -406,7 +406,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _core.ForceSet(TestDataKind, keyB, 2, itemBv2);
 
             // now, All should *not* reread the underlying data - we should only see the change to itemA
-            var items = wrapper.GetAll(TestDataKind).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             var expected = ImmutableDictionary.Create<string, ItemDescriptor>()
                 .Add(keyA, itemAv2.WithVersion(2))
                 .Add(keyB, itemBv1.WithVersion(1));
@@ -456,14 +456,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return null;
         }
 
-        public IEnumerable<KeyValuePair<string, SerializedItemDescriptor>> GetAll(DataKind kind)
+        public KeyedItems<SerializedItemDescriptor> GetAll(DataKind kind)
         {
             MaybeThrowError();
             if (Data.TryGetValue(kind, out var items))
             {
-                return items.ToImmutableDictionary();
+                return new KeyedItems<SerializedItemDescriptor>(items.ToImmutableDictionary());
             }
-            return ImmutableDictionary<string, SerializedItemDescriptor>.Empty;
+            return KeyedItems<SerializedItemDescriptor>.Empty();
         }
 
         public void Init(FullDataSet<SerializedItemDescriptor> allData)
@@ -472,7 +472,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             Data.Clear();
             foreach (var e in allData.Data)
             {
-                Data[e.Key] = e.Value.ToDictionary(kv => kv.Key, kv => kv.Value);
+                Data[e.Key] = e.Value.Items.ToDictionary(kv => kv.Key, kv => kv.Value);
             }
             Inited = true;
         }
