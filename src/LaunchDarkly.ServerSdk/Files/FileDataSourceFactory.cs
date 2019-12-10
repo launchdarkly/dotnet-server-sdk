@@ -24,6 +24,7 @@ namespace LaunchDarkly.Client.Files
         private TimeSpan _pollInterval = DefaultPollInterval;
         private Func<string, object> _parser = null;
         private bool _skipMissingPaths = false;
+        private DuplicateKeysHandling _duplicateKeysHandling = DuplicateKeysHandling.Throw;
 
         /// <summary>
         /// Adds any number of source files for loading flag data, specifying each file path as a string.
@@ -117,6 +118,22 @@ namespace LaunchDarkly.Client.Files
         }
 
         /// <summary>
+        /// Specifies how to handle keys that are duplicated across files.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// By default, the file data source will throw if keys are duplicated across files.
+        /// </para>
+        /// </remarks>
+        /// <param name="duplicateKeysHandling">how duplicate keys should be handled</param>
+        /// <returns>the same factory object</returns>
+        public FileDataSourceFactory WithDuplicateKeysHandling(DuplicateKeysHandling duplicateKeysHandling)
+        {
+            _duplicateKeysHandling = duplicateKeysHandling;
+            return this;
+        }
+
+        /// <summary>
         /// Specifies how often to poll for file changes if polling is necessary.
         /// </summary>
         /// <remarks>
@@ -151,7 +168,8 @@ namespace LaunchDarkly.Client.Files
         /// <returns>the component instance</returns>
         public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
-            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths);
+            return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths,
+                _duplicateKeysHandling);
         }
     }
 }
