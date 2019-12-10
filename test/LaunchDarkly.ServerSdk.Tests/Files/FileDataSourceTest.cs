@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Xunit;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using YamlDotNet.Serialization;
 
 namespace LaunchDarkly.Sdk.Server.Files
@@ -286,12 +288,12 @@ namespace LaunchDarkly.Sdk.Server.Files
         
         private int CountFlagsInStore()
         {
-            return store.All(VersionedDataKind.Features).Count;
+            return store.GetAll(DataKinds.Features).Items.Count();
         }
 
         private int CountSegmentsInStore()
         {
-            return store.All(VersionedDataKind.Segments).Count;
+            return store.GetAll(DataKinds.Segments).Items.Count();
         }
 
         private bool WaitForCondition(TimeSpan maxTime, Func<bool> test)

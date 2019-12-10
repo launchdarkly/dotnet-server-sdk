@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Files
 {
@@ -18,46 +20,39 @@ namespace LaunchDarkly.Sdk.Server.Files
         [JsonProperty(PropertyName = "segments", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Segments { get; set; }
 
-        public void AddToData(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData)
+        public void AddToData(IDictionary<string, ItemDescriptor> flagsOut, IDictionary<string, ItemDescriptor> segmentsOut)
         {
             if (Flags != null)
             {
                 foreach (KeyValuePair<string, JToken> e in Flags)
                 {
-                    AddItem(allData, VersionedDataKind.Features, FlagFactory.FlagFromJson(e.Value));
+                    AddItem(DataKinds.Features, flagsOut, e.Key, FlagFactory.FlagFromJson(e.Value));
                 }
             }
             if (FlagValues != null)
             {
                 foreach (KeyValuePair<string, JToken> e in FlagValues)
                 {
-                    AddItem(allData, VersionedDataKind.Features, FlagFactory.FlagWithValue(e.Key, e.Value));
+                    AddItem(DataKinds.Features, flagsOut, e.Key, FlagFactory.FlagWithValue(e.Key, e.Value));
                 }
             }
             if (Segments != null)
             {
                 foreach (KeyValuePair<string, JToken> e in Segments)
                 {
-                    AddItem(allData, VersionedDataKind.Segments, FlagFactory.SegmentFromJson(e.Value));
+                    AddItem(DataKinds.Segments, segmentsOut, e.Key, FlagFactory.SegmentFromJson(e.Value));
                 }
             }
         }
 
-        private void AddItem(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData,
-            IVersionedDataKind kind, IVersionedData item)
+        private void AddItem(DataKind kind, IDictionary<string, ItemDescriptor> items, string key, object item)
         {
-            IDictionary<string, IVersionedData> items;
-            if (!allData.TryGetValue(kind, out items))
+            if (items.ContainsKey(key))
             {
-                items = new Dictionary<string, IVersionedData>();
-                allData[kind] = items;
-            }
-            if (items.ContainsKey(item.Key))
-            {
-                throw new System.Exception("in \"" + kind.GetNamespace() + "\", key \"" + item.Key +
+                throw new System.Exception("in \"" + kind.Name + "\", key \"" + key +
                     "\" was already defined");
             }
-            items[item.Key] = item;
+            items[key] = new ItemDescriptor(1, item);
         }
     }
 }

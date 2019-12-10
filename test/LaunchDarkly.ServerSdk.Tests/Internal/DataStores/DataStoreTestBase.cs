@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.Model;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Internal.DataStores.DataStoreTestTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
@@ -9,30 +12,22 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     {
         protected IDataStore store;
 
-        internal readonly FeatureFlag feature1 = MakeFeature("foo", 10);
-        internal readonly FeatureFlag feature2 = MakeFeature("bar", 10);
+        internal static readonly TestItem item1 = new TestItem("item1");
+        internal const string item1Key = "key1";
+        internal const int item1Version = 10;
+        internal static readonly TestItem item2 = new TestItem("item2");
+        internal const string item2Key = "key2";
+        internal const int item2Version = 11;
 
         protected void InitStore()
         {
-            IDictionary<string, IVersionedData> items = new Dictionary<string, IVersionedData>();
-            items[feature1.Key] = feature1;
-            items[feature2.Key] = feature2;
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData =
-                new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>();
-            allData[VersionedDataKind.Features] = items;
+            var allData = new TestDataBuilder()
+                .Add(TestDataKind, item1Key, item1Version, item1)
+                .Add(TestDataKind, item2Key, item2Version, item2)
+                .Build();
             store.Init(allData);
         }
-
-        internal static FeatureFlag MakeFeature(string key, int version)
-        {
-            return new FeatureFlagBuilder(key).Version(version).Build();
-        }
-
-        internal static FeatureFlag CopyFeatureWithVersion(FeatureFlag old, int newVersion)
-        {
-            return new FeatureFlagBuilder(old).Version(newVersion).Build();
-        }
-
+        
         [Fact]
         public void StoreInitializedAfterInit()
         {
@@ -41,137 +36,208 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
 
         [Fact]
-        public void GetExistingFeature()
+        public void GetExistingitem()
         {
             InitStore();
-            var result = store.Get(VersionedDataKind.Features, feature1.Key);
-            Assert.Equal(feature1.Key, result.Key);
+            var result = store.Get(TestDataKind, item1Key);
+            Assert.Equal(result, new ItemDescriptor(item1Version, item1));
         }
 
         [Fact]
-        public void GetNonexistingFeature()
+        public void GetNonexistingItem()
         {
             InitStore();
-            var result = store.Get(VersionedDataKind.Features, "biz");
+            var result = store.Get(TestDataKind, "biz");
             Assert.Null(result);
         }
 
         [Fact]
-        public void GetDeletedFeature()
+        public void GetAllItems()
         {
             InitStore();
-            store.Delete(VersionedDataKind.Features, feature1.Key, feature1.Version + 1);
-            var result = store.Get(VersionedDataKind.Features, feature1.Key);
-            Assert.Null(result);
+            var result = store.GetAll(TestDataKind);
+            Assert.Equal(2, result.Items.Count());
+            Assert.Contains(KeyAndItemDescriptor(item1Key, item1Version, item1), result.Items);
+            Assert.Contains(KeyAndItemDescriptor(item2Key, item2Version, item2), result.Items);
         }
 
         [Fact]
-        public void GetAllFeatures()
+        public void GetAllItemsWithDeletedItems()
         {
             InitStore();
-            var result = store.All(VersionedDataKind.Features);
-            Assert.Equal(2, result.Count);
-            Assert.Equal(feature1.Key, result[feature1.Key].Key);
-            Assert.Equal(feature2.Key, result[feature2.Key].Key);
-        }
-
-        [Fact]
-        public void GetAllFeaturesWithDeletedItems()
-        {
-            InitStore();
-            store.Delete(VersionedDataKind.Features, feature2.Key, feature2.Version + 1);
-            var result = store.All(VersionedDataKind.Features);
-            Assert.Equal(1, result.Count);
-            Assert.Equal(feature1.Key, result[feature1.Key].Key);
+            store.Upsert(TestDataKind, item1Key, new ItemDescriptor(item1Version + 1, null));
+            var result = store.GetAll(TestDataKind);
+            Assert.Equal(2, result.Items.Count());
+            Assert.Contains(KeyAndItemDescriptor(item1Key, item1Version + 1, null), result.Items);
+            Assert.Contains(KeyAndItemDescriptor(item2Key, item2Version, item2), result.Items);
         }
 
         [Fact]
         public void GetAllUnknownKind()
         {
             InitStore();
-            var result = store.All(VersionedDataKind.Segments);
-            Assert.Equal(0, result.Count);
+            var result = store.GetAll(OtherDataKind);
+            Assert.Equal(0, result.Items.Count());
         }
 
         [Fact]
         public void UpsertWithNewerVersion()
         {
             InitStore();
-            var newVer = CopyFeatureWithVersion(feature1, feature1.Version + 1);
-            store.Upsert(VersionedDataKind.Features, newVer);
-            var result = store.Get(VersionedDataKind.Features, feature1.Key);
-            Assert.Equal(newVer.Version, result.Version);
+            var newItem1 = new TestItem("item1-updated");
+            var newVersion = item1Version + 1;
+
+            var success = store.Upsert(TestDataKind, item1Key, new ItemDescriptor(newVersion, newItem1));
+            Assert.True(success);
+
+            var result = store.Get(TestDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(newVersion, result.Value.Version);
+            Assert.Equal(newItem1, result.Value.Item);
         }
 
         [Fact]
         public void UpsertWithOlderVersion()
         {
             InitStore();
-            var newVer = CopyFeatureWithVersion(feature1, feature1.Version - 1);
-            store.Upsert(VersionedDataKind.Features, newVer);
-            var result = store.Get(VersionedDataKind.Features, feature1.Key);
-            Assert.Equal(feature1.Version, result.Version);
+            var newItem1 = new TestItem("item1-updated");
+            var newVersion = item1Version - 1;
+
+            var success = store.Upsert(TestDataKind, item1Key, new ItemDescriptor(newVersion, newItem1));
+            Assert.False(success);
+
+            var result = store.Get(TestDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(item1Version, result.Value.Version);
+            Assert.Equal(item1, result.Value.Item);
         }
 
         [Fact]
-        public void UpsertNewFeature()
+        public void UpsertNewItem()
         {
             InitStore();
-            var newFeature = MakeFeature("biz", 99);
-            store.Upsert(VersionedDataKind.Features, newFeature);
-            var result = store.Get(VersionedDataKind.Features, newFeature.Key);
-            Assert.Equal(newFeature.Key, result.Key);
+            var newItem = new TestItem("item3");
+            var newKey = "key3";
+            var newVersion = 22;
+
+            var success = store.Upsert(TestDataKind, newKey, new ItemDescriptor(newVersion, newItem));
+            Assert.True(success);
+
+            var result = store.Get(TestDataKind, newKey);
+            Assert.True(result.HasValue);
+            Assert.Equal(newVersion, result.Value.Version);
+            Assert.Equal(newItem, result.Value.Item);
         }
 
         [Fact]
         public void UpsertNewKind()
         {
             InitStore();
-            var segment = new Segment("test", 1, new List<string> { "foo" }, null, null, null, false);
-            store.Upsert(VersionedDataKind.Segments, segment);
-            var result = store.Get(VersionedDataKind.Segments, segment.Key);
-            Assert.Same(segment, result);
+            var newItem = new TestItem("item-of-other-kind");
+            var newVersion = 1;
+
+            var success = store.Upsert(OtherDataKind, item1Key, new ItemDescriptor(newVersion, newItem));
+            Assert.True(success);
+
+            var result = store.Get(OtherDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(newVersion, result.Value.Version);
+            Assert.Equal(newItem, result.Value.Item);
+
+            result = store.Get(TestDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(item1Version, result.Value.Version);
+            Assert.Equal(item1, result.Value.Item);
         }
 
         [Fact]
         public void DeleteWithNewerVersion()
         {
             InitStore();
-            store.Delete(VersionedDataKind.Features, feature1.Key, feature1.Version + 1);
-            Assert.Null(store.Get(VersionedDataKind.Features, feature1.Key));
+            var newVersion = item1Version + 1;
+
+            var success = store.Upsert(TestDataKind, item1Key, new ItemDescriptor(newVersion, null));
+            Assert.True(success);
+
+            var result = store.Get(TestDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(newVersion, result.Value.Version);
+            Assert.Null(result.Value.Item);
         }
 
         [Fact]
         public void DeleteWithOlderVersion()
         {
             InitStore();
-            store.Delete(VersionedDataKind.Features, feature1.Key, feature1.Version - 1);
-            Assert.NotNull(store.Get(VersionedDataKind.Features, feature1.Key));
+            var newVersion = item1Version - 1;
+
+            var success = store.Upsert(TestDataKind, item1Key, new ItemDescriptor(newVersion, null));
+            Assert.False(success);
+
+            var result = store.Get(TestDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(item1Version, result.Value.Version);
+            Assert.Equal(item1, result.Value.Item);
         }
 
         [Fact]
-        public void DeleteUnknownFeature()
+        public void DeleteUnknownItem()
         {
             InitStore();
-            store.Delete(VersionedDataKind.Features, "biz", 11);
-            Assert.Null(store.Get(VersionedDataKind.Features, "biz"));
+            var newKey = "key3";
+            var newVersion = 22;
+
+            var success = store.Upsert(TestDataKind, newKey, new ItemDescriptor(newVersion, null));
+            Assert.True(success);
+
+            var result = store.Get(TestDataKind, newKey);
+            Assert.True(result.HasValue);
+            Assert.Equal(newVersion, result.Value.Version);
+            Assert.Null(result.Value.Item);
         }
 
         [Fact]
         public void DeleteUnknownKind()
         {
             InitStore();
-            store.Delete(VersionedDataKind.Segments, "biz", 11);
-            Assert.Null(store.Get(VersionedDataKind.Segments, "biz"));
+            var newVersion = 1;
+
+            var success = store.Upsert(OtherDataKind, item1Key, new ItemDescriptor(newVersion, null));
+            Assert.True(success);
+
+            var result = store.Get(OtherDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(newVersion, result.Value.Version);
+            Assert.Null(result.Value.Item);
+
+            result = store.Get(TestDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(item1Version, result.Value.Version);
+            Assert.Equal(item1, result.Value.Item);
         }
 
         [Fact]
         public void UpsertOlderVersionAfterDelete()
         {
             InitStore();
-            store.Delete(VersionedDataKind.Features, feature1.Key, feature1.Version + 1);
-            store.Upsert(VersionedDataKind.Features, feature1);
-            Assert.Null(store.Get(VersionedDataKind.Features, feature1.Key));
+            var deletedVersion = item1Version + 1;
+
+            var success = store.Upsert(TestDataKind, item1Key, new ItemDescriptor(deletedVersion, null));
+            Assert.True(success);
+
+            var newItem = "item1a";
+            success = store.Upsert(TestDataKind, item1Key, new ItemDescriptor(item1Version, newItem));
+            Assert.False(success);
+            
+            var result = store.Get(TestDataKind, item1Key);
+            Assert.True(result.HasValue);
+            Assert.Equal(deletedVersion, result.Value.Version);
+            Assert.Null(result.Value.Item);
+        }
+
+        private KeyValuePair<string, ItemDescriptor> KeyAndItemDescriptor(string key, int version, object item)
+        {
+            return new KeyValuePair<string, ItemDescriptor>(key, new ItemDescriptor(version, item));
         }
     }
 }

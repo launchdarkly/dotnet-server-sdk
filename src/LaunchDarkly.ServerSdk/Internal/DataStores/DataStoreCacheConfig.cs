@@ -1,25 +1,17 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
     /// <summary>
-    /// Parameters that can be used for <see cref="IDataStore"/> database integrations that support local caching.
+    /// Internal abstraction of caching parameters used by <see cref="PersistentStoreWrapper"/>.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The built-in <see cref="Components.InMemoryDataStore"/> does not use this class; it is meant for database
-    /// implementations.
+    /// Application code cannot see this class and instead uses the configuration methods on
+    /// <see cref="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreConfiguration"/>.
     /// </para>
-    /// <para>
-    /// This is an immutable class that uses a fluent interface. Obtain an instance by getting the static
-    /// value Disabled or Enabled; then if desired, you can use chained methods to set other properties:
-    /// </para>
-    /// <code>
-    ///     DataStoreCacheConfig.Enabled.WithTtlSeconds(30);
-    /// </code>
     /// </remarks>
-    public sealed class DataStoreCacheConfig
+    internal sealed class DataStoreCacheConfig
     {
         /// <summary>
         /// The default cache expiration time.
@@ -31,10 +23,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         /// <remarks>
         /// If the value is negative (such as <see cref="System.Threading.Timeout.InfiniteTimeSpan"/>), data is cached
-        /// forever (i.e. it will only be read again from the database if the SDK is restarted). Use the "cached forever"
-        /// mode with caution: it means that in a scenario where multiple processes are sharing the database, and the
-        /// current process loses connectivity to LaunchDarkly while other processes are still receiving updates and
-        /// writing them to the database, the current process will have stale data.
+        /// forever (i.e. it will only be read again from the database if the SDK is restarted).
         /// </remarks>
         /// <seealso cref="WithTtl(TimeSpan)"/>
         /// <seealso cref="WithTtlMillis(double)"/>

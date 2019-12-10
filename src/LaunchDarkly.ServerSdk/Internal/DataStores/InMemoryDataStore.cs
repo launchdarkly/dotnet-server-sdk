@@ -3,106 +3,88 @@ using System.Collections.Immutable;
 using Common.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
     /// <summary>
     /// In-memory, thread-safe implementation of <see cref="IDataStore"/>.
     /// </summary>
+    /// <remarks>
+    /// Application code cannot see this implementation class and uses
+    /// <see cref="Components.InMemoryDataStore"/> instead.
+    /// </remarks>
     internal class InMemoryDataStore : IDataStore
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryDataStore));
         private readonly object WriterLock = new object();
-        private volatile ImmutableDictionary<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>> Items =
-            ImmutableDictionary<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>>.Empty;
+        private volatile ImmutableDictionary<DataKind, ImmutableDictionary<string, ItemDescriptor>> Items =
+            ImmutableDictionary<DataKind, ImmutableDictionary<string, ItemDescriptor>>.Empty;
         private volatile bool _initialized = false;
 
-        /// <summary>
-        /// Creates a new empty data store instance.
-        /// </summary>
         internal InMemoryDataStore() { }
 
-        public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
+        public void Init(FullDataSet<ItemDescriptor> data)
         {
-            ImmutableDictionary<string, IVersionedData> itemsOfKind;
-            IVersionedData item;
+            var itemsBuilder = ImmutableDictionary.CreateBuilder<DataKind, ImmutableDictionary<string, ItemDescriptor>>();
 
-            if (!Items.TryGetValue(kind, out itemsOfKind))
+            foreach (var kindEntry in data.Data)
             {
-                Log.DebugFormat("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
-                return null;
-            }
-            if (!itemsOfKind.TryGetValue(key, out item))
-            {
-                Log.DebugFormat("Key {0} not found in '{1}'; returning null", key, kind.GetNamespace());
-                return null;
-            }
-            if (item.Deleted)
-            {
-                Log.WarnFormat("Attempted to get deleted item with key {0} in '{1}'; returning null.",
-                    key, kind.GetNamespace());
-                return null;
-            }
-            return (T)item;
-        }
-
-        public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
-        {
-            IDictionary<string, T> ret = new Dictionary<string, T>();
-            ImmutableDictionary<string, IVersionedData> itemsOfKind;
-            if (Items.TryGetValue(kind, out itemsOfKind))
-            {
-                foreach (var entry in itemsOfKind)
+                var kindItemsBuilder = ImmutableDictionary.CreateBuilder<string, ItemDescriptor>();
+                foreach (var e1 in kindEntry.Value.Items)
                 {
-                    if (!entry.Value.Deleted)
-                    {
-                        ret[entry.Key] = (T)entry.Value;
-                    }
+                    kindItemsBuilder.Add(e1.Key, e1.Value);
                 }
-            }
-            return ret;
-        }
 
-        public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items)
-        {
+                itemsBuilder.Add(kindEntry.Key, kindItemsBuilder.ToImmutable());
+            }
+
+            var newItems = itemsBuilder.ToImmutable();
+
             lock (WriterLock)
             {
-                Items = CreateImmutableItems(items);
+                Items = newItems;
                 _initialized = true;
             }
         }
 
-        public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
+        public ItemDescriptor? Get(DataKind kind, string key)
         {
-            lock (WriterLock)
+            if (!Items.TryGetValue(kind, out var itemsOfKind))
             {
-                ImmutableDictionary<string, IVersionedData> itemsOfKind;
-                if (Items.TryGetValue(kind, out itemsOfKind))
-                {
-                    IVersionedData item;
-                    if (!itemsOfKind.TryGetValue(key, out item) || item.Version < version)
-                    {
-                        ImmutableDictionary<string, IVersionedData> newItemsOfKind = itemsOfKind.SetItem(key, kind.MakeDeletedItem(key, version));
-                        Items = Items.SetItem(kind, newItemsOfKind);
-                    }
-                }
+                return null;
             }
+            if (!itemsOfKind.TryGetValue(key, out var item))
+            {
+                return null;
+            }
+            return item;
         }
 
-        public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind)
+        {
+            if (Items.TryGetValue(kind, out var itemsOfKind))
+            {
+                return new KeyedItems<ItemDescriptor>(itemsOfKind);
+            }
+            return KeyedItems<ItemDescriptor>.Empty();
+        }
+        
+        public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
             lock (WriterLock)
             {
-                ImmutableDictionary<string, IVersionedData> itemsOfKind;
-                if (!Items.TryGetValue(kind, out itemsOfKind))
+                if (!Items.TryGetValue(kind, out var itemsOfKind))
                 {
-                    itemsOfKind = ImmutableDictionary<string, IVersionedData>.Empty;
+                    itemsOfKind = ImmutableDictionary<string, ItemDescriptor>.Empty;
                 }
-                IVersionedData old;
-                if (!itemsOfKind.TryGetValue(item.Key, out old) || old.Version < item.Version)
+                if (!itemsOfKind.TryGetValue(key, out var old) || old.Version < item.Version)
                 {
-                    ImmutableDictionary<string, IVersionedData> newItemsOfKind = itemsOfKind.SetItem(item.Key, item);
+                    var newItemsOfKind = itemsOfKind.SetItem(key, item);
                     Items = Items.SetItem(kind, newItemsOfKind);
+                    return true;
                 }
+                return false;
             }
         }
 
@@ -112,25 +94,5 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
 
         public void Dispose() { }
-
-        private static ImmutableDictionary<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>> CreateImmutableItems(
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> items
-        )
-        {
-            var itemsBuilder = ImmutableDictionary.CreateBuilder<IVersionedDataKind, ImmutableDictionary<string, IVersionedData>>();
-
-            foreach (var kindEntry in items)
-            {
-                var kindItemsBuilder = ImmutableDictionary.CreateBuilder<string, IVersionedData>();
-                foreach (var e1 in kindEntry.Value)
-                {
-                    kindItemsBuilder.Add(e1.Key, e1.Value);
-                }
-
-                itemsBuilder.Add(kindEntry.Key, kindItemsBuilder.ToImmutable());
-            }
-
-            return itemsBuilder.ToImmutable();
-        }
     }
 }

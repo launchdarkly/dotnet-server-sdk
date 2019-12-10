@@ -4,48 +4,50 @@ using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Sdk.Server.Utils
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+
+namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
     /// <summary>
-    /// Used internally by CachingStoreWrapper to call asynchronous IDataStoreCoreAsync
+    /// Used internally by PersistentStoreWrapper to call asynchronous IPersistentDataStoreAsync
     /// methods from synchronous code. In the future, if the SDK internals are rewritten to
     /// use async/await, we may reverse this and instead put an adapter around synchronous
     /// methods.
     /// </summary>
-    internal class DataStoreCoreAsyncAdapter : IDataStoreCore
+    internal class PersistentStoreAsyncAdapter : IPersistentDataStore
     {
-        private readonly IDataStoreCoreAsync _coreAsync;
+        private readonly IPersistentDataStoreAsync _coreAsync;
         private static readonly TaskFactory _taskFactory = new TaskFactory(CancellationToken.None,
             TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
-        internal DataStoreCoreAsyncAdapter(IDataStoreCoreAsync coreAsync)
+        internal PersistentStoreAsyncAdapter(IPersistentDataStoreAsync coreAsync)
         {
             _coreAsync = coreAsync;
         }
 
-        public void InitInternal(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData)
+        public void Init(FullDataSet<SerializedItemDescriptor> allData)
         {
-            WaitSafely(() => _coreAsync.InitInternalAsync(allData));
+            WaitSafely(() => _coreAsync.InitAsync(allData));
         }
-
-        public IVersionedData GetInternal(IVersionedDataKind kind, string key)
+        
+        public SerializedItemDescriptor? Get(DataKind kind, string key)
         {
-            return WaitSafely(() => _coreAsync.GetInternalAsync(kind, key));
+            return WaitSafely(() => _coreAsync.GetAsync(kind, key));
         }
-
-        public IDictionary<string, IVersionedData> GetAllInternal(IVersionedDataKind kind)
+        
+        public KeyedItems<SerializedItemDescriptor> GetAll(DataKind kind)
         {
-            return WaitSafely(() => _coreAsync.GetAllInternalAsync(kind));
+            return WaitSafely(() => _coreAsync.GetAllAsync(kind));
         }
-
-        public IVersionedData UpsertInternal(IVersionedDataKind kind, IVersionedData item)
+        
+        public bool Upsert(DataKind kind, string key, SerializedItemDescriptor item)
         {
-            return WaitSafely(() => _coreAsync.UpsertInternalAsync(kind, item));
+            return WaitSafely(() => _coreAsync.UpsertAsync(kind, key, item));
         }
-
-        public bool InitializedInternal()
+        
+        public bool Initialized()
         {
-            return WaitSafely(() => _coreAsync.InitializedInternalAsync());
+            return WaitSafely(() => _coreAsync.InitializedAsync());
         }
 
         public void Dispose()

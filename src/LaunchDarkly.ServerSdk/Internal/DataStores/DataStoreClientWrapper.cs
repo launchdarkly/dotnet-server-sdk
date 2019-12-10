@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
     /// <summary>
@@ -17,31 +19,26 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _store = store;
         }
 
-        public void Init(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData)
+        public void Init(FullDataSet<ItemDescriptor> allData)
         {
-            _store.Init(DataStoreDataSetSorter.SortAllCollections(allData));
+            _store.Init(DataStoreSorter.SortAllCollections(allData));
         }
 
-        public T Get<T>(VersionedDataKind<T> kind, string key) where T : class, IVersionedData
+        public ItemDescriptor? Get(DataKind kind, string key)
         {
             return _store.Get(kind, key);
         }
 
-        public IDictionary<string, T> All<T>(VersionedDataKind<T> kind) where T : class, IVersionedData
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind)
         {
-            return _store.All(kind);
+            return _store.GetAll(kind);
         }
 
-        public void Upsert<T>(VersionedDataKind<T> kind, T item) where T : IVersionedData
+        public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
-            _store.Upsert(kind, item);
+            return _store.Upsert(kind, key, item);
         }
         
-        public void Delete<T>(VersionedDataKind<T> kind, string key, int version) where T : IVersionedData
-        {
-            _store.Delete(kind, key, version);
-        }
-
         public bool Initialized()
         {
             return _store.Initialized();

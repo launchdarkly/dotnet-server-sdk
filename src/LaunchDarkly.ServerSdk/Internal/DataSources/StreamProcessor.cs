@@ -11,6 +11,8 @@ using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     internal class StreamProcessor : IDataSource, IStreamProcessor
@@ -67,21 +69,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             switch (messageType)
             {
                 case PUT:
-                    _dataStore.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToGenericDictionary());
+                    _dataStore.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
                     streamManager.Initialized = true;
                     break;
                 case PATCH:
                     PatchData patchData = JsonUtil.DecodeJson<PatchData>(messageData);
                     string patchKey;
-                    if (GetKeyFromPath(patchData.Path, VersionedDataKind.Features, out patchKey))
+                    if (GetKeyFromPath(patchData.Path, DataKinds.Features, out patchKey))
                     {
                         FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
-                        _dataStore.Upsert(VersionedDataKind.Features, flag);
+                        _dataStore.Upsert(DataKinds.Features, patchKey, new ItemDescriptor(flag.Version, flag));
                     }
-                    else if (GetKeyFromPath(patchData.Path, VersionedDataKind.Segments, out patchKey))
+                    else if (GetKeyFromPath(patchData.Path, DataKinds.Segments, out patchKey))
                     {
                         Segment segment = patchData.Data.ToObject<Segment>();
-                        _dataStore.Upsert(VersionedDataKind.Segments, segment);
+                        _dataStore.Upsert(DataKinds.Segments, patchKey, new ItemDescriptor(segment.Version, segment));
                     }
                     else
                     {
@@ -90,14 +92,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     break;
                 case DELETE:
                     DeleteData deleteData = JsonUtil.DecodeJson<DeleteData>(messageData);
+                    var tombstone = new ItemDescriptor(deleteData.Version, null);
                     string deleteKey;
-                    if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Features, out deleteKey))
+                    if (GetKeyFromPath(deleteData.Path, DataKinds.Features, out deleteKey))
                     {
-                        _dataStore.Delete(VersionedDataKind.Features, deleteKey, deleteData.Version);
+                        _dataStore.Upsert(DataKinds.Features, deleteKey, tombstone);
                     }
-                    else if (GetKeyFromPath(deleteData.Path, VersionedDataKind.Segments, out deleteKey))
+                    else if (GetKeyFromPath(deleteData.Path, DataKinds.Segments, out deleteKey))
                     {
-                        _dataStore.Delete(VersionedDataKind.Segments, deleteKey, deleteData.Version);
+                        _dataStore.Upsert(DataKinds.Segments, deleteKey, tombstone);
                     }
                     else
                     {
@@ -131,20 +134,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             try
             {
-                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out var key))
+                if (GetKeyFromPath(objectPath, DataKinds.Features, out var key))
                 {
                     var feature = await _featureRequestor.GetFlagAsync(key);
                     if (feature != null)
                     {
-                        _dataStore.Upsert(VersionedDataKind.Features, feature);
+                        _dataStore.Upsert(DataKinds.Features, key, new ItemDescriptor(feature.Version, feature));
                     }
                 }
-                else if (GetKeyFromPath(objectPath, VersionedDataKind.Segments, out key))
+                else if (GetKeyFromPath(objectPath, DataKinds.Segments, out key))
                 {
                     var segment = await _featureRequestor.GetSegmentAsync(key);
                     if (segment != null)
                     {
-                        _dataStore.Upsert(VersionedDataKind.Segments, segment);
+                        _dataStore.Upsert(DataKinds.Segments, key, new ItemDescriptor(segment.Version, segment));
                     }
                 }
                 else
@@ -178,11 +181,24 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        private bool GetKeyFromPath(string path, IVersionedDataKind kind, out string key)
+        private static string GetDataKindPath(DataKind kind)
         {
-            if (path.StartsWith(kind.GetStreamApiPath()))
+            if (kind == DataKinds.Features)
             {
-                key = path.Substring(kind.GetStreamApiPath().Length);
+                return "/flags/";
+            }
+            else if (kind == DataKinds.Segments)
+            {
+                return "/segments/";
+            }
+            return null;
+        }
+
+        private static bool GetKeyFromPath(string path, DataKind kind, out string key)
+        {
+            if (path.StartsWith(GetDataKindPath(kind)))
+            {
+                key = path.Substring(GetDataKindPath(kind).Length);
                 return true;
             }
             key = null;

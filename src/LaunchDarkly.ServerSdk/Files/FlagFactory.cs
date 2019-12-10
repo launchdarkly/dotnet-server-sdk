@@ -1,4 +1,4 @@
-﻿using LaunchDarkly.Sdk.Server.Interfaces;
+﻿using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Sdk.Server.Files
@@ -9,14 +9,14 @@ namespace LaunchDarkly.Sdk.Server.Files
     // constructor but instead must build some JSON and then parse that.
     internal static class FlagFactory
     {
-        public static IVersionedData FlagFromJson(JToken json)
+        public static object FlagFromJson(JToken json)
         {
-            return json.ToObject(VersionedDataKind.Features.GetItemType()) as IVersionedData;
+            return json.ToObject(typeof(FeatureFlag));
         }
 
         // Constructs a flag that always returns the same value. This is done by giving it a
         // single variation and setting the fallthrough variation to that.
-        public static IVersionedData FlagWithValue(string key, JToken value)
+        public static object FlagWithValue(string key, JToken value)
         {
             var o = new JObject();
             o.Add("key", key);
@@ -30,9 +30,9 @@ namespace LaunchDarkly.Sdk.Server.Files
             return FlagFromJson(o);
         }
 
-        public static IVersionedData SegmentFromJson(JToken json)
+        public static object SegmentFromJson(JToken json)
         {
-            return json.ToObject(VersionedDataKind.Segments.GetItemType()) as IVersionedData;
+            return json.ToObject(typeof(Segment));
         }
     }
 }

@@ -52,7 +52,7 @@ namespace LaunchDarkly.Sdk.Server
         public void OfflineClientGetsFlagFromDataStore()
         {
             var dataStore = new InMemoryDataStore();
-            dataStore.Upsert(VersionedDataKind.Features,
+            TestUtils.UpsertFlag(dataStore,
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
             var config = Configuration.Builder("SDK_KEY")
                 .Offline(true)

@@ -36,8 +36,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 var initTask = ((IDataSource)pp).Start();
                 initTask.Wait();
-                Assert.Equal(Flag, _dataStore.Get(VersionedDataKind.Features, Flag.Key));
-                Assert.Equal(Segment, _dataStore.Get(VersionedDataKind.Segments, Segment.Key));
+                Assert.Equal(Flag, _dataStore.Get(DataKinds.Features, Flag.Key).Value.Item);
+                Assert.Equal(Segment, _dataStore.Get(DataKinds.Segments, Segment.Key).Value.Item);
                 Assert.True(_dataStore.Initialized());
             }
         }
