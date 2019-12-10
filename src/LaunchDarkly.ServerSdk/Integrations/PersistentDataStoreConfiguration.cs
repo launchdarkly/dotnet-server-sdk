@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// For a persistent data store (e.g. a database integration), the store implementation will
     /// provide an <see cref="IPersistentDataStoreFactory"/> or <see cref="IPersistentDataStoreAsyncFactory"/>
     /// that implements the specific data store behavior. The SDK then provides additional
-    /// options for caching; thos are defined by this type, which is returned by
+    /// options for caching; those are defined by this type, which is returned by
     /// <see cref="Components.PersistentStore(IPersistentDataStoreFactory)"/>. Example usage:
     /// </para>
     /// <code>
