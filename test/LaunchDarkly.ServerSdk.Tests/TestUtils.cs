@@ -34,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server
             return store.Upsert(DataKinds.Features, item.Key, new ItemDescriptor(item.Version, item));
         }
 
-        internal static bool UpsertSegment(IDataStore store, IVersionedData item)
+        internal static bool UpsertSegment(IDataStore store, Segment item)
         {
             return store.Upsert(DataKinds.Segments, item.Key, new ItemDescriptor(item.Version, item));
         }

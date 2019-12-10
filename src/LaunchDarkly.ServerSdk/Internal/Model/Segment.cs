@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-    internal sealed class Segment : IVersionedData
+    internal sealed class Segment
     {
         [JsonProperty(PropertyName = "key")]
         public string Key { get; private set; }
