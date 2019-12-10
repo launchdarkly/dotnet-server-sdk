@@ -27,7 +27,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             private readonly Func<string, object> _deserializer;
 
             /// <summary>
-            /// An alphabetic string that uniquely identifies this data kind.
+            /// A case-sensitive alphabetic string that uniquely identifies this data kind.
             /// </summary>
             /// <remarks>
             /// This is in effect a namespace for a collection of items of the same kind. Item
@@ -36,6 +36,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// </remarks>
             public string Name => _name;
 
+            // Note that Serialize and Deserialize are never called by application code, not even by custom
+            // data store implementations; the SDK always pre-serializes data before passing it to a
+            // persistent data store.
             internal string Serialize(object o) => _serializer(o);
 
             internal object Deserialize(string serializedData) => _deserializer(serializedData);
@@ -48,9 +51,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// its own instances for the storable data types that it uses.
             /// </remarks>
             /// <param name="name">value for the <c>Name</c> property</param>
-            public DataKind(string name) : this(name, null, null) { }
-
-            internal DataKind(string name, Func<object, string> serializer,
+            /// <param name="serializer">function to convert an item to a serialized string form</param>
+            /// <param name="deserializer">function to convert an item from a serialized string form</param>
+            public DataKind(string name, Func<object, string> serializer,
                 Func<string, object> deserializer)
             {
                 _name = name;
