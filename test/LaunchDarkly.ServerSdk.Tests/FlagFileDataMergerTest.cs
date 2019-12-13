@@ -7,7 +7,7 @@ using Xunit;
 
 namespace LaunchDarkly.Tests
 {
-    public class FlagFileDataTest
+    public class FlagFileDataMergerTest
     {
         [Fact]
         public void AddToData_DuplicateKeysHandling_Throw()
