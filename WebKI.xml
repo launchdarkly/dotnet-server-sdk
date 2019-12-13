@@ -268,6 +268,7 @@
     <HelpKINode Title="LdClient.Dispose Method " Url="html/M_LaunchDarkly_Client_LdClient_Dispose.htm" />
   </HelpKINode>
   <HelpKINode Title="Double field" Url="html/F_LaunchDarkly_Client_LdValue_Convert_Double.htm" />
+  <HelpKINode Title="DuplicateKeysHandling enumeration" Url="html/T_LaunchDarkly_Client_Files_DuplicateKeysHandling.htm" />
   <HelpKINode Title="Email method" Url="html/M_LaunchDarkly_Client_IUserBuilder_Email.htm" />
   <HelpKINode Title="Email property" Url="html/P_LaunchDarkly_Client_User_Email.htm" />
   <HelpKINode Title="Enabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Enabled.htm" />
@@ -476,6 +477,7 @@
   <HelpKINode Title="FileDataSourceFactory.DefaultPollInterval field" Url="html/F_LaunchDarkly_Client_Files_FileDataSourceFactory_DefaultPollInterval.htm" />
   <HelpKINode Title="FileDataSourceFactory.FileDataSourceFactory constructor" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory__ctor.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithAutoUpdate method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithAutoUpdate.htm" />
+  <HelpKINode Title="FileDataSourceFactory.WithDuplicateKeysHandling method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithDuplicateKeysHandling.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithFilePaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFilePaths.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithParser method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithParser.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithPollInterval method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithPollInterval.htm" />
@@ -664,6 +666,7 @@
     <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStoreFactory.htm" />
   </HelpKINode>
   <HelpKINode Title="IFeatureStoreFactory.CreateFeatureStore method" Url="html/M_LaunchDarkly_Client_IFeatureStoreFactory_CreateFeatureStore.htm" />
+  <HelpKINode Title="Ignore enumeration member" Url="html/T_LaunchDarkly_Client_Files_DuplicateKeysHandling.htm" />
   <HelpKINode Title="ILdClient interface">
     <HelpKINode Title="ILdClient Interface" Url="html/T_LaunchDarkly_Client_ILdClient.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_ILdClient.htm" />
@@ -756,7 +759,7 @@
     <HelpKINode Title="LdClient.IntVariationDetail Method " Url="html/M_LaunchDarkly_Client_LdClient_IntVariationDetail.htm" />
   </HelpKINode>
   <HelpKINode Title="IPAddress method" Url="html/M_LaunchDarkly_Client_IUserBuilder_IPAddress.htm" />
-  <HelpKINode Title="IPAddress property" Url="html/P_LaunchDarkly_Client_User_IPAddress.htm" />
+  <HelpKINode Title="IPAddress property" Url="html/P_LaunchDarkly_Client_User_IpAddress.htm" />
   <HelpKINode Title="IsDefaultValue property" Url="html/P_LaunchDarkly_Client_EvaluationDetail_1_IsDefaultValue.htm" />
   <HelpKINode Title="IsEnabled property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsEnabled.htm" />
   <HelpKINode Title="IsInfiniteTtl property" Url="html/P_LaunchDarkly_Client_FeatureStoreCacheConfig_IsInfiniteTtl.htm" />
@@ -864,6 +867,7 @@
   <HelpKINode Title="LaunchDarkly.Client.FeatureRequestEvent class" Url="html/T_LaunchDarkly_Client_FeatureRequestEvent.htm" />
   <HelpKINode Title="LaunchDarkly.Client.FeatureStoreCacheConfig class" Url="html/T_LaunchDarkly_Client_FeatureStoreCacheConfig.htm" />
   <HelpKINode Title="LaunchDarkly.Client.Files namespace" Url="html/N_LaunchDarkly_Client_Files.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Files.DuplicateKeysHandling enumeration" Url="html/T_LaunchDarkly_Client_Files_DuplicateKeysHandling.htm" />
   <HelpKINode Title="LaunchDarkly.Client.Files.FileComponents class" Url="html/T_LaunchDarkly_Client_Files_FileComponents.htm" />
   <HelpKINode Title="LaunchDarkly.Client.Files.FileDataSourceFactory class" Url="html/T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm" />
   <HelpKINode Title="LaunchDarkly.Client.FlagsStateOption class" Url="html/T_LaunchDarkly_Client_FlagsStateOption.htm" />
@@ -1118,6 +1122,7 @@
   </HelpKINode>
   <HelpKINode Title="TargetMatchReason property" Url="html/P_LaunchDarkly_Client_EvaluationReason_TargetMatchReason.htm" />
   <HelpKINode Title="TARGET_MATCH enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationReasonKind.htm" />
+  <HelpKINode Title="Throw enumeration member" Url="html/T_LaunchDarkly_Client_Files_DuplicateKeysHandling.htm" />
   <HelpKINode Title="ToJsonString method" Url="html/M_LaunchDarkly_Client_LdValue_ToJsonString.htm" />
   <HelpKINode Title="ToString method">
     <HelpKINode Title="EvaluationReason.Error.ToString Method " Url="html/M_LaunchDarkly_Client_EvaluationReason_Error_ToString.htm" />
@@ -1178,7 +1183,7 @@
   <HelpKINode Title="User.Equals method" Url="html/Overload_LaunchDarkly_Client_User_Equals.htm" />
   <HelpKINode Title="User.FirstName property" Url="html/P_LaunchDarkly_Client_User_FirstName.htm" />
   <HelpKINode Title="User.GetHashCode method" Url="html/M_LaunchDarkly_Client_User_GetHashCode.htm" />
-  <HelpKINode Title="User.IPAddress property" Url="html/P_LaunchDarkly_Client_User_IPAddress.htm" />
+  <HelpKINode Title="User.IPAddress property" Url="html/P_LaunchDarkly_Client_User_IpAddress.htm" />
   <HelpKINode Title="User.Key property" Url="html/P_LaunchDarkly_Client_User_Key.htm" />
   <HelpKINode Title="User.LastName property" Url="html/P_LaunchDarkly_Client_User_LastName.htm" />
   <HelpKINode Title="User.Name property" Url="html/P_LaunchDarkly_Client_User_Name.htm" />
@@ -1256,6 +1261,7 @@
   <HelpKINode Title="WithAllAttributesPrivate method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithAllAttributesPrivate.htm" />
   <HelpKINode Title="WithAutoUpdate method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithAutoUpdate.htm" />
   <HelpKINode Title="WithCaching method" Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapperBuilder_WithCaching.htm" />
+  <HelpKINode Title="WithDuplicateKeysHandling method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithDuplicateKeysHandling.htm" />
   <HelpKINode Title="WithEventProcessorFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventProcessorFactory.htm" />
   <HelpKINode Title="WithEventQueueCapacity method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueCapacity.htm" />
   <HelpKINode Title="WithEventQueueFrequency method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithEventQueueFrequency.htm" />
