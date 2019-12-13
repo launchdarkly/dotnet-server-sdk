@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace LaunchDarkly.Client.Files
 {
@@ -16,47 +16,5 @@ namespace LaunchDarkly.Client.Files
 
         [JsonProperty(PropertyName = "segments", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Segments { get; set; }
-
-        public void AddToData(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData)
-        {
-            if (Flags != null)
-            {
-                foreach (KeyValuePair<string, JToken> e in Flags)
-                {
-                    AddItem(allData, VersionedDataKind.Features, FlagFactory.FlagFromJson(e.Value));
-                }
-            }
-            if (FlagValues != null)
-            {
-                foreach (KeyValuePair<string, JToken> e in FlagValues)
-                {
-                    AddItem(allData, VersionedDataKind.Features, FlagFactory.FlagWithValue(e.Key, e.Value));
-                }
-            }
-            if (Segments != null)
-            {
-                foreach (KeyValuePair<string, JToken> e in Segments)
-                {
-                    AddItem(allData, VersionedDataKind.Segments, FlagFactory.SegmentFromJson(e.Value));
-                }
-            }
-        }
-
-        private void AddItem(IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> allData,
-            IVersionedDataKind kind, IVersionedData item)
-        {
-            IDictionary<string, IVersionedData> items;
-            if (!allData.TryGetValue(kind, out items))
-            {
-                items = new Dictionary<string, IVersionedData>();
-                allData[kind] = items;
-            }
-            if (items.ContainsKey(item.Key))
-            {
-                throw new System.Exception("in \"" + kind.GetNamespace() + "\", key \"" + item.Key +
-                    "\" was already defined");
-            }
-            items[item.Key] = item;
-        }
     }
 }
