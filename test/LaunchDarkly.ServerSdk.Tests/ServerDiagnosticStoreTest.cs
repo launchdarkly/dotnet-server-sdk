@@ -81,11 +81,11 @@ namespace LaunchDarkly.Tests
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             DateTime dataSince = _serverDiagnosticStore.DataSince;
-            LdValue periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4).JsonValue;
+            LdValue periodicEvent = _serverDiagnosticStore.CreateEventAndReset().JsonValue;
 
             Assert.Equal("diagnostic", periodicEvent.Get("kind").AsString);
             Assert.Equal(Util.GetUnixTimestampMillis(dataSince), periodicEvent.Get("dataSinceDate").AsLong);
-            Assert.Equal(4, periodicEvent.Get("eventsInQueue").AsInt);
+            Assert.Equal(0, periodicEvent.Get("eventsInLastBatch").AsInt);
             Assert.Equal(0, periodicEvent.Get("droppedEvents").AsInt);
             Assert.Equal(0, periodicEvent.Get("deduplicatedUsers").AsInt);
 
@@ -99,7 +99,7 @@ namespace LaunchDarkly.Tests
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             DiagnosticEvent? initEvent = _serverDiagnosticStore.InitEvent;
             Assert.True(initEvent.HasValue);
-            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset();
             Assert.Equal(initEvent.Value.JsonValue.Get("id"), periodicEvent.JsonValue.Get("id"));
         }
 
@@ -108,7 +108,7 @@ namespace LaunchDarkly.Tests
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             _serverDiagnosticStore.IncrementDeduplicatedUsers();
-            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset();
             Assert.Equal(1, periodicEvent.JsonValue.Get("deduplicatedUsers").AsInt);
         }
 
@@ -117,8 +117,17 @@ namespace LaunchDarkly.Tests
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             _serverDiagnosticStore.IncrementDroppedEvents();
-            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset();
             Assert.Equal(1, periodicEvent.JsonValue.Get("droppedEvents").AsInt);
+        }
+
+        [Fact]
+        public void CanRecordEventsInBatch()
+        {
+            IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
+            _serverDiagnosticStore.RecordEventsInBatch(4);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset();
+            Assert.Equal(4, periodicEvent.JsonValue.Get("eventsInLastBatch").AsInt);
         }
 
         [Fact]
@@ -127,7 +136,7 @@ namespace LaunchDarkly.Tests
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             DateTime timestamp = DateTime.Now;
             _serverDiagnosticStore.AddStreamInit(timestamp, TimeSpan.FromMilliseconds(200.0), true);
-            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset();
 
             LdValue streamInits = periodicEvent.JsonValue.Get("streamInits");
             Assert.Equal(1, streamInits.Count);
@@ -142,7 +151,7 @@ namespace LaunchDarkly.Tests
         public void DataSinceFromLastDiagnostic()
         {
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
-            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset(4);
+            DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset();
             Assert.Equal(periodicEvent.JsonValue.Get("creationDate").AsLong,
                 Util.GetUnixTimestampMillis(_serverDiagnosticStore.DataSince));
         }
@@ -153,15 +162,16 @@ namespace LaunchDarkly.Tests
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore();
             _serverDiagnosticStore.IncrementDroppedEvents();
             _serverDiagnosticStore.IncrementDeduplicatedUsers();
+            _serverDiagnosticStore.RecordEventsInBatch(10);
             _serverDiagnosticStore.AddStreamInit(DateTime.Now, TimeSpan.FromMilliseconds(200.0), true);
-            LdValue firstPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset(4).JsonValue;
-            LdValue nextPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset(0).JsonValue;
+            LdValue firstPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset().JsonValue;
+            LdValue nextPeriodicEvent = _serverDiagnosticStore.CreateEventAndReset().JsonValue;
 
             Assert.Equal(firstPeriodicEvent.Get("creationDate"), nextPeriodicEvent.Get("dataSinceDate"));
-            Assert.Equal(0, nextPeriodicEvent.Get("eventsInQueue").AsInt);
+            Assert.Equal(0, nextPeriodicEvent.Get("eventsInLastBatch").AsInt);
             Assert.Equal(0, nextPeriodicEvent.Get("droppedEvents").AsInt);
             Assert.Equal(0, nextPeriodicEvent.Get("deduplicatedUsers").AsInt);
-
+            Assert.Equal(0, nextPeriodicEvent.Get("eventsInLastBatch").AsInt);
             LdValue streamInits = nextPeriodicEvent.Get("streamInits");
             Assert.Equal(0, streamInits.Count);
         }

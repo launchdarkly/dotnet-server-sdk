@@ -15,10 +15,10 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Release'">
-    <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.10.0-beta2-diag" />
+    <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="2.10.0-beta3-diag" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.10.0-beta2-diag" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="2.10.0-beta3-diag" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
