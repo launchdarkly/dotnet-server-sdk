@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Internal.Model;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -19,40 +18,5 @@ namespace LaunchDarkly.Sdk.Server.Files
 
         [JsonProperty(PropertyName = "segments", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, JToken> Segments { get; set; }
-
-        public void AddToData(IDictionary<string, ItemDescriptor> flagsOut, IDictionary<string, ItemDescriptor> segmentsOut)
-        {
-            if (Flags != null)
-            {
-                foreach (KeyValuePair<string, JToken> e in Flags)
-                {
-                    AddItem(DataKinds.Features, flagsOut, e.Key, FlagFactory.FlagFromJson(e.Value));
-                }
-            }
-            if (FlagValues != null)
-            {
-                foreach (KeyValuePair<string, JToken> e in FlagValues)
-                {
-                    AddItem(DataKinds.Features, flagsOut, e.Key, FlagFactory.FlagWithValue(e.Key, e.Value));
-                }
-            }
-            if (Segments != null)
-            {
-                foreach (KeyValuePair<string, JToken> e in Segments)
-                {
-                    AddItem(DataKinds.Segments, segmentsOut, e.Key, FlagFactory.SegmentFromJson(e.Value));
-                }
-            }
-        }
-
-        private void AddItem(DataKind kind, IDictionary<string, ItemDescriptor> items, string key, object item)
-        {
-            if (items.ContainsKey(key))
-            {
-                throw new System.Exception("in \"" + kind.Name + "\", key \"" + key +
-                    "\" was already defined");
-            }
-            items[key] = new ItemDescriptor(1, item);
-        }
     }
 }

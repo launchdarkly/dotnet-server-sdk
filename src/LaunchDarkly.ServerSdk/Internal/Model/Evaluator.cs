@@ -258,7 +258,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     return vr.Variation.Value;
                 }
 
-                if (vr.Rollout != null)
+                if (vr.Rollout != null &&vr. Rollout.Variations != null && vr.Rollout.Variations.Count > 0)
                 {
                     string bucketBy = vr.Rollout.BucketBy ?? "key";
                     float bucket = Bucketing.BucketUser(_user, key, bucketBy, salt);
@@ -271,6 +271,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                             return wv.Variation;
                         }
                     }
+                    // The user's bucket value was greater than or equal to the end of the last bucket. This could happen due
+                    // to a rounding error, or due to the fact that we are scaling to 100000 rather than 99999, or the flag
+                    // data could contain buckets that don't actually add up to 100000. Rather than returning an error in
+                    // this case (or changing the scaling, which would potentially change the results for *all* users), we
+                    // will simply put the user in the last bucket.
+                    return vr.Rollout.Variations[vr.Rollout.Variations.Count - 1].Variation;
                 }
                 return null;
             }
