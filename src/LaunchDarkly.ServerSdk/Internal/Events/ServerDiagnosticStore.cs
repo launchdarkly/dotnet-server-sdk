@@ -17,6 +17,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         private long DataSince;
         private long DroppedEvents;
         private long DeduplicatedUsers;
+        private long EventsInLastBatch;
         private readonly object StreamInitsLock = new object();
         private LdValue.ArrayBuilder StreamInits = LdValue.BuildArray();
 
@@ -140,16 +141,22 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             }
         }
 
-        public DiagnosticEvent CreateEventAndReset(long eventsInQueue)
+        public void RecordEventsInBatch(long eventsInBatch)
+        {
+            Interlocked.Exchange(ref EventsInLastBatch, eventsInBatch);
+        }
+
+        public DiagnosticEvent CreateEventAndReset()
         {
             DateTime currentTime = DateTime.Now;
             long droppedEvents = Interlocked.Exchange(ref DroppedEvents, 0);
             long deduplicatedUsers = Interlocked.Exchange(ref DeduplicatedUsers, 0);
+            long eventsInLastBatch = Interlocked.Exchange(ref EventsInLastBatch, 0);
             long dataSince = Interlocked.Exchange(ref DataSince, currentTime.ToBinary());
 
             var statEvent = LdValue.BuildObject();
             AddDiagnosticCommonFields(statEvent, "diagnostic", currentTime);
-            statEvent.Add("eventsInQueue", eventsInQueue);
+            statEvent.Add("eventsInLastBatch", eventsInLastBatch);
             statEvent.Add("dataSinceDate", Util.GetUnixTimestampMillis(DateTime.FromBinary(dataSince)));
             statEvent.Add("droppedEvents", droppedEvents);
             statEvent.Add("deduplicatedUsers", deduplicatedUsers);
