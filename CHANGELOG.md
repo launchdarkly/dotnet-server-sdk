@@ -2,6 +2,13 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.11.0] - 2019-12-13
+### Added:
+- With `FileDataSourceFactory`, it is now possible to specify that duplicate flag keys in data files should be ignored rather than causing an error; in this mode, it will use only the first occurrence of each flag key. This allows, for instance, implementing rolling updates of flag data by putting the newest data in a file that is specified first in your file list. (Thanks, [JeffAshton](https://github.com/launchdarkly/dotnet-server-sdk/pull/123)!)
+
+### Fixed:
+- In rare circumstances (depending on the exact data in the flag configuration, the flag's salt value, and the user properties), a percentage rollout could fail and return a default value, logging the error "Data inconsistency in feature flag ... variation/rollout object with no variation or rollout". This would happen if the user's hashed value fell exactly at the end of the last "bucket" (the last variation defined in the rollout). This has been fixed so that the user will get the last variation.
+
 ## [5.10.0] - 2019-11-12
 ### Added:
 - Added `ILdClient` extension methods `EnumVariation` and `EnumVariationDetail`, which convert strings to enums.
