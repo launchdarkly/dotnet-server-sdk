@@ -15,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Files
     internal class FileDataSource : IDataSource
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FileDataSource));
-        private readonly IDataStore _dataStore;
+        private readonly IDataStoreUpdates _dataStoreUpdates;
         private readonly List<string> _paths;
         private readonly IDisposable _reloader;
         private readonly FlagFileParser _parser;
@@ -24,10 +24,10 @@ namespace LaunchDarkly.Sdk.Server.Files
         private volatile bool _started;
         private volatile bool _loadedValidData;
 
-        public FileDataSource(IDataStore dataStore, List<string> paths, bool autoUpdate, TimeSpan pollInterval,
+        public FileDataSource(IDataStoreUpdates dataStoreUpdates, List<string> paths, bool autoUpdate, TimeSpan pollInterval,
             Func<string, object> alternateParser, bool skipMissingPaths, DuplicateKeysHandling duplicateKeysHandling)
         {
-            _dataStore = dataStore;
+            _dataStoreUpdates = dataStoreUpdates;
             _paths = new List<string>(paths);
             _parser = new FlagFileParser(alternateParser);
             _dataMerger = new FlagFileDataMerger(duplicateKeysHandling);
@@ -112,7 +112,7 @@ namespace LaunchDarkly.Sdk.Server.Files
                     .SetItem(DataKinds.Features, new KeyedItems<ItemDescriptor>(flags))
                     .SetItem(DataKinds.Segments, new KeyedItems<ItemDescriptor>(segments))
             );
-            _dataStore.Init(allData);
+            _dataStoreUpdates.Init(allData);
             _loadedValidData = true;
         }
 

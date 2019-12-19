@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
@@ -73,63 +74,71 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void DiagnosticStorePassedToFactoriesWhenSupported()
+        public void DiagnosticStorePassedToFactories()
         {
-            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
-            var dsfwd = new Mock<IDataSourceFactoryWithDiagnostics>();
+            var epf = new Mock<IEventProcessorFactory>();
+            var dsf = new Mock<IDataSourceFactory>();
             var config = Configuration.Builder("SDK_KEY")
                 .IsStreamingEnabled(false)
                 .BaseUri(new Uri("http://fake"))
                 .StartWaitTime(TimeSpan.Zero)
-                .EventProcessorFactory(epfwd.Object)
-                .DataSource(dsfwd.Object)
+                .EventProcessorFactory(epf.Object)
+                .DataSource(dsf.Object)
                 .Build();
 
             IDiagnosticStore eventProcessorDiagnosticStore = null;
-            IDiagnosticStore updateProcessorDiagnosticStore = null;
+            IDiagnosticStore dataSourceDiagnosticStore = null;
 
-            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
-                .Callback<Configuration, IDiagnosticStore>((c, ds) => eventProcessorDiagnosticStore = ds)
-                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
-            dsfwd.Setup(dsf => dsf.CreateDataSource(config, It.IsAny<IDataStore>(), It.IsAny<IDiagnosticStore>()))
-                .Callback<Configuration, IDataStore, IDiagnosticStore>((c, fs, ds) => updateProcessorDiagnosticStore = ds)
-                .Returns(dataSource);
+            epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
+                .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
+                .Returns(new NullEventProcessor());
+            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataStoreUpdates>()))
+                .Callback((LdClientContext ctx, IDataStoreUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx, IDataStoreUpdates dsu) => dataSource);
 
             using (var client = new LdClient(config))
             {
-                epfwd.Verify(epf => epf.CreateEventProcessor(config, It.IsNotNull<IDiagnosticStore>()), Times.Once());
-                epfwd.VerifyNoOtherCalls();
-                dsfwd.Verify(dsf => dsf.CreateDataSource(config, It.IsNotNull<IDataStore>(), It.IsNotNull<IDiagnosticStore>()), Times.Once());
-                dsfwd.VerifyNoOtherCalls();
-                Assert.True(eventProcessorDiagnosticStore == updateProcessorDiagnosticStore);
+                epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
+                epf.VerifyNoOtherCalls();
+                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataStoreUpdates>()), Times.Once());
+                dsf.VerifyNoOtherCalls();
+                Assert.NotNull(eventProcessorDiagnosticStore);
+                Assert.Same(eventProcessorDiagnosticStore, dataSourceDiagnosticStore);
             }
         }
 
         [Fact]
         public void DiagnosticStoreNotPassedToFactoriesWhenOptedOut()
         {
-            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
-            var dsfwd = new Mock<IDataSourceFactoryWithDiagnostics>();
+            var epf = new Mock<IEventProcessorFactory>();
+            var dsf = new Mock<IDataSourceFactory>();
             var config = Configuration.Builder("SDK_KEY")
                 .IsStreamingEnabled(false)
                 .BaseUri(new Uri("http://fake"))
                 .StartWaitTime(TimeSpan.Zero)
-                .EventProcessorFactory(epfwd.Object)
-                .DataSource(dsfwd.Object)
+                .EventProcessorFactory(epf.Object)
+                .DataSource(dsf.Object)
                 .DiagnosticOptOut(true)
                 .Build();
 
-            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
-                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
-            dsfwd.Setup(upf => upf.CreateDataSource(config, It.IsAny<IDataStore>(), It.IsAny<IDiagnosticStore>()))
-                .Returns(dataSource);
+            IDiagnosticStore eventProcessorDiagnosticStore = null;
+            IDiagnosticStore dataSourceDiagnosticStore = null;
+
+            epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
+                .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
+                .Returns(new NullEventProcessor());
+            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataStoreUpdates>()))
+                .Callback((LdClientContext ctx, IDataStoreUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx, IDataStoreUpdates dsu) => dataSource);
 
             using (var client = new LdClient(config))
             {
-                epfwd.Verify(epf => epf.CreateEventProcessor(config, null), Times.Once());
-                epfwd.VerifyNoOtherCalls();
-                dsfwd.Verify(dsf => dsf.CreateDataSource(config, It.IsNotNull<IDataStore>(), null), Times.Once());
-                dsfwd.VerifyNoOtherCalls();
+                epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
+                epf.VerifyNoOtherCalls();
+                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataStoreUpdates>()), Times.Once());
+                dsf.VerifyNoOtherCalls();
+                Assert.Null(eventProcessorDiagnosticStore);
+                Assert.Null(dataSourceDiagnosticStore);
             }
         }
 

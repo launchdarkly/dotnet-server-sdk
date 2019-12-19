@@ -98,7 +98,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// Creates an implementation instance.
         /// </summary>
+        /// <param name="context">configuration of the current client instance</param>
         /// <returns>a <see cref="IDataStore"/> instance</returns>
-        IDataStore CreateDataStore();
+        IDataStore CreateDataStore(LdClientContext context);
     }
 }

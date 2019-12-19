@@ -5,8 +5,14 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Interface for an object that receives updates to feature flags, user segments, and anything
-    /// else that might come from LaunchDarkly, and passes them to an <see cref="IDataStore"/>.
+    /// else that might come from LaunchDarkly.
     /// </summary>
+    /// <remarks>
+    /// This component uses a push model. When it is created (via <see cref="IDataSourceFactory"/>) it is
+    /// given a reference to an <see cref="IDataStoreUpdates"/> component, which is a write-only abstraction of
+    /// the data store. The SDK never requests feature flag data from the <see cref="IDataSource"/>, it
+    /// only looks at the last known data that was previously put into the store.
+    /// </remarks>
     /// <seealso cref="IDataSourceFactory"/>
     public interface IDataSource : IDisposable
     {
@@ -24,24 +30,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     }
 
     /// <summary>
-    /// Used when the client is offline or in LDD mode.
-    /// </summary>
-    internal class NullDataSource : IDataSource
-    {
-        Task<bool> IDataSource.Start()
-        {
-            return Task.FromResult(true);
-        }
-
-        bool IDataSource.Initialized()
-        {
-            return true;
-        }
-
-        void IDisposable.Dispose() { }
-    }
-
-    /// <summary>
     /// Interface for a factory that creates some implementation of <see cref="IDataSource"/>.
     /// </summary>
     /// <seealso cref="IConfigurationBuilder.DataSource"/>
@@ -51,9 +39,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// Creates an implementation instance.
         /// </summary>
-        /// <param name="config">the LaunchDarkly configuration</param>
-        /// <param name="dataStore">the store that holds feature flags and related data</param>
+        /// <param name="context">configuration of the current client instance</param>
+        /// <param name="dataUpdates">the destination for pushing data updates</param>
         /// <returns>an <see cref="IDataSource"/> instance</returns>
-        IDataSource CreateDataSource(Configuration config, IDataStore dataStore);
+        IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataUpdates);
     }
 }

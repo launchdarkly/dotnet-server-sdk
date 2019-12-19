@@ -24,10 +24,7 @@ namespace LaunchDarkly.Sdk.Server
             }
         }
 
-        public static string TestFilePath(string name)
-        {
-            return "./TestFiles/" + name;
-        }
+        public static string TestFilePath(string name) => "./TestFiles/" + name;
         
         internal static bool UpsertFlag(IDataStore store, FeatureFlag item)
         {
@@ -39,25 +36,17 @@ namespace LaunchDarkly.Sdk.Server
             return store.Upsert(DataKinds.Segments, item.Key, new ItemDescriptor(item.Version, item));
         }
 
-        public static IDataStoreFactory SpecificDataStore(IDataStore store)
-        {
-            return new SpecificDataStoreFactory(store);
-        }
+        public static IDataStoreFactory SpecificDataStore(IDataStore store) =>
+            new SpecificDataStoreFactory(store);
 
-        public static IEventProcessorFactory SpecificEventProcessor(IEventProcessor ep)
-        {
-            return new SpecificEventProcessorFactory(ep);
-        }
+        public static IEventProcessorFactory SpecificEventProcessor(IEventProcessor ep) =>
+            new SpecificEventProcessorFactory(ep);
 
-        public static IDataSourceFactory SpecificDataSource(IDataSource up)
-        {
-            return new SpecificDataSourceFactory(up);
-        }
+        public static IDataSourceFactory SpecificDataSource(IDataSource up) =>
+            new SpecificDataSourceFactory(up);
 
-        internal static IDataSourceFactory DataSourceWithData(FullDataSet<ItemDescriptor> data)
-        {
-            return new DataSourceFactoryWithData(data);
-        }
+        internal static IDataSourceFactory DataSourceWithData(FullDataSet<ItemDescriptor> data) =>
+            new DataSourceFactoryWithData(data);
     }
 
     public class SpecificDataStoreFactory : IDataStoreFactory
@@ -69,10 +58,7 @@ namespace LaunchDarkly.Sdk.Server
             _store = store;
         }
 
-        IDataStore IDataStoreFactory.CreateDataStore()
-        {
-            return _store;
-        }
+        IDataStore IDataStoreFactory.CreateDataStore(LdClientContext context) => _store;
     }
 
     public class SpecificEventProcessorFactory : IEventProcessorFactory
@@ -84,10 +70,7 @@ namespace LaunchDarkly.Sdk.Server
             _ep = ep;
         }
 
-        IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config)
-        {
-            return _ep;
-        }
+        IEventProcessor IEventProcessorFactory.CreateEventProcessor(LdClientContext context) => _ep;
     }
 
     public class SpecificDataSourceFactory : IDataSourceFactory
@@ -99,10 +82,7 @@ namespace LaunchDarkly.Sdk.Server
             _ds = ds;
         }
 
-        IDataSource IDataSourceFactory.CreateDataSource(Configuration config, IDataStore dataStore)
-        {
-            return _ds;
-        }
+        IDataSource IDataSourceFactory.CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates) => _ds;
     }
 
     public class DataSourceFactoryWithData : IDataSourceFactory
@@ -114,33 +94,28 @@ namespace LaunchDarkly.Sdk.Server
             _data = data;
         }
 
-        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore)
-        {
-            return new DataSourceWithData(dataStore, _data);
-        }
+        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
+            new DataSourceWithData(dataStoreUpdates, _data);
     }
 
     public class DataSourceWithData : IDataSource
     {
-        private readonly IDataStore _store;
+        private readonly IDataStoreUpdates _storeUpdates;
         private readonly FullDataSet<ItemDescriptor> _data;
 
-        public DataSourceWithData(IDataStore store, FullDataSet<ItemDescriptor> data)
+        public DataSourceWithData(IDataStoreUpdates storeUpdates, FullDataSet<ItemDescriptor> data)
         {
-            _store = store;
+            _storeUpdates = storeUpdates;
             _data = data;
         }
 
         public Task<bool> Start()
         {
-            _store.Init(_data);
+            _storeUpdates.Init(_data);
             return Task.FromResult(true);
         }
 
-        public bool Initialized()
-        {
-            return true;
-        }
+        public bool Initialized() => true;
         
         public void Dispose() { }
     }

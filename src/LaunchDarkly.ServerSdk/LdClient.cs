@@ -56,33 +56,21 @@ namespace LaunchDarkly.Sdk.Server
 
             _configuration = config;
         
-            IDataStore store = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore).CreateDataStore();
-            _dataStore = new DataStoreClientWrapper(store);
+            ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
+                new ServerDiagnosticStore(_configuration);
+
+            var clientContext = new LdClientContext(config, diagnosticStore);
+
+            _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore).CreateDataStore(clientContext);
 
             _evaluator = new Evaluator(GetFlag, GetSegment);
 
-            ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
-                new ServerDiagnosticStore(_configuration);
-            
             var eventProcessorFactory = _configuration.EventProcessorFactory ?? Components.DefaultEventProcessor;
-            if (eventProcessorFactory is IEventProcessorFactoryWithDiagnostics epfwd)
-            {
-                _eventProcessor = epfwd.CreateEventProcessor(_configuration, diagnosticStore);
-            }
-            else
-            {
-                _eventProcessor = eventProcessorFactory.CreateEventProcessor(_configuration);
-            }
+            _eventProcessor = eventProcessorFactory.CreateEventProcessor(clientContext);
             
             var dataSourceFactory = _configuration.DataSourceFactory ?? Components.DefaultDataSource;
-            if (dataSourceFactory is IDataSourceFactoryWithDiagnostics dsfwd)
-            {
-                _dataSource = dsfwd.CreateDataSource(_configuration, _dataStore, diagnosticStore);
-            }
-            else
-            {
-                _dataSource = dataSourceFactory.CreateDataSource(_configuration, _dataStore);
-            }
+            var dataStoreUpdates = new DataStoreUpdates(_dataStore);
+            _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataStoreUpdates);
 
             var initTask = _dataSource.Start();
 

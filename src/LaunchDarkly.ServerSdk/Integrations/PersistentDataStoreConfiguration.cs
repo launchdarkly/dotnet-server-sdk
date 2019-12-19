@@ -96,8 +96,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <summary>
         /// Called by the SDK to create the data store instance for a specific <see cref="LdClient"/>.
         /// </summary>
-        /// <returns>the data store instanc</returns>
-        public IDataStore CreateDataStore()
+        /// <param name="context">used internally</param>
+        /// <returns>the data store instance</returns>
+        public IDataStore CreateDataStore(LdClientContext context)
         {
             if (_coreFactory != null)
             {

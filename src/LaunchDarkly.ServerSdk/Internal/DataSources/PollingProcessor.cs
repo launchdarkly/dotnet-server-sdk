@@ -15,17 +15,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
         private readonly IFeatureRequestor _featureRequestor;
-        private readonly IDataStore _dataStore;
+        private readonly IDataStoreUpdates _dataStoreUpdates;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
         private volatile bool _disposed;
 
 
-        internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IDataStore dataStore)
+        internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IDataStoreUpdates dataStoreUpdates)
         {
             _config = config;
             _featureRequestor = featureRequestor;
-            _dataStore = dataStore;
+            _dataStoreUpdates = dataStoreUpdates;
             _initTask = new TaskCompletionSource<bool>();
         }
 
@@ -59,7 +59,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var allData = await _featureRequestor.GetAllDataAsync();
                 if (allData != null)
                 {
-                    _dataStore.Init(allData.ToInitData());
+                    _dataStoreUpdates.Init(allData.ToInitData());
 
                     //We can't use bool in CompareExchange because it is not a reference type.
                     if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
