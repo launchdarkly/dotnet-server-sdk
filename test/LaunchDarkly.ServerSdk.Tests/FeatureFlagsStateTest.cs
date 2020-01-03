@@ -13,9 +13,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CanGetFlagValue()
         {
-            var state = new FeatureFlagsState(true);
-            var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, null, false);
+            var state = FeatureFlagsState.Builder().AddFlag("key", new EvaluationDetail<LdValue>(LdValue.Of("value"), 1, null)).Build();
 
             Assert.Equal(LdValue.Of("value"), state.GetFlagValueJson("key"));
         }
@@ -23,9 +21,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CanGetDeprecatedFlagValue()
         {
-            var state = new FeatureFlagsState(true);
-            var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, null, false);
+            var state = FeatureFlagsState.Builder().AddFlag("key", new EvaluationDetail<LdValue>(LdValue.Of("value"), 1, null)).Build();
 #pragma warning disable 0618
             Assert.Equal(new JValue("value"), state.GetFlagValue("key"));
 #pragma warning restore 0618
@@ -34,7 +30,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void UnknownFlagReturnsNullValue()
         {
-            var state = new FeatureFlagsState(true);
+            var state = FeatureFlagsState.Builder().Build();
 #pragma warning disable 0618
             Assert.Null(state.GetFlagValue("key"));
 #pragma warning restore 0618
@@ -44,9 +40,9 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CanGetFlagReason()
         {
-            var state = new FeatureFlagsState(true);
-            var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, EvaluationReason.FallthroughReason, false);
+            var reason = EvaluationReason.FallthroughReason;
+            var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons).AddFlag("key",
+                new EvaluationDetail<LdValue>(LdValue.Of("value"), 1, reason)).Build();
 
             Assert.Equal(EvaluationReason.FallthroughReason, state.GetFlagReason("key"));
         }
@@ -54,7 +50,7 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void UnknownFlagReturnsNullReason()
         {
-            var state = new FeatureFlagsState(true);
+            var state = FeatureFlagsState.Builder().Build();
 
             Assert.Null(state.GetFlagReason("key"));
         }
@@ -62,9 +58,8 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void ReasonIsNullIfReasonsWereNotRecorded()
         {
-            var state = new FeatureFlagsState(true);
-            var flag = new FeatureFlagBuilder("key").Build();
-            state.AddFlag(flag, new JValue("value"), 1, null, false);
+            var reason = EvaluationReason.FallthroughReason;
+            var state = FeatureFlagsState.Builder().AddFlag("key", new EvaluationDetail<LdValue>(LdValue.Of("value"), 1, reason)).Build();
 
             Assert.Null(state.GetFlagReason("key"));
         }
@@ -72,11 +67,10 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CanConvertToValuesMap()
         {
-            var state = new FeatureFlagsState(true);
-            var flag1 = new FeatureFlagBuilder("key1").Build();
-            var flag2 = new FeatureFlagBuilder("key2").Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, null, false);
+            var state = FeatureFlagsState.Builder()
+                .AddFlag("key1", new EvaluationDetail<LdValue>(LdValue.Of("value1"), 1, null))
+                .AddFlag("key2", new EvaluationDetail<LdValue>(LdValue.Of("value2"), 1, null))
+                .Build();
 
             var expected = new Dictionary<string, LdValue>
             {
@@ -89,11 +83,10 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CanConvertToDeprecatedValuesMap()
         {
-            var state = new FeatureFlagsState(true);
-            var flag1 = new FeatureFlagBuilder("key1").Build();
-            var flag2 = new FeatureFlagBuilder("key2").Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, null, false);
+            var state = FeatureFlagsState.Builder()
+                .AddFlag("key1", new EvaluationDetail<LdValue>(LdValue.Of("value1"), 1, null))
+                .AddFlag("key2", new EvaluationDetail<LdValue>(LdValue.Of("value2"), 1, null))
+                .Build();
 
             var expected = new Dictionary<string, JToken>
             {
@@ -108,12 +101,10 @@ namespace LaunchDarkly.Tests
         [Fact]
         public void CanSerializeToJson()
         {
-            var state = new FeatureFlagsState(true);
-            var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
-            var flag2 = new FeatureFlagBuilder("key2").Version(200)
-                .TrackEvents(true).DebugEventsUntilDate(1000).Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.FallthroughReason, false);
+            var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons)
+                .AddFlag("key1", new JValue("value1"), 0, null, 100, false, null)
+                .AddFlag("key2", new JValue("value2"), 1, EvaluationReason.FallthroughReason, 200, true, 1000)
+                .Build();
 
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
                 ""$flagsState"":{
@@ -125,21 +116,19 @@ namespace LaunchDarkly.Tests
                 },
                 ""$valid"":true
             }";
-            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var expectedValue = LdValue.Parse(expectedString);
             var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
-            TestUtils.AssertJsonEqual(expectedValue, actualValue);
+            var actualValue = LdValue.Parse(actualString);
+            Assert.Equal(expectedValue, actualValue);
         }
 
         [Fact]
         public void CanDeserializeFromJson()
         {
-            var state = new FeatureFlagsState(true);
-            var flag1 = new FeatureFlagBuilder("key1").Version(100).Build();
-            var flag2 = new FeatureFlagBuilder("key2").Version(200)
-                .TrackEvents(true).DebugEventsUntilDate(1000).Build();
-            state.AddFlag(flag1, new JValue("value1"), 0, null, false);
-            state.AddFlag(flag2, new JValue("value2"), 1, EvaluationReason.FallthroughReason, false);
+            var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons)
+                .AddFlag("key1", new JValue("value1"), 0, null, 100, false, null)
+                .AddFlag("key2", new JValue("value2"), 1, EvaluationReason.FallthroughReason, 200, true, 1000)
+                .Build();
 
             var jsonString = JsonConvert.SerializeObject(state);
             var state1 = JsonConvert.DeserializeObject<FeatureFlagsState>(jsonString);
