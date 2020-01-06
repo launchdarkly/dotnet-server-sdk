@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shfbBuild product="Sandcastle Help File Builder and Tools" version="2019.8.24.0" projectFile="C:\Users\circleci\temp\project.shfbproj" started="12/13/2019 10:06:42 PM">
+<shfbBuild product="Sandcastle Help File Builder and Tools" version="2019.8.24.0" projectFile="C:\Users\circleci\temp\project.shfbproj" started="1/6/2020 11:56:39 PM">
 <buildStep step="Initializing">
 Finding tools...
 The Sandcastle tools are located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\&#39;
@@ -23,25 +23,25 @@ Source: C:\Users\circleci\project\src\LaunchDarkly.ServerSdk\bin\Debug\net45\Lau
 Source: C:\Users\circleci\project\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.xml
 Source: C:\Users\circleci\project\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.dll
     Found assembly &#39;C:\Users\circleci\project\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.CommonSdk.dll&#39;
-Source: C:\Users\circleci\.nuget\packages\LaunchDarkly.CommonSdk\2.9.2\lib\net45\LaunchDarkly.CommonSdk.xml
+Source: C:\Users\circleci\.nuget\packages\LaunchDarkly.CommonSdk\2.10.0\lib\net45\LaunchDarkly.CommonSdk.xml
 
 Copying XML comments files
     C:\Users\circleci\project\src\LaunchDarkly.ServerSdk\bin\Debug\net45\LaunchDarkly.ServerSdk.xml -&gt; C:\Users\circleci\temp\docs\Working\LaunchDarkly.ServerSdk.xml
-    C:\Users\circleci\.nuget\packages\LaunchDarkly.CommonSdk\2.9.2\lib\net45\LaunchDarkly.CommonSdk.xml -&gt; C:\Users\circleci\temp\docs\Working\LaunchDarkly.CommonSdk.xml
+    C:\Users\circleci\.nuget\packages\LaunchDarkly.CommonSdk\2.10.0\lib\net45\LaunchDarkly.CommonSdk.xml -&gt; C:\Users\circleci\temp\docs\Working\LaunchDarkly.CommonSdk.xml
 </buildStep>
 <buildStep step="GenerateSharedContent">
 Generating shared content files (en-US, English (United States))...
 <plugIn name="Lightweight Website Style" behavior="After" priority="1000">
-</plugIn>    Last step completed in 00:00:00.0489
+</plugIn>    Last step completed in 00:00:00.0488
 </buildStep>
 <buildStep step="GenerateApiFilter">
 Generating API filter for MRefBuilder...
-    Last step completed in 00:00:00.0127
+    Last step completed in 00:00:00.0190
 </buildStep>
 <buildStep step="GenerateReflectionInfo">
 Generating reflection information...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - GenerateRefInfo.proj]
-Build started 12/13/2019 10:06:45 PM.
+Build started 1/6/2020 11:56:43 PM.
 Project &quot;C:\Users\circleci\temp\docs\Working\GenerateRefInfo.proj&quot; on node 1 (default targets).
 PrepareForBuild:
   Creating directory &quot;obj\Debug\&quot;.
@@ -51,19 +51,19 @@ GenerateRefInfo:
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   No source code context base path specified.  Source context information is unavailable.
   Loaded 2 assemblies for reflection and 1 dependency assemblies.
-  Wrote information on 5 namespaces, 57 types, and 464 members
+  Wrote information on 5 namespaces, 58 types, and 470 members
   Copying file from &quot;C:\Users\circleci\temp\docs\Working\reflection.org&quot; to &quot;C:\Users\circleci\temp\docs\Working\reflection.all&quot;.
   XslTransform (v2019.8.24.0)
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\MergeDuplicates.xsl&#39;.
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\GenerateRefInfo.proj&quot; (default targets).
-    Last step completed in 00:00:04.9824
+    Last step completed in 00:00:04.6103
 </buildStep>
 <buildStep step="TransformReflectionInfo">
 Transforming reflection output...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - TransformManifest.proj]
-Build started 12/13/2019 10:06:50 PM.
+Build started 1/6/2020 11:56:47 PM.
 Project &quot;C:\Users\circleci\temp\docs\Working\TransformManifest.proj&quot; on node 1 (default targets).
 TransformManifest:
   XslTransform (v2019.8.24.0)
@@ -141,11 +141,11 @@ TransformManifest:
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\ReflectionToManifest.xsl&#39;.
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\TransformManifest.proj&quot; (default targets).
-    Last step completed in 00:00:03.3772
+    Last step completed in 00:00:03.3327
 </buildStep>
 <buildStep step="GenerateNamespaceSummaries">
 Generating namespace summary information...
-    Last step completed in 00:00:00.0626
+    Last step completed in 00:00:00.0499
 </buildStep>
 <buildStep step="GenerateInheritedDocumentation">
 Generating inherited documentation...
@@ -159,26 +159,26 @@ Inherited documentation will be written to &#39;_InheritedDocs_.xml&#39;
 Indexing C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\*.xml
 Indexing C:\Users\circleci\temp\docs\Working\LaunchDarkly.ServerSdk.xml
 Indexing C:\Users\circleci\temp\docs\Working\LaunchDarkly.CommonSdk.xml
-Indexed 158215 members in 122 file(s).  2 file(s) to scan for &lt;inheritdoc /&gt; tags.
+Indexed 158222 members in 122 file(s).  2 file(s) to scan for &lt;inheritdoc /&gt; tags.
 Merging inherited documentation...
 
 
 Documentation merged successfully
-    Last step completed in 00:00:03.6778
+    Last step completed in 00:00:03.5118
 </buildStep>
 <buildStep step="CopyAdditionalContent">
 Copying additional content files...
 No additional content to copy
-    Last step completed in 00:00:00.0156
+    Last step completed in 00:00:00.0084
 </buildStep>
 <buildStep step="MergeTablesOfContents">
 Merging conceptual and additional tables of contents...
-    Last step completed in 00:00:00.0010
+    Last step completed in 00:00:00.0009
 </buildStep>
 <buildStep step="GenerateIntermediateTableOfContents">
 Generating intermediate table of contents file...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - GenerateIntermediateTOC.proj]
-Build started 12/13/2019 10:06:57 PM.
+Build started 1/6/2020 11:56:54 PM.
 Project &quot;C:\Users\circleci\temp\docs\Working\GenerateIntermediateTOC.proj&quot; on node 1 (default targets).
 GenerateIntermediateTOC:
   XslTransform (v2019.8.24.0)
@@ -187,24 +187,24 @@ GenerateIntermediateTOC:
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\ProductionTransforms\CreateVSToc.xsl&#39;.
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\GenerateIntermediateTOC.proj&quot; (default targets).
 Generating conceptual content intermediate TOC file...
-    Last step completed in 00:00:02.3192
+    Last step completed in 00:00:02.3201
 </buildStep>
 <buildStep step="CreateBuildAssemblerConfigs">
 Creating Sandcastle configuration files...
     sandcastle.config
-    Last step completed in 00:00:00.1127
+    Last step completed in 00:00:00.0952
 </buildStep>
 <buildStep step="MergeCustomConfigs">
 Merging custom build component configurations
 C:\Users\circleci\temp\docs\Working\sandcastle.config
   Updating reference topic configurations.
   No conceptual content.  Removing conceptual content components.
-    Last step completed in 00:00:00.0161
+    Last step completed in 00:00:00.0229
 </buildStep>
 <buildStep step="BuildTopics">
 Building help topics...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - BuildTopics.proj]
-Build started 12/13/2019 10:07:00 PM.
+Build started 1/6/2020 11:56:56 PM.
 Project &quot;C:\Users\circleci\temp\docs\Working\BuildTopics.proj&quot; on node 1 (default targets).
 BuildTopics:
   BuildAssembler (v2019.8.24.0)
@@ -225,6 +225,7 @@ BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Clien
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetHashCode] Missing &lt;summary&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsState.GetHashCode] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.FeatureFlagsState.ToValuesMap] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsStateBuilder.AddFlag(System.String,LaunchDarkly.Client.EvaluationDetail{LaunchDarkly.Client.LdValue})] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Default] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Value] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UpdateProcessorFactory(LaunchDarkly.Client.IUpdateProcessorFactory)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
@@ -399,17 +400,17 @@ BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Logging.Console
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Logging.ConsoleAdapter.CreateLogger(System.String,Common.Logging.LogLevel,System.Boolean,System.Boolean,System.Boolean,System.String)] Missing &lt;param name=&quot;dateTimeFormat&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Logging.ConsoleAdapter.CreateLogger(System.String,Common.Logging.LogLevel,System.Boolean,System.Boolean,System.Boolean,System.String)] Unknown reference link target &#39;T:Common.Logging.LogLevel&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Logging.ConsoleAdapter.CreateLogger(System.String,Common.Logging.LogLevel,System.Boolean,System.Boolean,System.Boolean,System.String)] Unknown reference link target &#39;T:Common.Logging.ILog&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
-  Processed 613 topic(s)
-  186 warning(s)
+  Processed 621 topic(s)
+  187 warning(s)
   CopyFromIndexComponent: &quot;reflection&quot; in-memory cache entries used: 5 of 15.
   CopyFromIndexComponent: &quot;comments&quot; in-memory cache entries used: 4 of 30.
   ResolveReferenceLinksComponent: 52 entries added to the member ID URL cache.  New cache size: 52 entries
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\BuildTopics.proj&quot; (default targets).
-    Last step completed in 00:00:18.6554
+    Last step completed in 00:00:17.3740
 </buildStep>
 <buildStep step="CombiningIntermediateTocFiles">
 Combining conceptual and API intermediate TOC files...
-    Last step completed in 00:00:00.0101
+    Last step completed in 00:00:00.0044
 </buildStep>
 <buildStep step="ExtractingHtmlInfo">
 Extracting HTML info for HTML Help 1 and/or website...
@@ -421,11 +422,11 @@ E-Mail: Eric@EWoodruff.us
 Using LCID &#39;1033&#39;, code page &#39;65001&#39;, encoding charset &#39;UTF-8&#39;.
 
 Processing website files in C:\Users\circleci\temp\docs\Working\Output\Website
-Processed 612 HTML files
+Processed 620 HTML files
 Sorting keywords and generating See Also indices
 Saving website keyword index to C:\Users\circleci\temp\docs\Working\WebKI.xml
 Saving website table of contents to C:\Users\circleci\temp\docs\Working\WebTOC.xml
-    Last step completed in 00:00:02.1405
+    Last step completed in 00:00:02.0726
 </buildStep>
 <buildStep step="CopyStandardHelpContent">
 Copying standard help content...
@@ -507,33 +508,33 @@ C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyle
 C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\branding-Website.js -&gt; C:\Users\circleci\temp\docs\Working\Output\Website\scripts\branding-Website.js
 C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\clipboard.min.js -&gt; C:\Users\circleci\temp\docs\Working\Output\Website\scripts\clipboard.min.js
 C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\jquery-3.3.1.min.js -&gt; C:\Users\circleci\temp\docs\Working\Output\Website\scripts\jquery-3.3.1.min.js
-    Last step completed in 00:00:00.2851
+    Last step completed in 00:00:00.2646
 </buildStep>
 <buildStep step="GenerateHelpFormatTableOfContents">
 Generating website table of contents file...
-    Last step completed in 00:00:00.0093
+    Last step completed in 00:00:00.0051
 </buildStep>
 <buildStep step="GenerateFullTextIndex">
 Generating full-text index for the website...
 
 <plugIn name="Lightweight Website Style" behavior="After" priority="1000">
 Adding lightweight search and TOC elements to each topic...
-</plugIn>    Last step completed in 00:00:01.0116
+</plugIn>    Last step completed in 00:00:00.9695
 </buildStep>
 <buildStep step="CopyingWebsiteFiles">
 Copying website files to output folder...
 
 Copied 500 files
-Copied 870 files for the website content
-    Last step completed in 00:00:01.3837
+Copied 880 files for the website content
+    Last step completed in 00:00:00.6704
 </buildStep>
 <buildStep step="CleanIntermediates">
 Removing intermediate files...
-    Last step completed in 00:00:00.1943
+    Last step completed in 00:00:00.1401
 </buildStep>
 <buildStep step="Completed">
 
-Build completed successfully at 12/13/2019 10:07:23 PM.  Total time: 00:00:40.8766
+Build completed successfully at 1/6/2020 11:57:17 PM.  Total time: 00:00:37.9579
 
 </buildStep>
 </shfbBuild>
