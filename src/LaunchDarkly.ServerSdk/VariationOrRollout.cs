@@ -58,8 +58,8 @@ namespace LaunchDarkly.Client
             var idHash = BucketableStringValue(Operator.GetUserAttributeForEvaluation(user, attr));
             if (idHash != null)
             {
-                if (!string.IsNullOrEmpty(user.SecondaryKey))
-                    idHash += "." + user.SecondaryKey;
+                if (!string.IsNullOrEmpty(user.Secondary))
+                    idHash += "." + user.Secondary;
 
                 var hash = Hash(String.Format("{0}.{1}.{2}", featureKey, salt, idHash)).Substring(0, 15);
                 var longValue = long.Parse(hash, NumberStyles.HexNumber);
