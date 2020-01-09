@@ -27,10 +27,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly Configuration _config;
         private readonly StreamManager _streamManager;
         private readonly IFeatureRequestor _featureRequestor;
-        private readonly IDataStore _dataStore;
+        private readonly IDataStoreUpdates _dataStoreUpdates;
 
         internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor,
-            IDataStore dataStore, StreamManager.EventSourceCreator eventSourceCreator, IDiagnosticStore diagnosticStore)
+            IDataStoreUpdates dataStoreUpdates, StreamManager.EventSourceCreator eventSourceCreator, IDiagnosticStore diagnosticStore)
         {
             _streamManager = new StreamManager(this,
                 MakeStreamProperties(config),
@@ -39,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 eventSourceCreator, diagnosticStore);
             _config = config;
             _featureRequestor = featureRequestor;
-            _dataStore = dataStore;
+            _dataStoreUpdates = dataStoreUpdates;
         }
 
         private StreamProperties MakeStreamProperties(Configuration config)
@@ -69,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             switch (messageType)
             {
                 case PUT:
-                    _dataStore.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
+                    _dataStoreUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
                     streamManager.Initialized = true;
                     break;
                 case PATCH:
@@ -78,12 +78,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     if (GetKeyFromPath(patchData.Path, DataKinds.Features, out patchKey))
                     {
                         FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
-                        _dataStore.Upsert(DataKinds.Features, patchKey, new ItemDescriptor(flag.Version, flag));
+                        _dataStoreUpdates.Upsert(DataKinds.Features, patchKey, new ItemDescriptor(flag.Version, flag));
                     }
                     else if (GetKeyFromPath(patchData.Path, DataKinds.Segments, out patchKey))
                     {
                         Segment segment = patchData.Data.ToObject<Segment>();
-                        _dataStore.Upsert(DataKinds.Segments, patchKey, new ItemDescriptor(segment.Version, segment));
+                        _dataStoreUpdates.Upsert(DataKinds.Segments, patchKey, new ItemDescriptor(segment.Version, segment));
                     }
                     else
                     {
@@ -96,11 +96,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     string deleteKey;
                     if (GetKeyFromPath(deleteData.Path, DataKinds.Features, out deleteKey))
                     {
-                        _dataStore.Upsert(DataKinds.Features, deleteKey, tombstone);
+                        _dataStoreUpdates.Upsert(DataKinds.Features, deleteKey, tombstone);
                     }
                     else if (GetKeyFromPath(deleteData.Path, DataKinds.Segments, out deleteKey))
                     {
-                        _dataStore.Upsert(DataKinds.Segments, deleteKey, tombstone);
+                        _dataStoreUpdates.Upsert(DataKinds.Segments, deleteKey, tombstone);
                     }
                     else
                     {
@@ -139,7 +139,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     var feature = await _featureRequestor.GetFlagAsync(key);
                     if (feature != null)
                     {
-                        _dataStore.Upsert(DataKinds.Features, key, new ItemDescriptor(feature.Version, feature));
+                        _dataStoreUpdates.Upsert(DataKinds.Features, key, new ItemDescriptor(feature.Version, feature));
                     }
                 }
                 else if (GetKeyFromPath(objectPath, DataKinds.Segments, out key))
@@ -147,7 +147,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     var segment = await _featureRequestor.GetSegmentAsync(key);
                     if (segment != null)
                     {
-                        _dataStore.Upsert(DataKinds.Segments, key, new ItemDescriptor(segment.Version, segment));
+                        _dataStoreUpdates.Upsert(DataKinds.Segments, key, new ItemDescriptor(segment.Version, segment));
                     }
                 }
                 else

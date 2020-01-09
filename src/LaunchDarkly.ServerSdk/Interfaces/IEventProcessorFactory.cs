@@ -10,8 +10,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// Creates an implementation instance.
         /// </summary>
-        /// <param name="config">the LaunchDarkly configuration</param>
+        /// <param name="context">configuration of the current client instance</param>
         /// <returns>an <c>IEventProcessor</c> instance</returns>
-        IEventProcessor CreateEventProcessor(Configuration config);
+        IEventProcessor CreateEventProcessor(LdClientContext context);
     }
 }

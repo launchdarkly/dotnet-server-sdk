@@ -30,6 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly Mock<IFeatureRequestor> _mockRequestor;
         readonly IFeatureRequestor _requestor;
         readonly InMemoryDataStore _dataStore;
+        readonly IDataStoreUpdates _dataStoreUpdates;
         Server.Configuration _config;
 
         public StreamProcessorTest()
@@ -41,6 +42,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockRequestor = new Mock<IFeatureRequestor>();
             _requestor = _mockRequestor.Object;
             _dataStore = new InMemoryDataStore();
+            _dataStoreUpdates = new DataStoreUpdates(_dataStore);
             _config = Server.Configuration.Builder(SDK_KEY)
                 .DataStore(TestUtils.SpecificDataStore(_dataStore))
                 .Build();
@@ -216,7 +218,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         
         private StreamProcessor CreateProcessor()
         {
-            return new StreamProcessor(_config, _requestor, _dataStore,
+            return new StreamProcessor(_config, _requestor, _dataStoreUpdates,
                 _eventSourceFactory.Create(), null);
         }
 

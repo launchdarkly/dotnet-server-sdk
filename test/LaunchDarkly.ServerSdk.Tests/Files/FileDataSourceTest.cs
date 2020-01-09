@@ -22,11 +22,16 @@ namespace LaunchDarkly.Sdk.Server.Files
             .Build();
         private readonly User user = User.WithKey("key");
 
+        private IDataSource MakeDataSource()
+        {
+            return factory.CreateDataSource(new LdClientContext(config), new DataStoreUpdates(store));
+        }
+
         [Fact]
         public void FlagsAreNotLoadedUntilStart()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE);
-            using (var fp = factory.CreateDataSource(config, store))
+            using (var fp = MakeDataSource())
             {
                 Assert.False(store.Initialized());
                 Assert.Equal(0, CountFlagsInStore());
@@ -38,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void FlagsAreLoadedOnStart()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE);
-            using (var fp = factory.CreateDataSource(config, store))
+            using (var fp = MakeDataSource())
             {
                 fp.Start();
                 Assert.True(store.Initialized());
@@ -53,7 +58,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             var yaml = new DeserializerBuilder().Build();
             factory.WithFilePaths(ALL_DATA_YAML_FILE)
                 .WithParser(s => yaml.Deserialize<object>(s));
-            using (var fp = factory.CreateDataSource(config, store))
+            using (var fp = MakeDataSource())
             {
                 fp.Start();
                 Assert.True(store.Initialized());
@@ -65,7 +70,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void StartTaskIsCompletedAndInitializedIsTrueAfterSuccessfulLoad()
         {
-            using (var fp = factory.CreateDataSource(config, store))
+            using (var fp = MakeDataSource())
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
@@ -77,7 +82,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void StartTaskIsCompletedAndInitializedIsFalseAfterFailedLoadDueToMissingFile()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE, "bad-file-path");
-            using (var fp = factory.CreateDataSource(config, store))
+            using (var fp = MakeDataSource())
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
@@ -89,7 +94,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void CanIgnoreMissingFileOnStartup()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE, "bad-file-path").WithSkipMissingPaths(true);
-            using (var fp = factory.CreateDataSource(config, store))
+            using (var fp = MakeDataSource())
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
@@ -102,7 +107,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void StartTaskIsCompletedAndInitializedIsFalseAfterFailedLoadDueToMalformedFile()
         {
             factory.WithFilePaths(TestUtils.TestFilePath("bad-file.txt"));
-            using (var fp = factory.CreateDataSource(config, store))
+            using (var fp = MakeDataSource())
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
@@ -118,7 +123,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             try
             {
                 File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
-                using (var fp = factory.CreateDataSource(config, store))
+                using (var fp = MakeDataSource())
                 {
                     fp.Start();
                     File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
@@ -141,7 +146,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             try
             {
                 File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
-                using (var fp = factory.CreateDataSource(config, store))
+                using (var fp = MakeDataSource())
                 {
                     fp.Start();
                     Assert.True(store.Initialized());
@@ -175,7 +180,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             {
                 File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
                 File.WriteAllText(filename2, "{}");
-                using (var fp = factory.CreateDataSource(config, store))
+                using (var fp = MakeDataSource())
                 {
                     fp.Start();
                     Assert.True(store.Initialized());
@@ -210,7 +215,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             try
             {
                 File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
-                using (var fp = factory.CreateDataSource(config, store))
+                using (var fp = MakeDataSource())
                 {
                     fp.Start();
                     Assert.True(store.Initialized());
@@ -242,7 +247,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             try
             {
                 File.WriteAllText(filename, "{not correct}");
-                using (var fp = factory.CreateDataSource(config, store))
+                using (var fp = MakeDataSource())
                 {
                     fp.Start();
                     Assert.False(store.Initialized());

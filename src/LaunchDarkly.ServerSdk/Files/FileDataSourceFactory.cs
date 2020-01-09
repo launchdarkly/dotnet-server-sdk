@@ -164,12 +164,12 @@ namespace LaunchDarkly.Sdk.Server.Files
         /// <summary>
         /// Used internally by the LaunchDarkly client.
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="dataStore"></param>
+        /// <param name="context"></param>
+        /// <param name="dataStoreUpdates"></param>
         /// <returns>the component instance</returns>
-        public IDataSource CreateDataSource(Configuration config, IDataStore dataStore)
+        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
         {
-            return new FileDataSource(dataStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths,
+            return new FileDataSource(dataStoreUpdates, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths,
                 _duplicateKeysHandling);
         }
     }
