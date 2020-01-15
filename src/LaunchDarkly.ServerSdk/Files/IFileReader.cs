@@ -1,5 +1,9 @@
 ﻿namespace LaunchDarkly.Client.Files
 {
+    /// <summary>
+    /// Interface for customizing <see cref="FileDataSourceFactory"/>.
+    /// </summary>
+    /// <see cref="FileDataSourceFactory.WithFileReader(IFileReader)"/>
     public interface IFileReader
     {
         /// <summary>
