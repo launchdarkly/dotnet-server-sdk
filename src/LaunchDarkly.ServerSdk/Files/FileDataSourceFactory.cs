@@ -21,6 +21,7 @@ namespace LaunchDarkly.Client.Files
 
         private readonly List<string> _paths = new List<string>();
         private bool _autoUpdate = false;
+        private IFileReader _fileReader = FlagFileReader.Instance;
         private TimeSpan _pollInterval = DefaultPollInterval;
         private Func<string, object> _parser = null;
         private bool _skipMissingPaths = false;
@@ -80,6 +81,17 @@ namespace LaunchDarkly.Client.Files
         public FileDataSourceFactory WithParser(Func<string, object> parseFn)
         {
             _parser = parseFn;
+            return this;
+        }
+
+        /// <summary>
+        /// Specifies an alternate file reader which can support custom OS error handling and retry logic.
+        /// </summary>
+        /// <param name="fileReader">The flag file reader.</param>
+        /// <returns>the same factory object</returns>
+        public FileDataSourceFactory WithFileReader(IFileReader fileReader)
+        {
+            _fileReader = fileReader;
             return this;
         }
 
@@ -169,7 +181,7 @@ namespace LaunchDarkly.Client.Files
         public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
             return new FileDataSource(featureStore, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths,
-                _duplicateKeysHandling);
+                _duplicateKeysHandling, _fileReader);
         }
     }
 }
