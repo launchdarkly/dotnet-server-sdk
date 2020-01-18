@@ -28,6 +28,16 @@ namespace LaunchDarkly.Client
         /// </summary>
         public bool Valid => _valid;
 
+        /// <summary>
+        /// Returns a builder for constructing a new instance of this class. May be useful in testing.
+        /// </summary>
+        /// <param name="options">the same options that can be passed to <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/></param>
+        /// <returns>a new <see cref="FeatureFlagsStateBuilder"/></returns>
+        public static FeatureFlagsStateBuilder Builder(params FlagsStateOption[] options)
+        {
+            return new FeatureFlagsStateBuilder(options);
+        }
+
         internal FeatureFlagsState(bool valid)
         {
             _valid = valid;
@@ -42,28 +52,7 @@ namespace LaunchDarkly.Client
             _flagValues = values;
             _flagMetadata = metadata;
         }
-
-        internal void AddFlag(FeatureFlag flag, JToken value, int? variation, EvaluationReason reason,
-            bool detailsOnlyIfTracked)
-        {
-            _flagValues[flag.Key] = value;
-            var meta = new FlagMetadata
-            {
-                Variation = variation,
-                DebugEventsUntilDate = flag.DebugEventsUntilDate
-            };
-            if (!detailsOnlyIfTracked || flag.TrackEvents || flag.DebugEventsUntilDate != null)
-            {
-                meta.Version = flag.Version;
-                meta.Reason = reason;
-            }
-            if (flag.TrackEvents)
-            {
-                meta.TrackEvents = true;
-            }
-            _flagMetadata[flag.Key] = meta;
-        }
-
+        
         /// <summary>
         /// Returns the value of an individual feature flag at the time the state was recorded.
         /// </summary>
@@ -119,6 +108,12 @@ namespace LaunchDarkly.Client
         /// Do not use this method if you are passing data to the front end to "bootstrap" the
         /// JavaScript client. Instead, serialize the <see cref="FeatureFlagsState"/> object to JSON
         /// using <c>JsonConvert.SerializeObject()</c>.
+        /// </para>
+        /// <para>
+        /// Note that for historical reasons this returns a mutable dictionary; modifying the dictionary will
+        /// modify the original state object, and the values might be mutable JSON arrays or objects. It is
+        /// better to use <see cref="ToValuesJsonMap"/>, which returns an immutable dictionary of immutable
+        /// <see cref="LdValue"/> values.
         /// </para>
         /// </remarks>
         /// <returns>a dictionary of flag keys to flag values</returns>
@@ -176,6 +171,87 @@ namespace LaunchDarkly.Client
         public override int GetHashCode()
         {
             return ((_flagValues.GetHashCode() * 17) + _flagMetadata.GetHashCode()) * 17 + (_valid ? 1 : 0);
+        }
+    }
+
+    /// <summary>
+    /// A builder for constructing <see cref="FeatureFlagsState"/> instances.
+    /// </summary>
+    /// <remarks>
+    /// This may be useful in test code. Use <see cref="FeatureFlagsState.Builder"/> to create a new builder.
+    /// </remarks>
+    public class FeatureFlagsStateBuilder
+    {
+        private readonly bool _detailsOnlyIfTracked;
+        private readonly bool _withReasons;
+        private bool _valid = true;
+        private readonly Dictionary<string, JToken> _flagValues = new Dictionary<string, JToken>();
+        private readonly Dictionary<string, FlagMetadata> _flagMetadata = new Dictionary<string, FlagMetadata>();
+
+        internal FeatureFlagsStateBuilder(FlagsStateOption[] options)
+        {
+            _detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
+            _withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="FeatureFlagsState"/> with the properties that have been set on the builder.
+        /// </summary>
+        /// <returns>a state object</returns>
+        public FeatureFlagsState Build()
+        {
+            return new FeatureFlagsState(_valid, _flagValues, _flagMetadata);
+        }
+
+        /// <summary>
+        /// Allows the state object to be marked as not valid (i.e. an error occurred, so flags could not be evaluated).
+        /// </summary>
+        /// <param name="valid">true if valid, false if invalid (default is valid)</param>
+        /// <returns>the same builder</returns>
+        public FeatureFlagsStateBuilder Valid(bool valid)
+        {
+            _valid = valid;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the result of a flag evaluation.
+        /// </summary>
+        /// <param name="flagKey">the flag key</param>
+        /// <param name="result">the evaluation result</param>
+        /// <returns></returns>
+        public FeatureFlagsStateBuilder AddFlag(string flagKey, EvaluationDetail<LdValue> result)
+        {
+            return AddFlag(flagKey,
+                result?.Value.InnerValue,
+                result?.VariationIndex,
+                result?.Reason,
+                0,
+                false,
+                null);
+        }
+
+        // This method is defined with internal scope because 1. we don't want application code to use JToken any more and 2. extra
+        // metadata fields like trackEvents aren't relevant to the main external use case for the builder (testing server-side code)
+        internal FeatureFlagsStateBuilder AddFlag(string flagKey, JToken value, int? variationIndex, EvaluationReason reason, int flagVersion, bool flagTrackEvents, long? flagDebugEventsUntilDate)
+        {
+            _flagValues[flagKey] = value;
+            var meta = new FlagMetadata
+            {
+                Variation = variationIndex,
+                DebugEventsUntilDate = flagDebugEventsUntilDate
+            };
+            if (!_detailsOnlyIfTracked || flagTrackEvents || flagDebugEventsUntilDate != null)
+            {
+                meta.Version = flagVersion;
+                meta.Reason = _withReasons ? reason : null;
+            }
+            if (flagTrackEvents)
+            {
+                meta.TrackEvents = true;
+            }
+            _flagMetadata[flagKey] = meta;
+            return this;
         }
     }
 

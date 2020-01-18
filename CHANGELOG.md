@@ -2,6 +2,16 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.12.0] - 2020-01-06
+### Added:
+- `IUserBuilder.Secondary` is a new name for `SecondaryKey` (for consistency with other SDKs), and allows you to make the `secondary` attribute private.
+- `User.Secondary` (same as `SecondaryKey`).
+- `FeatureFlagsState` now has a `Builder` method for constructing a new instance (useful in testing). ([#125](https://github.com/launchdarkly/dotnet-server-sdk/issues/125))
+
+### Deprecated:
+- `IUserBuilder.SecondaryKey`, `User.SecondaryKey`.
+
+
 ## [5.11.0] - 2019-12-13
 ### Added:
 - With `FileDataSourceFactory`, it is now possible to specify that duplicate flag keys in data files should be ignored rather than causing an error; in this mode, it will use only the first occurrence of each flag key. This allows, for instance, implementing rolling updates of flag data by putting the newest data in a file that is specified first in your file list. (Thanks, [JeffAshton](https://github.com/launchdarkly/dotnet-server-sdk/pull/123)!)

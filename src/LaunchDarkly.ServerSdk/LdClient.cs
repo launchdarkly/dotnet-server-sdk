@@ -277,10 +277,8 @@ namespace LaunchDarkly.Client
                 return new FeatureFlagsState(false);
             }
 
-            var state = new FeatureFlagsState(true);
+            var builder = new FeatureFlagsStateBuilder(options);
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
-            var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
-            var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
             IDictionary<string, FeatureFlag> flags = _featureStore.All(VersionedDataKind.Features);
             foreach (KeyValuePair<string, FeatureFlag> pair in flags)
             {
@@ -292,18 +290,18 @@ namespace LaunchDarkly.Client
                 try
                 {
                     FeatureFlag.EvalResult result = flag.Evaluate(user, _featureStore, EventFactory.Default);
-                    state.AddFlag(flag, result.Result.Value.InnerValue, result.Result.VariationIndex,
-                        withReasons ? result.Result.Reason : null, detailsOnlyIfTracked);
+                    builder.AddFlag(flag.Key, result.Result.Value.InnerValue, result.Result.VariationIndex,
+                        result.Result.Reason, flag.Version, flag.TrackEvents, flag.DebugEventsUntilDate);
                 }
                 catch (Exception e)
                 {
                     Log.ErrorFormat("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key, Util.ExceptionMessage(e));
                     Log.Debug(e.ToString(), e);
                     EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
-                    state.AddFlag(flag, null, null, withReasons ? reason : null, detailsOnlyIfTracked);
+                    builder.AddFlag(flag.Key, null, null, reason, flag.Version, flag.TrackEvents, flag.DebugEventsUntilDate);
                 }
             }
-            return state;
+            return builder.Build();
         }
 
         private EvaluationDetail<T> Evaluate<T>(string featureKey, User user, LdValue defaultValue, LdValue.Converter<T> converter,

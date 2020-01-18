@@ -5,6 +5,7 @@ using System.Threading;
 using Xunit;
 using LaunchDarkly.Client;
 using LaunchDarkly.Client.Files;
+using Moq;
 using YamlDotNet.Serialization;
 
 namespace LaunchDarkly.Tests
@@ -109,6 +110,22 @@ namespace LaunchDarkly.Tests
             }
         }
         
+        [Fact]
+        public void CanUseCustomFileReader()
+        {
+            var path = "fake-file-path";
+            var data = "{\"flagValues\":{\"key\":\"value\"}}";
+            var mockReader = new Mock<IFileReader>();
+            mockReader.Setup(fr => fr.ReadAllText(path)).Returns(data);
+            factory.WithFileReader(mockReader.Object);
+            factory.WithFilePaths(path);
+            var config1 = Configuration.Builder(config).UpdateProcessorFactory(factory).Build();
+            using (var client = new LdClient(config1))
+            {
+                Assert.Equal("value", client.StringVariation("key", user, ""));
+            }
+        }
+
         [Fact]
         public void ModifiedFileIsNotReloadedIfAutoUpdateIsOff()
         {
