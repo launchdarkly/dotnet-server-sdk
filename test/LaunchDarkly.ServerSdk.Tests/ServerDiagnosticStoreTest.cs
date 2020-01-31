@@ -10,7 +10,10 @@ namespace LaunchDarkly.Tests
 {
     public class ServerDiagnosticStoreTest
     {
-        private LdValue _expectedPlatform = LdValue.BuildObject().Add("name", "dotnet").Build();
+        private LdValue _expectedPlatform = LdValue.BuildObject()
+            .Add("name", "dotnet")
+            .Add("osName", LdValue.Of(ServerDiagnosticStore.GetOSName()))
+            .Build();
         private LdValue _expectedSdk = LdValue.BuildObject()
             .Add("name", "dotnet-server-sdk")
             .Add("version", ServerSideClientEnvironment.Instance.Version.ToString())

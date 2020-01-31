@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+#if NETSTANDARD14 || NETSTANDARD16
+using System.Runtime.InteropServices;
+#endif
 using System.Threading;
 using LaunchDarkly.Common;
 
@@ -64,8 +67,13 @@ namespace LaunchDarkly.Client
             return new DiagnosticEvent(initEvent.Build());
         }
 
-        private LdValue InitEventPlatform() =>
-            LdValue.BuildObject().Add("name", "dotnet").Build();
+        private LdValue InitEventPlatform()
+        {
+            return LdValue.BuildObject()
+                .Add("name", "dotnet")
+                .Add("osName", LdValue.Of(GetOSName()))
+                .Build();
+        }
 
         private LdValue InitEventSdk()
         {
@@ -134,6 +142,32 @@ namespace LaunchDarkly.Client
                     return "Redis";
             }
             return "custom";
+        }
+
+        internal static string GetOSName() {
+#if NETSTANDARD14 || NETSTANDARD16
+            // .NET Standard <2.0 does not support Environment.OSVersion; instead, use System.Runtime.Interopservices
+            if (IsOSPlatform(OSPlatform.Linux)) {
+                return "Linux";
+            } else if (IsOSPlatform(OSPlatform.OSX)) {
+                return "MacOS";
+            } else if (IsOSPlatform(OSPlatform.Windows)) {
+                return "Windows";
+            }
+#else
+            switch (Environment.OSVersion.Platform) {
+                case PlatformID.Unix:
+                    return "Linux";
+                case PlatformID.MacOSX:
+                    return "MacOS";
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    return "Windows";
+            }
+#endif
+            return "unknown";
         }
 
         #endregion
