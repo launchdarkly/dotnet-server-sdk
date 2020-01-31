@@ -155,7 +155,6 @@ namespace LaunchDarkly.Client
             // run on anything but Windows anyway.
             return "Windows";
 #else
-            // since if we're using .NET 4.5 we know we're in Windows anyway
             // .NET Standard <2.0 does not support Environment.OSVersion; instead, use System.Runtime.Interopservices
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
                 return "Linux";
