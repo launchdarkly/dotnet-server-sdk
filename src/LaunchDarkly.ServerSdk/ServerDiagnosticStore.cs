@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-#if NETSTANDARD14 || NETSTANDARD16
 using System.Runtime.InteropServices;
-#endif
 using System.Threading;
 using LaunchDarkly.Common;
 
@@ -145,7 +143,7 @@ namespace LaunchDarkly.Client
         }
 
         internal static string GetOSName() {
-#if NETSTANDARD14 || NETSTANDARD16
+#if NETSTANDARD1_4 || NETSTANDARD1_6
             // .NET Standard <2.0 does not support Environment.OSVersion; instead, use System.Runtime.Interopservices
             if (IsOSPlatform(OSPlatform.Linux)) {
                 return "Linux";
