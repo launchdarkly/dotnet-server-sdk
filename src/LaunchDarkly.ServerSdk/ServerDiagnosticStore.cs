@@ -143,29 +143,26 @@ namespace LaunchDarkly.Client
         }
 
         internal static string GetOSName() {
-#if NETSTANDARD1_4 || NETSTANDARD1_6
+            // Environment.OSVersion.Platform is another way to get this information, except that it does not
+            // reliably distinguish between MacOS and Linux.
+
+#if NET45
+            // .NET Framework 4.5 does not support RuntimeInformation.ISOSPlatform. We could use Environment.OSVersion.Platform
+            // instead (it's similar, except that it can't reliably distinguish between MacOS and Linux)... but .NET 4.5 can't
+            // run on anything but Windows anyway.
+            return "Windows";
+#else
+            // since if we're using .NET 4.5 we know we're in Windows anyway
             // .NET Standard <2.0 does not support Environment.OSVersion; instead, use System.Runtime.Interopservices
-            if (IsOSPlatform(OSPlatform.Linux)) {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
                 return "Linux";
-            } else if (IsOSPlatform(OSPlatform.OSX)) {
+            } else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 return "MacOS";
-            } else if (IsOSPlatform(OSPlatform.Windows)) {
+            } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
                 return "Windows";
             }
-#else
-            switch (Environment.OSVersion.Platform) {
-                case PlatformID.Unix:
-                    return "Linux";
-                case PlatformID.MacOSX:
-                    return "MacOS";
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                    return "Windows";
-            }
-#endif
             return "unknown";
+#endif
         }
 
         #endregion
