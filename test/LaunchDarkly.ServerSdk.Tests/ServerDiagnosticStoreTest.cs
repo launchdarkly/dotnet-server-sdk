@@ -21,6 +21,7 @@ namespace LaunchDarkly.Tests
             .Add("customBaseURI", true)
             .Add("customEventsURI", false)
             .Add("customStreamURI", false)
+            .Add("dataStoreType", "memory")
             .Add("eventsCapacity", 10000)
             .Add("connectTimeoutMillis", 10000L)
             .Add("socketTimeoutMillis", 300000L)
