@@ -13,6 +13,9 @@ namespace LaunchDarkly.Tests
         private LdValue _expectedPlatform = LdValue.BuildObject()
             .Add("name", "dotnet")
             .Add("osName", LdValue.Of(ServerDiagnosticStore.GetOSName()))
+            .Add("osVersion", LdValue.Of(ServerDiagnosticStore.GetOSVersion()))
+            .Add("osArch", LdValue.Of(ServerDiagnosticStore.GetOSArch()))
+            .Add("dotNetTargetFramework", LdValue.Of(ServerDiagnosticStore.GetDotNetTargetFramework()))
             .Build();
         private LdValue _expectedSdk = LdValue.BuildObject()
             .Add("name", "dotnet-server-sdk")

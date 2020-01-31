@@ -69,7 +69,10 @@ namespace LaunchDarkly.Client
         {
             return LdValue.BuildObject()
                 .Add("name", "dotnet")
+                .Add("dotNetTargetFramework", LdValue.Of(GetDotNetTargetFramework()))
                 .Add("osName", LdValue.Of(GetOSName()))
+                .Add("osVersion", LdValue.Of(GetOSVersion()))
+                .Add("osArch", LdValue.Of(GetOSArch()))
                 .Build();
         }
 
@@ -165,6 +168,44 @@ namespace LaunchDarkly.Client
 #endif
         }
 
+        internal static string GetOSVersion() {
+#if NETSTANDARD1_4 || NETSTANDARD1_6
+            // .NET Standard <2.0 has no equivalent of Environment.OSVersion.Version
+            return "unknown";
+#else
+            // .NET's way of reporting Windows versions is very idiosyncratic, e.g. Windows 8 is "6.2", but we'll
+            // just report what it says and translate it later when we look at the analytics.
+            return Environment.OSVersion.Version.ToString();
+#endif
+        }
+
+        internal static string GetOSArch() {
+#if NET45
+            // .NET Standard 4.5 does not support RuntimeInformation.OSArchitecture
+            return "unknown";
+#else
+            return RuntimeInformation.OSArchitecture.ToString().ToLower(); // "arm", "arm64", "x64", "x86"
+#endif
+        }
+
+        internal static string GetDotNetTargetFramework() {
+            // Note that this is the _target framework_ that was selected at build time based on the application's
+            // compatibility requirements; it doesn't tell us anything about the actual OS version. We'll need to
+            // update this whenever we add or remove supported target frameworks in the .csproj file.
+#if NETSTANDARD1_4
+            return "netstandard1.4";
+#elif NETSTANDARD1_6
+            return "netstandard1.6";
+#elif NETSTANDARD2_0
+            return "netstandard2.0";
+#elif NET45
+            return "net45";
+#elif NET471
+            return "net471";
+#else
+            return "unknown";
+#endif
+        }
         #endregion
 
         #region Periodic event update and builder methods
