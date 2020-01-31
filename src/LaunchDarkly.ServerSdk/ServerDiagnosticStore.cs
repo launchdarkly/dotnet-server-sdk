@@ -110,11 +110,30 @@ namespace LaunchDarkly.Client
             configInfo.Add("userKeysFlushIntervalMillis", (long)Config.UserKeysFlushInterval.TotalMilliseconds);
             configInfo.Add("inlineUsersInEvents", Config.InlineUsersInEvents);
             configInfo.Add("diagnosticRecordingIntervalMillis", (long)Config.DiagnosticRecordingInterval.TotalMilliseconds);
-            if (Config.FeatureStoreFactory != null)
-            {
-                configInfo.Add("featureStoreFactory", Config.FeatureStoreFactory.GetType().Name);
-            }
+            configInfo.Add("dataStoreType", NormalizeDataStoreType(Config.FeatureStoreFactory));
             return configInfo.Build();
+        }
+
+        private string NormalizeDataStoreType(IFeatureStoreFactory storeFactory)
+        {
+            if (storeFactory is null)
+            {
+                return "memory";
+            }
+            var typeName = storeFactory.GetType().Name;
+            switch (typeName)
+            {
+                // These hard-coded tests will eventually be replaced by an interface that lets components describe themselves.
+                case "InMemoryFeatureStoreFactory":
+                    return "memory";
+                case "ConsulFeatureStoreBuilder":
+                    return "Consul";
+                case "DynamoFeatureStoreBuilder":
+                    return "Dynamo";
+                case "RedisFeatureStoreBuilder":
+                    return "Redis";
+            }
+            return "custom";
         }
 
         #endregion
