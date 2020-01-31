@@ -10,7 +10,13 @@ namespace LaunchDarkly.Tests
 {
     public class ServerDiagnosticStoreTest
     {
-        private LdValue _expectedPlatform = LdValue.BuildObject().Add("name", "dotnet").Build();
+        private LdValue _expectedPlatform = LdValue.BuildObject()
+            .Add("name", "dotnet")
+            .Add("osName", LdValue.Of(ServerDiagnosticStore.GetOSName()))
+            .Add("osVersion", LdValue.Of(ServerDiagnosticStore.GetOSVersion()))
+            .Add("osArch", LdValue.Of(ServerDiagnosticStore.GetOSArch()))
+            .Add("dotNetTargetFramework", LdValue.Of(ServerDiagnosticStore.GetDotNetTargetFramework()))
+            .Build();
         private LdValue _expectedSdk = LdValue.BuildObject()
             .Add("name", "dotnet-server-sdk")
             .Add("version", ServerSideClientEnvironment.Instance.Version.ToString())
@@ -21,6 +27,7 @@ namespace LaunchDarkly.Tests
             .Add("customBaseURI", true)
             .Add("customEventsURI", false)
             .Add("customStreamURI", false)
+            .Add("dataStoreType", "memory")
             .Add("eventsCapacity", 10000)
             .Add("connectTimeoutMillis", 10000L)
             .Add("socketTimeoutMillis", 300000L)
