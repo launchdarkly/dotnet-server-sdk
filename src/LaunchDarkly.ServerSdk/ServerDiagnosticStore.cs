@@ -108,7 +108,6 @@ namespace LaunchDarkly.Client
             configInfo.Add("usingRelayDaemon", Config.UseLdd);
             configInfo.Add("offline", Config.Offline);
             configInfo.Add("allAttributesPrivate", Config.AllAttributesPrivate);
-            configInfo.Add("eventReportingDisabled", false);
             configInfo.Add("pollingIntervalMillis", (long)Config.PollingInterval.TotalMilliseconds);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
 #pragma warning disable 618

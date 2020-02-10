@@ -38,7 +38,6 @@ namespace LaunchDarkly.Tests
             .Add("usingRelayDaemon", false)
             .Add("offline", false)
             .Add("allAttributesPrivate", false)
-            .Add("eventReportingDisabled", false)
             .Add("pollingIntervalMillis", 30000L)
             .Add("startWaitMillis", 0L)
             .Add("samplingInterval", 0)
