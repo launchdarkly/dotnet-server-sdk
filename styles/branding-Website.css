@@ -157,7 +157,7 @@ form#SearchForm button {
 
 /* LaunchDarkly additions to default Sandcastle styles */
 
-/* hide search box because it is PHP-based and can't work in Github Pages */
+/* hide search box because it is PHP-based and can't work in GitHub Pages */
 form#SearchForm {
 	display: none;
 }

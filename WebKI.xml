@@ -150,6 +150,8 @@
   <HelpKINode Title="Configuration.Builder method" Url="html/Overload_LaunchDarkly_Client_Configuration_Builder.htm" />
   <HelpKINode Title="Configuration.Default method" Url="html/M_LaunchDarkly_Client_Configuration_Default.htm" />
   <HelpKINode Title="Configuration.DefaultPollingInterval field" Url="html/F_LaunchDarkly_Client_Configuration_DefaultPollingInterval.htm" />
+  <HelpKINode Title="Configuration.DiagnosticOptOut property" Url="html/P_LaunchDarkly_Client_Configuration_DiagnosticOptOut.htm" />
+  <HelpKINode Title="Configuration.DiagnosticRecordingInterval property" Url="html/P_LaunchDarkly_Client_Configuration_DiagnosticRecordingInterval.htm" />
   <HelpKINode Title="Configuration.EventCapacity property" Url="html/P_LaunchDarkly_Client_Configuration_EventCapacity.htm" />
   <HelpKINode Title="Configuration.EventFlushInterval property" Url="html/P_LaunchDarkly_Client_Configuration_EventFlushInterval.htm" />
   <HelpKINode Title="Configuration.EventProcessorFactory property" Url="html/P_LaunchDarkly_Client_Configuration_EventProcessorFactory.htm" />
@@ -175,6 +177,8 @@
   <HelpKINode Title="Configuration.UserAgentType property" Url="html/P_LaunchDarkly_Client_Configuration_UserAgentType.htm" />
   <HelpKINode Title="Configuration.UserKeysCapacity property" Url="html/P_LaunchDarkly_Client_Configuration_UserKeysCapacity.htm" />
   <HelpKINode Title="Configuration.UserKeysFlushInterval property" Url="html/P_LaunchDarkly_Client_Configuration_UserKeysFlushInterval.htm" />
+  <HelpKINode Title="Configuration.WrapperName property" Url="html/P_LaunchDarkly_Client_Configuration_WrapperName.htm" />
+  <HelpKINode Title="Configuration.WrapperVersion property" Url="html/P_LaunchDarkly_Client_Configuration_WrapperVersion.htm" />
   <HelpKINode Title="ConfigurationExtensions class">
     <HelpKINode Title="ConfigurationExtensions Class" Url="html/T_LaunchDarkly_Client_ConfigurationExtensions.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_ConfigurationExtensions.htm" />
@@ -264,6 +268,10 @@
   </HelpKINode>
   <HelpKINode Title="Deleted property" Url="html/P_LaunchDarkly_Client_IVersionedData_Deleted.htm" />
   <HelpKINode Title="DetailsOnlyForTrackedFlags field" Url="html/F_LaunchDarkly_Client_FlagsStateOption_DetailsOnlyForTrackedFlags.htm" />
+  <HelpKINode Title="DiagnosticOptOut method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_DiagnosticOptOut.htm" />
+  <HelpKINode Title="DiagnosticOptOut property" Url="html/P_LaunchDarkly_Client_Configuration_DiagnosticOptOut.htm" />
+  <HelpKINode Title="DiagnosticRecordingInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_DiagnosticRecordingInterval.htm" />
+  <HelpKINode Title="DiagnosticRecordingInterval property" Url="html/P_LaunchDarkly_Client_Configuration_DiagnosticRecordingInterval.htm" />
   <HelpKINode Title="Disabled field" Url="html/F_LaunchDarkly_Client_FeatureStoreCacheConfig_Disabled.htm" />
   <HelpKINode Title="Dispose method">
     <HelpKINode Title="CachingStoreWrapper.Dispose Method " Url="html/M_LaunchDarkly_Client_Utils_CachingStoreWrapper_Dispose.htm" />
@@ -490,6 +498,7 @@
   <HelpKINode Title="FileDataSourceFactory.WithAutoUpdate method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithAutoUpdate.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithDuplicateKeysHandling method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithDuplicateKeysHandling.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithFilePaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFilePaths.htm" />
+  <HelpKINode Title="FileDataSourceFactory.WithFileReader method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFileReader.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithParser method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithParser.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithPollInterval method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithPollInterval.htm" />
   <HelpKINode Title="FileDataSourceFactory.WithSkipMissingPaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithSkipMissingPaths.htm" />
@@ -599,6 +608,8 @@
   <HelpKINode Title="IConfigurationBuilder.AllAttributesPrivate method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_AllAttributesPrivate.htm" />
   <HelpKINode Title="IConfigurationBuilder.BaseUri method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_BaseUri.htm" />
   <HelpKINode Title="IConfigurationBuilder.Build method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_Build.htm" />
+  <HelpKINode Title="IConfigurationBuilder.DiagnosticOptOut method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_DiagnosticOptOut.htm" />
+  <HelpKINode Title="IConfigurationBuilder.DiagnosticRecordingInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_DiagnosticRecordingInterval.htm" />
   <HelpKINode Title="IConfigurationBuilder.EventCapacity method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventCapacity.htm" />
   <HelpKINode Title="IConfigurationBuilder.EventFlushInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventFlushInterval.htm" />
   <HelpKINode Title="IConfigurationBuilder.EventProcessorFactory method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_EventProcessorFactory.htm" />
@@ -620,6 +631,8 @@
   <HelpKINode Title="IConfigurationBuilder.UseLdd method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UseLdd.htm" />
   <HelpKINode Title="IConfigurationBuilder.UserKeysCapacity method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UserKeysCapacity.htm" />
   <HelpKINode Title="IConfigurationBuilder.UserKeysFlushInterval method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_UserKeysFlushInterval.htm" />
+  <HelpKINode Title="IConfigurationBuilder.WrapperName method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_WrapperName.htm" />
+  <HelpKINode Title="IConfigurationBuilder.WrapperVersion method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_WrapperVersion.htm" />
   <HelpKINode Title="Identify method">
     <HelpKINode Title="ILdClient.Identify Method " Url="html/M_LaunchDarkly_Client_ILdClient_Identify.htm" />
     <HelpKINode Title="LdClient.Identify Method " Url="html/M_LaunchDarkly_Client_LdClient_Identify.htm" />
@@ -677,6 +690,11 @@
     <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_IFeatureStoreFactory.htm" />
   </HelpKINode>
   <HelpKINode Title="IFeatureStoreFactory.CreateFeatureStore method" Url="html/M_LaunchDarkly_Client_IFeatureStoreFactory_CreateFeatureStore.htm" />
+  <HelpKINode Title="IFileReader interface">
+    <HelpKINode Title="IFileReader Interface" Url="html/T_LaunchDarkly_Client_Files_IFileReader.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_LaunchDarkly_Client_Files_IFileReader.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IFileReader.ReadAllText method" Url="html/M_LaunchDarkly_Client_Files_IFileReader_ReadAllText.htm" />
   <HelpKINode Title="Ignore enumeration member" Url="html/T_LaunchDarkly_Client_Files_DuplicateKeysHandling.htm" />
   <HelpKINode Title="ILdClient interface">
     <HelpKINode Title="ILdClient Interface" Url="html/T_LaunchDarkly_Client_ILdClient.htm" />
@@ -883,6 +901,7 @@
   <HelpKINode Title="LaunchDarkly.Client.Files.DuplicateKeysHandling enumeration" Url="html/T_LaunchDarkly_Client_Files_DuplicateKeysHandling.htm" />
   <HelpKINode Title="LaunchDarkly.Client.Files.FileComponents class" Url="html/T_LaunchDarkly_Client_Files_FileComponents.htm" />
   <HelpKINode Title="LaunchDarkly.Client.Files.FileDataSourceFactory class" Url="html/T_LaunchDarkly_Client_Files_FileDataSourceFactory.htm" />
+  <HelpKINode Title="LaunchDarkly.Client.Files.IFileReader interface" Url="html/T_LaunchDarkly_Client_Files_IFileReader.htm" />
   <HelpKINode Title="LaunchDarkly.Client.FlagsStateOption class" Url="html/T_LaunchDarkly_Client_FlagsStateOption.htm" />
   <HelpKINode Title="LaunchDarkly.Client.IConfigurationBuilder interface" Url="html/T_LaunchDarkly_Client_IConfigurationBuilder.htm" />
   <HelpKINode Title="LaunchDarkly.Client.IdentifyEvent class" Url="html/T_LaunchDarkly_Client_IdentifyEvent.htm" />
@@ -1077,6 +1096,7 @@
     <HelpKINode Title="IBaseConfiguration.PrivateAttributeNames Property " Url="html/P_LaunchDarkly_Common_IBaseConfiguration_PrivateAttributeNames.htm" />
     <HelpKINode Title="User.PrivateAttributeNames Property " Url="html/P_LaunchDarkly_Client_User_PrivateAttributeNames.htm" />
   </HelpKINode>
+  <HelpKINode Title="ReadAllText method" Url="html/M_LaunchDarkly_Client_Files_IFileReader_ReadAllText.htm" />
   <HelpKINode Title="ReadTimeout method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_ReadTimeout.htm" />
   <HelpKINode Title="ReadTimeout property">
     <HelpKINode Title="Configuration.ReadTimeout Property " Url="html/P_LaunchDarkly_Client_Configuration_ReadTimeout.htm" />
@@ -1287,6 +1307,7 @@
   <HelpKINode Title="WithFeatureStore method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithFeatureStore.htm" />
   <HelpKINode Title="WithFeatureStoreFactory method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithFeatureStoreFactory.htm" />
   <HelpKINode Title="WithFilePaths method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFilePaths.htm" />
+  <HelpKINode Title="WithFileReader method" Url="html/M_LaunchDarkly_Client_Files_FileDataSourceFactory_WithFileReader.htm" />
   <HelpKINode Title="WithHttpClientHandler method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithHttpClientHandler.htm" />
   <HelpKINode Title="WithHttpClientTimeout method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithHttpClientTimeout.htm" />
   <HelpKINode Title="WithInlineUsersInEvents method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithInlineUsersInEvents.htm" />
@@ -1312,5 +1333,9 @@
   <HelpKINode Title="WithUseLdd method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUseLdd.htm" />
   <HelpKINode Title="WithUserKeysCapacity method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUserKeysCapacity.htm" />
   <HelpKINode Title="WithUserKeysFlushInterval method" Url="html/M_LaunchDarkly_Client_ConfigurationExtensions_WithUserKeysFlushInterval.htm" />
+  <HelpKINode Title="WrapperName method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_WrapperName.htm" />
+  <HelpKINode Title="WrapperName property" Url="html/P_LaunchDarkly_Client_Configuration_WrapperName.htm" />
+  <HelpKINode Title="WrapperVersion method" Url="html/M_LaunchDarkly_Client_IConfigurationBuilder_WrapperVersion.htm" />
+  <HelpKINode Title="WrapperVersion property" Url="html/P_LaunchDarkly_Client_Configuration_WrapperVersion.htm" />
   <HelpKINode Title="WRONG_TYPE enumeration member" Url="html/T_LaunchDarkly_Client_EvaluationErrorKind.htm" />
 </HelpKI>
