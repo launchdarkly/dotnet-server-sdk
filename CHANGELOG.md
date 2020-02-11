@@ -2,6 +2,16 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.13.0] - 2020-02-10
+Note: if you are using the LaunchDarkly Relay Proxy to forward events, update the Relay to version 5.10.0 or later before updating to this .NET SDK version.
+
+### Added:
+- The SDK now periodically sends diagnostic data to LaunchDarkly, describing the version and configuration of the SDK, the architecture and version of the runtime platform, and performance statistics. No credentials, hostnames, or other identifiable values are included. This behavior can be disabled with `IConfigurationBuilder.DiagnosticOptOut` or configured with `IConfigurationBuilder.DiagnosticRecordingInterval`.
+- With the file data source, it is now possible to customize the logic for reading a file in case there are special OS considerations. (Thanks, [JeffAshton](https://github.com/launchdarkly/dotnet-server-sdk/pull/127)!)
+
+### Fixed:
+- The SDK now specifies a uniquely identifiable request header when sending events to LaunchDarkly to ensure that events are only processed once, even if the SDK sends them two times due to a failed initial attempt.
+
 ## [5.12.0] - 2020-01-06
 ### Added:
 - `IUserBuilder.Secondary` is a new name for `SecondaryKey` (for consistency with other SDKs), and allows you to make the `secondary` attribute private.
