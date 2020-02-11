@@ -200,6 +200,23 @@ namespace LaunchDarkly.Client
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
         /// <summary>
+        /// The time between sending periodic diagnostic events.
+        /// </summary>
+        public TimeSpan DiagnosticRecordingInterval { get; internal set; }
+        /// <summary>
+        /// True if diagnostic events have been disabled.
+        /// </summary>
+        public bool DiagnosticOptOut { get; internal set; }
+        /// <summary>
+        /// Name specifying a wrapper library, to be included in request headers.
+        /// </summary>
+        public string WrapperName { get; internal set; }
+        /// <summary>
+        /// Version of a wrapper library, to be included in request headers.
+        /// </summary>
+        public string WrapperVersion { get; internal set; }
+
+        /// <summary>
         /// Default value for <see cref="PollingInterval"/>.
         /// </summary>
         public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(30);
@@ -247,7 +264,15 @@ namespace LaunchDarkly.Client
         /// Default value for <see cref="UserKeysFlushInterval"/>.
         /// </summary>
         internal static readonly TimeSpan DefaultUserKeysFlushInterval = TimeSpan.FromMinutes(5);
-        
+        /// <summary>
+        /// Default value for <see cref="DiagnosticRecordingInterval"/>.
+        /// </summary>
+        internal static readonly TimeSpan DefaultDiagnosticRecordingInterval = TimeSpan.FromMinutes(15);
+        /// <summary>
+        /// Minimum value for <see cref="DiagnosticRecordingInterval"/>.
+        /// </summary>
+        internal static readonly TimeSpan MinimumDiagnosticRecordingInterval = TimeSpan.FromMinutes(1);
+
         /// <summary>
         /// Creates a configuration with all parameters set to the default. Use extension methods
         /// to set additional parameters.
@@ -310,8 +335,11 @@ namespace LaunchDarkly.Client
 
         internal Configuration(ConfigurationBuilder builder)
         {
+            // Let's try to keep these alphabetical so it's easy to see if everything is here
             AllAttributesPrivate = builder._allAttributesPrivate;
             BaseUri = builder._baseUri;
+            DiagnosticOptOut = builder._diagnosticOptOut;
+            DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
             EventCapacity = builder._eventCapacity;
             EventFlushInterval = builder._eventFlushInterval;
             EventProcessorFactory = builder._eventProcessorFactory;
@@ -338,6 +366,8 @@ namespace LaunchDarkly.Client
             UseLdd = builder._useLdd;
             UserKeysCapacity = builder._userKeysCapacity;
             UserKeysFlushInterval = builder._userKeysFlushInterval;
+            WrapperName = builder._wrapperName;
+            WrapperVersion = builder._wrapperVersion;
         }
         
         internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
@@ -348,12 +378,15 @@ namespace LaunchDarkly.Client
         {
             internal Configuration Config { get; set; }
             public bool AllAttributesPrivate => Config.AllAttributesPrivate;
+            public bool DiagnosticOptOut => Config.DiagnosticOptOut;
+            public TimeSpan DiagnosticRecordingInterval => Config.DiagnosticRecordingInterval;
             public int EventCapacity => Config.EventCapacity;
             public TimeSpan EventFlushInterval => Config.EventFlushInterval;
 #pragma warning disable 618
             public int EventSamplingInterval => Config.EventSamplingInterval;
 #pragma warning restore 618
-            public Uri EventsUri => Config.EventsUri;
+            public Uri EventsUri => new Uri(Config.EventsUri, "bulk");
+            public Uri DiagnosticUri => new Uri(Config.EventsUri, "diagnostic");
             public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
             public bool InlineUsersInEvents => Config.InlineUsersInEvents;
             public ISet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
@@ -368,6 +401,8 @@ namespace LaunchDarkly.Client
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
             public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
+            public string WrapperName => Config.WrapperName;
+            public string WrapperVersion => Config.WrapperVersion;
         }
 
         private struct StreamManagerAdapter : IStreamManagerConfiguration
@@ -378,6 +413,8 @@ namespace LaunchDarkly.Client
             public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
             public TimeSpan ReadTimeout => Config.ReadTimeout;
             public TimeSpan ReconnectTime => Config.ReconnectTime;
+            public string WrapperName => Config.WrapperName;
+            public string WrapperVersion => Config.WrapperVersion;
         }
     }
 }

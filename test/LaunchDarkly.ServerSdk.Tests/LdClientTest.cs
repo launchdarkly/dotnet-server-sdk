@@ -68,6 +68,67 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
+        public void DiagnosticStorePassedToFactoriesWhenSupported()
+        {
+            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
+            var upfwd = new Mock<IUpdateProcessorFactoryWithDiagnostics>();
+            var config = Configuration.Builder("SDK_KEY")
+                .IsStreamingEnabled(false)
+                .BaseUri(new Uri("http://fake"))
+                .StartWaitTime(TimeSpan.Zero)
+                .EventProcessorFactory(epfwd.Object)
+                .UpdateProcessorFactory(upfwd.Object)
+                .Build();
+
+            IDiagnosticStore eventProcessorDiagnosticStore = null;
+            IDiagnosticStore updateProcessorDiagnosticStore = null;
+
+            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
+                .Callback<Configuration, IDiagnosticStore>((c, ds) => eventProcessorDiagnosticStore = ds)
+                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
+            upfwd.Setup(upf => upf.CreateUpdateProcessor(config, It.IsAny<IFeatureStore>(), It.IsAny<IDiagnosticStore>()))
+                .Callback<Configuration, IFeatureStore, IDiagnosticStore>((c, fs, ds) => updateProcessorDiagnosticStore = ds)
+                .Returns(updateProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                epfwd.Verify(epf => epf.CreateEventProcessor(config, It.IsNotNull<IDiagnosticStore>()), Times.Once());
+                epfwd.VerifyNoOtherCalls();
+                upfwd.Verify(upf => upf.CreateUpdateProcessor(config, It.IsNotNull<IFeatureStore>(), It.IsNotNull<IDiagnosticStore>()), Times.Once());
+                upfwd.VerifyNoOtherCalls();
+                Assert.True(eventProcessorDiagnosticStore == updateProcessorDiagnosticStore);
+            }
+        }
+
+        [Fact]
+        public void DiagnosticStoreNotPassedToFactoriesWhenOptedOut()
+        {
+            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
+            var upfwd = new Mock<IUpdateProcessorFactoryWithDiagnostics>();
+            var config = Configuration.Builder("SDK_KEY")
+                .IsStreamingEnabled(false)
+                .BaseUri(new Uri("http://fake"))
+                .StartWaitTime(TimeSpan.Zero)
+                .EventProcessorFactory(epfwd.Object)
+                .UpdateProcessorFactory(upfwd.Object)
+                .DiagnosticOptOut(true)
+                .Build();
+
+            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
+                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
+            upfwd.Setup(upf => upf.CreateUpdateProcessor(config, It.IsAny<IFeatureStore>(), It.IsAny<IDiagnosticStore>()))
+                .Returns(updateProcessor);
+
+            using (var client = new LdClient(config))
+            {
+                epfwd.Verify(epf => epf.CreateEventProcessor(config, null), Times.Once());
+                epfwd.VerifyNoOtherCalls();
+                upfwd.Verify(upf => upf.CreateUpdateProcessor(config, It.IsNotNull<IFeatureStore>(), null), Times.Once());
+                upfwd.VerifyNoOtherCalls();
+            }
+        }
+
+        [Fact]
         public void NoWaitForUpdateProcessorIfWaitMillisIsZero()
         {
             mockUpdateProcessor.Setup(up => up.Initialized()).Returns(true);
