@@ -178,14 +178,14 @@ namespace LaunchDarkly.Sdk.Server
             }
             else
             {
-                FeatureRequestor requestor = new FeatureRequestor(context.Configuration);
                 if (context.Configuration.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(context.Configuration, requestor, dataStoreUpdates, null, context.DiagnosticStore);
+                    return new StreamProcessor(context.Configuration, dataStoreUpdates, null, context.DiagnosticStore);
                 }
                 else
                 {
                     Log.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
+                    FeatureRequestor requestor = new FeatureRequestor(context.Configuration);
                     return new PollingProcessor(context.Configuration, requestor, dataStoreUpdates);
                 }
             }
