@@ -27,8 +27,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly Mock<IEventSource> _mockEventSource;
         readonly IEventSource _eventSource;
         readonly TestEventSourceFactory _eventSourceFactory;
-        readonly Mock<IFeatureRequestor> _mockRequestor;
-        readonly IFeatureRequestor _requestor;
         readonly InMemoryDataStore _dataStore;
         readonly IDataStoreUpdates _dataStoreUpdates;
         Server.Configuration _config;
@@ -39,8 +37,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask);
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
-            _mockRequestor = new Mock<IFeatureRequestor>();
-            _requestor = _mockRequestor.Object;
             _dataStore = new InMemoryDataStore();
             _dataStoreUpdates = new DataStoreUpdates(_dataStore);
             _config = Server.Configuration.Builder(SDK_KEY)
@@ -189,37 +185,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
                 _dataStore.Get(DataKinds.Segments, SEGMENT_KEY));
         }
-
-        [Fact]
-        public void IndirectPatchRequestsAndStoresFeature()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            _mockRequestor.Setup(r => r.GetFlagAsync(FEATURE_KEY)).ReturnsAsync(FEATURE);
-
-            string path = "/flags/" + FEATURE_KEY;
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(path, null), "indirect/patch");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
-
-            AssertFeatureInStore(FEATURE);
-        }
-
-        [Fact]
-        public void IndirectPatchRequestsAndStoresSegment()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            _mockRequestor.Setup(r => r.GetSegmentAsync(SEGMENT_KEY)).ReturnsAsync(SEGMENT);
-
-            string path = "/segments/" + SEGMENT_KEY;
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(path, null), "indirect/patch");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
-
-            AssertSegmentInStore(SEGMENT);
-        }
         
         private StreamProcessor CreateProcessor()
         {
-            return new StreamProcessor(_config, _requestor, _dataStoreUpdates,
-                _eventSourceFactory.Create(), null);
+            return new StreamProcessor(_config, _dataStoreUpdates, _eventSourceFactory.Create(), null);
         }
 
         private StreamProcessor CreateAndStartProcessor()
