@@ -1,5 +1,4 @@
-﻿#if !NETSTANDARD1_4 && !NETSTANDARD1_6
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -68,5 +67,3 @@ namespace LaunchDarkly.Sdk.Server.Files
         }
     }
 }
-
-#endif

@@ -36,11 +36,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             {
                 try
                 {
-#if NETSTANDARD1_4 || NETSTANDARD1_6
-                    _reloader = new FilePollingReloader(_paths, TriggerReload, pollInterval);
-#else
                     _reloader = new FileWatchingReloader(_paths, TriggerReload);
-#endif
                 }
                 catch (Exception e)
                 {
@@ -136,11 +132,7 @@ namespace LaunchDarkly.Sdk.Server.Files
                     {
                         throw;
                     }
-#if NETSTANDARD1_4 || NETSTANDARD1_6
-                    Task.Delay(delay).Wait();
-#else
                     Thread.Sleep(delay);
-#endif
                     // Retry immediately the first time but 200ms thereafter
                     delay = ReadFileRetryDelay;
                 }
