@@ -11,6 +11,7 @@ circleci:
 
 template:
   name: dotnet-windows
+  context: org-global
   env:
     # See Releaser docs - this causes the generated documentation to include all public APIs from CommonSdk
     LD_RELEASE_DOCS_ASSEMBLIES: LaunchDarkly.ServerSdk LaunchDarkly.CommonSdk
