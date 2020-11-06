@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.13.1] - 2020-11-05
+### Changed:
+- Updated the `LaunchDarkly.EventSource` dependency to a version that has a specific target for .NET Standard 2.0. Previously, that package targeted only .NET Standard 1.4 and .NET Framework 4.5. There is no functional difference between these targets, but .NET Core application developers may wish to avoid linking to any .NET Standard 1.x assemblies on general principle.
+
 ## [5.13.0] - 2020-02-10
 Note: if you are using the LaunchDarkly Relay Proxy to forward events, update the Relay to version 5.10.0 or later before updating to this .NET SDK version.
 
