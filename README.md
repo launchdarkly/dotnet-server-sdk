@@ -9,7 +9,14 @@
 
 ## Supported .NET versions
 
-This version of the LaunchDarkly SDK is compatible with .NET Framework version 4.5 and above, or .NET Standard 1.4-2.0.
+This version of the SDK is built for the following targets:
+
+* .NET Framework 4.5: runs on .NET Framework 4.5.x or 4.6.x.
+* .NET Framework 4.7.1: runs on .NET Framework 4.7.1 and above.
+* .NET Standard 1.4, 1.6: runs on .NET Core 1.0 and 1.1 in an application; or within a library that is targeted to .NET Standard 1.x.
+* .NET Standard 2.0: runs on .NET Core 2.x and 3.x, or .NET 5, in an application; or within a library that is targeted to .NET Standard 2.x or .NET 5.
+
+The .NET build tools should automatically load the most appropriate build of the SDK for whatever platform your application or library is targeted to.
 
 ## Getting started
 
