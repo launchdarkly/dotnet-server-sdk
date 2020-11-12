@@ -82,7 +82,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         {
                             return new Regex(b).IsMatch(a);
                         }
-                        catch (ArgumentException e)
+                        catch (ArgumentException)
                         {
                             return false;
                         }
