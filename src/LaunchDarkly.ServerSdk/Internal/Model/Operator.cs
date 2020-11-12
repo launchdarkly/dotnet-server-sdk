@@ -171,7 +171,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             if (value.IsString)
             {
-                return DateTime.Parse(value.AsString).ToUniversalTime();
+                try
+                {
+                    return DateTime.Parse(value.AsString).ToUniversalTime();
+                }
+                catch (FormatException)
+                {
+                    return null;
+                }
             }
             if (value.IsNumber)
             {
