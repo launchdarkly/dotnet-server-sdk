@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -14,7 +14,6 @@ namespace LaunchDarkly.Sdk.Server.Files
 {
     internal class FileDataSource : IDataSource
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(FileDataSource));
         private readonly IDataStoreUpdates _dataStoreUpdates;
         private readonly List<string> _paths;
         private readonly IDisposable _reloader;
@@ -22,13 +21,17 @@ namespace LaunchDarkly.Sdk.Server.Files
         private readonly FlagFileDataMerger _dataMerger;
         private readonly IFileReader _fileReader;
         private readonly bool _skipMissingPaths;
+        private readonly Logger _logger;
         private volatile bool _started;
         private volatile bool _loadedValidData;
 
         public FileDataSource(IDataStoreUpdates dataStoreUpdates, IFileReader fileReader,
             List<string> paths, bool autoUpdate, TimeSpan pollInterval,
-            Func<string, object> alternateParser, bool skipMissingPaths, DuplicateKeysHandling duplicateKeysHandling)
+            Func<string, object> alternateParser, bool skipMissingPaths,
+            DuplicateKeysHandling duplicateKeysHandling,
+            Logger logger)
         {
+            _logger = logger;
             _dataStoreUpdates = dataStoreUpdates;
             _paths = new List<string>(paths);
             _parser = new FlagFileParser(alternateParser);
@@ -43,7 +46,8 @@ namespace LaunchDarkly.Sdk.Server.Files
                 }
                 catch (Exception e)
                 {
-                    Log.ErrorFormat("Unable to watch files for auto-updating: {0}", e);
+                    _logger.Error("Unable to watch files for auto-updating: {0}", LogValues.ExceptionSummary(e));
+                    _logger.Debug(LogValues.ExceptionTrace(e));
                     _reloader = null;
                 }
             }
@@ -98,11 +102,12 @@ namespace LaunchDarkly.Sdk.Server.Files
                 }
                 catch (FileNotFoundException) when (_skipMissingPaths)
                 {
-                    Log.DebugFormat("{0}: {1}", path, "File not found");
+                    _logger.Debug("{0}: {1}", path, "File not found");
                 }
                 catch (Exception e)
                 {
-                    Log.ErrorFormat("{0}: {1}", path, e);
+                    _logger.Error("{0}: {1}", path, LogValues.ExceptionSummary(e));
+                    _logger.Debug(LogValues.ExceptionTrace(e));
                     return;
                 }
             }

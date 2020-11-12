@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Common.Logging;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Interfaces;
 
@@ -21,14 +21,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal sealed class Evaluator
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Evaluator));
-
         private readonly Func<string, FeatureFlag> _featureFlagGetter;
         private readonly Func<string, Segment> _segmentGetter;
+        private readonly Logger _logger;
 
         // exposed for testing
         internal Func<string, FeatureFlag> FeatureFlagGetter => _featureFlagGetter;
         internal Func<string, Segment> SegmentGetter => _segmentGetter;
+        internal Logger Logger => _logger;
 
         internal struct EvalResult
         {
@@ -47,11 +47,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         /// </summary>
         /// <param name="featureFlagGetter">a function that returns the stored FeatureFlag for a given key, or null if not found</param>
         /// <param name="segmentGetter">a function that returns the stored Segment for a given key, or null if not found </param>
+        /// <param name="logger">log messages will be sent here</param>
         internal Evaluator(Func<string, FeatureFlag> featureFlagGetter,
-            Func<string, Segment> segmentGetter)
+            Func<string, Segment> segmentGetter,
+            Logger logger)
         {
             _featureFlagGetter = featureFlagGetter;
             _segmentGetter = segmentGetter;
+            _logger = logger;
         }
 
         /// <summary>
@@ -67,7 +70,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             if (user == null || user.Key == null)
             {
-                Log.WarnFormat("User or user key is null when evaluating flag: {0} returning null",
+                _logger.Warn("User or user key is null when evaluating flag: {0} returning null",
                     flag.Key);
 
                 return new EvalResult(
@@ -187,7 +190,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     var prereqFeatureFlag = _parent._featureFlagGetter(prereq.Key);
                     if (prereqFeatureFlag == null)
                     {
-                        Log.ErrorFormat("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
+                        _parent._logger.Error("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
                             prereq.Key, _flag.Key);
                         prereqOk = false;
                     }
@@ -225,7 +228,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             {
                 if (variation < 0 || variation >= _flag.Variations.Count)
                 {
-                    Log.ErrorFormat("Data inconsistency in feature flag \"{0}\": invalid variation index", _flag.Key);
+                    _parent._logger.Error("Data inconsistency in feature flag \"{0}\": invalid variation index", _flag.Key);
                     return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
                 }
                 return new EvaluationDetail<LdValue>(_flag.Variations[variation], variation, reason);
@@ -245,7 +248,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 var index = VariationIndexForUser(vr, _flag.Key, _flag.Salt);
                 if (index is null)
                 {
-                    Log.ErrorFormat("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", _flag.Key);
+                    _parent._logger.Error("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", _flag.Key);
                     return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
                 }
                 return GetVariation(index.Value, reason);
@@ -332,7 +335,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     {
                         if (element.Type == LdValueType.Array || element.Type == LdValueType.Object)
                         {
-                            Log.ErrorFormat("Invalid custom attribute value in user object: {0}",
+                            _parent._logger.Error("Invalid custom attribute value in user object: {0}",
                                 element);
                             return false;
                         }
@@ -345,10 +348,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 }
                 else if (userValue.Type == LdValueType.Object)
                 {
-                    Log.WarnFormat("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
-                    userValue.Type,
-                    _user.Key,
-                    clause.Attribute);
+                    _parent._logger.Warn("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
+                        userValue.Type,
+                        _user.Key,
+                        clause.Attribute);
                     return false;
                 }
                 else

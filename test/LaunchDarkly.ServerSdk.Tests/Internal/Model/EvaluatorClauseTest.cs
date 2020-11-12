@@ -68,10 +68,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             var segment = new Segment("segkey", 1, new List<string> { "foo" }, new List<string>(), "",
                 new List<SegmentRule>(), false);
-            var evaluator = new Evaluator(
-                flagKey => null,
-                segmentKey => segmentKey == segment.Key ? segment : null
-            );
+            var evaluator = BasicEvaluator.WithStoredSegments(segment);
 
             var f = new FeatureFlagBuilder("key").BooleanMatchingSegment("segkey").Build();
             var user = User.WithKey("foo");

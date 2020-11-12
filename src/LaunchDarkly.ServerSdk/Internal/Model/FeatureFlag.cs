@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.Logging;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
     internal sealed class FeatureFlag
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureFlag));
-
         [JsonProperty(PropertyName = "key")]
         public string Key { get; private set; }
         [JsonProperty(PropertyName = "version")]

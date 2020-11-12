@@ -12,7 +12,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         /// </summary>
         public static readonly Evaluator BasicEvaluator = new Evaluator(
             flagKey => throw new Exception("Evaluator unexpectedly tried to query flag: " + flagKey),
-            segmentKey => throw new Exception("Evaluator unexpectedly tried to query segment: " + segmentKey)
+            segmentKey => throw new Exception("Evaluator unexpectedly tried to query segment: " + segmentKey),
+            TestUtils.NullLogger
         );
 
         /// <summary>
@@ -23,7 +24,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             return new Evaluator(
                 flagKey => flags.FirstOrDefault(f => f.Key == flagKey) ?? baseEvaluator.FeatureFlagGetter(flagKey),
-                baseEvaluator.SegmentGetter
+                baseEvaluator.SegmentGetter,
+                baseEvaluator.Logger
             );
         }
 
@@ -36,7 +38,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             return new Evaluator(
                 flagKey => flagKey == nonexistentFlagKey ? null : baseEvaluator.FeatureFlagGetter(flagKey),
-                baseEvaluator.SegmentGetter
+                baseEvaluator.SegmentGetter,
+                baseEvaluator.Logger
             );
         }
 
@@ -48,7 +51,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             return new Evaluator(
                 baseEvaluator.FeatureFlagGetter,
-                segmentKey => segments.FirstOrDefault(s => s.Key == segmentKey) ?? baseEvaluator.SegmentGetter(segmentKey)
+                segmentKey => segments.FirstOrDefault(s => s.Key == segmentKey) ?? baseEvaluator.SegmentGetter(segmentKey),
+                baseEvaluator.Logger
             );
         }
 
@@ -61,7 +65,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             return new Evaluator(
                 baseEvaluator.FeatureFlagGetter,
-                segmentKey => segmentKey == nonexistentSegmentKey ? null : baseEvaluator.SegmentGetter(segmentKey)
+                segmentKey => segmentKey == nonexistentSegmentKey ? null : baseEvaluator.SegmentGetter(segmentKey),
+                baseEvaluator.Logger
             );
         }
     }

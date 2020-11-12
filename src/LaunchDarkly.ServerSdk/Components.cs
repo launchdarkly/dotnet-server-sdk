@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Common.Logging;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
@@ -22,6 +22,75 @@ namespace LaunchDarkly.Sdk.Server
         /// Returns a factory for the default in-memory implementation of <see cref="IDataStore"/>.
         /// </summary>
         public static IDataStoreFactory InMemoryDataStore => InMemoryDataStoreFactory.Instance;
+
+        /// <summary>
+        /// Returns a configuration builder for the SDK's logging configuration.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Passing this to <see cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />,
+        /// after setting any desired properties on the builder, applies this configuration to the SDK.
+        /// </para>
+        /// <para>
+        /// The default behavior, if you do not change any properties, is to send log output to
+        /// <see cref="Console.Error"/>, with a minimum level of <c>Info</c> (that is, <c>Debug</c> logging
+        /// is disabled).
+        /// </para>
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .Logging(Components.Logging().Level(LogLevel.Warn)))
+        ///         .Build();
+        /// </example>
+        /// <returns>a configurable factory object</returns>
+        /// <seealso cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
+        /// <seealso cref="Components.Logging(ILogAdapter) "/>
+        /// <seealso cref="Components.NoLogging" />
+        public static LoggingConfigurationBuilder Logging() =>
+            new LoggingConfigurationBuilder();
+
+        /// <summary>
+        /// Returns a configuration builder for the SDK's logging configuration, specifying the logging implementation.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This is a shortcut for calling <see cref="Logging()"/> and then
+        /// <see cref="LoggingConfigurationBuilder.Adapter(ILogAdapter)"/>, to specify a logging implementation
+        /// other than the default one. For instance, in a .NET Core application you can use
+        /// <c>LaunchDarkly.Logging.Logs.CoreLogging</c> to use the standard .NET Core logging framework.
+        /// </para>
+        /// <para>
+        /// If you do not also specify a minimum logging level with <see cref="LoggingConfigurationBuilder.Level(LaunchDarkly.Logging.LogLevel)"/>,
+        /// or with some other filtering mechanism that is defined by an external logging framework, then the
+        /// log output will show all logging levels including <c>Debug</c>.
+        /// </para>
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .Logging(Components.Logging(Logs.CoreLogging(coreLoggingFactory)))
+        ///         .Build();
+        /// </example>
+        /// <param name="adapter">an <c>ILogAdapter</c> for the desired logging implementation</param>
+        /// <returns>a configurable factory object</returns>
+        /// <seealso cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
+        /// <seealso cref="Components.Logging() "/>
+        /// <seealso cref="Components.NoLogging" />
+        public static LoggingConfigurationBuilder Logging(ILogAdapter adapter) =>
+            new LoggingConfigurationBuilder().Adapter(adapter);
+
+        /// <summary>
+        /// A configuration object that disables logging.
+        /// </summary>
+        /// <remarks>
+        /// This is the same as <c>Logging(LaunchDarkly.Logging.Logs.None)</c>.
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .Logging(Components.NoLogging)
+        ///         .Build();
+        /// </example>
+        public static LoggingConfigurationBuilder NoLogging =>
+            new LoggingConfigurationBuilder().Adapter(Logs.None);
 
         /// <summary>
         /// Returns a configurable factory for a persistent data store.
@@ -161,32 +230,29 @@ namespace LaunchDarkly.Sdk.Server
 
         private DefaultDataSourceFactory() { }
 
-        // Note, logger uses LDClient class name for backward compatibility
-        private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
-
         public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
         {
             if (context.Configuration.Offline)
             {
-                Log.Info("Starting Launchdarkly client in offline mode.");
+                context.Logger.Info("Starting Launchdarkly client in offline mode.");
                 return NullDataSource.Instance;
             }
             else if (context.Configuration.UseLdd)
             {
-                Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
+                context.Logger.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
                 return NullDataSource.Instance;
             }
             else
             {
                 if (context.Configuration.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(context.Configuration, dataStoreUpdates, null, context.DiagnosticStore);
+                    return new StreamProcessor(context, dataStoreUpdates, null);
                 }
                 else
                 {
-                    Log.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
-                    FeatureRequestor requestor = new FeatureRequestor(context.Configuration);
-                    return new PollingProcessor(context.Configuration, requestor, dataStoreUpdates);
+                    context.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
+                    FeatureRequestor requestor = new FeatureRequestor(context);
+                    return new PollingProcessor(context, requestor, dataStoreUpdates);
                 }
             }
         }

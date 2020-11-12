@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Logging;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -10,7 +10,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     internal sealed class PollingProcessor : IDataSource
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(PollingProcessor));
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly Configuration _config;
@@ -18,15 +17,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly IDataStoreUpdates _dataStoreUpdates;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
+        private readonly Logger _log;
         private volatile bool _disposed;
 
 
-        internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IDataStoreUpdates dataStoreUpdates)
+        internal PollingProcessor(LdClientContext context,
+            IFeatureRequestor featureRequestor, IDataStoreUpdates dataStoreUpdates)
         {
-            _config = config;
+            _config = context.Configuration;
             _featureRequestor = featureRequestor;
             _dataStoreUpdates = dataStoreUpdates;
             _initTask = new TaskCompletionSource<bool>();
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         bool IDataSource.Initialized()
@@ -36,7 +38,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         Task<bool> IDataSource.Start()
         {
-            Log.InfoFormat("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
+            _log.Info("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
                 _config.PollingInterval.TotalMilliseconds);
 
             Task.Run(() => UpdateTaskLoopAsync());
@@ -65,19 +67,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
                     {
                         _initTask.SetResult(true);
-                        Log.Info("Initialized LaunchDarkly Polling Processor.");
+                        _log.Info("Initialized LaunchDarkly Polling Processor.");
                     }
                 }
             }
             catch (AggregateException ex)
             {
-                Log.ErrorFormat("Error Updating features: '{0}'",
-                    ex,
-                    Util.ExceptionMessage(ex.Flatten()));
+                _log.Error("Error Updating features: {0}",
+                    LogValues.ExceptionSummary(ex.Flatten()));
+                _log.Debug(LogValues.ExceptionTrace(ex));
             }
             catch (UnsuccessfulResponseException ex)
             {
-                Log.Error(Util.HttpErrorMessage(ex.StatusCode, "polling request", "will retry"));
+                _log.Error(Util.HttpErrorMessage(ex.StatusCode, "polling request", "will retry"));
                 if (!Util.IsHttpErrorRecoverable(ex.StatusCode))
                 {
                     try
@@ -94,9 +96,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
             catch (Exception ex)
             {
-                Log.ErrorFormat("Error Updating features: '{0}'",
-                    ex,
-                    Util.ExceptionMessage(ex));
+                _log.Error("Error Updating features: {0}", LogValues.ExceptionSummary(ex));
+                _log.Debug(LogValues.ExceptionTrace(ex));
             }
         }
 
@@ -110,7 +111,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             if (disposing)
             {
-                Log.Info("Stopping LaunchDarkly PollingProcessor");
+                _log.Info("Stopping LaunchDarkly PollingProcessor");
                 _disposed = true;
                 _featureRequestor.Dispose();
             }

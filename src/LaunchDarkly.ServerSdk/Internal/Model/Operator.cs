@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Common.Logging;
 using LaunchDarkly.Sdk.Internal.Helpers;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
     internal static class Operator
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Operator));
-        
         // This method was formerly part of User. It has been moved here because it is only needed
         // for server-side evaluation logic, specifically for comparing values with an Operator.
         // Note that ImmutableJsonValue.Of(string) is an efficient operation that does not allocate
@@ -50,86 +47,85 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         public static bool Apply(string op, LdValue uValue, LdValue cValue)
         {
-            try
+            if (uValue.IsNull || cValue.IsNull)
+                return false;
+
+            int comparison;
+
+            switch (op)
             {
-                if (uValue.IsNull || cValue.IsNull)
+                case "in":
+                    if (uValue.Equals(cValue))
+                    {
+                        return true;
+                    }
+
+                    if (uValue.IsString || cValue.IsString)
+                    {
+                        return StringOperator(uValue, cValue, (a, b) => a.Equals(b));
+                    }
+
+                    if (TryCompareNumericValues(uValue, cValue, out comparison))
+                    {
+                        return comparison == 0;
+                    }
+                    break;
+
+                case "endsWith":
+                    return StringOperator(uValue, cValue, (a, b) => a.EndsWith(b));
+                case "startsWith":
+                    return StringOperator(uValue, cValue, (a, b) => a.StartsWith(b));
+                case "matches":
+                    return StringOperator(uValue, cValue, (a, b) =>
+                    {
+                        try
+                        {
+                            return new Regex(b).IsMatch(a);
+                        }
+                        catch (ArgumentException e)
+                        {
+                            return false;
+                        }
+                        
+                    });
+                case "contains":
+                    return StringOperator(uValue, cValue, (a, b) => a.Contains(b));
+                case "lessThan":
+                    if (TryCompareNumericValues(uValue, cValue, out comparison))
+                    {
+                        return comparison < 0;
+                    }
+                    break;
+                case "lessThanOrEqual":
+                    if (TryCompareNumericValues(uValue, cValue, out comparison))
+                    {
+                        return comparison <= 0;
+                    }
+                    break;
+                case "greaterThan":
+                    if (TryCompareNumericValues(uValue, cValue, out comparison))
+                    {
+                        return comparison > 0;
+                    }
+                    break;
+                case "greaterThanOrEqual":
+                    if (TryCompareNumericValues(uValue, cValue, out comparison))
+                    {
+                        return comparison >= 0;
+                    }
+                    break;
+                case "before":
+                    return DateOperator(uValue, cValue, (a, b) => DateTime.Compare(a, b) < 0);
+                case "after":
+                    return DateOperator(uValue, cValue, (a, b) => DateTime.Compare(a, b) > 0);
+                case "semVerEqual":
+                    return SemVerOperator(uValue, cValue, (a, b) => a.ComparePrecedence(b) == 0);
+                case "semVerLessThan":
+                    return SemVerOperator(uValue, cValue, (a, b) => a.ComparePrecedence(b) < 0);
+                case "semVerGreaterThan":
+                    return SemVerOperator(uValue, cValue, (a, b) => a.ComparePrecedence(b) > 0);
+                default:
                     return false;
-
-                int comparison;
-
-                switch (op)
-                {
-                    case "in":
-                        if (uValue.Equals(cValue))
-                        {
-                            return true;
-                        }
-
-                        if (uValue.IsString || cValue.IsString)
-                        {
-                            return StringOperator(uValue, cValue, (a, b) => a.Equals(b));
-                        }
-
-                        if (TryCompareNumericValues(uValue, cValue, out comparison))
-                        {
-                            return comparison == 0;
-                        }
-                        break;
-
-                    case "endsWith":
-                        return StringOperator(uValue, cValue, (a, b) => a.EndsWith(b));
-                    case "startsWith":
-                        return StringOperator(uValue, cValue, (a, b) => a.StartsWith(b));
-                    case "matches":
-                        return StringOperator(uValue, cValue, (a, b) => new Regex(b).IsMatch(a));
-                    case "contains":
-                        return StringOperator(uValue, cValue, (a, b) => a.Contains(b));
-                    case "lessThan":
-                        if (TryCompareNumericValues(uValue, cValue, out comparison))
-                        {
-                            return comparison < 0;
-                        }
-                        break;
-                    case "lessThanOrEqual":
-                        if (TryCompareNumericValues(uValue, cValue, out comparison))
-                        {
-                            return comparison <= 0;
-                        }
-                        break;
-                    case "greaterThan":
-                        if (TryCompareNumericValues(uValue, cValue, out comparison))
-                        {
-                            return comparison > 0;
-                        }
-                        break;
-                    case "greaterThanOrEqual":
-                        if (TryCompareNumericValues(uValue, cValue, out comparison))
-                        {
-                            return comparison >= 0;
-                        }
-                        break;
-                    case "before":
-                        return DateOperator(uValue, cValue, (a, b) => DateTime.Compare(a, b) < 0);
-                    case "after":
-                        return DateOperator(uValue, cValue, (a, b) => DateTime.Compare(a, b) > 0);
-                    case "semVerEqual":
-                        return SemVerOperator(uValue, cValue, (a, b) => a.ComparePrecedence(b) == 0);
-                    case "semVerLessThan":
-                        return SemVerOperator(uValue, cValue, (a, b) => a.ComparePrecedence(b) < 0);
-                    case "semVerGreaterThan":
-                        return SemVerOperator(uValue, cValue, (a, b) => a.ComparePrecedence(b) > 0);
-                    default:
-                        return false;
-                }
-            }
-            catch (Exception e)
-            {
-                Log.DebugFormat("Got a possibly expected exception when applying operator: {0} to user Value: {1} and feature flag value: {2}. Exception message: {3}",
-                    e,
-                    op,
-                    uValue,
-                    cValue,
-                    Util.ExceptionMessage(e));
             }
             return false;
         }

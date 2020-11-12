@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using WireMock;
 using WireMock.Logging;
 using WireMock.RequestBuilders;
@@ -21,7 +22,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .BaseUri(new Uri(server.Urls[0]))
                 .ConnectionTimeout(TimeSpan.FromDays(1))
                 .Build();
-            return new FeatureRequestor(config);
+            return new FeatureRequestor(new LdClientContext(config));
         }
 
         [Fact]

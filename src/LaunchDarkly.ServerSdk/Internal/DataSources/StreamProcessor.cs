@@ -1,7 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Common.Logging;
+using LaunchDarkly.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LaunchDarkly.Sdk.Internal;
@@ -21,26 +21,26 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private const String PATCH = "patch";
         private const String DELETE = "delete";
 
-        private static readonly ILog Log = LogManager.GetLogger(typeof(StreamProcessor));
-
         private readonly Configuration _config;
         private readonly StreamManager _streamManager;
         private readonly IDataStoreUpdates _dataStoreUpdates;
+        private readonly Logger _log;
 
         internal StreamProcessor(
-            Configuration config,
+            LdClientContext context,
             IDataStoreUpdates dataStoreUpdates,
-            StreamManager.EventSourceCreator eventSourceCreator,
-            IDiagnosticStore diagnosticStore
+            StreamManager.EventSourceCreator eventSourceCreator
             )
         {
+            _config = context.Configuration;
             _streamManager = new StreamManager(this,
-                MakeStreamProperties(config),
-                config.StreamManagerConfiguration,
+                MakeStreamProperties(_config),
+                _config.StreamManagerConfiguration,
                 ServerSideClientEnvironment.Instance,
-                eventSourceCreator, diagnosticStore);
-            _config = config;
+                eventSourceCreator,
+                context.DiagnosticStore);
             _dataStoreUpdates = dataStoreUpdates;
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         private StreamProperties MakeStreamProperties(Configuration config)
@@ -88,7 +88,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     }
                     else
                     {
-                        Log.WarnFormat("Received patch event with unknown path: {0}", patchData.Path);
+                        _log.Warn("Received patch event with unknown path: {0}", patchData.Path);
                     }
                     break;
                 case DELETE:
@@ -105,7 +105,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     }
                     else
                     {
-                        Log.WarnFormat("Received delete event with unknown path: {0}", deleteData.Path);
+                        _log.Warn("Received delete event with unknown path: {0}", deleteData.Path);
                     }
                     break;
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using Xunit;
 
@@ -45,6 +46,8 @@ namespace LaunchDarkly.Sdk.Server
             TestSetter(b => b.HttpMessageHandler, c => c.HttpMessageHandler, new HttpClientHandler());
             TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
             TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
+            TestSetter(b => b.Logging, c => c.LoggingConfigurationFactory,
+                Components.Logging(Logs.ToWriter(Console.Out)));
             TestSetter(b => b.Offline, c => c.Offline, true);
             TestSetter(b => b.PollingInterval, c => c.PollingInterval, time);
             TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
