@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
 
@@ -45,10 +44,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         private LdValue EncodeDiagnosticId(DiagnosticId id)
         {
-            var o = LdValue.BuildObject().Add("diagnosticId", id._diagnosticId.ToString());
-            if (id._sdkKeySuffix != null)
+            var o = LdValue.BuildObject().Add("diagnosticId", id.Id.ToString());
+            if (id.SdkKeySuffix != null)
             {
-                o.Add("sdkKeySuffix", id._sdkKeySuffix);
+                o.Add("sdkKeySuffix", id.SdkKeySuffix);
             }
             return o.Build();
         }

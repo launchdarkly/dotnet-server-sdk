@@ -189,21 +189,26 @@ namespace LaunchDarkly.Sdk.Server
 
         private DefaultEventProcessorFactory() { }
         
-        public IEventProcessor CreateEventProcessor(LdClientContext context) {
+        public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor CreateEventProcessor(LdClientContext context) {
             if (context.Configuration.Offline)
             {
                 return new NullEventProcessor();
             }
             else
             {
-                return new DefaultEventProcessor(
-                    context.Configuration.EventProcessorConfiguration,
+                var logger = context.Logger.SubLogger(LogNames.EventsSubLog);
+                var eventsConfig = context.Configuration.EventProcessorConfiguration;
+                var httpClient = Util.MakeHttpClient(context.Configuration.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
+                var eventSender = new DefaultEventSender(httpClient, eventsConfig, logger);
+                return new DelegatingEventProcessor(new DefaultEventProcessor(
+                    eventsConfig,
+                    eventSender,
                     new DefaultUserDeduplicator(context.Configuration),
-                    Util.MakeHttpClient(context.Configuration.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
                     context.DiagnosticStore,
                     null,
+                    logger,
                     null
-                );
+                ));
             }
         }
     }
@@ -214,7 +219,7 @@ namespace LaunchDarkly.Sdk.Server
 
         private NullEventProcessorFactory() { }
 
-        public IEventProcessor CreateEventProcessor(LdClientContext config) => new NullEventProcessor();
+        public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor CreateEventProcessor(LdClientContext config) => new NullEventProcessor();
     }
 
     internal class InMemoryDataStoreFactory : IDataStoreFactory
@@ -282,5 +287,37 @@ namespace LaunchDarkly.Sdk.Server
 
         public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
             NullDataSource.Instance;
+    }
+
+    internal class DelegatingEventProcessor : LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor
+    {
+        private readonly LaunchDarkly.Sdk.Interfaces.IEventProcessor _impl;
+
+        internal DelegatingEventProcessor(LaunchDarkly.Sdk.Interfaces.IEventProcessor impl)
+        {
+            _impl = impl;
+        }
+
+        public void SendEvent(Event e)
+        {
+            _impl.SendEvent(e);
+        }
+
+        public void Flush()
+        {
+            _impl.Flush();
+        }
+
+        public void Dispose()
+        {
+            _impl.Dispose();
+        }
+    }
+
+    internal class NullEventProcessor : LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor
+    {
+        public void SendEvent(Event e) { }
+        public void Flush() { }
+        public void Dispose() { }
     }
 }

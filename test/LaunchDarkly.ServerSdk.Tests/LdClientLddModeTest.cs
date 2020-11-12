@@ -24,7 +24,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder("SDK_KEY").UseLdd(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<DefaultEventProcessor>(client._eventProcessor);
+                Assert.IsType<DelegatingEventProcessor>(client._eventProcessor);
             }
         }
 

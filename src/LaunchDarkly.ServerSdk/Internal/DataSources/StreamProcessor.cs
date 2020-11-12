@@ -33,14 +33,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             )
         {
             _config = context.Configuration;
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
             _streamManager = new StreamManager(this,
                 MakeStreamProperties(_config),
                 _config.StreamManagerConfiguration,
                 ServerSideClientEnvironment.Instance,
                 eventSourceCreator,
-                context.DiagnosticStore);
+                context.DiagnosticStore,
+                _log);
             _dataStoreUpdates = dataStoreUpdates;
-            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         private StreamProperties MakeStreamProperties(Configuration config)
