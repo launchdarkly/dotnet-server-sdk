@@ -4,49 +4,126 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-netcore-2-1
+      - build-netstandard-2
+      - test-netcore:
+          name: .NET Standard 2.0 + .NET Core 2.0
+          docker-image: microsoft/dotnet:2.0-sdk-jessie
+          build-target-framework: netstandard2.0
+          test-target-framework: netcoreapp2.0
+          requires:
+            - build-netstandard-2
+      - test-netcore:
+          name: .NET Standard 2.0 + .NET Core 2.1
+          docker-image: mcr.microsoft.com/dotnet/core/sdk:2.1-focal
+          build-target-framework: netstandard2.0
+          test-target-framework: netcoreapp2.1
+          requires:
+            - build-netstandard-2
+      - test-netcore:
+          name: .NET Standard 2.0 + .NET Core 3.1
+          docker-image: mcr.microsoft.com/dotnet/core/sdk:3.1-focal
+          build-target-framework: netstandard2.0
+          test-target-framework: netcoreapp3.1
+          requires:
+            - build-netstandard-2
+      - test-netcore:
+          name: .NET Standard 2.0 + .NET 5.0
+          docker-image: mcr.microsoft.com/dotnet/sdk:5.0-focal
+          build-target-framework: netstandard2.0
+          test-target-framework: net5.0
+          requires:
+            - build-netstandard-2
       - test-windows-netframework-4-5-2
 
 orbs:
   win: circleci/windows@1.0.0
 
 jobs:
-  test-netcore-2-1:
+  build-netstandard-2:
+    parameters:
+      build-target-framework:
+        type: string
+        default: netstandard2.0
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:2.1-focal
+    environment:
+      ASPNETCORE_SUPPRESSSTATUSMESSAGES: true
     steps:
       - checkout
       - restore_cache:
           keys: 
-            - netcore21-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+            - deps-<<parameters.build-target-framework>>-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}
+            # For these two-step builds, we're caching the NuGet dependencies twice:
+            # 1. Here, where we're only building the SDK itself and not the test project, we cache the
+            # packages with a key like "deps-netstandard2.0-xxxx" where "xxxx" only changes if the SDK
+            # project file changes.
+            # 2. In the test-netcore job, we are loading dependencies for the test project which might
+            # vary depending on which framework we're building the test project with. So we cache the
+            # dependencies there with a key like "deps-netstandard2.0-netcoreapp2.1-xxxx-yyyy" where
+            # the "yyyy" part will change if the project file for the test project changes.
       - run:
-          name: install project dependencies
-          command: dotnet restore
+          name: restore dependencies
+          command: dotnet restore src/LaunchDarkly.ServerSdk
       - save_cache:
-          key: netcore21-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          key: deps-<<parameters.build-target-framework>>-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}
           paths:
             - /root/.nuget/packages
       - run:
-          name: build SDK for .NET Standard 2.0
-          command: dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
+          name: build
+          command: dotnet build src/LaunchDarkly.ServerSdk -f <<parameters.build-target-framework>>
+      - persist_to_workspace:
+          root: src/LaunchDarkly.ServerSdk
+          paths:
+            - bin
+            - obj
+
+  test-netcore:
+    parameters:
+      docker-image:
+        type: string
+      build-target-framework:
+        type: string
+      test-target-framework:
+        type: string
+    docker:
+      - image: <<parameters.docker-image>>
+    environment:
+      ASPNETCORE_SUPPRESSSTATUSMESSAGES: true
+      TESTFRAMEWORK: <<parameters.test-target-framework>>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: src/LaunchDarkly.ServerSdk
+      - restore_cache:
+          keys: 
+            - deps-<<parameters.build-target-framework>>-<<parameters.test-target-framework>>-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
       - run:
-          name: run tests in .NET Core 2.1
-          command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f netcoreapp2.1
+          name: restore LaunchDarkly.ServerSdk.Tests
+          command: dotnet restore test/LaunchDarkly.ServerSdk.Tests
+      - save_cache:
+          key: deps-<<parameters.build-target-framework>>-<<parameters.test-target-framework>>-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          paths:
+            - /root/.nuget/packages
+      - run:
+          name: run tests
+          command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj -f <<parameters.test-target-framework>>
 
   test-windows-netframework-4-5-2:
     executor:
       name: win/vs2019
       shell: powershell.exe
+    environment:
+      TESTFRAMEWORK: net46 # the SDK is built for 4.5, but we run in 4.6 so we can use some test libraries that don't work in 4.5
     steps:
       - checkout
       - restore_cache:
           keys: 
-            - net452-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+            - deps-net45-net46-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
       - run:
           name: install project dependencies
           command: dotnet restore
       - save_cache:
-          key: net452-deps-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
+          key: deps-net45-net46-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
           paths:
             - C:\Users\circleci\.nuget\packages
       - run:

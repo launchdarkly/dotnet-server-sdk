@@ -22,6 +22,7 @@ namespace LaunchDarkly.Sdk.Server.Files
 
         private readonly List<string> _paths = new List<string>();
         private bool _autoUpdate = false;
+        private IFileReader _fileReader = FlagFileReader.Instance;
         private TimeSpan _pollInterval = DefaultPollInterval;
         private Func<string, object> _parser = null;
         private bool _skipMissingPaths = false;
@@ -81,6 +82,17 @@ namespace LaunchDarkly.Sdk.Server.Files
         public FileDataSourceFactory WithParser(Func<string, object> parseFn)
         {
             _parser = parseFn;
+            return this;
+        }
+
+        /// <summary>
+        /// Specifies an alternate file reader which can support custom OS error handling and retry logic.
+        /// </summary>
+        /// <param name="fileReader">The flag file reader.</param>
+        /// <returns>the same factory object</returns>
+        public FileDataSourceFactory WithFileReader(IFileReader fileReader)
+        {
+            _fileReader = fileReader;
             return this;
         }
 
@@ -169,8 +181,8 @@ namespace LaunchDarkly.Sdk.Server.Files
         /// <returns>the component instance</returns>
         public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
         {
-            return new FileDataSource(dataStoreUpdates, _paths, _autoUpdate, _pollInterval, _parser, _skipMissingPaths,
-                _duplicateKeysHandling);
+            return new FileDataSource(dataStoreUpdates, _fileReader, _paths, _autoUpdate,
+                _pollInterval, _parser, _skipMissingPaths, _duplicateKeysHandling);
         }
     }
 }

@@ -20,17 +20,20 @@ namespace LaunchDarkly.Sdk.Server.Files
         private readonly IDisposable _reloader;
         private readonly FlagFileParser _parser;
         private readonly FlagFileDataMerger _dataMerger;
+        private readonly IFileReader _fileReader;
         private readonly bool _skipMissingPaths;
         private volatile bool _started;
         private volatile bool _loadedValidData;
 
-        public FileDataSource(IDataStoreUpdates dataStoreUpdates, List<string> paths, bool autoUpdate, TimeSpan pollInterval,
+        public FileDataSource(IDataStoreUpdates dataStoreUpdates, IFileReader fileReader,
+            List<string> paths, bool autoUpdate, TimeSpan pollInterval,
             Func<string, object> alternateParser, bool skipMissingPaths, DuplicateKeysHandling duplicateKeysHandling)
         {
             _dataStoreUpdates = dataStoreUpdates;
             _paths = new List<string>(paths);
             _parser = new FlagFileParser(alternateParser);
             _dataMerger = new FlagFileDataMerger(duplicateKeysHandling);
+            _fileReader = fileReader;
             _skipMissingPaths = skipMissingPaths;
             if (autoUpdate)
             {
@@ -89,7 +92,7 @@ namespace LaunchDarkly.Sdk.Server.Files
             {
                 try
                 {
-                    var content = ReadFileContent(path);
+                    var content = _fileReader.ReadAllText(path);
                     var data = _parser.Parse(content);
                     _dataMerger.AddToData(data, flags, segments);
                 }

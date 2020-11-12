@@ -9,7 +9,13 @@
 
 ## Supported .NET versions
 
-This version of the LaunchDarkly SDK is compatible with .NET Framework version 4.5.2 and above, or .NET Standard 2.0 (.NET Core 2.1 and above).
+This version of the SDK is built for the following targets:
+
+* .NET Framework 4.5.2: runs on .NET Framework 4.5.x or 4.6.x.
+* .NET Framework 4.7.1: runs on .NET Framework 4.7.1 and above.
+* .NET Standard 2.0: runs on .NET Core 2.x and 3.x, or .NET 5, in an application; or within a library that is targeted to .NET Standard 2.x or .NET 5.
+
+The .NET build tools should automatically load the most appropriate build of the SDK for whatever platform your application or library is targeted to.
 
 ## Getting started
 
@@ -17,7 +23,7 @@ Refer to the [SDK documentation](https://docs.launchdarkly.com/docs/dotnet-sdk-r
 
 ## Signing
 
-The published version of the `LaunchDarkly.Client` assembly is digitally signed with Authenticode and [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies). The public key file is in this repository at `LaunchDarkly.pk` as well as here:
+The published version of the `LaunchDarkly.ServerSdk` assembly is digitally signed with Authenticode and [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies). The public key file is in this repository at `LaunchDarkly.pk` as well as here:
 
 ```
 Public Key:

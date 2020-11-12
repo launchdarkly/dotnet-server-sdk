@@ -5,6 +5,7 @@ using System.Linq;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -30,6 +31,16 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         public bool Valid => _valid;
 
+        /// <summary>
+        /// Returns a builder for constructing a new instance of this class. May be useful in testing.
+        /// </summary>
+        /// <param name="options">the same options that can be passed to <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/></param>
+        /// <returns>a new <see cref="FeatureFlagsStateBuilder"/></returns>
+        public static FeatureFlagsStateBuilder Builder(params FlagsStateOption[] options)
+        {
+            return new FeatureFlagsStateBuilder(options);
+        }
+
         internal FeatureFlagsState(bool valid)
         {
             _valid = valid;
@@ -43,27 +54,6 @@ namespace LaunchDarkly.Sdk.Server
             _valid = valid;
             _flagValues = values;
             _flagMetadata = metadata;
-        }
-
-        internal void AddFlag(FeatureFlag flag, LdValue value, int? variation, EvaluationReason? reason,
-            bool detailsOnlyIfTracked)
-        {
-            _flagValues[flag.Key] = value;
-            var meta = new FlagMetadata
-            {
-                Variation = variation,
-                DebugEventsUntilDate = flag.DebugEventsUntilDate
-            };
-            if (!detailsOnlyIfTracked || flag.TrackEvents || flag.DebugEventsUntilDate != null)
-            {
-                meta.Version = flag.Version;
-                meta.Reason = reason;
-            }
-            if (flag.TrackEvents)
-            {
-                meta.TrackEvents = true;
-            }
-            _flagMetadata[flag.Key] = meta;
         }
         
         /// <summary>
@@ -151,6 +141,87 @@ namespace LaunchDarkly.Sdk.Server
         {
             return d0.Count == d1.Count && d0.All(kv =>
                 d1.TryGetValue(kv.Key, out var v) && kv.Value.Equals(v));
+        }
+    }
+
+    /// <summary>
+    /// A builder for constructing <see cref="FeatureFlagsState"/> instances.
+    /// </summary>
+    /// <remarks>
+    /// This may be useful in test code. Use <see cref="FeatureFlagsState.Builder"/> to create a new builder.
+    /// </remarks>
+    public class FeatureFlagsStateBuilder
+    {
+        private readonly bool _detailsOnlyIfTracked;
+        private readonly bool _withReasons;
+        private bool _valid = true;
+        private readonly Dictionary<string, LdValue> _flagValues = new Dictionary<string, LdValue>();
+        private readonly Dictionary<string, FlagMetadata> _flagMetadata = new Dictionary<string, FlagMetadata>();
+
+        internal FeatureFlagsStateBuilder(FlagsStateOption[] options)
+        {
+            _detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
+            _withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="FeatureFlagsState"/> with the properties that have been set on the builder.
+        /// </summary>
+        /// <returns>a state object</returns>
+        public FeatureFlagsState Build()
+        {
+            return new FeatureFlagsState(_valid, _flagValues, _flagMetadata);
+        }
+
+        /// <summary>
+        /// Allows the state object to be marked as not valid (i.e. an error occurred, so flags could not be evaluated).
+        /// </summary>
+        /// <param name="valid">true if valid, false if invalid (default is valid)</param>
+        /// <returns>the same builder</returns>
+        public FeatureFlagsStateBuilder Valid(bool valid)
+        {
+            _valid = valid;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the result of a flag evaluation.
+        /// </summary>
+        /// <param name="flagKey">the flag key</param>
+        /// <param name="result">the evaluation result</param>
+        /// <returns></returns>
+        public FeatureFlagsStateBuilder AddFlag(string flagKey, EvaluationDetail<LdValue> result)
+        {
+            return AddFlag(flagKey,
+                result.Value,
+                result.VariationIndex,
+                result.Reason,
+                0,
+                false,
+                null);
+        }
+
+        // This method is defined with internal scope because metadata fields like trackEvents aren't
+        // relevant to the main external use case for the builder (testing server-side code)
+        internal FeatureFlagsStateBuilder AddFlag(string flagKey, LdValue value, int? variationIndex, EvaluationReason reason, int flagVersion, bool flagTrackEvents, long? flagDebugEventsUntilDate)
+        {
+            _flagValues[flagKey] = value;
+            var meta = new FlagMetadata
+            {
+                Variation = variationIndex,
+                DebugEventsUntilDate = flagDebugEventsUntilDate
+            };
+            if (!_detailsOnlyIfTracked || flagTrackEvents || flagDebugEventsUntilDate != null)
+            {
+                meta.Version = flagVersion;
+                meta.Reason = _withReasons ? reason : (EvaluationReason?)null;
+            }
+            if (flagTrackEvents)
+            {
+                meta.TrackEvents = true;
+            }
+            _flagMetadata[flagKey] = meta;
+            return this;
         }
     }
 

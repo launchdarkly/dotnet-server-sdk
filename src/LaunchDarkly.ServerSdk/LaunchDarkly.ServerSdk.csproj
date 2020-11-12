@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>5.11.0</Version>
-    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <Version>6.0.0-alpha.1</Version>
+    <TargetFrameworks>netstandard2.0;net452;net471</TargetFrameworks>
+    <!-- Note: whenever we add or remove supported target frameworks, we must update ServerDiagnosticStore.GetDotNetTargetFramework() -->
     <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/dotnet-server-sdk/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
     <AssemblyName>LaunchDarkly.ServerSdk</AssemblyName>
@@ -14,12 +15,14 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
+
   <ItemGroup Condition="'$(Configuration)'=='Release'">
     <PackageReference Include="LaunchDarkly.CommonSdk.StrongName" Version="5.0.0-beta3" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.0.0-beta3" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
@@ -31,10 +34,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DocumentationFile>bin\Debug\$(TargetFramework)\LaunchDarkly.ServerSdk.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DocumentationFile>bin\Release\$(TargetFramework)\LaunchDarkly.ServerSdk.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\LaunchDarkly.ServerSdk.xml</DocumentationFile>
   </PropertyGroup>
 </Project>

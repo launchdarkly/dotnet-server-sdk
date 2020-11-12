@@ -208,7 +208,7 @@ namespace LaunchDarkly.Sdk.Server
                 return new FeatureFlagsState(false);
             }
 
-            var state = new FeatureFlagsState(true);
+            var builder = new FeatureFlagsStateBuilder(options);
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
@@ -226,18 +226,18 @@ namespace LaunchDarkly.Sdk.Server
                 try
                 {
                     Evaluator.EvalResult result = _evaluator.Evaluate(flag, user, EventFactory.Default);
-                    state.AddFlag(flag, result.Result.Value, result.Result.VariationIndex,
-                        withReasons ? (EvaluationReason?)result.Result.Reason : null, detailsOnlyIfTracked);
+                    builder.AddFlag(flag.Key, result.Result.Value, result.Result.VariationIndex,
+                        result.Result.Reason, flag.Version, flag.TrackEvents, flag.DebugEventsUntilDate);
                 }
                 catch (Exception e)
                 {
                     Log.ErrorFormat("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key, Util.ExceptionMessage(e));
                     Log.Debug(e.ToString(), e);
                     EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
-                    state.AddFlag(flag, LdValue.Null, null, withReasons ? (EvaluationReason?)reason : null, detailsOnlyIfTracked);
+                    builder.AddFlag(flag.Key, new EvaluationDetail<LdValue>(LdValue.Null, null, reason));
                 }
             }
-            return state;
+            return builder.Build();
         }
 
         private EvaluationDetail<T> Evaluate<T>(string featureKey, User user, LdValue defaultValue, LdValue.Converter<T> converter,
