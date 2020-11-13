@@ -69,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         internal HashSet<string> _privateAttributes = new HashSet<string>();
         internal int _userKeysCapacity = DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = DefaultUserKeysFlushInterval;
-        //internal EventSenderFactory eventSenderFactory = null;
+        internal IEventSender _eventSender = null; // used in testing
 
         /// <summary>
         /// Sets whether or not all optional user attributes should be hidden from LaunchDarkly.
@@ -150,6 +150,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             _diagnosticRecordingInterval =
                 diagnosticRecordingInterval.CompareTo(MinimumDiagnosticRecordingInterval) < 0 ?
                 MinimumDiagnosticRecordingInterval : diagnosticRecordingInterval;
+            return this;
+        }
+
+        // Used only in testing
+        internal EventProcessorBuilder EventSender(IEventSender eventSender)
+        {
+            _eventSender = eventSender;
             return this;
         }
 
@@ -249,14 +256,18 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
                 ReadTimeout = context.Configuration.ReadTimeout,
-                ReconnectTime = TimeSpan.FromSeconds(1), // TODO
+                ReconnectTime = TimeSpan.FromSeconds(1), // this isn't the same as the stream reconnect time - it's fixed
                 UserKeysCapacity = _userKeysCapacity,
                 UserKeysFlushInterval = _userKeysFlushInterval
             };
             var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
-            var httpClient = Util.MakeHttpClient(context.Configuration.HttpRequestConfiguration,
-                ServerSideClientEnvironment.Instance);
-            var eventSender = new DefaultEventSender(httpClient, eventsConfig, logger);
+            var eventSender = _eventSender ??
+                new DefaultEventSender(
+                    Util.MakeHttpClient(context.Configuration.HttpRequestConfiguration,
+                        ServerSideClientEnvironment.Instance),
+                    eventsConfig,
+                    logger
+                    );
             return new DefaultEventProcessorWrapper(
                 new DefaultEventProcessor(
                     eventsConfig,
