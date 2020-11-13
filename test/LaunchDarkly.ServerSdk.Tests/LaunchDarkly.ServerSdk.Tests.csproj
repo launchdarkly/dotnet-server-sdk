@@ -6,6 +6,7 @@
     <PackageId>LaunchDarkly.ServerSdk.Tests</PackageId>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <RootNamespace>LaunchDarkly.Sdk.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

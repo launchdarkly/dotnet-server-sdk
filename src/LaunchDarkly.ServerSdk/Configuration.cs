@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Net.Http;
-using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server
@@ -22,7 +20,6 @@ namespace LaunchDarkly.Sdk.Server
     public class Configuration
     {
         private readonly bool _allAttributesPrivate;
-        private readonly Uri _baseUri;
         private readonly TimeSpan _connectionTimeout;
         private readonly IDataSourceFactory _dataSourceFactory;
         private readonly IDataStoreFactory _dataStoreFactory;
@@ -35,29 +32,16 @@ namespace LaunchDarkly.Sdk.Server
         private readonly ILoggingConfigurationFactory _loggingConfigurationFactory;
         private readonly HttpMessageHandler _httpMessageHandler;
         private readonly bool _inlineUsersInEvents;
-        private readonly bool _isStreamingEnabled;
         private readonly bool _offline;
-        private readonly TimeSpan _pollingInterval;
         private readonly ImmutableHashSet<string> _privateAttributeNames;
         private readonly TimeSpan _readTimeout;
-        private readonly TimeSpan _reconnectTime;
         private readonly string _sdkKey;
         private readonly TimeSpan _startWaitTime;
-        private readonly Uri _streamUri;
-        private readonly bool _useLdd;
         private readonly int _userKeysCapacity;
         private readonly TimeSpan _userKeysFlushInterval;
         private readonly string _wrapperName;
         private readonly string _wrapperVersion;
 
-        /// <summary>
-        /// The base URI of the LaunchDarkly server.
-        /// </summary>
-        public Uri BaseUri => _baseUri;
-        /// <summary>
-        /// The base URL of the LaunchDarkly streaming server.
-        /// </summary>
-        public Uri StreamUri => _streamUri;
         /// <summary>
         /// The base URL of the LaunchDarkly analytics event server.
         /// </summary>
@@ -66,13 +50,6 @@ namespace LaunchDarkly.Sdk.Server
         /// The SDK key for your LaunchDarkly environment.
         /// </summary>
         public string SdkKey => _sdkKey;
-        /// <summary>
-        /// Whether or not the streaming API should be used to receive flag updates.
-        /// </summary>
-        /// <remarks>
-        /// This is true by default. Streaming should only be disabled on the advice of LaunchDarkly support.
-        /// </remarks>
-        public bool IsStreamingEnabled => _isStreamingEnabled;
         /// <summary>
         /// The capacity of the events buffer.
         /// </summary>
@@ -91,10 +68,6 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         public TimeSpan EventFlushInterval => _eventFlushInterval;
         /// <summary>
-        /// Set the polling interval (when streaming is disabled). The default value is 30 seconds.
-        /// </summary>
-        public TimeSpan PollingInterval => _pollingInterval;
-        /// <summary>
         /// How long the client constructor will block awaiting a successful connection to
         /// LaunchDarkly.
         /// </summary>
@@ -107,14 +80,6 @@ namespace LaunchDarkly.Sdk.Server
         /// The timeout when reading data from the EventSource API. The default value is 5 minutes.
         /// </summary>
         public TimeSpan ReadTimeout => _readTimeout;
-        /// <summary>
-        /// The reconnect base time for the streaming connection.
-        /// </summary>
-        /// <remarks>
-        /// The streaming connection uses an exponential backoff algorithm (with jitter) for reconnects,
-        /// but will start the backoff with a value near the value specified here. The default value is 1 second.
-        /// </remarks>
-        public TimeSpan ReconnectTime => _reconnectTime;
         /// <summary>
         /// The connection timeout. The default value is 10 seconds.
         /// </summary>
@@ -163,11 +128,6 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         public bool InlineUsersInEvents => _inlineUsersInEvents;
         /// <summary>
-        /// True if this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
-        /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
-        /// </summary>
-        public bool UseLdd => _useLdd;
-        /// <summary>
         /// A factory object that creates an implementation of <see cref="IDataStore"/>, to be used
         /// for holding feature flags and related data received from LaunchDarkly.
         /// </summary>
@@ -189,10 +149,6 @@ namespace LaunchDarkly.Sdk.Server
         /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
         /// receive feature flag data.
         /// </summary>
-        /// <remarks>
-        /// The default is <see cref="Components.DefaultDataSource"/>, but you may provide a custom
-        /// implementation.
-        /// </remarks>
         public IDataSourceFactory DataSourceFactory => _dataSourceFactory;
         /// <summary>
         /// A factory object that creates an implementation of <see cref="ILoggingConfigurationFactory"/>, defining
@@ -223,19 +179,6 @@ namespace LaunchDarkly.Sdk.Server
         /// Version of a wrapper library, to be included in request headers.
         /// </summary>
         public string WrapperVersion => _wrapperVersion;
-
-        /// <summary>
-        /// Default value for <see cref="PollingInterval"/>.
-        /// </summary>
-        public static TimeSpan DefaultPollingInterval = TimeSpan.FromSeconds(30);
-        /// <summary>
-        /// Default value for <see cref="BaseUri"/>.
-        /// </summary>
-        internal static readonly Uri DefaultUri = new Uri("https://app.launchdarkly.com");
-        /// <summary>
-        /// Default value for <see cref="StreamUri"/>.
-        /// </summary>
-        internal static readonly Uri DefaultStreamUri = new Uri("https://stream.launchdarkly.com");
         /// <summary>
         /// Default value for <see cref="EventsUri"/>.
         /// </summary>
@@ -256,10 +199,6 @@ namespace LaunchDarkly.Sdk.Server
         /// Default value for <see cref="ReadTimeout"/>.
         /// </summary>
         internal static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
-        /// <summary>
-        /// Default value for <see cref="ReconnectTime"/>.
-        /// </summary>
-        internal static readonly TimeSpan DefaultReconnectTime = TimeSpan.FromSeconds(1);
         /// <summary>
         /// Default value for <see cref="ConnectionTimeout"/>.
         /// </summary>
@@ -338,7 +277,6 @@ namespace LaunchDarkly.Sdk.Server
         internal Configuration(ConfigurationBuilder builder)
         {
             _allAttributesPrivate = builder._allAttributesPrivate;
-            _baseUri = builder._baseUri;
             _connectionTimeout = builder._connectionTimeout;
             _dataSourceFactory = builder._dataSourceFactory;
             _dataStoreFactory = builder._dataStoreFactory;
@@ -350,19 +288,14 @@ namespace LaunchDarkly.Sdk.Server
             _eventsUri = builder._eventsUri;
             _httpMessageHandler = builder._httpMessageHandler;
             _inlineUsersInEvents = builder._inlineUsersInEvents;
-            _isStreamingEnabled = builder._isStreamingEnabled;
             _loggingConfigurationFactory = builder._loggingConfigurationFactory ?? Components.Logging();
             _offline = builder._offline;
-            _pollingInterval = builder._pollingInterval;
             _privateAttributeNames = builder._privateAttributeNames is null ?
                 ImmutableHashSet.Create<string>() :
                 builder._privateAttributeNames.ToImmutableHashSet();
             _readTimeout = builder._readTimeout;
-            _reconnectTime = builder._reconnectTime;
             _sdkKey = builder._sdkKey;
-            _streamUri = builder._streamUri;
             _startWaitTime = builder._startWaitTime;
-            _useLdd = builder._useLdd;
             _userKeysCapacity = builder._userKeysCapacity;
             _userKeysFlushInterval = builder._userKeysFlushInterval;
             _wrapperName = builder._wrapperName;
@@ -371,7 +304,6 @@ namespace LaunchDarkly.Sdk.Server
         
         internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
         internal IHttpRequestConfiguration HttpRequestConfiguration => new HttpRequestAdapter { Config = this };
-        internal IStreamManagerConfiguration StreamManagerConfiguration => new StreamManagerAdapter { Config = this };
 
         private struct EventProcessorAdapter : IEventProcessorConfiguration
         {
@@ -387,7 +319,7 @@ namespace LaunchDarkly.Sdk.Server
             public bool InlineUsersInEvents => Config.InlineUsersInEvents;
             public IImmutableSet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
             public TimeSpan ReadTimeout => Config.ReadTimeout;
-            public TimeSpan ReconnectTime => Config.ReconnectTime;
+            public TimeSpan ReconnectTime => TimeSpan.FromSeconds(1);
             public int UserKeysCapacity => Config.UserKeysCapacity;
             public TimeSpan UserKeysFlushInterval => Config.UserKeysFlushInterval;
         }
@@ -397,19 +329,6 @@ namespace LaunchDarkly.Sdk.Server
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
             public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
-            public string WrapperName => Config.WrapperName;
-            public string WrapperVersion => Config.WrapperVersion;
-        }
-
-        private struct StreamManagerAdapter : IStreamManagerConfiguration
-        {
-            internal Configuration Config { get; set; }
-            public string HttpAuthorizationKey => Config.SdkKey;
-            public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
-            public TimeSpan HttpClientTimeout => Config.ConnectionTimeout;
-            public TimeSpan ReadTimeout => Config.ReadTimeout;
-            public TimeSpan ReconnectTime => Config.ReconnectTime;
-            public Exception TranslateHttpException(Exception e) => e;
             public string WrapperName => Config.WrapperName;
             public string WrapperVersion => Config.WrapperVersion;
         }

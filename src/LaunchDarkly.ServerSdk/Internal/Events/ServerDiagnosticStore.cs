@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
 {
@@ -9,6 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
     internal class ServerDiagnosticStore : IDiagnosticStore
     {
         private readonly Configuration Config;
+        private readonly BasicConfiguration BasicConfig;
         private readonly DiagnosticEvent InitEvent;
         private readonly DiagnosticId DiagnosticId;
 
@@ -26,10 +29,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         DateTime IDiagnosticStore.DataSince => DateTime.FromBinary(Interlocked.Read(ref DataSince));
         #endregion
 
-        internal ServerDiagnosticStore(Configuration config)
+        internal ServerDiagnosticStore(Configuration config, BasicConfiguration basicConfig)
         {
             DateTime currentTime = DateTime.Now;
             Config = config;
+            BasicConfig = basicConfig;
             DataSince = currentTime.ToBinary();
             DiagnosticId = new DiagnosticId(config.SdkKey, Guid.NewGuid());
             InitEvent = BuildInitEvent(currentTime);
@@ -86,32 +90,56 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         private LdValue InitEventConfig()
         {
             var configInfo = LdValue.BuildObject();
-            configInfo.Add("customBaseURI", !(Configuration.DefaultUri.Equals(Config.BaseUri)));
             configInfo.Add("customEventsURI", !(Configuration.DefaultEventsUri.Equals(Config.EventsUri)));
-            configInfo.Add("customStreamURI", !(Configuration.DefaultStreamUri.Equals(Config.StreamUri)));
             configInfo.Add("eventsCapacity", Config.EventCapacity);
             configInfo.Add("connectTimeoutMillis", Config.ConnectionTimeout.TotalMilliseconds);
             configInfo.Add("socketTimeoutMillis", Config.ReadTimeout.TotalMilliseconds);
             configInfo.Add("eventsFlushIntervalMillis", Config.EventFlushInterval.TotalMilliseconds);
             configInfo.Add("usingProxy", false);
             configInfo.Add("usingProxyAuthenticator", false);
-            configInfo.Add("streamingDisabled", !Config.IsStreamingEnabled);
-            configInfo.Add("usingRelayDaemon", Config.UseLdd);
             configInfo.Add("offline", Config.Offline);
             configInfo.Add("allAttributesPrivate", Config.AllAttributesPrivate);
             configInfo.Add("eventReportingDisabled", false);
-            configInfo.Add("pollingIntervalMillis", (long)Config.PollingInterval.TotalMilliseconds);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
-            configInfo.Add("reconnectTimeMillis", (long)Config.ReconnectTime.TotalMilliseconds);
             configInfo.Add("userKeysCapacity", Config.UserKeysCapacity);
             configInfo.Add("userKeysFlushIntervalMillis", (long)Config.UserKeysFlushInterval.TotalMilliseconds);
             configInfo.Add("inlineUsersInEvents", Config.InlineUsersInEvents);
             configInfo.Add("diagnosticRecordingIntervalMillis", (long)Config.DiagnosticRecordingInterval.TotalMilliseconds);
+
             if (Config.DataStoreFactory != null)
             {
                 configInfo.Add("featureStoreFactory", Config.DataStoreFactory.GetType().Name);
             }
+
+            // Allow each pluggable component to describe its own relevant properties. 
+            MergeComponentProperties(configInfo, Config.DataSourceFactory ?? Components.StreamingDataSource(), null);
+
             return configInfo.Build();
+        }
+
+        private void MergeComponentProperties(LdValue.ObjectBuilder builder, object component,
+            string defaultPropertyName)
+        {
+            if (!(component is IDiagnosticDescription))
+            {
+                if (!string.IsNullOrEmpty(defaultPropertyName))
+                {
+                    builder.Add(defaultPropertyName, "custom");
+                }
+                return;
+            }
+            var componentDesc = (component as IDiagnosticDescription).DescribeConfiguration(BasicConfig);
+            if (!string.IsNullOrEmpty(defaultPropertyName))
+            {
+                builder.Add(defaultPropertyName, componentDesc.IsString ? componentDesc : LdValue.Of("custom"));
+            }
+            else if (componentDesc.Type == LdValueType.Object)
+            {
+                foreach (KeyValuePair<string, LdValue> prop in componentDesc.AsDictionary(LdValue.Convert.Json))
+                {
+                    builder.Add(prop.Key, prop.Value); // TODO: filter allowable properties
+                }
+            }
         }
 
         #endregion

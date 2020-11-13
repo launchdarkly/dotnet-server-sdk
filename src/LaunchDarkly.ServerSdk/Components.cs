@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
-using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
-using LaunchDarkly.Sdk.Server.Internal.DataSources;
-using LaunchDarkly.Sdk.Server.Internal.DataStores;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -19,9 +13,35 @@ namespace LaunchDarkly.Sdk.Server
     public static class Components
     {
         /// <summary>
+        /// Returns a configuration object that disables direct connection with LaunchDarkly for feature
+        /// flag updates.
+        /// </summary>
+        /// <remarks>
+        /// Passing this to <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/> causes the SDK
+        /// not to retrieve feature flag data from LaunchDarkly, regardless of any other configuration. This is
+        /// normally done if you are using the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">Relay Proxy</a>
+        /// in "daemon mode", where an external process-- the Relay Proxy-- connects to LaunchDarkly and populates
+        /// a persistent data store with the feature flag data. The data store could also be populated by
+        /// another process that is running the LaunchDarkly SDK. If there is no external process updating
+        /// the data store, then the SDK will not have any feature flag data and will return application
+        /// default values only.
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .DataSource(Components.ExternalUpdatesOnly)
+        ///         .DataStore(Components.PersistentDataStore(Redis.DataStore())) // assuming the Relay Proxy is using Redis
+        ///         .Build();
+        /// </example>
+        public static IDataSourceFactory ExternalUpdatesOnly => ComponentsImpl.NullDataSourceFactory.Instance;
+
+        /// <summary>
         /// Returns a factory for the default in-memory implementation of <see cref="IDataStore"/>.
         /// </summary>
-        public static IDataStoreFactory InMemoryDataStore => InMemoryDataStoreFactory.Instance;
+        /// <remarks>
+        /// Since it is the default, you do not normally need to call this method, unless you need to create
+        /// a data store instance for testing purposes.
+        /// </remarks>
+        public static IDataStoreFactory InMemoryDataStore => ComponentsImpl.InMemoryDataStoreFactory.Instance;
 
         /// <summary>
         /// Returns a configuration builder for the SDK's logging configuration.
@@ -157,167 +177,79 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <summary>
+        /// Returns a configurable factory for using polling mode to get feature flag data.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This is not the default behavior; by default, the SDK uses a streaming connection to receive feature flag
+        /// data from LaunchDarkly. In polling mode, the SDK instead makes a new HTTP request to LaunchDarkly at regular
+        /// intervals. HTTP caching allows it to avoid redundantly downloading data if there have been no changes, but
+        /// polling is still less efficient than streaming and should only be used on the advice of LaunchDarkly support.
+        /// </para>
+        /// <para>
+        /// To use polling mode, call this method to obtain a builder, change its properties with the
+        /// <see cref="PollingDataSourceBuilder"/> methods, and pass it to
+        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+        /// </para>
+        /// <para>
+        /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will superseded this
+        /// setting and completely disable network requests.
+        /// </para>
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .DataSource(Components.PollingDataSource()
+        ///             .PollInterval(TimeSpan.FromSeconds(45)))
+        ///         .Build();
+        /// </example>
+        /// <returns>a builder for setting polling connection properties</returns>
+        /// <see cref="StreamingDataSource"/>
+        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>
+        public static PollingDataSourceBuilder PollingDataSource() =>
+            new PollingDataSourceBuilder();
+
+        /// <summary>
+        /// Returns a configurable factory for using streaming mode to get feature flag data.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// By default, the SDK uses a streaming connection to receive feature flag data from LaunchDarkly. To use
+        /// the default behavior, you do not need to call this method. However, if you want to customize the behavior
+        /// of the connection, call this method to obtain a builder, change its properties with the
+        /// <see cref="StreamingDataSourceBuilder"/> methods, and pass it to
+        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+        /// </para>
+        /// <para>
+        /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will superseded this
+        /// setting and completely disable network requests.
+        /// </para>
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .DataSource(Components.StreamingDataSource()
+        ///             .InitialReconnectDelay(TimeSpan.FromMilliseconds(500)))
+        ///         .Build();
+        /// </example>
+        /// <returns>a builder for setting streaming connection properties</returns>
+        /// <see cref="PollingDataSource"/>
+        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>
+        public static StreamingDataSourceBuilder StreamingDataSource() =>
+            new StreamingDataSourceBuilder();
+
+        /// <summary>
         /// Returns a factory for the default implementation of <see cref="IEventProcessor"/>, which
         /// forwards all analytics events to LaunchDarkly (unless the client is offline).
         /// </summary>
-        public static IEventProcessorFactory DefaultEventProcessor => DefaultEventProcessorFactory.Instance;
+        public static IEventProcessorFactory DefaultEventProcessor =>
+            ComponentsImpl.DefaultEventProcessorFactory.Instance;
 
         /// <summary>
         /// Returns a factory for a null implementation of <see cref="IEventProcessor"/>, which will
         /// discard all analytics events and not send them to LaunchDarkly, regardless of any
         /// other configuration.
         /// </summary>
-        public static IEventProcessorFactory NullEventProcessor => NullEventProcessorFactory.Instance;
-
-        /// <summary>
-        /// Returns a factory for the default implementation of <see cref="IDataSource"/>, which
-        /// receives feature flag data from LaunchDarkly using either streaming or polling as configured
-        /// (or does nothing if the client is offline, or in LDD mode).
-        /// </summary>
-        public static IDataSourceFactory DefaultDataSource => DefaultDataSourceFactory.Instance;
-
-        /// <summary>
-        /// Returns a factory for a null implementation of <see cref="IDataSource"/>, which
-        /// does not connect to LaunchDarkly, regardless of any other configuration.
-        /// </summary>
-        public static IDataSourceFactory NullDataSource => NullDataSourceFactory.Instance;
+        public static IEventProcessorFactory NullEventProcessor =>
+            ComponentsImpl.NullEventProcessorFactory.Instance;
     }
 
-    internal class DefaultEventProcessorFactory : IEventProcessorFactory
-    {
-        internal static readonly DefaultEventProcessorFactory Instance = new DefaultEventProcessorFactory();
-
-        private DefaultEventProcessorFactory() { }
-        
-        public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor CreateEventProcessor(LdClientContext context) {
-            if (context.Configuration.Offline)
-            {
-                return new NullEventProcessor();
-            }
-            else
-            {
-                var logger = context.Logger.SubLogger(LogNames.EventsSubLog);
-                var eventsConfig = context.Configuration.EventProcessorConfiguration;
-                var httpClient = Util.MakeHttpClient(context.Configuration.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
-                var eventSender = new DefaultEventSender(httpClient, eventsConfig, logger);
-                return new DelegatingEventProcessor(new DefaultEventProcessor(
-                    eventsConfig,
-                    eventSender,
-                    new DefaultUserDeduplicator(context.Configuration),
-                    context.DiagnosticStore,
-                    null,
-                    logger,
-                    null
-                ));
-            }
-        }
-    }
-
-    internal class NullEventProcessorFactory : IEventProcessorFactory
-    {
-        internal static readonly NullEventProcessorFactory Instance = new NullEventProcessorFactory();
-
-        private NullEventProcessorFactory() { }
-
-        public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor CreateEventProcessor(LdClientContext config) => new NullEventProcessor();
-    }
-
-    internal class InMemoryDataStoreFactory : IDataStoreFactory
-    {
-        internal static readonly InMemoryDataStoreFactory Instance = new InMemoryDataStoreFactory();
-
-        public IDataStore CreateDataStore(LdClientContext context) => new InMemoryDataStore();
-    }
-
-    internal class DefaultDataSourceFactory : IDataSourceFactory
-    {
-        internal static readonly DefaultDataSourceFactory Instance = new DefaultDataSourceFactory();
-
-        private DefaultDataSourceFactory() { }
-
-        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
-        {
-            if (context.Configuration.Offline)
-            {
-                context.Logger.Info("Starting Launchdarkly client in offline mode.");
-                return NullDataSource.Instance;
-            }
-            else if (context.Configuration.UseLdd)
-            {
-                context.Logger.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
-                return NullDataSource.Instance;
-            }
-            else
-            {
-                if (context.Configuration.IsStreamingEnabled)
-                {
-                    return new StreamProcessor(context, dataStoreUpdates, null);
-                }
-                else
-                {
-                    context.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
-                    FeatureRequestor requestor = new FeatureRequestor(context);
-                    return new PollingProcessor(context, requestor, dataStoreUpdates);
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Used when the client is offline or in LDD mode.
-    /// </summary>
-    internal class NullDataSource : IDataSource
-    {
-        internal static readonly NullDataSource Instance = new NullDataSource();
-
-        private NullDataSource() { }
-
-        Task<bool> IDataSource.Start() => Task.FromResult(true);
-
-        bool IDataSource.Initialized() => true;
-
-        void IDisposable.Dispose() { }
-    }
-
-    internal class NullDataSourceFactory : IDataSourceFactory
-    {
-        internal static readonly NullDataSourceFactory Instance = new NullDataSourceFactory();
-
-        private NullDataSourceFactory() { }
-
-        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
-            NullDataSource.Instance;
-    }
-
-    internal class DelegatingEventProcessor : LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor
-    {
-        private readonly LaunchDarkly.Sdk.Interfaces.IEventProcessor _impl;
-
-        internal DelegatingEventProcessor(LaunchDarkly.Sdk.Interfaces.IEventProcessor impl)
-        {
-            _impl = impl;
-        }
-
-        public void SendEvent(Event e)
-        {
-            _impl.SendEvent(e);
-        }
-
-        public void Flush()
-        {
-            _impl.Flush();
-        }
-
-        public void Dispose()
-        {
-            _impl.Dispose();
-        }
-    }
-
-    internal class NullEventProcessor : LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor
-    {
-        public void SendEvent(Event e) { }
-        public void Flush() { }
-        public void Dispose() { }
-    }
 }

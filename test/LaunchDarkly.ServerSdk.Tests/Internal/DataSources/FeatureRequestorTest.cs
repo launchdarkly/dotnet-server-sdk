@@ -14,15 +14,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class FeatureRequestorTest
     {
+        private const string sdkKey = "SDK_KEY";
         private const string AllDataJson = @"{""flags"":{""flag1"":{""key"":""flag1"",""version"":1}},""segments"":{""seg1"":{""key"":""seg1"",""version"":2}}}";
         
         private IFeatureRequestor MakeRequestor(FluentMockServer server)
         {
-            var config = Configuration.Builder("key")
-                .BaseUri(new Uri(server.Urls[0]))
+            var config = Configuration.Builder(sdkKey)
                 .ConnectionTimeout(TimeSpan.FromDays(1))
                 .Build();
-            return new FeatureRequestor(new LdClientContext(config));
+            return new FeatureRequestor(
+                new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), config),
+                new Uri(server.Urls[0]));
         }
 
         [Fact]

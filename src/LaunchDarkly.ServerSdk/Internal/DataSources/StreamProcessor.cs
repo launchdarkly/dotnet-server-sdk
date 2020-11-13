@@ -4,9 +4,6 @@ using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using LaunchDarkly.Sdk.Internal;
-using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -21,7 +18,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private const String PATCH = "patch";
         private const String DELETE = "delete";
 
-        private readonly Configuration _config;
         private readonly StreamManager _streamManager;
         private readonly IDataStoreUpdates _dataStoreUpdates;
         private readonly Logger _log;
@@ -29,25 +25,32 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         internal StreamProcessor(
             LdClientContext context,
             IDataStoreUpdates dataStoreUpdates,
+            Uri baseUri,
+            TimeSpan initialReconnectDelay,
             StreamManager.EventSourceCreator eventSourceCreator
             )
         {
-            _config = context.Configuration;
-            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
+
+            var streamProperties = new StreamProperties(
+                new Uri(baseUri, "/all"),
+                HttpMethod.Get,
+                null
+                );
+            var streamManagerConfig = new StreamManagerConfigImpl
+            {
+                Config = context.Configuration,
+                InitialReconnectDelay = initialReconnectDelay
+            };
             _streamManager = new StreamManager(this,
-                MakeStreamProperties(_config),
-                _config.StreamManagerConfiguration,
+                streamProperties,
+                streamManagerConfig,
                 ServerSideClientEnvironment.Instance,
                 eventSourceCreator,
                 context.DiagnosticStore,
-                _log);
+                _log
+                );
             _dataStoreUpdates = dataStoreUpdates;
-        }
-
-        private StreamProperties MakeStreamProperties(Configuration config)
-        {
-            return new StreamProperties(new Uri(config.StreamUri, "/all"),
-                HttpMethod.Get, null);
         }
 
         #region IDataSource
@@ -187,6 +190,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 Path = path;
                 Version = version;
             }
+        }
+
+        private struct StreamManagerConfigImpl : IStreamManagerConfiguration
+        {
+            internal Configuration Config { get; set; }
+            internal TimeSpan InitialReconnectDelay { get; set; }
+
+            public string HttpAuthorizationKey => Config.SdkKey;
+            public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
+            public TimeSpan HttpClientTimeout => Config.ConnectionTimeout;
+            public TimeSpan ReadTimeout => Config.ReadTimeout;
+            public TimeSpan ReconnectTime => InitialReconnectDelay;
+            public Exception TranslateHttpException(Exception e) => e;
+            public string WrapperName => Config.WrapperName;
+            public string WrapperVersion => Config.WrapperVersion;
         }
     }
 }

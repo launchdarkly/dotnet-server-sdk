@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly TestEventSourceFactory _eventSourceFactory;
         readonly InMemoryDataStore _dataStore;
         readonly IDataStoreUpdates _dataStoreUpdates;
-        Server.Configuration _config;
+        Configuration _config;
 
         public StreamProcessorTest()
         {
@@ -39,7 +39,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new InMemoryDataStore();
             _dataStoreUpdates = new DataStoreUpdates(_dataStore);
-            _config = Server.Configuration.Builder(SDK_KEY)
+            _config = Configuration.Builder(SDK_KEY)
+                .DataSource(Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create()))
                 .DataStore(TestUtils.SpecificDataStore(_dataStore))
                 .Build();
         }
@@ -47,7 +48,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void StreamUriHasCorrectEndpoint()
         {
-            _config = Server.Configuration.Builder(_config).StreamUri(new Uri("http://stream.test.com")).Build();
+            _config = Server.Configuration.Builder(_config)
+                .DataSource(
+                    Components.StreamingDataSource()
+                        .BaseUri(new Uri("http://stream.test.com"))
+                        .EventSourceCreator(_eventSourceFactory.Create())
+                    )
+                .Build();
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.Equal(new Uri("http://stream.test.com/all"),
                 _eventSourceFactory.ReceivedProperties.StreamUri);
@@ -188,8 +195,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         
         private StreamProcessor CreateProcessor()
         {
-            return new StreamProcessor(new LdClientContext(_config), _dataStoreUpdates,
-                _eventSourceFactory.Create());
+            var basicConfig = new BasicConfiguration(SDK_KEY, false, TestUtils.NullLogger);
+            return _config.DataSourceFactory.CreateDataSource(
+                new LdClientContext(basicConfig, _config),
+                _dataStoreUpdates
+                ) as StreamProcessor;
         }
 
         private StreamProcessor CreateAndStartProcessor()

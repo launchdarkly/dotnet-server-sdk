@@ -46,13 +46,6 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder AllAttributesPrivate(bool allAttributesPrivate);
 
         /// <summary>
-        /// Sets the base URI of the LaunchDarkly server.
-        /// </summary>
-        /// <param name="baseUri">the base URI</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder BaseUri(Uri baseUri);
-
-        /// <summary>
         /// Sets the connection timeout. The default value is 10 seconds.
         /// </summary>
         /// <param name="connectionTimeout">the connection timeout</param>
@@ -60,13 +53,23 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout);
 
         /// <summary>
-        /// Sets the implementation of <see cref="IDataSource"/> to be used for receiving feature flag data.
+        /// Sets the implementation of the component that receives feature flag data from LaunchDarkly,
+        /// using a factory object.
         /// </summary>
         /// <remarks>
-        /// The default is <see cref="Components.DefaultDataSource"/>, but you may choose to use a custom
-        /// implementation (for instance, a test fixture).
+        /// <para>
+        /// Depending on the implementation, the factory may be a builder that allows you to set other
+        /// allows you to set other configuration options as well.
+        /// </para>
+        /// <para>
+        /// The default is <see cref="Components.StreamingDataSource"/>. You may instead use
+        /// <see cref="Components.PollingDataSource"/>, <see cref="Components.ExternalUpdatesOnly"/>, or a
+        /// test fixture such as <see cref="Files.FileComponents.FileDataSource"/>. See those methods for
+        /// details on how to configure them.
+        /// </para>
         /// </remarks>
         /// <param name="dataSourceFactory">the factory object</param>
+        /// <returns>the same builder</returns>
         IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory);
 
         /// <summary>
@@ -179,16 +182,6 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder InlineUsersInEvents(bool inlineUsersInEvents);
 
         /// <summary>
-        /// Sets whether or not the streaming API should be used to receive flag updates.
-        /// </summary>
-        /// <remarks>
-        /// This is true by default. Streaming should only be disabled on the advice of LaunchDarkly support.
-        /// </remarks>
-        /// <param name="isStreamingEnabled">true if the streaming API should be used</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder IsStreamingEnabled(bool isStreamingEnabled);
-
-        /// <summary>
         /// Sets the SDK's logging configuration, using a factory object.
         /// </summary>
         /// <remarks>
@@ -216,16 +209,6 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder Offline(bool offline);
 
         /// <summary>
-        /// Sets the polling interval (when streaming is disabled).
-        /// </summary>
-        /// <remarks>
-        /// Values less than the default of 30 seconds will be changed to the default.
-        /// </remarks>
-        /// <param name="pollingInterval">the rule update polling interval</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder PollingInterval(TimeSpan pollingInterval);
-
-        /// <summary>
         /// Marks an attribute name as private.
         /// </summary>
         /// <remarks>
@@ -248,17 +231,6 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder ReadTimeout(TimeSpan readTimeout);
 
         /// <summary>
-        /// Sets the reconnect base time for the streaming connection.
-        /// </summary>
-        /// <remarks>
-        /// The streaming connection uses an exponential backoff algorithm (with jitter) for reconnects, but
-        /// will start the backoff with a value near the value specified here. The default value is 1 second.
-        /// </remarks>
-        /// <param name="reconnectTime">the reconnect time base value</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder ReconnectTime(TimeSpan reconnectTime);
-
-        /// <summary>
         /// Sets the SDK key for your LaunchDarkly environment.
         /// </summary>
         /// <param name="sdkKey">the SDK key</param>
@@ -276,25 +248,6 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="startWaitTime">the length of time to wait</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder StartWaitTime(TimeSpan startWaitTime);
-
-        /// <summary>
-        /// Sets the base URI of the LaunchDarkly streaming server.
-        /// </summary>
-        /// <param name="streamUri">the stream URI</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder StreamUri(Uri streamUri);
-
-        /// <summary>
-        /// Sets whether this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
-        /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
-        /// </summary>
-        /// <remarks>
-        /// For this to work, you must also be using a
-        /// <a href="https://docs.launchdarkly.com/docs/using-a-persistent-feature-store">persistent data store</a>.
-        /// </remarks>
-        /// <param name="useLdd">true to use the relay in daemon mode; false to use streaming or polling</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder UseLdd(bool useLdd);
 
         /// <summary>
         /// Sets the number of user keys that the event processor can remember at any one time.
@@ -339,7 +292,6 @@ namespace LaunchDarkly.Sdk.Server
     {
         // Let's try to keep these properties and methods alphabetical so they're easy to find
         internal bool _allAttributesPrivate = false;
-        internal Uri _baseUri = Configuration.DefaultUri;
         internal TimeSpan _connectionTimeout = Configuration.DefaultConnectionTimeout;
         internal IDataSourceFactory _dataSourceFactory = null;
         internal IDataStoreFactory _dataStoreFactory = null;
@@ -355,13 +307,10 @@ namespace LaunchDarkly.Sdk.Server
         internal ILogAdapter _logAdapter = null;
         internal ILoggingConfigurationFactory _loggingConfigurationFactory = null;
         internal bool _offline = false;
-        internal TimeSpan _pollingInterval = Configuration.DefaultPollingInterval;
         internal ISet<string> _privateAttributeNames = null;
         internal TimeSpan _readTimeout = Configuration.DefaultReadTimeout;
-        internal TimeSpan _reconnectTime = Configuration.DefaultReconnectTime;
         internal string _sdkKey;
         internal TimeSpan _startWaitTime = Configuration.DefaultStartWaitTime;
-        internal Uri _streamUri = Configuration.DefaultStreamUri;
         internal bool _useLdd = false;
         internal int _userKeysCapacity = Configuration.DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = Configuration.DefaultUserKeysFlushInterval;
@@ -376,7 +325,6 @@ namespace LaunchDarkly.Sdk.Server
         public ConfigurationBuilder(Configuration copyFrom)
         {
             _allAttributesPrivate = copyFrom.AllAttributesPrivate;
-            _baseUri = copyFrom.BaseUri;
             _connectionTimeout = copyFrom.ConnectionTimeout;
             _dataSourceFactory = copyFrom.DataSourceFactory;
             _dataStoreFactory = copyFrom.DataStoreFactory;
@@ -388,18 +336,13 @@ namespace LaunchDarkly.Sdk.Server
             _eventsUri = copyFrom.EventsUri;
             _httpMessageHandler = copyFrom.HttpMessageHandler;
             _inlineUsersInEvents = copyFrom.InlineUsersInEvents;
-            _isStreamingEnabled = copyFrom.IsStreamingEnabled;
             _loggingConfigurationFactory = copyFrom.LoggingConfigurationFactory;
             _offline = copyFrom.Offline;
-            _pollingInterval = copyFrom.PollingInterval;
             _privateAttributeNames = copyFrom.PrivateAttributeNames is null ? null :
                 new HashSet<string>(copyFrom.PrivateAttributeNames);
             _readTimeout = copyFrom.ReadTimeout;
-            _reconnectTime = copyFrom.ReconnectTime;
             _sdkKey = copyFrom.SdkKey;
             _startWaitTime = copyFrom.StartWaitTime;
-            _streamUri = copyFrom.StreamUri;
-            _useLdd = copyFrom.UseLdd;
             _userKeysCapacity = copyFrom.UserKeysCapacity;
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
             _wrapperName = copyFrom.WrapperName;
@@ -417,12 +360,6 @@ namespace LaunchDarkly.Sdk.Server
             return this;
         }
 
-        public IConfigurationBuilder BaseUri(Uri baseUri)
-        {
-            _baseUri = baseUri;
-            return this;
-        }
-        
         public IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout)
         {
             _connectionTimeout = connectionTimeout;
@@ -515,20 +452,6 @@ namespace LaunchDarkly.Sdk.Server
             return this;
         }
 
-        public IConfigurationBuilder PollingInterval(TimeSpan pollingInterval)
-        {
-            if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
-            {
-                //Log.Warn("PollingInterval cannot be less than the default of 30 seconds.");
-                _pollingInterval = Configuration.DefaultPollingInterval;
-            }
-            else
-            {
-                _pollingInterval = pollingInterval;
-            }
-            return this;
-        }
-
         public IConfigurationBuilder PrivateAttribute(string privateAttributeName)
         {
             if (_privateAttributeNames is null)
@@ -545,12 +468,6 @@ namespace LaunchDarkly.Sdk.Server
             return this;
         }
 
-        public IConfigurationBuilder ReconnectTime(TimeSpan reconnectTime)
-        {
-            _reconnectTime = reconnectTime;
-            return this;
-        }
-
         public IConfigurationBuilder SdkKey(string sdkKey)
         {
             _sdkKey = sdkKey;
@@ -560,12 +477,6 @@ namespace LaunchDarkly.Sdk.Server
         public IConfigurationBuilder StartWaitTime(TimeSpan startWaitTime)
         {
             _startWaitTime = startWaitTime;
-            return this;
-        }
-
-        public IConfigurationBuilder StreamUri(Uri streamUri)
-        {
-            _streamUri = streamUri;
             return this;
         }
 

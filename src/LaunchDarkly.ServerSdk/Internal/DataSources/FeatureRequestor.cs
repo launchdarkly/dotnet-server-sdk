@@ -23,14 +23,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
         private readonly Logger _log;
 
-        internal FeatureRequestor(LdClientContext context)
+        internal FeatureRequestor(LdClientContext context, Uri baseUri)
         {
             _config = context.Configuration;
-            _allUri = new Uri(_config.BaseUri.AbsoluteUri + "sdk/latest-all");
-            _flagsUri = new Uri(_config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
-            _segmentsUri = new Uri(_config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
+            _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
+            _flagsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-flags/");
+            _segmentsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-segments/");
             _httpClient = Util.MakeHttpClient(_config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
-            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         void IDisposable.Dispose()
