@@ -154,6 +154,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         // Used only in testing
+        internal EventProcessorBuilder DiagnosticRecordingIntervalNoMinimum(TimeSpan diagnosticRecordingInterval)
+        {
+            _diagnosticRecordingInterval = diagnosticRecordingInterval;
+            return this;
+        }
+
+        // Used only in testing
         internal EventProcessorBuilder EventSender(IEventSender eventSender)
         {
             _eventSender = eventSender;

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using LaunchDarkly.Sdk.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -172,5 +175,44 @@ namespace LaunchDarkly.Sdk.Server
         public void Flush() { }
 
         public void Dispose() { }
+    }
+
+    public class TestEventSender : LaunchDarkly.Sdk.Internal.Events.IEventSender
+    {
+        public BlockingCollection<Params> Calls = new BlockingCollection<Params>();
+
+        public void Dispose() { }
+
+        public struct Params
+        {
+            public EventDataKind Kind;
+            public string Data;
+            public int EventCount;
+        }
+
+        public Task<EventSenderResult> SendEventDataAsync(EventDataKind kind, string data, int eventCount)
+        {
+            Calls.Add(new Params { Kind = kind, Data = data, EventCount = eventCount });
+            return Task.FromResult(new EventSenderResult(DeliveryStatus.Succeeded, null));
+        }
+
+        public Params RequirePayload(TimeSpan timeout)
+        {
+            Params result;
+            if (!Calls.TryTake(out result, timeout))
+            {
+                throw new System.Exception("did not receive an event payload");
+            }
+            return result;
+        }
+
+        public void RequireNoPayloadSent(TimeSpan timeout)
+        {
+            Params result;
+            if (Calls.TryTake(out result, timeout))
+            {
+                throw new System.Exception("received an unexpected event payload");
+            }
+        }
     }
 }
