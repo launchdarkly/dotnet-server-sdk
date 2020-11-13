@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     /// <summary>
-    /// Implementation of file monitoring using FileSystemWatcher. In .NET Standard 1.x, that class
-    /// is unavailable so we will use FilePollingReloader instead.
+    /// Implementation of file monitoring using FileSystemWatcher.
     /// </summary>
-    class FileWatchingReloader : IDisposable
+    internal sealed class FileWatchingReloader : IDisposable
     {
         private readonly ISet<string> _filePaths;
         private readonly Action _reload;

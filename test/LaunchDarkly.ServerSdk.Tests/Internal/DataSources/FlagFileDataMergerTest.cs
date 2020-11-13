@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class FlagFileDataMergerTest
     {
@@ -38,7 +37,7 @@ namespace LaunchDarkly.Sdk.Server.Files
                 }
             };
 
-            FlagFileDataMerger merger = new FlagFileDataMerger(DuplicateKeysHandling.Throw);
+            FlagFileDataMerger merger = new FlagFileDataMerger(FileDataTypes.DuplicateKeysHandling.Throw);
 
             Exception err = Assert.Throws<Exception>(() =>
             {
@@ -77,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server.Files
                 }
             };
 
-            FlagFileDataMerger merger = new FlagFileDataMerger(DuplicateKeysHandling.Ignore);
+            FlagFileDataMerger merger = new FlagFileDataMerger(FileDataTypes.DuplicateKeysHandling.Ignore);
             merger.AddToData(fileData, flagData, segmentData);
 
             ItemDescriptor postFeatureFlag = flagData[key];
