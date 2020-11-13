@@ -14,6 +14,7 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <RootNamespace>LaunchDarkly.Sdk.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Release'">
@@ -24,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
+    <PackageReference Include="LaunchDarkly.Logging" Version="1.0.0-alpha.2" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -13,6 +14,8 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class TestUtils
     {
+        public static readonly Logger NullLogger = Logs.None.Logger("");
+
         public static void AssertJsonEqual(JToken expected, JToken actual)
         {
             if (!JToken.DeepEquals(expected, actual))

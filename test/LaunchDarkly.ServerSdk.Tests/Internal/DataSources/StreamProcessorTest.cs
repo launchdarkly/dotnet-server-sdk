@@ -188,7 +188,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         
         private StreamProcessor CreateProcessor()
         {
-            return new StreamProcessor(_config, _dataStoreUpdates, _eventSourceFactory.Create(), null);
+            return new StreamProcessor(new LdClientContext(_config), _dataStoreUpdates,
+                _eventSourceFactory.Create());
         }
 
         private StreamProcessor CreateAndStartProcessor()

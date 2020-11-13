@@ -1,13 +1,10 @@
 using System.Collections.Generic;
-using Common.Logging;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
     internal sealed class Clause
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Clause));
-
         [JsonProperty(PropertyName = "attribute")]
         internal string Attribute { get; private set; }
         [JsonProperty(PropertyName = "op")]

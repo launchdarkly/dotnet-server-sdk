@@ -19,6 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly InMemoryDataStore _dataStore;
         readonly IDataStoreUpdates _dataStoreUpdates;
         readonly Configuration _config;
+        readonly LdClientContext _context;
 
         public PollingProcessorTest()
         {
@@ -27,6 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _dataStore = new InMemoryDataStore();
             _dataStoreUpdates = new DataStoreUpdates(_dataStore);
             _config = Configuration.Default("SDK_KEY");
+            _context = new LdClientContext(_config);
         }
 
         [Fact]
@@ -34,7 +36,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             AllData allData = MakeAllData();
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
             {
                 var initTask = ((IDataSource)pp).Start();
                 initTask.Wait();
@@ -49,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             AllData allData = MakeAllData();
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
             {
                 var initTask = ((IDataSource)pp).Start();
                 initTask.Wait();
@@ -61,7 +63,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void ConnectionErrorDoesNotCauseImmediateFailure()
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(new InvalidOperationException("no"));
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
             {
                 var startTime = DateTime.Now;
                 var initTask = ((IDataSource)pp).Start();
@@ -106,7 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
             {
                 var initTask = ((IDataSource)pp).Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(1000));
@@ -119,7 +121,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
             {
                 var initTask = ((IDataSource)pp).Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));

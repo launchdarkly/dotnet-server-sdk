@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using Common.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -16,7 +15,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     /// </remarks>
     internal class InMemoryDataStore : IDataStore
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(InMemoryDataStore));
         private readonly object WriterLock = new object();
         private volatile ImmutableDictionary<DataKind, ImmutableDictionary<string, ItemDescriptor>> Items =
             ImmutableDictionary<DataKind, ImmutableDictionary<string, ItemDescriptor>>.Empty;

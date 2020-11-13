@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Net.Http;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
@@ -31,6 +32,7 @@ namespace LaunchDarkly.Sdk.Server
         private readonly int _eventCapacity;
         private readonly IEventProcessorFactory _eventProcessorFactory;
         private readonly Uri _eventsUri;
+        private readonly ILoggingConfigurationFactory _loggingConfigurationFactory;
         private readonly HttpMessageHandler _httpMessageHandler;
         private readonly bool _inlineUsersInEvents;
         private readonly bool _isStreamingEnabled;
@@ -193,6 +195,15 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         public IDataSourceFactory DataSourceFactory => _dataSourceFactory;
         /// <summary>
+        /// A factory object that creates an implementation of <see cref="ILoggingConfigurationFactory"/>, defining
+        /// the SDK's logging configuration.
+        /// </summary>
+        /// <remarks>
+        /// SDK components should not use this property directly; instead, the SDK client will use it to create a
+        /// logger instance which will be in <see cref="LdClientContext"/>.
+        /// </remarks>
+        public ILoggingConfigurationFactory LoggingConfigurationFactory => _loggingConfigurationFactory;
+        /// <summary>
         /// A string that will be sent to LaunchDarkly to identify the SDK type.
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
@@ -340,6 +351,7 @@ namespace LaunchDarkly.Sdk.Server
             _httpMessageHandler = builder._httpMessageHandler;
             _inlineUsersInEvents = builder._inlineUsersInEvents;
             _isStreamingEnabled = builder._isStreamingEnabled;
+            _loggingConfigurationFactory = builder._loggingConfigurationFactory ?? Components.Logging();
             _offline = builder._offline;
             _pollingInterval = builder._pollingInterval;
             _privateAttributeNames = builder._privateAttributeNames is null ?

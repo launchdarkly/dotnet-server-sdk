@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using Common.Logging;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
@@ -189,6 +189,26 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder IsStreamingEnabled(bool isStreamingEnabled);
 
         /// <summary>
+        /// Sets the SDK's logging configuration, using a factory object.
+        /// </summary>
+        /// <remarks>
+        /// This object is normally a configuration builder obtained from <see cref="Components.Logging()"/>
+        /// which has methods for setting individual logging-related properties. As a shortcut for disabling
+        /// logging, you may use <see cref="Components.NoLogging"/> instead.
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .Logging(Components.Logging().Level(LogLevel.Warn)))
+        ///         .Build();
+        /// </example>
+        /// <param name="factory">the factory object</param>
+        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.Logging()" />
+        /// <seealso cref="Components.Logging(ILogAdapter) "/>
+        /// <seealso cref="Components.NoLogging" />
+        IConfigurationBuilder Logging(ILoggingConfigurationFactory factory);
+
+        /// <summary>
         /// Sets whether or not this client is offline. If true, no calls to Launchdarkly will be made.
         /// </summary>
         /// <param name="offline">true if the client should remain offline</param>
@@ -317,8 +337,6 @@ namespace LaunchDarkly.Sdk.Server
 
     class ConfigurationBuilder : IConfigurationBuilder
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(ConfigurationBuilder));
-
         // Let's try to keep these properties and methods alphabetical so they're easy to find
         internal bool _allAttributesPrivate = false;
         internal Uri _baseUri = Configuration.DefaultUri;
@@ -334,6 +352,8 @@ namespace LaunchDarkly.Sdk.Server
         internal HttpMessageHandler _httpMessageHandler = new HttpClientHandler();
         internal bool _inlineUsersInEvents = false;
         internal bool _isStreamingEnabled = true;
+        internal ILogAdapter _logAdapter = null;
+        internal ILoggingConfigurationFactory _loggingConfigurationFactory = null;
         internal bool _offline = false;
         internal TimeSpan _pollingInterval = Configuration.DefaultPollingInterval;
         internal ISet<string> _privateAttributeNames = null;
@@ -369,6 +389,7 @@ namespace LaunchDarkly.Sdk.Server
             _httpMessageHandler = copyFrom.HttpMessageHandler;
             _inlineUsersInEvents = copyFrom.InlineUsersInEvents;
             _isStreamingEnabled = copyFrom.IsStreamingEnabled;
+            _loggingConfigurationFactory = copyFrom.LoggingConfigurationFactory;
             _offline = copyFrom.Offline;
             _pollingInterval = copyFrom.PollingInterval;
             _privateAttributeNames = copyFrom.PrivateAttributeNames is null ? null :
@@ -430,7 +451,6 @@ namespace LaunchDarkly.Sdk.Server
         {
             if (diagnosticRecordingInterval.CompareTo(Configuration.MinimumDiagnosticRecordingInterval) < 0)
             {
-                Log.Warn("DiagnosticRecordingInterval cannot be less than the minimum of 1 minute.");
                 _diagnosticRecordingInterval = Configuration.MinimumDiagnosticRecordingInterval;
             }
             else
@@ -482,6 +502,12 @@ namespace LaunchDarkly.Sdk.Server
             return this;
         }
 
+        public IConfigurationBuilder Logging(ILoggingConfigurationFactory factory)
+        {
+            _loggingConfigurationFactory = factory;
+            return this;
+        }
+
         public IConfigurationBuilder Offline(bool offline)
         {
             _offline = offline;
@@ -492,7 +518,6 @@ namespace LaunchDarkly.Sdk.Server
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
             {
-                Log.Warn("PollingInterval cannot be less than the default of 30 seconds.");
                 _pollingInterval = Configuration.DefaultPollingInterval;
             }
             else

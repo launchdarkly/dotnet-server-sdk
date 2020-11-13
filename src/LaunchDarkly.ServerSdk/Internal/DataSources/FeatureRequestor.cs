@@ -5,30 +5,32 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Common.Logging;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Helpers;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     internal class FeatureRequestor : IFeatureRequestor
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureRequestor));
         private readonly Uri _allUri;
         private readonly Uri _flagsUri;
         private readonly Uri _segmentsUri;
         private readonly HttpClient _httpClient;
         private readonly Configuration _config;
         private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
+        private readonly Logger _log;
 
-        internal FeatureRequestor(Configuration config)
+        internal FeatureRequestor(LdClientContext context)
         {
-            _config = config;
-            _allUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-all");
-            _flagsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
-            _segmentsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
-            _httpClient = Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
+            _config = context.Configuration;
+            _allUri = new Uri(_config.BaseUri.AbsoluteUri + "sdk/latest-all");
+            _flagsUri = new Uri(_config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
+            _segmentsUri = new Uri(_config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
+            _httpClient = Util.MakeHttpClient(_config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         void IDisposable.Dispose()
@@ -52,7 +54,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var ret = await GetAsync<AllData>(_allUri);
             if (ret != null)
             {
-                Log.DebugFormat("Get all returned {0} feature flags and {1} segments",
+                _log.Debug("Get all returned {0} feature flags and {1} segments",
                     ret.Flags.Keys.Count, ret.Segments.Keys.Count);
             }
             return ret;
@@ -74,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private async Task<T> GetAsync<T>(Uri path) where T : class
         {
-            Log.DebugFormat("Getting flags with uri: {0}", path.AbsoluteUri);
+            _log.Debug("Getting flags with uri: {0}", path.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, path);
             lock (_etags)
             {
@@ -92,7 +94,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     {
                         if (response.StatusCode == HttpStatusCode.NotModified)
                         {
-                            Log.Debug("Get all flags returned 304: not modified");
+                            _log.Debug("Get all flags returned 304: not modified");
                             return null;
                         }
                         //We ensure the status code after checking for 304, because 304 isn't considered success
