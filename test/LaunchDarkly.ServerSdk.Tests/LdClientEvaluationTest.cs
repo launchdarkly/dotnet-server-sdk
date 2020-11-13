@@ -21,8 +21,8 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder("SDK_KEY")
                 .DataStore(new SpecificDataStoreFactory(dataStore))
-                .EventProcessorFactory(Components.NullEventProcessor)
                 .DataSource(Components.ExternalUpdatesOnly)
+                .Events(Components.NoEvents)
                 .Build();
             client = new LdClient(config);
         }
@@ -331,9 +331,9 @@ namespace LaunchDarkly.Sdk.Server
                 },
                 ""$valid"":true
             }";
-            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var expectedValue = LdValue.Parse(expectedString);
             var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
+            var actualValue = LdValue.Parse(actualString);
             TestUtils.AssertJsonEqual(expectedValue, actualValue);
         }
 
@@ -363,9 +363,9 @@ namespace LaunchDarkly.Sdk.Server
                 },
                 ""$valid"":true
             }";
-            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var expectedValue = LdValue.Parse(expectedString);
             var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
+            var actualValue = LdValue.Parse(actualString);
             TestUtils.AssertJsonEqual(expectedValue, actualValue);
         }
 
@@ -427,9 +427,9 @@ namespace LaunchDarkly.Sdk.Server
                 },
                 ""$valid"":true
             }";
-            var expectedValue = JsonConvert.DeserializeObject<JToken>(expectedString);
+            var expectedValue = LdValue.Parse(expectedString);
             var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = JsonConvert.DeserializeObject<JToken>(actualString);
+            var actualValue = LdValue.Parse(actualString);
             TestUtils.AssertJsonEqual(expectedValue, actualValue);
         }
 

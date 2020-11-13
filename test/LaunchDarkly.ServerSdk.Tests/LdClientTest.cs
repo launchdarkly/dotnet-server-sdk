@@ -38,8 +38,8 @@ namespace LaunchDarkly.Sdk.Server
             var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
                 .Logging(Components.Logging(logCapture))
+                .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
-                .DiagnosticOptOut(true)
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -68,6 +68,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
+                .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -83,6 +84,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey)
                 .Logging(Components.Logging(logCapture))
                 .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
+                .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -98,6 +100,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
+                .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -112,6 +115,7 @@ namespace LaunchDarkly.Sdk.Server
             var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
                 .Logging(Components.Logging(logCapture))
+                .Events(Components.NoEvents)
                 .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
@@ -134,7 +138,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
-                .EventProcessorFactory(epf.Object)
+                .Events(epf.Object)
                 .DataSource(dsf.Object)
                 .Build();
 
@@ -167,7 +171,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
-                .EventProcessorFactory(epf.Object)
+                .Events(epf.Object)
                 .DataSource(dsf.Object)
                 .DiagnosticOptOut(true)
                 .Build();
@@ -199,7 +203,7 @@ namespace LaunchDarkly.Sdk.Server
             mockDataSource.Setup(up => up.Initialized()).Returns(true);
             var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
-                .EventProcessorFactory(Components.NullEventProcessor)
+                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -213,7 +217,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.FromMilliseconds(10))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
-                .EventProcessorFactory(Components.NullEventProcessor)
+                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -230,7 +234,7 @@ namespace LaunchDarkly.Sdk.Server
             errorTaskSource.SetException(new Exception("bad"));
             var config = Configuration.Builder(sdkKey)
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
-                .EventProcessorFactory(Components.NullEventProcessor)
+                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -250,7 +254,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
                 .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
-                .EventProcessorFactory(Components.NullEventProcessor)
+                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -270,7 +274,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
                 .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
-                .EventProcessorFactory(Components.NullEventProcessor)
+                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -299,7 +303,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey)
                 .DataStore(TestUtils.SpecificDataStore(store))
                 .DataSource(TestUtils.DataSourceWithData(DataStoreSorterTest.DependencyOrderingTestData))
-                .EventProcessorFactory(Components.NullEventProcessor)
+                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))

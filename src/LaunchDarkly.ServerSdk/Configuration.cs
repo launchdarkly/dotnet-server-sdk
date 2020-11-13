@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Immutable;
 using System.Net.Http;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal;
-using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server
@@ -19,54 +17,25 @@ namespace LaunchDarkly.Sdk.Server
     /// </remarks>
     public class Configuration
     {
-        private readonly bool _allAttributesPrivate;
         private readonly TimeSpan _connectionTimeout;
         private readonly IDataSourceFactory _dataSourceFactory;
         private readonly IDataStoreFactory _dataStoreFactory;
         private readonly bool _diagnosticOptOut;
-        private readonly TimeSpan _diagnosticRecordingInterval;
-        private readonly TimeSpan _eventFlushInterval;
-        private readonly int _eventCapacity;
         private readonly IEventProcessorFactory _eventProcessorFactory;
-        private readonly Uri _eventsUri;
         private readonly ILoggingConfigurationFactory _loggingConfigurationFactory;
         private readonly HttpMessageHandler _httpMessageHandler;
-        private readonly bool _inlineUsersInEvents;
         private readonly bool _offline;
-        private readonly ImmutableHashSet<string> _privateAttributeNames;
         private readonly TimeSpan _readTimeout;
         private readonly string _sdkKey;
         private readonly TimeSpan _startWaitTime;
-        private readonly int _userKeysCapacity;
-        private readonly TimeSpan _userKeysFlushInterval;
         private readonly string _wrapperName;
         private readonly string _wrapperVersion;
 
         /// <summary>
-        /// The base URL of the LaunchDarkly analytics event server.
-        /// </summary>
-        public Uri EventsUri => _eventsUri;
-        /// <summary>
         /// The SDK key for your LaunchDarkly environment.
         /// </summary>
         public string SdkKey => _sdkKey;
-        /// <summary>
-        /// The capacity of the events buffer.
-        /// </summary>
-        /// <remarks>
-        /// The client buffers up to this many events in memory before flushing. If the capacity is exceeded
-        /// before the buffer is flushed, events will be discarded. Increasing the capacity means that events
-        /// are less likely to be discarded, at the cost of consuming more memory.
-        /// </remarks>
-        public int EventCapacity => _eventCapacity;
-        /// <summary>
-        /// The time between flushes of the event buffer.
-        /// </summary>
-        /// <remarks>
-        /// Decreasing the flush interval means that the event buffer is less likely to reach capacity.
-        /// The default value is 5 seconds.
-        /// </remarks>
-        public TimeSpan EventFlushInterval => _eventFlushInterval;
+
         /// <summary>
         /// How long the client constructor will block awaiting a successful connection to
         /// LaunchDarkly.
@@ -76,57 +45,27 @@ namespace LaunchDarkly.Sdk.Server
         /// default value is 10 seconds.
         /// </remarks>
         public TimeSpan StartWaitTime => _startWaitTime;
+
         /// <summary>
         /// The timeout when reading data from the EventSource API. The default value is 5 minutes.
         /// </summary>
         public TimeSpan ReadTimeout => _readTimeout;
+
         /// <summary>
         /// The connection timeout. The default value is 10 seconds.
         /// </summary>
         public TimeSpan ConnectionTimeout => _connectionTimeout;
+
         /// <summary>
         /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
         /// </summary>
         public HttpMessageHandler HttpMessageHandler => _httpMessageHandler;
+
         /// <summary>
         /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
         /// </summary>
         public bool Offline => _offline;
-        /// <summary>
-        /// Whether or not user attributes (other than the key) should be private (not sent to
-        /// the LaunchDarkly server).
-        /// </summary>
-        /// <remarks>
-        /// If this is true, all of the user attributes will be private, not just attributes that are
-        /// marked as private  on the <see cref="User"/> object. By default, this is false.
-        /// </remarks>
-        public bool AllAttributesPrivate => _allAttributesPrivate;
-        /// <summary>
-        /// Marks a set of attribute names as private.
-        /// </summary>
-        /// <remarks>
-        /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
-        /// names removed, even if you did specify them as private on the <see cref="User"/> object.
-        /// </remarks>
-        public IImmutableSet<string> PrivateAttributeNames => _privateAttributeNames;
-        /// <summary>
-        /// The number of user keys that the event processor can remember at any one time, so that
-        /// duplicate user details will not be sent in analytics events.
-        /// </summary>
-        public int UserKeysCapacity => _userKeysCapacity;
-        /// <summary>
-        /// The interval at which the event processor will reset its set of known user keys. The
-        /// default value is five minutes.
-        /// </summary>
-        public TimeSpan UserKeysFlushInterval => _userKeysFlushInterval;
-        /// <summary>
-        /// True if full user details should be included in every analytics event.
-        /// </summary>
-        /// <remarks>
-        /// The default is false (events will only include the user key, except for one "index" event
-        /// that provides the full details for the user).
-        /// </remarks>
-        public bool InlineUsersInEvents => _inlineUsersInEvents;
+
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IDataStore"/>, to be used
         /// for holding feature flags and related data received from LaunchDarkly.
@@ -136,20 +75,23 @@ namespace LaunchDarkly.Sdk.Server
         /// implementation.
         /// </remarks>
         public IDataStoreFactory DataStoreFactory => _dataStoreFactory;
+
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IEventProcessor"/>, which will
         /// process all analytics events.
         /// </summary>
         /// <remarks>
-        /// The default is <see cref="Components.DefaultEventProcessor"/>, but you may provide a custom
+        /// The default is <see cref="Components.SendEvents"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
         public IEventProcessorFactory EventProcessorFactory => _eventProcessorFactory;
+
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
         /// receive feature flag data.
         /// </summary>
         public IDataSourceFactory DataSourceFactory => _dataSourceFactory;
+
         /// <summary>
         /// A factory object that creates an implementation of <see cref="ILoggingConfigurationFactory"/>, defining
         /// the SDK's logging configuration.
@@ -159,66 +101,31 @@ namespace LaunchDarkly.Sdk.Server
         /// logger instance which will be in <see cref="LdClientContext"/>.
         /// </remarks>
         public ILoggingConfigurationFactory LoggingConfigurationFactory => _loggingConfigurationFactory;
+
         /// <summary>
         /// A string that will be sent to LaunchDarkly to identify the SDK type.
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
-        /// <summary>
-        /// The time between sending periodic diagnostic events.
-        /// </summary>
-        public TimeSpan DiagnosticRecordingInterval => _diagnosticRecordingInterval;
+
         /// <summary>
         /// True if diagnostic events have been disabled.
         /// </summary>
         public bool DiagnosticOptOut => _diagnosticOptOut;
+
         /// <summary>
         /// Name specifying a wrapper library, to be included in request headers.
         /// </summary>
         public string WrapperName => _wrapperName;
+
         /// <summary>
         /// Version of a wrapper library, to be included in request headers.
         /// </summary>
         public string WrapperVersion => _wrapperVersion;
-        /// <summary>
-        /// Default value for <see cref="EventsUri"/>.
-        /// </summary>
-        internal static readonly Uri DefaultEventsUri = new Uri("https://events.launchdarkly.com");
-        /// <summary>
-        /// Default value for <see cref="EventCapacity"/>.
-        /// </summary>
-        internal static readonly int DefaultEventCapacity = 10000;
-        /// <summary>
-        /// Default value for <see cref="EventFlushInterval"/>.
-        /// </summary>
-        internal static readonly TimeSpan DefaultEventFlushInterval = TimeSpan.FromSeconds(5);
-        /// <summary>
-        /// Default value for <see cref="StartWaitTime"/>.
-        /// </summary>
-        internal static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
-        /// <summary>
-        /// Default value for <see cref="ReadTimeout"/>.
-        /// </summary>
-        internal static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
-        /// <summary>
-        /// Default value for <see cref="ConnectionTimeout"/>.
-        /// </summary>
+
         internal static readonly TimeSpan DefaultConnectionTimeout = TimeSpan.FromSeconds(10);
-        /// <summary>
-        /// Default value for <see cref="UserKeysCapacity"/>.
-        /// </summary>
-        internal static readonly int DefaultUserKeysCapacity = 1000;
-        /// <summary>
-        /// Default value for <see cref="UserKeysFlushInterval"/>.
-        /// </summary>
-        internal static readonly TimeSpan DefaultUserKeysFlushInterval = TimeSpan.FromMinutes(5);
-        /// <summary>
-        /// Default value for <see cref="DiagnosticRecordingInterval"/>.
-        /// </summary>
-        internal static readonly TimeSpan DefaultDiagnosticRecordingInterval = TimeSpan.FromMinutes(15);
-        /// <summary>
-        /// Minimum value for <see cref="DiagnosticRecordingInterval"/>.
-        /// </summary>
-        internal static readonly TimeSpan MinimumDiagnosticRecordingInterval = TimeSpan.FromMinutes(1);
+        internal static HttpMessageHandler DefaultMessageHandler = new HttpClientHandler();
+        internal static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
+        internal static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
 
         /// <summary>
         /// Creates a configuration with all parameters set to the default.
@@ -242,7 +149,6 @@ namespace LaunchDarkly.Sdk.Server
         /// <example>
         /// <code>
         ///     var config = Configuration.Builder("my-sdk-key")
-        ///         .EventFlushInterval(TimeSpan.FromSeconds(90))
         ///         .StartWaitTime(TimeSpan.FromSeconds(5))
         ///         .Build();
         /// </code>
@@ -262,8 +168,8 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <example>
         /// <code>
-        ///     var configWithLargerEventCapacity = Configuration.Builder(originalConfig)
-        ///         .EventCapacity(50000)
+        ///     var configWithCustomEventProperties = Configuration.Builder(originalConfig)
+        ///         .Events(Components.SendEvents().Capacity(50000))
         ///         .Build();
         /// </code>
         /// </example>
@@ -276,53 +182,22 @@ namespace LaunchDarkly.Sdk.Server
 
         internal Configuration(ConfigurationBuilder builder)
         {
-            _allAttributesPrivate = builder._allAttributesPrivate;
             _connectionTimeout = builder._connectionTimeout;
             _dataSourceFactory = builder._dataSourceFactory;
             _dataStoreFactory = builder._dataStoreFactory;
             _diagnosticOptOut = builder._diagnosticOptOut;
-            _diagnosticRecordingInterval = builder._diagnosticRecordingInterval;
-            _eventCapacity = builder._eventCapacity;
-            _eventFlushInterval = builder._eventFlushInterval;
             _eventProcessorFactory = builder._eventProcessorFactory;
-            _eventsUri = builder._eventsUri;
             _httpMessageHandler = builder._httpMessageHandler;
-            _inlineUsersInEvents = builder._inlineUsersInEvents;
-            _loggingConfigurationFactory = builder._loggingConfigurationFactory ?? Components.Logging();
+            _loggingConfigurationFactory = builder._loggingConfigurationFactory;
             _offline = builder._offline;
-            _privateAttributeNames = builder._privateAttributeNames is null ?
-                ImmutableHashSet.Create<string>() :
-                builder._privateAttributeNames.ToImmutableHashSet();
             _readTimeout = builder._readTimeout;
             _sdkKey = builder._sdkKey;
             _startWaitTime = builder._startWaitTime;
-            _userKeysCapacity = builder._userKeysCapacity;
-            _userKeysFlushInterval = builder._userKeysFlushInterval;
             _wrapperName = builder._wrapperName;
             _wrapperVersion = builder._wrapperVersion;
         }
         
-        internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
         internal IHttpRequestConfiguration HttpRequestConfiguration => new HttpRequestAdapter { Config = this };
-
-        private struct EventProcessorAdapter : IEventProcessorConfiguration
-        {
-            internal Configuration Config { get; set; }
-            public bool AllAttributesPrivate => Config.AllAttributesPrivate;
-            public bool DiagnosticOptOut => Config.DiagnosticOptOut;
-            public TimeSpan DiagnosticRecordingInterval => Config.DiagnosticRecordingInterval;
-            public int EventCapacity => Config.EventCapacity;
-            public TimeSpan EventFlushInterval => Config.EventFlushInterval;
-            public Uri EventsUri => new Uri(Config.EventsUri, "bulk");
-            public Uri DiagnosticUri => new Uri(Config.EventsUri, "diagnostic");
-            public TimeSpan HttpClientTimeout => Config.ConnectionTimeout;
-            public bool InlineUsersInEvents => Config.InlineUsersInEvents;
-            public IImmutableSet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
-            public TimeSpan ReadTimeout => Config.ReadTimeout;
-            public TimeSpan ReconnectTime => TimeSpan.FromSeconds(1);
-            public int UserKeysCapacity => Config.UserKeysCapacity;
-            public TimeSpan UserKeysFlushInterval => Config.UserKeysFlushInterval;
-        }
 
         private struct HttpRequestAdapter : IHttpRequestConfiguration
         {

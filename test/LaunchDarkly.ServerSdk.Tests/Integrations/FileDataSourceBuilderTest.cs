@@ -7,23 +7,23 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 {
     public class FileDataSourceBuilderTest
     {
+        private readonly BuilderInternalTestUtil<FileDataSourceBuilder> _tester =
+            BuilderTestUtil.For(FileData.DataSource);
+
         [Fact]
         public void AutoUpdate()
         {
-            Assert.False(FileData.DataSource()._autoUpdate);
-
-            Assert.True(FileData.DataSource().AutoUpdate(true)._autoUpdate);
+            var prop = _tester.Property(b => b._autoUpdate, (b, v) => b.AutoUpdate(v));
+            prop.AssertDefault(false);
+            prop.AssertCanSet(true);
         }
 
         [Fact]
         public void DuplicateKeysHandling()
         {
-            Assert.Equal(FileDataTypes.DuplicateKeysHandling.Throw,
-                FileData.DataSource()._duplicateKeysHandling);
-
-            Assert.Equal(FileDataTypes.DuplicateKeysHandling.Ignore,
-                FileData.DataSource().DuplicateKeysHandling(FileDataTypes.DuplicateKeysHandling.Ignore)
-                    ._duplicateKeysHandling);
+            var prop = _tester.Property(b => b._duplicateKeysHandling, (b, v) => b.DuplicateKeysHandling(v));
+            prop.AssertDefault(FileDataTypes.DuplicateKeysHandling.Throw);
+            prop.AssertCanSet(FileDataTypes.DuplicateKeysHandling.Ignore);
         }
 
         [Fact]
@@ -40,27 +40,27 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void FileReader()
         {
-            Assert.Same(FlagFileReader.Instance, FileData.DataSource()._fileReader);
-
-            var other = new TestFileReader();
-            Assert.Same(other, FileData.DataSource().FileReader(other)._fileReader);
+            var prop = _tester.Property(b => b._fileReader, (b, v) => b.FileReader(v));
+            prop.AssertDefault(FlagFileReader.Instance);
+            prop.AssertCanSet(new TestFileReader());
         }
 
         [Fact]
         public void Parser()
         {
-            Assert.Null(FileData.DataSource()._parser);
-
+            var prop = _tester.Property(b => b._parser, (b, v) => b.Parser(v));
+            prop.AssertDefault(null);
             Func<string, object> p = s => s;
-            Assert.Same(p, FileData.DataSource().Parser(p)._parser);
+            prop.AssertCanSet(p);
         }
 
         [Fact]
         public void SkipMissingPaths()
         {
+            var prop = _tester.Property(b => b._skipMissingPaths, (b, v) => b.SkipMissingPaths(v));
+            prop.AssertDefault(false);
+            prop.AssertCanSet(true);
             Assert.False(FileData.DataSource()._skipMissingPaths);
-
-            Assert.True(FileData.DataSource().SkipMissingPaths(true)._skipMissingPaths);
         }
 
         private class TestFileReader : FileDataTypes.IFileReader

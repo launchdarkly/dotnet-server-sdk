@@ -90,29 +90,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         private LdValue InitEventConfig()
         {
             var configInfo = LdValue.BuildObject();
-            configInfo.Add("customEventsURI", !(Configuration.DefaultEventsUri.Equals(Config.EventsUri)));
-            configInfo.Add("eventsCapacity", Config.EventCapacity);
             configInfo.Add("connectTimeoutMillis", Config.ConnectionTimeout.TotalMilliseconds);
             configInfo.Add("socketTimeoutMillis", Config.ReadTimeout.TotalMilliseconds);
-            configInfo.Add("eventsFlushIntervalMillis", Config.EventFlushInterval.TotalMilliseconds);
             configInfo.Add("usingProxy", false);
             configInfo.Add("usingProxyAuthenticator", false);
-            configInfo.Add("offline", Config.Offline);
-            configInfo.Add("allAttributesPrivate", Config.AllAttributesPrivate);
-            configInfo.Add("eventReportingDisabled", false);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
-            configInfo.Add("userKeysCapacity", Config.UserKeysCapacity);
-            configInfo.Add("userKeysFlushIntervalMillis", (long)Config.UserKeysFlushInterval.TotalMilliseconds);
-            configInfo.Add("inlineUsersInEvents", Config.InlineUsersInEvents);
-            configInfo.Add("diagnosticRecordingIntervalMillis", (long)Config.DiagnosticRecordingInterval.TotalMilliseconds);
 
             if (Config.DataStoreFactory != null)
             {
                 configInfo.Add("featureStoreFactory", Config.DataStoreFactory.GetType().Name);
             }
 
-            // Allow each pluggable component to describe its own relevant properties. 
+            // Allow each pluggable component to describe its own relevant properties.
             MergeComponentProperties(configInfo, Config.DataSourceFactory ?? Components.StreamingDataSource(), null);
+            MergeComponentProperties(configInfo, Config.EventProcessorFactory ?? Components.SendEvents(), null);
 
             return configInfo.Build();
         }

@@ -2,7 +2,6 @@
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server
@@ -18,8 +17,8 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder("SDK_KEY")
                 .DataStore(TestUtils.SpecificDataStore(dataStore))
-                .EventProcessorFactory(TestUtils.SpecificEventProcessor(eventSink))
                 .DataSource(Components.ExternalUpdatesOnly)
+                .Events(TestUtils.SpecificEventProcessor(eventSink))
                 .Build();
             client = new LdClient(config);
         }
