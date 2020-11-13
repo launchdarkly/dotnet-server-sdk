@@ -60,14 +60,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// This adds a log level filter that is applied regardless of what implementation of logging is
         /// being used, so that log messages at lower levels are suppressed. For instance, setting the
         /// minimum level to <see cref="LogLevel.Info"/> means that <c>Debug</c>-level output is disabled.
-        /// External logging frameworks may also have their own mechanisms for setting a minimum log level;
-        /// if you use those as well as this method, the resulting minimum log level is whichever one is
-        /// higher.
+        /// External logging frameworks may also have their own mechanisms for setting a minimum log level.
         /// </para>
         /// <para>
-        /// If you did not specify an <see cref="ILogAdapter"/> at all, then the default minimum logging level
-        /// is <c>Info</c>. If you did specify an <see cref="ILogAdapter"/>, then the default level is <c>Debug</c>
-        /// unless you set it to a higher level.
+        /// If you did not specify an <see cref="ILogAdapter"/> at all, so it is using the default <c>Console.Error</c>
+        /// destination, then the default minimum logging level is <c>Info</c>.
+        /// </para>
+        /// <para>
+        /// If you did specify an <see cref="ILogAdapter"/>, then the SDK does not apply a level filter by
+        /// default. This is so as not to interfere with any other configuration that you may have set up
+        /// in an external logging framework. However, you can still use this method to set a higher level
+        /// so that any messages below that level will not be sent to the external framework at all.
         /// </para>
         /// </remarks>
         /// <param name="minimumLevel">the lowest level of logging to enable</param>

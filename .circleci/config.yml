@@ -6,13 +6,6 @@ workflows:
     jobs:
       - build-netstandard-2
       - test-netcore:
-          name: .NET Standard 2.0 + .NET Core 2.0
-          docker-image: microsoft/dotnet:2.0-sdk-jessie
-          build-target-framework: netstandard2.0
-          test-target-framework: netcoreapp2.0
-          requires:
-            - build-netstandard-2
-      - test-netcore:
           name: .NET Standard 2.0 + .NET Core 2.1
           docker-image: mcr.microsoft.com/dotnet/core/sdk:2.1-focal
           build-target-framework: netstandard2.0
