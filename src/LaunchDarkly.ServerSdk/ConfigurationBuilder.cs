@@ -451,7 +451,6 @@ namespace LaunchDarkly.Sdk.Server
         {
             if (diagnosticRecordingInterval.CompareTo(Configuration.MinimumDiagnosticRecordingInterval) < 0)
             {
-                //Log.Warn("DiagnosticRecordingInterval cannot be less than the minimum of 1 minute.");
                 _diagnosticRecordingInterval = Configuration.MinimumDiagnosticRecordingInterval;
             }
             else
@@ -519,7 +518,6 @@ namespace LaunchDarkly.Sdk.Server
         {
             if (pollingInterval.CompareTo(Configuration.DefaultPollingInterval) < 0)
             {
-                //Log.Warn("PollingInterval cannot be less than the default of 30 seconds.");
                 _pollingInterval = Configuration.DefaultPollingInterval;
             }
             else
