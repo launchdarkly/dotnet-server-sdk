@@ -1,10 +1,9 @@
-﻿using System;
-
+﻿
 namespace LaunchDarkly.Sdk.Server
 {
     internal static class LogNames
     {
-        internal const string Base = "LaunchDarkly.ServerSdk.LdClient";
+        internal const string Base = "LaunchDarkly.Sdk.Server.LdClient";
 
         internal const string DataSourceSubLog = "DataSource";
 
