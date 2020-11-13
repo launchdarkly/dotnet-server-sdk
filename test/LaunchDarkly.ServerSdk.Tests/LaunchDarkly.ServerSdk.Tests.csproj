@@ -39,9 +39,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Integrations\" />
-    <Folder Include="Files\" />
-  </ItemGroup>
 </Project>
