@@ -42,7 +42,7 @@ namespace LaunchDarkly.Sdk.Server
         public static IDataStoreFactory SpecificDataStore(IDataStore store) =>
             new SpecificDataStoreFactory(store);
 
-        public static IEventProcessorFactory SpecificEventProcessor(IEventProcessor ep) =>
+        public static IEventProcessorFactory SpecificEventProcessor(LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor ep) =>
             new SpecificEventProcessorFactory(ep);
 
         public static IDataSourceFactory SpecificDataSource(IDataSource up) =>
@@ -66,14 +66,14 @@ namespace LaunchDarkly.Sdk.Server
 
     public class SpecificEventProcessorFactory : IEventProcessorFactory
     {
-        private readonly IEventProcessor _ep;
+        private readonly LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor _ep;
 
-        public SpecificEventProcessorFactory(IEventProcessor ep)
+        public SpecificEventProcessorFactory(LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor ep)
         {
             _ep = ep;
         }
 
-        IEventProcessor IEventProcessorFactory.CreateEventProcessor(LdClientContext context) => _ep;
+        LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor IEventProcessorFactory.CreateEventProcessor(LdClientContext context) => _ep;
     }
 
     public class SpecificDataSourceFactory : IDataSourceFactory
@@ -123,7 +123,7 @@ namespace LaunchDarkly.Sdk.Server
         public void Dispose() { }
     }
 
-    public class TestEventProcessor : IEventProcessor
+    public class TestEventProcessor : LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor
     {
         public List<Event> Events = new List<Event>();
 
