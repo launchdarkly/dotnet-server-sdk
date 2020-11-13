@@ -46,7 +46,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <remarks>
         /// <para>
         /// Depending on the implementation, the factory may be a builder that allows you to set other
-        /// allows you to set other configuration options as well.
+        /// configuration options as well.
         /// </para>
         /// <para>
         /// The default is <see cref="Components.StreamingDataSource"/>. You may instead use
@@ -125,11 +125,9 @@ namespace LaunchDarkly.Sdk.Server
         /// logging, you may use <see cref="Components.NoLogging"/> instead.
         /// </remarks>
         /// <example>
-        /// <code>
         ///     var config = Configuration.Builder("my-sdk-key")
         ///         .Logging(Components.Logging().Level(LogLevel.Warn)))
         ///         .Build();
-        /// </code>
         /// </example>
         /// <param name="factory">the factory object</param>
         /// <returns>the same builder</returns>
