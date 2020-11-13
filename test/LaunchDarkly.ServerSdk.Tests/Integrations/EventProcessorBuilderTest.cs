@@ -53,6 +53,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var prop = _tester.Property(b => b._flushInterval, (b, v) => b.FlushInterval(v));
             prop.AssertDefault(EventProcessorBuilder.DefaultFlushInterval);
             prop.AssertCanSet(TimeSpan.FromMinutes(7));
+            prop.AssertSetIsChangedTo(TimeSpan.Zero, EventProcessorBuilder.DefaultFlushInterval);
+            prop.AssertSetIsChangedTo(TimeSpan.FromMilliseconds(-1), EventProcessorBuilder.DefaultFlushInterval);
         }
 
         [Fact]
@@ -79,6 +81,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var prop = _tester.Property(b => b._userKeysCapacity, (b, v) => b.UserKeysCapacity(v));
             prop.AssertDefault(EventProcessorBuilder.DefaultUserKeysCapacity);
             prop.AssertCanSet(1);
+            prop.AssertSetIsChangedTo(0, EventProcessorBuilder.DefaultUserKeysCapacity);
+            prop.AssertSetIsChangedTo(-1, EventProcessorBuilder.DefaultUserKeysCapacity);
         }
 
         [Fact]
@@ -87,6 +91,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var prop = _tester.Property(b => b._userKeysFlushInterval, (b, v) => b.UserKeysFlushInterval(v));
             prop.AssertDefault(EventProcessorBuilder.DefaultUserKeysFlushInterval);
             prop.AssertCanSet(TimeSpan.FromMinutes(7));
+            prop.AssertSetIsChangedTo(TimeSpan.Zero, EventProcessorBuilder.DefaultUserKeysFlushInterval);
+            prop.AssertSetIsChangedTo(TimeSpan.FromMilliseconds(-1), EventProcessorBuilder.DefaultUserKeysFlushInterval);
         }
     }
 }

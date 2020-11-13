@@ -124,14 +124,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// capacity means that events are less likely to be discarded, at the cost of consuming more memory.
         /// </para>
         /// <para>
-        /// The default value is <see cref="DefaultCapacity"/>.
+        /// The default value is <see cref="DefaultCapacity"/>. A zero or negative value will be changed to the default.
         /// </para>
         /// </remarks>
         /// <param name="capacity">the capacity of the event buffer</param>
         /// <returns>the builder</returns>
         public EventProcessorBuilder Capacity(int capacity)
         {
-            _capacity = capacity > 0 ? capacity : DefaultCapacity;
+            _capacity = (capacity <= 0) ? DefaultCapacity : capacity;
             return this;
         }
 
@@ -165,13 +165,15 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         /// <remarks>
         /// Decreasing the flush interval means that the event buffer is less likely to reach capacity.
-        /// The default value is <see cref="DefaultFlushInterval"/>.
+        /// The default value is <see cref="DefaultFlushInterval"/>. A zero or negative value will be changed to
+        /// the default.
         /// </remarks>
         /// <param name="flushInterval">the flush interval</param>
         /// <returns>the builder</returns>
         public EventProcessorBuilder FlushInterval(TimeSpan flushInterval)
         {
-            _flushInterval = flushInterval;
+            _flushInterval = (flushInterval.CompareTo(TimeSpan.Zero) <= 0) ?
+                DefaultFlushInterval : flushInterval;
             return this;
         }
 
@@ -215,13 +217,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <remarks>
         /// To avoid sending duplicate user details in analytics events, the SDK maintains a cache of
         /// recently seen user keys, expiring at an interval set by <see cref="UserKeysFlushInterval(TimeSpan)"/>.
-        /// The default value for the size of this cache is <see cref="DefaultUserKeysCapacity"/>.
+        /// The default value for the size of this cache is <see cref="DefaultUserKeysCapacity"/>. A zero or
+        /// negative value will be changed to the default.
         /// </remarks>
         /// <param name="userKeysCapacity">the maximum number of user keys to remember</param>
         /// <returns>the builder</returns>
         public EventProcessorBuilder UserKeysCapacity(int userKeysCapacity)
         {
-            _userKeysCapacity = userKeysCapacity;
+            _userKeysCapacity = (userKeysCapacity <= 0) ? DefaultUserKeysCapacity : userKeysCapacity;
             return this;
         }
 
@@ -229,14 +232,16 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// Sets the interval at which the event processor will reset its cache of known user keys.
         /// </summary>
         /// <remarks>
-        /// The default value is <see cref="DefaultUserKeysFlushInterval"/>.
+        /// The default value is <see cref="DefaultUserKeysFlushInterval"/>. A zero or negative value will be
+        /// changed to the default.
         /// </remarks>
         /// <param name="userKeysFlushInterval">the flush interval</param>
         /// <returns>the builder</returns>
         /// <see cref="UserKeysCapacity(int)"/>
         public EventProcessorBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval)
         {
-            _userKeysFlushInterval = userKeysFlushInterval;
+            _userKeysFlushInterval = (userKeysFlushInterval.CompareTo(TimeSpan.Zero) <= 0) ?
+                DefaultUserKeysFlushInterval : userKeysFlushInterval;
             return this;
         }
 
