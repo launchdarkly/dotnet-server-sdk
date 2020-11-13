@@ -59,7 +59,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <remarks>
         /// <para>
         /// Depending on the implementation, the factory may be a builder that allows you to set other
-        /// allows you to set other configuration options as well.
+        /// configuration options as well.
         /// </para>
         /// <para>
         /// The default is <see cref="Components.StreamingDataSource"/>. You may instead use
@@ -388,7 +388,6 @@ namespace LaunchDarkly.Sdk.Server
         {
             if (diagnosticRecordingInterval.CompareTo(Configuration.MinimumDiagnosticRecordingInterval) < 0)
             {
-                //Log.Warn("DiagnosticRecordingInterval cannot be less than the minimum of 1 minute.");
                 _diagnosticRecordingInterval = Configuration.MinimumDiagnosticRecordingInterval;
             }
             else
