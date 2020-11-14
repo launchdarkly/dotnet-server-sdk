@@ -77,7 +77,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
                 }
                 else
                 {
-                    context.Basic.Logger.Info("LaunchDarkly client will not connect to Launchdarkly for feature flag data");
+                    context.Basic.Logger.Info("LaunchDarkly client will not connect to LaunchDarkly for feature flag data");
                 }
                 return NullDataSource.Instance;
             }
