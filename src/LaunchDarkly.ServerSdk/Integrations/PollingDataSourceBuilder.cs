@@ -49,7 +49,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <list type="bullet">
         /// <item>
         /// <description>
-        /// You are using the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">Relay Proxy</a>.
+        /// You are using the <a href="https://docs.launchdarkly.com/home/advanced/relay-proxy">Relay Proxy</a>.
         /// Set <c>BaseUri</c> to the base URI of the Relay Proxy instance.
         /// </description>
         /// </item>
