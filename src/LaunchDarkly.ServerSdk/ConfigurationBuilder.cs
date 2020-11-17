@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server
@@ -64,7 +65,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// The default is <see cref="Components.StreamingDataSource"/>. You may instead use
         /// <see cref="Components.PollingDataSource"/>, <see cref="Components.ExternalUpdatesOnly"/>, or a
-        /// test fixture such as <see cref="Files.FileComponents.FileDataSource"/>. See those methods for
+        /// test fixture such as <see cref="FileData.DataSource"/>. See those methods for
         /// details on how to configure them.
         /// </para>
         /// </remarks>

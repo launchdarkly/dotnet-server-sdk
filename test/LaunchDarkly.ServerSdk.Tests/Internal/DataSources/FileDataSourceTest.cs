@@ -3,12 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Xunit;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using YamlDotNet.Serialization;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class FileDataSourceTest
     {
@@ -17,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         private static readonly string ALL_DATA_YAML_FILE = TestUtils.TestFilePath("all-properties.yml");
 
         private readonly IDataStore store = new InMemoryDataStore();
-        private readonly FileDataSourceFactory factory = FileComponents.FileDataSource();
+        private readonly FileDataSourceBuilder factory = FileData.DataSource();
         private readonly Configuration config = Configuration.Builder(sdkKey)
             .EventProcessorFactory(Components.NullEventProcessor)
             .Build();
@@ -31,7 +32,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void FlagsAreNotLoadedUntilStart()
         {
-            factory.WithFilePaths(ALL_DATA_JSON_FILE);
+            factory.FilePaths(ALL_DATA_JSON_FILE);
             using (var fp = MakeDataSource())
             {
                 Assert.False(store.Initialized());
@@ -43,7 +44,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void FlagsAreLoadedOnStart()
         {
-            factory.WithFilePaths(ALL_DATA_JSON_FILE);
+            factory.FilePaths(ALL_DATA_JSON_FILE);
             using (var fp = MakeDataSource())
             {
                 fp.Start();
@@ -57,8 +58,8 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void FlagsCanBeLoadedWithExternalYamlParser()
         {
             var yaml = new DeserializerBuilder().Build();
-            factory.WithFilePaths(ALL_DATA_YAML_FILE)
-                .WithParser(s => yaml.Deserialize<object>(s));
+            factory.FilePaths(ALL_DATA_YAML_FILE)
+                .Parser(s => yaml.Deserialize<object>(s));
             using (var fp = MakeDataSource())
             {
                 fp.Start();
@@ -82,7 +83,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void StartTaskIsCompletedAndInitializedIsFalseAfterFailedLoadDueToMissingFile()
         {
-            factory.WithFilePaths(ALL_DATA_JSON_FILE, "bad-file-path");
+            factory.FilePaths(ALL_DATA_JSON_FILE, "bad-file-path");
             using (var fp = MakeDataSource())
             {
                 var task = fp.Start();
@@ -94,7 +95,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void CanIgnoreMissingFileOnStartup()
         {
-            factory.WithFilePaths(ALL_DATA_JSON_FILE, "bad-file-path").WithSkipMissingPaths(true);
+            factory.FilePaths(ALL_DATA_JSON_FILE, "bad-file-path").SkipMissingPaths(true);
             using (var fp = MakeDataSource())
             {
                 var task = fp.Start();
@@ -107,7 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void StartTaskIsCompletedAndInitializedIsFalseAfterFailedLoadDueToMalformedFile()
         {
-            factory.WithFilePaths(TestUtils.TestFilePath("bad-file.txt"));
+            factory.FilePaths(TestUtils.TestFilePath("bad-file.txt"));
             using (var fp = MakeDataSource())
             {
                 var task = fp.Start();
@@ -120,7 +121,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void ModifiedFileIsNotReloadedIfAutoUpdateIsOff()
         {
             var filename = Path.GetTempFileName();
-            factory.WithFilePaths(filename);
+            factory.FilePaths(filename);
             try
             {
                 File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
@@ -143,7 +144,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void ModifiedFileIsReloadedIfAutoUpdateIsOn()
         {
             var filename = Path.GetTempFileName();
-            factory.WithFilePaths(filename).WithAutoUpdate(true).WithPollInterval(TimeSpan.FromMilliseconds(200));
+            factory.FilePaths(filename).AutoUpdate(true);
             try
             {
                 File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
@@ -175,8 +176,8 @@ namespace LaunchDarkly.Sdk.Server.Files
         {
             var filename1 = Path.GetTempFileName();
             var filename2 = Path.GetTempFileName();
-            factory.WithFilePaths(filename1, filename2)
-                .WithAutoUpdate(true).WithPollInterval(TimeSpan.FromMilliseconds(200));
+            factory.FilePaths(filename1, filename2)
+                .AutoUpdate(true);
             try
             {
                 File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
@@ -210,9 +211,9 @@ namespace LaunchDarkly.Sdk.Server.Files
             var filename1 = Path.GetTempFileName();
             var filename2 = Path.GetTempFileName();
             File.Delete(filename2);
-            factory.WithFilePaths(filename1, filename2)
-                .WithSkipMissingPaths(true)
-                .WithAutoUpdate(true).WithPollInterval(TimeSpan.FromMilliseconds(200));
+            factory.FilePaths(filename1, filename2)
+                .SkipMissingPaths(true)
+                .AutoUpdate(true);
             try
             {
                 File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
@@ -244,7 +245,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         public void IfFlagsAreBadAtStartTimeAutoUpdateCanStillLoadGoodDataLater()
         {
             var filename = Path.GetTempFileName();
-            factory.WithFilePaths(filename).WithAutoUpdate(true).WithPollInterval(TimeSpan.FromMilliseconds(200));
+            factory.FilePaths(filename).AutoUpdate(true);
             try
             {
                 File.WriteAllText(filename, "{not correct}");
@@ -273,7 +274,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void FullFlagDefinitionEvaluatesAsExpected()
         {
-            factory.WithFilePaths(ALL_DATA_JSON_FILE);
+            factory.FilePaths(ALL_DATA_JSON_FILE);
             var config1 = Configuration.Builder(config).DataSource(factory).Build();
             using (var client = new LdClient(config1))
             {
@@ -284,7 +285,7 @@ namespace LaunchDarkly.Sdk.Server.Files
         [Fact]
         public void SimplifiedFlagEvaluatesAsExpected()
         {
-            factory.WithFilePaths(ALL_DATA_JSON_FILE);
+            factory.FilePaths(ALL_DATA_JSON_FILE);
             var config1 = Configuration.Builder(config).DataSource(factory).Build();
             using (var client = new LdClient(config1))
             {

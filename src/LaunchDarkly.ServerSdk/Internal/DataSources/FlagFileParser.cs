@@ -1,9 +1,8 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Server.Internal;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal class FlagFileParser
+    internal sealed class FlagFileParser
     {
         private readonly Func<string, object> _alternateParser;
 

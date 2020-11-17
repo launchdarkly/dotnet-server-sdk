@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json.Linq;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     // Provides the logic for merging sets of feature flag and segment data.
     internal sealed class FlagFileDataMerger
     {
-        private readonly DuplicateKeysHandling _duplicateKeysHandling;
+        private readonly FileDataTypes.DuplicateKeysHandling _duplicateKeysHandling;
 
-        public FlagFileDataMerger(DuplicateKeysHandling duplicateKeysHandling)
+        public FlagFileDataMerger(FileDataTypes.DuplicateKeysHandling duplicateKeysHandling)
         {
             _duplicateKeysHandling = duplicateKeysHandling;
         }
@@ -48,10 +49,10 @@ namespace LaunchDarkly.Sdk.Server.Files
             {
                 switch (_duplicateKeysHandling)
                 {
-                    case DuplicateKeysHandling.Throw:
+                    case FileDataTypes.DuplicateKeysHandling.Throw:
                         throw new System.Exception("in \"" + kind.Name + "\", key \"" + key +
                             "\" was already defined");
-                    case DuplicateKeysHandling.Ignore:
+                    case FileDataTypes.DuplicateKeysHandling.Ignore:
                         break;
                     default:
                         throw new NotImplementedException("Unknown duplicate keys handling: " + _duplicateKeysHandling);

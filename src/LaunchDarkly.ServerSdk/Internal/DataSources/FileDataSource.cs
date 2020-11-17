@@ -5,30 +5,30 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal class FileDataSource : IDataSource
+    internal sealed class FileDataSource : IDataSource
     {
         private readonly IDataStoreUpdates _dataStoreUpdates;
         private readonly List<string> _paths;
         private readonly IDisposable _reloader;
         private readonly FlagFileParser _parser;
         private readonly FlagFileDataMerger _dataMerger;
-        private readonly IFileReader _fileReader;
+        private readonly FileDataTypes.IFileReader _fileReader;
         private readonly bool _skipMissingPaths;
         private readonly Logger _logger;
         private volatile bool _started;
         private volatile bool _loadedValidData;
 
-        public FileDataSource(IDataStoreUpdates dataStoreUpdates, IFileReader fileReader,
-            List<string> paths, bool autoUpdate, TimeSpan pollInterval,
-            Func<string, object> alternateParser, bool skipMissingPaths,
-            DuplicateKeysHandling duplicateKeysHandling,
+        public FileDataSource(IDataStoreUpdates dataStoreUpdates, FileDataTypes.IFileReader fileReader,
+            List<string> paths, bool autoUpdate, Func<string, object> alternateParser, bool skipMissingPaths,
+            FileDataTypes.DuplicateKeysHandling duplicateKeysHandling,
             Logger logger)
         {
             _logger = logger;
