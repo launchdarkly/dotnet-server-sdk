@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </example>
     public class PollingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {
-        internal static readonly Uri DefaultBaseUri = new Uri("https://app.launchdarkly.com");
+        internal static readonly Uri DefaultBaseUri = new Uri("https://sdk.launchdarkly.com");
 
         /// <summary>
         /// The default value for <see cref="PollInterval(TimeSpan)"/>: 30 seconds.
