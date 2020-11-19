@@ -13,9 +13,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// to <see cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />.
     /// </remarks>
     /// <example>
+    /// <code>
     ///     var config = Configuration.Builder("my-sdk-key")
     ///         .Logging(Components.Logging().Level(LogLevel.Warn))
     ///         .Build();
+    /// </code>
     /// </example>
     public sealed class LoggingConfigurationBuilder : ILoggingConfigurationFactory
     {
@@ -40,9 +42,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </para>
         /// </remarks>
         /// <example>
+        /// <code>
         ///     var config = Configuration.Builder("my-sdk-key")
         ///         .Logging(Components.Logging().CoreLogging(coreLoggingFactory)))
         ///         .Build();
+        /// </code>
         /// </example>
         /// <param name="adapter">an <c>ILogAdapter</c> for the desired logging implementation</param>
         /// <returns>the same builder</returns>

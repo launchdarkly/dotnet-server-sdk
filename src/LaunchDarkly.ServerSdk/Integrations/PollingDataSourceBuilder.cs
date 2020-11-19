@@ -19,15 +19,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// with the methods of this class, and pass it to <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
     /// </para>
     /// <para>
-    /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will superseded this
+    /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
     /// setting and completely disable network requests.
     /// </para>
     /// </remarks>
     /// <example>
+    /// <code>
     ///     var config = Configuration.Builder(sdkKey)
     ///         .DataSource(Components.PollingDataSource()
     ///             .PollInterval(TimeSpan.FromSeconds(45)))
     ///         .Build();
+    /// </code>
     /// </example>
     public class PollingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {

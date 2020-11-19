@@ -48,7 +48,8 @@ namespace LaunchDarkly.Sdk.Server
         {
             _configuration = config;
 
-            var logConfig = config.LoggingConfigurationFactory.CreateLoggingConfiguration();
+            var logConfig = (config.LoggingConfigurationFactory ?? Components.Logging())
+                .CreateLoggingConfiguration();
             _log = logConfig.LogAdapter.Logger(LogNames.Base);
             _log.Info("Starting LaunchDarkly Client {0}",
                 ServerSideClientEnvironment.Instance.Version);
@@ -64,19 +65,15 @@ namespace LaunchDarkly.Sdk.Server
 
             _evaluator = new Evaluator(GetFlag, GetSegment, _log);
 
-            var eventProcessorFactory = _configuration.EventProcessorFactory ?? Components.DefaultEventProcessor;
+            var eventProcessorFactory =
+                config.Offline ? Components.NoEvents :
+                (_configuration.EventProcessorFactory ?? Components.SendEvents());
             _eventProcessor = eventProcessorFactory.CreateEventProcessor(clientContext);
 
             var dataStoreUpdates = new DataStoreUpdates(_dataStore);
-            IDataSourceFactory dataSourceFactory;
-            if (config.Offline)
-            {
-                dataSourceFactory = Components.ExternalUpdatesOnly;
-            }
-            else
-            {
-                dataSourceFactory = _configuration.DataSourceFactory ?? Components.StreamingDataSource();
-            }
+            IDataSourceFactory dataSourceFactory =
+                config.Offline ? Components.ExternalUpdatesOnly :
+                (_configuration.DataSourceFactory ?? Components.StreamingDataSource());
             _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataStoreUpdates);
 
             var initTask = _dataSource.Start();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal;
@@ -10,6 +9,10 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class ConfigurationTest
     {
+        private readonly BuilderTestUtil<IConfigurationBuilder, Configuration> _tester =
+            BuilderTestUtil.For(() => Configuration.Builder(sdkKey), b => b.Build())
+                .WithCopyConstructor(c => Configuration.Builder(c));
+
         const string sdkKey = "any-key";
 
         [Fact]
@@ -27,76 +30,106 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void CanSetAndCopyProperties()
+        public void ConnectionTimeout()
         {
-            var uri = new Uri("http://fake");
-            var time = TimeSpan.FromDays(3);
-            TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);
-            TestSetter(b => b.DataSource, c => c.DataSourceFactory, ComponentsImpl.NullDataSourceFactory.Instance);
-            TestSetter(b => b.DataStore, c => c.DataStoreFactory,
-                TestUtils.SpecificDataStore(new InMemoryDataStore()));
-            TestSetter(b => b.ConnectionTimeout, c => c.ConnectionTimeout, time);
-            TestSetter(b => b.DiagnosticOptOut, c => c.DiagnosticOptOut, true);
-            TestSetter(b => b.DiagnosticRecordingInterval, c => c.DiagnosticRecordingInterval, time);
-            TestSetter(b => b.EventCapacity, c => c.EventCapacity, 999);
-            TestSetter(b => b.EventFlushInterval, c => c.EventFlushInterval, time);
-            TestSetter(b => b.EventProcessorFactory, c => c.EventProcessorFactory,
-                TestUtils.SpecificEventProcessor(new TestEventProcessor()));
-            TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
-            TestSetter(b => b.HttpMessageHandler, c => c.HttpMessageHandler, new HttpClientHandler());
-            TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
-            TestSetter(b => b.Logging, c => c.LoggingConfigurationFactory,
-                Components.Logging(Logs.ToWriter(Console.Out)));
-            TestSetter(b => b.Offline, c => c.Offline, true);
-            TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
-            TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
-            TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
-            TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
-            TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
-            TestSetter(b => b.WrapperName, c => c.WrapperName, "name");
-            TestSetter(b => b.WrapperVersion, c => c.WrapperVersion, "version");
-        }
-
-        private void TestSetter<T>(Func<IConfigurationBuilder, Func<T, IConfigurationBuilder>> setter,
-            Func<Configuration, T> getter, T value)
-        {
-            var config = setter(Configuration.Builder(sdkKey))(value).Build();
-            Assert.Equal(value, getter(config));
-            var copy = Configuration.Builder(config).Build();
-            Assert.Equal(value, getter(copy));
+            var prop = _tester.Property(c => c.ConnectionTimeout, (b, v) => b.ConnectionTimeout(v));
+            prop.AssertDefault(Configuration.DefaultConnectionTimeout);
+            prop.AssertCanSet(TimeSpan.FromSeconds(7));
         }
 
         [Fact]
-        public void CanSetPrivateAttributes()
+        public void DataSource()
         {
-            var config = Configuration.Builder(sdkKey)
-                .PrivateAttribute("a")
-                .PrivateAttribute("b")
-                .Build();
-            var names = new List<string>(config.PrivateAttributeNames);
-            Assert.Equal(2, config.PrivateAttributeNames.Count);
-            Assert.Contains("a", config.PrivateAttributeNames);
-            Assert.Contains("b", config.PrivateAttributeNames);
+            var prop = _tester.Property(c => c.DataSourceFactory, (b, v) => b.DataSource(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(ComponentsImpl.NullDataSourceFactory.Instance);
         }
-        
-        [Fact]
-        public void CannotOverrideTooSmallDiagnosticRecordingInterval()
-        {
-            var config = Configuration.Builder(sdkKey).DiagnosticRecordingInterval(TimeSpan.FromSeconds(59)).Build();
 
-            Assert.Equal(TimeSpan.FromMinutes(1), config.DiagnosticRecordingInterval);
+        [Fact]
+        public void DataStore()
+        {
+            var prop = _tester.Property(c => c.DataStoreFactory, (b, v) => b.DataStore(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(TestUtils.SpecificDataStore(new InMemoryDataStore()));
         }
-        
-        [Fact]
-        public void DeprecatedPropertiesAreEquivalentToNewOnes()
-        {
-            var config = Configuration.Builder(sdkKey)
-                .EventCapacity(99)
-                .EventFlushInterval(TimeSpan.FromSeconds(90))
-                .Build();
 
-            Assert.Equal(99, config.EventCapacity);
-            Assert.Equal(TimeSpan.FromSeconds(90), config.EventFlushInterval);
+        [Fact]
+        public void DiagnosticOptOut()
+        {
+            var prop = _tester.Property(c => c.DiagnosticOptOut, (b, v) => b.DiagnosticOptOut(v));
+            prop.AssertDefault(false);
+            prop.AssertCanSet(true);
+        }
+
+        [Fact]
+        public void Events()
+        {
+            var prop = _tester.Property(c => c.EventProcessorFactory, (b, v) => b.Events(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(TestUtils.SpecificEventProcessor(new TestEventProcessor()));
+        }
+
+        [Fact]
+        public void HttpMessageHandler()
+        {
+            var prop = _tester.Property(c => c.HttpMessageHandler, (b, v) => b.HttpMessageHandler(v));
+            prop.AssertDefault(Configuration.DefaultMessageHandler);
+            prop.AssertCanSet(new HttpClientHandler());
+        }
+
+        [Fact]
+        public void Logging()
+        {
+            var prop = _tester.Property(c => c.LoggingConfigurationFactory, (b, v) => b.Logging(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(Components.Logging(Logs.ToWriter(Console.Out)));
+        }
+
+        [Fact]
+        public void Offline()
+        {
+            var prop = _tester.Property(c => c.Offline, (b, v) => b.Offline(v));
+            prop.AssertDefault(false);
+            prop.AssertCanSet(true);
+        }
+
+        [Fact]
+        public void ReadTimeout()
+        {
+            var prop = _tester.Property(c => c.ReadTimeout, (b, v) => b.ReadTimeout(v));
+            prop.AssertDefault(Configuration.DefaultReadTimeout);
+            prop.AssertCanSet(TimeSpan.FromSeconds(7));
+        }
+
+        [Fact]
+        public void SdkKey()
+        {
+            var prop = _tester.Property(c => c.SdkKey, (b, v) => b.SdkKey(v));
+            prop.AssertCanSet("other-key");
+        }
+
+        [Fact]
+        public void StartWaitTime()
+        {
+            var prop = _tester.Property(c => c.StartWaitTime, (b, v) => b.StartWaitTime(v));
+            prop.AssertDefault(Configuration.DefaultStartWaitTime);
+            prop.AssertCanSet(TimeSpan.FromSeconds(7));
+        }
+
+        [Fact]
+        public void WrapperName()
+        {
+            var prop = _tester.Property(c => c.WrapperName, (b, v) => b.WrapperName(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet("name");
+        }
+
+        [Fact]
+        public void WrapperVersion()
+        {
+            var prop = _tester.Property(c => c.WrapperVersion, (b, v) => b.WrapperVersion(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet("1.0");
         }
     }
 }

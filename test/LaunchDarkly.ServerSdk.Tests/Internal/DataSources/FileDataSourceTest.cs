@@ -20,7 +20,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly IDataStore store = new InMemoryDataStore();
         private readonly FileDataSourceBuilder factory = FileData.DataSource();
         private readonly Configuration config = Configuration.Builder(sdkKey)
-            .EventProcessorFactory(Components.NullEventProcessor)
+            .Events(Components.NoEvents)
             .Build();
         private readonly User user = User.WithKey("key");
 

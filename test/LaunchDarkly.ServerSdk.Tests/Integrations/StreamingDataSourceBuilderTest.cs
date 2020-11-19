@@ -1,34 +1,28 @@
 ﻿using System;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Components;
-
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     public class StreamingDataSourceBuilderTest
     {
+        private readonly BuilderInternalTestUtil<StreamingDataSourceBuilder> _tester =
+            BuilderTestUtil.For(Components.StreamingDataSource);
+
         [Fact]
         public void BaseUri()
         {
-            Assert.Equal(StreamingDataSourceBuilder.DefaultBaseUri,
-                StreamingDataSource()._baseUri);
-
-            Assert.Equal(new Uri("http://x"),
-                StreamingDataSource().BaseUri(new Uri("http://x"))._baseUri);
-
-            Assert.Equal(StreamingDataSourceBuilder.DefaultBaseUri,
-                StreamingDataSource().BaseUri(null)._baseUri);
+            var prop = _tester.Property(b => b._baseUri, (b, v) => b.BaseUri(v));
+            prop.AssertDefault(StreamingDataSourceBuilder.DefaultBaseUri);
+            prop.AssertCanSet(new Uri("http://x"));
+            prop.AssertSetIsChangedTo(null, StreamingDataSourceBuilder.DefaultBaseUri);
         }
 
         [Fact]
         public void InitialReconnectDelay()
         {
-            Assert.Equal(StreamingDataSourceBuilder.DefaultInitialReconnectDelay,
-                StreamingDataSource()._initialReconnectDelay);
-
-            Assert.Equal(TimeSpan.FromMilliseconds(222),
-                StreamingDataSource().InitialReconnectDelay(TimeSpan.FromMilliseconds(222))
-                ._initialReconnectDelay);
+            var prop = _tester.Property(b => b._initialReconnectDelay, (b, v) => b.InitialReconnectDelay(v));
+            prop.AssertDefault(StreamingDataSourceBuilder.DefaultInitialReconnectDelay);
+            prop.AssertCanSet(TimeSpan.FromMilliseconds(222));
         }
     }
 }

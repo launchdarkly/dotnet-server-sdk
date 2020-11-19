@@ -1,9 +1,6 @@
 ﻿using System.Threading.Tasks;
-using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server.Internal
 {
@@ -13,38 +10,6 @@ namespace LaunchDarkly.Sdk.Server.Internal
     /// </summary>
     internal static class ComponentsImpl
     {
-        internal class DefaultEventProcessorFactory : IEventProcessorFactory
-        {
-            internal static readonly DefaultEventProcessorFactory Instance = new DefaultEventProcessorFactory();
-
-            private DefaultEventProcessorFactory() { }
-
-            public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor CreateEventProcessor(LdClientContext context)
-            {
-                if (context.Configuration.Offline)
-                {
-                    return new NullEventProcessor();
-                }
-                else
-                {
-                    var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
-                    var eventsConfig = context.Configuration.EventProcessorConfiguration;
-                    var httpClient = Util.MakeHttpClient(context.Configuration.HttpRequestConfiguration,
-                        ServerSideClientEnvironment.Instance);
-                    var eventSender = new DefaultEventSender(httpClient, eventsConfig, logger);
-                    return new DefaultEventProcessorWrapper(new DefaultEventProcessor(
-                        eventsConfig,
-                        eventSender,
-                        new DefaultUserDeduplicator(context.Configuration),
-                        context.DiagnosticStore,
-                        null,
-                        logger,
-                        null
-                    ));
-                }
-            }
-        }
-
         internal sealed class InMemoryDataStoreFactory : IDataStoreFactory
         {
             internal static readonly InMemoryDataStoreFactory Instance = new InMemoryDataStoreFactory();

@@ -1,5 +1,4 @@
 ﻿using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
