@@ -33,7 +33,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </example>
     public class PollingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {
-        internal static readonly Uri DefaultBaseUri = new Uri("https://app.launchdarkly.com");
+        internal static readonly Uri DefaultBaseUri = new Uri("https://sdk.launchdarkly.com");
 
         /// <summary>
         /// The default value for <see cref="PollInterval(TimeSpan)"/>: 30 seconds.
@@ -51,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <list type="bullet">
         /// <item>
         /// <description>
-        /// You are using the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">Relay Proxy</a>.
+        /// You are using the <a href="https://docs.launchdarkly.com/home/advanced/relay-proxy">Relay Proxy</a>.
         /// Set <c>BaseUri</c> to the base URI of the Relay Proxy instance.
         /// </description>
         /// </item>
