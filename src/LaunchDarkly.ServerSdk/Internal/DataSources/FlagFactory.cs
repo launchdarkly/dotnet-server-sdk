@@ -1,7 +1,7 @@
 ﻿using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json.Linq;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     // Creates flag or segment objects from raw JSON.  Note that the FeatureFlag and Segment
     // classes are internal to LaunchDarkly.Client, so we refer to those types indirectly via

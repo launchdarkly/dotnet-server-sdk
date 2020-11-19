@@ -1,17 +1,18 @@
 ﻿using System.IO;
 using System.Threading;
+using LaunchDarkly.Sdk.Server.Integrations;
 
-namespace LaunchDarkly.Sdk.Server.Files
+namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal sealed class FlagFileReader : IFileReader
+    internal sealed class FlagFileReader : FileDataTypes.IFileReader
     {
         private const int ReadFileRetryDelay = 200;
         private const int ReadFileRetryAttempts = 30000 / ReadFileRetryDelay;
 
         private FlagFileReader() { }
-        public static readonly IFileReader Instance = new FlagFileReader();
+        public static readonly FileDataTypes.IFileReader Instance = new FlagFileReader();
 
-        string IFileReader.ReadAllText(string path)
+        public string ReadAllText(string path)
         {
             int delay = 0;
             for (int i = 0; ; i++)
