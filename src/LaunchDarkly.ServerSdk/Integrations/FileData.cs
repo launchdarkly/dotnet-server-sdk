@@ -53,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// output as the starting point for your file. In Linux you would do this:
         /// </para>
         /// <code>
-        ///     curl -H "Authorization: {your sdk key}" https://app.launchdarkly.com/sdk/latest-all
+        ///     curl -H "Authorization: {your sdk key}" https://sdk.launchdarkly.com/sdk/latest-all
         /// </code>
         /// <para>
         /// The output will look something like this (but with many more properties):
