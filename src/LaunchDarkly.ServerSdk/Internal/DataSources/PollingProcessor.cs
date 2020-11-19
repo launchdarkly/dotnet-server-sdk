@@ -12,23 +12,27 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
     {
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
-        private readonly Configuration _config;
         private readonly IFeatureRequestor _featureRequestor;
         private readonly IDataStoreUpdates _dataStoreUpdates;
+        private readonly TimeSpan _pollInterval;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
         private readonly Logger _log;
         private volatile bool _disposed;
 
 
-        internal PollingProcessor(LdClientContext context,
-            IFeatureRequestor featureRequestor, IDataStoreUpdates dataStoreUpdates)
+        internal PollingProcessor(
+            LdClientContext context,
+            IFeatureRequestor featureRequestor,
+            IDataStoreUpdates dataStoreUpdates,
+            TimeSpan pollInterval
+            )
         {
-            _config = context.Configuration;
             _featureRequestor = featureRequestor;
             _dataStoreUpdates = dataStoreUpdates;
+            _pollInterval = pollInterval;
             _initTask = new TaskCompletionSource<bool>();
-            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         bool IDataSource.Initialized()
@@ -39,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         Task<bool> IDataSource.Start()
         {
             _log.Info("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
-                _config.PollingInterval.TotalMilliseconds);
+                _pollInterval.TotalMilliseconds);
 
             Task.Run(() => UpdateTaskLoopAsync());
             return _initTask.Task;
@@ -50,7 +54,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             while (!_disposed)
             {
                 await UpdateTaskAsync();
-                await Task.Delay(_config.PollingInterval);
+                await Task.Delay(_pollInterval);
             }
         }
 

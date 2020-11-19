@@ -1,5 +1,6 @@
 ﻿using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
@@ -16,17 +17,17 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey).Offline(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<NullDataSource>(client._dataSource);
+                Assert.IsType<ComponentsImpl.NullDataSource>(client._dataSource);
             }
         }
 
         [Fact]
-        public void LddModeClientHasNullEventProcessor()
+        public void OfflineClientHasNullEventProcessor()
         {
             var config = Configuration.Builder(sdkKey).Offline(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<NullEventProcessor>(client._eventProcessor);
+                Assert.IsType<ComponentsImpl.NullEventProcessor>(client._eventProcessor);
             }
         }
 
@@ -75,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server
             using (var client = new LdClient(config))
             {
                 Assert.True(logCapture.HasMessageWithText(LogLevel.Info,
-                    "Starting Launchdarkly client in offline mode."), logCapture.ToString());
+                    "Starting LaunchDarkly client in offline mode"), logCapture.ToString());
             }
         }
 

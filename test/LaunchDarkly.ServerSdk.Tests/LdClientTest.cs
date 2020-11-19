@@ -6,6 +6,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Moq;
 using Xunit;
@@ -52,14 +53,13 @@ namespace LaunchDarkly.Sdk.Server
         public void ClientHasDefaultEventProcessorByDefault()
         {
             var config = Configuration.Builder(sdkKey)
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+                .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
                 .DiagnosticOptOut(true)
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<DelegatingEventProcessor>(client._eventProcessor);
+                Assert.IsType<DefaultEventProcessorWrapper>(client._eventProcessor);
             }
         }
 
@@ -67,8 +67,7 @@ namespace LaunchDarkly.Sdk.Server
         public void StreamingClientHasStreamProcessor()
         {
             var config = Configuration.Builder(sdkKey)
-                .IsStreamingEnabled(true)
-                .StreamUri(new Uri("http://fake"))
+                .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -83,8 +82,7 @@ namespace LaunchDarkly.Sdk.Server
             var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
                 .Logging(Components.Logging(logCapture))
-                .IsStreamingEnabled(true)
-                .StreamUri(new Uri("http://fake"))
+                .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -99,8 +97,7 @@ namespace LaunchDarkly.Sdk.Server
         public void PollingClientHasPollingProcessor()
         {
             var config = Configuration.Builder(sdkKey)
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+                .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -115,8 +112,7 @@ namespace LaunchDarkly.Sdk.Server
             var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
                 .Logging(Components.Logging(logCapture))
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+                .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -136,8 +132,7 @@ namespace LaunchDarkly.Sdk.Server
             var epf = new Mock<IEventProcessorFactory>();
             var dsf = new Mock<IDataSourceFactory>();
             var config = Configuration.Builder(sdkKey)
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+                .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
                 .EventProcessorFactory(epf.Object)
                 .DataSource(dsf.Object)
@@ -148,7 +143,7 @@ namespace LaunchDarkly.Sdk.Server
 
             epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
                 .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
-                .Returns(new NullEventProcessor());
+                .Returns(new ComponentsImpl.NullEventProcessor());
             dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataStoreUpdates>()))
                 .Callback((LdClientContext ctx, IDataStoreUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
                 .Returns((LdClientContext ctx, IDataStoreUpdates dsu) => dataSource);
@@ -170,8 +165,7 @@ namespace LaunchDarkly.Sdk.Server
             var epf = new Mock<IEventProcessorFactory>();
             var dsf = new Mock<IDataSourceFactory>();
             var config = Configuration.Builder(sdkKey)
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+                .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
                 .EventProcessorFactory(epf.Object)
                 .DataSource(dsf.Object)
@@ -183,7 +177,7 @@ namespace LaunchDarkly.Sdk.Server
 
             epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
                 .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
-                .Returns(new NullEventProcessor());
+                .Returns(new ComponentsImpl.NullEventProcessor());
             dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataStoreUpdates>()))
                 .Callback((LdClientContext ctx, IDataStoreUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
                 .Returns((LdClientContext ctx, IDataStoreUpdates dsu) => dataSource);

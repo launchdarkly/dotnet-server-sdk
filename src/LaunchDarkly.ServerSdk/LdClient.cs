@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
-using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -56,10 +53,12 @@ namespace LaunchDarkly.Sdk.Server
             _log.Info("Starting LaunchDarkly Client {0}",
                 ServerSideClientEnvironment.Instance.Version);
 
-            ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
-                new ServerDiagnosticStore(_configuration);
+            var basicConfig = new BasicConfiguration(config.SdkKey, config.Offline, _log);
 
-            var clientContext = new LdClientContext(config, _log, diagnosticStore);
+            ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
+                new ServerDiagnosticStore(_configuration, basicConfig);
+
+            var clientContext = new LdClientContext(basicConfig, config, diagnosticStore);
 
             _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore).CreateDataStore(clientContext);
 
@@ -67,14 +66,22 @@ namespace LaunchDarkly.Sdk.Server
 
             var eventProcessorFactory = _configuration.EventProcessorFactory ?? Components.DefaultEventProcessor;
             _eventProcessor = eventProcessorFactory.CreateEventProcessor(clientContext);
-            
-            var dataSourceFactory = _configuration.DataSourceFactory ?? Components.DefaultDataSource;
+
             var dataStoreUpdates = new DataStoreUpdates(_dataStore);
+            IDataSourceFactory dataSourceFactory;
+            if (config.Offline)
+            {
+                dataSourceFactory = Components.ExternalUpdatesOnly;
+            }
+            else
+            {
+                dataSourceFactory = _configuration.DataSourceFactory ?? Components.StreamingDataSource();
+            }
             _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataStoreUpdates);
 
             var initTask = _dataSource.Start();
 
-            if (!(_dataSource is NullDataSource))
+            if (!(_dataSource is ComponentsImpl.NullDataSource))
             {
                 _log.Info("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
                     _configuration.StartWaitTime.TotalMilliseconds);

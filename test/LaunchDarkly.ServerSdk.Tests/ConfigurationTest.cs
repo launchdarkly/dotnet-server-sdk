@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using Xunit;
 
@@ -31,8 +32,7 @@ namespace LaunchDarkly.Sdk.Server
             var uri = new Uri("http://fake");
             var time = TimeSpan.FromDays(3);
             TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);
-            TestSetter(b => b.BaseUri, c => c.BaseUri, uri);
-            TestSetter(b => b.DataSource, c => c.DataSourceFactory, Components.NullDataSource);
+            TestSetter(b => b.DataSource, c => c.DataSourceFactory, ComponentsImpl.NullDataSourceFactory.Instance);
             TestSetter(b => b.DataStore, c => c.DataStoreFactory,
                 TestUtils.SpecificDataStore(new InMemoryDataStore()));
             TestSetter(b => b.ConnectionTimeout, c => c.ConnectionTimeout, time);
@@ -45,17 +45,12 @@ namespace LaunchDarkly.Sdk.Server
             TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
             TestSetter(b => b.HttpMessageHandler, c => c.HttpMessageHandler, new HttpClientHandler());
             TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
-            TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
             TestSetter(b => b.Logging, c => c.LoggingConfigurationFactory,
                 Components.Logging(Logs.ToWriter(Console.Out)));
             TestSetter(b => b.Offline, c => c.Offline, true);
-            TestSetter(b => b.PollingInterval, c => c.PollingInterval, time);
             TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
-            TestSetter(b => b.ReconnectTime, c => c.ReconnectTime, time);
             TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
             TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
-            TestSetter(b => b.StreamUri, c => c.StreamUri, uri);
-            TestSetter(b => b.UseLdd, c => c.UseLdd, true);
             TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
             TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
             TestSetter(b => b.WrapperName, c => c.WrapperName, "name");
@@ -84,14 +79,6 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Contains("b", config.PrivateAttributeNames);
         }
         
-        [Fact]
-        public void CannotOverrideTooSmallPollingInterval()
-        {
-            var config = Configuration.Builder(sdkKey).PollingInterval(TimeSpan.FromSeconds(29)).Build();
-
-            Assert.Equal(TimeSpan.FromSeconds(30), config.PollingInterval);
-        }
-
         [Fact]
         public void CannotOverrideTooSmallDiagnosticRecordingInterval()
         {

@@ -1,5 +1,4 @@
 ﻿using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Logging;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -15,28 +14,14 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public class LdClientContext
     {
         /// <summary>
+        /// The SDK's basic global properties.
+        /// </summary>
+        public BasicConfiguration Basic { get; }
+
+        /// <summary>
         /// The configuration for the current client instance.
         /// </summary>
         public Configuration Configuration { get; }
-
-        /// <summary>
-        /// The base logger for all SDK components to use.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// Components should use the methods of the <a href="https://github.com/launchdarkly/dotnet-logging">LaunchDarkly.Logging</a>
-        /// API to write log messages which will be output or discarded as appropriate by the logging
-        /// framework. This is the main logger for the SDK; components that want to tag their log messages
-        /// with a more specific logger name can use the <c>SubLogger</c> method: for instance, if the
-        /// base logger's name is "LaunchDarkly.Sdk.Server.LdClient", an event-processing component could
-        /// use <c>SubLogger("Events")</c> to get a logger whose name is "LaunchDarkly.Sdk.Server.LdClient.Events".
-        /// </para>
-        /// <para>
-        /// This property will never be null; if logging is disabled, it will be set to a stub logger
-        /// that produces no output.
-        /// </para>
-        /// </remarks>
-        public Logger Logger { get; }
 
         internal IDiagnosticStore DiagnosticStore { get; }
 
@@ -46,23 +31,22 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <remarks>
         /// This constructor overload is only for convenience in testing.
         /// </remarks>
-        /// <param name="configuration">the configuration for the current client instance</param>
-        public LdClientContext(Configuration configuration) :
-            this(configuration, Logs.None.Logger(""), null) { }
+        /// <param name="basic">the basic global SDK properties</param>
+        /// <param name="configuration">the full configuration for the current client instance</param>
+        public LdClientContext(
+            BasicConfiguration basic,
+            Configuration configuration
+            ) :
+            this(basic, configuration, null) { }
 
-        /// <summary>
-        /// Constructs a new instance with only the public properties.
-        /// </summary>
-        /// <param name="configuration">the configuration for the current client instance</param>
-        /// <param name="logger">the base logger for all SDK components to use</param>
-        public LdClientContext(Configuration configuration, Logger logger) :
-            this(configuration, logger, null) { }
-
-        internal LdClientContext(Configuration configuration, Logger logger,
-            IDiagnosticStore diagnosticStore)
+        internal LdClientContext(
+            BasicConfiguration basic,
+            Configuration configuration,
+            IDiagnosticStore diagnosticStore
+            )
         {
+            Basic = basic;
             Configuration = configuration;
-            Logger = logger;
             DiagnosticStore = diagnosticStore;
         }
     }

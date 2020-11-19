@@ -12,20 +12,21 @@ namespace LaunchDarkly.Sdk.Server.Files
 {
     public class FileDataSourceTest
     {
+        private const string sdkKey = "sdkKey";
         private static readonly string ALL_DATA_JSON_FILE = TestUtils.TestFilePath("all-properties.json");
         private static readonly string ALL_DATA_YAML_FILE = TestUtils.TestFilePath("all-properties.yml");
 
         private readonly IDataStore store = new InMemoryDataStore();
         private readonly FileDataSourceFactory factory = FileComponents.FileDataSource();
-        private readonly Configuration config = Configuration.Builder("sdkKey")
+        private readonly Configuration config = Configuration.Builder(sdkKey)
             .EventProcessorFactory(Components.NullEventProcessor)
             .Build();
         private readonly User user = User.WithKey("key");
 
-        private IDataSource MakeDataSource()
-        {
-            return factory.CreateDataSource(new LdClientContext(config), new DataStoreUpdates(store));
-        }
+        private IDataSource MakeDataSource() =>
+            factory.CreateDataSource(
+                new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), config),
+                new DataStoreUpdates(store));
 
         [Fact]
         public void FlagsAreNotLoadedUntilStart()

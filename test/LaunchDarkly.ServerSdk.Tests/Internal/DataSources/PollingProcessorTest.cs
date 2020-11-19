@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -11,9 +12,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class PollingProcessorTest
     {
+        private const string sdkKey = "SDK_KEY";
         private readonly FeatureFlag Flag = new FeatureFlagBuilder("flagkey").Build();
         private readonly Segment Segment = new Segment("segkey", 1, null, null, "", null, false);
-
+        
         readonly Mock<IFeatureRequestor> _mockFeatureRequestor;
         readonly IFeatureRequestor _featureRequestor;
         readonly InMemoryDataStore _dataStore;
@@ -27,16 +29,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _featureRequestor = _mockFeatureRequestor.Object;
             _dataStore = new InMemoryDataStore();
             _dataStoreUpdates = new DataStoreUpdates(_dataStore);
-            _config = Configuration.Default("SDK_KEY");
-            _context = new LdClientContext(_config);
+            _config = Configuration.Default(sdkKey);
+            _context = new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), _config);
         }
+
+        private PollingProcessor MakeProcessor() =>
+            new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates,
+                PollingDataSourceBuilder.DefaultPollInterval);
 
         [Fact]
         public void SuccessfulRequestPutsFeatureDataInStore()
         {
             AllData allData = MakeAllData();
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
-            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = ((IDataSource)pp).Start();
                 initTask.Wait();
@@ -51,7 +57,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             AllData allData = MakeAllData();
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
-            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = ((IDataSource)pp).Start();
                 initTask.Wait();
@@ -63,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void ConnectionErrorDoesNotCauseImmediateFailure()
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(new InvalidOperationException("no"));
-            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = MakeProcessor())
             {
                 var startTime = DateTime.Now;
                 var initTask = ((IDataSource)pp).Start();
@@ -108,7 +114,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
-            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = ((IDataSource)pp).Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(1000));
@@ -121,7 +127,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
-            using (PollingProcessor pp = new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates))
+            using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = ((IDataSource)pp).Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
