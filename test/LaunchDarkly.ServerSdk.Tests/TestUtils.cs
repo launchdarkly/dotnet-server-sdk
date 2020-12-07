@@ -123,7 +123,7 @@ namespace LaunchDarkly.Sdk.Server
             _ds = ds;
         }
 
-        IDataSource IDataSourceFactory.CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates) => _ds;
+        IDataSource IDataSourceFactory.CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates) => _ds;
     }
 
     public class DataSourceFactoryWithData : IDataSourceFactory
@@ -135,24 +135,24 @@ namespace LaunchDarkly.Sdk.Server
             _data = data;
         }
 
-        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
-            new DataSourceWithData(dataStoreUpdates, _data);
+        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates) =>
+            new DataSourceWithData(dataSourceUpdates, _data);
     }
 
     public class DataSourceWithData : IDataSource
     {
-        private readonly IDataStoreUpdates _storeUpdates;
+        private readonly IDataSourceUpdates _dataSourceUpdates;
         private readonly FullDataSet<ItemDescriptor> _data;
 
-        public DataSourceWithData(IDataStoreUpdates storeUpdates, FullDataSet<ItemDescriptor> data)
+        public DataSourceWithData(IDataSourceUpdates dataSourceUpdates, FullDataSet<ItemDescriptor> data)
         {
-            _storeUpdates = storeUpdates;
+            _dataSourceUpdates = dataSourceUpdates;
             _data = data;
         }
 
         public Task<bool> Start()
         {
-            _storeUpdates.Init(_data);
+            _dataSourceUpdates.Init(_data);
             return Task.FromResult(true);
         }
 

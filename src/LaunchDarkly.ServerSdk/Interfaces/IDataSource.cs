@@ -9,7 +9,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// </summary>
     /// <remarks>
     /// This component uses a push model. When it is created (via <see cref="IDataSourceFactory"/>) it is
-    /// given a reference to an <see cref="IDataStoreUpdates"/> component, which is a write-only abstraction of
+    /// given a reference to an <see cref="IDataSourceUpdates"/> component, which is a write-only abstraction of
     /// the data store. The SDK never requests feature flag data from the <see cref="IDataSource"/>, it
     /// only looks at the last known data that was previously put into the store.
     /// </remarks>

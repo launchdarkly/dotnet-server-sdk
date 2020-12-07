@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly Mock<IFeatureRequestor> _mockFeatureRequestor;
         readonly IFeatureRequestor _featureRequestor;
         readonly InMemoryDataStore _dataStore;
-        readonly IDataStoreUpdates _dataStoreUpdates;
+        readonly IDataSourceUpdates _dataSourceUpdates;
         readonly Configuration _config;
         readonly LdClientContext _context;
 
@@ -28,13 +28,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockFeatureRequestor = new Mock<IFeatureRequestor>();
             _featureRequestor = _mockFeatureRequestor.Object;
             _dataStore = new InMemoryDataStore();
-            _dataStoreUpdates = new DataStoreUpdates(_dataStore);
+            _dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore);
             _config = Configuration.Default(sdkKey);
             _context = new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), _config);
         }
 
         private PollingProcessor MakeProcessor() =>
-            new PollingProcessor(_context, _featureRequestor, _dataStoreUpdates,
+            new PollingProcessor(_context, _featureRequestor, _dataSourceUpdates,
                 PollingDataSourceBuilder.DefaultPollInterval);
 
         [Fact]
