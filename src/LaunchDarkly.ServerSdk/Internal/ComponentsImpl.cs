@@ -32,7 +32,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
         {
             internal static readonly IDataSourceFactory Instance = new NullDataSourceFactory();
 
-            public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
+            public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
             {
                 if (context.Basic.Offline)
                 {

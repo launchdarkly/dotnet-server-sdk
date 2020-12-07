@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private static int UNINITIALIZED = 0;
         private static int INITIALIZED = 1;
         private readonly IFeatureRequestor _featureRequestor;
-        private readonly IDataStoreUpdates _dataStoreUpdates;
+        private readonly IDataSourceUpdates _dataSourceUpdates;
         private readonly TimeSpan _pollInterval;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
@@ -24,12 +24,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         internal PollingProcessor(
             LdClientContext context,
             IFeatureRequestor featureRequestor,
-            IDataStoreUpdates dataStoreUpdates,
+            IDataSourceUpdates dataSourceUpdates,
             TimeSpan pollInterval
             )
         {
             _featureRequestor = featureRequestor;
-            _dataStoreUpdates = dataStoreUpdates;
+            _dataSourceUpdates = dataSourceUpdates;
             _pollInterval = pollInterval;
             _initTask = new TaskCompletionSource<bool>();
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
@@ -65,7 +65,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var allData = await _featureRequestor.GetAllDataAsync();
                 if (allData != null)
                 {
-                    _dataStoreUpdates.Init(allData.ToInitData());
+                    _dataSourceUpdates.Init(allData.ToInitData());
 
                     //We can't use bool in CompareExchange because it is not a reference type.
                     if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)

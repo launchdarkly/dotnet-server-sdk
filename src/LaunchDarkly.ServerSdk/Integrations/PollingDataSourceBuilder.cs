@@ -88,14 +88,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
+        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
             context.Basic.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
             FeatureRequestor requestor = new FeatureRequestor(context, _baseUri ?? DefaultBaseUri);
             return new PollingProcessor(
                 context,
                 requestor,
-                dataStoreUpdates,
+                dataSourceUpdates,
                 _pollInterval
                 );
         }

@@ -70,11 +70,11 @@ namespace LaunchDarkly.Sdk.Server
                 (_configuration.EventProcessorFactory ?? Components.SendEvents());
             _eventProcessor = eventProcessorFactory.CreateEventProcessor(clientContext);
 
-            var dataStoreUpdates = new DataStoreUpdates(_dataStore);
+            var dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore);
             IDataSourceFactory dataSourceFactory =
                 config.Offline ? Components.ExternalUpdatesOnly :
                 (_configuration.DataSourceFactory ?? Components.StreamingDataSource());
-            _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataStoreUpdates);
+            _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataSourceUpdates);
 
             var initTask = _dataSource.Start();
 

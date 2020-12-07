@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// through these methods. The SDK may modify the data before sending it to the store, or take other
     /// actions when an update happens, that are separate from the store implementation.
     /// </remarks>
-    public interface IDataStoreUpdates
+    public interface IDataSourceUpdates
     {
         /// <summary>
         /// Provides a full data set to be copied into the data store, overwriting any previous contents.
