@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
@@ -255,28 +253,23 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public IEventProcessor CreateEventProcessor(LdClientContext context)
         {
-            var eventsConfig = new EventProcessorConfigurationImpl
+            var eventsConfig = new EventsConfiguration
             {
                 AllAttributesPrivate = _allAttributesPrivate,
-                DiagnosticOptOut = context.Configuration.DiagnosticOptOut,
                 DiagnosticRecordingInterval = _diagnosticRecordingInterval,
                 EventCapacity = _capacity,
                 EventFlushInterval = _flushInterval,
                 EventsUri = new Uri(_baseUri, "bulk"),
                 DiagnosticUri = new Uri(_baseUri, "diagnostic"),
-                HttpClientTimeout = context.Configuration.ConnectionTimeout,
                 InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
-                ReadTimeout = context.Configuration.ReadTimeout,
-                ReconnectTime = TimeSpan.FromSeconds(1), // this isn't the same as the stream reconnect time - it's fixed
                 UserKeysCapacity = _userKeysCapacity,
                 UserKeysFlushInterval = _userKeysFlushInterval
             };
             var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
             var eventSender = _eventSender ??
                 new DefaultEventSender(
-                    Util.MakeHttpClient(context.Configuration.HttpRequestConfiguration,
-                        ServerSideClientEnvironment.Instance),
+                    context.Configuration.HttpProperties,
                     eventsConfig,
                     logger
                     );
@@ -306,25 +299,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 .Add("userKeysCapacity", _userKeysCapacity)
                 .Add("userKeysFlushIntervalMillis", _userKeysFlushInterval.TotalMilliseconds)
                 .Build();
-        }
-
-        private struct EventProcessorConfigurationImpl : IEventProcessorConfiguration
-        {
-            internal Configuration Config { get; set; }
-            public bool AllAttributesPrivate { get; set; }
-            public bool DiagnosticOptOut { get; set; }
-            public TimeSpan DiagnosticRecordingInterval { get; set; }
-            public int EventCapacity { get; set; }
-            public TimeSpan EventFlushInterval { get; set; }
-            public Uri EventsUri { get; set; }
-            public Uri DiagnosticUri { get; set; }
-            public TimeSpan HttpClientTimeout { get; set; }
-            public bool InlineUsersInEvents { get; set; }
-            public IImmutableSet<string> PrivateAttributeNames { get; set; }
-            public TimeSpan ReadTimeout { get; set; }
-            public TimeSpan ReconnectTime { get; set; }
-            public int UserKeysCapacity { get; set; }
-            public TimeSpan UserKeysFlushInterval { get; set; }
         }
     }
 }

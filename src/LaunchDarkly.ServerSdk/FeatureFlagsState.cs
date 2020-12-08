@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using LaunchDarkly.Sdk.Internal.Helpers;
-using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Internal;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -134,7 +132,8 @@ namespace LaunchDarkly.Sdk.Server
 
         public override int GetHashCode()
         {
-            return Util.Hash().With(_flagValues).With(_flagMetadata).With(_valid).Value;
+            
+            return new HashCodeBuilder().With(_flagValues).With(_flagMetadata).With(_valid).Value;
         }
         
         private static bool DictionariesEqual<T, U>(IDictionary<T, U> d0, IDictionary<T, U> d1)
@@ -203,7 +202,8 @@ namespace LaunchDarkly.Sdk.Server
 
         // This method is defined with internal scope because metadata fields like trackEvents aren't
         // relevant to the main external use case for the builder (testing server-side code)
-        internal FeatureFlagsStateBuilder AddFlag(string flagKey, LdValue value, int? variationIndex, EvaluationReason reason, int flagVersion, bool flagTrackEvents, long? flagDebugEventsUntilDate)
+        internal FeatureFlagsStateBuilder AddFlag(string flagKey, LdValue value, int? variationIndex, EvaluationReason reason,
+            int flagVersion, bool flagTrackEvents, UnixMillisecondTime? flagDebugEventsUntilDate)
         {
             _flagValues[flagKey] = value;
             var meta = new FlagMetadata
@@ -234,7 +234,7 @@ namespace LaunchDarkly.Sdk.Server
         [JsonProperty(PropertyName = "trackEvents", NullValueHandling = NullValueHandling.Ignore)]
         internal bool? TrackEvents { get; set; }
         [JsonProperty(PropertyName = "debugEventsUntilDate", NullValueHandling = NullValueHandling.Ignore)]
-        internal long? DebugEventsUntilDate { get; set; }
+        internal UnixMillisecondTime? DebugEventsUntilDate { get; set; }
         [JsonProperty(PropertyName = "reason", NullValueHandling = NullValueHandling.Ignore)]
         internal EvaluationReason? Reason { get; set; }
 
@@ -245,7 +245,7 @@ namespace LaunchDarkly.Sdk.Server
                 return Variation == o.Variation &&
                     Version == o.Version &&
                     TrackEvents == o.TrackEvents &&
-                    DebugEventsUntilDate == o.DebugEventsUntilDate &&
+                    DebugEventsUntilDate.Equals(o.DebugEventsUntilDate) &&
                     Object.Equals(Reason, o.Reason);
             }
             return false;
@@ -253,7 +253,7 @@ namespace LaunchDarkly.Sdk.Server
 
         public override int GetHashCode()
         {
-            return Util.Hash().With(Variation).With(Version).With(TrackEvents).With(DebugEventsUntilDate).With(Reason).Value;
+            return new HashCodeBuilder().With(Variation).With(Version).With(TrackEvents).With(DebugEventsUntilDate).With(Reason).Value;
         }
     }
 

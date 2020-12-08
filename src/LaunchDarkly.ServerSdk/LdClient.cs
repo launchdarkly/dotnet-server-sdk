@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
@@ -52,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server
                 .CreateLoggingConfiguration();
             _log = logConfig.LogAdapter.Logger(LogNames.Base);
             _log.Info("Starting LaunchDarkly Client {0}",
-                ServerSideClientEnvironment.Instance.Version);
+                AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
 
             var basicConfig = new BasicConfiguration(config.SdkKey, config.Offline, _log);
 
@@ -235,9 +236,9 @@ namespace LaunchDarkly.Sdk.Server
                 }
                 catch (Exception e)
                 {
-                    _log.Error("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key,
-                        LogValues.ExceptionSummary(e));
-                    _log.Debug(LogValues.ExceptionTrace(e));
+                    LogHelpers.LogException(_log,
+                        string.Format("Exception caught for feature flag \"{0}\" when evaluating all flags", flag.Key),
+                        e);
                     EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
                     builder.AddFlag(flag.Key, new EvaluationDetail<LdValue>(LdValue.Null, null, reason));
                 }
@@ -326,11 +327,9 @@ namespace LaunchDarkly.Sdk.Server
             }
             catch (Exception e)
             {
-                _log.Error("Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
-                     LogValues.ExceptionSummary(e),
-                     featureKey,
-                     user.Key);
-                _log.Debug(LogValues.ExceptionTrace(e));
+                LogHelpers.LogException(_log,
+                    string.Format("Exception when evaluating feature key \"{1}\" for user key \"{2}\"", featureKey, user.Key),
+                    e);
                 var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
                 if (featureFlag == null)
                 {
@@ -404,7 +403,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             get
             {
-                return ServerSideClientEnvironment.Instance.Version;
+                return AssemblyVersions.GetAssemblyVersionForType(typeof(LdClient));
             }
         }
         

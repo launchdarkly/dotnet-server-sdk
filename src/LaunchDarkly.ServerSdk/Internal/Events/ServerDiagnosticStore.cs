@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -43,7 +44,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         {
             fieldsBuilder.Add("kind", kind);
             fieldsBuilder.Add("id", EncodeDiagnosticId(DiagnosticId));
-            fieldsBuilder.Add("creationDate", Util.GetUnixTimestampMillis(creationDate));
+            fieldsBuilder.Add("creationDate", UnixMillisecondTime.FromDateTime(creationDate).Value);
         }
 
         private LdValue EncodeDiagnosticId(DiagnosticId id)
@@ -75,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         {
             var sdkInfo = LdValue.BuildObject()
                 .Add("name", "dotnet-server-sdk")
-                .Add("version", ServerSideClientEnvironment.Instance.Version.ToString());
+                .Add("version", AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
             if (Config.WrapperName != null)
             {
                 sdkInfo.Add("wrapperName", Config.WrapperName);
@@ -150,7 +151,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         public void AddStreamInit(DateTime timestamp, TimeSpan duration, bool failed)
         {
             var streamInitObject = LdValue.BuildObject();
-            streamInitObject.Add("timestamp", Util.GetUnixTimestampMillis(timestamp));
+            streamInitObject.Add("timestamp", UnixMillisecondTime.FromDateTime(timestamp).Value);
             streamInitObject.Add("durationMillis", duration.TotalMilliseconds);
             streamInitObject.Add("failed", failed);
             lock (StreamInitsLock)
@@ -175,7 +176,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             var statEvent = LdValue.BuildObject();
             AddDiagnosticCommonFields(statEvent, "diagnostic", currentTime);
             statEvent.Add("eventsInLastBatch", eventsInLastBatch);
-            statEvent.Add("dataSinceDate", Util.GetUnixTimestampMillis(DateTime.FromBinary(dataSince)));
+            statEvent.Add("dataSinceDate", UnixMillisecondTime.FromDateTime(DateTime.FromBinary(dataSince)).Value);
             statEvent.Add("droppedEvents", droppedEvents);
             statEvent.Add("deduplicatedUsers", deduplicatedUsers);
             lock (StreamInitsLock) {

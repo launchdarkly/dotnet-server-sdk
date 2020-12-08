@@ -16,7 +16,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private List<LdValue> _variations;
         private bool _trackEvents;
         private bool _trackEventsFallthrough;
-        private long? _debugEventsUntilDate;
+        private UnixMillisecondTime? _debugEventsUntilDate;
         private bool _deleted;
         private bool _clientSide;
 
@@ -143,7 +143,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        internal FeatureFlagBuilder DebugEventsUntilDate(long? debugEventsUntilDate)
+        internal FeatureFlagBuilder DebugEventsUntilDate(UnixMillisecondTime? debugEventsUntilDate)
         {
             _debugEventsUntilDate = debugEventsUntilDate;
             return this;

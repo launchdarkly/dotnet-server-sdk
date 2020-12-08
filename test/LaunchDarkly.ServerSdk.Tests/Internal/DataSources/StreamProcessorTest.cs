@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
@@ -222,10 +224,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
             public StreamManager.EventSourceCreator Create()
             {
-                return (StreamProperties sp, IDictionary<string, string> headers) =>
+                return (StreamProperties sp, HttpProperties hp) =>
                 {
                     ReceivedProperties = sp;
-                    ReceivedHeaders = headers;
+                    ReceivedHeaders = hp.BaseHeaders.ToDictionary(kv => kv.Key, kv => kv.Value);
                     return _eventSource;
                 };
             }

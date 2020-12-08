@@ -2,6 +2,7 @@
 using System.Net.Http;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server
@@ -196,16 +197,13 @@ namespace LaunchDarkly.Sdk.Server
             _wrapperName = builder._wrapperName;
             _wrapperVersion = builder._wrapperVersion;
         }
-        
-        internal IHttpRequestConfiguration HttpRequestConfiguration => new HttpRequestAdapter { Config = this };
 
-        private struct HttpRequestAdapter : IHttpRequestConfiguration
-        {
-            internal Configuration Config { get; set; }
-            public string HttpAuthorizationKey => Config.SdkKey;
-            public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
-            public string WrapperName => Config.WrapperName;
-            public string WrapperVersion => Config.WrapperVersion;
-        }
+        internal HttpProperties HttpProperties => HttpProperties.Default
+            .WithAuthorizationKey(SdkKey)
+            .WithConnectTimeout(_connectionTimeout)
+            .WithReadTimeout(_readTimeout)
+            .WithHttpMessageHandler(HttpMessageHandler)
+            .WithWrapper(WrapperName, WrapperVersion)
+            .WithUserAgent("DotNetClient");
     }
 }

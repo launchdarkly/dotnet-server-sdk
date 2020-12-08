@@ -2,11 +2,11 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -37,15 +37,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 HttpMethod.Get,
                 null
                 );
-            var streamManagerConfig = new StreamManagerConfigImpl
-            {
-                Config = context.Configuration,
-                InitialReconnectDelay = initialReconnectDelay
-            };
             _streamManager = new StreamManager(this,
                 streamProperties,
-                streamManagerConfig,
-                ServerSideClientEnvironment.Instance,
+                context.Configuration.HttpProperties,
+                initialReconnectDelay,
                 eventSourceCreator,
                 context.DiagnosticStore,
                 _log
@@ -68,8 +63,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         #endregion
 
         #region IStreamProcessor
-        
+
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        // This method is async because that's how the dotnet-eventsource API wants message handlers to be. There's no
+        // problem with *not* doing any awaits in the method, and in fact for the SDK's purposes it's best that this
+        // method behaves synchronously because that ensures that stream messages are processed in the order received.
         public async Task HandleMessage(StreamManager streamManager, string messageType, string messageData)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             switch (messageType)
             {
@@ -113,6 +113,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     }
                     break;
             }
+        }
+
+        public void HandleError(StreamManager streamManager, Exception e, bool recoverable)
+        {
+
         }
 
         #endregion
@@ -190,21 +195,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 Path = path;
                 Version = version;
             }
-        }
-
-        private struct StreamManagerConfigImpl : IStreamManagerConfiguration
-        {
-            internal Configuration Config { get; set; }
-            internal TimeSpan InitialReconnectDelay { get; set; }
-
-            public string HttpAuthorizationKey => Config.SdkKey;
-            public HttpMessageHandler HttpMessageHandler => Config.HttpMessageHandler;
-            public TimeSpan HttpClientTimeout => Config.ConnectionTimeout;
-            public TimeSpan ReadTimeout => Config.ReadTimeout;
-            public TimeSpan ReconnectTime => InitialReconnectDelay;
-            public Exception TranslateHttpException(Exception e) => e;
-            public string WrapperName => Config.WrapperName;
-            public string WrapperVersion => Config.WrapperVersion;
         }
     }
 }

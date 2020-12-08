@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
@@ -44,7 +45,7 @@ namespace LaunchDarkly.Sdk.Server
             using (var client = new LdClient(config))
             {
                 Assert.True(logCapture.HasMessageWithText(LogLevel.Info,
-                    "Starting LaunchDarkly Client " + ServerSideClientEnvironment.Instance.Version),
+                    "Starting LaunchDarkly Client " + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient))),
                     logCapture.ToString());
             }
         }

@@ -57,7 +57,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 .TrackEvents(true).Build();
             var target = new Target(new List<string> { "userkey" }, 0);
             return new FeatureFlagBuilder("flagkey")
-                .DebugEventsUntilDate(100000)
+                .DebugEventsUntilDate(UnixMillisecondTime.OfMillis(100000))
                 .Deleted(true)
                 .Fallthrough(new VariationOrRollout(0, rollout))
                 .OffVariation(0)
