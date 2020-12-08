@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -46,8 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 }
                 catch (Exception e)
                 {
-                    _logger.Error("Unable to watch files for auto-updating: {0}", LogValues.ExceptionSummary(e));
-                    _logger.Debug(LogValues.ExceptionTrace(e));
+                    LogHelpers.LogException(_logger, "Unable to watch files for auto-updating", e);
                     _reloader = null;
                 }
             }
@@ -106,8 +106,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 }
                 catch (Exception e)
                 {
-                    _logger.Error("{0}: {1}", path, LogValues.ExceptionSummary(e));
-                    _logger.Debug(LogValues.ExceptionTrace(e));
+                    LogHelpers.LogException(_logger, "Failed to load " + path, e);
                     return;
                 }
             }

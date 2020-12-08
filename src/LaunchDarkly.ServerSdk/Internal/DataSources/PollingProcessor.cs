@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Http;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
@@ -78,9 +77,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
             catch (AggregateException ex)
             {
-                _log.Error("Error Updating features: {0}",
-                    LogValues.ExceptionSummary(ex.Flatten()));
-                _log.Debug(LogValues.ExceptionTrace(ex));
+                LogHelpers.LogException(_log, "Polling for feature flag updates failed", ex.Flatten());
             }
             catch (UnsuccessfulResponseException ex)
             {
@@ -101,8 +98,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
             catch (Exception ex)
             {
-                _log.Error("Error Updating features: {0}", LogValues.ExceptionSummary(ex));
-                _log.Debug(LogValues.ExceptionTrace(ex));
+                LogHelpers.LogException(_log, "Polling for feature flag updates failed", ex);
             }
         }
 

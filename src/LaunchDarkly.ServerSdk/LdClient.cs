@@ -236,9 +236,9 @@ namespace LaunchDarkly.Sdk.Server
                 }
                 catch (Exception e)
                 {
-                    _log.Error("Exception caught for feature flag \"{0}\" when evaluating all flags: {1}", flag.Key,
-                        LogValues.ExceptionSummary(e));
-                    _log.Debug(LogValues.ExceptionTrace(e));
+                    LogHelpers.LogException(_log,
+                        string.Format("Exception caught for feature flag \"{0}\" when evaluating all flags", flag.Key),
+                        e);
                     EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
                     builder.AddFlag(flag.Key, new EvaluationDetail<LdValue>(LdValue.Null, null, reason));
                 }
@@ -327,11 +327,9 @@ namespace LaunchDarkly.Sdk.Server
             }
             catch (Exception e)
             {
-                _log.Error("Encountered exception in LaunchDarkly client: {0} when evaluating feature key: {1} for user key: {2}",
-                     LogValues.ExceptionSummary(e),
-                     featureKey,
-                     user.Key);
-                _log.Debug(LogValues.ExceptionTrace(e));
+                LogHelpers.LogException(_log,
+                    string.Format("Exception when evaluating feature key \"{1}\" for user key \"{2}\"", featureKey, user.Key),
+                    e);
                 var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
                 if (featureFlag == null)
                 {
