@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
@@ -52,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server
                 .CreateLoggingConfiguration();
             _log = logConfig.LogAdapter.Logger(LogNames.Base);
             _log.Info("Starting LaunchDarkly Client {0}",
-                ServerSideClientEnvironment.Instance.Version);
+                AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
 
             var basicConfig = new BasicConfiguration(config.SdkKey, config.Offline, _log);
 
@@ -404,7 +405,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             get
             {
-                return ServerSideClientEnvironment.Instance.Version;
+                return AssemblyVersions.GetAssemblyVersionForType(typeof(LdClient));
             }
         }
         

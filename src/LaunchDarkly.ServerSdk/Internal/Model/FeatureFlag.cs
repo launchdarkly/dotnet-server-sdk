@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [JsonProperty(PropertyName = "trackEventsFallthrough")]
         public bool TrackEventsFallthrough { get; private set; }
         [JsonProperty(PropertyName = "debugEventsUntilDate")]
-        public long? DebugEventsUntilDate { get; private set; }
+        public UnixMillisecondTime? DebugEventsUntilDate { get; private set; }
         [JsonProperty(PropertyName = "deleted")]
         public bool Deleted { get; set; }
         [JsonProperty(PropertyName = "clientSide")]
@@ -40,7 +40,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [JsonConstructor]
         internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
             List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation,
-            List<LdValue> variations, bool trackEvents, bool trackEventsFallthrough, long? debugEventsUntilDate,
+            List<LdValue> variations, bool trackEvents, bool trackEventsFallthrough, UnixMillisecondTime? debugEventsUntilDate,
             bool deleted, bool clientSide)
         {
             Key = key;

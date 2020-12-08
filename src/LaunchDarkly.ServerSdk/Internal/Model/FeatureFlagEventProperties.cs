@@ -23,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         public bool TrackEvents => _flag.TrackEvents;
 
-        public long? DebugEventsUntilDate => _flag.DebugEventsUntilDate;
+        public UnixMillisecondTime? DebugEventsUntilDate => _flag.DebugEventsUntilDate;
 
         // This method is called by EventFactory to determine if extra tracking should be
         // enabled for an event, based on the evaluation reason.

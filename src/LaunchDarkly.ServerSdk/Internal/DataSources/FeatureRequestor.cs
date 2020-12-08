@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -29,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
             _flagsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-flags/");
             _segmentsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-segments/");
-            _httpClient = Util.MakeHttpClient(_config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
+            _httpClient = _config.HttpProperties.NewHttpClient();
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 

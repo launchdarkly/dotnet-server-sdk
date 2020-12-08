@@ -74,7 +74,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons)
                 .AddFlag("key1", LdValue.Of("value1"), 0, EvaluationReason.OffReason, 100, false, null)
-                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, 1000)
+                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, UnixMillisecondTime.OfMillis(1000))
                 .Build();
 
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
@@ -98,7 +98,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons)
                 .AddFlag("key1", LdValue.Of("value1"), 0, EvaluationReason.OffReason, 100, false, null)
-                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, 1000)
+                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, UnixMillisecondTime.OfMillis(1000))
                 .Build();
 
             var jsonString = JsonConvert.SerializeObject(state);

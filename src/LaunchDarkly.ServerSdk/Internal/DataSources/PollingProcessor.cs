@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
@@ -83,8 +84,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
             catch (UnsuccessfulResponseException ex)
             {
-                _log.Error(Util.HttpErrorMessage(ex.StatusCode, "polling request", "will retry"));
-                if (!Util.IsHttpErrorRecoverable(ex.StatusCode))
+                _log.Error(HttpErrors.ErrorMessage(ex.StatusCode, "polling request", "will retry"));
+                if (!HttpErrors.IsRecoverable(ex.StatusCode))
                 {
                     try
                     {

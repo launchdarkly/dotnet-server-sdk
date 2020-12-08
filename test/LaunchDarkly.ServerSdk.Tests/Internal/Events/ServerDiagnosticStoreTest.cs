@@ -39,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             LdValue periodicEvent = _serverDiagnosticStore.CreateEventAndReset().JsonValue;
 
             Assert.Equal("diagnostic", periodicEvent.Get("kind").AsString);
-            Assert.Equal(Util.GetUnixTimestampMillis(dataSince), periodicEvent.Get("dataSinceDate").AsLong);
+            Assert.Equal(UnixMillisecondTime.FromDateTime(dataSince).Value, periodicEvent.Get("dataSinceDate").AsLong);
             Assert.Equal(0, periodicEvent.Get("eventsInLastBatch").AsInt);
             Assert.Equal(0, periodicEvent.Get("droppedEvents").AsInt);
             Assert.Equal(0, periodicEvent.Get("deduplicatedUsers").AsInt);
@@ -97,7 +97,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             Assert.Equal(1, streamInits.Count);
 
             LdValue streamInit = streamInits.Get(0);
-            Assert.Equal(Util.GetUnixTimestampMillis(timestamp), streamInit.Get("timestamp").AsLong);
+            Assert.Equal(UnixMillisecondTime.FromDateTime(timestamp).Value, streamInit.Get("timestamp").AsLong);
             Assert.Equal(200, streamInit.Get("durationMillis").AsInt);
             Assert.Equal(true, streamInit.Get("failed").AsBool);
         }
@@ -108,7 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             IDiagnosticStore _serverDiagnosticStore = CreateDiagnosticStore(null);
             DiagnosticEvent periodicEvent = _serverDiagnosticStore.CreateEventAndReset();
             Assert.Equal(periodicEvent.JsonValue.Get("creationDate").AsLong,
-                Util.GetUnixTimestampMillis(_serverDiagnosticStore.DataSince));
+                UnixMillisecondTime.FromDateTime(_serverDiagnosticStore.DataSince).Value);
         }
 
         [Fact]

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Integrations;
-using LaunchDarkly.Sdk.Server.Internal;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.TestHttpUtils;
@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server
             LdValue.BuildObject().Add("name", "dotnet").Build();
         private static readonly LdValue expectedSdk = LdValue.BuildObject()
             .Add("name", "dotnet-server-sdk")
-            .Add("version", ServerSideClientEnvironment.Instance.Version.ToString())
+            .Add("version", AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
             .Add("wrapperName", testWrapperName)
             .Add("wrapperVersion", testWrapperVersion)
             .Build();

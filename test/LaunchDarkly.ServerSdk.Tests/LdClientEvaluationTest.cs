@@ -313,7 +313,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value2"))
-                .TrackEvents(true).DebugEventsUntilDate(1000)
+                .TrackEvents(true).DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
             TestUtils.UpsertFlag(dataStore, flag1);
             TestUtils.UpsertFlag(dataStore, flag2);
@@ -345,7 +345,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
                 .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value2"))
-                .TrackEvents(true).DebugEventsUntilDate(1000)
+                .TrackEvents(true).DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
             TestUtils.UpsertFlag(dataStore, flag1);
             TestUtils.UpsertFlag(dataStore, flag2);
@@ -406,7 +406,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             var flag3 = new FeatureFlagBuilder("key3").Version(300)
                 .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value3"))
-                .DebugEventsUntilDate(1000)
+                .DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
             TestUtils.UpsertFlag(dataStore, flag1);
             TestUtils.UpsertFlag(dataStore, flag2);
