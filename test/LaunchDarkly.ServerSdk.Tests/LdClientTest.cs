@@ -148,15 +148,15 @@ namespace LaunchDarkly.Sdk.Server
             epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
                 .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
                 .Returns(new ComponentsImpl.NullEventProcessor());
-            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataStoreUpdates>()))
-                .Callback((LdClientContext ctx, IDataStoreUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
-                .Returns((LdClientContext ctx, IDataStoreUpdates dsu) => dataSource);
+            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataSourceUpdates>()))
+                .Callback((LdClientContext ctx, IDataSourceUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx, IDataSourceUpdates dsu) => dataSource);
 
             using (var client = new LdClient(config))
             {
                 epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
                 epf.VerifyNoOtherCalls();
-                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataStoreUpdates>()), Times.Once());
+                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataSourceUpdates>()), Times.Once());
                 dsf.VerifyNoOtherCalls();
                 Assert.NotNull(eventProcessorDiagnosticStore);
                 Assert.Same(eventProcessorDiagnosticStore, dataSourceDiagnosticStore);
@@ -182,15 +182,15 @@ namespace LaunchDarkly.Sdk.Server
             epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
                 .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
                 .Returns(new ComponentsImpl.NullEventProcessor());
-            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataStoreUpdates>()))
-                .Callback((LdClientContext ctx, IDataStoreUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
-                .Returns((LdClientContext ctx, IDataStoreUpdates dsu) => dataSource);
+            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataSourceUpdates>()))
+                .Callback((LdClientContext ctx, IDataSourceUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx, IDataSourceUpdates dsu) => dataSource);
 
             using (var client = new LdClient(config))
             {
                 epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
                 epf.VerifyNoOtherCalls();
-                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataStoreUpdates>()), Times.Once());
+                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataSourceUpdates>()), Times.Once());
                 dsf.VerifyNoOtherCalls();
                 Assert.Null(eventProcessorDiagnosticStore);
                 Assert.Null(dataSourceDiagnosticStore);

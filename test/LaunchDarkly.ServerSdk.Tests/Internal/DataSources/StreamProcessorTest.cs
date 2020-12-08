@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly IEventSource _eventSource;
         readonly TestEventSourceFactory _eventSourceFactory;
         readonly InMemoryDataStore _dataStore;
-        readonly IDataStoreUpdates _dataStoreUpdates;
+        readonly IDataSourceUpdates _dataSourceUpdates;
         Configuration _config;
 
         public StreamProcessorTest()
@@ -38,7 +38,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new InMemoryDataStore();
-            _dataStoreUpdates = new DataStoreUpdates(_dataStore);
+            _dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore);
             _config = Configuration.Builder(SDK_KEY)
                 .DataSource(Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create()))
                 .DataStore(TestUtils.SpecificDataStore(_dataStore))
@@ -198,7 +198,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var basicConfig = new BasicConfiguration(SDK_KEY, false, TestUtils.NullLogger);
             return _config.DataSourceFactory.CreateDataSource(
                 new LdClientContext(basicConfig, _config),
-                _dataStoreUpdates
+                _dataSourceUpdates
                 ) as StreamProcessor;
         }
 

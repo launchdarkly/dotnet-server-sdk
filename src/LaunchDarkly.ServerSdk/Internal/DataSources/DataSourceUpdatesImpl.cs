@@ -12,11 +12,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     /// Currently this just means sorting the data set for Init(). In the future we may also use this
     /// to provide an update listener capability.
     /// </remarks>
-    internal class DataStoreUpdates : IDataStoreUpdates
+    internal class DataSourceUpdatesImpl : IDataSourceUpdates
     {
         private readonly IDataStore _store;
 
-        internal DataStoreUpdates(IDataStore store)
+        internal DataSourceUpdatesImpl(IDataStore store)
         {
             _store = store;
         }

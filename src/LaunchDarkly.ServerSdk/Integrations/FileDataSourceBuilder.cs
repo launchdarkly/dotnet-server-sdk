@@ -147,9 +147,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
+        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
-            return new FileDataSource(dataStoreUpdates, _fileReader, _paths, _autoUpdate,
+            return new FileDataSource(dataSourceUpdates, _fileReader, _paths, _autoUpdate,
                 _parser, _skipMissingPaths, _duplicateKeysHandling,
                 context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog));
         }

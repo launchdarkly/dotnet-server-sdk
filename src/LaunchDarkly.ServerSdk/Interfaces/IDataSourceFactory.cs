@@ -12,8 +12,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Creates an implementation instance.
         /// </summary>
         /// <param name="context">configuration of the current client instance</param>
-        /// <param name="dataStoreUpdates">the destination for pushing data updates</param>
+        /// <param name="dataSourceUpdates">the destination for pushing data and status updates</param>
         /// <returns>an <see cref="IDataSource"/> instance</returns>
-        IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates);
+        IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates);
     }
 }

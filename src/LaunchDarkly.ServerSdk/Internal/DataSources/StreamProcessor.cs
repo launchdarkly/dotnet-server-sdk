@@ -19,12 +19,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private const String DELETE = "delete";
 
         private readonly StreamManager _streamManager;
-        private readonly IDataStoreUpdates _dataStoreUpdates;
+        private readonly IDataSourceUpdates _dataSourceUpdates;
         private readonly Logger _log;
 
         internal StreamProcessor(
             LdClientContext context,
-            IDataStoreUpdates dataStoreUpdates,
+            IDataSourceUpdates dataSourceUpdates,
             Uri baseUri,
             TimeSpan initialReconnectDelay,
             StreamManager.EventSourceCreator eventSourceCreator
@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 context.DiagnosticStore,
                 _log
                 );
-            _dataStoreUpdates = dataStoreUpdates;
+            _dataSourceUpdates = dataSourceUpdates;
         }
 
         #region IDataSource
@@ -74,7 +74,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             switch (messageType)
             {
                 case PUT:
-                    _dataStoreUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
+                    _dataSourceUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
                     streamManager.Initialized = true;
                     break;
                 case PATCH:
@@ -83,12 +83,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     if (GetKeyFromPath(patchData.Path, DataKinds.Features, out patchKey))
                     {
                         FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
-                        _dataStoreUpdates.Upsert(DataKinds.Features, patchKey, new ItemDescriptor(flag.Version, flag));
+                        _dataSourceUpdates.Upsert(DataKinds.Features, patchKey, new ItemDescriptor(flag.Version, flag));
                     }
                     else if (GetKeyFromPath(patchData.Path, DataKinds.Segments, out patchKey))
                     {
                         Segment segment = patchData.Data.ToObject<Segment>();
-                        _dataStoreUpdates.Upsert(DataKinds.Segments, patchKey, new ItemDescriptor(segment.Version, segment));
+                        _dataSourceUpdates.Upsert(DataKinds.Segments, patchKey, new ItemDescriptor(segment.Version, segment));
                     }
                     else
                     {
@@ -101,11 +101,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     string deleteKey;
                     if (GetKeyFromPath(deleteData.Path, DataKinds.Features, out deleteKey))
                     {
-                        _dataStoreUpdates.Upsert(DataKinds.Features, deleteKey, tombstone);
+                        _dataSourceUpdates.Upsert(DataKinds.Features, deleteKey, tombstone);
                     }
                     else if (GetKeyFromPath(deleteData.Path, DataKinds.Segments, out deleteKey))
                     {
-                        _dataStoreUpdates.Upsert(DataKinds.Segments, deleteKey, tombstone);
+                        _dataSourceUpdates.Upsert(DataKinds.Segments, deleteKey, tombstone);
                     }
                     else
                     {

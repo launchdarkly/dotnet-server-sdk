@@ -27,7 +27,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private IDataSource MakeDataSource() =>
             factory.CreateDataSource(
                 new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), config),
-                new DataStoreUpdates(store));
+                new DataSourceUpdatesImpl(store));
 
         [Fact]
         public void FlagsAreNotLoadedUntilStart()

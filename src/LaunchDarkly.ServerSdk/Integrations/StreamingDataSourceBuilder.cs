@@ -97,11 +97,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IDataSource CreateDataSource(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
+        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
             return new StreamProcessor(
                 context,
-                dataStoreUpdates,
+                dataSourceUpdates,
                 _baseUri ?? DefaultBaseUri,
                 _initialReconnectDelay,
                 _eventSourceCreator
