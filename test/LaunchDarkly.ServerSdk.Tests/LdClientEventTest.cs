@@ -3,22 +3,24 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server
 {
-    public class LdClientEventTest
+    public class LdClientEventTest : BaseTest
     {
         private static readonly User user = User.WithKey("userkey");
         private IDataStore dataStore = new InMemoryDataStore();
         private TestEventProcessor eventSink = new TestEventProcessor();
         private ILdClient client;
 
-        public LdClientEventTest()
+        public LdClientEventTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             var config = Configuration.Builder("SDK_KEY")
                 .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .DataSource(Components.ExternalUpdatesOnly)
                 .Events(TestUtils.SpecificEventProcessor(eventSink))
+                .Logging(Components.Logging(testLogging))
                 .Build();
             client = new LdClient(config);
         }

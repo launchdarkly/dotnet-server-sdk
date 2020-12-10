@@ -2,16 +2,17 @@
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Xunit;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using YamlDotNet.Serialization;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    public class FileDataSourceTest
+    public class FileDataSourceTest : BaseTest
     {
         private const string sdkKey = "sdkKey";
         private static readonly string ALL_DATA_JSON_FILE = TestUtils.TestFilePath("all-properties.json");
@@ -19,14 +20,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private readonly IDataStore store = new InMemoryDataStore();
         private readonly FileDataSourceBuilder factory = FileData.DataSource();
-        private readonly Configuration config = Configuration.Builder(sdkKey)
-            .Events(Components.NoEvents)
-            .Build();
         private readonly User user = User.WithKey("key");
+
+        public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput) { }
+
+        private Configuration MakeConfig() =>
+            Configuration.Builder(sdkKey)
+                .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
+                .Build();
 
         private IDataSource MakeDataSource() =>
             factory.CreateDataSource(
-                new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), config),
+                new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), MakeConfig()),
                 new DataSourceUpdatesImpl(store));
 
         [Fact]
@@ -275,7 +281,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void FullFlagDefinitionEvaluatesAsExpected()
         {
             factory.FilePaths(ALL_DATA_JSON_FILE);
-            var config1 = Configuration.Builder(config).DataSource(factory).Build();
+            var config1 = Configuration.Builder(MakeConfig()).DataSource(factory).Build();
             using (var client = new LdClient(config1))
             {
                 Assert.Equal("on", client.StringVariation("flag1", user, ""));
@@ -286,7 +292,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void SimplifiedFlagEvaluatesAsExpected()
         {
             factory.FilePaths(ALL_DATA_JSON_FILE);
-            var config1 = Configuration.Builder(config).DataSource(factory).Build();
+            var config1 = Configuration.Builder(MakeConfig()).DataSource(factory).Build();
             using (var client = new LdClient(config1))
             {
                 Assert.Equal("value2", client.StringVariation("flag2", user, ""));

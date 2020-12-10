@@ -9,18 +9,22 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    public class FeatureRequestorTest
+    public class FeatureRequestorTest : BaseTest
     {
         private const string sdkKey = "SDK_KEY";
         private const string AllDataJson = @"{""flags"":{""flag1"":{""key"":""flag1"",""version"":1}},""segments"":{""seg1"":{""key"":""seg1"",""version"":2}}}";
+
+        public FeatureRequestorTest(ITestOutputHelper testOutput) : base(testOutput) { }
         
         private IFeatureRequestor MakeRequestor(FluentMockServer server)
         {
             var config = Configuration.Builder(sdkKey)
                 .ConnectionTimeout(TimeSpan.FromDays(1))
+                .Logging(Components.Logging(testLogging))
                 .Build();
             return new FeatureRequestor(
                 new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), config),
