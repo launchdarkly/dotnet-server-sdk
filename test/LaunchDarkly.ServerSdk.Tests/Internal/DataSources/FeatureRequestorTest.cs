@@ -27,7 +27,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .Logging(Components.Logging(testLogging))
                 .Build();
             return new FeatureRequestor(
-                new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), config),
+                new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), config),
                 new Uri(server.Urls[0]));
         }
 
