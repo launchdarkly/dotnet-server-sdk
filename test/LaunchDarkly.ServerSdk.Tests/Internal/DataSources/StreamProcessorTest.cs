@@ -11,12 +11,13 @@ using LaunchDarkly.EventSource;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
+using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    public class StreamProcessorTest
+    public class StreamProcessorTest : BaseTest
     {
         private const string SDK_KEY = "sdk_key";
         private const string FEATURE_KEY = "feature";
@@ -33,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly IDataSourceUpdates _dataSourceUpdates;
         Configuration _config;
 
-        public StreamProcessorTest()
+        public StreamProcessorTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _mockEventSource = new Mock<IEventSource>();
             _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask);
@@ -44,6 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _config = Configuration.Builder(SDK_KEY)
                 .DataSource(Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create()))
                 .DataStore(TestUtils.SpecificDataStore(_dataStore))
+                .Logging(Components.Logging(testLogging))
                 .Build();
         }
 
@@ -197,7 +199,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         
         private StreamProcessor CreateProcessor()
         {
-            var basicConfig = new BasicConfiguration(SDK_KEY, false, TestUtils.NullLogger);
+            var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
             return _config.DataSourceFactory.CreateDataSource(
                 new LdClientContext(basicConfig, _config),
                 _dataSourceUpdates

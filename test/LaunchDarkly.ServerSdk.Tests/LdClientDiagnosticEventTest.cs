@@ -4,13 +4,14 @@ using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Integrations;
 using Xunit;
+using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.TestHttpUtils;
 using static LaunchDarkly.Sdk.Server.TestUtils;
 
 namespace LaunchDarkly.Sdk.Server
 {
-    public class LdClientDiagnosticEventTest
+    public class LdClientDiagnosticEventTest : BaseTest
     {
         private const string sdkKey = "SDK_KEY";
         private const string testWrapperName = "wrapper-name";
@@ -27,6 +28,8 @@ namespace LaunchDarkly.Sdk.Server
 
         private TestEventSender testEventSender = new TestEventSender();
 
+        public LdClientDiagnosticEventTest(ITestOutputHelper testOutput) : base(testOutput) { }
+
         [Fact]
         public void NoDiagnosticInitEventIsSentIfOptedOut()
         {
@@ -34,6 +37,7 @@ namespace LaunchDarkly.Sdk.Server
                 .DiagnosticOptOut(true)
                 .DataSource(Components.ExternalUpdatesOnly)
                 .Events(Components.SendEvents().EventSender(testEventSender))
+                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -49,6 +53,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Events(Components.SendEvents().EventSender(testEventSender))
                 .WrapperName(testWrapperName)
                 .WrapperVersion(testWrapperVersion)
+                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -76,6 +81,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Events(Components.SendEvents()
                     .EventSender(testEventSender)
                     .DiagnosticRecordingIntervalNoMinimum(TimeSpan.FromMilliseconds(50)))
+                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -263,6 +269,7 @@ namespace LaunchDarkly.Sdk.Server
             var configBuilder = Configuration.Builder(sdkKey)
                 .Events(eventsBuilder)
                 .HttpMessageHandler(new StubMessageHandler(HttpStatusCode.Unauthorized))
+                .Logging(Components.Logging(testLogging))
                 .StartWaitTime(testStartWaitTime);
             modConfig?.Invoke(configBuilder);
             using (var client = new LdClient(configBuilder.Build()))

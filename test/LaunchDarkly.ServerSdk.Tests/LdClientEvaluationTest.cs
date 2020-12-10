@@ -3,26 +3,27 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server
 {
     // Note, exhaustive coverage of all the code paths for evaluation is in FeatureFlagTest.
     // LdClientEvaluationTest verifies that the LdClient evaluation methods do what they're
     // supposed to do, regardless of exactly what value we get.
-    public class LdClientEvaluationTest
+    public class LdClientEvaluationTest : BaseTest
     {
         private static readonly User user = User.WithKey("userkey");
-        private IDataStore dataStore = new InMemoryDataStore();
-        private ILdClient client;
+        private readonly IDataStore dataStore = new InMemoryDataStore();
+        private readonly ILdClient client;
 
-        public LdClientEvaluationTest()
+        public LdClientEvaluationTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             var config = Configuration.Builder("SDK_KEY")
                 .DataStore(new SpecificDataStoreFactory(dataStore))
                 .DataSource(Components.ExternalUpdatesOnly)
                 .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
             client = new LdClient(config);
         }

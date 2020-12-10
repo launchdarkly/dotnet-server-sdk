@@ -7,10 +7,11 @@ using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Moq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    public class PollingProcessorTest
+    public class PollingProcessorTest : BaseTest
     {
         private const string sdkKey = "SDK_KEY";
         private readonly FeatureFlag Flag = new FeatureFlagBuilder("flagkey").Build();
@@ -23,14 +24,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly Configuration _config;
         readonly LdClientContext _context;
 
-        public PollingProcessorTest()
+        public PollingProcessorTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _mockFeatureRequestor = new Mock<IFeatureRequestor>();
             _featureRequestor = _mockFeatureRequestor.Object;
             _dataStore = new InMemoryDataStore();
             _dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore);
-            _config = Configuration.Default(sdkKey);
-            _context = new LdClientContext(new BasicConfiguration(sdkKey, false, TestUtils.NullLogger), _config);
+            _config = Configuration.Builder(sdkKey).Logging(Components.Logging(testLogging)).Build();
+            _context = new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), _config);
         }
 
         private PollingProcessor MakeProcessor() =>

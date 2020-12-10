@@ -11,13 +11,14 @@ using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Moq;
 using Xunit;
+using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
     // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
-    public class LdClientTest
+    public class LdClientTest : BaseTest
     {
         private const string sdkKey = "SDK_KEY";
 
@@ -25,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server
         private readonly IDataSource dataSource;
         private readonly Task<bool> initTask;
 
-        public LdClientTest()
+        public LdClientTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             mockDataSource = new Mock<IDataSource>();
             dataSource = mockDataSource.Object;
@@ -38,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(logCapture))
+                .Logging(Components.Logging(Logs.ToMultiple(logCapture, testLogging)))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
@@ -57,6 +58,7 @@ namespace LaunchDarkly.Sdk.Server
                 .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
                 .DiagnosticOptOut(true)
+                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -71,6 +73,7 @@ namespace LaunchDarkly.Sdk.Server
                 .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
+                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -83,7 +86,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(logCapture))
+                .Logging(Components.Logging(Logs.ToMultiple(logCapture, testLogging)))
                 .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
@@ -103,6 +106,7 @@ namespace LaunchDarkly.Sdk.Server
                 .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
+                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -115,7 +119,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(logCapture))
+                .Logging(Components.Logging(Logs.ToMultiple(logCapture, testLogging)))
                 .Events(Components.NoEvents)
                 .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
@@ -141,6 +145,7 @@ namespace LaunchDarkly.Sdk.Server
                 .StartWaitTime(TimeSpan.Zero)
                 .Events(epf.Object)
                 .DataSource(dsf.Object)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             IDiagnosticStore eventProcessorDiagnosticStore = null;
@@ -175,6 +180,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Events(epf.Object)
                 .DataSource(dsf.Object)
                 .DiagnosticOptOut(true)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             IDiagnosticStore eventProcessorDiagnosticStore = null;
@@ -205,6 +211,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -219,6 +226,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.FromMilliseconds(10))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -236,6 +244,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey)
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -256,6 +265,7 @@ namespace LaunchDarkly.Sdk.Server
                 .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -276,6 +286,7 @@ namespace LaunchDarkly.Sdk.Server
                 .DataStore(TestUtils.SpecificDataStore(dataStore))
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -305,6 +316,7 @@ namespace LaunchDarkly.Sdk.Server
                 .DataStore(TestUtils.SpecificDataStore(store))
                 .DataSource(TestUtils.DataSourceWithData(DataStoreSorterTest.DependencyOrderingTestData))
                 .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
