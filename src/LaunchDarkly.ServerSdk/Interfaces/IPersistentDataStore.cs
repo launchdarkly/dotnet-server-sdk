@@ -108,7 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <summary>
     /// Interface for a factory that creates some implementation of <see cref="IPersistentDataStore"/>.
     /// </summary>
-    /// <seealso cref="IConfigurationBuilder.DataStore(IDataStoreFactory)"/>
+    /// <seealso cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>
     /// <seealso cref="Components.PersistentStore(IPersistentDataStoreFactory)"/>
     public interface IPersistentDataStoreFactory
     {

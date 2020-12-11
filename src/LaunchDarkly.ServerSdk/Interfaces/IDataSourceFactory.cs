@@ -4,7 +4,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <summary>
     /// Interface for a factory that creates some implementation of <see cref="IDataSource"/>.
     /// </summary>
-    /// <seealso cref="IConfigurationBuilder.DataSource"/>
+    /// <seealso cref="ConfigurationBuilder.DataSource"/>
     /// <seealso cref="Components"/>
     public interface IDataSourceFactory
     {

@@ -12,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// To use the file data source, obtain a new instance of this class with <see cref="FileData.DataSource"/>;
     /// call the builder method {@link #filePaths(String...)} to specify file path(s), and/or
     /// {@link #classpathResources(String...)} to specify classpath data resources; then pass the resulting
-    /// object to <see cref="IConfigurationBuilder.DataSource(Interfaces.IDataSourceFactory)"/>.
+    /// object to <see cref="ConfigurationBuilder.DataSource(Interfaces.IDataSourceFactory)"/>.
     /// </remarks>
     /// <seealso cref="FileData"/>
     public sealed class FileDataSourceBuilder : IDataSourceFactory

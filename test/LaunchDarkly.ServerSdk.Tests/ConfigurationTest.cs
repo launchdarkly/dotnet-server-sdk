@@ -8,7 +8,7 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class ConfigurationTest
     {
-        private readonly BuilderTestUtil<IConfigurationBuilder, Configuration> _tester =
+        private readonly BuilderTestUtil<ConfigurationBuilder, Configuration> _tester =
             BuilderTestUtil.For(() => Configuration.Builder(sdkKey), b => b.Build())
                 .WithCopyConstructor(c => Configuration.Builder(c));
 
@@ -87,7 +87,7 @@ namespace LaunchDarkly.Sdk.Server
         public void StartWaitTime()
         {
             var prop = _tester.Property(c => c.StartWaitTime, (b, v) => b.StartWaitTime(v));
-            prop.AssertDefault(Configuration.DefaultStartWaitTime);
+            prop.AssertDefault(ConfigurationBuilder.DefaultStartWaitTime);
             prop.AssertCanSet(TimeSpan.FromSeconds(7));
         }
     }

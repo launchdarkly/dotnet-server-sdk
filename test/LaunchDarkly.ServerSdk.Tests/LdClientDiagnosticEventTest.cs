@@ -270,7 +270,7 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         private void TestDiagnosticConfig(
-            Func<IConfigurationBuilder, IConfigurationBuilder> modConfig,
+            Func<ConfigurationBuilder, ConfigurationBuilder> modConfig,
             Func<EventProcessorBuilder, EventProcessorBuilder> modEvents,
             LdValue.ObjectBuilder expected
             )

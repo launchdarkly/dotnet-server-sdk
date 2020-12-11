@@ -10,7 +10,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <remarks>
     /// If you want to set non-default values for any of these properties, create a builder with
     /// <see cref="Components.Logging()"/>, change its properties with the methods of this class, and pass it
-    /// to <see cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />.
+    /// to <see cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />.
     /// </remarks>
     /// <example>
     /// <code>

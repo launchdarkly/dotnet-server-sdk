@@ -45,8 +45,8 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <remarks>
         /// The constructor will block until the client has successfully connected to LaunchDarkly
-        /// (assuming it is not in <see cref="IConfigurationBuilder.Offline(bool)"/> mode), or until
-        /// the timeout specified by <see cref="IConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
+        /// (assuming it is not in <see cref="ConfigurationBuilder.Offline(bool)"/> mode), or until
+        /// the timeout specified by <see cref="ConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
         /// elapsed. If it times out, <see cref="LdClient.Initialized"/> will be false.
         /// </remarks>
         public LdClient(Configuration config)
@@ -438,7 +438,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </para>
         /// <para>
         /// Any components that were added by specifying a factory object
-        /// (<see cref="IConfigurationBuilder.DataStore(IDataStoreFactory)"/>, etc.)
+        /// (<see cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>, etc.)
         /// will also be disposed of by this method; their lifecycle is the same as the client's.
         /// </para>
         /// </remarks>

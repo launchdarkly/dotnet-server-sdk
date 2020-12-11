@@ -1,6 +1,5 @@
 using System;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 
@@ -10,7 +9,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
     {
         private const string sdkKey = "SDK_KEY";
 
-        private IDiagnosticStore CreateDiagnosticStore(Action<IConfigurationBuilder> modConfig) {
+        private IDiagnosticStore CreateDiagnosticStore(Action<ConfigurationBuilder> modConfig) {
             var builder = Configuration.Builder(sdkKey)
                 .Http(Components.HttpConfiguration().Wrapper("Xamarin", "1.0.0"))
                 .StartWaitTime(TimeSpan.Zero);

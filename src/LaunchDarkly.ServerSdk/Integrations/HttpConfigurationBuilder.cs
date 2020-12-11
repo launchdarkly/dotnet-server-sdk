@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <para>
     /// If you want to set non-default values for any of these properties, create a builder with
     /// <see cref="Components.HttpConfiguration"/>, change its properties with the methods of this class, and
-    /// pass it to <see cref="IConfigurationBuilder.Http(IHttpConfigurationFactory)"/>:
+    /// pass it to <see cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/>:
     /// </para>
     /// <example>
     /// <code>

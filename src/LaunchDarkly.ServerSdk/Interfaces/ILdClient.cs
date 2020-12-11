@@ -1,6 +1,5 @@
-﻿using LaunchDarkly.Sdk.Server.Interfaces;
-
-namespace LaunchDarkly.Sdk.Server
+﻿
+namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.

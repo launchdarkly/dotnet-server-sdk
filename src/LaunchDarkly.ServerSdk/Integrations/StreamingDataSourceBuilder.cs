@@ -13,10 +13,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// By default, the SDK uses a streaming connection to receive feature flag data from LaunchDarkly. If you want
     /// to customize the behavior of the connection, create a builder with <see cref="Components.StreamingDataSource"/>,
     /// change its properties with the methods of this class, and pass it to
-    /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+    /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
     /// </para>
     /// <para>
-    /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
+    /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
     /// setting and completely disable network requests.
     /// </para>
     /// </remarks>

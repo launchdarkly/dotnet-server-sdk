@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server

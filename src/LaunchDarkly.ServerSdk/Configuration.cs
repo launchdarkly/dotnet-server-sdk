@@ -15,35 +15,13 @@ namespace LaunchDarkly.Sdk.Server
     /// </remarks>
     public class Configuration
     {
-        private readonly IDataSourceFactory _dataSourceFactory;
-        private readonly IDataStoreFactory _dataStoreFactory;
-        private readonly bool _diagnosticOptOut;
-        private readonly IEventProcessorFactory _eventProcessorFactory;
-        private readonly IHttpConfigurationFactory _httpConfigurationFactory;
-        private readonly ILoggingConfigurationFactory _loggingConfigurationFactory;
-        private readonly bool _offline;
-        private readonly string _sdkKey;
-        private readonly TimeSpan _startWaitTime;
+        #region Public properties
 
         /// <summary>
-        /// The SDK key for your LaunchDarkly environment.
+        /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
+        /// receive feature flag data.
         /// </summary>
-        public string SdkKey => _sdkKey;
-
-        /// <summary>
-        /// How long the client constructor will block awaiting a successful connection to
-        /// LaunchDarkly.
-        /// </summary>
-        /// <remarks>
-        /// Setting this to 0 will not block and will cause the constructor to return immediately. The
-        /// default value is 10 seconds.
-        /// </remarks>
-        public TimeSpan StartWaitTime => _startWaitTime;
-
-        /// <summary>
-        /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
-        /// </summary>
-        public bool Offline => _offline;
+        public IDataSourceFactory DataSourceFactory { get; }
 
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IDataStore"/>, to be used
@@ -53,7 +31,12 @@ namespace LaunchDarkly.Sdk.Server
         /// The default is <see cref="Components.InMemoryDataStore"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
-        public IDataStoreFactory DataStoreFactory => _dataStoreFactory;
+        public IDataStoreFactory DataStoreFactory { get; }
+
+        /// <summary>
+        /// True if diagnostic events have been disabled.
+        /// </summary>
+        public bool DiagnosticOptOut { get; }
 
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IEventProcessor"/>, which will
@@ -63,19 +46,13 @@ namespace LaunchDarkly.Sdk.Server
         /// The default is <see cref="Components.SendEvents"/>, but you may provide a custom
         /// implementation.
         /// </remarks>
-        public IEventProcessorFactory EventProcessorFactory => _eventProcessorFactory;
-
-        /// <summary>
-        /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
-        /// receive feature flag data.
-        /// </summary>
-        public IDataSourceFactory DataSourceFactory => _dataSourceFactory;
+        public IEventProcessorFactory EventProcessorFactory { get; }
 
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IHttpConfiguration"/>, defining the
         /// SDK's networking behavior.
         /// </summary>
-        public IHttpConfigurationFactory HttpConfigurationFactory => _httpConfigurationFactory;
+        public IHttpConfigurationFactory HttpConfigurationFactory { get; }
 
         /// <summary>
         /// A factory object that creates an implementation of <see cref="ILoggingConfiguration"/>, defining
@@ -85,19 +62,31 @@ namespace LaunchDarkly.Sdk.Server
         /// SDK components should not use this property directly; instead, the SDK client will use it to create a
         /// logger instance which will be in <see cref="LdClientContext"/>.
         /// </remarks>
-        public ILoggingConfigurationFactory LoggingConfigurationFactory => _loggingConfigurationFactory;
+        public ILoggingConfigurationFactory LoggingConfigurationFactory { get; }
 
         /// <summary>
-        /// A string that will be sent to LaunchDarkly to identify the SDK type.
+        /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
         /// </summary>
-        public string UserAgentType { get { return "DotNetClient"; } }
+        public bool Offline { get; }
 
         /// <summary>
-        /// True if diagnostic events have been disabled.
+        /// The SDK key for your LaunchDarkly environment.
         /// </summary>
-        public bool DiagnosticOptOut => _diagnosticOptOut;
+        public string SdkKey { get; }
 
-        internal static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
+        /// <summary>
+        /// How long the client constructor will block awaiting a successful connection to
+        /// LaunchDarkly.
+        /// </summary>
+        /// <remarks>
+        /// Setting this to 0 will not block and will cause the constructor to return immediately. The
+        /// default value is 10 seconds.
+        /// </remarks>
+        public TimeSpan StartWaitTime { get; }
+
+        #endregion
+
+        #region Public methods
 
         /// <summary>
         /// Creates a configuration with all parameters set to the default.
@@ -110,12 +99,12 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <summary>
-        /// Creates an <see cref="IConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
+        /// Creates an <see cref="ConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
         /// </summary>
         /// <remarks>
         /// This is the only method for building a <see cref="Configuration"/> if you are setting properties
-        /// besides the <c>SdkKey</c>. The <see cref="IConfigurationBuilder"/> has methods for setting any number of
-        /// properties, after which you call <see cref="IConfigurationBuilder.Build"/> to get the resulting
+        /// besides the <c>SdkKey</c>. The <see cref="ConfigurationBuilder"/> has methods for setting any number of
+        /// properties, after which you call <see cref="ConfigurationBuilder.Build"/> to get the resulting
         /// <c>Configuration</c> instance.
         /// </remarks>
         /// <example>
@@ -127,13 +116,13 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
         /// <returns>a builder object</returns>
-        public static IConfigurationBuilder Builder(string sdkKey)
+        public static ConfigurationBuilder Builder(string sdkKey)
         {
             return new ConfigurationBuilder(sdkKey);
         }
 
         /// <summary>
-        /// Creates an <see cref="IConfigurationBuilder"/> based on an existing configuration.
+        /// Creates an <see cref="ConfigurationBuilder"/> based on an existing configuration.
         /// </summary>
         /// <remarks>
         /// Modifying properties of the builder will not affect the original configuration object.
@@ -147,22 +136,28 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <param name="fromConfiguration">the existing configuration</param>
         /// <returns>a builder object</returns>
-        public static IConfigurationBuilder Builder(Configuration fromConfiguration)
+        public static ConfigurationBuilder Builder(Configuration fromConfiguration)
         {
             return new ConfigurationBuilder(fromConfiguration);
         }
 
+        #endregion
+
+        #region Internal constructor
+
         internal Configuration(ConfigurationBuilder builder)
         {
-            _dataSourceFactory = builder._dataSourceFactory;
-            _dataStoreFactory = builder._dataStoreFactory;
-            _diagnosticOptOut = builder._diagnosticOptOut;
-            _eventProcessorFactory = builder._eventProcessorFactory;
-            _httpConfigurationFactory = builder._httpConfigurationFactory;
-            _loggingConfigurationFactory = builder._loggingConfigurationFactory;
-            _offline = builder._offline;
-            _sdkKey = builder._sdkKey;
-            _startWaitTime = builder._startWaitTime;
+            DataSourceFactory = builder._dataSourceFactory;
+            DataStoreFactory = builder._dataStoreFactory;
+            DiagnosticOptOut = builder._diagnosticOptOut;
+            EventProcessorFactory = builder._eventProcessorFactory;
+            HttpConfigurationFactory = builder._httpConfigurationFactory;
+            LoggingConfigurationFactory = builder._loggingConfigurationFactory;
+            Offline = builder._offline;
+            SdkKey = builder._sdkKey;
+            StartWaitTime = builder._startWaitTime;
         }
+
+        #endregion
     }
 }

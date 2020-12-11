@@ -139,7 +139,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <remarks>
         /// The default value is <see cref="DefaultDiagnosticRecordingInterval"/>; the minimum value is
         /// <see cref="MinimumDiagnosticRecordingInterval"/>. This property is ignored if
-        /// <see cref="IConfigurationBuilder.DiagnosticOptOut(bool)"/> is set to <see langword="true"/>.
+        /// <see cref="ConfigurationBuilder.DiagnosticOptOut(bool)"/> is set to <see langword="true"/>.
         /// </remarks>
         /// <param name="diagnosticRecordingInterval">the diagnostics interval</param>
         /// <returns>the builder</returns>

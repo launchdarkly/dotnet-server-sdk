@@ -1,4 +1,5 @@
 ﻿using Moq;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server

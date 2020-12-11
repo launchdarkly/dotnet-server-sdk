@@ -5,7 +5,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// Interface for a factory that creates an <see cref="IHttpConfiguration"/>.
     /// </summary>
     /// <seealso cref="Components.HttpConfiguration"/>
-    /// <seealso cref="IConfigurationBuilder.Http(IHttpConfigurationFactory)"/>
+    /// <seealso cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/>
     public interface IHttpConfigurationFactory
     {
         /// <summary>

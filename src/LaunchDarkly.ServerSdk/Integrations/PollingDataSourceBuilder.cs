@@ -16,10 +16,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </para>
     /// <para>
     /// To use polling mode, create a builder with <see cref="Components.PollingDataSource"/>, change its properties
-    /// with the methods of this class, and pass it to <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+    /// with the methods of this class, and pass it to <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
     /// </para>
     /// <para>
-    /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
+    /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
     /// setting and completely disable network requests.
     /// </para>
     /// </remarks>

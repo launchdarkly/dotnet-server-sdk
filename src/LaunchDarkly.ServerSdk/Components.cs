@@ -16,7 +16,7 @@ namespace LaunchDarkly.Sdk.Server
         /// flag updates.
         /// </summary>
         /// <remarks>
-        /// Passing this to <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/> causes the SDK
+        /// Passing this to <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/> causes the SDK
         /// not to retrieve feature flag data from LaunchDarkly, regardless of any other configuration. This is
         /// normally done if you are using the <a href="https://docs.launchdarkly.com/home/advanced/relay-proxy">Relay Proxy</a>
         /// in "daemon mode", where an external process-- the Relay Proxy-- connects to LaunchDarkly and populates
@@ -39,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server
         /// Returns a configuration builder for the SDK's networking configuration.
         /// </summary>
         /// <remarks>
-        /// Passing this to <see cref="IConfigurationBuilder.Http(IHttpConfigurationFactory)"/> applies this
+        /// Passing this to <see cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/> applies this
         /// configuration to all HTTP/HTTPS requests made by the SDK.
         /// </remarks>
         /// <example>
@@ -69,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         /// <remarks>
         /// <para>
-        /// Passing this to <see cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />,
+        /// Passing this to <see cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />,
         /// after setting any desired properties on the builder, applies this configuration to the SDK.
         /// </para>
         /// <para>
@@ -86,7 +86,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </code>
         /// </example>
         /// <returns>a configurable factory object</returns>
-        /// <seealso cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
+        /// <seealso cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
         /// <seealso cref="Components.Logging(ILogAdapter) "/>
         /// <seealso cref="Components.NoLogging" />
         public static LoggingConfigurationBuilder Logging() =>
@@ -117,7 +117,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <param name="adapter">an <c>ILogAdapter</c> for the desired logging implementation</param>
         /// <returns>a configurable factory object</returns>
-        /// <seealso cref="IConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
+        /// <seealso cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
         /// <seealso cref="Components.Logging() "/>
         /// <seealso cref="Components.NoLogging" />
         public static LoggingConfigurationBuilder Logging(ILogAdapter adapter) =>
@@ -127,7 +127,7 @@ namespace LaunchDarkly.Sdk.Server
         /// Returns a configuration object that disables analytics events.
         /// </summary>
         /// <remarks>
-        /// Passing this to <see cref="IConfigurationBuilder.Events(IEventProcessorFactory)"/> causes
+        /// Passing this to <see cref="ConfigurationBuilder.Events(IEventProcessorFactory)"/> causes
         /// the SDK to discard all analytics events and not send them to LaunchDarkly, regardless of
         /// any other configuration.
         /// </remarks>
@@ -166,7 +166,7 @@ namespace LaunchDarkly.Sdk.Server
         /// some persistent data store implementation (i.e. a database integration), and converts
         /// it to a <see cref="PersistentDataStoreConfiguration"/> which can be used to add
         /// caching behavior. You can then pass the <see cref="PersistentDataStoreConfiguration"/>
-        /// object to <see cref="IConfigurationBuilder.DataStore(IDataStoreFactory)"/> to use this
+        /// object to <see cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/> to use this
         /// configuration in the SDK. Example usage:
         /// </para>
         /// <code>
@@ -198,7 +198,7 @@ namespace LaunchDarkly.Sdk.Server
         /// some persistent data store implementation (i.e. a database integration), and converts
         /// it to a <see cref="PersistentDataStoreConfiguration"/> which can be used to add
         /// caching behavior. You can then pass the <see cref="PersistentDataStoreConfiguration"/>
-        /// object to <see cref="IConfigurationBuilder.DataStore(IDataStoreFactory)"/> to use this
+        /// object to <see cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/> to use this
         /// configuration in the SDK. Example usage:
         /// </para>
         /// <code>
@@ -234,10 +234,10 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// To use polling mode, call this method to obtain a builder, change its properties with the
         /// <see cref="PollingDataSourceBuilder"/> methods, and pass it to
-        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+        /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
         /// </para>
         /// <para>
-        /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will superseded this
+        /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will superseded this
         /// setting and completely disable network requests.
         /// </para>
         /// </remarks>
@@ -251,7 +251,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <returns>a builder for setting polling connection properties</returns>
         /// <see cref="StreamingDataSource"/>
-        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>
+        /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>
         public static PollingDataSourceBuilder PollingDataSource() =>
             new PollingDataSourceBuilder();
 
@@ -264,10 +264,10 @@ namespace LaunchDarkly.Sdk.Server
         /// the default behavior, you do not need to call this method. However, if you want to customize the behavior
         /// of the connection, call this method to obtain a builder, change its properties with the
         /// <see cref="StreamingDataSourceBuilder"/> methods, and pass it to
-        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+        /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
         /// </para>
         /// <para>
-        /// Setting <see cref="IConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will superseded this
+        /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will superseded this
         /// setting and completely disable network requests.
         /// </para>
         /// </remarks>
@@ -281,7 +281,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <returns>a builder for setting streaming connection properties</returns>
         /// <see cref="PollingDataSource"/>
-        /// <see cref="IConfigurationBuilder.DataSource(IDataSourceFactory)"/>
+        /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>
         public static StreamingDataSourceBuilder StreamingDataSource() =>
             new StreamingDataSourceBuilder();
 
@@ -293,7 +293,7 @@ namespace LaunchDarkly.Sdk.Server
         /// The default configuration has events enabled with default settings. If you want to
         /// customize this behavior, call this method to obtain a builder, change its properties
         /// with the <see cref="EventProcessorBuilder"/> methods, and pass it to
-        /// <see cref="IConfigurationBuilder.Events(IEventProcessorFactory)"/>.
+        /// <see cref="ConfigurationBuilder.Events(IEventProcessorFactory)"/>.
         /// </para>
         /// <para>
         /// To completely disable sending analytics events, use <see cref="NoEvents"/> instead.
