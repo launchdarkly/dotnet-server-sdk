@@ -5,6 +5,7 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -63,27 +64,37 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             try
             {
                 var allData = await _featureRequestor.GetAllDataAsync();
-                if (allData != null)
+                if (allData is null)
                 {
-                    _dataSourceUpdates.Init(allData.ToInitData());
-
-                    //We can't use bool in CompareExchange because it is not a reference type.
-                    if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                    // This means it was cached, and alreadyInited was true
+                    _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
+                }
+                else
+                {
+                    if (_dataSourceUpdates.Init(allData.ToInitData()))
                     {
-                        _initTask.SetResult(true);
-                        _log.Info("Initialized LaunchDarkly Polling Processor.");
+                        _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
+
+                        //We can't use bool in CompareExchange because it is not a reference type.
+                        if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                        {
+                            _initTask.SetResult(true);
+                            _log.Info("Initialized LaunchDarkly Polling Processor.");
+                        }
                     }
                 }
-            }
-            catch (AggregateException ex)
-            {
-                LogHelpers.LogException(_log, "Polling for feature flag updates failed", ex.Flatten());
             }
             catch (UnsuccessfulResponseException ex)
             {
                 _log.Error(HttpErrors.ErrorMessage(ex.StatusCode, "polling request", "will retry"));
-                if (!HttpErrors.IsRecoverable(ex.StatusCode))
+                var errorInfo = DataSourceStatus.ErrorInfo.FromHttpError(ex.StatusCode);
+                if (HttpErrors.IsRecoverable(ex.StatusCode))
                 {
+                    _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted, errorInfo);
+                }
+                else
+                {
+                    _dataSourceUpdates.UpdateStatus(DataSourceState.Off, errorInfo);
                     try
                     {
                         // if client is initializing, make it stop waiting
@@ -96,9 +107,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     ((IDisposable)this).Dispose();
                 }
             }
+            catch (JsonException ex)
+            {
+                _log.Error("Polling request received malformed data: {0}", LogValues.ExceptionSummary(ex));
+                _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted,
+                    new DataSourceStatus.ErrorInfo
+                    {
+                        Kind = DataSourceStatus.ErrorKind.InvalidData,
+                        Time = DateTime.Now
+                    });
+            }
             catch (Exception ex)
             {
-                LogHelpers.LogException(_log, "Polling for feature flag updates failed", ex);
+                Exception realEx = (ex is AggregateException ae) ? ae.Flatten() : ex;
+                LogHelpers.LogException(_log, "Polling for feature flag updates failed", realEx);
+
+                _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted,
+                    DataSourceStatus.ErrorInfo.FromException(realEx));
             }
         }
 

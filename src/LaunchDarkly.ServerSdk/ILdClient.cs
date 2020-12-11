@@ -1,4 +1,5 @@
-﻿
+﻿using LaunchDarkly.Sdk.Server.Interfaces;
+
 namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
@@ -10,6 +11,17 @@ namespace LaunchDarkly.Sdk.Server
     /// </remarks>
     public interface ILdClient
     {
+        /// <summary>
+        /// A mechanism for tracking the status of the data source.
+        /// </summary>
+        /// <remarks>
+        /// The data source is the mechanism that the SDK uses to get feature flag configurations, such as a
+        /// streaming connection (the default) or poll requests. The <see cref="IDataSourceStatusProvider"/>
+        /// has methods for checking whether the data source is (as far as the SDK knows) currently operational,
+        /// and tracking changes in this status. This property will never be null.
+        /// </remarks>
+        IDataSourceStatusProvider DataSourceStatusProvider { get; }
+
         /// <summary>
         /// Tests whether the client is ready to be used.
         /// </summary>

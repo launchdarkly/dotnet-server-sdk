@@ -1,5 +1,5 @@
-﻿using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Server;
+﻿using System;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
@@ -23,7 +23,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     {
         private ILogAdapter _logAdapter = null;
         private LogLevel? _minimumLevel = null;
-        
+        private TimeSpan? _logDataSourceOutageAsErrorAfter = null;
+
+        /// <summary>
+        /// The default value for <see cref="LogDataSourceOutageAsErrorAfter(TimeSpan?)"/>: one minute.
+        /// </summary>
+        public static readonly TimeSpan DefaultLogDataSourceAsErrorAfter = TimeSpan.FromMinutes(1);
+
         /// <summary>
         /// Creates a new builder with default properties.
         /// </summary>
@@ -63,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <para>
         /// This adds a log level filter that is applied regardless of what implementation of logging is
         /// being used, so that log messages at lower levels are suppressed. For instance, setting the
-        /// minimum level to <see cref="LogLevel.Info"/> means that <c>Debug</c>-level output is disabled.
+        /// minimum level to <see cref="LaunchDarkly.Logging.LogLevel.Info"/> means that <c>Debug</c>-level output is disabled.
         /// External logging frameworks may also have their own mechanisms for setting a minimum log level.
         /// </para>
         /// <para>
@@ -85,30 +91,58 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             return this;
         }
 
+        /// <summary>
+        /// Sets the time threshold, if any, after which the SDK will log a data source outage at <c>Error</c>
+        /// level instead of <c>Warn</c> level.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// A data source outage means that an error condition, such as a network interruption or an error from
+        /// the LaunchDarkly service, is preventing the SDK from receiving feature flag updates. Many outages are
+        /// brief and the SDK can recover from them quickly; in that case it may be undesirable to log an
+        /// <c>Error</c> line, which might trigger an unwanted automated alert depending on your monitoring
+        /// tools. So, by default, the SDK logs such errors at <c>Warn</c> level. However, if the amount of time
+        /// specified by this method elapses before the data source starts working again, the SDK will log an
+        /// additional message at <c>Error</c> level to indicate that this is a sustained problem.
+        /// </para>
+        /// <para>
+        /// The default is <see cref="DefaultLogDataSourceAsErrorAfter"/>. Setting it to <see langword="null"/>
+        /// will disable this feature, so you will only get <c>Warn</c> messages.
+        /// </para>
+        /// </remarks>
+        /// <param name="interval">the error logging threshold, or null</param>
+        /// <returns>the same builder</returns>
+        public LoggingConfigurationBuilder LogDataSourceOutageAsErrorAfter(TimeSpan? interval)
+        {
+            _logDataSourceOutageAsErrorAfter = interval;
+            return this;
+        }
+
         /// <inheritdoc/>
         public ILoggingConfiguration CreateLoggingConfiguration()
         {
-            ILogAdapter adapter;
-            if (_logAdapter is null)
-            {
-                adapter = Logs.ToConsole.Level(_minimumLevel ?? LogLevel.Info);
-            }
-            else
-            {
-                adapter = _minimumLevel.HasValue ?
-                   _logAdapter.Level(_minimumLevel.Value) :
-                    _logAdapter;
-            }
-            return new LoggingConfigurationImpl(adapter);
+            return new LoggingConfigurationImpl(this);
         }
 
         private sealed class LoggingConfigurationImpl : ILoggingConfiguration
         {
             public ILogAdapter LogAdapter { get; }
+            public TimeSpan? LogDataSourceOutageAsErrorAfter { get; }
 
-            internal LoggingConfigurationImpl(ILogAdapter logAdapter)
+            internal LoggingConfigurationImpl(LoggingConfigurationBuilder builder)
             {
-                LogAdapter = logAdapter;
+                if (builder._logAdapter is null)
+                {
+                    LogAdapter = Logs.ToConsole.Level(builder._minimumLevel ?? LogLevel.Info);
+                }
+                else
+                {
+                    LogAdapter = builder._minimumLevel.HasValue ?
+                       builder._logAdapter.Level(builder._minimumLevel.Value) :
+                        builder._logAdapter;
+                }
+
+                LogDataSourceOutageAsErrorAfter = builder._logDataSourceOutageAsErrorAfter;
             }
         }
     }

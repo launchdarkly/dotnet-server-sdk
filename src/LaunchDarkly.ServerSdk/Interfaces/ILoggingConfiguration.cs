@@ -1,4 +1,5 @@
-﻿using LaunchDarkly.Logging;
+﻿using System;
+using LaunchDarkly.Logging;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -23,5 +24,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         ILogAdapter LogAdapter { get; }
+
+        /// <summary>
+        /// The time threshold, if any, after which the SDK will log a data source outage at <c>Error</c> level
+        /// instead of <c>Warn</c> level.
+        /// </summary>
+        TimeSpan? LogDataSourceOutageAsErrorAfter { get; }
     }
 }

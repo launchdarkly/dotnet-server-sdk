@@ -161,6 +161,41 @@ namespace LaunchDarkly.Sdk.Server
         public void Dispose() { }
     }
 
+    public class CapturingDataSourceFactory : IDataSourceFactory
+    {
+        public volatile LdClientContext Context;
+        public volatile IDataSourceUpdates DataSourceUpdates;
+        private readonly Func<Task<bool>> _startFn;
+
+        public CapturingDataSourceFactory(Func<Task<bool>> startFn = null)
+        {
+            _startFn = startFn;
+        }
+
+        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        {
+            Context = context;
+            DataSourceUpdates = dataSourceUpdates;
+            return new DataSourceImpl(_startFn);
+        }
+
+        private class DataSourceImpl : IDataSource
+        {
+            internal readonly Func<Task<bool>> _startFn;
+
+            internal DataSourceImpl(Func<Task<bool>> startFn)
+            {
+                _startFn = startFn;
+            }
+
+            public Task<bool> Start() => _startFn is null ? Task.FromResult(true) : _startFn();
+
+            public bool Initialized() => true;
+
+            public void Dispose() { }
+        }
+    }
+
     public class TestEventProcessor : LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor
     {
         public List<Event> Events = new List<Event>();
@@ -196,10 +231,10 @@ namespace LaunchDarkly.Sdk.Server
             return Task.FromResult(new EventSenderResult(DeliveryStatus.Succeeded, null));
         }
 
-        public Params RequirePayload(TimeSpan timeout)
+        public Params RequirePayload()
         {
             Params result;
-            if (!Calls.TryTake(out result, timeout))
+            if (!Calls.TryTake(out result, TimeSpan.FromSeconds(5)))
             {
                 throw new System.Exception("did not receive an event payload");
             }
@@ -212,6 +247,39 @@ namespace LaunchDarkly.Sdk.Server
             if (Calls.TryTake(out result, timeout))
             {
                 throw new System.Exception("received an unexpected event payload");
+            }
+        }
+    }
+
+    public class EventSink<T>
+    {
+        private readonly BlockingCollection<T> _queue = new BlockingCollection<T>();
+
+        public void Add(object sender, T args) => _queue.Add(args);
+
+        public T ExpectValue() => ExpectValue(TimeSpan.FromSeconds(1));
+
+        public T ExpectValue(TimeSpan timeout)
+        {
+            if (!_queue.TryTake(out var value, timeout))
+            {
+                Assert.True(false, "expected an event but did not get one at " + TestLogging.TimestampString);
+            }
+            return value;
+        }
+
+        public bool TryTakeValue(out T value)
+        {
+            return _queue.TryTake(out value, TimeSpan.FromSeconds(1));
+        }
+
+        public void ExpectNoValue() => ExpectNoValue(TimeSpan.FromMilliseconds(100));
+
+        public void ExpectNoValue(TimeSpan timeout)
+        {
+            if (_queue.TryTake(out _, timeout))
+            {
+                Assert.False(true, "expected no event but got one at " + TestLogging.TimestampString);
             }
         }
     }

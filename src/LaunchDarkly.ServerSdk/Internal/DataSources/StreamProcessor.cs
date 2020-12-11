@@ -75,6 +75,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 case PUT:
                     _dataSourceUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
+                    _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
                     streamManager.Initialized = true;
                     break;
                 case PATCH:
@@ -117,7 +118,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         public void HandleError(StreamManager streamManager, Exception e, bool recoverable)
         {
-
+            var errorInfo = e is EventSource.EventSourceServiceUnsuccessfulResponseException re ?
+                DataSourceStatus.ErrorInfo.FromHttpError(re.StatusCode) :
+                DataSourceStatus.ErrorInfo.FromException(e);
+            _dataSourceUpdates.UpdateStatus(recoverable ? DataSourceState.Interrupted : DataSourceState.Off,
+                errorInfo);
         }
 
         #endregion

@@ -3,27 +3,26 @@
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
-    /// Interface that an implementation of <see cref="IDataSource"/> will use to put data into the
-    /// underlying data store.
+    /// Interface that an implementation of <see cref="IDataSource"/> will use to push data into the SDK.
     /// </summary>
     /// <remarks>
-    /// These methods correspond to the <see cref="IDataStore.Init(FullDataSet{ItemDescriptor})"/> and
-    /// <see cref="IDataStore.Upsert(DataKind, string, ItemDescriptor)"/> methods in <see cref="IDataStore"/>,
-    /// but the data source does not have full access to the data store; all it can do is provide new data
-    /// through these methods. The SDK may modify the data before sending it to the store, or take other
-    /// actions when an update happens, that are separate from the store implementation.
+    /// The data source interacts with this object, rather than manipulating the data store directly, so
+    /// that the SDK can perform any other necessary operations that must happen when data is updated. This
+    /// object also provides a mechanism to report status changes.
     /// </remarks>
     public interface IDataSourceUpdates
     {
         /// <summary>
-        /// Provides a full data set to be copied into the data store, overwriting any previous contents.
+        /// Completely overwrites the current contents of the data store with a set of items for each collection.
         /// </summary>
         /// <param name="allData">a list of <see cref="DataKind"/> instances and their
         /// corresponding data sets</param>
-        void Init(FullDataSet<ItemDescriptor> allData);
+        /// <returns>true if the update succeeded, false if it failed</returns>
+        bool Init(FullDataSet<ItemDescriptor> allData);
 
         /// <summary>
-        /// Adds or replaces a single data item.
+        /// Updates or inserts an item in the specified collection. For updates, the object will only be
+        /// updated if the existing version is less than the new version.
         /// </summary>
         /// <remarks>
         /// The <see cref="ItemDescriptor"/> may contain a null, to represent a placeholder for a deleted item.
@@ -32,5 +31,31 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="key">the unique key for the item within that collection</param>
         /// <param name="item">the item to insert or update</param>
         void Upsert(DataKind kind, string key, ItemDescriptor item);
+
+        /// <summary>
+        /// Informs the SDK of a change in the data source's status.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Data source implementations should use this method if they have any concept of being in a valid
+        /// state, a temporarily disconnected state, or a permanently stopped state.
+        /// </para>
+        /// <para>
+        /// If <paramref name="newState"/> is different from the previous state, and/or <paramref name="newError"/>
+        /// is non-null, the SDK will start returning the new status(adding a timestamp for the change) from
+        /// <see cref="IDataSourceStatusProvider.Status"/>, and will trigger status change events to any
+        /// registered listeners.
+        /// </para>
+        /// <para>
+        /// A special case is that if <paramref name="newState"/> is <see cref="DataSourceState.Interrupted"/>,
+        /// but the previous state was <see cref="DataSourceState.Initializing"/>, the state will
+        /// remain at <see cref="DataSourceState.Initializing"/> because
+        /// <see cref="DataSourceState.Interrupted"/> is only meaningful after a successful startup.
+        /// </para>
+        /// </remarks>
+        /// <param name="newState">the data source state</param>
+        /// <param name="newError">information about a new error, if any</param>
+        /// <seealso cref="IDataSourceStatusProvider"/>
+        void UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError);
     }
 }

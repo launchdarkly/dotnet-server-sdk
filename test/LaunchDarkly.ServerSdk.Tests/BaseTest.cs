@@ -1,10 +1,12 @@
-﻿using LaunchDarkly.Logging;
+﻿using System.Threading;
+using LaunchDarkly.Logging;
 using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
-    /// Unit tests classes can derive from this class to take advantage of useful Xunit integrations.
+    /// Unit tests classes should derive from this class to provide necessary environment setup
+    /// and useful Xunit integrations.
     /// </summary>
     public class BaseTest
     {
@@ -33,6 +35,21 @@ namespace LaunchDarkly.Sdk.Server
         {
             testLogging = Logs.None;
             testLogger = TestUtils.NullLogger;
+
+            // The following line prevents intermittent test failures that happen only in .NET
+            // Framework, where background tasks (including calls to Task.Delay) are very excessively
+            // slow to start-- on the order of many seconds. The issue appears to be a long-standing
+            // one that is described here, where the very low default setting of ThreadPool.SetMinThreads
+            // causes new worker tasks to be severely throttled:
+            // http://joeduffyblog.com/2006/07/08/clr-thread-pool-injection-stuttering-problems/
+            //
+            // We've seen experimentally that this setting defaults to 2 when running the tests in .NET
+            // Framework, versus at least 12 when running them in .NET Core.
+            //
+            // It is theoretically possible for something similar to happen in a real application, but
+            // since that would affect all tasks in the application, we assume that developers would
+            // need to tune this parameter in any case, not only because of our SDK.
+            ThreadPool.SetMinThreads(100, 100);
         }
 
         /// <summary>
@@ -50,7 +67,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <param name="testOutput">the <see cref="ITestOutputHelper"/> that Xunit passed to the test
         /// class constructor</param>
-        public BaseTest(ITestOutputHelper testOutput)
+        public BaseTest(ITestOutputHelper testOutput) : this()
         {
             testLogging = TestLogging.TestOutputAdapter(testOutput);
             testLogger = TestLogging.TestLogger(testOutput);

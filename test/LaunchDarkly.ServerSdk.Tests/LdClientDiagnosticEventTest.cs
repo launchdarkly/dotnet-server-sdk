@@ -57,7 +57,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             using (var client = new LdClient(config))
             {
-                var payload = testEventSender.RequirePayload(TimeSpan.FromSeconds(1));
+                var payload = testEventSender.RequirePayload();
 
                 Assert.Equal(EventDataKind.DiagnosticEvent, payload.Kind);
                 Assert.Equal(1, payload.EventCount);
@@ -85,7 +85,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             using (var client = new LdClient(config))
             {
-                var payload1 = testEventSender.RequirePayload(TimeSpan.FromSeconds(1));
+                var payload1 = testEventSender.RequirePayload();
 
                 Assert.Equal(EventDataKind.DiagnosticEvent, payload1.Kind);
                 Assert.Equal(1, payload1.EventCount);
@@ -94,7 +94,7 @@ namespace LaunchDarkly.Sdk.Server
                 var timestamp1 = data1.Get("creationDate").AsLong;
                 Assert.NotEqual(0, timestamp1);
 
-                var payload2 = testEventSender.RequirePayload(TimeSpan.FromSeconds(1));
+                var payload2 = testEventSender.RequirePayload();
 
                 Assert.Equal(EventDataKind.DiagnosticEvent, payload2.Kind);
                 Assert.Equal(1, payload2.EventCount);
@@ -103,7 +103,7 @@ namespace LaunchDarkly.Sdk.Server
                 var timestamp2 = data2.Get("creationDate").AsLong;
                 Assert.InRange(timestamp2, timestamp1, timestamp1 + 1000);
 
-                var payload3 = testEventSender.RequirePayload(TimeSpan.FromSeconds(1));
+                var payload3 = testEventSender.RequirePayload();
 
                 Assert.Equal(EventDataKind.DiagnosticEvent, payload3.Kind);
                 Assert.Equal(1, payload3.EventCount);
@@ -117,8 +117,11 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void ConfigDefaults()
         {
+            // Note that in all of the test configurations where the streaming or polling data source
+            // is enabled, we're setting a fake HTTP message handler so it doesn't try to do any real
+            // HTTP requests that would fail and (depending on timing) disrupt the test.
             TestDiagnosticConfig(
-                null,
+                c => c.HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -132,7 +135,8 @@ namespace LaunchDarkly.Sdk.Server
             TestDiagnosticConfig(
                 c => c.ConnectionTimeout(TimeSpan.FromMilliseconds(1001))
                     .ReadTimeout(TimeSpan.FromMilliseconds(1003))
-                    .StartWaitTime(TimeSpan.FromMilliseconds(2)),
+                    .StartWaitTime(TimeSpan.FromMilliseconds(2))
+                    .HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
                 null,
                 LdValue.BuildObject()
                     .WithEventsDefaults()
@@ -152,7 +156,8 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.DataSource(
                     Components.StreamingDataSource()
                         .InitialReconnectDelay(TimeSpan.FromSeconds(2))
-                    ),
+                    )
+                    .HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -168,7 +173,8 @@ namespace LaunchDarkly.Sdk.Server
                     Components.StreamingDataSource()
                         .BaseUri(new Uri("http://custom"))
                         .InitialReconnectDelay(TimeSpan.FromSeconds(2))
-                    ),
+                    )
+                    .HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -187,7 +193,8 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.DataSource(
                     Components.PollingDataSource()
                         .PollInterval(TimeSpan.FromSeconds(45))
-                    ),
+                    )
+                    .HttpMessageHandler(StubMessageHandler.EmptyPollingResponse()),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -203,7 +210,8 @@ namespace LaunchDarkly.Sdk.Server
                     Components.PollingDataSource()
                         .BaseUri(new Uri("http://custom"))
                         .PollInterval(TimeSpan.FromSeconds(45))
-                    ),
+                    )
+                    .HttpMessageHandler(StubMessageHandler.EmptyPollingResponse()),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -234,7 +242,7 @@ namespace LaunchDarkly.Sdk.Server
         public void CustomConfigForEvents()
         {
             TestDiagnosticConfig(
-                null,
+                c => c.HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
                 e => e.AllAttributesPrivate(true)
                     .BaseUri(new Uri("http://custom"))
                     .Capacity(333)
@@ -274,7 +282,7 @@ namespace LaunchDarkly.Sdk.Server
             modConfig?.Invoke(configBuilder);
             using (var client = new LdClient(configBuilder.Build()))
             {
-                var payload = testEventSender.RequirePayload(TimeSpan.FromSeconds(1));
+                var payload = testEventSender.RequirePayload();
 
                 Assert.Equal(EventDataKind.DiagnosticEvent, payload.Kind);
                 Assert.Equal(1, payload.EventCount);

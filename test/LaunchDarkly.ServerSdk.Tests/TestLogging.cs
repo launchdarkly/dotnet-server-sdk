@@ -40,6 +40,11 @@ namespace LaunchDarkly.Sdk.Server
         public static Logger TestLogger(ITestOutputHelper testOutputHelper) =>
             TestOutputAdapter(testOutputHelper).Logger("");
 
+        /// <summary>
+        /// Convenience property for getting a millisecond timestamp string.
+        /// </summary>
+        public static string TimestampString => DateTime.Now.ToString("O");
+
         private class TestOutputAdapterImpl : ILogAdapter
         {
             private readonly ITestOutputHelper _testOutputHelper;
@@ -63,7 +68,7 @@ namespace LaunchDarkly.Sdk.Server
             public TestOutputChannelImpl(ITestOutputHelper testOutputHelper, string name)
             {
                 _testOutputHelper = testOutputHelper;
-                _name = "testlog" + (name.StartsWith(".") ? "" : ".") + name;
+                _name = "testlog" + (name == "" || name.StartsWith(".") ? "" : ".") + name;
             }
 
             public bool IsEnabled(LogLevel level)
@@ -95,7 +100,7 @@ namespace LaunchDarkly.Sdk.Server
             {
                 _testOutputHelper.WriteLine(
                     "{0} [{1}] {2}: {3}",
-                    DateTime.Now.ToString("O"),
+                    TimestampString,
                     _name,
                     level,
                     message

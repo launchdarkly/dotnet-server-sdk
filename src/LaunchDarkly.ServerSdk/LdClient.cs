@@ -5,6 +5,7 @@ using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -23,8 +24,12 @@ namespace LaunchDarkly.Sdk.Server
         internal readonly IEventProcessor _eventProcessor;
         private readonly IDataStore _dataStore;
         internal readonly IDataSource _dataSource;
+        private readonly DataSourceStatusProviderImpl _dataSourceStatusProvider;
         internal readonly Evaluator _evaluator;
         private readonly Logger _log;
+
+        /// <inheritdoc/>
+        public IDataSourceStatusProvider DataSourceStatusProvider => _dataSourceStatusProvider;
 
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration.
@@ -62,6 +67,8 @@ namespace LaunchDarkly.Sdk.Server
 
             var clientContext = new LdClientContext(basicConfig, config, diagnosticStore);
 
+            var taskExecutor = new TaskExecutor(_log);
+
             _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore).CreateDataStore(clientContext);
 
             _evaluator = new Evaluator(GetFlag, GetSegment, _log);
@@ -71,11 +78,13 @@ namespace LaunchDarkly.Sdk.Server
                 (_configuration.EventProcessorFactory ?? Components.SendEvents());
             _eventProcessor = eventProcessorFactory.CreateEventProcessor(clientContext);
 
-            var dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore);
+            var dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore, taskExecutor, _log,
+                logConfig.LogDataSourceOutageAsErrorAfter);
             IDataSourceFactory dataSourceFactory =
                 config.Offline ? Components.ExternalUpdatesOnly :
                 (_configuration.DataSourceFactory ?? Components.StreamingDataSource());
             _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataSourceUpdates);
+            _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdates);
 
             var initTask = _dataSource.Start();
 

@@ -32,6 +32,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly TestEventSourceFactory _eventSourceFactory;
         readonly InMemoryDataStore _dataStore;
         readonly IDataSourceUpdates _dataSourceUpdates;
+        readonly IDataSourceStatusProvider _dataSourceStatusProvider;
         Configuration _config;
 
         public StreamProcessorTest(ITestOutputHelper testOutput) : base(testOutput)
@@ -41,7 +42,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new InMemoryDataStore();
-            _dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore);
+            var dataSourceUpdatesImpl = new DataSourceUpdatesImpl(_dataStore,
+                new TaskExecutor(testLogger),
+                testLogger, null);
+            _dataSourceUpdates = dataSourceUpdatesImpl;
+            _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdatesImpl);
             _config = Configuration.Builder(SDK_KEY)
                 .DataSource(Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create()))
                 .DataStore(TestUtils.SpecificDataStore(_dataStore))
@@ -108,6 +113,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.False(((IDataSource)sp).Initialized());
+            Assert.Equal(DataSourceState.Initializing, _dataSourceStatusProvider.Status.State);
         }
 
         [Fact]
@@ -116,6 +122,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             StreamProcessor sp = CreateAndStartProcessor();
             _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
             Assert.True(((IDataSource)sp).Initialized());
+            Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
         }
 
         [Fact]
@@ -196,7 +203,43 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
                 _dataStore.Get(DataKinds.Segments, SEGMENT_KEY));
         }
-        
+
+        [Fact]
+        public void RecoverableErrorChangesStateToInterrupted()
+        {
+            StreamProcessor sp = CreateAndStartProcessor();
+            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            Assert.True(((IDataSource)sp).Initialized());
+            Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
+
+            var ex = new EventSourceServiceUnsuccessfulResponseException("", 500);
+            _mockEventSource.Raise(es => es.Error += null, new EventSource.ExceptionEventArgs(ex));
+
+            var newStatus = _dataSourceStatusProvider.Status;
+            Assert.Equal(DataSourceState.Interrupted, newStatus.State);
+            Assert.NotNull(newStatus.LastError);
+            Assert.Equal(DataSourceStatus.ErrorKind.ErrorResponse, newStatus.LastError.Value.Kind);
+            Assert.Equal(500, newStatus.LastError.Value.StatusCode);
+        }
+
+        [Fact]
+        public void UnrecoverableErrorChangesStateToOff()
+        {
+            StreamProcessor sp = CreateAndStartProcessor();
+            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            Assert.True(((IDataSource)sp).Initialized());
+            Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
+
+            var ex = new EventSourceServiceUnsuccessfulResponseException("", 401);
+            _mockEventSource.Raise(es => es.Error += null, new EventSource.ExceptionEventArgs(ex));
+
+            var newStatus = _dataSourceStatusProvider.Status;
+            Assert.Equal(DataSourceState.Off, newStatus.State);
+            Assert.NotNull(newStatus.LastError);
+            Assert.Equal(DataSourceStatus.ErrorKind.ErrorResponse, newStatus.LastError.Value.Kind);
+            Assert.Equal(401, newStatus.LastError.Value.StatusCode);
+        }
+
         private StreamProcessor CreateProcessor()
         {
             var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);

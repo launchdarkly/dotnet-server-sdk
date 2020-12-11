@@ -21,6 +21,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly IFeatureRequestor _featureRequestor;
         readonly InMemoryDataStore _dataStore;
         readonly IDataSourceUpdates _dataSourceUpdates;
+        readonly IDataSourceStatusProvider _dataSourceStatusProvider;
         readonly Configuration _config;
         readonly LdClientContext _context;
 
@@ -29,8 +30,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockFeatureRequestor = new Mock<IFeatureRequestor>();
             _featureRequestor = _mockFeatureRequestor.Object;
             _dataStore = new InMemoryDataStore();
-            _dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore);
-            _config = Configuration.Builder(sdkKey).Logging(Components.Logging(testLogging)).Build();
+            var dataSourceUpdatesImpl = new DataSourceUpdatesImpl(_dataStore,
+                new TaskExecutor(testLogger),
+                testLogger, null);
+            _dataSourceUpdates = dataSourceUpdatesImpl;
+            _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdatesImpl);
+            _config = Configuration.Default(sdkKey);
             _context = new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), _config);
         }
 
@@ -63,6 +68,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var initTask = ((IDataSource)pp).Start();
                 initTask.Wait();
                 Assert.True(((IDataSource)pp).Initialized());
+                Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
             }
         }
 
@@ -78,6 +84,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 Assert.InRange(DateTime.Now.Subtract(startTime).Milliseconds, 190, 2000);
                 Assert.False(completed);
                 Assert.False(((IDataSource)pp).Initialized());
+                Assert.Equal(DataSourceState.Initializing, _dataSourceStatusProvider.Status.State);
             }
         }
 
@@ -121,6 +128,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(1000));
                 Assert.True(completed);
                 Assert.False(((IDataSource)pp).Initialized());
+                Assert.Equal(DataSourceState.Off, _dataSourceStatusProvider.Status.State);
             }
         }
 
