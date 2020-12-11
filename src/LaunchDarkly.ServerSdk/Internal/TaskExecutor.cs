@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
@@ -40,18 +41,25 @@ namespace LaunchDarkly.Sdk.Server.Internal
                 return;
             }
             _log.Debug("scheduling task to send {0} to {1}", eventArgs, handlers);
-            _ = Task.Run(() =>
+            foreach (var handler in handlers.GetInvocationList())
             {
-                _log.Debug("sending {0} to {1}", eventArgs, handlers);
-                try
+                _ = Task.Run(() =>
                 {
-                    handlers.DynamicInvoke(sender, eventArgs);
-                }
-                catch (Exception e)
-                {
-                    LogHelpers.LogException(_log, "Unexpected exception from event handler", e);
-                }
-            });
+                    _log.Debug("sending {0}", eventArgs);
+                    try
+                    {
+                        handler.DynamicInvoke(sender, eventArgs);
+                    }
+                    catch (Exception e)
+                    {
+                        if (e is TargetInvocationException wrappedException)
+                        {
+                            e = wrappedException.InnerException;
+                        }
+                        LogHelpers.LogException(_log, "Unexpected exception from event handler", e);
+                    }
+                });
+            }
         }
 
         /// <summary>
