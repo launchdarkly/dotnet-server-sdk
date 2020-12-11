@@ -51,8 +51,9 @@ namespace LaunchDarkly.Sdk.Server
             var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.ExternalUpdatesOnly)
                 .Events(Components.SendEvents().EventSender(testEventSender))
-                .WrapperName(testWrapperName)
-                .WrapperVersion(testWrapperVersion)
+                .Http(
+                    Components.HttpConfiguration().Wrapper(testWrapperName, testWrapperVersion)
+                )
                 .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
@@ -121,7 +122,7 @@ namespace LaunchDarkly.Sdk.Server
             // is enabled, we're setting a fake HTTP message handler so it doesn't try to do any real
             // HTTP requests that would fail and (depending on timing) disrupt the test.
             TestDiagnosticConfig(
-                c => c.HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
+                c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -133,10 +134,13 @@ namespace LaunchDarkly.Sdk.Server
         public void CustomConfigGeneralProperties()
         {
             TestDiagnosticConfig(
-                c => c.ConnectionTimeout(TimeSpan.FromMilliseconds(1001))
-                    .ReadTimeout(TimeSpan.FromMilliseconds(1003))
-                    .StartWaitTime(TimeSpan.FromMilliseconds(2))
-                    .HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
+                c => c.Http(
+                        Components.HttpConfiguration()
+                            .ConnectTimeout(TimeSpan.FromMilliseconds(1001))
+                            .ReadTimeout(TimeSpan.FromMilliseconds(1003))
+                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
+                    )
+                    .StartWaitTime(TimeSpan.FromMilliseconds(2)),
                 null,
                 LdValue.BuildObject()
                     .WithEventsDefaults()
@@ -157,7 +161,7 @@ namespace LaunchDarkly.Sdk.Server
                     Components.StreamingDataSource()
                         .InitialReconnectDelay(TimeSpan.FromSeconds(2))
                     )
-                    .HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -174,7 +178,7 @@ namespace LaunchDarkly.Sdk.Server
                         .BaseUri(new Uri("http://custom"))
                         .InitialReconnectDelay(TimeSpan.FromSeconds(2))
                     )
-                    .HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -194,7 +198,7 @@ namespace LaunchDarkly.Sdk.Server
                     Components.PollingDataSource()
                         .PollInterval(TimeSpan.FromSeconds(45))
                     )
-                    .HttpMessageHandler(StubMessageHandler.EmptyPollingResponse()),
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -211,7 +215,7 @@ namespace LaunchDarkly.Sdk.Server
                         .BaseUri(new Uri("http://custom"))
                         .PollInterval(TimeSpan.FromSeconds(45))
                     )
-                    .HttpMessageHandler(StubMessageHandler.EmptyPollingResponse()),
+                   .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithEventsDefaults()
@@ -242,7 +246,7 @@ namespace LaunchDarkly.Sdk.Server
         public void CustomConfigForEvents()
         {
             TestDiagnosticConfig(
-                c => c.HttpMessageHandler(StubMessageHandler.EmptyStreamingResponse()),
+                c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 e => e.AllAttributesPrivate(true)
                     .BaseUri(new Uri("http://custom"))
                     .Capacity(333)
@@ -276,7 +280,7 @@ namespace LaunchDarkly.Sdk.Server
             modEvents?.Invoke(eventsBuilder);
             var configBuilder = Configuration.Builder(sdkKey)
                 .Events(eventsBuilder)
-                .HttpMessageHandler(new StubMessageHandler(HttpStatusCode.Unauthorized))
+                .Http(Components.HttpConfiguration().MessageHandler(new StubMessageHandler(HttpStatusCode.Unauthorized)))
                 .Logging(Components.Logging(testLogging))
                 .StartWaitTime(testStartWaitTime);
             modConfig?.Invoke(configBuilder);
@@ -299,8 +303,8 @@ namespace LaunchDarkly.Sdk.Server
     {
         public static LdValue.ObjectBuilder Base() =>
             LdValue.BuildObject()
-                .Add("connectTimeoutMillis", Configuration.DefaultConnectionTimeout.TotalMilliseconds)
-                .Add("socketTimeoutMillis", Configuration.DefaultReadTimeout.TotalMilliseconds)
+                .Add("connectTimeoutMillis", HttpConfigurationBuilder.DefaultConnectTimeout.TotalMilliseconds)
+                .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
                 .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
                 .Add("usingProxy", false)
                 .Add("usingProxyAuthenticator", false);

@@ -7,11 +7,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface ILoggingConfigurationFactory
     {
         /// <summary>
-        /// Creates the configuration object.
+        /// Creates the configuration object. This is called internally by the SDK.
         /// </summary>
-        /// <remarks>
-        /// This method is called by the SDK. Application code does not need to use it.
-        /// </remarks>
         /// <returns>the logging configuration</returns>
         ILoggingConfiguration CreateLoggingConfiguration();
     }

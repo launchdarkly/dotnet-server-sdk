@@ -24,7 +24,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public class EventProcessorBuilder : IEventProcessorFactory, IDiagnosticDescription
+    public sealed class EventProcessorBuilder : IEventProcessorFactory, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="Capacity(int)"/>.
@@ -269,7 +269,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
             var eventSender = _eventSender ??
                 new DefaultEventSender(
-                    context.Configuration.HttpProperties,
+                    context.Http.ToHttpProperties(),
                     eventsConfig,
                     logger
                     );

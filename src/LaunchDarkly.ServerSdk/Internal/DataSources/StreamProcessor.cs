@@ -39,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 );
             _streamManager = new StreamManager(this,
                 streamProperties,
-                context.Configuration.HttpProperties,
+                context.Http.ToHttpProperties(),
                 initialReconnectDelay,
                 eventSourceCreator,
                 context.DiagnosticStore,

@@ -6,7 +6,6 @@ using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
-using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -61,11 +60,13 @@ namespace LaunchDarkly.Sdk.Server
                 AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
 
             var basicConfig = new BasicConfiguration(config.SdkKey, config.Offline, _log);
+            var httpConfig = (config.HttpConfigurationFactory ?? Components.HttpConfiguration())
+                .CreateHttpConfiguration(basicConfig);
 
             ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
-                new ServerDiagnosticStore(_configuration, basicConfig);
+                new ServerDiagnosticStore(_configuration, basicConfig, httpConfig);
 
-            var clientContext = new LdClientContext(basicConfig, config, diagnosticStore);
+            var clientContext = new LdClientContext(basicConfig, httpConfig, diagnosticStore);
 
             var taskExecutor = new TaskExecutor(_log);
 

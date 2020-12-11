@@ -7,7 +7,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IEventProcessorFactory
     {
         /// <summary>
-        /// Creates an implementation instance.
+        /// Creates an implementation instance. This is called internally by the SDK.
         /// </summary>
         /// <param name="context">configuration of the current client instance</param>
         /// <returns>an <c>IEventProcessor</c> instance</returns>

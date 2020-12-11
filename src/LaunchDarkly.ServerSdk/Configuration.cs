@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Net.Http;
 using LaunchDarkly.Sdk.Interfaces;
-using LaunchDarkly.Sdk.Internal;
-using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server
@@ -18,19 +15,15 @@ namespace LaunchDarkly.Sdk.Server
     /// </remarks>
     public class Configuration
     {
-        private readonly TimeSpan _connectionTimeout;
         private readonly IDataSourceFactory _dataSourceFactory;
         private readonly IDataStoreFactory _dataStoreFactory;
         private readonly bool _diagnosticOptOut;
         private readonly IEventProcessorFactory _eventProcessorFactory;
+        private readonly IHttpConfigurationFactory _httpConfigurationFactory;
         private readonly ILoggingConfigurationFactory _loggingConfigurationFactory;
-        private readonly HttpMessageHandler _httpMessageHandler;
         private readonly bool _offline;
-        private readonly TimeSpan _readTimeout;
         private readonly string _sdkKey;
         private readonly TimeSpan _startWaitTime;
-        private readonly string _wrapperName;
-        private readonly string _wrapperVersion;
 
         /// <summary>
         /// The SDK key for your LaunchDarkly environment.
@@ -46,21 +39,6 @@ namespace LaunchDarkly.Sdk.Server
         /// default value is 10 seconds.
         /// </remarks>
         public TimeSpan StartWaitTime => _startWaitTime;
-
-        /// <summary>
-        /// The timeout when reading data from the EventSource API. The default value is 5 minutes.
-        /// </summary>
-        public TimeSpan ReadTimeout => _readTimeout;
-
-        /// <summary>
-        /// The connection timeout. The default value is 10 seconds.
-        /// </summary>
-        public TimeSpan ConnectionTimeout => _connectionTimeout;
-
-        /// <summary>
-        /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
-        /// </summary>
-        public HttpMessageHandler HttpMessageHandler => _httpMessageHandler;
 
         /// <summary>
         /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
@@ -94,7 +72,13 @@ namespace LaunchDarkly.Sdk.Server
         public IDataSourceFactory DataSourceFactory => _dataSourceFactory;
 
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="ILoggingConfigurationFactory"/>, defining
+        /// A factory object that creates an implementation of <see cref="IHttpConfiguration"/>, defining the
+        /// SDK's networking behavior.
+        /// </summary>
+        public IHttpConfigurationFactory HttpConfigurationFactory => _httpConfigurationFactory;
+
+        /// <summary>
+        /// A factory object that creates an implementation of <see cref="ILoggingConfiguration"/>, defining
         /// the SDK's logging configuration.
         /// </summary>
         /// <remarks>
@@ -113,19 +97,6 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         public bool DiagnosticOptOut => _diagnosticOptOut;
 
-        /// <summary>
-        /// Name specifying a wrapper library, to be included in request headers.
-        /// </summary>
-        public string WrapperName => _wrapperName;
-
-        /// <summary>
-        /// Version of a wrapper library, to be included in request headers.
-        /// </summary>
-        public string WrapperVersion => _wrapperVersion;
-
-        internal static readonly TimeSpan DefaultConnectionTimeout = TimeSpan.FromSeconds(10);
-        internal static HttpMessageHandler DefaultMessageHandler = new HttpClientHandler();
-        internal static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromMinutes(5);
         internal static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
 
         /// <summary>
@@ -183,27 +154,15 @@ namespace LaunchDarkly.Sdk.Server
 
         internal Configuration(ConfigurationBuilder builder)
         {
-            _connectionTimeout = builder._connectionTimeout;
             _dataSourceFactory = builder._dataSourceFactory;
             _dataStoreFactory = builder._dataStoreFactory;
             _diagnosticOptOut = builder._diagnosticOptOut;
             _eventProcessorFactory = builder._eventProcessorFactory;
-            _httpMessageHandler = builder._httpMessageHandler;
+            _httpConfigurationFactory = builder._httpConfigurationFactory;
             _loggingConfigurationFactory = builder._loggingConfigurationFactory;
             _offline = builder._offline;
-            _readTimeout = builder._readTimeout;
             _sdkKey = builder._sdkKey;
             _startWaitTime = builder._startWaitTime;
-            _wrapperName = builder._wrapperName;
-            _wrapperVersion = builder._wrapperVersion;
         }
-
-        internal HttpProperties HttpProperties => HttpProperties.Default
-            .WithAuthorizationKey(SdkKey)
-            .WithConnectTimeout(_connectionTimeout)
-            .WithReadTimeout(_readTimeout)
-            .WithHttpMessageHandler(HttpMessageHandler)
-            .WithWrapper(WrapperName, WrapperVersion)
-            .WithUserAgent("DotNetClient");
     }
 }

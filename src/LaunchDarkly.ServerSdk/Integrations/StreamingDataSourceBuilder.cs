@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public class StreamingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
+    public sealed class StreamingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {
         internal static readonly Uri DefaultBaseUri = new Uri("https://stream.launchdarkly.com");
 

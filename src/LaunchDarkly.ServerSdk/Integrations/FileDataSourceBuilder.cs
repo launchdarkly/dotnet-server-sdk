@@ -15,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// object to <see cref="IConfigurationBuilder.DataSource(Interfaces.IDataSourceFactory)"/>.
     /// </remarks>
     /// <seealso cref="FileData"/>
-    public class FileDataSourceBuilder : IDataSourceFactory
+    public sealed class FileDataSourceBuilder : IDataSourceFactory
     {
         internal readonly List<string> _paths = new List<string>();
         internal bool _autoUpdate = false;

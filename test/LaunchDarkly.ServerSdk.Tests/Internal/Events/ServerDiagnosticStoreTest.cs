@@ -12,15 +12,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         private IDiagnosticStore CreateDiagnosticStore(Action<IConfigurationBuilder> modConfig) {
             var builder = Configuration.Builder(sdkKey)
-                .StartWaitTime(TimeSpan.Zero)
-                .WrapperName("Xamarin")
-                .WrapperVersion("1.0.0");
+                .Http(Components.HttpConfiguration().Wrapper("Xamarin", "1.0.0"))
+                .StartWaitTime(TimeSpan.Zero);
             if (!(modConfig is null))
             {
                 modConfig(builder);
             }
             var config = builder.Build();
-            return new ServerDiagnosticStore(config, new BasicConfiguration(sdkKey, false, TestUtils.NullLogger));
+            var basicConfig = new BasicConfiguration(sdkKey, false, TestUtils.NullLogger);
+            var httpConfig = (config.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basicConfig);
+            return new ServerDiagnosticStore(config, basicConfig, httpConfig);
         }
 
         [Fact]

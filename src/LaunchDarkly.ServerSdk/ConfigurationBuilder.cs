@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -31,13 +30,6 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         /// <returns>the configured <c>Configuration</c> object</returns>
         Configuration Build();
-
-        /// <summary>
-        /// Sets the connection timeout. The default value is 10 seconds.
-        /// </summary>
-        /// <param name="connectionTimeout">the connection timeout</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout);
 
         /// <summary>
         /// Sets the implementation of the component that receives feature flag data from LaunchDarkly,
@@ -110,11 +102,13 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder Events(IEventProcessorFactory factory);
 
         /// <summary>
-        /// Sets the object to be used for sending HTTP requests. This is exposed for testing purposes.
+        /// Sets the SDK's networking configuration, using a factory object. This object is normally a
+        /// configuration builder obtained from <see cref="Components.HttpConfiguration()"/>, which has
+        /// methods for setting individual HTTP-related properties.
         /// </summary>
-        /// <param name="httpMessageHandler">the <c>HttpMessageHandler</c> to use</param>
+        /// <param name="factory">a builder/factory object for HTTP configuration</param>
         /// <returns>the same builder</returns>
-        IConfigurationBuilder HttpMessageHandler(HttpMessageHandler httpMessageHandler);
+        IConfigurationBuilder Http(IHttpConfigurationFactory factory);
 
         /// <summary>
         /// Sets the SDK's logging configuration, using a factory object.
@@ -144,16 +138,6 @@ namespace LaunchDarkly.Sdk.Server
         IConfigurationBuilder Offline(bool offline);
 
         /// <summary>
-        /// Sets the timeout when reading data from the streaming connection.
-        /// </summary>
-        /// <remarks>
-        /// The default value is 5 minutes.
-        /// </remarks>
-        /// <param name="readTimeout">the read timeout</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder ReadTimeout(TimeSpan readTimeout);
-
-        /// <summary>
         /// Sets the SDK key for your LaunchDarkly environment.
         /// </summary>
         /// <param name="sdkKey">the SDK key</param>
@@ -171,44 +155,22 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="startWaitTime">the length of time to wait</param>
         /// <returns>the same builder</returns>
         IConfigurationBuilder StartWaitTime(TimeSpan startWaitTime);
-
-        /// <summary>
-        /// For use by wrapper libraries to set an identifying name for the wrapper being used. This
-        /// will be sent in request headers during requests to the LaunchDarkly servers to allow
-        /// recording metrics on the usage of these wrapper libraries.
-        /// </summary>
-        /// <param name="wrapperName">The name of the wrapper to include in request headers</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder WrapperName(string wrapperName);
-
-        /// <summary>
-        /// For use by wrapper libraries to set version to be included alongside a WrapperName. If
-        /// WrapperName is unset or null, this field will be ignored.
-        /// </summary>
-        /// <param name="wrapperVersion">The version of the wrapper to include in request headers</param>
-        /// <returns>the same builder</returns>
-        IConfigurationBuilder WrapperVersion(string wrapperVersion);
     }
 
     class ConfigurationBuilder : IConfigurationBuilder
     {
         // Let's try to keep these properties and methods alphabetical so they're easy to find
-        internal TimeSpan _connectionTimeout = Configuration.DefaultConnectionTimeout;
         internal IDataSourceFactory _dataSourceFactory = null;
         internal IDataStoreFactory _dataStoreFactory = null;
         internal bool _diagnosticOptOut = false;
         internal IEventProcessorFactory _eventProcessorFactory = null;
-        internal HttpMessageHandler _httpMessageHandler = Configuration.DefaultMessageHandler;
+        internal IHttpConfigurationFactory _httpConfigurationFactory = null;
         internal bool _isStreamingEnabled = true;
         internal ILogAdapter _logAdapter = null;
         internal ILoggingConfigurationFactory _loggingConfigurationFactory = null;
         internal bool _offline = false;
-        internal TimeSpan _readTimeout = Configuration.DefaultReadTimeout;
         internal string _sdkKey;
         internal TimeSpan _startWaitTime = Configuration.DefaultStartWaitTime;
-        internal bool _useLdd = false;
-        internal string _wrapperName = null;
-        internal string _wrapperVersion = null;
 
         public ConfigurationBuilder(string sdkKey)
         {
@@ -217,30 +179,20 @@ namespace LaunchDarkly.Sdk.Server
 
         public ConfigurationBuilder(Configuration copyFrom)
         {
-            _connectionTimeout = copyFrom.ConnectionTimeout;
             _dataSourceFactory = copyFrom.DataSourceFactory;
             _dataStoreFactory = copyFrom.DataStoreFactory;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
             _eventProcessorFactory = copyFrom.EventProcessorFactory;
-            _httpMessageHandler = copyFrom.HttpMessageHandler;
+            _httpConfigurationFactory = copyFrom.HttpConfigurationFactory;
             _loggingConfigurationFactory = copyFrom.LoggingConfigurationFactory;
             _offline = copyFrom.Offline;
-            _readTimeout = copyFrom.ReadTimeout;
             _sdkKey = copyFrom.SdkKey;
             _startWaitTime = copyFrom.StartWaitTime;
-            _wrapperName = copyFrom.WrapperName;
-            _wrapperVersion = copyFrom.WrapperVersion;
         }
 
         public Configuration Build()
         {
             return new Configuration(this);
-        }
-
-        public IConfigurationBuilder ConnectionTimeout(TimeSpan connectionTimeout)
-        {
-            _connectionTimeout = connectionTimeout;
-            return this;
         }
 
         public IConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory)
@@ -267,9 +219,9 @@ namespace LaunchDarkly.Sdk.Server
             return this;
         }
         
-        public IConfigurationBuilder HttpMessageHandler(HttpMessageHandler httpMessageHandler)
+        public IConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory)
         {
-            _httpMessageHandler = httpMessageHandler;
+            _httpConfigurationFactory = httpConfigurationFactory;
             return this;
         }
 
@@ -291,12 +243,6 @@ namespace LaunchDarkly.Sdk.Server
             return this;
         }
 
-        public IConfigurationBuilder ReadTimeout(TimeSpan readTimeout)
-        {
-            _readTimeout = readTimeout;
-            return this;
-        }
-
         public IConfigurationBuilder SdkKey(string sdkKey)
         {
             _sdkKey = sdkKey;
@@ -306,24 +252,6 @@ namespace LaunchDarkly.Sdk.Server
         public IConfigurationBuilder StartWaitTime(TimeSpan startWaitTime)
         {
             _startWaitTime = startWaitTime;
-            return this;
-        }
-
-        public IConfigurationBuilder UseLdd(bool useLdd)
-        {
-            _useLdd = useLdd;
-            return this;
-        }
-
-        public IConfigurationBuilder WrapperName(string wrapperName)
-        {
-            _wrapperName = wrapperName;
-            return this;
-        }
-
-        public IConfigurationBuilder WrapperVersion(string wrapperVersion)
-        {
-            _wrapperVersion = wrapperVersion;
             return this;
         }
     }

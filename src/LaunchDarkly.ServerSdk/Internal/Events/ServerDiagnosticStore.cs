@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Helpers;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
@@ -13,6 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
     {
         private readonly Configuration Config;
         private readonly BasicConfiguration BasicConfig;
+        private readonly IHttpConfiguration HttpConfig;
         private readonly DiagnosticEvent InitEvent;
         private readonly DiagnosticId DiagnosticId;
 
@@ -30,11 +30,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         DateTime IDiagnosticStore.DataSince => DateTime.FromBinary(Interlocked.Read(ref DataSince));
         #endregion
 
-        internal ServerDiagnosticStore(Configuration config, BasicConfiguration basicConfig)
+        internal ServerDiagnosticStore(Configuration config, BasicConfiguration basicConfig, IHttpConfiguration httpConfig)
         {
             DateTime currentTime = DateTime.Now;
             Config = config;
             BasicConfig = basicConfig;
+            HttpConfig = httpConfig;
             DataSince = currentTime.ToBinary();
             DiagnosticId = new DiagnosticId(config.SdkKey, Guid.NewGuid());
             InitEvent = BuildInitEvent(currentTime);
@@ -77,13 +78,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             var sdkInfo = LdValue.BuildObject()
                 .Add("name", "dotnet-server-sdk")
                 .Add("version", AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
-            if (Config.WrapperName != null)
+            foreach (var kv in HttpConfig.DefaultHeaders)
             {
-                sdkInfo.Add("wrapperName", Config.WrapperName);
-            }
-            if (Config.WrapperVersion != null)
-            {
-                sdkInfo.Add("wrapperVersion", Config.WrapperVersion);
+                if (kv.Key.ToLower() == "x-launchdarkly-wrapper")
+                {
+                    if (kv.Value.Contains("/"))
+                    {
+                        sdkInfo.Add("wrapperName", kv.Value.Substring(0, kv.Value.IndexOf("/")));
+                        sdkInfo.Add("wrapperVersion", kv.Value.Substring(kv.Value.IndexOf("/") + 1));
+                    }
+                    else
+                    {
+                        sdkInfo.Add("wrapperName", kv.Value);
+                    }
+                }
             }
             return sdkInfo.Build();
         }
@@ -91,8 +99,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         private LdValue InitEventConfig()
         {
             var configInfo = LdValue.BuildObject();
-            configInfo.Add("connectTimeoutMillis", Config.ConnectionTimeout.TotalMilliseconds);
-            configInfo.Add("socketTimeoutMillis", Config.ReadTimeout.TotalMilliseconds);
+            configInfo.Add("connectTimeoutMillis", HttpConfig.ConnectTimeout.TotalMilliseconds);
+            configInfo.Add("socketTimeoutMillis", HttpConfig.ReadTimeout.TotalMilliseconds);
             configInfo.Add("usingProxy", false);
             configInfo.Add("usingProxyAuthenticator", false);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);

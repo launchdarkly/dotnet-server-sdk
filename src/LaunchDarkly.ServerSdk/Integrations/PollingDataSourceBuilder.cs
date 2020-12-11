@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public class PollingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
+    public sealed class PollingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {
         internal static readonly Uri DefaultBaseUri = new Uri("https://sdk.launchdarkly.com");
 

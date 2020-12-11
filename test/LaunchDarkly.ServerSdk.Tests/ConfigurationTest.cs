@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
@@ -27,14 +26,6 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder(sdkKey).Build();
             Assert.Equal(sdkKey, config.SdkKey);
-        }
-
-        [Fact]
-        public void ConnectionTimeout()
-        {
-            var prop = _tester.Property(c => c.ConnectionTimeout, (b, v) => b.ConnectionTimeout(v));
-            prop.AssertDefault(Configuration.DefaultConnectionTimeout);
-            prop.AssertCanSet(TimeSpan.FromSeconds(7));
         }
 
         [Fact]
@@ -70,14 +61,6 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void HttpMessageHandler()
-        {
-            var prop = _tester.Property(c => c.HttpMessageHandler, (b, v) => b.HttpMessageHandler(v));
-            prop.AssertDefault(Configuration.DefaultMessageHandler);
-            prop.AssertCanSet(new HttpClientHandler());
-        }
-
-        [Fact]
         public void Logging()
         {
             var prop = _tester.Property(c => c.LoggingConfigurationFactory, (b, v) => b.Logging(v));
@@ -94,14 +77,6 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void ReadTimeout()
-        {
-            var prop = _tester.Property(c => c.ReadTimeout, (b, v) => b.ReadTimeout(v));
-            prop.AssertDefault(Configuration.DefaultReadTimeout);
-            prop.AssertCanSet(TimeSpan.FromSeconds(7));
-        }
-
-        [Fact]
         public void SdkKey()
         {
             var prop = _tester.Property(c => c.SdkKey, (b, v) => b.SdkKey(v));
@@ -114,22 +89,6 @@ namespace LaunchDarkly.Sdk.Server
             var prop = _tester.Property(c => c.StartWaitTime, (b, v) => b.StartWaitTime(v));
             prop.AssertDefault(Configuration.DefaultStartWaitTime);
             prop.AssertCanSet(TimeSpan.FromSeconds(7));
-        }
-
-        [Fact]
-        public void WrapperName()
-        {
-            var prop = _tester.Property(c => c.WrapperName, (b, v) => b.WrapperName(v));
-            prop.AssertDefault(null);
-            prop.AssertCanSet("name");
-        }
-
-        [Fact]
-        public void WrapperVersion()
-        {
-            var prop = _tester.Property(c => c.WrapperVersion, (b, v) => b.WrapperVersion(v));
-            prop.AssertDefault(null);
-            prop.AssertCanSet("1.0");
         }
     }
 }

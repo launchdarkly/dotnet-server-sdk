@@ -11,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// may also include non-public properties that are relevant only when creating one of the built-in
     /// component types and are not accessible to custom components.
     /// </remarks>
-    public class LdClientContext
+    public sealed class LdClientContext
     {
         /// <summary>
         /// The SDK's basic global properties.
@@ -19,9 +19,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         public BasicConfiguration Basic { get; }
 
         /// <summary>
-        /// The configuration for the current client instance.
+        /// The HTTP configuration for the current client instance.
         /// </summary>
-        public Configuration Configuration { get; }
+        public IHttpConfiguration Http { get; }
 
         internal IDiagnosticStore DiagnosticStore { get; }
 
@@ -37,16 +37,20 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             BasicConfiguration basic,
             Configuration configuration
             ) :
-            this(basic, configuration, null) { }
+            this(
+                basic,
+                (configuration.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
+                null
+                ) { }
 
         internal LdClientContext(
             BasicConfiguration basic,
-            Configuration configuration,
+            IHttpConfiguration http,
             IDiagnosticStore diagnosticStore
             )
         {
             Basic = basic;
-            Configuration = configuration;
+            Http = http;
             DiagnosticStore = diagnosticStore;
         }
     }

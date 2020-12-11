@@ -36,6 +36,26 @@ namespace LaunchDarkly.Sdk.Server
         public static IDataSourceFactory ExternalUpdatesOnly => ComponentsImpl.NullDataSourceFactory.Instance;
 
         /// <summary>
+        /// Returns a configuration builder for the SDK's networking configuration.
+        /// </summary>
+        /// <remarks>
+        /// Passing this to <see cref="IConfigurationBuilder.Http(IHttpConfigurationFactory)"/> applies this
+        /// configuration to all HTTP/HTTPS requests made by the SDK.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .Http(
+        ///             Components.HttpConfiguration()
+        ///                 .ConnectTimeout(TimeSpan.FromMilliseconds(3000))
+        ///         )
+        ///         .Build();
+        /// </code>
+        /// </example>
+        /// <returns>a configurable factory object</returns>
+        public static HttpConfigurationBuilder HttpConfiguration() => new HttpConfigurationBuilder();
+
+        /// <summary>
         /// Returns a factory for the default in-memory implementation of <see cref="IDataStore"/>.
         /// </summary>
         /// <remarks>

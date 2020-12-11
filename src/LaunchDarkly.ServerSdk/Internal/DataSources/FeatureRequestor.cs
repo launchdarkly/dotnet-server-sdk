@@ -18,17 +18,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly Uri _flagsUri;
         private readonly Uri _segmentsUri;
         private readonly HttpClient _httpClient;
-        private readonly Configuration _config;
+        private readonly TimeSpan _connectTimeout;
         private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
         private readonly Logger _log;
 
         internal FeatureRequestor(LdClientContext context, Uri baseUri)
         {
-            _config = context.Configuration;
+            _httpClient = context.Http.NewHttpClient();
+            _connectTimeout = context.Http.ConnectTimeout;
             _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
             _flagsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-flags/");
             _segmentsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-segments/");
-            _httpClient = _config.HttpProperties.NewHttpClient();
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
@@ -85,7 +85,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 }
             }
 
-            using (var cts = new CancellationTokenSource(_config.ConnectionTimeout))
+            using (var cts = new CancellationTokenSource(_connectTimeout))
             {
                 try
                 {
@@ -125,7 +125,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     }
                     //Otherwise this was a request timeout.
                     throw new TimeoutException("Get item with URL: " + path.AbsoluteUri +
-                                                " timed out after : " + _config.ConnectionTimeout);
+                                                " timed out after : " + _connectTimeout);
                 }
             }
         }
