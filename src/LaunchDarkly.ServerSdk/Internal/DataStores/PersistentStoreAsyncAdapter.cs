@@ -50,6 +50,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return WaitSafely(() => _coreAsync.InitializedAsync());
         }
 
+        public bool IsStoreAvailable()
+        {
+            return WaitSafely(() => _coreAsync.IsStoreAvailableAsync());
+        }
+
         public void Dispose()
         {
             _coreAsync.Dispose();

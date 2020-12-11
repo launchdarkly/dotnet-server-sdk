@@ -6,6 +6,7 @@ using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -26,6 +27,7 @@ namespace LaunchDarkly.Sdk.Server
         private readonly IDataStore _dataStore;
         internal readonly IDataSource _dataSource;
         private readonly DataSourceStatusProviderImpl _dataSourceStatusProvider;
+        private readonly DataStoreStatusProviderImpl _dataStoreStatusProvider;
         private readonly IFlagTracker _flagTracker;
         internal readonly Evaluator _evaluator;
         private readonly Logger _log;
@@ -36,6 +38,9 @@ namespace LaunchDarkly.Sdk.Server
 
         /// <inheritdoc/>
         public IDataSourceStatusProvider DataSourceStatusProvider => _dataSourceStatusProvider;
+
+        /// <inheritdoc/>
+        public IDataStoreStatusProvider DataStoreStatusProvider => _dataStoreStatusProvider;
 
         /// <inheritdoc/>
         public IFlagTracker FlagTracker => _flagTracker;
@@ -82,11 +87,14 @@ namespace LaunchDarkly.Sdk.Server
             ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
                 new ServerDiagnosticStore(_configuration, basicConfig, httpConfig);
 
-            var clientContext = new LdClientContext(basicConfig, httpConfig, diagnosticStore);
-
             var taskExecutor = new TaskExecutor(_log);
 
-            _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore).CreateDataStore(clientContext);
+            var clientContext = new LdClientContext(basicConfig, httpConfig, diagnosticStore, taskExecutor);
+
+            var dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor);
+            _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore)
+                .CreateDataStore(clientContext, dataStoreUpdates);
+            _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, dataStoreUpdates);
 
             _evaluator = new Evaluator(GetFlag, GetSegment, _log);
 
@@ -95,8 +103,8 @@ namespace LaunchDarkly.Sdk.Server
                 (_configuration.EventProcessorFactory ?? Components.SendEvents());
             _eventProcessor = eventProcessorFactory.CreateEventProcessor(clientContext);
 
-            var dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore, taskExecutor, _log,
-                logConfig.LogDataSourceOutageAsErrorAfter);
+            var dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore, _dataStoreStatusProvider,
+                taskExecutor, _log, logConfig.LogDataSourceOutageAsErrorAfter);
             IDataSourceFactory dataSourceFactory =
                 config.Offline ? Components.ExternalUpdatesOnly :
                 (_configuration.DataSourceFactory ?? Components.StreamingDataSource());

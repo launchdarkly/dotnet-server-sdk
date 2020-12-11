@@ -24,8 +24,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
         {
             var flagKey = "flagKey";
             var store = new InMemoryDataStore();
-            var dataSourceUpdates = new DataSourceUpdatesImpl(store,
-                new TaskExecutor(testLogger), testLogger, null);
+            var dataSourceUpdates = TestUtils.BasicDataSourceUpdates(store, testLogger);
 
             var tracker = new FlagTrackerImpl(dataSourceUpdates, null);
 
@@ -67,8 +66,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             var user = User.WithKey("important-user");
             var otherUser = User.WithKey("unimportant-user");
             var store = new InMemoryDataStore();
-            var dataSourceUpdates = new DataSourceUpdatesImpl(store,
-                new TaskExecutor(testLogger), testLogger, null);
+            var dataSourceUpdates = TestUtils.BasicDataSourceUpdates(store, testLogger);
 
             var resultMap = new Dictionary<KeyValuePair<string, User>, LdValue>();
             

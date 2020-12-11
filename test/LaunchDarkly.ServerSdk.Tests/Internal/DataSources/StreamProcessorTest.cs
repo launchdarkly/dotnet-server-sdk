@@ -45,9 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new InMemoryDataStore();
-            var dataSourceUpdatesImpl = new DataSourceUpdatesImpl(_dataStore,
-                new TaskExecutor(testLogger),
-                testLogger, null);
+            var dataSourceUpdatesImpl = TestUtils.BasicDataSourceUpdates(_dataStore, testLogger);
             _dataSourceUpdates = dataSourceUpdatesImpl;
             _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdatesImpl);
             _config = Configuration.Builder(SDK_KEY)
@@ -248,9 +246,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
             var diagnosticStore = mockDiagnosticStore.Object;
-            var basicConfig = new BasicConfiguration(SDK_KEY, false, TestUtils.NullLogger);
+            var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
             var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
-                diagnosticStore);
+                diagnosticStore, new TaskExecutor(testLogger));
 
             using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
                 .CreateDataSource(context, _dataSourceUpdates))
@@ -273,9 +271,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
             var diagnosticStore = mockDiagnosticStore.Object;
-            var basicConfig = new BasicConfiguration(SDK_KEY, false, TestUtils.NullLogger);
+            var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
             var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
-                diagnosticStore);
+                diagnosticStore, new TaskExecutor(testLogger));
 
             using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
                 .CreateDataSource(context, _dataSourceUpdates))

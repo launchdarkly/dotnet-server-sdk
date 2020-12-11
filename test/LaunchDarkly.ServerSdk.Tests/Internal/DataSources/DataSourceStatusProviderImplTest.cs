@@ -14,12 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         public DataSourceStatusProviderImplTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            updates = new DataSourceUpdatesImpl(
-                new InMemoryDataStore(),
-                new TaskExecutor(testLogger),
-                testLogger,
-                null
-                );
+            updates = TestUtils.BasicDataSourceUpdates(new InMemoryDataStore(), testLogger);
             statusProvider = new DataSourceStatusProviderImpl(updates);
         }
 

@@ -25,18 +25,34 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private static readonly Segment segment2 = new SegmentBuilder("segment2").Version(1).Build();
         private static readonly Segment segment2v2 = new SegmentBuilder("segment2").Version(2).Build();
 
-        private DataSourceUpdatesImpl MakeInstance(IDataStore store) =>
-            new DataSourceUpdatesImpl(store, new TaskExecutor(testLogger),
-                testLogger, null);
+        private IDataStore store;
+        private DataStoreUpdatesImpl dataStoreUpdates;
+        private DataStoreStatusProviderImpl dataStoreStatusProvider;
+        private TaskExecutor taskExecutor;
 
-        public DataSourceUpdatesImplTest(ITestOutputHelper testOutput) : base(testOutput) { }
+        private DataSourceUpdatesImpl MakeInstance() =>
+            new DataSourceUpdatesImpl(
+                store,
+                dataStoreStatusProvider,
+                taskExecutor,
+                testLogger,
+                null
+                );
+
+        public DataSourceUpdatesImplTest(ITestOutputHelper testOutput) : base(testOutput)
+        {
+            taskExecutor = new TaskExecutor(testLogger);
+            store = new InMemoryDataStore();
+            dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor);
+            dataStoreStatusProvider = new DataStoreStatusProviderImpl(store, dataStoreUpdates);
+        }
 
         [Fact]
         public void SendsEventsOnInitForNewlyAddedFlags()
         {
             var dataBuilder = new DataSetBuilder().Flags(flag1).Segments(segment1);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -54,7 +70,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var dataBuilder = new DataSetBuilder().Flags(flag1).Segments(segment1);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -71,7 +87,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var dataBuilder = new DataSetBuilder().Flags(flag1, flag2).Segments(segment1, segment2);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -90,7 +106,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var dataBuilder = new DataSetBuilder().Flags(flag1, flag2).Segments(segment1, segment2);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -107,7 +123,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var dataBuilder = new DataSetBuilder().Flags(flag1, flag2);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -124,7 +140,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var dataBuilder = new DataSetBuilder().Flags(flag1, flag2).Segments(segment1);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -142,7 +158,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var dataBuilder = new DataSetBuilder().Flags(flag1, flag2).Segments(segment1);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -169,7 +185,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new FeatureFlagBuilder("flag6").Version(1).Build()
                 );
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -197,7 +213,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new FeatureFlagBuilder("flag6").Version(1).Build()
                 );
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -228,7 +244,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 )
                 .Segments(segment1, segment2);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -259,7 +275,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 )
                 .Segments(segment1, segment2);
 
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             updates.Init(dataBuilder.Build());
 
@@ -274,7 +290,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void UpdateStatusBroadcastsNewStatus()
         {
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
             var statuses = new EventSink<DataSourceStatus>();
             updates.StatusChanged += statuses.Add;
 
@@ -291,7 +307,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void UpdateStatusKeepsStateUnchangedIfStateWasInitializingAndNewStateIsInterrupted()
         {
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             Assert.Equal(DataSourceState.Initializing, updates.LastStatus.State);
             var originalTime = updates.LastStatus.StateSince;
@@ -311,7 +327,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void UpdateStatusDoesNothingIfParametersHaveNoNewData()
         {
-            var updates = MakeInstance(new InMemoryDataStore());
+            var updates = MakeInstance();
 
             var statuses = new EventSink<DataSourceStatus>();
             updates.StatusChanged += statuses.Add;
@@ -324,12 +340,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void OutageTimeoutLogging()
         {
-            var logCapture = Logs.Capture();
             var outageTimeout = TimeSpan.FromMilliseconds(100);
 
-            var logger = logCapture.Logger("logname");
-            var updates = new DataSourceUpdatesImpl(new InMemoryDataStore(),
-                new TaskExecutor(logger), logger, outageTimeout);
+            var updates = new DataSourceUpdatesImpl(
+                store,
+                dataStoreStatusProvider,
+                taskExecutor,
+                testLogger,
+                outageTimeout
+                );
 
             // simulate an outage
             updates.UpdateStatus(DataSourceState.Interrupted, DataSourceStatus.ErrorInfo.FromHttpError(500));
@@ -353,7 +372,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 m =>
                 {
                     Assert.Equal(LogLevel.Error, m.Level);
-                    Assert.Equal("logname.DataSource", m.LoggerName);
+                    Assert.Equal(".DataSource", m.LoggerName);
                     Assert.Contains("NETWORK_ERROR (1 time)", m.Text);
                     Assert.Contains("ERROR_RESPONSE(501) (2 times)", m.Text);
                     Assert.Contains("ERROR_RESPONSE(502) (1 time)", m.Text);

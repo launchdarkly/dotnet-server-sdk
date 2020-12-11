@@ -25,6 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         #region Private fields
 
         private readonly IDataStore _store;
+        private readonly IDataStoreStatusProvider _dataStoreStatusProvider;
         private readonly TaskExecutor _taskExecutor;
         private readonly Logger _log;
         private readonly DependencyTracker _dependencyTracker;
@@ -34,6 +35,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private DataSourceStatus _currentStatus;
         private volatile bool _lastStoreUpdateFailed = false;
+
+        #endregion
+
+        #region Public properties
+
+        public IDataStoreStatusProvider DataStoreStatusProvider => _dataStoreStatusProvider;
 
         #endregion
 
@@ -64,12 +71,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         internal DataSourceUpdatesImpl(
             IDataStore store,
+            IDataStoreStatusProvider dataStoreStatusProvider,
             TaskExecutor taskExecutor,
             Logger baseLogger,
             TimeSpan? outageLoggingTimeout
             )
         {
             _store = store;
+            _dataStoreStatusProvider = dataStoreStatusProvider;
             _taskExecutor = taskExecutor;
             _log = baseLogger.SubLogger(LogNames.DataSourceSubLog);
 

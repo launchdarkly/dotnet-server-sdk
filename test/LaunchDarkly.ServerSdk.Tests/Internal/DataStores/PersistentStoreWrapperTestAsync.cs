@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -10,11 +10,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     // Runs all the CachingStoreWrapper tests with an async data store implementation.
     public class PersistentStoreWrapperTestAsync : PersistentStoreWrapperTestBase<MockCoreAsync>
     {
-        public PersistentStoreWrapperTestAsync() : base(new MockCoreAsync()) { }
+        public PersistentStoreWrapperTestAsync(ITestOutputHelper testOutput) :
+            base(new MockCoreAsync(), testOutput) { }
 
         internal override PersistentStoreWrapper MakeWrapperWithCacheConfig(DataStoreCacheConfig config)
         {
-            return new PersistentStoreWrapper(_core, config);
+            return new PersistentStoreWrapper(_core, config, _dataStoreUpdates, _taskExecutor, testLogger);
         }
     }
     
@@ -52,10 +53,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             return Upsert(kind, key, item);
         }
 
-        public async Task<bool> InitializedAsync()
+        public Task<bool> InitializedAsync()
         {
-            await ArbitraryTask();
-            return Initialized();
+            return Task.FromResult(Initialized());
+        }
+
+        public Task<bool> IsStoreAvailableAsync()
+        {
+            return Task.FromResult(IsStoreAvailable());
         }
     }
 }

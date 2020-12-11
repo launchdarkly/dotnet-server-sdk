@@ -29,12 +29,19 @@ namespace LaunchDarkly.Sdk.Server
         protected readonly Logger testLogger;
 
         /// <summary>
+        /// All log output written via <see cref="testLogger"/> or <see cref="testLogging"/> is copied
+        /// to this buffer (as well as being buffered by Xunit, if applicable).
+        /// </summary>
+        protected readonly LogCapture logCapture;
+
+        /// <summary>
         /// This empty constructor disables log output.
         /// </summary>
         public BaseTest()
         {
-            testLogging = Logs.None;
-            testLogger = TestUtils.NullLogger;
+            logCapture = Logs.Capture();
+            testLogging = logCapture;
+            testLogger = logCapture.Logger("");
 
             // The following line prevents intermittent test failures that happen only in .NET
             // Framework, where background tasks (including calls to Task.Delay) are very excessively
@@ -69,8 +76,8 @@ namespace LaunchDarkly.Sdk.Server
         /// class constructor</param>
         public BaseTest(ITestOutputHelper testOutput) : this()
         {
-            testLogging = TestLogging.TestOutputAdapter(testOutput);
-            testLogger = TestLogging.TestLogger(testOutput);
+            testLogging = Logs.ToMultiple(TestLogging.TestOutputAdapter(testOutput), logCapture);
+            testLogger = testLogging.Logger("");
         }
     }
 }

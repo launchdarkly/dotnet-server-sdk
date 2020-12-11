@@ -24,6 +24,26 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IDataStore : IDisposable
     {
         /// <summary>
+        /// True if this data store implementation supports status monitoring.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This is normally only true for persistent data stores created with
+        /// <see cref="Components.PersistentStore(IPersistentDataStoreFactory)"/>, but it could
+        /// also be true for any custom <see cref="IDataStore"/> implementation that makes use of the
+        /// <see cref="IDataStoreUpdates"/> mechanism. Returning true means that the store guarantees
+        /// that if it ever enters an invalid state (that is, an operation has failed or it knows
+        /// that operations cannot succeed at the moment), it will publish a status update, and will
+        /// then publish another status update once it has returned to a valid state.
+        /// </para>
+        /// <para>
+        /// The same value will be returned from
+        /// <see cref="IDataStoreStatusProvider.StatusMonitoringEnabled"/>.
+        /// </para>
+        /// </remarks>
+        bool StatusMonitoringEnabled { get; }
+
+        /// <summary>
         /// Overwrites the store's contents with a set of items for each collection.
         /// </summary>
         /// <remarks>
@@ -86,20 +106,5 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <returns>true if the store contains data</returns>
         bool Initialized();
-    }
-
-    /// <summary>
-    /// Interface for a factory that creates some implementation of <see cref="IDataStore"/>.
-    /// </summary>
-    /// <seealso cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>
-    /// <seealso cref="Components"/>
-    public interface IDataStoreFactory
-    {
-        /// <summary>
-        /// Creates an implementation instance.
-        /// </summary>
-        /// <param name="context">configuration of the current client instance</param>
-        /// <returns>a <see cref="IDataStore"/> instance</returns>
-        IDataStore CreateDataStore(LdClientContext context);
     }
 }

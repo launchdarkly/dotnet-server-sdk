@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -21,6 +20,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         private volatile bool _initialized = false;
 
         internal InMemoryDataStore() { }
+
+        public bool StatusMonitoringEnabled => false;
 
         public void Init(FullDataSet<ItemDescriptor> data)
         {

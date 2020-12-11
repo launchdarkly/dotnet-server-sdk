@@ -77,9 +77,8 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void OfflineClientStartupMessage()
         {
-            var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey).Offline(true)
-                .Logging(Components.Logging(Logs.ToMultiple(logCapture, testLogging))).Build();
+                .Logging(Components.Logging(testLogging)).Build();
             using (var client = new LdClient(config))
             {
                 Assert.True(logCapture.HasMessageWithText(LogLevel.Info,

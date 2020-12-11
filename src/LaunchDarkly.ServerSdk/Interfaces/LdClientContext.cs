@@ -1,4 +1,6 @@
-﻿using LaunchDarkly.Sdk.Internal.Events;
+﻿using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -25,6 +27,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
 
         internal IDiagnosticStore DiagnosticStore { get; }
 
+        internal TaskExecutor TaskExecutor { get; }
+
         /// <summary>
         /// Constructs a new instance with only the public properties, and no logging.
         /// </summary>
@@ -40,18 +44,21 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             this(
                 basic,
                 (configuration.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
-                null
+                null,
+                new TaskExecutor(Logs.None.Logger(""))
                 ) { }
 
         internal LdClientContext(
             BasicConfiguration basic,
             IHttpConfiguration http,
-            IDiagnosticStore diagnosticStore
+            IDiagnosticStore diagnosticStore,
+            TaskExecutor taskExecutor
             )
         {
             Basic = basic;
             Http = http;
             DiagnosticStore = diagnosticStore;
+            TaskExecutor = taskExecutor;
         }
     }
 }

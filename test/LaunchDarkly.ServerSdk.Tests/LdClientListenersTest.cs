@@ -169,5 +169,78 @@ namespace LaunchDarkly.Sdk.Server
                 Assert.Equal(errorInfo, newStatus.LastError);
             }
         }
+
+        [Fact]
+        public void DataStoreStatusMonitoringIsDisabledForInMemoryDataStore()
+        {
+            var config = Configuration.Builder("")
+                .DataSource(Components.ExternalUpdatesOnly)
+                .Events(Components.NoEvents)
+                .Build();
+
+            using (var client = new LdClient(config))
+            {
+                Assert.False(client.DataStoreStatusProvider.StatusMonitoringEnabled);
+            }
+        }
+
+        [Fact]
+        public void DataStoreStatusMonitoringIsEnabledForPersistentStore()
+        {
+            var config = Configuration.Builder("")
+                .DataSource(Components.ExternalUpdatesOnly)
+                .DataStore(Components.PersistentStore(TestUtils.ArbitraryPersistentDataStore))
+                .Events(Components.NoEvents)
+                .Build();
+
+            using (var client = new LdClient(config))
+            {
+                Assert.True(client.DataStoreStatusProvider.StatusMonitoringEnabled);
+            }
+        }
+
+        [Fact]
+        public void DataStoreStatusProviderReturnsLatestStatus()
+        {
+            var dataStoreFactory = new CapturingDataStoreFactory(Components.InMemoryDataStore);
+            var config = Configuration.Builder("")
+                .DataSource(Components.ExternalUpdatesOnly)
+                .DataStore(dataStoreFactory)
+                .Events(Components.NoEvents)
+                .Build();
+
+            using (var client = new LdClient(config))
+            {
+                Assert.Equal(new DataStoreStatus { Available = true },
+                    client.DataStoreStatusProvider.Status);
+
+                var newStatus = new DataStoreStatus { Available = false };
+                dataStoreFactory.DataStoreUpdates.UpdateStatus(newStatus);
+
+                Assert.Equal(newStatus, client.DataStoreStatusProvider.Status);
+            }
+        }
+
+        [Fact]
+        public void DataStoreStatusProviderSendsStatusUpdates()
+        {
+            var dataStoreFactory = new CapturingDataStoreFactory(Components.InMemoryDataStore);
+            var config = Configuration.Builder("")
+                .DataSource(Components.ExternalUpdatesOnly)
+                .DataStore(dataStoreFactory)
+                .Events(Components.NoEvents)
+                .Build();
+
+            using (var client = new LdClient(config))
+            {
+                var statuses = new EventSink<DataStoreStatus>();
+                client.DataStoreStatusProvider.StatusChanged += statuses.Add;
+
+                var newStatus = new DataStoreStatus { Available = false };
+                dataStoreFactory.DataStoreUpdates.UpdateStatus(newStatus);
+
+                Assert.Equal(newStatus, statuses.ExpectValue());
+            }
+        }
     }
 }

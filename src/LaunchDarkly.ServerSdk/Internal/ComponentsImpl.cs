@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
         {
             internal static readonly InMemoryDataStoreFactory Instance = new InMemoryDataStoreFactory();
 
-            public IDataStore CreateDataStore(LdClientContext context) => new InMemoryDataStore();
+            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates _) => new InMemoryDataStore();
         }
 
         internal sealed class NullDataSource : IDataSource

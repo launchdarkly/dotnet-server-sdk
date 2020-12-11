@@ -22,6 +22,17 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         IDataSourceStatusProvider DataSourceStatusProvider { get; }
 
         /// <summary>
+        /// A mechanism for tracking the status of a persistent data store.
+        /// </summary>
+        /// <remarks>
+        /// The <see cref="IDataStoreStatusProvider"/> has methods for checking whether the data store is (as
+        /// far as the SDK knows) currently operational and tracking changes in this status. These are only
+        /// relevant for a persistent data store; if you are using an in-memory data store, then this property
+        /// is a stub object that always reports the store as operational.
+        /// </remarks>
+        IDataStoreStatusProvider DataStoreStatusProvider { get; }
+
+        /// <summary>
         /// A mechanism for tracking changes in feature flag configurations.
         /// </summary>
         /// <remarks>

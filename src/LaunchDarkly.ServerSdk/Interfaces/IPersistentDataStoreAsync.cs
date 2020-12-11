@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -53,6 +52,23 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Equivalent to <see cref="IPersistentDataStore.Initialized"/>.
         /// </summary>
         Task<bool> InitializedAsync();
+
+        /// <summary>
+        /// Tests whether the data store seems to be functioning normally.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This should not be a detailed test of different kinds of operations, but just the smallest
+        /// possible operation to determine whether (for instance) we can reach the database.
+        /// </para>
+        /// <para>
+        /// Whenever one of the store's other methods throws an exception, the SDK will assume that it
+        /// may have become unavailable (e.g. the database connection was lost). The SDK will then call
+        /// <c>IsStoreAvailable()</c> at intervals until it returns true.
+        /// </para>
+        /// </remarks>
+        /// <returns>true if the underlying data store is reachable</returns>
+        Task<bool> IsStoreAvailableAsync();
     }
 
     /// <summary>
@@ -65,7 +81,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// Creates an implementation instance.
         /// </summary>
+        /// <param name="context">configuration of the current client instance</param>
         /// <returns>a <see cref="IPersistentDataStoreAsync"/> instance</returns>
-        IPersistentDataStoreAsync CreatePersistentDataStore();
+        IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context);
     }
 }

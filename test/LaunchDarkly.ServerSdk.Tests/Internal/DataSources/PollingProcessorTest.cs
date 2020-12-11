@@ -30,9 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockFeatureRequestor = new Mock<IFeatureRequestor>();
             _featureRequestor = _mockFeatureRequestor.Object;
             _dataStore = new InMemoryDataStore();
-            var dataSourceUpdatesImpl = new DataSourceUpdatesImpl(_dataStore,
-                new TaskExecutor(testLogger),
-                testLogger, null);
+            var dataSourceUpdatesImpl = TestUtils.BasicDataSourceUpdates(_dataStore, testLogger);
             _dataSourceUpdates = dataSourceUpdatesImpl;
             _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdatesImpl);
             _config = Configuration.Default(sdkKey);

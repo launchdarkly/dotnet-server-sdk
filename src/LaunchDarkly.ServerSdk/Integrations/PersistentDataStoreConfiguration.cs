@@ -97,16 +97,29 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// Called by the SDK to create the data store instance for a specific <see cref="LdClient"/>.
         /// </summary>
         /// <param name="context">used internally</param>
+        /// <param name="dataStoreUpdates">used internally</param>
         /// <returns>the data store instance</returns>
-        public IDataStore CreateDataStore(LdClientContext context)
+        public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
         {
             if (_coreFactory != null)
             {
-                return new PersistentStoreWrapper(_coreFactory.CreatePersistentDataStore(), _cacheConfig);
+                return new PersistentStoreWrapper(
+                    _coreFactory.CreatePersistentDataStore(context),
+                    _cacheConfig,
+                    dataStoreUpdates,
+                    context.TaskExecutor,
+                    context.Basic.Logger
+                    );
             }
             else if (_coreAsyncFactory != null)
             {
-                return new PersistentStoreWrapper(_coreAsyncFactory.CreatePersistentDataStore(), _cacheConfig);
+                return new PersistentStoreWrapper(
+                    _coreAsyncFactory.CreatePersistentDataStore(context),
+                    _cacheConfig,
+                    dataStoreUpdates,
+                    context.TaskExecutor,
+                    context.Basic.Logger
+                    );
             }
             return null;
         }

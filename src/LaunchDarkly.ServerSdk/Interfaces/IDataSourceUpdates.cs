@@ -13,6 +13,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IDataSourceUpdates
     {
         /// <summary>
+        /// An object that provides status tracking for the data store, if applicable.
+        /// </summary>
+        /// <remarks>
+        /// This may be useful if the data source needs to be aware of storage problems that might require it
+        /// to take some special action: for instance, if a database outage may have caused some data to be
+        /// lost and therefore the data should be re-requested from LaunchDarkly.
+        /// </remarks>
+        IDataStoreStatusProvider DataStoreStatusProvider { get; }
+
+        /// <summary>
         /// Completely overwrites the current contents of the data store with a set of items for each collection.
         /// </summary>
         /// <param name="allData">a list of <see cref="DataKind"/> instances and their

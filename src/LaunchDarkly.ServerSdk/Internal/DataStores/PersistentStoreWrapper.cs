@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Cache;
+using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -23,21 +25,41 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     {
         private readonly IPersistentDataStore _core;
         private readonly DataStoreCacheConfig _caching;
-        
+        private readonly IDataStoreUpdates _dataStoreUpdates;
+        private readonly Logger _log;
         private readonly ICache<CacheKey, ItemDescriptor?> _itemCache;
         private readonly ICache<DataKind, ImmutableDictionary<string, ItemDescriptor>> _allCache;
         private readonly ISingleValueCache<bool> _initCache;
+        private readonly bool _cacheIndefinitely;
+        private readonly List<DataKind> _cachedDataKinds = new List<DataKind>();
+        private readonly PersistentDataStoreStatusManager _statusManager;
+
         private volatile bool _inited;
         
-        internal PersistentStoreWrapper(IPersistentDataStoreAsync coreAsync, DataStoreCacheConfig caching) :
-            this(new PersistentStoreAsyncAdapter(coreAsync), caching)
+        internal PersistentStoreWrapper(
+            IPersistentDataStoreAsync coreAsync,
+            DataStoreCacheConfig caching,
+            IDataStoreUpdates dataStoreUpdates,
+            TaskExecutor taskExecutor,
+            Logger log
+            ) :
+            this(new PersistentStoreAsyncAdapter(coreAsync), caching, dataStoreUpdates, taskExecutor, log)
         { }
 
-        internal PersistentStoreWrapper(IPersistentDataStore core, DataStoreCacheConfig caching)
+        internal PersistentStoreWrapper(
+            IPersistentDataStore core,
+            DataStoreCacheConfig caching,
+            IDataStoreUpdates dataStoreUpdates,
+            TaskExecutor taskExecutor,
+            Logger log
+            )
         {
             this._core = core;
             this._caching = caching;
+            this._dataStoreUpdates = dataStoreUpdates;
+            this._log = log;
 
+            _cacheIndefinitely = caching.IsEnabled && caching.IsInfiniteTtl;
             if (caching.IsEnabled)
             {
                 var itemCacheBuilder = Caches.KeyValue<CacheKey, ItemDescriptor?>()
@@ -63,8 +85,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 _allCache = null;
                 _initCache = null;
             }
+
+            _statusManager = new PersistentDataStoreStatusManager(
+                !_cacheIndefinitely,
+                true,
+                this.PollAvailabilityAfterOutage,
+                dataStoreUpdates.UpdateStatus,
+                taskExecutor,
+                log
+                );
         }
-        
+
+        public bool StatusMonitoringEnabled => true;
+
         public bool Initialized()
         {
             if (_inited)
@@ -89,23 +122,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         public void Init(FullDataSet<ItemDescriptor> items)
         {
-            Exception failure = null;
+            lock (_cachedDataKinds)
+            {
+                _cachedDataKinds.Clear();
+                foreach (var kv in items.Data)
+                {
+                    _cachedDataKinds.Add(kv.Key);
+                }
+            }
+
             var serializedItems = items.Data.ToImmutableDictionary(
                 kindAndItems => kindAndItems.Key,
-                kindAndItems => new KeyedItems<SerializedItemDescriptor>(
-                    kindAndItems.Value.Items.ToImmutableDictionary(
-                        keyAndItem => keyAndItem.Key,
-                        keyAndItem => Serialize(kindAndItems.Key, keyAndItem.Value)
-                    ))
+                kindAndItems => SerializeAll(kindAndItems.Key, kindAndItems.Value.Items)
             );
-            try
-            {
-                _core.Init(new FullDataSet<SerializedItemDescriptor>(serializedItems));
-            }
-            catch (Exception e)
-            {
-                failure = e;
-            }
+            Exception failure = InitCore(new FullDataSet<SerializedItemDescriptor>(serializedItems));
             if (_itemCache != null && _allCache != null)
             {
                 _itemCache.Clear();
@@ -138,13 +168,37 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             }
         }
         
-        public ItemDescriptor? Get(DataKind kind, string key) =>
-            _itemCache is null ? GetAndDeserializeItem(kind, key) :
-                _itemCache.Get(new CacheKey(kind, key));
+        public ItemDescriptor? Get(DataKind kind, string key)
+        {
+            try
+            {
+                var ret = _itemCache is null ? GetAndDeserializeItem(kind, key) :
+                    _itemCache.Get(new CacheKey(kind, key));
+                ProcessError(null);
+                return ret;
+            }
+            catch (Exception e)
+            {
+                ProcessError(e);
+                throw e;
+            }
+        }
 
-        public KeyedItems<ItemDescriptor> GetAll(DataKind kind) =>
-            new KeyedItems<ItemDescriptor>(_allCache is null ?
-                GetAllAndDeserialize(kind) : _allCache.Get(kind));
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind)
+        {
+            try
+            {
+                var ret = new KeyedItems<ItemDescriptor>(_allCache is null ?
+                    GetAllAndDeserialize(kind) : _allCache.Get(kind));
+                ProcessError(null);
+                return ret;
+            }
+            catch (Exception e)
+            {
+                ProcessError(e);
+                throw e;
+            }
+        }
 
         public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
@@ -155,6 +209,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             try
             {
                 updated = _core.Upsert(kind, key, serializedItem);
+                ProcessError(null);
             }
             catch (Exception e)
             {
@@ -162,6 +217,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 // the idea being that it's better to stay in a consistent state of having old data than to act
                 // like we have new data but then suddenly fall back to old data when the cache expires. However,
                 // if the cache TTL is infinite, then it makes sense to update the cache always.
+                ProcessError(e);
                 if (!_caching.IsInfiniteTtl)
                 {
                     throw;
@@ -247,6 +303,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 _itemCache?.Dispose();
                 _allCache?.Dispose();
                 _initCache?.Dispose();
+                _statusManager.Dispose();
             }
         }
 
@@ -278,11 +335,96 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 item is null ? null : kind.Serialize(item));
         }
 
+        private KeyedItems<SerializedItemDescriptor> SerializeAll(DataKind kind,
+            IEnumerable<KeyValuePair<string, ItemDescriptor>> items)
+        {
+            var itemsBuilder = ImmutableList.CreateBuilder<KeyValuePair<string, SerializedItemDescriptor>>();
+            foreach (var kv in items)
+            {
+                itemsBuilder.Add(new KeyValuePair<string, SerializedItemDescriptor>(kv.Key,
+                    Serialize(kind, kv.Value)));
+            }
+            return new KeyedItems<SerializedItemDescriptor>(itemsBuilder.ToImmutable());
+        }
+
         private ItemDescriptor Deserialize(DataKind kind, SerializedItemDescriptor serializedItemDesc)
         {
             var serializedItem = serializedItemDesc.SerializedItem;
             return new ItemDescriptor(serializedItemDesc.Version,
                 serializedItem is null ? null : kind.Deserialize(serializedItem));
+        }
+
+        private Exception InitCore(FullDataSet<SerializedItemDescriptor> allData)
+        {
+            try
+            {
+                _core.Init(allData);
+                ProcessError(null);
+                return null;
+            }
+            catch (Exception e)
+            {
+                ProcessError(e);
+                return e;
+            }
+        }
+
+        private void ProcessError(Exception e)
+        {
+            if (e == null)
+            {
+                // If we're waiting to recover after a failure, we'll let the polling routine take care
+                // of signaling success. Even if we could signal success a little earlier based on the
+                // success of whatever operation we just did, we'd rather avoid the overhead of acquiring
+                // w.statusLock every time we do anything. So we'll just do nothing here.
+                return;
+            }
+            _statusManager.UpdateAvailability(false);
+        }
+
+        private bool PollAvailabilityAfterOutage()
+        {
+            if (!_core.IsStoreAvailable())
+            {
+                return false;
+            }
+
+            if (_cacheIndefinitely && _allCache != null)
+            {
+                // If we're in infinite cache mode, then we can assume the cache has a full set of current
+                // flag data (since presumably the data source has still been running) and we can just
+                // write the contents of the cache to the underlying data store.
+                DataKind[] allKinds;
+                lock (_cachedDataKinds)
+                {
+                    allKinds = _cachedDataKinds.ToArray();
+                }
+                var builder = ImmutableList.CreateBuilder<KeyValuePair<DataKind, KeyedItems<SerializedItemDescriptor>>>();
+                foreach (var kind in allKinds)
+                {
+                    if (_allCache.TryGetValue(kind, out var items))
+                    {
+                        builder.Add(new KeyValuePair<DataKind, KeyedItems<SerializedItemDescriptor>>(kind,
+                            SerializeAll(kind, items)));
+                    }
+                }
+                var e = InitCore(new FullDataSet<SerializedItemDescriptor>(builder.ToImmutable()));
+                if (e is null)
+                {
+                    _log.Warn("Successfully updated persistent store from cached data");
+                }
+                else
+                {
+                    // We failed to write the cached data to the underlying store. In this case, we should not
+                    // return to a recovered state, but just try this all again next time the poll task runs.
+                    LogHelpers.LogException(_log,
+                        "Tried to write cached data to persistent store after a store outage, but failed",
+                        e);
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
     

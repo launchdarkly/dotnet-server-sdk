@@ -5,6 +5,9 @@ using System.Linq;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.DataSources;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using System.Threading.Tasks;
 using Xunit;
@@ -86,8 +89,20 @@ namespace LaunchDarkly.Sdk.Server
         public static IDataSourceFactory SpecificDataSource(IDataSource up) =>
             new SpecificDataSourceFactory(up);
 
+        public static IPersistentDataStoreFactory ArbitraryPersistentDataStore =>
+            new SpecificPersistentDataStoreFactory(new MockCoreSync());
+
         internal static IDataSourceFactory DataSourceWithData(FullDataSet<ItemDescriptor> data) =>
             new DataSourceFactoryWithData(data);
+
+        internal static DataSourceUpdatesImpl BasicDataSourceUpdates(IDataStore dataStore, Logger logger) =>
+            new DataSourceUpdatesImpl(
+                dataStore,
+                new DataStoreStatusProviderImpl(dataStore, new DataStoreUpdatesImpl(new TaskExecutor(logger))),
+                new TaskExecutor(logger),
+                logger,
+                null
+                );
     }
 
     public class SpecificDataStoreFactory : IDataStoreFactory
@@ -99,7 +114,7 @@ namespace LaunchDarkly.Sdk.Server
             _store = store;
         }
 
-        IDataStore IDataStoreFactory.CreateDataStore(LdClientContext context) => _store;
+        IDataStore IDataStoreFactory.CreateDataStore(LdClientContext context, IDataStoreUpdates _) => _store;
     }
 
     public class SpecificEventProcessorFactory : IEventProcessorFactory
@@ -137,6 +152,23 @@ namespace LaunchDarkly.Sdk.Server
 
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates) =>
             new DataSourceWithData(dataSourceUpdates, _data);
+    }
+
+    public class SpecificPersistentDataStoreFactory : IPersistentDataStoreFactory
+    {
+        private readonly IPersistentDataStore _store;
+
+        public SpecificPersistentDataStoreFactory(IPersistentDataStore store)
+        {
+            _store = store;
+        }
+
+        public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) => _store;
+
+        public IPersistentDataStore CreatePersistentDataStore()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class DataSourceWithData : IDataSource
@@ -193,6 +225,25 @@ namespace LaunchDarkly.Sdk.Server
             public bool Initialized() => true;
 
             public void Dispose() { }
+        }
+    }
+
+    public class CapturingDataStoreFactory : IDataStoreFactory
+    {
+        private readonly IDataStoreFactory _factory;
+        public volatile LdClientContext Context;
+        public volatile IDataStoreUpdates DataStoreUpdates;
+
+        public CapturingDataStoreFactory(IDataStoreFactory factory)
+        {
+            _factory = factory;
+        }
+
+        public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
+        {
+            Context = context;
+            DataStoreUpdates = dataStoreUpdates;
+            return _factory.CreateDataStore(context, dataStoreUpdates);
         }
     }
 

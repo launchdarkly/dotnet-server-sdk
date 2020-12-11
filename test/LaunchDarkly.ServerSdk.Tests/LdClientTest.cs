@@ -37,9 +37,8 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void ClientStartupMessage()
         {
-            var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(Logs.ToMultiple(logCapture, testLogging)))
+                .Logging(Components.Logging(testLogging))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
@@ -84,9 +83,8 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StreamingClientStartupMessage()
         {
-            var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(Logs.ToMultiple(logCapture, testLogging)))
+                .Logging(Components.Logging(testLogging))
                 .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
@@ -117,9 +115,8 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void PollingClientStartupMessage()
         {
-            var logCapture = Logs.Capture();
             var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(Logs.ToMultiple(logCapture, testLogging)))
+                .Logging(Components.Logging(testLogging))
                 .Events(Components.NoEvents)
                 .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
@@ -303,7 +300,7 @@ namespace LaunchDarkly.Sdk.Server
 
             var mockStore = new Mock<IDataStore>();
             var store = mockStore.Object;
-            FullDataSet<ItemDescriptor> receivedData;
+            FullDataSet<ItemDescriptor> receivedData = new FullDataSet<ItemDescriptor>();
 
             mockStore.Setup(s => s.Init(It.IsAny<FullDataSet<ItemDescriptor>>()))
                 .Callback((FullDataSet<ItemDescriptor> data) => {

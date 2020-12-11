@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using LaunchDarkly.Sdk.Server.Integrations;
+using System.Threading;
+using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
+using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.DataStores.DataStoreTestTypes;
@@ -15,9 +18,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     // of the mock. Most of the tests are run twice ([Theory]), once with caching enabled
     // and once not; a few of the tests are only relevant when caching is enabled and so are
     // run only once ([Fact]).
-    public abstract class PersistentStoreWrapperTestBase<T> where T : MockCoreBase
+    public abstract class PersistentStoreWrapperTestBase<T> : BaseTest where T : MockCoreBase
     {
         protected T _core;
+        internal TaskExecutor _taskExecutor;
+        internal DataStoreUpdatesImpl _dataStoreUpdates;
 
         // the following are strings instead of enums because Xunit's InlineData can't use enums
         const string Uncached = "Uncached";
@@ -26,9 +31,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         private static readonly Exception FakeError = new NotImplementedException("sorry");
         
-        protected PersistentStoreWrapperTestBase(T core)
+        protected PersistentStoreWrapperTestBase(T core, ITestOutputHelper testOutput) : base(testOutput)
         {
             _core = core;
+            _taskExecutor = new TaskExecutor(testLogger);
+            _dataStoreUpdates = new DataStoreUpdatesImpl(_taskExecutor);
         }
 
         internal abstract PersistentStoreWrapper MakeWrapperWithCacheConfig(DataStoreCacheConfig config);
@@ -413,6 +420,188 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             Assert.Equal(expected, items);
         }
 
+        [Fact]
+        public void StatusIsOkInitially()
+        {
+            using (var wrapper = MakeWrapper(Cached))
+            {
+                var dataStoreStatusProvider = new DataStoreStatusProviderImpl(wrapper, _dataStoreUpdates);
+                var status = dataStoreStatusProvider.Status;
+                Assert.True(status.Available);
+            }
+        }
+
+        [Fact]
+        public void StatusIsUnavailableAfterError()
+        {
+            using (var wrapper = MakeWrapper(Cached))
+            {
+                var dataStoreStatusProvider = new DataStoreStatusProviderImpl(wrapper, _dataStoreUpdates);
+
+                CauseStoreError(_core, wrapper);
+
+                var status = dataStoreStatusProvider.Status;
+                Assert.False(status.Available);
+                Assert.False(status.RefreshNeeded);
+            }
+        }
+
+        [Theory]
+        [InlineData(Uncached)]
+        [InlineData(Cached)]
+        [InlineData(CachedIndefinitely)]
+        public void StatusListenerIsNotifiedOnFailureAndRecovery(string cacheMode)
+        {
+            using (var wrapper = MakeWrapper(cacheMode))
+            {
+                var dataStoreStatusProvider = new DataStoreStatusProviderImpl(wrapper, _dataStoreUpdates);
+
+                var statuses = new EventSink<DataStoreStatus>();
+                dataStoreStatusProvider.StatusChanged += statuses.Add;
+
+                CauseStoreError(_core, wrapper);
+
+                var status1 = statuses.ExpectValue();
+                Assert.False(status1.Available);
+                Assert.False(status1.RefreshNeeded);
+
+                Assert.True(logCapture.HasMessageWithRegex(LogLevel.Warn, "Detected persistent store unavailability"));
+
+                MakeStoreAvailable(_core);
+
+                var status2 = statuses.ExpectValue();
+                Assert.True(status2.Available);
+                Assert.Equal(cacheMode != CachedIndefinitely, status2.RefreshNeeded);
+
+                Assert.True(logCapture.HasMessageWithRegex(LogLevel.Warn, "Persistent store is available again"));
+            }
+        }
+
+        [Fact]
+        public void CacheIsWrittenToStoreAfterRecoveryIfTtlIsInfinite()
+        {
+            using (var wrapper = MakeWrapper(CachedIndefinitely))
+            {
+                var dataStoreStatusProvider = new DataStoreStatusProviderImpl(wrapper, _dataStoreUpdates);
+
+                var statuses = new EventSink<DataStoreStatus>();
+                dataStoreStatusProvider.StatusChanged += statuses.Add;
+
+                string key1 = "key1", key2 = "key2";
+                var item1 = new TestItem("name1");
+                var item2 = new TestItem("name2");
+
+                wrapper.Init(new TestDataBuilder()
+                    .Add(TestDataKind, key1, 1, item1)
+                    .Build());
+
+                // In infinite cache mode, we do *not* expect exceptions thrown by the store to be propagated; it will
+                // swallow the error, but also go into polling/recovery mode. Note that even though the store rejects
+                // this update, it'll still be cached.
+                CauseStoreError(_core, wrapper);
+                Assert.Equal(FakeError, Assert.Throws(FakeError.GetType(),
+                    () => wrapper.Upsert(TestDataKind, key1, item1.WithVersion(2))));
+
+                Assert.Equal(item1.WithVersion(2), wrapper.Get(TestDataKind, key1));
+
+                var status1 = statuses.ExpectValue();
+                Assert.False(status1.Available);
+                Assert.False(status1.RefreshNeeded);
+
+                // While the store is still down, try to update it again - the update goes into the cache
+
+                Assert.Equal(FakeError, Assert.Throws(FakeError.GetType(),
+                    () => wrapper.Upsert(TestDataKind, key2, item2.WithVersion(1))));
+
+                Assert.Equal(item2.WithVersion(1), wrapper.Get(TestDataKind, key2));
+
+                // Verify that this update did not go into the underlying data yet
+
+                Assert.False(_core.Data[TestDataKind].TryGetValue(key2, out _));
+
+                // Now simulate the store coming back up
+                MakeStoreAvailable(_core);
+
+                // Wait for the poller to notice this and publish a new status
+                var status2 = statuses.ExpectValue();
+                Assert.True(status2.Available);
+                Assert.False(status2.RefreshNeeded);
+
+                // Once that has happened, the cache should have been written to the store
+                Assert.Equal(item1.SerializedWithVersion(2), _core.Data[TestDataKind][key1]);
+                Assert.Equal(item2.SerializedWithVersion(1), _core.Data[TestDataKind][key2]);
+            }
+        }
+
+        [Fact]
+        public void StatusRemainsUnavailableIfStoreSaysItIsAvailableButInitFails()
+        {
+            // Most of this test is identical to CacheIsWrittenToStoreAfterRecoveryIfTtlIsInfinite() except as noted below.
+            using (var wrapper = MakeWrapper(CachedIndefinitely))
+            {
+                var dataStoreStatusProvider = new DataStoreStatusProviderImpl(wrapper, _dataStoreUpdates);
+
+                var statuses = new EventSink<DataStoreStatus>();
+                dataStoreStatusProvider.StatusChanged += statuses.Add;
+
+                string key1 = "key1", key2 = "key2";
+                var item1 = new TestItem("name1");
+                var item2 = new TestItem("name2");
+
+                wrapper.Init(new TestDataBuilder()
+                    .Add(TestDataKind, key1, 1, item1)
+                    .Build());
+
+                // In infinite cache mode, we do *not* expect exceptions thrown by the store to be propagated; it will
+                // swallow the error, but also go into polling/recovery mode. Note that even though the store rejects
+                // this update, it'll still be cached.
+                CauseStoreError(_core, wrapper);
+                Assert.Equal(FakeError, Assert.Throws(FakeError.GetType(),
+                    () => wrapper.Upsert(TestDataKind, key1, item1.WithVersion(2))));
+
+                Assert.Equal(item1.WithVersion(2), wrapper.Get(TestDataKind, key1));
+
+                var status1 = statuses.ExpectValue();
+                Assert.False(status1.Available);
+                Assert.False(status1.RefreshNeeded);
+
+                // While the store is still down, try to update it again - the update goes into the cache
+
+                Assert.Equal(FakeError, Assert.Throws(FakeError.GetType(),
+                    () => wrapper.Upsert(TestDataKind, key2, item2.WithVersion(1))));
+
+                Assert.Equal(item2.WithVersion(1), wrapper.Get(TestDataKind, key2));
+
+                // Verify that this update did not go into the underlying data yet
+
+                Assert.False(_core.Data[TestDataKind].TryGetValue(key2, out _));
+
+                // Here's what is unique to this test: we are telling the store to report its status as "available",
+                // but *not* clearing the fake exception, so when the poller tries to write the cached data with
+                // init() it should fail.
+                _core.Available = true;
+
+                // We can't prove that an unwanted status transition will never happen, but we can verify that it
+                // does not happen within two status poll intervals.
+                Thread.Sleep(PersistentDataStoreStatusManager.PollInterval + PersistentDataStoreStatusManager.PollInterval);
+
+                statuses.ExpectNoValue();
+                Assert.InRange(_core.InitCalledCount, 2, 100); // that is, it *tried* to do at least one more init
+
+                // Now simulate the store coming back up and actually working
+                _core.Error = null;
+
+                // Wait for the poller to notice this and publish a new status
+                var status2 = statuses.ExpectValue();
+                Assert.True(status2.Available);
+                Assert.False(status2.RefreshNeeded);
+
+                // Once that has happened, the cache should have been written to the store
+                Assert.Equal(item1.SerializedWithVersion(2), _core.Data[TestDataKind][key1]);
+                Assert.Equal(item2.SerializedWithVersion(1), _core.Data[TestDataKind][key2]);
+            }
+        }
+
         private PersistentStoreWrapper MakeWrapper(string mode)
         {
             DataStoreCacheConfig config;
@@ -430,6 +619,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             }
             return MakeWrapperWithCacheConfig(config);
         }
+
+        private void CauseStoreError(MockCoreBase core, PersistentStoreWrapper wrapper)
+        {
+            core.Available = false;
+            core.Error = FakeError;
+            Assert.Equal(FakeError, Assert.Throws(FakeError.GetType(), () =>
+                wrapper.Upsert(TestDataKind, "irrelevant-key", ItemDescriptor.Deleted(1))));
+        }
+
+        private void MakeStoreAvailable(MockCoreBase core)
+        {
+            core.Error = null;
+            core.Available = true;
+        }
     }
     
     public class MockCoreBase : IDisposable
@@ -438,7 +641,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             new Dictionary<DataKind, IDictionary<string, SerializedItemDescriptor>>();
         public bool Inited;
         public int InitedQueryCount;
+        public int InitCalledCount;
         public Exception Error;
+        public bool Available = true;
 
         public void Dispose() { }
 
@@ -468,6 +673,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         public void Init(FullDataSet<SerializedItemDescriptor> allData)
         {
+            InitCalledCount++;
             MaybeThrowError();
             Data.Clear();
             foreach (var e in allData.Data)
@@ -500,6 +706,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             MaybeThrowError();
             ++InitedQueryCount;
             return Inited;
+        }
+
+        public bool IsStoreAvailable()
+        {
+            return Available;
         }
 
         public void ForceSet(DataKind kind, string key, int version, object item)
