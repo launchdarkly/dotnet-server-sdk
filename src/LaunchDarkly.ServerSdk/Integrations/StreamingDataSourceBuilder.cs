@@ -1,5 +1,4 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 
@@ -39,7 +38,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         internal Uri _baseUri = DefaultBaseUri;
         internal TimeSpan _initialReconnectDelay = DefaultInitialReconnectDelay;
-        internal StreamManager.EventSourceCreator _eventSourceCreator = null;
+        internal StreamProcessor.EventSourceCreator _eventSourceCreator = null;
 
         /// <summary>
         /// Sets a custom base URI for the streaming service.
@@ -90,7 +89,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         // Exposed for testing
-        internal StreamingDataSourceBuilder EventSourceCreator(StreamManager.EventSourceCreator eventSourceCreator)
+        internal StreamingDataSourceBuilder EventSourceCreator(StreamProcessor.EventSourceCreator eventSourceCreator)
         {
             _eventSourceCreator = eventSourceCreator;
             return this;

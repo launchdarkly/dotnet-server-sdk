@@ -1,82 +1,228 @@
 using System;
+using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using LaunchDarkly.EventSource;
 using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Internal.Stream;
+using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Internal.DataSources.StreamProcessorEvents;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal class StreamProcessor : IDataSource, IStreamProcessor
+    internal class StreamProcessor : IDataSource
     {
+        // The read timeout for the stream is not the same read timeout that can be set in the SDK configuration.
+        // It is a fixed value that is set to be slightly longer than the expected interval between heartbeats
+        // from the LaunchDarkly streaming server. If this amount of time elapses with no new data, the connection
+        // will be cycled.
+        private static readonly TimeSpan LaunchDarklyStreamReadTimeout = TimeSpan.FromMinutes(5);
+
         private const String PUT = "put";
         private const String PATCH = "patch";
         private const String DELETE = "delete";
 
-        private readonly StreamManager _streamManager;
         private readonly IDataSourceUpdates _dataSourceUpdates;
+        private readonly IHttpConfiguration _httpConfig;
+        private readonly TimeSpan _initialReconnectDelay;
+        private readonly TaskCompletionSource<bool> _initTask;
+        private readonly EventSourceCreator _eventSourceCreator;
+        private readonly EventSource.ExponentialBackoffWithDecorrelation _backoff;
+        private readonly IDiagnosticStore _diagnosticStore;
+        private readonly AtomicBoolean _initialized = new AtomicBoolean(false);
+        private readonly Uri _streamUri;
         private readonly Logger _log;
+
+        private volatile IEventSource _es;
+        internal DateTime _esStarted; // exposed for testing
+
+        internal delegate IEventSource EventSourceCreator(Uri streamUri,
+            IHttpConfiguration httpConfig);
 
         internal StreamProcessor(
             LdClientContext context,
             IDataSourceUpdates dataSourceUpdates,
             Uri baseUri,
             TimeSpan initialReconnectDelay,
-            StreamManager.EventSourceCreator eventSourceCreator
+            EventSourceCreator eventSourceCreator
             )
         {
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
 
-            var streamProperties = new StreamProperties(
-                new Uri(baseUri, "/all"),
-                HttpMethod.Get,
-                null
-                );
-            _streamManager = new StreamManager(this,
-                streamProperties,
-                context.Http.ToHttpProperties(),
-                initialReconnectDelay,
-                eventSourceCreator,
-                context.DiagnosticStore,
-                _log
-                );
             _dataSourceUpdates = dataSourceUpdates;
+            _httpConfig = context.Http;
+            _initialReconnectDelay = initialReconnectDelay;
+            _diagnosticStore = context.DiagnosticStore;
+            _eventSourceCreator = eventSourceCreator ?? CreateEventSource;
+            _initTask = new TaskCompletionSource<bool>();
+            _backoff = new EventSource.ExponentialBackoffWithDecorrelation(initialReconnectDelay,
+                EventSource.Configuration.MaximumRetryDuration);
+            _streamUri = new Uri(baseUri, "/all");
         }
 
         #region IDataSource
 
-        bool IDataSource.Initialized()
+        public bool Initialized()
         {
-            return _streamManager.Initialized;
+            return _initialized.Get();
         }
 
-        Task<bool> IDataSource.Start()
+        public Task<bool> Start()
         {
-            return _streamManager.Start();
+            _es = _eventSourceCreator(_streamUri, _httpConfig);
+
+            _es.MessageReceived += OnMessage;
+            _es.Error += OnError;
+            _es.Opened += OnOpen;
+
+            Task.Run(() => {
+                _esStarted = DateTime.Now;
+                return _es.StartAsync();
+            });
+
+            return _initTask.Task;
         }
 
         #endregion
 
-        #region IStreamProcessor
+        #region IDisposable
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        // This method is async because that's how the dotnet-eventsource API wants message handlers to be. There's no
-        // problem with *not* doing any awaits in the method, and in fact for the SDK's purposes it's best that this
-        // method behaves synchronously because that ensures that stream messages are processed in the order received.
-        public async Task HandleMessage(StreamManager streamManager, string messageType, string messageData)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _log.Info("Stopping LaunchDarkly StreamProcessor");
+                if (_es != null)
+                {
+                    _es.Close();
+                }
+            }
+        }
+
+        #endregion
+
+        private IEventSource CreateEventSource(Uri uri, IHttpConfiguration httpConfig)
+        {
+            var configBuilder = EventSource.Configuration.Builder(uri)
+                .Method(HttpMethod.Get)
+                .MessageHandler(httpConfig.MessageHandler)
+                .ConnectionTimeout(httpConfig.ConnectTimeout)
+                .DelayRetryDuration(_initialReconnectDelay)
+                .ReadTimeout(LaunchDarklyStreamReadTimeout)
+                .RequestHeaders(httpConfig.DefaultHeaders.ToDictionary(kv => kv.Key, kv => kv.Value))
+                .Logger(_log);
+            return new EventSource.EventSource(configBuilder.Build());
+        }
+
+        private async void Restart()
+        {
+            TimeSpan sleepTime = _backoff.GetNextBackOff();
+            if (sleepTime != TimeSpan.Zero)
+            {
+                _log.Info("Restarting stream. Waiting {0} milliseconds before reconnecting...",
+                    sleepTime.TotalMilliseconds);
+            }
+            _es.Close();
+            await Task.Delay(sleepTime);
+            try
+            {
+                _esStarted = DateTime.Now;
+                await _es.StartAsync();
+                _backoff.ResetReconnectAttemptCount();
+                _log.Info("Reconnected to LaunchDarkly stream");
+            }
+            catch (Exception ex)
+            {
+                LogHelpers.LogException(_log, null, ex);
+            }
+        }
+
+        private void RecordStreamInit(bool failed)
+        {
+            if (_diagnosticStore != null)
+            {
+                DateTime now = DateTime.Now;
+                _diagnosticStore.AddStreamInit(_esStarted, now - _esStarted, failed);
+                _esStarted = now;
+            }
+        }
+
+        private void OnOpen(object sender, EventSource.StateChangedEventArgs e)
+        {
+            _log.Debug("EventSource Opened");
+            RecordStreamInit(false);
+        }
+
+        private void OnMessage(object sender, EventSource.MessageReceivedEventArgs e)
+        {
+            try
+            {
+                HandleMessage(e.EventName, e.Message.Data);
+            }
+            catch (JsonException ex)
+            {
+                _log.Debug("Failed to deserialize JSON in {0} message:\n{1}",
+                    e.EventName, e.Message.Data);
+                LogHelpers.LogException(_log, "Encountered an error reading stream data", ex);
+                Restart();
+            }
+            catch (Exception ex)
+            {
+                LogHelpers.LogException(_log, null, ex);
+                Restart();
+            }
+        }
+
+        private void OnError(object sender, EventSource.ExceptionEventArgs e)
+        {
+            var ex = e.Exception;
+            LogHelpers.LogException(_log, "Encountered EventSource error", ex);
+            var recoverable = true;
+            if (ex is EventSource.EventSourceServiceUnsuccessfulResponseException respEx)
+            {
+                int status = respEx.StatusCode;
+                _log.Error(HttpErrors.ErrorMessage(status, "streaming connection", "will retry"));
+                RecordStreamInit(true);
+                if (!HttpErrors.IsRecoverable(status))
+                {
+                    recoverable = false;
+                    _initTask.TrySetException(ex); // sends this exception to the client if we haven't already started up
+                    ((IDisposable)this).Dispose();
+                }
+            }
+
+            var errorInfo = ex is EventSource.EventSourceServiceUnsuccessfulResponseException re ?
+                DataSourceStatus.ErrorInfo.FromHttpError(re.StatusCode) :
+                DataSourceStatus.ErrorInfo.FromException(ex);
+            _dataSourceUpdates.UpdateStatus(recoverable ? DataSourceState.Interrupted : DataSourceState.Off,
+                errorInfo);
+        }
+
+        private void HandleMessage(string messageType, string messageData)
         {
             switch (messageType)
             {
                 case PUT:
                     _dataSourceUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
                     _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
-                    streamManager.Initialized = true;
+                    if (!_initialized.GetAndSet(true))
+                    {
+                        _initTask.SetResult(true);
+                        _log.Info("Initialized LaunchDarkly Stream Processor.");
+                    }
                     break;
                 case PATCH:
                     PatchData patchData = JsonUtil.DecodeJson<PatchData>(messageData);
@@ -116,90 +262,5 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        public void HandleError(StreamManager streamManager, Exception e, bool recoverable)
-        {
-            var errorInfo = e is EventSource.EventSourceServiceUnsuccessfulResponseException re ?
-                DataSourceStatus.ErrorInfo.FromHttpError(re.StatusCode) :
-                DataSourceStatus.ErrorInfo.FromException(e);
-            _dataSourceUpdates.UpdateStatus(recoverable ? DataSourceState.Interrupted : DataSourceState.Off,
-                errorInfo);
-        }
-
-        #endregion
-
-        void IDisposable.Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                ((IDisposable)_streamManager).Dispose();
-            }
-        }
-
-        private static string GetDataKindPath(DataKind kind)
-        {
-            if (kind == DataKinds.Features)
-            {
-                return "/flags/";
-            }
-            else if (kind == DataKinds.Segments)
-            {
-                return "/segments/";
-            }
-            return null;
-        }
-
-        private static bool GetKeyFromPath(string path, DataKind kind, out string key)
-        {
-            if (path.StartsWith(GetDataKindPath(kind)))
-            {
-                key = path.Substring(GetDataKindPath(kind).Length);
-                return true;
-            }
-            key = null;
-            return false;
-        }
-
-        internal class PutData
-        {
-            internal AllData Data { get; private set; }
-
-            [JsonConstructor]
-            internal PutData(AllData data)
-            {
-                Data = data;
-            }
-        }
-
-        internal class PatchData
-        {
-            internal string Path { get; private set; }
-            internal JToken Data { get; private set; }
-
-            [JsonConstructor]
-            internal PatchData(string path, JToken data)
-            {
-                Path = path;
-                Data = data;
-            }
-        }
-
-        internal class DeleteData
-        {
-            internal string Path { get; private set; }
-            internal int Version { get; private set; }
-
-            [JsonConstructor]
-            internal DeleteData(string path, int version)
-            {
-                Path = path;
-                Version = version;
-            }
-        }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Http;
-using LaunchDarkly.Sdk.Internal.Stream;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -35,10 +36,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         readonly IDataSourceStatusProvider _dataSourceStatusProvider;
         Configuration _config;
 
+        CountdownEvent _esStartedReady = new CountdownEvent(1);
+
         public StreamProcessorTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _mockEventSource = new Mock<IEventSource>();
-            _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask);
+            _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask).Callback(() => _esStartedReady.Signal());
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new InMemoryDataStore();
@@ -66,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .Build();
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.Equal(new Uri("http://stream.test.com/all"),
-                _eventSourceFactory.ReceivedProperties.StreamUri);
+                _eventSourceFactory.ReceivedUri);
         }
         
         [Fact]
@@ -240,6 +243,56 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Assert.Equal(401, newStatus.LastError.Value.StatusCode);
         }
 
+        [Fact]
+        public void StreamInitDiagnosticRecordedOnOpen()
+        {
+            var mockDiagnosticStore = new Mock<IDiagnosticStore>();
+            var diagnosticStore = mockDiagnosticStore.Object;
+            var basicConfig = new BasicConfiguration(SDK_KEY, false, TestUtils.NullLogger);
+            var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
+                diagnosticStore);
+
+            using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
+                .CreateDataSource(context, _dataSourceUpdates))
+            {
+                sp.Start();
+                Assert.True(_esStartedReady.Wait(TimeSpan.FromSeconds(1)));
+                DateTime esStarted = sp._esStarted;
+                Thread.Sleep(TimeSpan.FromMilliseconds(100));
+                _mockEventSource.Raise(es => es.Opened += null, new EventSource.StateChangedEventArgs(ReadyState.Open));
+                DateTime startCompleted = sp._esStarted;
+
+                Assert.True(esStarted != startCompleted);
+                mockDiagnosticStore.Verify(ds => ds.AddStreamInit(esStarted,
+                    It.Is<TimeSpan>(ts => TimeSpan.Equals(ts, startCompleted - esStarted)), false));
+            }
+        }
+
+        [Fact]
+        public void StreamInitDiagnosticRecordedOnError()
+        {
+            var mockDiagnosticStore = new Mock<IDiagnosticStore>();
+            var diagnosticStore = mockDiagnosticStore.Object;
+            var basicConfig = new BasicConfiguration(SDK_KEY, false, TestUtils.NullLogger);
+            var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
+                diagnosticStore);
+
+            using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
+                .CreateDataSource(context, _dataSourceUpdates))
+            {
+                sp.Start();
+                Assert.True(_esStartedReady.Wait(TimeSpan.FromSeconds(1)));
+                DateTime esStarted = sp._esStarted;
+                Thread.Sleep(TimeSpan.FromMilliseconds(100));
+                _mockEventSource.Raise(es => es.Error += null,
+                    new EventSource.ExceptionEventArgs(new EventSource.EventSourceServiceUnsuccessfulResponseException("test", 401)));
+                DateTime startFailed = sp._esStarted;
+
+                Assert.True(esStarted != startFailed);
+                mockDiagnosticStore.Verify(ds => ds.AddStreamInit(esStarted, It.Is<TimeSpan>(ts => TimeSpan.Equals(ts, startFailed - esStarted)), true));
+            }
+        }
+
         private StreamProcessor CreateProcessor()
         {
             var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
@@ -252,13 +305,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private StreamProcessor CreateAndStartProcessor()
         {
             StreamProcessor sp = CreateProcessor();
-            ((IDataSource)sp).Start();
+            sp.Start();
             return sp;
         }
 
         class TestEventSourceFactory
         {
-            public StreamProperties ReceivedProperties { get; private set; }
+            public Uri ReceivedUri { get; private set; }
             public IDictionary<string, string> ReceivedHeaders { get; private set; }
             readonly IEventSource _eventSource;
 
@@ -267,12 +320,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 _eventSource = eventSource;
             }
 
-            public StreamManager.EventSourceCreator Create()
+            public StreamProcessor.EventSourceCreator Create()
             {
-                return (StreamProperties sp, HttpProperties hp) =>
+                return (Uri uri, IHttpConfiguration httpConfig) =>
                 {
-                    ReceivedProperties = sp;
-                    ReceivedHeaders = hp.BaseHeaders.ToDictionary(kv => kv.Key, kv => kv.Value);
+                    ReceivedUri = uri;
+                    ReceivedHeaders = httpConfig.DefaultHeaders.ToDictionary(kv => kv.Key, kv => kv.Value);
                     return _eventSource;
                 };
             }

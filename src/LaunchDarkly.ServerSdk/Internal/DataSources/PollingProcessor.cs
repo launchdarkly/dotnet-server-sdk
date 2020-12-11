@@ -11,12 +11,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     internal sealed class PollingProcessor : IDataSource
     {
-        private static int UNINITIALIZED = 0;
-        private static int INITIALIZED = 1;
         private readonly IFeatureRequestor _featureRequestor;
         private readonly IDataSourceUpdates _dataSourceUpdates;
         private readonly TimeSpan _pollInterval;
-        private int _initialized = UNINITIALIZED;
+        private readonly AtomicBoolean _initialized = new AtomicBoolean(false);
         private readonly TaskCompletionSource<bool> _initTask;
         private readonly Logger _log;
         private volatile bool _disposed;
@@ -38,7 +36,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         bool IDataSource.Initialized()
         {
-            return _initialized == INITIALIZED;
+            return _initialized.Get();
         }
 
         Task<bool> IDataSource.Start()
@@ -75,8 +73,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     {
                         _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
 
-                        //We can't use bool in CompareExchange because it is not a reference type.
-                        if (Interlocked.CompareExchange(ref _initialized, INITIALIZED, UNINITIALIZED) == 0)
+                        if (!_initialized.GetAndSet(true))
                         {
                             _initTask.SetResult(true);
                             _log.Info("Initialized LaunchDarkly Polling Processor.");
