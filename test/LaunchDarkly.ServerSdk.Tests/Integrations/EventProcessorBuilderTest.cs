@@ -70,9 +70,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             var b = _tester.New();
             Assert.Empty(b._privateAttributes);
-            b.PrivateAttributes("name");
-            b.PrivateAttributes("email", "country");
-            Assert.Equal(new HashSet<string> { "name", "email", "country" }, b._privateAttributes);
+            b.PrivateAttributes(UserAttribute.Name);
+            b.PrivateAttributes(UserAttribute.Email, UserAttribute.ForName("other"));
+            Assert.Equal(new HashSet<UserAttribute> {
+                UserAttribute.Name, UserAttribute.Email, UserAttribute.ForName("other") }, b._privateAttributes);
         }
 
         [Fact]

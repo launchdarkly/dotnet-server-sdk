@@ -263,7 +263,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
                 if (vr.Rollout != null &&vr. Rollout.Variations != null && vr.Rollout.Variations.Count > 0)
                 {
-                    string bucketBy = vr.Rollout.BucketBy ?? "key";
+                    var bucketBy = vr.Rollout.BucketBy.GetValueOrDefault(UserAttribute.Key);
                     float bucket = Bucketing.BucketUser(_user, key, bucketBy, salt);
                     float sum = 0F;
                     foreach (WeightedVariation wv in vr.Rollout.Variations)
@@ -323,7 +323,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
             private bool MatchClauseNoSegments(Clause clause)
             {
-                var userValue = Operator.GetUserAttributeForEvaluation(_user, clause.Attribute);
+                var userValue = _user.GetAttribute(clause.Attribute);
                 if (userValue.IsNull)
                 {
                     return false;
@@ -421,7 +421,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 }
 
                 // All of the clauses are met. See if the user buckets in
-                var by = segmentRule.BucketBy ?? "key";
+                var by = segmentRule.BucketBy.GetValueOrDefault(UserAttribute.Key);
                 double bucket = Bucketing.BucketUser(_user, segment.Key, by, segment.Salt);
                 double weight = (double)segmentRule.Weight / 100000F;
                 return bucket < weight;

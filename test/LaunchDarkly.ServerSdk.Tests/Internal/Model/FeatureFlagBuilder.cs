@@ -231,7 +231,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal class ClauseBuilder
     {
-        private string _attribute;
+        private UserAttribute _attribute;
         private string _op;
         private List<LdValue> _values = new List<LdValue>();
         private bool _negate;
@@ -241,7 +241,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new Clause(_attribute, _op, _values, _negate);
         }
 
-        public ClauseBuilder Attribute(string attribute)
+        public ClauseBuilder Attribute(string attribute) =>
+            Attribute(UserAttribute.ForName(attribute));
+
+        public ClauseBuilder Attribute(UserAttribute attribute)
         {
             _attribute = attribute;
             return this;
