@@ -19,16 +19,33 @@ namespace LaunchDarkly.Sdk.Server
     /// </summary>
     public sealed class LdClient : IDisposable, ILdClient
     {
+        #region Private fields
+
         private readonly Configuration _configuration;
         internal readonly IEventProcessor _eventProcessor;
         private readonly IDataStore _dataStore;
         internal readonly IDataSource _dataSource;
         private readonly DataSourceStatusProviderImpl _dataSourceStatusProvider;
+        private readonly IFlagTracker _flagTracker;
         internal readonly Evaluator _evaluator;
         private readonly Logger _log;
 
+        #endregion
+
+        #region Public properties
+
         /// <inheritdoc/>
         public IDataSourceStatusProvider DataSourceStatusProvider => _dataSourceStatusProvider;
+
+        /// <inheritdoc/>
+        public IFlagTracker FlagTracker => _flagTracker;
+
+        /// <inheritdoc/>
+        public Version Version => AssemblyVersions.GetAssemblyVersionForType(typeof(LdClient));
+        
+        #endregion
+
+        #region Public constructors
 
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration.
@@ -62,7 +79,6 @@ namespace LaunchDarkly.Sdk.Server
             var basicConfig = new BasicConfiguration(config.SdkKey, config.Offline, _log);
             var httpConfig = (config.HttpConfigurationFactory ?? Components.HttpConfiguration())
                 .CreateHttpConfiguration(basicConfig);
-
             ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
                 new ServerDiagnosticStore(_configuration, basicConfig, httpConfig);
 
@@ -86,6 +102,8 @@ namespace LaunchDarkly.Sdk.Server
                 (_configuration.DataSourceFactory ?? Components.StreamingDataSource());
             _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataSourceUpdates);
             _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdates);
+            _flagTracker = new FlagTrackerImpl(dataSourceUpdates,
+                (string key, User user) => JsonVariation(key, user, LdValue.Null));
 
             var initTask = _dataSource.Start();
 
@@ -124,6 +142,10 @@ namespace LaunchDarkly.Sdk.Server
         public LdClient(string sdkKey) : this(Configuration.Default(sdkKey))
         {
         }
+
+        #endregion
+
+        #region Public methods
 
         /// <inheritdoc/>
         public bool Initialized()
@@ -408,26 +430,6 @@ namespace LaunchDarkly.Sdk.Server
             _eventProcessor.SendEvent(EventFactory.Default.NewIdentifyEvent(user));
         }
 
-        /// <inheritdoc/>
-        public Version Version
-        {
-            get
-            {
-                return AssemblyVersions.GetAssemblyVersionForType(typeof(LdClient));
-            }
-        }
-        
-        private void Dispose(bool disposing)
-        {
-            if (disposing) // follow standard IDisposable pattern
-            {
-                _log.Info("Closing LaunchDarkly client.");
-                _eventProcessor.Dispose();
-                _dataStore.Dispose();
-                _dataSource.Dispose();
-            }
-        }
-
         /// <summary>
         /// Shuts down the client and releases any resources it is using.
         /// </summary>
@@ -459,6 +461,10 @@ namespace LaunchDarkly.Sdk.Server
             _eventProcessor.Flush();
         }
 
+        #endregion
+
+        #region Private methods
+
         private FeatureFlag GetFlag(string key)
         {
             var maybeItem = _dataStore.Get(DataKinds.Features, key);
@@ -478,5 +484,18 @@ namespace LaunchDarkly.Sdk.Server
             }
             return null;
         }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing) // follow standard IDisposable pattern
+            {
+                _log.Info("Closing LaunchDarkly client.");
+                _eventProcessor.Dispose();
+                _dataStore.Dispose();
+                _dataSource.Dispose();
+            }
+        }
+
+        #endregion
     }
 }

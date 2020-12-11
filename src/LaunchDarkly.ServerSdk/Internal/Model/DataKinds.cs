@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -26,5 +27,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal static readonly DataKind Features = MakeDataKind("features", typeof(FeatureFlag));
 
         internal static readonly DataKind Segments = MakeDataKind("segments", typeof(Segment));
+
+        internal static IEnumerable<DataKind> All
+        {
+            get
+            {
+                yield return Features;
+                yield return Segments;
+            }
+        }
     }
 }

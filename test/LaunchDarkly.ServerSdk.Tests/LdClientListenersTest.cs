@@ -1,14 +1,122 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 using Xunit.Abstractions;
+
+using static LaunchDarkly.Sdk.Server.TestUtils;
 
 namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientListenersTest : BaseTest
     {
         public LdClientListenersTest(ITestOutputHelper testOutput) : base(testOutput) { }
+
+        [Fact]
+        public void ClientSendsFlagChangeEvents()
+        {
+            var flagKey = "flagKey";
+            var dataSourceFactory = new CapturingDataSourceFactory();
+            var config = Configuration.Builder("").DataSource(dataSourceFactory)
+                .Events(Components.NoEvents).Build();
+
+            using (var client = new LdClient(config))
+            {
+                var updates = dataSourceFactory.DataSourceUpdates;
+
+                var flagV1 = new FeatureFlagBuilder(flagKey).Version(1).Build();
+                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV1));
+
+                var eventSink1 = new EventSink<FlagChangeEvent>();
+                var eventSink2 = new EventSink<FlagChangeEvent>();
+                EventHandler<FlagChangeEvent> listener1 = eventSink1.Add;
+                EventHandler<FlagChangeEvent> listener2 = eventSink2.Add;
+                client.FlagTracker.FlagChanged += listener1;
+                client.FlagTracker.FlagChanged += listener2;
+
+                eventSink1.ExpectNoValue();
+                eventSink2.ExpectNoValue();
+
+                var flagV2 = new FeatureFlagBuilder(flagKey).Version(2).Build();
+                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV2));
+
+
+                var event1 = eventSink1.ExpectValue();
+                var event2 = eventSink2.ExpectValue();
+                Assert.Equal(flagKey, event1.Key);
+                Assert.Equal(flagKey, event2.Key);
+
+                eventSink1.ExpectNoValue();
+                eventSink2.ExpectNoValue();
+
+                client.FlagTracker.FlagChanged -= listener2;
+
+                var flagV3 = new FeatureFlagBuilder(flagKey).Version(3).Build();
+                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV3));
+
+                var event3 = eventSink1.ExpectValue();
+                Assert.Equal(flagKey, event3.Key);
+                eventSink2.ExpectNoValue();
+            }
+        }
+
+        [Fact]
+        public void ClientSendsFlagValueChangeEvents()
+        {
+            var flagKey = "flagKey";
+            var user = User.WithKey("important-user");
+            var otherUser = User.WithKey("unimportant-user");
+            var dataSourceFactory = new CapturingDataSourceFactory();
+            var config = Configuration.Builder("").DataSource(dataSourceFactory)
+                .Events(Components.NoEvents).Build();
+
+            using (var client = new LdClient(config))
+            {
+                var updates = dataSourceFactory.DataSourceUpdates;
+
+                // flag starts out as false for everyone
+                var flagV1 = new FeatureFlagBuilder(flagKey).Version(1).On(true)
+                    .Variations(LdValue.Of(false), LdValue.Of(true)).FallthroughVariation(0)
+                    .Build();
+                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV1));
+
+                var eventSink1 = new EventSink<FlagValueChangeEvent>();
+                var eventSink2 = new EventSink<FlagValueChangeEvent>();
+                var eventSink3 = new EventSink<FlagValueChangeEvent>();
+                var listener1 = client.FlagTracker.FlagValueChangeHandler(flagKey, user, eventSink1.Add);
+                var listener2 = client.FlagTracker.FlagValueChangeHandler(flagKey, user, eventSink2.Add);
+                var listener3 = client.FlagTracker.FlagValueChangeHandler(flagKey, otherUser, eventSink3.Add);
+                client.FlagTracker.FlagChanged += listener1;
+                client.FlagTracker.FlagChanged += listener2;
+                client.FlagTracker.FlagChanged -= listener2; // just verifying that removing a listener works
+                client.FlagTracker.FlagChanged += listener3;
+
+                eventSink1.ExpectNoValue();
+                eventSink2.ExpectNoValue();
+                eventSink3.ExpectNoValue();
+
+                // make the flag true for the first user only, and broadcast a flag change event
+                var flagV2 = new FeatureFlagBuilder(flagKey).Version(2).On(true)
+                    .Variations(LdValue.Of(false), LdValue.Of(true)).FallthroughVariation(0)
+                    .Targets(new Target(new List<string> { user.Key }, 1))
+                    .Build();
+                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV2));
+
+                // eventSink1 receives a value change event
+                var event1 = eventSink1.ExpectValue();
+                Assert.Equal(flagKey, event1.Key);
+                Assert.Equal(LdValue.Of(false), event1.OldValue);
+                Assert.Equal(LdValue.Of(true), event1.NewValue);
+                eventSink1.ExpectNoValue();
+
+                // eventSink2 doesn't receive one, because it was unregistered
+                eventSink2.ExpectNoValue();
+
+                // eventSink3 doesn't receive one, because the flag's value hasn't changed for otherUser
+                eventSink3.ExpectNoValue();
+            }
+        }
 
         [Fact]
         public void DataSourceStatusProviderReturnsLatestStatus()

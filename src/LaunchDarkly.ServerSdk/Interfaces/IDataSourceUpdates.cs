@@ -30,7 +30,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="kind">specifies which collection to use</param>
         /// <param name="key">the unique key for the item within that collection</param>
         /// <param name="item">the item to insert or update</param>
-        void Upsert(DataKind kind, string key, ItemDescriptor item);
+        /// <returns>true if the update succeeded, false if it failed</returns>
+        bool Upsert(DataKind kind, string key, ItemDescriptor item);
 
         /// <summary>
         /// Informs the SDK of a change in the data source's status.

@@ -66,16 +66,16 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         public static string TestFilePath(string name) => "./TestFiles/" + name;
-        
-        internal static bool UpsertFlag(IDataStore store, FeatureFlag item)
-        {
-            return store.Upsert(DataKinds.Features, item.Key, new ItemDescriptor(item.Version, item));
-        }
 
-        internal static bool UpsertSegment(IDataStore store, Segment item)
-        {
-            return store.Upsert(DataKinds.Segments, item.Key, new ItemDescriptor(item.Version, item));
-        }
+        internal static ItemDescriptor DescriptorOf(FeatureFlag item) => new ItemDescriptor(item.Version, item);
+
+        internal static ItemDescriptor DescriptorOf(Segment item) => new ItemDescriptor(item.Version, item);
+
+        internal static bool UpsertFlag(IDataStore store, FeatureFlag item) =>
+            store.Upsert(DataKinds.Features, item.Key, DescriptorOf(item));
+
+        internal static bool UpsertSegment(IDataStore store, Segment item) =>
+            store.Upsert(DataKinds.Segments, item.Key, DescriptorOf(item));
 
         public static IDataStoreFactory SpecificDataStore(IDataStore store) =>
             new SpecificDataStoreFactory(store);

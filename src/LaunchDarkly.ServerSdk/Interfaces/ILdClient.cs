@@ -22,6 +22,15 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         IDataSourceStatusProvider DataSourceStatusProvider { get; }
 
         /// <summary>
+        /// A mechanism for tracking changes in feature flag configurations.
+        /// </summary>
+        /// <remarks>
+        /// The <see cref="IFlagTracker"/> contains methods for requesting notifications about feature flag
+        /// changes using an event listener model.
+        /// </remarks>
+        IFlagTracker FlagTracker { get; }
+
+        /// <summary>
         /// Tests whether the client is ready to be used.
         /// </summary>
         /// <returns>true if the client is ready, or false if it is still initializing</returns>

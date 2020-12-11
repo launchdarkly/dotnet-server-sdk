@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -20,17 +20,24 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
     /// This component is also responsible for receiving updates to the data source status, broadcasting
     /// them to any status listeners, and tracking the length of any period of sustained failure.
     /// </remarks>
-    internal class DataSourceUpdatesImpl : IDataSourceUpdates
+    internal sealed class DataSourceUpdatesImpl : IDataSourceUpdates
     {
+        #region Private fields
+
         private readonly IDataStore _store;
         private readonly TaskExecutor _taskExecutor;
-        internal readonly Logger _log;
-        private readonly OutageTracker _outageTracker;
+        private readonly Logger _log;
+        private readonly DependencyTracker _dependencyTracker;
+        private readonly DataSourceOutageTracker _outageTracker;
         private readonly MultiNotifier _stateChangedSignal = new MultiNotifier();
         private readonly object _stateLock = new object();
 
         private DataSourceStatus _currentStatus;
         private volatile bool _lastStoreUpdateFailed = false;
+
+        #endregion
+
+        #region Internal properties
 
         internal DataSourceStatus LastStatus
         {
@@ -43,7 +50,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
+        #endregion
+
+        #region Internal events
+
         internal event EventHandler<DataSourceStatus> StatusChanged;
+
+        internal event EventHandler<FlagChangeEvent> FlagChanged;
+
+        #endregion
+
+        #region Internal constructor
 
         internal DataSourceUpdatesImpl(
             IDataStore store,
@@ -55,8 +72,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _store = store;
             _taskExecutor = taskExecutor;
             _log = baseLogger.SubLogger(LogNames.DataSourceSubLog);
+
+            _dependencyTracker = new DependencyTracker();
+
             _outageTracker = outageLoggingTimeout.HasValue ?
-                new OutageTracker(_log, outageLoggingTimeout.Value) : null;
+                new DataSourceOutageTracker(_log, outageLoggingTimeout.Value) : null;
+
             _currentStatus = new DataSourceStatus
             {
                 State = DataSourceState.Initializing,
@@ -65,11 +86,31 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             };
         }
 
+        #endregion
+
+        #region IDataSourceUpdatesImpl methods
+
         public bool Init(FullDataSet<ItemDescriptor> allData)
         {
+            ImmutableDictionary<DataKind, ImmutableDictionary<string, ItemDescriptor>> oldData = null;
+
             try
             {
+                if (HasFlagChangeListeners())
+                {
+                    // Query the existing data if any, so that after the update we can send events for
+                    // whatever was changed
+                    var oldDataBuilder = ImmutableDictionary.CreateBuilder<DataKind,
+                        ImmutableDictionary<string, ItemDescriptor>>();
+                    foreach (var kind in DataKinds.All)
+                    {
+                        var items = _store.GetAll(kind);
+                        oldDataBuilder.Add(kind, items.Items.ToImmutableDictionary());
+                    }
+                    oldData = oldDataBuilder.ToImmutable();
+                }
                 _store.Init(DataStoreSorter.SortAllCollections(allData));
+                _lastStoreUpdateFailed = false;
             }
             catch (Exception e)
             {
@@ -77,19 +118,46 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 return false;
             }
 
+            // We must always update the dependency graph even if we don't currently have any event listeners, because if
+            // listeners are added later, we don't want to have to reread the whole data store to compute the graph
+            UpdateDependencyTrackerFromFullDataSet(allData);
+
+            // Now, if we previously queried the old data because someone is listening for flag change events, compare
+            // the versions of all items and generate events for those (and any other items that depend on them)
+            if (oldData != null)
+            {
+                SendChangeEvents(ComputeChangedItemsForFullDataSet(oldData, FullDataSetToMap(allData)));
+            }
+
             return true;
         }
 
-        public void Upsert(DataKind kind, string key, ItemDescriptor item)
+        public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
+            bool successfullyUpdated = false;
             try
             {
-                _store.Upsert(kind, key, item);
+                successfullyUpdated = _store.Upsert(kind, key, item);
+                _lastStoreUpdateFailed = false;
             }
             catch (Exception e)
             {
                 ReportStoreFailure(e);
+                return false;
             }
+
+            if (successfullyUpdated)
+            {
+                _dependencyTracker.UpdateDependenciesFrom(kind, key, item);
+                if (HasFlagChangeListeners())
+                {
+                    var affectedItems = new HashSet<KindAndKey>();
+                    _dependencyTracker.AddAffectedItems(affectedItems, new KindAndKey(kind, key));
+                    SendChangeEvents(affectedItems);
+                }
+            }
+
+            return true;
         }
 
         public void UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)
@@ -125,6 +193,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 _taskExecutor.ScheduleEvent(this, statusToBroadcast.Value, StatusChanged);
             }
         }
+
+        #endregion
+
+        #region IDisposable method
+
+        public void Dispose()
+        {
+            _stateChangedSignal.Dispose();
+        }
+
+        #endregion
+
+        #region Internal methods
 
         internal async Task<bool> WaitForAsync(DataSourceState desiredState, TimeSpan timeout)
         {
@@ -169,13 +250,86 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        public void Dispose()
+        #endregion
+
+        #region Private methods
+
+        private bool HasFlagChangeListeners() => FlagChanged != null;
+
+        private void SendChangeEvents(IEnumerable<KindAndKey> affectedItems)
         {
-            lock (_stateLock)
+            var copyOfHandlers = FlagChanged;
+            if (copyOfHandlers == null)
             {
-                _stateChangedSignal.NotifyAll(); // in case anyone was waiting on this
+                return;
             }
-            _store.Dispose();
+            var sender = this;
+            foreach (var item in affectedItems)
+            {
+                if (item.Kind == DataKinds.Features)
+                {
+                    var eventArgs = new FlagChangeEvent(item.Key);
+                    _taskExecutor.ScheduleEvent(this, eventArgs, copyOfHandlers);
+                }
+            }
+        }
+
+        private void UpdateDependencyTrackerFromFullDataSet(FullDataSet<ItemDescriptor> allData)
+        {
+            _dependencyTracker.Clear();
+            foreach (var e0 in allData.Data)
+            {
+                var kind = e0.Key;
+                foreach (var e1 in e0.Value.Items)
+                {
+                    var key = e1.Key;
+                    _dependencyTracker.UpdateDependenciesFrom(kind, key, e1.Value);
+                }
+            }
+        }
+
+        private ImmutableDictionary<DataKind, ImmutableDictionary<string, ItemDescriptor>> FullDataSetToMap(
+            FullDataSet<ItemDescriptor> allData)
+        {
+            var builder = ImmutableDictionary.CreateBuilder<DataKind, ImmutableDictionary<string, ItemDescriptor>>();
+            foreach (var e in allData.Data)
+            {
+                builder.Add(e.Key, e.Value.Items.ToImmutableDictionary());
+            }
+            return builder.ToImmutable();
+        }
+
+        private ISet<KindAndKey> ComputeChangedItemsForFullDataSet(
+            ImmutableDictionary<DataKind, ImmutableDictionary<String, ItemDescriptor>> oldDataMap,
+            ImmutableDictionary<DataKind, ImmutableDictionary<String, ItemDescriptor>> newDataMap
+            )
+        {
+            ISet<KindAndKey> affectedItems = new HashSet<KindAndKey>();
+            var emptyDict = ImmutableDictionary.Create<string, ItemDescriptor>();
+            foreach (var kind in DataKinds.All)
+            {
+                var oldItems = oldDataMap.GetValueOrDefault(kind, emptyDict);
+                var newItems = newDataMap.GetValueOrDefault(kind, emptyDict);
+                var allKeys = oldItems.Keys.ToImmutableHashSet().Union(newItems.Keys);
+                foreach (var key in allKeys)
+                {
+                    var hasOldItem = oldItems.TryGetValue(key, out var oldItem);
+                    var hasNewItem = newItems.TryGetValue(key, out var newItem);
+                    if (!hasOldItem && !hasNewItem)
+                    {
+                        continue; // shouldn't be possible due to how we computed allKeys
+                    }
+                    if (!hasOldItem || !hasNewItem || (oldItem.Version < newItem.Version))
+                    {
+                        _dependencyTracker.AddAffectedItems(affectedItems, new KindAndKey(kind, key));
+                    }
+                    // Note that comparing the version numbers is sufficient; we don't have to compare every detail of the
+                    // flag or segment configuration, because it's a basic underlying assumption of the entire LD data model
+                    // that if an entity's version number hasn't changed, then the entity hasn't changed (and that if two
+                    // version numbers are different, the higher one is the more recent version).
+                }
+            }
+            return affectedItems;
         }
 
         private void ReportStoreFailure(Exception e)
@@ -195,107 +349,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             });
         }
 
-        private class OutageTracker
-        {
-            private readonly Logger _log;
-            private readonly TimeSpan _loggingTimeout;
-            private readonly object _trackerLock = new object();
-            private readonly Dictionary<DataSourceStatus.ErrorInfo, int> _errorCounts =
-                new Dictionary<DataSourceStatus.ErrorInfo, int>();
-
-            private volatile bool _inOutage;
-            private volatile TaskCompletionSource<bool> _outageEndedSignal;
-
-            internal OutageTracker(Logger log, TimeSpan loggingTimeout)
-            {
-                _log = log;
-                _loggingTimeout = loggingTimeout;
-            }
-
-            internal void TrackDataSourceState(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)
-            {
-                lock (_trackerLock)
-                {
-                    if (newState == DataSourceState.Interrupted || newError.HasValue ||
-                        (newState == DataSourceState.Initializing && _inOutage))
-                    {
-                        // We are in a potentially recoverable outage. If that wasn't the case already, and if
-                        // we've been configured with a timeout for logging the outage at a higher level, schedule
-                        // that timeout.
-                        if (_inOutage)
-                        {
-                            // We were already in one - just record this latest error for logging later.
-                            RecordError(newError);
-                        }
-                        else
-                        {
-                            // We weren't already in one, so set the timeout and start recording errors.
-                            _inOutage = true;
-                            _errorCounts.Clear();
-                            RecordError(newError);
-                            _outageEndedSignal = new TaskCompletionSource<bool>();
-                            Task.Run(() => WaitForTimeout(_outageEndedSignal.Task));
-                        }
-                    }
-                    else
-                    {
-                        if (_outageEndedSignal != null)
-                        {
-                            _outageEndedSignal.SetResult(true);
-                            _outageEndedSignal = null;
-                        }
-                        _inOutage = false;
-                    }
-                }
-            }
-
-            private void RecordError(DataSourceStatus.ErrorInfo? newError)
-            {
-                if (!newError.HasValue)
-                {
-                    return;
-                }
-                // Accumulate how many times each kind of error has occurred during the outage - use just the basic
-                // properties as the key so the map won't expand indefinitely
-                var basicErrorInfo = new DataSourceStatus.ErrorInfo
-                {
-                    Kind = newError.Value.Kind,
-                    StatusCode = newError.Value.StatusCode
-                };
-                if (_errorCounts.TryGetValue(basicErrorInfo, out var count))
-                {
-                    _errorCounts[basicErrorInfo] = count + 1;
-                }
-                else
-                {
-                    _errorCounts[basicErrorInfo] = 1;
-                }
-            }
-
-            private async Task WaitForTimeout(Task outageEnded)
-            {
-                var timeoutTask = Task.Delay(_loggingTimeout);
-                await Task.WhenAny(outageEnded, timeoutTask);
-                lock (_trackerLock)
-                {
-                    _outageEndedSignal = null;
-                    if (!_inOutage)
-                    {
-                        return;
-                    }
-                    var errorsDesc = string.Join(", ", _errorCounts.Select(kv => DescribeErrorCount(kv.Key, kv.Value)));
-                    _log.Error("LaunchDarkly data source outage - updates have been unavailable for at least {0} with the following errors: {1}",
-                        _loggingTimeout, errorsDesc);
-                }
-            }
-
-            private string DescribeErrorCount(DataSourceStatus.ErrorInfo errorInfo, int count)
-            {
-                var errorDesc = errorInfo.StatusCode > 0 ?
-                    string.Format("{0}({1})", errorInfo.Kind.Identifier(), errorInfo.StatusCode) :
-                    errorInfo.Kind.Identifier();
-                return string.Format("{0} ({1} {2})", errorDesc, count, count == 1 ? "time" : "times");
-            }
-        }
+        #endregion
     }
 }
