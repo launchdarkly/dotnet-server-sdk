@@ -3,7 +3,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
-    internal class DataStoreStatusProviderImpl : IDataStoreStatusProvider
+    internal sealed class DataStoreStatusProviderImpl : IDataStoreStatusProvider
     {
         private readonly IDataStore _dataStore;
         private readonly DataStoreUpdatesImpl _dataStoreUpdates;

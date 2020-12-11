@@ -7,7 +7,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal class DataSourceOutageTracker
+    internal sealed class DataSourceOutageTracker
     {
         private readonly Logger _log;
         private readonly TimeSpan _loggingTimeout;

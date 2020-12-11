@@ -38,9 +38,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly IDiagnosticStore _diagnosticStore;
         private readonly AtomicBoolean _initialized = new AtomicBoolean(false);
         private readonly Uri _streamUri;
+        private readonly bool _storeStatusMonitoringEnabled;
         private readonly Logger _log;
 
         private volatile IEventSource _es;
+        private volatile bool _lastStoreUpdateFailed = false;
         internal DateTime _esStarted; // exposed for testing
 
         internal delegate IEventSource EventSourceCreator(Uri streamUri,
@@ -65,6 +67,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _backoff = new EventSource.ExponentialBackoffWithDecorrelation(initialReconnectDelay,
                 EventSource.Configuration.MaximumRetryDuration);
             _streamUri = new Uri(baseUri, "/all");
+
+            _storeStatusMonitoringEnabled = _dataSourceUpdates.DataStoreStatusProvider.StatusMonitoringEnabled;
+            if (_storeStatusMonitoringEnabled)
+            {
+                _dataSourceUpdates.DataStoreStatusProvider.StatusChanged += OnDataStoreStatusChanged;
+            }
         }
 
         #region IDataSource
@@ -109,6 +117,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 {
                     _es.Close();
                 }
+                if (_storeStatusMonitoringEnabled)
+                {
+                    _dataSourceUpdates.DataStoreStatusProvider.StatusChanged -= OnDataStoreStatusChanged;
+                }
             }
         }
 
@@ -127,7 +139,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             return new EventSource.EventSource(configBuilder.Build());
         }
 
-        private async void Restart()
+        private void Restart()
         {
             TimeSpan sleepTime = _backoff.GetNextBackOff();
             if (sleepTime != TimeSpan.Zero)
@@ -136,6 +148,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     sleepTime.TotalMilliseconds);
             }
             _es.Close();
+
+            // Everything after this point is async and done in the background - Restart returns immediately after the Close
+            _ = FinishRestart(sleepTime);
+        }
+
+        private async Task FinishRestart(TimeSpan sleepTime)
+        {
             await Task.Delay(sleepTime);
             try
             {
@@ -174,14 +193,34 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
             catch (JsonException ex)
             {
-                _log.Debug("Failed to deserialize JSON in {0} message:\n{1}",
-                    e.EventName, e.Message.Data);
-                LogHelpers.LogException(_log, "Encountered an error reading stream data", ex);
+                _log.Error("LaunchDarkly service request failed or received invalid data: {0}",
+                    LogValues.ExceptionSummary(ex));
+
+                var errorInfo = new DataSourceStatus.ErrorInfo
+                {
+                    Kind = DataSourceStatus.ErrorKind.InvalidData,
+                    Message = ex.Message,
+                    Time = DateTime.Now
+                };
+                _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted, errorInfo);
+
                 Restart();
+            }
+            catch (StreamStoreException)
+            {
+                if (!_storeStatusMonitoringEnabled)
+                {
+                    if (!_lastStoreUpdateFailed)
+                    {
+                        _log.Warn("Restarting stream to ensure that we have the latest data");
+                    }
+                    Restart();
+                }
+                _lastStoreUpdateFailed = true;
             }
             catch (Exception ex)
             {
-                LogHelpers.LogException(_log, null, ex);
+                LogHelpers.LogException(_log, "Unexpected error in stream processing", ex);
                 Restart();
             }
         }
@@ -216,7 +255,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             switch (messageType)
             {
                 case PUT:
-                    _dataSourceUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData());
+                    if (!_dataSourceUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData()))
+                    {
+                        throw new StreamStoreException("failed to write full data set to data store");
+                    }
+                    _lastStoreUpdateFailed = false;
                     _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
                     if (!_initialized.GetAndSet(true))
                     {
@@ -224,43 +267,92 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                         _log.Info("Initialized LaunchDarkly Stream Processor.");
                     }
                     break;
+
                 case PATCH:
                     PatchData patchData = JsonUtil.DecodeJson<PatchData>(messageData);
+                    DataKind patchKind;
                     string patchKey;
+                    ItemDescriptor item;
                     if (GetKeyFromPath(patchData.Path, DataKinds.Features, out patchKey))
                     {
+                        patchKind = DataKinds.Features;
                         FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
-                        _dataSourceUpdates.Upsert(DataKinds.Features, patchKey, new ItemDescriptor(flag.Version, flag));
+                        item = new ItemDescriptor(flag.Version, flag);
                     }
                     else if (GetKeyFromPath(patchData.Path, DataKinds.Segments, out patchKey))
                     {
+                        patchKind = DataKinds.Segments;
                         Segment segment = patchData.Data.ToObject<Segment>();
-                        _dataSourceUpdates.Upsert(DataKinds.Segments, patchKey, new ItemDescriptor(segment.Version, segment));
+                        item = new ItemDescriptor(segment.Version, segment);
                     }
                     else
+                    {
+                        patchKind = null;
+                        item = new ItemDescriptor();
+                    }
+                    if (patchKind is null)
                     {
                         _log.Warn("Received patch event with unknown path: {0}", patchData.Path);
                     }
+                    else
+                    {
+                        if (!_dataSourceUpdates.Upsert(patchKind, patchKey, item))
+                        {
+                            throw new StreamStoreException(string.Format("failed to update \"{0}\" ({1}) in data store",
+                                patchKey, patchKind.Name));
+                        }
+                    }
+                    _lastStoreUpdateFailed = false;
                     break;
+
                 case DELETE:
                     DeleteData deleteData = JsonUtil.DecodeJson<DeleteData>(messageData);
                     var tombstone = new ItemDescriptor(deleteData.Version, null);
+                    DataKind deleteKind;
                     string deleteKey;
                     if (GetKeyFromPath(deleteData.Path, DataKinds.Features, out deleteKey))
                     {
-                        _dataSourceUpdates.Upsert(DataKinds.Features, deleteKey, tombstone);
+                        deleteKind = DataKinds.Features;
                     }
                     else if (GetKeyFromPath(deleteData.Path, DataKinds.Segments, out deleteKey))
                     {
-                        _dataSourceUpdates.Upsert(DataKinds.Segments, deleteKey, tombstone);
+                        deleteKind = DataKinds.Segments;
                     }
                     else
                     {
+                        deleteKind = null;
+                    }
+                    if (deleteKind is null)
+                    {
                         _log.Warn("Received delete event with unknown path: {0}", deleteData.Path);
+                    }
+                    else
+                    {
+                        if (!_dataSourceUpdates.Upsert(deleteKind, deleteKey, tombstone))
+                        {
+                            throw new StreamStoreException(string.Format("failed to delete \"{0}\" ({1}) in data store",
+                                deleteKey, deleteKind.Name));
+                        }
+                        _lastStoreUpdateFailed = false;
                     }
                     break;
             }
         }
 
+        private void OnDataStoreStatusChanged(object sender, DataStoreStatus newStatus)
+        {
+            if (newStatus.Available && newStatus.RefreshNeeded)
+            {
+                // The store has just transitioned from unavailable to available, and we can't guarantee that
+                // all of the latest data got cached, so let's restart the stream to refresh all the data.
+                _log.Warn("Restarting stream to refresh data after data store outage");
+                Restart();
+            }
+        }
+
+        private sealed class StreamStoreException : Exception
+        {
+            public StreamStoreException(string message) : base(message) { }
+        }
     }
 }

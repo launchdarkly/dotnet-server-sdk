@@ -27,27 +27,37 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private const string SEGMENT_KEY = "segment";
         private const int SEGMENT_VERSION = 22;
         private static readonly Segment SEGMENT = new Segment(SEGMENT_KEY, SEGMENT_VERSION, null, null, null, null, false);
+        private const string EmptyPutData = "{\"data\":{\"flags\":{},\"segments\":{}}}";
 
         readonly Mock<IEventSource> _mockEventSource;
         readonly IEventSource _eventSource;
         readonly TestEventSourceFactory _eventSourceFactory;
-        readonly InMemoryDataStore _dataStore;
-        readonly IDataSourceUpdates _dataSourceUpdates;
+        readonly DelegatingDataStoreForStreamTests _dataStore;
+        readonly DataStoreUpdatesImpl _dataStoreUpdates;
+        readonly IDataStoreStatusProvider _dataStoreStatusProvider;
+        readonly DataSourceUpdatesImpl _dataSourceUpdates;
         readonly IDataSourceStatusProvider _dataSourceStatusProvider;
         Configuration _config;
 
-        CountdownEvent _esStartedReady = new CountdownEvent(1);
+        EventWaitHandle _esStartedReady = new EventWaitHandle(false, EventResetMode.AutoReset);
 
         public StreamProcessorTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _mockEventSource = new Mock<IEventSource>();
-            _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask).Callback(() => _esStartedReady.Signal());
+            _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask).Callback(() => _esStartedReady.Set());
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
-            _dataStore = new InMemoryDataStore();
-            var dataSourceUpdatesImpl = TestUtils.BasicDataSourceUpdates(_dataStore, testLogger);
-            _dataSourceUpdates = dataSourceUpdatesImpl;
-            _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdatesImpl);
+            _dataStore = new DelegatingDataStoreForStreamTests { WrappedStore = new InMemoryDataStore() };
+            _dataStoreUpdates = new DataStoreUpdatesImpl(new TaskExecutor(testLogger));
+            _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, _dataStoreUpdates);
+            _dataSourceUpdates = new DataSourceUpdatesImpl(
+                _dataStore,
+                _dataStoreStatusProvider,
+                new TaskExecutor(testLogger),
+                testLogger,
+                null
+                );
+            _dataSourceStatusProvider = new DataSourceStatusProviderImpl(_dataSourceUpdates);
             _config = Configuration.Builder(SDK_KEY)
                 .DataSource(Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create()))
                 .DataStore(TestUtils.SpecificDataStore(_dataStore))
@@ -69,15 +79,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Assert.Equal(new Uri("http://stream.test.com/all"),
                 _eventSourceFactory.ReceivedUri);
         }
-        
+
         [Fact]
         public void PutCausesFeatureToBeStored()
         {
             StreamProcessor sp = CreateAndStartProcessor();
             string data = "{\"data\":{\"flags\":{\"" +
                 FEATURE_KEY + "\":" + JsonConvert.SerializeObject(FEATURE) + "},\"segments\":{}}}";
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "put");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
+            SimulateMessageReceived("put", data);
 
             AssertFeatureInStore(FEATURE);
         }
@@ -88,8 +97,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             StreamProcessor sp = CreateAndStartProcessor();
             string data = "{\"data\":{\"flags\":{},\"segments\":{\"" +
                 SEGMENT_KEY + "\":" + JsonConvert.SerializeObject(SEGMENT) + "}}}";
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "put");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
+            SimulateMessageReceived("put", data);
 
             AssertSegmentInStore(SEGMENT);
         }
@@ -105,7 +113,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void PutCausesStoreToBeInitialized()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
             Assert.True(_dataStore.Initialized());
         }
 
@@ -121,7 +129,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void PutCausesProcessorToBeInitialized()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
             Assert.True(((IDataSource)sp).Initialized());
             Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
         }
@@ -133,13 +141,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Task<bool> task = ((IDataSource)sp).Start();
             Assert.False(task.IsCompleted);
         }
-        
+
         [Fact]
         public void PutCausesTaskToBeCompleted()
         {
             StreamProcessor sp = CreateProcessor();
             Task<bool> task = ((IDataSource)sp).Start();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
             Assert.True(task.IsCompleted);
         }
 
@@ -147,26 +155,24 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void PatchUpdatesFeature()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
 
             string path = "/flags/" + FEATURE_KEY;
             string data = "{\"path\":\"" + path + "\",\"data\":" + JsonConvert.SerializeObject(FEATURE) + "}";
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "patch");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
+            SimulateMessageReceived("patch", data);
 
             AssertFeatureInStore(FEATURE);
         }
-        
+
         [Fact]
         public void PatchUpdatesSegment()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
 
             string path = "/segments/" + SEGMENT_KEY;
             string data = "{\"path\":\"" + path + "\",\"data\":" + JsonConvert.SerializeObject(SEGMENT) + "}";
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "patch");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
+            SimulateMessageReceived("patch", data);
 
             AssertSegmentInStore(SEGMENT);
         }
@@ -175,14 +181,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void DeleteDeletesFeature()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
             TestUtils.UpsertFlag(_dataStore, FEATURE);
 
             string path = "/flags/" + FEATURE_KEY;
             int deletedVersion = FEATURE.Version + 1;
             string data = "{\"path\":\"" + path + "\",\"version\":" + deletedVersion + "}";
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "delete");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
+            SimulateMessageReceived("delete", data);
 
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
                 _dataStore.Get(DataKinds.Features, FEATURE_KEY));
@@ -192,14 +197,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void DeleteDeletesSegment()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
             TestUtils.UpsertSegment(_dataStore, SEGMENT);
 
             string path = "/segments/" + SEGMENT_KEY;
             int deletedVersion = SEGMENT.Version + 1;
             string data = "{\"path\":\"" + path + "\",\"version\":" + deletedVersion + "}";
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(data, null), "delete");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
+            SimulateMessageReceived("delete", data);
 
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
                 _dataStore.Get(DataKinds.Segments, SEGMENT_KEY));
@@ -209,12 +213,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void RecoverableErrorChangesStateToInterrupted()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
             Assert.True(((IDataSource)sp).Initialized());
             Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
 
-            var ex = new EventSourceServiceUnsuccessfulResponseException("", 500);
-            _mockEventSource.Raise(es => es.Error += null, new EventSource.ExceptionEventArgs(ex));
+            SimulateStreamHttpError(500);
 
             var newStatus = _dataSourceStatusProvider.Status;
             Assert.Equal(DataSourceState.Interrupted, newStatus.State);
@@ -227,12 +230,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void UnrecoverableErrorChangesStateToOff()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            _mockEventSource.Raise(es => es.MessageReceived += null, EmptyPutEvent());
+            SimulateMessageReceived("put", EmptyPutData);
             Assert.True(((IDataSource)sp).Initialized());
             Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
 
-            var ex = new EventSourceServiceUnsuccessfulResponseException("", 401);
-            _mockEventSource.Raise(es => es.Error += null, new EventSource.ExceptionEventArgs(ex));
+            SimulateStreamHttpError(401);
 
             var newStatus = _dataSourceStatusProvider.Status;
             Assert.Equal(DataSourceState.Off, newStatus.State);
@@ -254,7 +256,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .CreateDataSource(context, _dataSourceUpdates))
             {
                 sp.Start();
-                Assert.True(_esStartedReady.Wait(TimeSpan.FromSeconds(1)));
+                Assert.True(_esStartedReady.WaitOne(TimeSpan.FromSeconds(1)));
                 DateTime esStarted = sp._esStarted;
                 Thread.Sleep(TimeSpan.FromMilliseconds(100));
                 _mockEventSource.Raise(es => es.Opened += null, new EventSource.StateChangedEventArgs(ReadyState.Open));
@@ -279,15 +281,152 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .CreateDataSource(context, _dataSourceUpdates))
             {
                 sp.Start();
-                Assert.True(_esStartedReady.Wait(TimeSpan.FromSeconds(1)));
+                Assert.True(_esStartedReady.WaitOne(TimeSpan.FromSeconds(1)));
                 DateTime esStarted = sp._esStarted;
                 Thread.Sleep(TimeSpan.FromMilliseconds(100));
-                _mockEventSource.Raise(es => es.Error += null,
-                    new EventSource.ExceptionEventArgs(new EventSource.EventSourceServiceUnsuccessfulResponseException("test", 401)));
+                SimulateStreamHttpError(401);
                 DateTime startFailed = sp._esStarted;
 
                 Assert.True(esStarted != startFailed);
                 mockDiagnosticStore.Verify(ds => ds.AddStreamInit(esStarted, It.Is<TimeSpan>(ts => TimeSpan.Equals(ts, startFailed - esStarted)), true));
+            }
+        }
+
+        [Fact]
+        public void PutEventWithInvalidJsonCausesStreamRestart()
+        {
+            VerifyInvalidDataEvent("put", "{sorry");
+        }
+
+        [Fact]
+        public void PutEventWithWellFormedJsonButInvalidDataCausesStreamRestart()
+        {
+            VerifyInvalidDataEvent("put", "{\"data\":{\"flags\":3}}");
+        }
+
+        [Fact]
+        public void PatchEventWithInvalidJsonCausesStreamRestart()
+        {
+            VerifyInvalidDataEvent("patch", "{sorry");
+        }
+
+        [Fact]
+        public void PatchEventWithWellFormedJsonButInvalidDataCausesStreamRestart()
+        {
+            VerifyInvalidDataEvent("patch", "{\"path\":\"/flags/flagkey\", \"data\":{\"rules\":3}}");
+        }
+
+        [Fact]
+        public void PatchEventWithInvalidPathCausesNoStreamRestart()
+        {
+            VerifyEventCausesNoStreamRestart("patch", "{\"path\":\"/wrong\", \"data\":{\"key\":\"flagkey\"}}");
+        }
+
+        [Fact]
+        public void DeleteEventWithInvalidJsonCausesStreamRestart()
+        {
+            VerifyInvalidDataEvent("delete", "{sorry");
+        }
+
+        [Fact]
+        public void DeleteEventWithInvalidPathCausesNoStreamRestart()
+        {
+            VerifyEventCausesNoStreamRestart("delete", "{\"path\":\"/wrong\", \"version\":1}");
+        }
+
+        [Fact]
+        public void RestartsStreamIfStoreNeedsRefresh()
+        {
+            var mockDataStore = new Mock<IDataStore>();
+            _dataStore.WrappedStore = mockDataStore.Object;
+            mockDataStore.Setup(d => d.StatusMonitoringEnabled).Returns(true);
+
+            using (StreamProcessor sp = CreateAndStartProcessor())
+            {
+                ExpectStreamRestart(() =>
+                {
+                    _dataStoreUpdates.UpdateStatus(new DataStoreStatus { Available = false, RefreshNeeded = false });
+                    _dataStoreUpdates.UpdateStatus(new DataStoreStatus { Available = true, RefreshNeeded = true });
+                });
+            }
+        }
+
+        [Fact]
+        public void DoesNotRestartStreamIfStoreHadOutageButDoesNotNeedRefresh()
+        {
+            var mockDataStore = new Mock<IDataStore>();
+            _dataStore.WrappedStore = mockDataStore.Object;
+            mockDataStore.Setup(d => d.StatusMonitoringEnabled).Returns(true);
+
+            using (StreamProcessor sp = CreateAndStartProcessor())
+            {
+                ExpectNoStreamRestart(() =>
+                {
+                    _dataStoreUpdates.UpdateStatus(new DataStoreStatus { Available = false, RefreshNeeded = false });
+                    _dataStoreUpdates.UpdateStatus(new DataStoreStatus { Available = true, RefreshNeeded = false });
+
+                    // No way to really synchronize on this condition, since no action is taken
+                    Thread.Sleep(TimeSpan.FromMilliseconds(300));
+                });
+            }
+        }
+
+        [Fact]
+        public void StoreFailureOnPutCausesStreamRestart()
+        {
+            var mockDataStore = new Mock<IDataStore>();
+            _dataStore.WrappedStore = mockDataStore.Object;
+            mockDataStore.Setup(d => d.StatusMonitoringEnabled).Returns(false);
+            mockDataStore.Setup(d => d.Init(Moq.It.IsAny<FullDataSet<ItemDescriptor>>())).Throws(new Exception("sorry"));
+
+            using (StreamProcessor sp = CreateAndStartProcessor())
+            {
+                ExpectStreamRestart(() =>
+                {
+                    SimulateMessageReceived("put", EmptyPutData);
+                });
+            }
+
+            var status = _dataSourceStatusProvider.Status;
+            Assert.NotNull(status.LastError);
+            Assert.Equal(DataSourceStatus.ErrorKind.StoreError, status.LastError.Value.Kind);
+        }
+
+        [Fact]
+        public void StoreFailureOnPatchCausesStreamRestart()
+        {
+            var mockDataStore = new Mock<IDataStore>();
+            _dataStore.WrappedStore = mockDataStore.Object;
+            mockDataStore.Setup(d => d.StatusMonitoringEnabled).Returns(false);
+            mockDataStore.Setup(d => d.Upsert(Moq.It.IsAny<DataKind>(), Moq.It.IsAny<string>(),
+                Moq.It.IsAny<ItemDescriptor>())).Throws(new Exception("sorry"));
+
+            using (StreamProcessor sp = CreateAndStartProcessor())
+            {
+                ExpectStreamRestart(() =>
+                {
+                    SimulateMessageReceived("patch",
+                        "{\"path\":\"/flags/flagkey\",\"data\":{\"key\":\"flagkey\",\"version\":1}}");
+                });
+            }
+        }
+
+        [Fact]
+        public void StoreFailureOnDeleteCausesStreamRestart()
+        {
+            var mockDataStore = new Mock<IDataStore>();
+            _dataStore.WrappedStore = mockDataStore.Object;
+            mockDataStore.Setup(d => d.StatusMonitoringEnabled).Returns(false);
+            mockDataStore.Setup(d => d.Upsert(Moq.It.IsAny<DataKind>(), Moq.It.IsAny<string>(),
+                Moq.It.IsAny<ItemDescriptor>())).Throws(new Exception("sorry"));
+
+            using (StreamProcessor sp = CreateAndStartProcessor())
+            {
+                ExpectStreamRestart(() =>
+                {
+                    SimulateMessageReceived("delete",
+                        "{\"path\":\"/flags/flagkey\",\"version\":1}");
+                });
             }
         }
 
@@ -304,7 +443,74 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             StreamProcessor sp = CreateProcessor();
             sp.Start();
+            _esStartedReady.WaitOne();
+            _esStartedReady.Reset();
             return sp;
+        }
+
+        private void VerifyEventCausesNoStreamRestart(string eventName, string eventData)
+        {
+            using (StreamProcessor sp = CreateAndStartProcessor())
+            {
+                ExpectNoStreamRestart(() => SimulateMessageReceived(eventName, eventData));
+            }
+        }
+
+        private void VerifyEventCausesStreamRestartWithInMemoryStore(string eventName, string eventData)
+        {
+            using (StreamProcessor sp = CreateAndStartProcessor())
+            {
+                ExpectStreamRestart(() => SimulateMessageReceived(eventName, eventData));
+            }
+        }
+
+        private void VerifyInvalidDataEvent(string eventName, string eventData)
+        {
+            var statuses = new EventSink<DataSourceStatus>();
+            _dataSourceStatusProvider.StatusChanged += statuses.Add;
+
+            VerifyEventCausesStreamRestartWithInMemoryStore(eventName, eventData);
+
+            // We did not allow the stream to successfully process an event before causing the error, so the
+            // state will still be Initializing, but we should be able to see that an error happened.
+            var status = statuses.ExpectValue();
+            Assert.NotNull(status.LastError);
+            Assert.Equal(DataSourceStatus.ErrorKind.InvalidData, status.LastError.Value.Kind);
+        }
+
+        private void ExpectNoStreamRestart(Action action)
+        {
+            _mockEventSource.ResetCalls();
+            action();
+            _mockEventSource.Verify(es => es.Close(), Times.Never);
+            _mockEventSource.Verify(es => es.StartAsync(), Times.Never);
+            _mockEventSource.ResetCalls();
+        }
+
+        private void ExpectStreamRestart(Action action)
+        {
+            _mockEventSource.ResetCalls();
+            action();
+
+            // Wait on the signal that our mock StartAsync method triggers, because StreamProcessor.Restart
+            // runs asynchronously so it may not have happened yet.
+            _esStartedReady.WaitOne();
+
+            _mockEventSource.Verify(es => es.Close(), Times.Once);
+            _mockEventSource.Verify(es => es.StartAsync(), Times.Once);
+            _mockEventSource.ResetCalls();
+        }
+
+        private void SimulateMessageReceived(string eventName, string eventData)
+        {
+            var evt = new MessageReceivedEventArgs(new MessageEvent(eventData, null), eventName);
+            _mockEventSource.Raise(es => es.MessageReceived += null, evt);
+        }
+
+        private void SimulateStreamHttpError(int statusCode)
+        {
+            var ex = new EventSourceServiceUnsuccessfulResponseException("", statusCode);
+            _mockEventSource.Raise(es => es.Error += null, new EventSource.ExceptionEventArgs(ex));
         }
 
         class TestEventSourceFactory
@@ -338,11 +544,24 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             Assert.Equal(s.Version, _dataStore.Get(DataKinds.Segments, s.Key).Value.Version);
         }
+    }
 
-        private MessageReceivedEventArgs EmptyPutEvent()
-        {
-            string data = "{\"data\":{\"flags\":{},\"segments\":{}}}";
-            return new MessageReceivedEventArgs(new MessageEvent(data, null), "put");
-        }
+    internal class DelegatingDataStoreForStreamTests : IDataStore
+    {
+        internal IDataStore WrappedStore;
+
+        public bool StatusMonitoringEnabled => WrappedStore.StatusMonitoringEnabled;
+
+        public void Dispose() => WrappedStore.Dispose();
+
+        public ItemDescriptor? Get(DataKind kind, string key) => WrappedStore.Get(kind, key);
+
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind) => WrappedStore.GetAll(kind);
+
+        public void Init(FullDataSet<ItemDescriptor> allData) => WrappedStore.Init(allData);
+
+        public bool Initialized() => WrappedStore.Initialized();
+
+        public bool Upsert(DataKind kind, string key, ItemDescriptor item) => WrappedStore.Upsert(kind, key, item);
     }
 }

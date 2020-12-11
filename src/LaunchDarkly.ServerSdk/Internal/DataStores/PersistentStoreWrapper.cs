@@ -379,6 +379,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 // w.statusLock every time we do anything. So we'll just do nothing here.
                 return;
             }
+            _log.Error("Error from persistent data store: {0}", LogValues.ExceptionSummary(e));
             _statusManager.UpdateAvailability(false);
         }
 

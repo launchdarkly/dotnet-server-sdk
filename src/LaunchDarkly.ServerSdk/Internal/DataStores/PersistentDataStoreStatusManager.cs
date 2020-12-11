@@ -15,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     /// This is currently only used by PersistentDataStoreWrapper, but encapsulating it
     /// in its own class helps with clarity and also lets us reuse this logic in tests.
     /// </remarks>
-    internal class PersistentDataStoreStatusManager : IDisposable
+    internal sealed class PersistentDataStoreStatusManager : IDisposable
     {
         internal static readonly TimeSpan PollInterval = TimeSpan.FromMilliseconds(500); // exposed for tests
 

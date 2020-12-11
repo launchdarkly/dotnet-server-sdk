@@ -3,7 +3,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 {
-    internal class DataStoreUpdatesImpl : IDataStoreUpdates
+    internal sealed class DataStoreUpdatesImpl : IDataStoreUpdates
     {
         private readonly TaskExecutor _taskExecutor;
         private readonly object _stateLock = new object();
