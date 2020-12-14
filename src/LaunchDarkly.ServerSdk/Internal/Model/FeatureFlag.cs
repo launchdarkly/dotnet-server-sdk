@@ -77,10 +77,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [JsonProperty(PropertyName = "variations")]
         internal List<WeightedVariation> Variations { get; private set; }
         [JsonProperty(PropertyName = "bucketBy")]
-        internal string BucketBy { get; private set; }
+        internal UserAttribute? BucketBy { get; private set; }
 
         [JsonConstructor]
-        internal Rollout(List<WeightedVariation> variations, string bucketBy)
+        internal Rollout(List<WeightedVariation> variations, UserAttribute? bucketBy)
         {
             Variations = variations;
             BucketBy = bucketBy;

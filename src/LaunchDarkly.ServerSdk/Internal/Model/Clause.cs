@@ -6,7 +6,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     internal sealed class Clause
     {
         [JsonProperty(PropertyName = "attribute")]
-        internal string Attribute { get; private set; }
+        internal UserAttribute Attribute { get; private set; }
         [JsonProperty(PropertyName = "op")]
         internal string Op { get; private set; }
         [JsonProperty(PropertyName = "values")]
@@ -15,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal bool Negate { get; private set; }
 
         [JsonConstructor]
-        internal Clause(string attribute, string op, List<LdValue> values, bool negate)
+        internal Clause(UserAttribute attribute, string op, List<LdValue> values, bool negate)
         {
             Attribute = attribute;
             Op = op;

@@ -52,7 +52,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("x")).Negate(true).Build();
             var wv = new WeightedVariation(0, 50);
-            var rollout = new Rollout(new List<WeightedVariation> { wv }, "key");
+            var rollout = new Rollout(new List<WeightedVariation> { wv }, UserAttribute.Key);
             var rule = new RuleBuilder().Id("ruleid").Variation(0).Rollout(rollout).Clauses(clause)
                 .TrackEvents(true).Build();
             var target = new Target(new List<string> { "userkey" }, 0);
@@ -118,7 +118,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private Segment BuildSegment()
         {
             var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("x")).Negate(true).Build();
-            var rule = new SegmentRule(new List<Clause> { clause }, 50, "key");
+            var rule = new SegmentRule(new List<Clause> { clause }, 50, UserAttribute.Key);
             return new Segment(
                 "segkey",
                 100,

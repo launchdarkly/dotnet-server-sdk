@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Events;
@@ -64,7 +65,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         internal TimeSpan _diagnosticRecordingInterval = DefaultDiagnosticRecordingInterval;
         internal TimeSpan _flushInterval = DefaultFlushInterval;
         internal bool _inlineUsersInEvents = false;
-        internal HashSet<string> _privateAttributes = new HashSet<string>();
+        internal HashSet<UserAttribute> _privateAttributes = new HashSet<UserAttribute>();
         internal int _userKeysCapacity = DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = DefaultUserKeysFlushInterval;
         internal IEventSender _eventSender = null; // used in testing
@@ -74,7 +75,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         /// <remarks>
         /// If this is <see langword="true"/>, all user attribute values (other than the key) will be private, not just
-        /// the attributes specified in <see cref="PrivateAttributes(string[])"/> or on a per-user basis with
+        /// the attributes specified in <see cref="PrivateAttributes(UserAttribute[])"/> or on a per-user basis with
         /// <see cref="UserBuilder"/> methods. By default, it is <see langword="false"/>.
         /// </remarks>
         /// <param name="allAttributesPrivate">true if all user attributes should be private</param>
@@ -202,16 +203,43 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         /// <remarks>
         /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
-        /// names removed.This is in addition to any attributes that were marked as private for an
+        /// names removed. This is in addition to any attributes that were marked as private for an
         /// individual user with <see cref="UserBuilder"/> methods.
         /// </remarks>
-        /// <param name="attributes">a set of names that will be removed from user data set to LaunchDarkly</param>
+        /// <param name="attributes">a set of attributes that will be removed from user data set to LaunchDarkly</param>
         /// <returns>the builder</returns>
-        public EventProcessorBuilder PrivateAttributes(params string[] attributes)
+        /// <seealso cref="PrivateAttributeNames(string[])"/>
+        public EventProcessorBuilder PrivateAttributes(params UserAttribute[] attributes)
         {
             foreach (var a in attributes)
             {
                 _privateAttributes.Add(a);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Marks a set of attribute names as private.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
+        /// names removed. This is in addition to any attributes that were marked as private for an
+        /// individual user with <see cref="UserBuilder"/> methods.
+        /// </para>
+        /// <para>
+        /// Using <see cref="PrivateAttributes(UserAttribute[])"/> is preferable to avoid the possibility of
+        /// misspelling a built-in attribute.
+        /// </para>
+        /// </remarks>
+        /// <param name="attributes">a set of names that will be removed from user data set to LaunchDarkly</param>
+        /// <returns>the builder</returns>
+        /// <seealso cref="PrivateAttributes(UserAttribute[])"/>
+        public EventProcessorBuilder PrivateAttributeNames(params string[] attributes)
+        {
+            foreach (var a in attributes)
+            {
+                _privateAttributes.Add(UserAttribute.ForName(a));
             }
             return this;
         }
@@ -262,7 +290,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 EventsUri = new Uri(_baseUri, "bulk"),
                 DiagnosticUri = new Uri(_baseUri, "diagnostic"),
                 InlineUsersInEvents = _inlineUsersInEvents,
-                PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
+                PrivateAttributeNames = _privateAttributes.Select(a => a.AttributeName).ToImmutableHashSet(),
                 UserKeysCapacity = _userKeysCapacity,
                 UserKeysFlushInterval = _userKeysFlushInterval
             };

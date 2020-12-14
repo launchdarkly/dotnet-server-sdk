@@ -1,50 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using LaunchDarkly.Sdk.Internal.Helpers;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
     internal static class Operator
     {
-        // This method was formerly part of User. It has been moved here because it is only needed
-        // for server-side evaluation logic, specifically for comparing values with an Operator.
-        // Note that ImmutableJsonValue.Of(string) is an efficient operation that does not allocate
-        // a new object, but just wraps the string in a struct (or returns ImmutableJsonValue.Null
-        // if the string is null).
-        public static LdValue GetUserAttributeForEvaluation(User user, string attribute)
-        {
-            switch (attribute)
-            {
-                case "key":
-                    return LdValue.Of(user.Key);
-                case "secondary":
-                    return LdValue.Of(user.Secondary);
-                case "ip":
-                    return LdValue.Of(user.IPAddress);
-                case "email":
-                    return LdValue.Of(user.Email);
-                case "avatar":
-                    return LdValue.Of(user.Avatar);
-                case "firstName":
-                    return LdValue.Of(user.FirstName);
-                case "lastName":
-                    return LdValue.Of(user.LastName);
-                case "name":
-                    return LdValue.Of(user.Name);
-                case "country":
-                    return LdValue.Of(user.Country);
-                case "anonymous":
-                    if (user.AnonymousOptional.HasValue)
-                    {
-                        return LdValue.Of(user.AnonymousOptional.Value);
-                    }
-                    return LdValue.Null;
-                default:
-                    return user.Custom.TryGetValue(attribute, out var customValue) ?
-                        customValue : LdValue.Null;
-            }
-        }
-
         public static bool Apply(string op, LdValue uValue, LdValue cValue)
         {
             if (uValue.IsNull || cValue.IsNull)

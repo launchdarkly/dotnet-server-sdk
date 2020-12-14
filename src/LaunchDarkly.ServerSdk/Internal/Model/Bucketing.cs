@@ -9,9 +9,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 
-        internal static float BucketUser(User user, string featureKey, string attr, string salt)
+        internal static float BucketUser(User user, string featureKey, UserAttribute attr, string salt)
         {
-            var idHash = BucketableStringValue(Operator.GetUserAttributeForEvaluation(user, attr));
+            var idHash = BucketableStringValue(user.GetAttribute(attr));
             if (idHash != null)
             {
                 if (!string.IsNullOrEmpty(user.Secondary))
