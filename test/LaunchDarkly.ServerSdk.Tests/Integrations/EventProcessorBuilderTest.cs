@@ -77,6 +77,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
+        public void PrivateAttributeNames()
+        {
+            var b = _tester.New();
+            Assert.Empty(b._privateAttributes);
+            b.PrivateAttributeNames("name");
+            b.PrivateAttributeNames("email", "other");
+            Assert.Equal(new HashSet<UserAttribute> {
+                UserAttribute.Name, UserAttribute.Email, UserAttribute.ForName("other") }, b._privateAttributes);
+        }
+
+        [Fact]
         public void UserKeysCapacity()
         {
             var prop = _tester.Property(b => b._userKeysCapacity, (b, v) => b.UserKeysCapacity(v));
