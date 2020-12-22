@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 {
     /// <summary>
     /// INTERNAL namespace for types related to the internal implementation of
-    /// <see cref="LaunchDarkly.Sdk.Interfaces.IEventProcessor"/>. These types should not be public
+    /// <see cref="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor"/>. These types should not be public
     /// and should not appear in documentation.
     /// </summary>
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

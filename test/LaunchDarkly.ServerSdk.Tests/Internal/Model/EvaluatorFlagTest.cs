@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Interfaces;
-using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal.Events;
 using Xunit;
 
+using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
 using static LaunchDarkly.Sdk.Server.Internal.Model.EvaluatorTestUtil;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
@@ -212,11 +212,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
-            FeatureRequestEvent e = result.PrerequisiteEvents[0];
-            Assert.Equal(f1.Key, e.Key);
+            EvaluationEvent e = result.PrerequisiteEvents[0];
+            Assert.Equal(f1.Key, e.FlagKey);
             Assert.Equal(LdValue.Of("go"), e.Value);
-            Assert.Equal(f1.Version, e.Version);
-            Assert.Equal(f0.Key, e.PrereqOf);
+            Assert.Equal(f1.Version, e.FlagVersion);
+            Assert.Equal(f0.Key, e.PrerequisiteOf);
         }
 
         [Fact]
@@ -245,11 +245,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
-            FeatureRequestEvent e = result.PrerequisiteEvents[0];
-            Assert.Equal(f1.Key, e.Key);
+            EvaluationEvent e = result.PrerequisiteEvents[0];
+            Assert.Equal(f1.Key, e.FlagKey);
             Assert.Equal(LdValue.Of("nogo"), e.Value);
-            Assert.Equal(f1.Version, e.Version);
-            Assert.Equal(f0.Key, e.PrereqOf);
+            Assert.Equal(f1.Version, e.FlagVersion);
+            Assert.Equal(f0.Key, e.PrerequisiteOf);
         }
 
         [Fact]
@@ -277,11 +277,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Assert.Equal(expected, result.Result);
 
             Assert.Equal(1, result.PrerequisiteEvents.Count);
-            FeatureRequestEvent e = result.PrerequisiteEvents[0];
-            Assert.Equal(f1.Key, e.Key);
+            EvaluationEvent e = result.PrerequisiteEvents[0];
+            Assert.Equal(f1.Key, e.FlagKey);
             Assert.Equal(LdValue.Of("go"), e.Value);
-            Assert.Equal(f1.Version, e.Version);
-            Assert.Equal(f0.Key, e.PrereqOf);
+            Assert.Equal(f1.Version, e.FlagVersion);
+            Assert.Equal(f0.Key, e.PrerequisiteOf);
         }
 
         [Fact]
@@ -317,17 +317,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
             Assert.Equal(2, result.PrerequisiteEvents.Count);
 
-            FeatureRequestEvent e0 = result.PrerequisiteEvents[0];
-            Assert.Equal(f2.Key, e0.Key);
+            EvaluationEvent e0 = result.PrerequisiteEvents[0];
+            Assert.Equal(f2.Key, e0.FlagKey);
             Assert.Equal(LdValue.Of("go"), e0.Value);
-            Assert.Equal(f2.Version, e0.Version);
-            Assert.Equal(f1.Key, e0.PrereqOf);
+            Assert.Equal(f2.Version, e0.FlagVersion);
+            Assert.Equal(f1.Key, e0.PrerequisiteOf);
 
-            FeatureRequestEvent e1 = result.PrerequisiteEvents[1];
-            Assert.Equal(f1.Key, e1.Key);
+            EvaluationEvent e1 = result.PrerequisiteEvents[1];
+            Assert.Equal(f1.Key, e1.FlagKey);
             Assert.Equal(LdValue.Of("go"), e1.Value);
-            Assert.Equal(f1.Version, e1.Version);
-            Assert.Equal(f0.Key, e1.PrereqOf);
+            Assert.Equal(f1.Version, e1.FlagVersion);
+            Assert.Equal(f0.Key, e1.PrerequisiteOf);
         }
         
         [Fact]

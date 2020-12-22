@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Events;
@@ -290,7 +289,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 EventsUri = new Uri(_baseUri, "bulk"),
                 DiagnosticUri = new Uri(_baseUri, "diagnostic"),
                 InlineUsersInEvents = _inlineUsersInEvents,
-                PrivateAttributeNames = _privateAttributes.Select(a => a.AttributeName).ToImmutableHashSet(),
+                PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
                 UserKeysCapacity = _userKeysCapacity,
                 UserKeysFlushInterval = _userKeysFlushInterval
             };
@@ -302,7 +301,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     logger
                     );
             return new DefaultEventProcessorWrapper(
-                new DefaultEventProcessor(
+                new EventProcessor(
                     eventsConfig,
                     eventSender,
                     new DefaultUserDeduplicator(_userKeysCapacity, _userKeysFlushInterval),

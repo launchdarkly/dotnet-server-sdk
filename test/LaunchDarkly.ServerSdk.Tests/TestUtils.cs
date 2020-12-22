@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
@@ -247,20 +246,24 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    public class TestEventProcessor : LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor
+    public class TestEventProcessor : IEventProcessor
     {
-        public List<Event> Events = new List<Event>();
-
-        public void SendEvent(Event e)
-        {
-            Events.Add(e);
-        }
+        public List<object> Events = new List<object>();
 
         public void SetOffline(bool offline) { }
 
         public void Flush() { }
 
         public void Dispose() { }
+
+        public void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e) =>
+            Events.Add(e);
+
+        public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e) =>
+            Events.Add(e);
+
+        public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) =>
+            Events.Add(e);
     }
 
     public class TestEventSender : LaunchDarkly.Sdk.Internal.Events.IEventSender

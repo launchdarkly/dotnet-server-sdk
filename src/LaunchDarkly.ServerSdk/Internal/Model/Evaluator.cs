@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.Events;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
@@ -33,9 +34,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal struct EvalResult
         {
             internal EvaluationDetail<LdValue> Result;
-            internal readonly IList<FeatureRequestEvent> PrerequisiteEvents;
+            internal readonly IList<EvaluationEvent> PrerequisiteEvents;
 
-            internal EvalResult(EvaluationDetail<LdValue> result, IList<FeatureRequestEvent> events)
+            internal EvalResult(EvaluationDetail<LdValue> result, IList<EvaluationEvent> events)
             {
                 Result = result;
                 PrerequisiteEvents = events;
@@ -75,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
                 return new EvalResult(
                     new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED)),
-                    ImmutableList.Create<FeatureRequestEvent>());
+                    ImmutableList.Create<EvaluationEvent>());
             }
 
             var scope = new EvalScope(this, flag, user, eventFactory);
@@ -111,7 +112,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             private readonly FeatureFlag _flag;
             private readonly User _user;
             private readonly EventFactory _eventFactory;
-            private LazilyCreatedList<FeatureRequestEvent> _prereqEvents;
+            private LazilyCreatedList<EvaluationEvent> _prereqEvents;
 
             internal EvalScope(Evaluator parent, FeatureFlag flag, User user, EventFactory eventFactory)
             {
@@ -119,7 +120,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 _flag = flag;
                 _user = user;
                 _eventFactory = eventFactory;
-                _prereqEvents = new LazilyCreatedList<FeatureRequestEvent>();
+                _prereqEvents = new LazilyCreatedList<EvaluationEvent>();
             }
 
             internal EvalResult Evaluate()
@@ -183,7 +184,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 {
                     return null;
                 }
-                var parentFlagEventProperties = new FeatureFlagEventProperties(_flag);
                 foreach (var prereq in _flag.Prerequisites)
                 {
                     var prereqOk = true;
@@ -210,8 +210,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         {
                             _prereqEvents.Add(subPrereqEvent);
                         }
-                        _prereqEvents.Add(_eventFactory.NewPrerequisiteFeatureRequestEvent(new FeatureFlagEventProperties(prereqFeatureFlag), _user,
-                            prereqDetails, parentFlagEventProperties));
+                        _prereqEvents.Add(_eventFactory.NewPrerequisiteEvaluationEvent(prereqFeatureFlag, _user,
+                            prereqDetails, _flag));
                     }
                     if (!prereqOk)
                     {

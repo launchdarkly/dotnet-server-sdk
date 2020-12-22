@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal.Events;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Internal.Model.EvaluatorTestUtil;

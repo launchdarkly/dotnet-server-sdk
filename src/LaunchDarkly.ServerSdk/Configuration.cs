@@ -1,5 +1,4 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Interfaces;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server

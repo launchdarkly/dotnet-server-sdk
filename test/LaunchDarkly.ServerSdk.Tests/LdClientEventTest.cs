@@ -1,9 +1,10 @@
-﻿using LaunchDarkly.Sdk.Interfaces;
-using LaunchDarkly.Sdk.Server.Interfaces;
+﻿using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 using Xunit.Abstractions;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -67,7 +68,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal(1, eventSink.Events.Count);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
-            Assert.Equal("eventkey", ce.Key);
+            Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(LdValue.Null, ce.Data);
             Assert.Null(ce.MetricValue);
         }
@@ -81,7 +82,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal(1, eventSink.Events.Count);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
-            Assert.Equal("eventkey", ce.Key);
+            Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(data, ce.Data);
         }
         
@@ -94,7 +95,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal(1, eventSink.Events.Count);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
-            Assert.Equal("eventkey", ce.Key);
+            Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(data, ce.Data);
             Assert.Equal(1.5, ce.MetricValue);
         }
@@ -241,7 +242,7 @@ namespace LaunchDarkly.Sdk.Server
             // tracking and a reason, because the rule-level trackEvents flag is on for the matched rule.
 
             Assert.Equal(1, eventSink.Events.Count);
-            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.True(e.TrackEvents);
             Assert.Equal(EvaluationReason.RuleMatchReason(0, "rule-id"), e.Reason);
         }
@@ -266,7 +267,7 @@ namespace LaunchDarkly.Sdk.Server
             // It matched rule1, which has trackEvents: false, so we don't get the override behavior
 
             Assert.Equal(1, eventSink.Events.Count);
-            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.False(e.TrackEvents);
             Assert.Null(e.Reason);
         }
@@ -289,7 +290,7 @@ namespace LaunchDarkly.Sdk.Server
             // tracking and a reason, because trackEventsFallthrough is on and the evaluation fell through.
 
             Assert.Equal(1, eventSink.Events.Count);
-            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.True(e.TrackEvents);
             Assert.Equal(EvaluationReason.FallthroughReason, e.Reason);
         }
@@ -308,7 +309,7 @@ namespace LaunchDarkly.Sdk.Server
             client.StringVariation("flag", user, "default");
 
             Assert.Equal(1, eventSink.Events.Count);
-            var e = Assert.IsType<FeatureRequestEvent>(eventSink.Events[0]);
+            var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.False(e.TrackEvents);
             Assert.Null(e.Reason);
         }
@@ -378,26 +379,26 @@ namespace LaunchDarkly.Sdk.Server
             CheckFeatureEvent(eventSink.Events[0], f0, LdValue.Of("off"), LdValue.Of("default"), null);
         }
 
-        private void CheckFeatureEvent(Event e, FeatureFlag flag, LdValue value, LdValue defaultVal, string prereqOf)
+        private void CheckFeatureEvent(object e, FeatureFlag flag, LdValue value, LdValue defaultVal, string prereqOf)
         {
-            var fe = Assert.IsType<FeatureRequestEvent>(e);
-            Assert.Equal(flag.Key, fe.Key);
+            var fe = Assert.IsType<EvaluationEvent>(e);
+            Assert.Equal(flag.Key, fe.FlagKey);
             Assert.Equal(user.Key, fe.User.Key);
-            Assert.Equal(flag.Version, fe.Version);
+            Assert.Equal(flag.Version, fe.FlagVersion);
             Assert.Equal(value, fe.Value);
             Assert.Equal(defaultVal, fe.Default);
-            Assert.Equal(prereqOf, fe.PrereqOf);
+            Assert.Equal(prereqOf, fe.PrerequisiteOf);
         }
 
-        private void CheckUnknownFeatureEvent(Event e, string key, LdValue defaultVal, string prereqOf)
+        private void CheckUnknownFeatureEvent(object e, string key, LdValue defaultVal, string prereqOf)
         {
-            var fe = Assert.IsType<FeatureRequestEvent>(e);
-            Assert.Equal(key, fe.Key);
+            var fe = Assert.IsType<EvaluationEvent>(e);
+            Assert.Equal(key, fe.FlagKey);
             Assert.Equal(user.Key, fe.User.Key);
-            Assert.Null(fe.Version);
+            Assert.Null(fe.FlagVersion);
             Assert.Equal(defaultVal, fe.Value);
             Assert.Equal(defaultVal, fe.Default);
-            Assert.Equal(prereqOf, fe.PrereqOf);
+            Assert.Equal(prereqOf, fe.PrerequisiteOf);
         }
     }
 }

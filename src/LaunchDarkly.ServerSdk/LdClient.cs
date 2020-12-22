@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
-using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
@@ -305,7 +304,6 @@ namespace LaunchDarkly.Sdk.Server
             }
 
             FeatureFlag featureFlag = null;
-            FeatureFlagEventProperties? flagEventProperties = null;
             try
             {
                 featureFlag = GetFlag(featureKey);
@@ -313,18 +311,17 @@ namespace LaunchDarkly.Sdk.Server
                 {
                     _log.Info("Unknown feature flag {0}; returning default value",
                         featureKey);
-                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user, defaultValue,
-                        EvaluationErrorKind.FLAG_NOT_FOUND));
+                    _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
+                        featureKey, user, defaultValue, EvaluationErrorKind.FLAG_NOT_FOUND));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.FLAG_NOT_FOUND));
                 }
-                flagEventProperties = new FeatureFlagEventProperties(featureFlag);
 
                 if (user == null || user.Key == null)
                 {
                     _log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
-                    _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(flagEventProperties, user, defaultValue,
-                        EvaluationErrorKind.USER_NOT_SPECIFIED));
+                    _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
+                        featureFlag, user, defaultValue, EvaluationErrorKind.USER_NOT_SPECIFIED));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
                 }
@@ -334,7 +331,7 @@ namespace LaunchDarkly.Sdk.Server
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvents)
                     {
-                        _eventProcessor.SendEvent(prereqEvent);
+                        _eventProcessor.RecordEvaluationEvent(prereqEvent);
                     }
                 }
                 var evalDetail = evalResult.Result;
@@ -353,16 +350,16 @@ namespace LaunchDarkly.Sdk.Server
                             evalDetail.Value.Type,
                             featureKey);
 
-                        _eventProcessor.SendEvent(eventFactory.NewDefaultFeatureRequestEvent(flagEventProperties, user,
-                            defaultValue, EvaluationErrorKind.WRONG_TYPE));
+                        _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
+                            featureFlag, user, defaultValue, EvaluationErrorKind.WRONG_TYPE));
                         return new EvaluationDetail<T>(defaultValueOfType, null,
                             EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
                     }
                     returnDetail = new EvaluationDetail<T>(converter.ToType(evalDetail.Value),
                         evalDetail.VariationIndex, evalDetail.Reason);
                 }
-                _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(flagEventProperties, user,
-                    evalDetail, defaultValue));
+                _eventProcessor.RecordEvaluationEvent(eventFactory.NewEvaluationEvent(
+                    featureFlag, user, evalDetail, defaultValue));
                 return returnDetail;
             }
             catch (Exception e)
@@ -373,13 +370,13 @@ namespace LaunchDarkly.Sdk.Server
                 var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
                 if (featureFlag == null)
                 {
-                    _eventProcessor.SendEvent(eventFactory.NewUnknownFeatureRequestEvent(featureKey, user,
-                        defaultValue, EvaluationErrorKind.EXCEPTION));
+                    _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
+                        featureKey, user, defaultValue, EvaluationErrorKind.EXCEPTION));
                 }
                 else
                 {
-                    _eventProcessor.SendEvent(eventFactory.NewFeatureRequestEvent(flagEventProperties, user,
-                        new EvaluationDetail<LdValue>(defaultValue, null, reason), defaultValue));
+                    _eventProcessor.RecordEvaluationEvent(eventFactory.NewEvaluationEvent(
+                        featureFlag, user, new EvaluationDetail<LdValue>(defaultValue, null, reason), defaultValue));
                 }
                 return new EvaluationDetail<T>(defaultValueOfType, null, reason);
             }
@@ -401,30 +398,32 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <inheritdoc/>
-        public void Track(string name, User user)
-        {
-            Track(name, user, LdValue.Null);
-        }
-        
+        public void Track(string name, User user) =>
+            TrackInternal(name, user, LdValue.Null, null);
+
         /// <inheritdoc/>
-        public void Track(string name, User user, LdValue data)
+        public void Track(string name, User user, LdValue data) =>
+            TrackInternal(name, user, data, null);
+
+        /// <inheritdoc/>
+        public void Track(string name, User user, LdValue data, double metricValue) =>
+            TrackInternal(name, user, data, metricValue);
+
+        private void TrackInternal(string key, User user, LdValue data, double? metricValue)
         {
             if (user == null || String.IsNullOrEmpty(user.Key))
             {
                 _log.Warn("Track called with null user or null user key");
                 return;
             }
-            _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data));
-        }
-
-        /// <inheritdoc/>
-        public void Track(string name, User user, LdValue data, double metricValue)
-        {
-            if (user == null || user.Key == null)
+            _eventProcessor.RecordCustomEvent(new EventProcessorTypes.CustomEvent
             {
-                _log.Warn("Track called with null user or null user key");
-            }
-            _eventProcessor.SendEvent(EventFactory.Default.NewCustomEvent(name, user, data, metricValue));
+                Timestamp = UnixMillisecondTime.Now,
+                User = user,
+                EventKey = key,
+                Data = data,
+                MetricValue = metricValue
+            });
         }
 
         /// <inheritdoc/>
@@ -435,7 +434,11 @@ namespace LaunchDarkly.Sdk.Server
                 _log.Warn("Identify called with null user or null user key");
                 return;
             }
-            _eventProcessor.SendEvent(EventFactory.Default.NewIdentifyEvent(user));
+            _eventProcessor.RecordIdentifyEvent(new EventProcessorTypes.IdentifyEvent
+            {
+                Timestamp = UnixMillisecondTime.Now,
+                User = user
+            });
         }
 
         /// <summary>

@@ -65,12 +65,14 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
         internal sealed class NullEventProcessor : IEventProcessor
         {
-            public void SendEvent(LaunchDarkly.Sdk.Interfaces.Event e) { }
+            public void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e) { }
+            public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e) { }
+            public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) { }
             public void Flush() { }
             public void Dispose() { }
         }
 
-        internal class NullEventProcessorFactory : IEventProcessorFactory
+        internal sealed class NullEventProcessorFactory : IEventProcessorFactory
         {
             internal static readonly NullEventProcessorFactory Instance = new NullEventProcessorFactory();
 
