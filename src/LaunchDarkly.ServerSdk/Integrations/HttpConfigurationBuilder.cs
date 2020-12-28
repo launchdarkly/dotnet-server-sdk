@@ -108,11 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             return this;
         }
 
-        /// <summary>
-        /// Called internally by the SDK to create the configuration object.
-        /// </summary>
-        /// <param name="basicConfiguration">basic configuration properties</param>
-        /// <returns>the configuration object</returns>
+        /// <inheritdoc/>
         public IHttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
         {
             var httpProperties = HttpProperties.Default

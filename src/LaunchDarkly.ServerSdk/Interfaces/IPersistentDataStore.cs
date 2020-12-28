@@ -177,10 +177,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IPersistentDataStoreFactory
     {
         /// <summary>
-        /// Creates an implementation instance.
+        /// Called internally by the SDK to create an implementation instance. Applications do not need
+        /// to call this method.
         /// </summary>
         /// <param name="context">configuration of the current client instance</param>
-        /// <returns>a <see cref="IPersistentDataStore"/> instance</returns>
+        /// <returns>an <see cref="IPersistentDataStore"/> instance</returns>
         IPersistentDataStore CreatePersistentDataStore(LdClientContext context);
     }
 }

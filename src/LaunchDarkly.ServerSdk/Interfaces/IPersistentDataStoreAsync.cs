@@ -79,7 +79,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IPersistentDataStoreAsyncFactory
     {
         /// <summary>
-        /// Creates an implementation instance.
+        /// Called internally by the SDK to create an implementation instance. Applications do not need
+        /// to call this method.
         /// </summary>
         /// <param name="context">configuration of the current client instance</param>
         /// <returns>a <see cref="IPersistentDataStoreAsync"/> instance</returns>
