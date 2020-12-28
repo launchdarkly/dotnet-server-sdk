@@ -7,7 +7,6 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
 {
-
     internal class ServerDiagnosticStore : IDiagnosticStore
     {
         private readonly Configuration Config;
@@ -105,12 +104,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             configInfo.Add("usingProxyAuthenticator", false);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
 
-            if (Config.DataStoreFactory != null)
-            {
-                configInfo.Add("featureStoreFactory", Config.DataStoreFactory.GetType().Name);
-            }
-
             // Allow each pluggable component to describe its own relevant properties.
+            MergeComponentProperties(configInfo, Config.DataStoreFactory ?? Components.InMemoryDataStore, "dataStoreType");
             MergeComponentProperties(configInfo, Config.DataSourceFactory ?? Components.StreamingDataSource(), null);
             MergeComponentProperties(configInfo, Config.EventProcessorFactory ?? Components.SendEvents(), null);
 

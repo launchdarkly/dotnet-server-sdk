@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 
@@ -24,7 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </remarks>
-    public class PersistentDataStoreConfiguration : IDataStoreFactory
+    public class PersistentDataStoreBuilder : IDataStoreFactory, IDiagnosticDescription
     {
         private readonly IPersistentDataStoreFactory _coreFactory;
         private readonly IPersistentDataStoreAsyncFactory _coreAsyncFactory;
@@ -35,17 +36,26 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan DefaultTtl = DataStoreCacheConfig.DefaultTtl;
 
-        internal PersistentDataStoreConfiguration(IPersistentDataStoreFactory coreFactory)
+        internal PersistentDataStoreBuilder(IPersistentDataStoreFactory coreFactory)
         {
             _coreFactory = coreFactory;
             _coreAsyncFactory = null;
         }
 
-        internal PersistentDataStoreConfiguration(IPersistentDataStoreAsyncFactory coreAsyncFactory)
+        internal PersistentDataStoreBuilder(IPersistentDataStoreAsyncFactory coreAsyncFactory)
         {
             _coreFactory = null;
             _coreAsyncFactory = coreAsyncFactory;
         }
+
+        /// <summary>
+        /// Specifies that the SDK should <i>not</i> use an in-memory cache for the persistent data store.
+        /// </summary>
+        /// <remarks>
+        /// This means that every feature flag evaluation will trigger a data store query.
+        /// </remarks>
+        /// <returns>the builder</returns>
+        public PersistentDataStoreBuilder NoCaching() => CacheTime(TimeSpan.Zero);
 
         /// <summary>
         /// Specifies the cache TTL. Items will expire from the cache after this amount of time from the
@@ -53,25 +63,36 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         /// <remarks>
         /// <para>
-        /// Specifying <c>TimeSpan.Zero</c> disables caching, so every feature flag request will cause a query
-        /// to the data store.
+        /// If the value is <c>TimeSpan.Zero</c>, caching is disabled (equivalent to <see cref="NoCaching"/>).
         /// </para>
         /// <para>
-        /// Specifying <c>System.Threading.Timeout.InfiniteTimeSpan</c> (or any negative number) turns off cache
-        /// expiration, so the data store will only be queried the first time a particular item is used; all updates
-        /// received from LaunchDarkly will be written to both the data store and the cache. Use this "cached forever"
-        /// mode with caution: it means that in a scenario where multiple processes are sharing the database, and the
-        /// current process loses connectivity to LaunchDarkly while other processes are still receiving updates and
-        /// writing them to the database, the current process will have stale data.
+        /// If the value is <c>System.Threading.Timeout.InfiniteTimeSpan</c> (or any negative number), data is
+        /// cached forever (equivalent to <see cref="CacheForever"/>).
         /// </para>
         /// </remarks>
-        /// <param name="ttl">the cache TTL</param>
-        /// <returns>an updated factory object</returns>
-        public PersistentDataStoreConfiguration CacheTtl(TimeSpan ttl)
+        /// <param name="cacheTime">the cache TTL</param>
+        /// <returns>the builder</returns>
+        public PersistentDataStoreBuilder CacheTime(TimeSpan cacheTime)
         {
-            _cacheConfig = _cacheConfig.WithTtl(ttl);
+            _cacheConfig = _cacheConfig.WithTtl(cacheTime);
             return this;
         }
+
+        /// <summary>
+        /// Shortcut for calling <see cref="CacheTime(TimeSpan)"/> with a time span in milliseconds.
+        /// </summary>
+        /// <param name="millis">the cache TTL in milliseconds</param>
+        /// <returns>the builder</returns>
+        public PersistentDataStoreBuilder CacheMillis(int millis) =>
+            CacheTime(TimeSpan.FromMilliseconds(millis));
+
+        /// <summary>
+        /// Shortcut for calling <see cref="CacheTime(TimeSpan)"/> with a time span in seconds.
+        /// </summary>
+        /// <param name="seconds">the cache TTL in seconds</param>
+        /// <returns>the builder</returns>
+        public PersistentDataStoreBuilder CacheSeconds(int seconds) =>
+            CacheTime(TimeSpan.FromSeconds(seconds));
 
         /// <summary>
         /// Specifies the maximum number of entries that can be held in the cache at a time.
@@ -87,18 +108,31 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </remarks>
         /// <param name="maximumEntries">the maximum number of entries, or null for no limit</param>
         /// <returns>an updated factory object</returns>
-        public PersistentDataStoreConfiguration CacheMaximumEntries(int? maximumEntries)
+        public PersistentDataStoreBuilder CacheMaximumEntries(int? maximumEntries)
         {
             _cacheConfig = _cacheConfig.WithMaximumEntries(maximumEntries);
             return this;
         }
 
         /// <summary>
-        /// Called by the SDK to create the data store instance for a specific <see cref="LdClient"/>.
+        /// Specifies that the in-memory cache should never expire.
         /// </summary>
-        /// <param name="context">used internally</param>
-        /// <param name="dataStoreUpdates">used internally</param>
-        /// <returns>the data store instance</returns>
+        /// <remarks>
+        /// <para>
+        /// In this mode, data will be written to both the underlying persistent store and the cache,
+        /// but will only ever be read <i>from</i> the persistent store if the SDK is restarted.
+        /// </para>
+        /// <para>
+        /// Use this mode with caution: it means that in a scenario where multiple processes are sharing
+        /// the database, and the current process loses connectivity to LaunchDarkly while other processes
+        /// are still receiving updates and writing them to the database, the current process will have
+        /// stale data.
+        /// </para>
+        /// </remarks>
+        /// <returns>the builder</returns>
+        public PersistentDataStoreBuilder CacheForever() => CacheTime(Timeout.InfiniteTimeSpan);
+
+        /// <inheritdoc/>
         public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
         {
             if (_coreFactory != null)
@@ -122,6 +156,20 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     );
             }
             return null;
+        }
+
+        /// <inheritdoc/>
+        public LdValue DescribeConfiguration(BasicConfiguration basic)
+        {
+            if (_coreFactory != null && _coreFactory is IDiagnosticDescription dd1)
+            {
+                return dd1.DescribeConfiguration(basic);
+            }
+            if (_coreAsyncFactory != null && _coreAsyncFactory is IDiagnosticDescription dd2)
+            {
+                return dd2.DescribeConfiguration(basic);
+            }
+            return LdValue.Of("custom");
         }
     }
 }

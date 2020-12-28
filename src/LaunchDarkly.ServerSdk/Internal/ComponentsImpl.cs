@@ -10,11 +10,13 @@ namespace LaunchDarkly.Sdk.Server.Internal
     /// </summary>
     internal static class ComponentsImpl
     {
-        internal sealed class InMemoryDataStoreFactory : IDataStoreFactory
+        internal sealed class InMemoryDataStoreFactory : IDataStoreFactory, IDiagnosticDescription
         {
             internal static readonly InMemoryDataStoreFactory Instance = new InMemoryDataStoreFactory();
 
             public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates _) => new InMemoryDataStore();
+
+            public LdValue DescribeConfiguration(BasicConfiguration _) => LdValue.Of("memory");
         }
 
         internal sealed class NullDataSource : IDataSource
