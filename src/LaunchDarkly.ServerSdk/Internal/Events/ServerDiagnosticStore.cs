@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
@@ -70,7 +71,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         }
 
         private LdValue InitEventPlatform() =>
-            LdValue.BuildObject().Add("name", "dotnet").Build();
+            LdValue.BuildObject()
+                .Add("name", "dotnet")
+                .Add("dotNetTargetFramework", LdValue.Of(GetDotNetTargetFramework()))
+                .Add("osName", LdValue.Of(GetOSName()))
+                .Add("osVersion", LdValue.Of(GetOSVersion()))
+                .Add("osArch", LdValue.Of(GetOSArch()))
+                .Build();
 
         private LdValue InitEventSdk()
         {
@@ -132,6 +139,66 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                     builder.Add(prop.Key, prop.Value); // TODO: filter allowable properties
                 }
             }
+        }
+
+        internal static string GetOSName()
+        {
+            // Environment.OSVersion.Platform is another way to get this information, except that it does not
+            // reliably distinguish between MacOS and Linux.
+
+#if NET452
+            // .NET Framework 4.5 does not support RuntimeInformation.ISOSPlatform. We could use Environment.OSVersion.Platform
+            // instead (it's similar, except that it can't reliably distinguish between MacOS and Linux)... but .NET 4.5 can't
+            // run on anything but Windows anyway.
+            return "Windows";
+#else
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return "Linux";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "MacOS";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return "Windows";
+            }
+            return "unknown";
+#endif
+        }
+
+        internal static string GetOSVersion()
+        {
+            // .NET's way of reporting Windows versions is very idiosyncratic, e.g. Windows 8 is "6.2", but we'll
+            // just report what it says and translate it later when we look at the analytics.
+            return Environment.OSVersion.Version.ToString();
+        }
+
+        internal static string GetOSArch()
+        {
+#if NET452
+            // .NET Standard 4.5 does not support RuntimeInformation.OSArchitecture
+            return "unknown";
+#else
+            return RuntimeInformation.OSArchitecture.ToString().ToLower(); // "arm", "arm64", "x64", "x86"
+#endif
+        }
+
+        internal static string GetDotNetTargetFramework()
+        {
+            // Note that this is the _target framework_ that was selected at build time based on the application's
+            // compatibility requirements; it doesn't tell us anything about the actual OS version. We'll need to
+            // update this whenever we add or remove supported target frameworks in the .csproj file.
+#if NETSTANDARD2_0
+            return "netstandard2.0";
+#elif NET452
+            return "net452";
+#elif NET471
+            return "net471";
+#else
+            return "unknown";
+#endif
         }
 
         #endregion

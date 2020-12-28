@@ -5,6 +5,7 @@ using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Events;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -18,8 +19,6 @@ namespace LaunchDarkly.Sdk.Server
         private const string sdkKey = "SDK_KEY";
         private const string testWrapperName = "wrapper-name";
         private const string testWrapperVersion = "1.2.3";
-        private static readonly LdValue expectedPlatform =
-            LdValue.BuildObject().Add("name", "dotnet").Build();
         private static readonly LdValue expectedSdk = LdValue.BuildObject()
             .Add("name", "dotnet-server-sdk")
             .Add("version", AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
@@ -67,13 +66,23 @@ namespace LaunchDarkly.Sdk.Server
 
                 var data = LdValue.Parse(payload.Data);
                 Assert.Equal("diagnostic-init", data.Get("kind").AsString);
-                AssertJsonEqual(expectedPlatform, data.Get("platform"));
+                AssertJsonEqual(ExpectedPlatform(), data.Get("platform"));
                 AssertJsonEqual(expectedSdk, data.Get("sdk"));
                 Assert.Equal("DK_KEY", data.Get("id").Get("sdkKeySuffix").AsString);
 
                 var timestamp = data.Get("creationDate").AsLong;
                 Assert.NotEqual(0, timestamp);
             }
+        }
+
+        private static LdValue ExpectedPlatform()
+        {
+            return LdValue.BuildObject().Add("name", "dotnet")
+                .Add("dotNetTargetFramework", ServerDiagnosticStore.GetDotNetTargetFramework())
+                .Add("osName", ServerDiagnosticStore.GetOSName())
+                .Add("osVersion", ServerDiagnosticStore.GetOSVersion())
+                .Add("osArch", ServerDiagnosticStore.GetOSArch())
+                .Build();
         }
 
         [Fact]
