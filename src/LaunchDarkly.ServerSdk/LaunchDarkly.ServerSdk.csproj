@@ -3,11 +3,18 @@
     <Version>6.0.0-alpha.1</Version>
     <TargetFrameworks>netstandard2.0;net452;net471</TargetFrameworks>
     <!-- Note: whenever we add or remove supported target frameworks, we must update ServerDiagnosticStore.GetDotNetTargetFramework() -->
-    <PackageLicenseUrl>https://raw.githubusercontent.com/launchdarkly/dotnet-server-sdk/master/LICENSE</PackageLicenseUrl>
     <DebugType>portable</DebugType>
     <AssemblyName>LaunchDarkly.ServerSdk</AssemblyName>
     <OutputType>Library</OutputType>
     <PackageId>LaunchDarkly.ServerSdk</PackageId>
+    <Company>LaunchDarkly</Company>
+    <Copyright>Copyright 2020 LaunchDarkly</Copyright>
+    <LicenseExpression>Apache-2.0</LicenseExpression>
+    <PackageProjectUrl>https://github.com/launchdarkly/dotnet-server-sdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/launchdarkly/dotnet-server-sdk</RepositoryUrl>
+    <RepositoryBranch>master</RepositoryBranch>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
