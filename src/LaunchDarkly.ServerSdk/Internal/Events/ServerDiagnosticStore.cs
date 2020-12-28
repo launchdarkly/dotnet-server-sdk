@@ -98,16 +98,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         private LdValue InitEventConfig()
         {
             var configInfo = LdValue.BuildObject();
-            configInfo.Add("connectTimeoutMillis", HttpConfig.ConnectTimeout.TotalMilliseconds);
-            configInfo.Add("socketTimeoutMillis", HttpConfig.ReadTimeout.TotalMilliseconds);
-            configInfo.Add("usingProxy", false);
-            configInfo.Add("usingProxyAuthenticator", false);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
 
             // Allow each pluggable component to describe its own relevant properties.
             MergeComponentProperties(configInfo, Config.DataStoreFactory ?? Components.InMemoryDataStore, "dataStoreType");
             MergeComponentProperties(configInfo, Config.DataSourceFactory ?? Components.StreamingDataSource(), null);
             MergeComponentProperties(configInfo, Config.EventProcessorFactory ?? Components.SendEvents(), null);
+            MergeComponentProperties(configInfo, Config.HttpConfigurationFactory ?? Components.HttpConfiguration(), null);
 
             return configInfo.Build();
         }
