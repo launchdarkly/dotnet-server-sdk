@@ -8,7 +8,6 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -112,8 +111,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
             var allData = new FullDataSet<ItemDescriptor>(
                 ImmutableDictionary.Create<DataKind, KeyedItems<ItemDescriptor>>()
-                    .SetItem(DataKinds.Features, new KeyedItems<ItemDescriptor>(flags))
-                    .SetItem(DataKinds.Segments, new KeyedItems<ItemDescriptor>(segments))
+                    .SetItem(DataModel.Features, new KeyedItems<ItemDescriptor>(flags))
+                    .SetItem(DataModel.Segments, new KeyedItems<ItemDescriptor>(segments))
             );
             _dataSourceUpdates.Init(allData);
             _loadedValidData = true;

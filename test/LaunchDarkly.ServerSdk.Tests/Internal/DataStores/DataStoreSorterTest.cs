@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
@@ -32,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         internal static readonly FullDataSet<ItemDescriptor> DependencyOrderingTestData =
             new TestDataBuilder()
-                .Add(DataKinds.Features, "a", 1,
+                .Add(DataModel.Features, "a", 1,
                     new FeatureFlagBuilder("a")
                         .Prerequisites(new List<Prerequisite>()
                         {
@@ -40,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                             new Prerequisite("c", 0),
                         })
                     .Build())
-                .Add(DataKinds.Features, "b", 1,
+                .Add(DataModel.Features, "b", 1,
                     new FeatureFlagBuilder("b")
                         .Prerequisites(new List<Prerequisite>()
                         {
@@ -48,11 +47,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                             new Prerequisite("e", 0),
                         })
                     .Build())
-                .Add(DataKinds.Features, "c", 1, new FeatureFlagBuilder("c").Build())
-                .Add(DataKinds.Features, "d", 1, new FeatureFlagBuilder("d").Build())
-                .Add(DataKinds.Features, "e", 1, new FeatureFlagBuilder("e").Build())
-                .Add(DataKinds.Features, "f", 1, new FeatureFlagBuilder("f").Build())
-                .Add(DataKinds.Segments, "o", 1, new Segment("o", 1, null, null, null, null, false))
+                .Add(DataModel.Features, "c", 1, new FeatureFlagBuilder("c").Build())
+                .Add(DataModel.Features, "d", 1, new FeatureFlagBuilder("d").Build())
+                .Add(DataModel.Features, "e", 1, new FeatureFlagBuilder("e").Build())
+                .Add(DataModel.Features, "f", 1, new FeatureFlagBuilder("f").Build())
+                .Add(DataModel.Segments, "o", 1, new Segment("o", 1, null, null, null, null, false))
                 .Build();
 
         internal struct KeyOrderConstraint
@@ -64,9 +63,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         internal static List<KeyValuePair<DataKind, List<KeyOrderConstraint>>> ExpectedOrderingForSortedDataSet =
             new List<KeyValuePair<DataKind, List<KeyOrderConstraint>>>()
                 {
-                    new KeyValuePair<DataKind, List<KeyOrderConstraint>>(DataKinds.Segments,
+                    new KeyValuePair<DataKind, List<KeyOrderConstraint>>(DataModel.Segments,
                         new List<KeyOrderConstraint>()), // ordering within segments doesn't matter
-                    new KeyValuePair<DataKind, List<KeyOrderConstraint>>(DataKinds.Features,
+                    new KeyValuePair<DataKind, List<KeyOrderConstraint>>(DataModel.Features,
                         new List<KeyOrderConstraint>()
                         {
                             new KeyOrderConstraint { EarlierKey = "c", LaterKey = "b" },

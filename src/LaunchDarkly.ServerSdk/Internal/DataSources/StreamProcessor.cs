@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.EventSource;
 using LaunchDarkly.Logging;
@@ -273,15 +272,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     DataKind patchKind;
                     string patchKey;
                     ItemDescriptor item;
-                    if (GetKeyFromPath(patchData.Path, DataKinds.Features, out patchKey))
+                    if (GetKeyFromPath(patchData.Path, DataModel.Features, out patchKey))
                     {
-                        patchKind = DataKinds.Features;
+                        patchKind = DataModel.Features;
                         FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
                         item = new ItemDescriptor(flag.Version, flag);
                     }
-                    else if (GetKeyFromPath(patchData.Path, DataKinds.Segments, out patchKey))
+                    else if (GetKeyFromPath(patchData.Path, DataModel.Segments, out patchKey))
                     {
-                        patchKind = DataKinds.Segments;
+                        patchKind = DataModel.Segments;
                         Segment segment = patchData.Data.ToObject<Segment>();
                         item = new ItemDescriptor(segment.Version, segment);
                     }
@@ -310,13 +309,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     var tombstone = new ItemDescriptor(deleteData.Version, null);
                     DataKind deleteKind;
                     string deleteKey;
-                    if (GetKeyFromPath(deleteData.Path, DataKinds.Features, out deleteKey))
+                    if (GetKeyFromPath(deleteData.Path, DataModel.Features, out deleteKey))
                     {
-                        deleteKind = DataKinds.Features;
+                        deleteKind = DataModel.Features;
                     }
-                    else if (GetKeyFromPath(deleteData.Path, DataKinds.Segments, out deleteKey))
+                    else if (GetKeyFromPath(deleteData.Path, DataModel.Segments, out deleteKey))
                     {
-                        deleteKind = DataKinds.Segments;
+                        deleteKind = DataModel.Segments;
                     }
                     else
                     {

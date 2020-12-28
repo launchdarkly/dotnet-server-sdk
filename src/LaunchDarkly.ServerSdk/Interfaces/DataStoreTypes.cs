@@ -23,8 +23,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         public class DataKind
         {
             private readonly string _name;
-            private readonly Func<object, string> _serializer;
-            private readonly Func<string, object> _deserializer;
+            private readonly Func<ItemDescriptor, string> _serializer;
+            private readonly Func<string, ItemDescriptor> _deserializer;
 
             /// <summary>
             /// A case-sensitive alphabetic string that uniquely identifies this data kind.
@@ -36,12 +36,37 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// </remarks>
             public string Name => _name;
 
-            // Note that Serialize and Deserialize are never called by application code, not even by custom
-            // data store implementations; the SDK always pre-serializes data before passing it to a
-            // persistent data store.
-            internal string Serialize(object o) => _serializer(o);
+            /// <summary>
+            /// Returns a serialized representation of an item of this kind.
+            /// </summary>
+            /// <remarks>
+            /// The SDK uses this function to generate the data that is stored by an <see cref="IPersistentDataStore"/>.
+            /// Store implementations normally do not need to call it, except in a special case described in the
+            /// documentation for <see cref="IPersistentDataStore"/> regarding deleted item placeholders.
+            /// </remarks>
+            /// <param name="item">an <see cref="ItemDescriptor"/></param> describing the object to be serialized
+            /// <returns>the serialized representation</returns>
+            public string Serialize(ItemDescriptor item) => _serializer(item);
 
-            internal object Deserialize(string serializedData) => _deserializer(serializedData);
+            /// <summary>
+            /// Creates an item of this kind from its serialized representation.
+            /// </summary>
+            /// <remarks>
+            /// <para>
+            /// The SDK uses this function to translate data that is returned by an <see cref="IPersistentDataStore"/>.
+            /// Store implementations normally do not need to call it, except in a special case described in the
+            /// documentation for <see cref="IPersistentDataStore"/> regarding updates.
+            /// </para>
+            /// <para>
+            /// The returned <see cref="ItemDescriptor"/> has two properties: <see cref="ItemDescriptor.Item"/>,
+            /// which is the deserialized object <i>or</i> a <see langword="null"/> value for a deleted item
+            /// placeholder, and <see cref="ItemDescriptor.Version"/>, which provides the object's version number
+            /// regardless of whether it is deleted or not.
+            /// </para>
+            /// </remarks>
+            /// <param name="serializedData">the serialized representation</param>
+            /// <returns>an <see cref="ItemDescriptor"/> describing the deserialized object</returns>
+            public ItemDescriptor Deserialize(string serializedData) => _deserializer(serializedData);
 
             /// <summary>
             /// Constructor for use in testing.
@@ -53,8 +78,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// <param name="name">value for the <c>Name</c> property</param>
             /// <param name="serializer">function to convert an item to a serialized string form</param>
             /// <param name="deserializer">function to convert an item from a serialized string form</param>
-            public DataKind(string name, Func<object, string> serializer,
-                Func<string, object> deserializer)
+            public DataKind(string name, Func<ItemDescriptor, string> serializer,
+                Func<string, ItemDescriptor> deserializer)
             {
                 _name = name;
                 _serializer = serializer;
@@ -138,40 +163,46 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         public struct SerializedItemDescriptor
         {
-            private readonly int _version;
-            private readonly string _serializedItem;
-
             /// <summary>
             /// The version number of this data, provided by the SDK.
             /// </summary>
-            public int Version => _version;
+            public int Version { get; }
 
             /// <summary>
-            /// The serialized data item, or null if this is a placeholder for a deleted item.
+            /// True if this is a placeholder (tombstone) for a deleted item.
             /// </summary>
-            public string SerializedItem => _serializedItem;
+            /// <remarks>
+            /// If this is true, <see cref="SerializedItem"/> may still contain a string representing the
+            /// deleted item, but the persistent store implementation has the option of not storing it if
+            /// it can represent the placeholder in a more efficient way.
+            /// </remarks>
+            public bool Deleted { get; }
+
+            /// <summary>
+            /// The data item's serialized representatation.
+            /// </summary>
+            /// <remarks>
+            /// This will never be null; for a deleted item placeholder, it will contain a special value
+            /// that can be stored if necessary (see <see cref="Deleted"/>).
+            /// </remarks>
+            public string SerializedItem { get; }
 
             /// <summary>
             /// Constructs an instance.
             /// </summary>
             /// <param name="version">the version number</param>
-            /// <param name="serializedItem">the serialized data item, or null for a deleted item</param>
-            public SerializedItemDescriptor(int version, string serializedItem)
+            /// <param name="deleted">true if this is a deleted item placeholder</param>
+            /// <param name="serializedItem">the serialized data item (will not be null)</param>
+            public SerializedItemDescriptor(int version, bool deleted, string serializedItem)
             {
-                _version = version;
-                _serializedItem = serializedItem;
+                Version = version;
+                Deleted = deleted;
+                SerializedItem = serializedItem;
             }
 
-            /// <summary>
-            /// Shortcut for constructing a deleted item placeholder.
-            /// </summary>
-            /// <param name="version">the version number</param>
-            /// <returns>the item descriptor</returns>
-            public static SerializedItemDescriptor Deleted(int version) =>
-                new SerializedItemDescriptor(version, null);
-
             /// <inheritdoc/>
-            public override string ToString() => "SerializedItemDescriptor(" + Version + "," + SerializedItem;
+            public override string ToString() => "SerializedItemDescriptor(" + Version + ","
+                + Deleted + "," + SerializedItem + ")";
         }
 
         /// <summary>

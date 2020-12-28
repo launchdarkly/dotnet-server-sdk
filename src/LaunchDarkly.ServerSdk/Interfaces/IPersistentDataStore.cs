@@ -27,6 +27,38 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// Implementations that use a task-based asynchronous pattern can use
     /// <see cref="IPersistentDataStoreAsync"/> instead.
     /// </para>
+    /// <para>
+    /// Conceptually, each item in the store is a <see cref="SerializedItemDescriptor"/> which
+    /// always has a version number, and can represent either a serialized object or a
+    /// placeholder (tombstone) for a deleted item. There are two approaches a persistent store
+    /// implementation can use for persisting this data:
+    /// </para>
+    /// <list type="number">
+    /// <item>
+    /// Preferably, it should store the version number and the <see cref="SerializedItemDescriptor.Deleted"/>
+    /// state separately so that the object does not need to be fully deserialized to read
+    /// them. In this case, deleted item placeholders can ignore the value of
+    /// <see cref="SerializedItemDescriptor.SerializedItem"/> on writes and can set it to
+    /// null on reads. The store should never call <see cref="DataKind.Deserialize(string)"/>
+    /// or <see cref="DataKind.Serialize(ItemDescriptor)"/> in this case.
+    /// </item>
+    /// <item>
+    /// If that isn't possible, then the store should simply persist the exact string from
+    /// <see cref="SerializedItemDescriptor.SerializedItem"/> on writes, and return the persisted
+    /// string on reads -- setting <see cref="SerializedItemDescriptor.Version"/> to zero and
+    /// <see cref="SerializedItemDescriptor.Deleted"/> to false. The string is guaranteed to
+    /// provide the SDK with enough information to infer the version and the deleted state.
+    /// On updates, the store will have to call <see cref="DataKind.Deserialize(string)"/> in
+    /// order to inspect the version number of the existing item if any.
+    /// </item>
+    /// </list>
+    /// <para>
+    /// Error handling is defined as follows: if any data store operation encounters a database
+    /// error, or is otherwise unable to complete its task, it should throw an exception to make
+    /// the SDK aware of this. The SDK will log the exception and will assume that the data store
+    /// is now in a non-operational state; the SDK will then start polling <see cref="IsStoreAvailable"/>
+    /// to determine when the store has started working again.
+    /// </para>
     /// </remarks>
     /// <seealso cref="IPersistentDataStoreFactory"/>
     /// <seealso cref="IPersistentDataStoreAsync"/>
@@ -54,8 +86,23 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Retrieves an item from the specified collection, if available.
         /// </summary>
         /// <remarks>
-        /// If the item has been deleted and the store contains a placeholder, it should
-        /// return that placeholder rather than null.
+        /// <para>
+        /// If the key is not known at all, the method should return null. Otherwise, it should return
+        /// a <see cref="SerializedItemDescriptor"/> as follows:
+        /// </para>
+        /// <list type="number">
+        /// <item>
+        /// If the version number and deletion state can be determined without fully deserializing
+        /// the item, then the store should set those properties in the <see cref="SerializedItemDescriptor"/>
+        /// (and can set <see cref="SerializedItemDescriptor.SerializedItem"/> to null for deleted items).
+        /// </item>
+        /// <item>
+        /// Otherwise, it should simply set <see cref="SerializedItemDescriptor.SerializedItem"/> to
+        /// the exact string that was persisted, and can leave the other properties as zero/false. The
+        /// SDK will inspect the properties of the item after deserializing it to fill in the rest of
+        /// the information.
+        /// </item>
+        /// </list>
         /// </remarks>
         /// <param name="kind">specifies which collection to use</param>
         /// <param name="key">the unique key of the item within that collection</param>
@@ -68,7 +115,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <remarks>
         /// If the store contains placeholders for deleted items, it should include them in
-        /// the results, not filter them out.
+        /// the results, not filter them out. See <see cref="Get(DataKind, string)"/> for how to set
+        /// the properties of the <see cref="SerializedItemDescriptor"/> for each item.
         /// </remarks>
         /// <param name="kind">specifies which collection to use</param>
         /// <returns>a collection of key-value pairs; the ordering is not significant</returns>

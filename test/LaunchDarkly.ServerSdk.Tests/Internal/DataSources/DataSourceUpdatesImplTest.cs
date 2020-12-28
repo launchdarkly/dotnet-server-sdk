@@ -77,7 +77,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataKinds.Features, flag2.Key, DescriptorOf(flag2));
+            updates.Upsert(DataModel.Features, flag2.Key, DescriptorOf(flag2));
 
             ExpectFlagChangeEvents(eventSink, flag2.Key);
         }
@@ -113,7 +113,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataKinds.Features, flag2v2.Key, DescriptorOf(flag2v2));
+            updates.Upsert(DataModel.Features, flag2v2.Key, DescriptorOf(flag2v2));
 
             ExpectFlagChangeEvents(eventSink, flag2v2.Key);
         }
@@ -130,7 +130,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataKinds.Features, flag2.Key, DescriptorOf(flag2));
+            updates.Upsert(DataModel.Features, flag2.Key, DescriptorOf(flag2));
 
             eventSink.ExpectNoValue();
         }
@@ -165,7 +165,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataKinds.Features, flag2.Key, ItemDescriptor.Deleted(flag2v2.Version));
+            updates.Upsert(DataModel.Features, flag2.Key, ItemDescriptor.Deleted(flag2v2.Version));
 
             ExpectFlagChangeEvents(eventSink, flag2.Key);
         }
@@ -220,7 +220,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataKinds.Features, "flag1", DescriptorOf(
+            updates.Upsert(DataModel.Features, "flag1", DescriptorOf(
                 new FeatureFlagBuilder("flag1").Version(2).Build()));
 
             ExpectFlagChangeEvents(eventSink, "flag1", "flag2", "flag4", "flag5");
@@ -282,7 +282,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataKinds.Segments, segment1.Key, DescriptorOf(segment1v2));
+            updates.Upsert(DataModel.Segments, segment1.Key, DescriptorOf(segment1v2));
 
             ExpectFlagChangeEvents(eventSink, "flag2", "flag4");
         }

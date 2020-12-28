@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Integrations;
-using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json.Linq;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -24,21 +23,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 foreach (KeyValuePair<string, JToken> e in data.Flags)
                 {
-                    AddItem(DataKinds.Features, flagsOut, e.Key, FlagFactory.FlagFromJson(e.Value));
+                    AddItem(DataModel.Features, flagsOut, e.Key, FlagFactory.FlagFromJson(e.Value));
                 }
             }
             if (data.FlagValues != null)
             {
                 foreach (KeyValuePair<string, JToken> e in data.FlagValues)
                 {
-                    AddItem(DataKinds.Features, flagsOut, e.Key, FlagFactory.FlagWithValue(e.Key, e.Value));
+                    AddItem(DataModel.Features, flagsOut, e.Key, FlagFactory.FlagWithValue(e.Key, e.Value));
                 }
             }
             if (data.Segments != null)
             {
                 foreach (KeyValuePair<string, JToken> e in data.Segments)
                 {
-                    AddItem(DataKinds.Segments, segmentsOut, e.Key, FlagFactory.SegmentFromJson(e.Value));
+                    AddItem(DataModel.Segments, segmentsOut, e.Key, FlagFactory.SegmentFromJson(e.Value));
                 }
             }
         }

@@ -49,13 +49,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 new Dictionary<DataKind, KeyedItems<ItemDescriptor>>
                 {
                     {
-                        DataKinds.Features,
+                        DataModel.Features,
                         new KeyedItems<ItemDescriptor>(
                             _flags.ToDictionary(kv => kv.Key, kv => DescriptorOf(kv.Value))
                         )
                     },
                     {
-                        DataKinds.Segments,
+                        DataModel.Segments,
                         new KeyedItems<ItemDescriptor>(
                             _segments.ToDictionary(kv => kv.Key, kv => DescriptorOf(kv.Value))
                         )

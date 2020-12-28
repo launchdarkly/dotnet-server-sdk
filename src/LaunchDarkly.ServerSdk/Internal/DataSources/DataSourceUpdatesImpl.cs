@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
-using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -111,7 +110,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     // whatever was changed
                     var oldDataBuilder = ImmutableDictionary.CreateBuilder<DataKind,
                         ImmutableDictionary<string, ItemDescriptor>>();
-                    foreach (var kind in DataKinds.All)
+                    foreach (var kind in DataModel.AllDataKinds)
                     {
                         var items = _store.GetAll(kind);
                         oldDataBuilder.Add(kind, items.Items.ToImmutableDictionary());
@@ -275,7 +274,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var sender = this;
             foreach (var item in affectedItems)
             {
-                if (item.Kind == DataKinds.Features)
+                if (item.Kind == DataModel.Features)
                 {
                     var eventArgs = new FlagChangeEvent(item.Key);
                     _taskExecutor.ScheduleEvent(this, eventArgs, copyOfHandlers);
@@ -315,7 +314,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             ISet<KindAndKey> affectedItems = new HashSet<KindAndKey>();
             var emptyDict = ImmutableDictionary.Create<string, ItemDescriptor>();
-            foreach (var kind in DataKinds.All)
+            foreach (var kind in DataModel.AllDataKinds)
             {
                 var oldItems = oldDataMap.GetValueOrDefault(kind, emptyDict);
                 var newItems = newDataMap.GetValueOrDefault(kind, emptyDict);

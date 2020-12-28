@@ -26,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server
                 var updates = dataSourceFactory.DataSourceUpdates;
 
                 var flagV1 = new FeatureFlagBuilder(flagKey).Version(1).Build();
-                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV1));
+                updates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV1));
 
                 var eventSink1 = new EventSink<FlagChangeEvent>();
                 var eventSink2 = new EventSink<FlagChangeEvent>();
@@ -39,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server
                 eventSink2.ExpectNoValue();
 
                 var flagV2 = new FeatureFlagBuilder(flagKey).Version(2).Build();
-                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV2));
+                updates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV2));
 
 
                 var event1 = eventSink1.ExpectValue();
@@ -53,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server
                 client.FlagTracker.FlagChanged -= listener2;
 
                 var flagV3 = new FeatureFlagBuilder(flagKey).Version(3).Build();
-                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV3));
+                updates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV3));
 
                 var event3 = eventSink1.ExpectValue();
                 Assert.Equal(flagKey, event3.Key);
@@ -79,7 +79,7 @@ namespace LaunchDarkly.Sdk.Server
                 var flagV1 = new FeatureFlagBuilder(flagKey).Version(1).On(true)
                     .Variations(LdValue.Of(false), LdValue.Of(true)).FallthroughVariation(0)
                     .Build();
-                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV1));
+                updates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV1));
 
                 var eventSink1 = new EventSink<FlagValueChangeEvent>();
                 var eventSink2 = new EventSink<FlagValueChangeEvent>();
@@ -101,7 +101,7 @@ namespace LaunchDarkly.Sdk.Server
                     .Variations(LdValue.Of(false), LdValue.Of(true)).FallthroughVariation(0)
                     .Targets(new Target(new List<string> { user.Key }, 1))
                     .Build();
-                updates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV2));
+                updates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV2));
 
                 // eventSink1 receives a value change event
                 var event1 = eventSink1.ExpectValue();

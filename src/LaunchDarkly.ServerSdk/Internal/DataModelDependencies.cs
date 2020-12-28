@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -89,7 +87,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 return new HashSet<KindAndKey>();
             }
-            if (fromKind == DataKinds.Features)
+            if (fromKind == DataModel.Features)
             {
                 var flag = fromItem.Item as FeatureFlag;
                 var prereqFlagKeys = (flag.Prerequisites ?? Enumerable.Empty<Prerequisite>()).Select(p => p.Key);
@@ -100,8 +98,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                             Enumerable.Empty<string>()
                     )
                 );
-                return new HashSet<KindAndKey>(prereqFlagKeys.Select(key => new KindAndKey(DataKinds.Features, key))
-                    .Union(segmentKeys.Select(key => new KindAndKey(DataKinds.Segments, key))));
+                return new HashSet<KindAndKey>(prereqFlagKeys.Select(key => new KindAndKey(DataModel.Features, key))
+                    .Union(segmentKeys.Select(key => new KindAndKey(DataModel.Segments, key))));
             }
             return new HashSet<KindAndKey>();
         }

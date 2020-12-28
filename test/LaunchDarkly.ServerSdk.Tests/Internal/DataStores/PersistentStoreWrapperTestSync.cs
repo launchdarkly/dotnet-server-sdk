@@ -9,9 +9,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         public PersistentStoreWrapperTestSync(ITestOutputHelper testOutput) :
             base(new MockCoreSync(), testOutput) { }
 
-        internal override PersistentStoreWrapper MakeWrapperWithCacheConfig(DataStoreCacheConfig config)
+        internal override PersistentStoreWrapper MakeWrapper(TestParams testParams)
         {
-            return new PersistentStoreWrapper(_core, config, _dataStoreUpdates, _taskExecutor, testLogger);
+            _core.PersistOnlyAsString = testParams.PersistMode.PersistOnlyAsString;
+            return new PersistentStoreWrapper(_core, testParams.CacheMode.CacheConfig, _dataStoreUpdates, _taskExecutor, testLogger);
         }
     }
     

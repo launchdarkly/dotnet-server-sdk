@@ -202,8 +202,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
-            var serializedItem = new SerializedItemDescriptor(item.Version,
-                item.Item is null ? null : kind.Serialize(item.Item));
+            var serializedItem = Serialize(kind, item);
             bool updated = false;
             Exception failure = null;
             try
@@ -330,9 +329,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         private SerializedItemDescriptor Serialize(DataKind kind, ItemDescriptor itemDesc)
         {
-            var item = itemDesc.Item;
             return new SerializedItemDescriptor(itemDesc.Version,
-                item is null ? null : kind.Serialize(item));
+                itemDesc.Item is null, kind.Serialize(itemDesc));
         }
 
         private KeyedItems<SerializedItemDescriptor> SerializeAll(DataKind kind,
@@ -349,9 +347,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         private ItemDescriptor Deserialize(DataKind kind, SerializedItemDescriptor serializedItemDesc)
         {
-            var serializedItem = serializedItemDesc.SerializedItem;
-            return new ItemDescriptor(serializedItemDesc.Version,
-                serializedItem is null ? null : kind.Deserialize(serializedItem));
+            if (serializedItemDesc.Deleted || serializedItemDesc.SerializedItem is null)
+            {
+                return ItemDescriptor.Deleted(serializedItemDesc.Version);
+            }
+            var deserializedItem = kind.Deserialize(serializedItemDesc.SerializedItem);
+            if (serializedItemDesc.Version == 0 || serializedItemDesc.Version == deserializedItem.Version
+                || deserializedItem.Item is null)
+            {
+                return deserializedItem;
+            }
+            // If the store gave us a version number that isn't what was encoded in the object, trust it
+            return new ItemDescriptor(serializedItemDesc.Version, deserializedItem.Item);
         }
 
         private Exception InitCore(FullDataSet<SerializedItemDescriptor> allData)

@@ -74,10 +74,10 @@ namespace LaunchDarkly.Sdk.Server
         internal static ItemDescriptor DescriptorOf(Segment item) => new ItemDescriptor(item.Version, item);
 
         internal static bool UpsertFlag(IDataStore store, FeatureFlag item) =>
-            store.Upsert(DataKinds.Features, item.Key, DescriptorOf(item));
+            store.Upsert(DataModel.Features, item.Key, DescriptorOf(item));
 
         internal static bool UpsertSegment(IDataStore store, Segment item) =>
-            store.Upsert(DataKinds.Segments, item.Key, DescriptorOf(item));
+            store.Upsert(DataModel.Segments, item.Key, DescriptorOf(item));
 
         public static IDataStoreFactory SpecificDataStore(IDataStore store) =>
             new SpecificDataStoreFactory(store);
