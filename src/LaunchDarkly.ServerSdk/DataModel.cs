@@ -76,6 +76,10 @@ namespace LaunchDarkly.Sdk.Server
         {
             return item =>
             {
+                if (item.Item is null)
+                {
+                    return @"{""version"":" + item.Version + @",""deleted"":true}";
+                }
                 if (item.Item.GetType() == expectedType)
                 {
                     return JsonUtil.EncodeJson(item.Item);
