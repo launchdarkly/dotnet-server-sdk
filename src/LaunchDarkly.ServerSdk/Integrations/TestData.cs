@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -52,6 +54,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         private readonly object _lock = new object();
         private readonly Dictionary<string, ItemDescriptor> _currentFlags =
+            new Dictionary<string, ItemDescriptor>();
+        private readonly Dictionary<string, ItemDescriptor> _currentSegments =
             new Dictionary<string, ItemDescriptor>();
         private readonly Dictionary<string, FlagBuilder> _currentBuilders =
             new Dictionary<string, FlagBuilder>();
@@ -136,6 +140,12 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             var key = flagBuilder._key;
             var clonedBuilder = new FlagBuilder(flagBuilder);
+            UpdateInternal(key, flagBuilder.CreateFlag, clonedBuilder);
+            return this;
+        }
+
+        private void UpdateInternal(string key, Func<int, ItemDescriptor> makeFlag, FlagBuilder builder)
+        {
             ItemDescriptor newItem;
             DataSourceImpl[] instances;
 
@@ -143,15 +153,71 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             {
                 var oldVersion = _currentFlags.TryGetValue(key, out var oldItem) ?
                     oldItem.Version : 0;
-                newItem = flagBuilder.CreateFlag(oldVersion + 1);
+                newItem = makeFlag(oldVersion + 1);
                 _currentFlags[key] = newItem;
-                _currentBuilders[key] = clonedBuilder;
+                if (builder is null)
+                {
+                    _currentBuilders.Remove(key);
+                }
+                else
+                {
+                    _currentBuilders[key] = builder;
+                }
                 instances = _instances.ToArray();
             }
 
             foreach (var instance in instances)
             {
                 instance._updates.Upsert(DataModel.Features, key, newItem);
+            }
+        }
+
+        /// <summary>
+        /// For SDK tests only - inserts a full feature flag data model object into the test data.
+        /// </summary>
+        /// <remarks>
+        /// This fully replaces any existing flag with the same key, and immediately propagates the change
+        /// to any LdClient instance(s) using the data source.
+        /// </remarks>
+        /// <param name="flag">a flag instance</param>
+        /// <returns>the same <see cref="TestData"/> instance</returns>
+        internal TestData UsePreconfiguredFlag(FeatureFlag flag)
+        {
+            UpdateInternal(flag.Key,
+                version =>
+                {
+                    if (flag.Version < version)
+                    {
+                        flag.Version = version;
+                    }
+                    return new ItemDescriptor(flag.Version, flag);
+                },
+                null);
+            return this;
+        }
+
+        internal TestData UsePreconfiguredSegment(Segment segment)
+        {
+            ItemDescriptor newItem;
+            DataSourceImpl[] instances;
+
+            lock (_lock)
+            {
+                var oldVersion = _currentSegments.TryGetValue(segment.Key, out var oldItem) ?
+                    oldItem.Version : 0;
+                var newVersion = oldVersion + 1;
+                if (segment.Version < newVersion)
+                {
+                    segment.Version = newVersion;
+                }
+                newItem = new ItemDescriptor(newVersion, segment);
+                _currentSegments[segment.Key] = newItem;
+                instances = _instances.ToArray();
+            }
+
+            foreach (var instance in instances)
+            {
+                instance._updates.Upsert(DataModel.Segments, segment.Key, newItem);
             }
 
             return this;
@@ -212,7 +278,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     ));
                 b.Add(new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(
                     DataModel.Segments,
-                    KeyedItems<ItemDescriptor>.Empty()
+                    new KeyedItems<ItemDescriptor>(_currentSegments.ToImmutableDictionary())
                     ));
                 return new FullDataSet<ItemDescriptor>(b.ToImmutable());
             }
