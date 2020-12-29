@@ -109,7 +109,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// The default is <see cref="Components.InMemoryDataStore"/>, but you may choose to use a custom
         /// implementation such as a database integration. For the latter, you will normally
-        /// use <see cref="Components.PersistentStore(IPersistentDataStoreFactory)"/> in
+        /// use <see cref="Components.PersistentDataStore(IPersistentDataStoreFactory)"/> in
         /// conjunction with some specific type for that integration.
         /// </para>
         /// <para>

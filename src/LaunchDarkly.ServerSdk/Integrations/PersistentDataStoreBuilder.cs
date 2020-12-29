@@ -15,10 +15,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// provide an <see cref="IPersistentDataStoreFactory"/> or <see cref="IPersistentDataStoreAsyncFactory"/>
     /// that implements the specific data store behavior. The SDK then provides additional
     /// options for caching; those are defined by this type, which is returned by
-    /// <see cref="Components.PersistentStore(IPersistentDataStoreFactory)"/>. Example usage:
+    /// <see cref="Components.PersistentDataStore(IPersistentDataStoreFactory)"/>. Example usage:
     /// </para>
     /// <code>
-    ///     var myStore = Components.PersistentStore(Redis.FeatureStore())
+    ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
     ///         .CacheTtl(TimeSpan.FromSeconds(45));
     ///     var config = Configuration.Builder(sdkKey)
     ///         .DataStore(myStore)

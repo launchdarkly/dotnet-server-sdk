@@ -170,7 +170,7 @@ namespace LaunchDarkly.Sdk.Server
         /// configuration in the SDK. Example usage:
         /// </para>
         /// <code>
-        ///     var myStore = Components.PersistentStore(Redis.FeatureStore())
+        ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
         ///         .CacheTtl(TimeSpan.FromSeconds(45));
         ///     var config = Configuration.Builder(sdkKey)
         ///         .DataStore(myStore)
@@ -184,7 +184,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
         /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
-        public static PersistentDataStoreBuilder PersistentStore(IPersistentDataStoreFactory storeFactory)
+        public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreFactory storeFactory)
         {
             return new PersistentDataStoreBuilder(storeFactory);
         }
@@ -202,7 +202,7 @@ namespace LaunchDarkly.Sdk.Server
         /// configuration in the SDK. Example usage:
         /// </para>
         /// <code>
-        ///     var myStore = Components.PersistentStore(Redis.FeatureStore())
+        ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
         ///         .CacheTtl(TimeSpan.FromSeconds(45));
         ///     var config = Configuration.Builder(sdkKey)
         ///         .DataStore(myStore)
@@ -216,7 +216,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
         /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
-        public static PersistentDataStoreBuilder PersistentStore(IPersistentDataStoreAsyncFactory storeFactory)
+        public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreAsyncFactory storeFactory)
         {
             return new PersistentDataStoreBuilder(storeFactory);
         }

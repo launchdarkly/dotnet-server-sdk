@@ -323,7 +323,7 @@ namespace LaunchDarkly.Sdk.Server
         public void CustomConfigForPersistentDataStore()
         {
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentStore(
+                c => c.DataStore(Components.PersistentDataStore(
                     new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
                 null,
                 ExpectedConfigProps.Base()
@@ -333,7 +333,7 @@ namespace LaunchDarkly.Sdk.Server
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentStore(
+                c => c.DataStore(Components.PersistentDataStore(
                     new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
                 null,
                 ExpectedConfigProps.Base()
@@ -343,7 +343,7 @@ namespace LaunchDarkly.Sdk.Server
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentStore(
+                c => c.DataStore(Components.PersistentDataStore(
                     new PersistentDataStoreFactoryWithoutDiagnosticDescription())),
                 null,
                 ExpectedConfigProps.Base()
@@ -353,7 +353,7 @@ namespace LaunchDarkly.Sdk.Server
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentStore(
+                c => c.DataStore(Components.PersistentDataStore(
                     new PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription())),
                 null,
                 ExpectedConfigProps.Base()
@@ -363,7 +363,7 @@ namespace LaunchDarkly.Sdk.Server
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentStore(
+                c => c.DataStore(Components.PersistentDataStore(
                     new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
                 null,
                 ExpectedConfigProps.Base()
@@ -373,7 +373,7 @@ namespace LaunchDarkly.Sdk.Server
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentStore(
+                c => c.DataStore(Components.PersistentDataStore(
                     new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
                 null,
                 ExpectedConfigProps.Base()

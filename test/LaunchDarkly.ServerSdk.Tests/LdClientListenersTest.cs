@@ -189,7 +189,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder("")
                 .DataSource(Components.ExternalUpdatesOnly)
-                .DataStore(Components.PersistentStore(TestUtils.ArbitraryPersistentDataStore))
+                .DataStore(Components.PersistentDataStore(TestUtils.ArbitraryPersistentDataStore))
                 .Events(Components.NoEvents)
                 .Build();
 
