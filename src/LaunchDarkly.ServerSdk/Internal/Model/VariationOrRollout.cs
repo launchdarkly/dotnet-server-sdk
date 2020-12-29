@@ -4,9 +4,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
     internal class VariationOrRollout
     {
-        [JsonProperty(PropertyName = "variation")]
+        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
         internal int? Variation { get; private set; }
-        [JsonProperty(PropertyName = "rollout")]
+        [JsonProperty(PropertyName = "rollout", NullValueHandling = NullValueHandling.Ignore)]
         internal Rollout Rollout { get; private set; }
 
         [JsonConstructor]

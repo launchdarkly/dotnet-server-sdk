@@ -7,15 +7,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         [JsonProperty(PropertyName = "clauses")]
         internal List<Clause> Clauses { get; private set; }
-        [JsonProperty(PropertyName = "weight")]
+        [JsonProperty(PropertyName = "weight", NullValueHandling = NullValueHandling.Ignore)]
         internal int? Weight { get; private set; }
-        [JsonProperty(PropertyName = "bucketBy")]
+        [JsonProperty(PropertyName = "bucketBy", NullValueHandling = NullValueHandling.Ignore)]
         internal UserAttribute? BucketBy { get; private set; }
 
         [JsonConstructor]
         internal SegmentRule(List<Clause> clauses, int? weight, UserAttribute? bucketBy)
         {
-            Clauses = clauses;
+            Clauses = clauses ?? new List<Clause>();
             Weight = weight;
             BucketBy = bucketBy;
         }

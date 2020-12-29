@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Included = included;
             Excluded = excluded;
             Salt = salt;
-            Rules = rules;
+            Rules = rules ?? new List<SegmentRule>();
             Deleted = deleted;
         }
 

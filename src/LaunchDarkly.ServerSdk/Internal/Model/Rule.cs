@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal Rule(string id, int? variation, Rollout rollout, List<Clause> clauses, bool trackEvents) : base(variation, rollout)
         {
             Id = id;
-            Clauses = clauses;
+            Clauses = clauses ?? new List<Clause>();
             TrackEvents = trackEvents;
         }
     }
