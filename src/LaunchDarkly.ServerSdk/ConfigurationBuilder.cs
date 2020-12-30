@@ -180,9 +180,17 @@ namespace LaunchDarkly.Sdk.Server
         /// Sets the SDK's logging configuration, using a factory object.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// This object is normally a configuration builder obtained from <see cref="Components.Logging()"/>
         /// which has methods for setting individual logging-related properties. As a shortcut for disabling
-        /// logging, you may use <see cref="Components.NoLogging"/> instead.
+        /// logging, you may use <see cref="Components.NoLogging"/> instead. If all you want to do is to set
+        /// the basic logging destination, and you do not need to set other logging properties, you can use
+        /// <see cref="Logging(ILogAdapter)"/> instead.
+        /// </para>
+        /// <para>
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// SDK reference guide</a>.
+        /// </para>
         /// </remarks>
         /// <example>
         ///     var config = Configuration.Builder("my-sdk-key")
@@ -194,11 +202,35 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="Components.Logging()" />
         /// <seealso cref="Components.Logging(ILogAdapter) "/>
         /// <seealso cref="Components.NoLogging" />
+        /// <seealso cref="Logging(ILogAdapter)"/>
         public ConfigurationBuilder Logging(ILoggingConfigurationFactory loggingConfigurationFactory)
         {
             _loggingConfigurationFactory = loggingConfigurationFactory;
             return this;
         }
+
+        /// <summary>
+        /// Sets the SDK's logging destination.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This is a shortcut for <c>Logging(Components.Logging(logAdapter))</c>. You can use it when you
+        /// only want to specify the basic logging destination, and do not need to set other log properties.
+        /// </para>
+        /// <para>
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// SDK reference guide</a>.
+        /// </para>
+        /// </remarks>
+        /// <example>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .Logging(Logs.ToWriter(Console.Out))
+        ///         .Build();
+        /// </example>
+        /// <param name="logAdapter">an <c>ILogAdapter</c> for the desired logging implementation</param>
+        /// <returns>the same builder</returns>
+        public ConfigurationBuilder Logging(ILogAdapter logAdapter) =>
+            Logging(Components.Logging(logAdapter));
 
         /// <summary>
         /// Sets whether or not this client is offline. If true, no calls to Launchdarkly will be made.

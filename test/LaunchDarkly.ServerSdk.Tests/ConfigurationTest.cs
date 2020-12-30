@@ -69,6 +69,15 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void LoggingAdapterShortcut()
+        {
+            var adapter = Logs.ToWriter(Console.Out);
+            var config = Configuration.Builder("").Logging(adapter).Build();
+            var logConfig = config.LoggingConfigurationFactory.CreateLoggingConfiguration();
+            Assert.Same(adapter, logConfig.LogAdapter);
+        }
+
+        [Fact]
         public void Offline()
         {
             var prop = _tester.Property(c => c.Offline, (b, v) => b.Offline(v));

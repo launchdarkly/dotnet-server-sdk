@@ -77,6 +77,10 @@ namespace LaunchDarkly.Sdk.Server
         /// <see cref="Console.Error"/>, with a minimum level of <c>Info</c> (that is, <c>Debug</c> logging
         /// is disabled).
         /// </para>
+        /// <para>
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// SDK reference guide</a>.
+        /// </para>
         /// </remarks>
         /// <example>
         /// <code>
@@ -106,6 +110,10 @@ namespace LaunchDarkly.Sdk.Server
         /// If you do not also specify a minimum logging level with <see cref="LoggingConfigurationBuilder.Level(LaunchDarkly.Logging.LogLevel)"/>,
         /// or with some other filtering mechanism that is defined by an external logging framework, then the
         /// log output will show all logging levels including <c>Debug</c>.
+        /// </para>
+        /// <para>
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// SDK reference guide</a>.
         /// </para>
         /// </remarks>
         /// <example>
