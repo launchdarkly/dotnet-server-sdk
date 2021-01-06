@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.JsonStream;
 using LaunchDarkly.Sdk.Json;
@@ -88,11 +89,24 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         internal IEnumerable<string> Values { get; }
         internal int Variation { get; }
+        internal PreprocessedData Preprocessed { get; }
 
         internal Target(IEnumerable<string> values, int variation)
         {
             Values = values ?? Enumerable.Empty<string>();
             Variation = variation;
+            Preprocessed = Preprocess(Values);
+        }
+
+        private static PreprocessedData Preprocess(IEnumerable<string> values) =>
+            new PreprocessedData
+            {
+                ValuesSet = values.ToImmutableHashSet()
+            };
+
+        internal struct PreprocessedData
+        {
+            internal ImmutableHashSet<string> ValuesSet { get; set; }
         }
     }
 

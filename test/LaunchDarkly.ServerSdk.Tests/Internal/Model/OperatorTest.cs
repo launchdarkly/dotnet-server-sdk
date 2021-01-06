@@ -3,7 +3,6 @@ using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-
     public class OperatorTest
     {
         [Fact]
@@ -42,11 +41,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
             var after = LdValue.Of(afterTimestamp);
             var before = LdValue.Of(utcTimestamp);
-            Assert.True(Operator.Apply("after", after, before));
-            Assert.False(Operator.Apply("after", before, after));
+            Assert.True(ApplyOperator("after", after, before));
+            Assert.False(ApplyOperator("after", before, after));
 
-            Assert.True(Operator.Apply("before", before, after));
-            Assert.False(Operator.Apply("before", after, before));
+            Assert.True(ApplyOperator("before", before, after));
+            Assert.False(ApplyOperator("before", after, before));
         }
 
         [Fact]
@@ -58,29 +57,29 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var after = LdValue.Of(afterTimestamp);
             var before = LdValue.Of(beforeMillis);
 
-            Assert.True(Operator.Apply("after", after, before));
-            Assert.False(Operator.Apply("after", before, after));
+            Assert.True(ApplyOperator("after", after, before));
+            Assert.False(ApplyOperator("after", before, after));
 
-            Assert.True(Operator.Apply("before", before, after));
-            Assert.False(Operator.Apply("before", after, before));
+            Assert.True(ApplyOperator("before", before, after));
+            Assert.False(ApplyOperator("before", after, before));
         }
 
         [Fact]
         public void Apply_UnknownOperation_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("unknown", LdValue.Of(10), LdValue.Of(10)));
+            Assert.False(ApplyOperator("unknown", LdValue.Of(10), LdValue.Of(10)));
         }
 
         [Fact]
         public void Apply_UserValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", LdValue.Null, LdValue.Of(10)));
+            Assert.False(ApplyOperator("in", LdValue.Null, LdValue.Of(10)));
         }
 
         [Fact]
         public void Apply_ClauseValueIsNull_ReturnsFalse()
         {
-            Assert.False(Operator.Apply("in", LdValue.Of(10), LdValue.Null));
+            Assert.False(ApplyOperator("in", LdValue.Of(10), LdValue.Null));
         }
 
         [Theory]
@@ -91,7 +90,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(11d, 11)]
         public void Apply_In_SupportedTypes_ValuesAreEqual_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.True(ApplyOperator("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -102,7 +101,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(11.4d, 11)]
         public void Apply_In_SupportedTypes_ValuesAreNotEqual_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("in", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -110,7 +109,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData("userValue", "userValue")]
         public void Apply_EndsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("endsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
+            Assert.True(ApplyOperator("endsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -119,7 +118,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(78, "userValue")]
         public void Apply_EndsWith_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("endsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("endsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -127,7 +126,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData("userValue", "user")]
         public void Apply_StartsWith_SupportedTypes_ReturnsTrue(string userValue, string clauseValue)
         {
-            Assert.True(Operator.Apply("startsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
+            Assert.True(ApplyOperator("startsWith", LdValue.Of(userValue), LdValue.Of(clauseValue)));
         }
 
         [Theory]
@@ -136,13 +135,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(78, "userValue")]
         public void Apply_StartsWith_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("startsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("startsWith", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Fact]
         public void Apply_Matches_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("matches", LdValue.Of("22"), LdValue.Of(@"\d")));
+            Assert.True(ApplyOperator("matches", LdValue.Of("22"), LdValue.Of(@"\d")));
         }
 
         [Theory]
@@ -152,13 +151,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(77, "userValue")]
         public void Apply_Matches_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("matches", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("matches", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Fact]
         public void Apply_Contains_SupportedTypes_ReturnsTrue()
         {
-            Assert.True(Operator.Apply("contains", LdValue.Of("userValue"), LdValue.Of("serValu")));
+            Assert.True(ApplyOperator("contains", LdValue.Of("userValue"), LdValue.Of("serValu")));
         }
 
         [Theory]
@@ -167,7 +166,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(78, "userValue")]
         public void Apply_Contains_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("contains", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("contains", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -180,7 +179,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(555L, 566d)]
         public void Apply_LessThan_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.True(ApplyOperator("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -204,7 +203,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(1055L, 1054d)]
         public void Apply_LessThan_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("lessThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -226,7 +225,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(1055L, 1055d)]
         public void Apply_LessThanOrEqual_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.True(ApplyOperator("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -242,7 +241,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(546L, 545d)]
         public void Apply_LessThanOrEqual_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("lessThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -255,7 +254,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(566L, 555d)]
         public void Apply_GreaterThan_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.True(ApplyOperator("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -279,7 +278,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(1055L, 1055d)]
         public void Apply_GreaterThan_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("greaterThan", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -301,7 +300,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(1034L, 1033d)]
         public void Apply_GreaterThanOrEqual_SupportedTypes_ReturnsTrue(object userValue, object clauseValue)
         {
-            Assert.True(Operator.Apply("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.True(ApplyOperator("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -317,7 +316,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData(545L, 546d)]
         public void Apply_GreaterThanOrEqual_SupportedTypes_ReturnsFalse(object userValue, object clauseValue)
         {
-            Assert.False(Operator.Apply("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
+            Assert.False(ApplyOperator("greaterThanOrEqual", ArbitraryValue(userValue), ArbitraryValue(clauseValue)));
         }
 
         [Theory]
@@ -341,8 +340,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [InlineData("semVerGreaterThan", "2.0.1", "xbad%ver", false)]
         public void Apply_Any_Operators(string opName, object userValue, object clauseValue, bool expected)
         {
-            var result = Operator.Apply(opName, ArbitraryValue(userValue), ArbitraryValue(clauseValue));
+            var result = ApplyOperator(opName, ArbitraryValue(userValue), ArbitraryValue(clauseValue));
             Assert.Equal(expected, result);
+        }
+
+        private static bool ApplyOperator(string opName, LdValue userValue, LdValue clauseValue) =>
+            ApplyOperator(Operator.ForName(opName), userValue, clauseValue);
+
+        private static bool ApplyOperator(Operator op, LdValue userValue, LdValue clauseValue)
+        {
+            // Calling ApplyOperator directly wouldn't work in these tests, because we rely on
+            // preprocessing that happens in the Clause constructor.
+            var clause = new ClauseBuilder().Attribute("anyAttr").Op(op).Values(clauseValue).Build();
+            return Evaluator.ClauseMatchAny(clause, userValue);
         }
 
         private LdValue ArbitraryValue(object v)

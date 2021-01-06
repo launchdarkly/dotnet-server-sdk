@@ -146,12 +146,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 // Check to see if targets match
                 foreach (var target in _flag.Targets)
                 {
-                    foreach (var v in target.Values)
+                    if (target.Preprocessed.ValuesSet.Contains(_user.Key))
                     {
-                        if (_user.Key == v)
-                        {
-                            return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
-                        }
+                        return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
                     }
                 }
                 // Now walk through the rules and see if any match
@@ -290,7 +287,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             private bool MatchClause(Clause clause)
             {
                 // A clause matches if ANY of its values match, for the given attribute and operator
-                if (clause.Op == "segmentMatch")
+                if (clause.Op == Operator.SegmentMatch)
                 {
                     foreach (var value in clause.Values)
                     {
@@ -347,31 +344,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 }
             }
 
-            private static bool ClauseMatchAny(Clause clause, LdValue userValue)
-            {
-                foreach (var v in clause.Values)
-                {
-                    if (Operator.Apply(clause.Op, userValue, v))
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            private static bool MaybeNegate(Clause clause, bool b) =>
-                clause.Negate ? !b : b;
-
             private bool MatchSegment(Segment segment)
             {
                 var userKey = _user.Key;
                 if (userKey != null)
                 {
-                    if (segment.Included != null && segment.Included.Contains(userKey))
+                    if (segment.Preprocessed.IncludedSet.Contains(userKey))
                     {
                         return true;
                     }
-                    if (segment.Excluded != null && segment.Excluded.Contains(userKey))
+                    if (segment.Preprocessed.ExcludedSet.Contains(userKey))
                     {
                         return false;
                     }
@@ -412,5 +394,29 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 return bucket < weight;
             }
         }
+
+        internal static bool ClauseMatchAny(Clause clause, LdValue userValue)
+        {
+            // Special case for the "in" operator - we preprocess the values to a set for fast lookup
+            if (clause.Op == Operator.In && clause.Preprocessed.ValuesAsSet != null)
+            {
+                return clause.Preprocessed.ValuesAsSet.Contains(userValue);
+            }
+
+            int index = 0;
+            foreach (var clauseValue in clause.Values)
+            {
+                var preprocessedValue = clause.Preprocessed.Values is null ? (Clause.PreprocessedValue?)null :
+                    clause.Preprocessed.Values[index++];
+                if (clause.Op.Apply(userValue, clauseValue, preprocessedValue))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool MaybeNegate(Clause clause, bool b) =>
+            clause.Negate ? !b : b;
     }
 }
