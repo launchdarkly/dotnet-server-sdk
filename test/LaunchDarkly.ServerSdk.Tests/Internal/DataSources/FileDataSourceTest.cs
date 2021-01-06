@@ -81,7 +81,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
-                Assert.True(fp.Initialized());
+                Assert.True(fp.Initialized);
             }
         }
 
@@ -93,7 +93,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
-                Assert.False(fp.Initialized());
+                Assert.False(fp.Initialized);
             }
         }
 
@@ -105,7 +105,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
-                Assert.True(fp.Initialized());
+                Assert.True(fp.Initialized);
                 Assert.Equal(2, CountFlagsInStore());
             }
         }
@@ -118,7 +118,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
-                Assert.False(fp.Initialized());
+                Assert.False(fp.Initialized);
             }
         }
         

@@ -69,10 +69,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             return initTask.Task;
         }
 
-        public bool Initialized()
-        {
-            return _loadedValidData;
-        }
+        public bool Initialized => _loadedValidData;
 
         public void Dispose()
         {

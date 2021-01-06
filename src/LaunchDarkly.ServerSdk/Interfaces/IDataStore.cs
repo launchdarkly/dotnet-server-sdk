@@ -104,6 +104,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// Checks whether this store has been initialized with any data yet.
         /// </summary>
+        /// <remarks>
+        /// This is defined as a method rather than a property to emphasize that it may be an
+        /// operation that involves I/O; some data stores need to do a database query to see if
+        /// there is existing data.
+        /// </remarks>
         /// <returns>true if the store contains data</returns>
         bool Initialized();
     }

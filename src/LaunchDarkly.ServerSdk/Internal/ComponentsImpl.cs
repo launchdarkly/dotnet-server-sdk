@@ -25,7 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
             public void Dispose() { }
 
-            public bool Initialized() => true;
+            public bool Initialized => true;
 
             public Task<bool> Start() => Task.FromResult(true);
         }

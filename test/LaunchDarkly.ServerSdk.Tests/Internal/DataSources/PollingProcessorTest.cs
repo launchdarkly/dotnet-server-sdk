@@ -48,7 +48,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(MakeAllData());
             using (PollingProcessor pp = MakeProcessor())
             {
-                var initTask = ((IDataSource)pp).Start();
+                var initTask = pp.Start();
                 initTask.Wait();
                 Assert.Equal(Flag, _dataStore.Get(DataModel.Features, Flag.Key).Value.Item);
                 Assert.Equal(Segment, _dataStore.Get(DataModel.Segments, Segment.Key).Value.Item);
@@ -62,9 +62,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(MakeAllData());
             using (PollingProcessor pp = MakeProcessor())
             {
-                var initTask = ((IDataSource)pp).Start();
+                var initTask = pp.Start();
                 initTask.Wait();
-                Assert.True(((IDataSource)pp).Initialized());
+                Assert.True(pp.Initialized);
                 Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
             }
         }
@@ -76,11 +76,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             using (PollingProcessor pp = MakeProcessor())
             {
                 var startTime = DateTime.Now;
-                var initTask = ((IDataSource)pp).Start();
+                var initTask = pp.Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
                 Assert.InRange(DateTime.Now.Subtract(startTime).Milliseconds, 190, 2000);
                 Assert.False(completed);
-                Assert.False(((IDataSource)pp).Initialized());
+                Assert.False(pp.Initialized);
                 Assert.Equal(DataSourceState.Initializing, _dataSourceStatusProvider.Status.State);
             }
         }
@@ -121,10 +121,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new UnsuccessfulResponseException(status));
             using (PollingProcessor pp = MakeProcessor())
             {
-                var initTask = ((IDataSource)pp).Start();
+                var initTask = pp.Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(1000));
                 Assert.True(completed);
-                Assert.False(((IDataSource)pp).Initialized());
+                Assert.False(pp.Initialized);
                 Assert.Equal(DataSourceState.Off, _dataSourceStatusProvider.Status.State);
             }
         }
@@ -135,10 +135,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new UnsuccessfulResponseException(status));
             using (PollingProcessor pp = MakeProcessor())
             {
-                var initTask = ((IDataSource)pp).Start();
+                var initTask = pp.Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
                 Assert.False(completed);
-                Assert.False(((IDataSource)pp).Initialized());
+                Assert.False(pp.Initialized);
             }
         }
 

@@ -132,7 +132,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void ProcessorNotInitializedByDefault()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            Assert.False(((IDataSource)sp).Initialized());
+            Assert.False(sp.Initialized);
             Assert.Equal(DataSourceState.Initializing, _dataSourceStatusProvider.Status.State);
         }
 
@@ -141,7 +141,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             StreamProcessor sp = CreateAndStartProcessor();
             SimulateMessageReceived("put", EmptyPutData);
-            Assert.True(((IDataSource)sp).Initialized());
+            Assert.True(sp.Initialized);
             Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
         }
 
@@ -149,7 +149,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void TaskIsNotCompletedByDefault()
         {
             StreamProcessor sp = CreateProcessor();
-            Task<bool> task = ((IDataSource)sp).Start();
+            Task<bool> task = sp.Start();
             Assert.False(task.IsCompleted);
         }
 
@@ -157,7 +157,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void PutCausesTaskToBeCompleted()
         {
             StreamProcessor sp = CreateProcessor();
-            Task<bool> task = ((IDataSource)sp).Start();
+            Task<bool> task = sp.Start();
             SimulateMessageReceived("put", EmptyPutData);
             Assert.True(task.IsCompleted);
         }
@@ -237,7 +237,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             StreamProcessor sp = CreateAndStartProcessor();
             SimulateMessageReceived("put", EmptyPutData);
-            Assert.True(((IDataSource)sp).Initialized());
+            Assert.True(sp.Initialized);
             Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
 
             SimulateStreamHttpError(500);
@@ -254,7 +254,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             StreamProcessor sp = CreateAndStartProcessor();
             SimulateMessageReceived("put", EmptyPutData);
-            Assert.True(((IDataSource)sp).Initialized());
+            Assert.True(sp.Initialized);
             Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
 
             SimulateStreamHttpError(401);

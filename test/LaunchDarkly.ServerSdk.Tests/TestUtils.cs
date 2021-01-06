@@ -155,7 +155,7 @@ namespace LaunchDarkly.Sdk.Server
             return Task.FromResult(true);
         }
 
-        public bool Initialized() => true;
+        public bool Initialized => true;
         
         public void Dispose() { }
     }

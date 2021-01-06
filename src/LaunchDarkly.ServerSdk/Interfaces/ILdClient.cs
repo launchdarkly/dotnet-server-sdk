@@ -44,8 +44,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// Tests whether the client is ready to be used.
         /// </summary>
-        /// <returns>true if the client is ready, or false if it is still initializing</returns>
-        bool Initialized();
+        /// <value>true if the client is ready, or false if it is still initializing</value>
+        bool Initialized { get; }
 
         /// <summary>
         /// Calculates the integer value of a feature flag for a given user.
