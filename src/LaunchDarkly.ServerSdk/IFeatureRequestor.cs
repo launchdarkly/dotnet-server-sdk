@@ -8,8 +8,6 @@ namespace LaunchDarkly.Client
     internal interface IFeatureRequestor : IDisposable
     {
         Task<AllData> GetAllDataAsync();
-        Task<FeatureFlag> GetFlagAsync(string featureKey);
-        Task<Segment> GetSegmentAsync(string segmentKey);
     }
     
     internal class AllData

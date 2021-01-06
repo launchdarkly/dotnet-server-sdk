@@ -139,15 +139,15 @@ namespace LaunchDarkly.Client
                 return new NullUpdateProcessor();
             }
             else
-            {
-                FeatureRequestor requestor = new FeatureRequestor(config);
+            {                
                 if (config.IsStreamingEnabled)
                 {
-                    return new StreamProcessor(config, requestor, featureStore, null, diagnosticStore);
+                    return new StreamProcessor(config, featureStore, null, diagnosticStore);
                 }
                 else
                 {
                     Log.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
+                    FeatureRequestor requestor = new FeatureRequestor(config);
                     return new PollingProcessor(config, requestor, featureStore);
                 }
             }

@@ -13,16 +13,14 @@ namespace LaunchDarkly.Client
         private const String PUT = "put";
         private const String PATCH = "patch";
         private const String DELETE = "delete";
-        private const String INDIRECT_PATCH = "indirect/patch";
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(StreamProcessor));
 
         private readonly Configuration _config;
         private readonly StreamManager _streamManager;
-        private readonly IFeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
 
-        internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor,
+        internal StreamProcessor(Configuration config,
             IFeatureStore featureStore, StreamManager.EventSourceCreator eventSourceCreator, IDiagnosticStore diagnosticStore)
         {
             _streamManager = new StreamManager(this,
@@ -31,7 +29,6 @@ namespace LaunchDarkly.Client
                 ServerSideClientEnvironment.Instance,
                 eventSourceCreator, diagnosticStore);
             _config = config;
-            _featureRequestor = featureRequestor;
             _featureStore = featureStore;
         }
 
@@ -99,9 +96,6 @@ namespace LaunchDarkly.Client
                         Log.WarnFormat("Received delete event with unknown path: {0}", deleteData.Path);
                     }
                     break;
-                case INDIRECT_PATCH:
-                    await UpdateTaskAsync(messageData);
-                    break;
             }
         }
 
@@ -118,58 +112,6 @@ namespace LaunchDarkly.Client
             if (disposing)
             {
                 ((IDisposable)_streamManager).Dispose();
-                _featureRequestor.Dispose();
-            }
-        }
-
-        private async Task UpdateTaskAsync(string objectPath)
-        {
-            try
-            {
-                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out var key))
-                {
-                    var feature = await _featureRequestor.GetFlagAsync(key);
-                    if (feature != null)
-                    {
-                        _featureStore.Upsert(VersionedDataKind.Features, feature);
-                    }
-                }
-                else if (GetKeyFromPath(objectPath, VersionedDataKind.Segments, out key))
-                {
-                    var segment = await _featureRequestor.GetSegmentAsync(key);
-                    if (segment != null)
-                    {
-                        _featureStore.Upsert(VersionedDataKind.Segments, segment);
-                    }
-                }
-                else
-                {
-                    Log.WarnFormat("Received indirect patch event with unknown path: {0}", objectPath);
-                }
-            }
-            catch (AggregateException ex)
-            {
-                Log.ErrorFormat("Error Updating {0}: '{1}'",
-                    ex, objectPath, Util.ExceptionMessage(ex.Flatten()));
-            }
-            catch (UnsuccessfulResponseException ex) when (ex.StatusCode == 401)
-            {
-                Log.ErrorFormat("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex));
-                if (ex.StatusCode == 401)
-                {
-                    Log.Error("Received 401 error, no further streaming connection will be made since SDK key is invalid");
-                    ((IDisposable)this).Dispose();
-                }
-            }
-            catch (TimeoutException ex) {
-                Log.ErrorFormat("Error Updating {0}: '{1}'",
-                    ex, objectPath, Util.ExceptionMessage(ex));
-                _streamManager.Restart();
-            }
-            catch (Exception ex)
-            {
-                Log.ErrorFormat("Error Updating feature: '{0}'",
-                    ex, Util.ExceptionMessage(ex));
             }
         }
 
