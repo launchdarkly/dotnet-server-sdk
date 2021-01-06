@@ -3,6 +3,7 @@ flags:
   flag1:
     key: flag1
     "on": true
+    version: 1
     fallthrough:
       variation: 2
     variations:
@@ -14,4 +15,5 @@ flagValues:
 segments:
   seg1:
     key: seg1
+    version: 1
     include: ["user1"]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LaunchDarkly.JsonStream;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -20,11 +21,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// all data kinds generically.
         /// </para>
         /// </remarks>
-        public class DataKind
+        public sealed class DataKind
         {
+            internal delegate void SerializerToJWriter(object item, IValueWriter writer);
+            internal delegate ItemDescriptor DeserializerFromJReader(ref JReader reader);
+
             private readonly string _name;
             private readonly Func<ItemDescriptor, string> _serializer;
             private readonly Func<string, ItemDescriptor> _deserializer;
+            private readonly SerializerToJWriter _internalSerializer;
+            private readonly DeserializerFromJReader _internalDeserializer;
 
             /// <summary>
             /// A case-sensitive alphabetic string that uniquely identifies this data kind.
@@ -68,6 +74,24 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// <returns>an <see cref="ItemDescriptor"/> describing the deserialized object</returns>
             public ItemDescriptor Deserialize(string serializedData) => _deserializer(serializedData);
 
+            internal void SerializeToJWriter(ItemDescriptor item, IValueWriter writer)
+            {
+                if (_internalSerializer is null)
+                {
+                    throw new ArgumentException("SDK tried to serialize a non-built-in data kind");
+                }
+                _internalSerializer(item.Item, writer);
+            }
+
+            internal ItemDescriptor DeserializeFromJReader(ref JReader reader)
+            {
+                if (_internalDeserializer is null)
+                {
+                    throw new ArgumentException("SDK tried to deserialize a non-built-in data kind");
+                }
+                return _internalDeserializer(ref reader);
+            }
+
             /// <summary>
             /// Constructor for use in testing.
             /// </summary>
@@ -78,12 +102,47 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// <param name="name">value for the <c>Name</c> property</param>
             /// <param name="serializer">function to convert an item to a serialized string form</param>
             /// <param name="deserializer">function to convert an item from a serialized string form</param>
-            public DataKind(string name, Func<ItemDescriptor, string> serializer,
+            public DataKind(
+                string name,
+                Func<ItemDescriptor, string> serializer,
                 Func<string, ItemDescriptor> deserializer)
             {
                 _name = name;
                 _serializer = serializer;
                 _deserializer = deserializer;
+                _internalSerializer = null;
+                _internalDeserializer = null;
+            }
+
+            internal DataKind(
+                string name,
+                SerializerToJWriter internalSerializer,
+                DeserializerFromJReader internalDeserializer)
+            {
+                _name = name;
+                _internalSerializer = internalSerializer;
+                _internalDeserializer = internalDeserializer;
+                _serializer = item =>
+                {
+                    var w = JWriter.New();
+                    if (item.Item is null)
+                    {
+                        var obj = w.Object();
+                        obj.Name("version").Int(item.Version);
+                        obj.Name("deleted").Bool(true);
+                        obj.End();
+                    }
+                    else
+                    {
+                        internalSerializer(item.Item, w);
+                    }
+                    return w.GetString();
+                };
+                _deserializer = s =>
+                {
+                    var r = JReader.FromString(s);
+                    return _internalDeserializer(ref r);
+                };
             }
 
             /// <inheritdoc/>

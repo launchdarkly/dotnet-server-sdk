@@ -1,4 +1,5 @@
-﻿using LaunchDarkly.Sdk.Server.Internal.Model;
+﻿using System.Linq;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
 
@@ -99,11 +100,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             var r = reason.Value;
             switch (r.Kind)
             {
-                case EvaluationReasonKind.FALLTHROUGH:
+                case EvaluationReasonKind.Fallthrough:
                     return flag.TrackEventsFallthrough;
-                case EvaluationReasonKind.RULE_MATCH:
-                    return r.RuleIndex >= 0 && flag.Rules != null && r.RuleIndex < flag.Rules.Count &&
-                        flag.Rules[r.RuleIndex].TrackEvents;
+                case EvaluationReasonKind.RuleMatch:
+                    return r.RuleIndex.HasValue && r.RuleIndex >= 0 && r.RuleIndex < flag.Rules.Count() &&
+                        flag.Rules.ElementAt(r.RuleIndex.Value).TrackEvents;
             }
             return false;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -9,13 +8,15 @@ using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class PollingProcessorTest : BaseTest
     {
         private const string sdkKey = "SDK_KEY";
         private readonly FeatureFlag Flag = new FeatureFlagBuilder("flagkey").Build();
-        private readonly Segment Segment = new Segment("segkey", 1, null, null, "", null, false);
+        private readonly Segment Segment = new SegmentBuilder("segkey").Version(1).Build();
         
         readonly Mock<IFeatureRequestor> _mockFeatureRequestor;
         readonly IFeatureRequestor _featureRequestor;
@@ -44,8 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void SuccessfulRequestPutsFeatureDataInStore()
         {
-            AllData allData = MakeAllData();
-            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
+            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(MakeAllData());
             using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = ((IDataSource)pp).Start();
@@ -59,8 +59,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void SuccessfulRequestSetsInitializedToTrue()
         {
-            AllData allData = MakeAllData();
-            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
+            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(MakeAllData());
             using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = ((IDataSource)pp).Start();
@@ -143,13 +142,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        private AllData MakeAllData()
-        {
-            IDictionary<string, FeatureFlag> flags = new Dictionary<string, FeatureFlag>();
-            flags[Flag.Key] = Flag;
-            IDictionary<string, Segment> segments = new Dictionary<string, Segment>();
-            segments[Segment.Key] = Segment;
-            return new AllData(flags, segments);
-        }
+        private FullDataSet<ItemDescriptor> MakeAllData() =>
+            new DataSetBuilder().Flags(Flag).Segments(Segment).Build();
     }
 }

@@ -51,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 .Add(DataModel.Features, "d", 1, new FeatureFlagBuilder("d").Build())
                 .Add(DataModel.Features, "e", 1, new FeatureFlagBuilder("e").Build())
                 .Add(DataModel.Features, "f", 1, new FeatureFlagBuilder("f").Build())
-                .Add(DataModel.Segments, "o", 1, new Segment("o", 1, null, null, null, null, false))
+                .Add(DataModel.Segments, "o", 1, new SegmentBuilder("o").Version(1).Build())
                 .Build();
 
         internal struct KeyOrderConstraint

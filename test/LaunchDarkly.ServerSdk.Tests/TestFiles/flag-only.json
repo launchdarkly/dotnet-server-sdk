@@ -2,6 +2,7 @@
     "flags": {
         "flag1": {
             "key": "flag1",
+            "version":  1,
             "on": true,
             "fallthrough": {
                 "variation": 2

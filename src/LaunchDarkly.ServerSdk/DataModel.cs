@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Internal;
+﻿using System.Collections.Generic;
+using LaunchDarkly.JsonStream;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -26,16 +25,7 @@ namespace LaunchDarkly.Sdk.Server
         /// Applications should not need to reference this object directly. It is public so that custom integrations
         /// and test code can serialize or deserialize data or inject it into a data store.
         /// </remarks>
-        public static DataKind Features = new DataKind(
-            "features",
-            SerializeItem(typeof(FeatureFlag)),
-            s =>
-            {
-                var flag = JsonUtil.DecodeJson<FeatureFlag>(s);
-                return flag.Deleted ? ItemDescriptor.Deleted(flag.Version) :
-                    new ItemDescriptor(flag.Version, flag);
-            }
-            );
+        public static DataKind Features = new DataKind("features", SerializeFlag, DeserializeFlag);
 
         /// <summary>
         /// The <see cref="DataKind"/> instance that describes user segment data.
@@ -44,16 +34,7 @@ namespace LaunchDarkly.Sdk.Server
         /// Applications should not need to reference this object directly. It is public so that custom integrations
         /// and test code can serialize or deserialize data or inject it into a data store.
         /// </remarks>
-        public static DataKind Segments = new DataKind(
-            "segments",
-                        SerializeItem(typeof(Segment)),
-            s =>
-            {
-                var segment = JsonUtil.DecodeJson<Segment>(s);
-                return segment.Deleted ? ItemDescriptor.Deleted(segment.Version) :
-                    new ItemDescriptor(segment.Version, segment);
-            }
-            );
+        public static DataKind Segments = new DataKind("segments", SerializeSegment, DeserializeSegment);
 
         /// <summary>
         /// An enumeration of all supported <see cref="DataKind"/>s.
@@ -72,20 +53,24 @@ namespace LaunchDarkly.Sdk.Server
             }
         }
 
-        private static Func<ItemDescriptor, string> SerializeItem(Type expectedType)
+        private static void SerializeFlag(object o, IValueWriter w) =>
+            FeatureFlagSerialization.Instance.WriteJson(o as FeatureFlag, w);
+
+        private static ItemDescriptor DeserializeFlag(ref JReader r)
         {
-            return item =>
-            {
-                if (item.Item is null)
-                {
-                    return @"{""version"":" + item.Version + @",""deleted"":true}";
-                }
-                if (item.Item.GetType() == expectedType)
-                {
-                    return JsonUtil.EncodeJson(item.Item);
-                }
-                throw new ArgumentException("tried to serialize " + item.Item.GetType() + " as " + expectedType);
-            };
+            var flag = FeatureFlagSerialization.Instance.ReadJson(ref r);
+            return flag.Deleted ? ItemDescriptor.Deleted(flag.Version) :
+                new ItemDescriptor(flag.Version, flag);
+        }
+
+        private static void SerializeSegment(object o, IValueWriter w) =>
+            SegmentSerialization.Instance.WriteJson(o as Segment, w);
+
+        private static ItemDescriptor DeserializeSegment(ref JReader r)
+        {
+            var segment = SegmentSerialization.Instance.ReadJson(ref r);
+            return segment.Deleted ? ItemDescriptor.Deleted(segment.Version) :
+                new ItemDescriptor(segment.Version, segment);
         }
     }
 }

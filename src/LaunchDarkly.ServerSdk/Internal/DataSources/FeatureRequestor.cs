@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.Model;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -46,34 +49,30 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        // Returns a dictionary of the latest flags, or null if they have not been modified. Throws an exception if there
-        // was a problem getting flags.
-        public async Task<AllData> GetAllDataAsync()
+        // Returns a data set of the latest flags and segments, or null if they have not been modified. Throws an
+        // exception if there was a problem getting data.
+        public async Task<FullDataSet<ItemDescriptor>?> GetAllDataAsync()
         {
-            var ret = await GetAsync<AllData>(_allUri);
-            if (ret != null)
+            var json = await GetAsync(_allUri);
+            if (json is null)
             {
-                _log.Debug("Get all returned {0} feature flags and {1} segments",
-                    ret.Flags.Keys.Count, ret.Segments.Keys.Count);
+                return null;
             }
-            return ret;
+            var data = ParseAllData(json);
+            Func<DataKind, int> countItems = kind =>
+                data.Data.FirstOrDefault(kv => kv.Key == kind).Value.Items?.Count() ?? 0;
+            _log.Debug("Get all returned {0} feature flags and {1} segments",
+                countItems(DataModel.Features), countItems(DataModel.Segments));
+            return data;
         }
 
-        // Returns the latest version of a flag, or null if it has not been modified. Throws an exception if there
-        // was a problem getting flags.
-        public async Task<FeatureFlag> GetFlagAsync(string featureKey)
+        private FullDataSet<ItemDescriptor> ParseAllData(string json)
         {
-            return await GetAsync<FeatureFlag>(new Uri(_flagsUri, featureKey));
+            var r = JReader.FromString(json);
+            return StreamProcessorEvents.ParseFullDataset(ref r);
         }
 
-        // Returns the latest version of a segment, or null if it has not been modified. Throws an exception if there
-        // was a problem getting segments.
-        public async Task<Segment> GetSegmentAsync(string segmentKey)
-        {
-            return await GetAsync<Segment>(new Uri(_segmentsUri, segmentKey));
-        }
-
-        private async Task<T> GetAsync<T>(Uri path) where T : class
+        private async Task<string> GetAsync(Uri path)
         {
             _log.Debug("Getting flags with uri: {0}", path.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, path);
@@ -113,7 +112,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                             }
                         }
                         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        return string.IsNullOrEmpty(content) ? null : JsonUtil.DecodeJson<T>(content);
+                        return string.IsNullOrEmpty(content) ? null : content;
                     }
                 }
                 catch (TaskCanceledException tce)

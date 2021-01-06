@@ -126,7 +126,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BoolVariationSendsEvent()
         {
-            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build();
+            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of(true)).Build();
             testData.UsePreconfiguredFlag(flag);
 
             client.BoolVariation("key", user, false);
@@ -145,7 +145,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void IntVariationSendsEvent()
         {
-            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build();
+            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of(2)).Build();
             testData.UsePreconfiguredFlag(flag);
 
             client.IntVariation("key", user, 1);
@@ -164,7 +164,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void FloatVariationSendsEvent()
         {
-            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5f)).Build();
+            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of(2.5f)).Build();
             testData.UsePreconfiguredFlag(flag);
 
             client.FloatVariation("key", user, 1.0f);
@@ -183,7 +183,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StringVariationSendsEvent()
         {
-            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build();
+            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of("b")).Build();
             testData.UsePreconfiguredFlag(flag);
 
             client.StringVariation("key", user, "a");
@@ -203,7 +203,7 @@ namespace LaunchDarkly.Sdk.Server
         public void JsonVariationSendsEvent()
         {
             var data = LdValue.BuildObject().Add("thing", "stuff").Build();
-            var flag = new FeatureFlagBuilder("key").OffWithValue(data).Build();
+            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(data).Build();
             testData.UsePreconfiguredFlag(flag);
             var defaultVal = LdValue.Of(42);
 
@@ -227,7 +227,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var clause = ClauseBuilder.ShouldMatchUser(user);
             var rule = new RuleBuilder().Id("rule-id").Variation(1).Clauses(clause).TrackEvents(true).Build();
-            var flag = new FeatureFlagBuilder("flag")
+            var flag = new FeatureFlagBuilder("flag").Version(1)
                 .On(true)
                 .Rules(rule)
                 .OffVariation(0)
@@ -253,7 +253,7 @@ namespace LaunchDarkly.Sdk.Server
             var clause1 = ClauseBuilder.ShouldMatchUser(user);
             var rule0 = new RuleBuilder().Id("id0").Variation(1).Clauses(clause0).TrackEvents(true).Build();
             var rule1 = new RuleBuilder().Id("id1").Variation(1).Clauses(clause1).TrackEvents(false).Build();
-            var flag = new FeatureFlagBuilder("flag")
+            var flag = new FeatureFlagBuilder("flag").Version(1)
                 .On(true)
                 .Rules(rule0, rule1)
                 .OffVariation(0)
@@ -274,7 +274,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void EventTrackingAndReasonCanBeForcedForFallthrough()
         {
-            var flag = new FeatureFlagBuilder("flag")
+            var flag = new FeatureFlagBuilder("flag").Version(1)
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(0)
@@ -297,7 +297,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void EventTrackingAndReasonAreNotForcedForFallthroughIfFlagIsNotSet()
         {
-            var flag = new FeatureFlagBuilder("flag")
+            var flag = new FeatureFlagBuilder("flag").Version(1)
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(0)
@@ -316,7 +316,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void EventIsSentForExistingPrerequisiteFlag()
         {
-            var f0 = new FeatureFlagBuilder("feature0")
+            var f0 = new FeatureFlagBuilder("feature0").Version(1)
                 .On(true)
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))
@@ -324,7 +324,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
                 .Version(1)
                 .Build();
-            var f1 = new FeatureFlagBuilder("feature1")
+            var f1 = new FeatureFlagBuilder("feature1").Version(1)
                 .On(true)
                 .Fallthrough(new VariationOrRollout(1, null))
                 .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
@@ -343,7 +343,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void EventIsSentWithDefaultValueForFlagThatEvaluatesToNull()
         {
-            var flag = new FeatureFlagBuilder("feature")
+            var flag = new FeatureFlagBuilder("feature").Version(1)
                 .On(false)
                 .OffVariation(null)
                 .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
@@ -362,7 +362,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void EventIsNotSentForUnknownPrerequisiteFlag()
         {
-            var f0 = new FeatureFlagBuilder("feature0")
+            var f0 = new FeatureFlagBuilder("feature0").Version(1)
                 .On(true)
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))

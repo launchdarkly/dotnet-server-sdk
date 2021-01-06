@@ -278,7 +278,7 @@ namespace LaunchDarkly.Sdk.Server
                     LogHelpers.LogException(_log,
                         string.Format("Exception caught for feature flag \"{0}\" when evaluating all flags", flag.Key),
                         e);
-                    EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
+                    EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.Exception);
                     builder.AddFlag(flag.Key, new EvaluationDetail<LdValue>(LdValue.Null, null, reason));
                 }
             }
@@ -299,7 +299,7 @@ namespace LaunchDarkly.Sdk.Server
                 {
                     _log.Warn("Flag evaluation before client initialized; data store unavailable, returning default value");
                     return new EvaluationDetail<T>(defaultValueOfType, null,
-                        EvaluationReason.ErrorReason(EvaluationErrorKind.CLIENT_NOT_READY));
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.ClientNotReady));
                 }
             }
 
@@ -312,18 +312,18 @@ namespace LaunchDarkly.Sdk.Server
                     _log.Info("Unknown feature flag {0}; returning default value",
                         featureKey);
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
-                        featureKey, user, defaultValue, EvaluationErrorKind.FLAG_NOT_FOUND));
+                        featureKey, user, defaultValue, EvaluationErrorKind.FlagNotFound));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
-                        EvaluationReason.ErrorReason(EvaluationErrorKind.FLAG_NOT_FOUND));
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound));
                 }
 
                 if (user == null || user.Key == null)
                 {
                     _log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
-                        featureFlag, user, defaultValue, EvaluationErrorKind.USER_NOT_SPECIFIED));
+                        featureFlag, user, defaultValue, EvaluationErrorKind.UserNotSpecified));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
-                        EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
                 }
                 
                 Evaluator.EvalResult evalResult = _evaluator.Evaluate(featureFlag, user, eventFactory);
@@ -351,9 +351,9 @@ namespace LaunchDarkly.Sdk.Server
                             featureKey);
 
                         _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
-                            featureFlag, user, defaultValue, EvaluationErrorKind.WRONG_TYPE));
+                            featureFlag, user, defaultValue, EvaluationErrorKind.WrongType));
                         return new EvaluationDetail<T>(defaultValueOfType, null,
-                            EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
+                            EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType));
                     }
                     returnDetail = new EvaluationDetail<T>(converter.ToType(evalDetail.Value),
                         evalDetail.VariationIndex, evalDetail.Reason);
@@ -367,11 +367,11 @@ namespace LaunchDarkly.Sdk.Server
                 LogHelpers.LogException(_log,
                     string.Format("Exception when evaluating feature key \"{1}\" for user key \"{2}\"", featureKey, user.Key),
                     e);
-                var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.EXCEPTION);
+                var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.Exception);
                 if (featureFlag == null)
                 {
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
-                        featureKey, user, defaultValue, EvaluationErrorKind.EXCEPTION));
+                        featureKey, user, defaultValue, EvaluationErrorKind.Exception));
                 }
                 else
                 {

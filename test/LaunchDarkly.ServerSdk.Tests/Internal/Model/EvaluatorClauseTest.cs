@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Internal.Events;
+﻿using LaunchDarkly.Sdk.Server.Internal.Events;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Internal.Model.EvaluatorTestUtil;
@@ -66,8 +65,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [Fact]
         public void SegmentMatchClauseRetrievesSegmentFromStore()
         {
-            var segment = new Segment("segkey", 1, new List<string> { "foo" }, new List<string>(), "",
-                new List<SegmentRule>(), false);
+            var segment = new SegmentBuilder("segkey").Version(1).Included("foo").Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment);
 
             var f = new FeatureFlagBuilder("key").BooleanMatchingSegment("segkey").Build();

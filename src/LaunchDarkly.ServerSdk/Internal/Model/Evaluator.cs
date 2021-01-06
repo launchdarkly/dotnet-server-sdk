@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 
@@ -75,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     flag.Key);
 
                 return new EvalResult(
-                    new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED)),
+                    new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
                     ImmutableList.Create<EvaluationEvent>());
             }
 
@@ -143,47 +144,36 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 }
 
                 // Check to see if targets match
-                if (_flag.Targets != null)
+                foreach (var target in _flag.Targets)
                 {
-                    foreach (var target in _flag.Targets)
+                    foreach (var v in target.Values)
                     {
-                        foreach (var v in target.Values)
+                        if (_user.Key == v)
                         {
-                            if (_user.Key == v)
-                            {
-                                return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
-                            }
+                            return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
                         }
                     }
                 }
                 // Now walk through the rules and see if any match
-                if (_flag.Rules != null)
+                var ruleIndex = 0;
+                foreach (var rule in _flag.Rules)
                 {
-                    for (int i = 0; i < _flag.Rules.Count; i++)
+                    if (MatchRule(rule))
                     {
-                        Rule rule = _flag.Rules[i];
-                        if (MatchRule(rule))
-                        {
-                            return GetValueForVariationOrRollout(rule, EvaluationReason.RuleMatchReason(i, rule.Id));
-                        }
+                        return GetValueForVariationOrRollout(rule.Variation, rule.Rollout,
+                            EvaluationReason.RuleMatchReason(ruleIndex, rule.Id));
                     }
+                    ruleIndex++;
                 }
                 // Walk through the fallthrough and see if it matches
-                if (_flag.Fallthrough is null)
-                {
-                    return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
-                }
-                return GetValueForVariationOrRollout(_flag.Fallthrough, EvaluationReason.FallthroughReason);
+                return GetValueForVariationOrRollout(_flag.Fallthrough.Variation, _flag.Fallthrough.Rollout,
+                    EvaluationReason.FallthroughReason);
             }
 
             // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
             // short-circuit due to a prerequisite failure. May add events to _prereqEvents.
             private EvaluationReason? CheckPrerequisites()
             {
-                if (_flag.Prerequisites == null || _flag.Prerequisites.Count == 0)
-                {
-                    return null;
-                }
                 foreach (var prereq in _flag.Prerequisites)
                 {
                     var prereqOk = true;
@@ -226,12 +216,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
             private EvaluationDetail<LdValue> GetVariation(int variation, EvaluationReason reason)
             {
-                if (variation < 0 || variation >= _flag.Variations.Count)
+                if (variation < 0 || variation >= _flag.Variations.Count())
                 {
                     _parent._logger.Error("Data inconsistency in feature flag \"{0}\": invalid variation index", _flag.Key);
-                    return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
+                    return ErrorResult(EvaluationErrorKind.MalformedFlag);
                 }
-                return new EvaluationDetail<LdValue>(_flag.Variations[variation], variation, reason);
+                return new EvaluationDetail<LdValue>(_flag.Variations.ElementAt(variation), variation, reason);
             }
 
             private EvaluationDetail<LdValue> GetOffValue(EvaluationReason reason)
@@ -243,30 +233,30 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 return GetVariation(_flag.OffVariation.Value, reason);
             }
 
-            private EvaluationDetail<LdValue> GetValueForVariationOrRollout(VariationOrRollout vr, EvaluationReason reason)
+            private EvaluationDetail<LdValue> GetValueForVariationOrRollout(int? variation, Rollout? rollout, EvaluationReason reason)
             {
-                var index = VariationIndexForUser(vr, _flag.Key, _flag.Salt);
+                var index = VariationIndexForUser(variation, rollout, _flag.Key, _flag.Salt);
                 if (index is null)
                 {
                     _parent._logger.Error("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", _flag.Key);
-                    return ErrorResult(EvaluationErrorKind.MALFORMED_FLAG);
+                    return ErrorResult(EvaluationErrorKind.MalformedFlag);
                 }
                 return GetVariation(index.Value, reason);
             }
 
-            private int? VariationIndexForUser(VariationOrRollout vr, string key, string salt)
+            private int? VariationIndexForUser(int? variation, Rollout? rollout, string key, string salt)
             {
-                if (vr.Variation.HasValue)
+                if (variation.HasValue)
                 {
-                    return vr.Variation.Value;
+                    return variation.Value;
                 }
 
-                if (vr.Rollout != null &&vr. Rollout.Variations != null && vr.Rollout.Variations.Count > 0)
+                if (rollout.HasValue && rollout.Value.Variations.Count() > 0)
                 {
-                    var bucketBy = vr.Rollout.BucketBy.GetValueOrDefault(UserAttribute.Key);
+                    var bucketBy = rollout.Value.BucketBy.GetValueOrDefault(UserAttribute.Key);
                     float bucket = Bucketing.BucketUser(_user, key, bucketBy, salt);
                     float sum = 0F;
-                    foreach (WeightedVariation wv in vr.Rollout.Variations)
+                    foreach (WeightedVariation wv in rollout.Value.Variations)
                     {
                         sum += (float)wv.Weight / 100000F;
                         if (bucket < sum)
@@ -279,22 +269,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     // data could contain buckets that don't actually add up to 100000. Rather than returning an error in
                     // this case (or changing the scaling, which would potentially change the results for *all* users), we
                     // will simply put the user in the last bucket.
-                    return vr.Rollout.Variations[vr.Rollout.Variations.Count - 1].Variation;
+                    return rollout.Value.Variations.Last().Variation;
                 }
                 return null;
             }
 
-            private bool MatchRule(Rule rule)
+            private bool MatchRule(FlagRule rule)
             {
                 // A rule matches if ALL of its clauses match
-                if (rule.Clauses != null)
+                foreach (var c in rule.Clauses)
                 {
-                    foreach (var c in rule.Clauses)
+                    if (!MatchClause(c))
                     {
-                        if (!MatchClause(c))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
                 return true;
@@ -372,10 +359,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 return false;
             }
 
-            private static bool MaybeNegate(Clause clause, bool b)
-            {
-                return clause.Negate ? !b : b;
-            }
+            private static bool MaybeNegate(Clause clause, bool b) =>
+                clause.Negate ? !b : b;
 
             private bool MatchSegment(Segment segment)
             {

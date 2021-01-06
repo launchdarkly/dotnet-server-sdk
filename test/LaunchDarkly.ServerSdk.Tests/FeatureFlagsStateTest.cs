@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System.Collections.Generic;
+using LaunchDarkly.Sdk.Json;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server
@@ -87,10 +84,8 @@ namespace LaunchDarkly.Sdk.Server
                 },
                 ""$valid"":true
             }";
-            var expectedValue = LdValue.Parse(expectedString);
-            var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = LdValue.Parse(actualString);
-            Assert.Equal(expectedValue, actualValue);
+            var actualString = LdJsonSerialization.SerializeObject(state);
+            AssertHelpers.JsonEqual(expectedString, actualString);
         }
 
         [Fact]
@@ -101,8 +96,8 @@ namespace LaunchDarkly.Sdk.Server
                 .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, UnixMillisecondTime.OfMillis(1000))
                 .Build();
 
-            var jsonString = JsonConvert.SerializeObject(state);
-            var state1 = JsonConvert.DeserializeObject<FeatureFlagsState>(jsonString);
+            var jsonString = LdJsonSerialization.SerializeObject(state);
+            var state1 = LdJsonSerialization.DeserializeObject<FeatureFlagsState>(jsonString);
 
             Assert.Equal(state, state1);
         }

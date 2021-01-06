@@ -20,53 +20,6 @@ namespace LaunchDarkly.Sdk.Server
     {
         public static readonly Logger NullLogger = Logs.None.Logger("");
 
-        public static void AssertJsonEqual(LdValue expected, LdValue actual)
-        {
-            if (!expected.Equals(actual))
-            {
-                if (expected.Type != LdValueType.Object || actual.Type != LdValueType.Object)
-                {
-                    Assert.Equal(expected, actual); // generates standard failure message
-                }
-                // generate a better message with a diff of properties
-                var expectedDict = expected.AsDictionary(LdValue.Convert.Json);
-                var actualDict = actual.AsDictionary(LdValue.Convert.Json);
-                var allKeys = expectedDict.Keys.Union(actualDict.Keys);
-                var lines = new List<string>();
-                foreach (var key in allKeys)
-                {
-                    string expectedDesc = null, actualDesc = null;
-                    if (expectedDict.ContainsKey(key))
-                    {
-                        if (actualDict.ContainsKey(key))
-                        {
-                            if (!expectedDict[key].Equals(actualDict[key]))
-                            {
-                                expectedDesc = expectedDict[key].ToJsonString();
-                                actualDesc = actualDict[key].ToJsonString();
-                            }
-                        }
-                        else
-                        {
-                            expectedDesc = expectedDict[key].ToJsonString();
-                            actualDesc = "<absent>";
-                        }
-                    }
-                    else
-                    {
-                        actualDesc = actualDict[key].ToJsonString();
-                        expectedDesc = "<absent>";
-                    }
-                    if (expectedDesc != null || actualDesc != null)
-                    {
-                        lines.Add(string.Format("property \"{0}\": expected = {1}, actual = {2}",
-                            key, expectedDesc, actualDesc));
-                    }
-                }
-                Assert.True(false, "JSON result mismatch:\n" + string.Join("\n", lines));
-            }
-        }
-
         public static string TestFilePath(string name) => "./TestFiles/" + name;
 
         internal static ItemDescriptor DescriptorOf(FeatureFlag item) => new ItemDescriptor(item.Version, item);

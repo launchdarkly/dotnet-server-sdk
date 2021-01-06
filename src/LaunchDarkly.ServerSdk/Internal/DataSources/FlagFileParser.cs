@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using LaunchDarkly.JsonStream;
+using LaunchDarkly.Sdk.Json;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -15,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             if (_alternateParser == null)
             {
-                return JsonUtil.DecodeJson<FlagFileData>(content);
+                return ParseJson(content);
             }
             else
             {
@@ -23,7 +27,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 {
                     try
                     {
-                        return JsonUtil.DecodeJson<FlagFileData>(content);
+                        return ParseJson(content);
                     }
                     catch (Exception)
                     {
@@ -32,12 +36,55 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 }
                 // The alternate parser should produce the most basic .NET data structure that can represent
                 // the file content, using types like Dictionary and String. We then convert this into a
-                // JSON tree so we can use the JSON deserializer; this is inefficient, but we already know
-                // that Gson can deserialize our model types correctly.
+                // JSON tree so we can use the JSON deserializer; this is inefficient, but it lets us reuse
+                // our existing data model deserialization logic.
                 var o = _alternateParser(content);
-                var json = JsonUtil.EncodeJson(o);
-                return JsonUtil.DecodeJson<FlagFileData>(json);
+                var r = JReader.FromAdapter(ReaderAdapters.FromSimpleTypes(o, allowTypeCoercion: true));
+                return ParseJson(ref r);
             }
+        }
+
+        private static FlagFileData ParseJson(string data)
+        {
+            var r = JReader.FromString(data);
+            return ParseJson(ref r);
+        }
+
+        private static FlagFileData ParseJson(ref JReader r)
+        {
+            var ret = new FlagFileData
+            {
+                Flags = new Dictionary<string, FeatureFlag>(),
+                FlagValues = new Dictionary<string, LdValue>(),
+                Segments = new Dictionary<string, Segment>()
+            };
+            for (var obj = r.Object(); obj.Next(ref r);)
+            {
+                switch (obj.Name.ToString())
+                {
+                    case "flags":
+                        for (var subObj = r.ObjectOrNull(); subObj.Next(ref r);)
+                        {
+                            ret.Flags[subObj.Name.ToString()] = FeatureFlagSerialization.Instance.ReadJson(ref r);
+                        }
+                        break;
+
+                    case "flagValues":
+                        for (var subObj = r.ObjectOrNull(); subObj.Next(ref r);)
+                        {
+                            ret.FlagValues[subObj.Name.ToString()] = new LdJsonConverters.LdValueConverter().ReadJson(ref r);
+                        }
+                        break;
+
+                    case "segments":
+                        for (var subObj = r.ObjectOrNull(); subObj.Next(ref r);)
+                        {
+                            ret.Segments[subObj.Name.ToString()] = SegmentSerialization.Instance.ReadJson(ref r);
+                        }
+                        break;
+                }
+            }
+            return ret;
         }
     }
 }

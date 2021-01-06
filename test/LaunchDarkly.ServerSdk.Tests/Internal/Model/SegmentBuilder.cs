@@ -6,8 +6,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         private readonly string _key;
         private int _version;
-        private List<string> _included = new List<string>();
-        private List<string> _excluded = new List<string>();
+        private ISet<string> _included = new HashSet<string>();
+        private ISet<string> _excluded = new HashSet<string>();
         private List<SegmentRule> _rules = new List<SegmentRule>();
         private string _salt;
         private bool _deleted;
@@ -21,13 +21,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             _key = from.Key;
             _version = from.Version;
-            _rules = from.Rules;
             _deleted = from.Deleted;
+            _included = new HashSet<string>(from.Included);
+            _excluded = new HashSet<string>(from.Excluded);
+            _rules = new List<SegmentRule>(from.Rules);
+            _salt = from.Salt;
         }
 
         internal Segment Build()
         {
-            return new Segment(_key, _version, _included, _excluded, _salt, _rules, _deleted);
+            return new Segment(_key, _version, _deleted, _included, _excluded, _rules, _salt);
         }
 
         internal SegmentBuilder Version(int version)
@@ -39,6 +42,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal SegmentBuilder Salt(string salt)
         {
             _salt = salt;
+            return this;
+        }
+
+        internal SegmentBuilder Included(params string[] keys)
+        {
+            foreach (var key in keys) { _included.Add(key); }
+            return this;
+        }
+
+        internal SegmentBuilder Excluded(params string[] keys)
+        {
+            foreach (var key in keys) { _excluded.Add(key); }
             return this;
         }
 

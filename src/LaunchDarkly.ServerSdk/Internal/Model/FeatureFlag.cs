@@ -1,100 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using LaunchDarkly.JsonStream;
+using LaunchDarkly.Sdk.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-    internal sealed class FeatureFlag
+    [JsonStreamConverter(typeof(FeatureFlagSerialization))]
+    internal sealed class FeatureFlag : IJsonSerializable
     {
-        [JsonProperty(PropertyName = "key")]
-        public string Key { get; private set; }
-        [JsonProperty(PropertyName = "version")]
-        public int Version { get; set; }
-        [JsonProperty(PropertyName = "on")]
-        internal bool On { get; private set; }
-        [JsonProperty(PropertyName = "prerequisites")]
-        internal List<Prerequisite> Prerequisites { get; private set; }
-        [JsonProperty(PropertyName = "salt")]
-        internal string Salt { get; private set; }
-        [JsonProperty(PropertyName = "targets")]
-        internal List<Target> Targets { get; private set; }
-        [JsonProperty(PropertyName = "rules")]
-        internal List<Rule> Rules { get; private set; }
-        [JsonProperty(PropertyName = "fallthrough")]
-        internal VariationOrRollout Fallthrough { get; private set; }
-        [JsonProperty(PropertyName = "offVariation")]
-        internal int? OffVariation { get; private set; }
-        [JsonProperty(PropertyName = "variations")]
-        internal List<LdValue> Variations { get; private set; }
-        [JsonProperty(PropertyName = "trackEvents")]
-        public bool TrackEvents { get; private set; }
-        [JsonProperty(PropertyName = "trackEventsFallthrough")]
-        public bool TrackEventsFallthrough { get; private set; }
-        [JsonProperty(PropertyName = "debugEventsUntilDate", NullValueHandling = NullValueHandling.Ignore)]
+        internal string Key { get; }
+        internal int Version { get; }
+        internal bool Deleted { get; }
+        internal bool On { get; }
+        internal IEnumerable<Prerequisite> Prerequisites { get; }
+        internal IEnumerable<Target> Targets { get; }
+        internal IEnumerable<FlagRule> Rules { get; }
+        internal VariationOrRollout Fallthrough { get; }
+        internal int? OffVariation { get; }
+        internal IEnumerable<LdValue> Variations { get; }
+        internal string Salt { get; }
+        public bool TrackEvents { get; }
+        public bool TrackEventsFallthrough { get; }
         public UnixMillisecondTime? DebugEventsUntilDate { get; private set; }
-        [JsonProperty(PropertyName = "deleted")]
-        public bool Deleted { get; set; }
-        [JsonProperty(PropertyName = "clientSide")]
         public bool ClientSide { get; set; }
 
-        [JsonConstructor]
-        internal FeatureFlag(string key, int version, bool on, List<Prerequisite> prerequisites, string salt,
-            List<Target> targets, List<Rule> rules, VariationOrRollout fallthrough, int? offVariation,
-            List<LdValue> variations, bool trackEvents, bool trackEventsFallthrough, UnixMillisecondTime? debugEventsUntilDate,
-            bool deleted, bool clientSide)
+        internal FeatureFlag(string key, int version, bool deleted, bool on, IEnumerable<Prerequisite> prerequisites,
+            IEnumerable<Target> targets, IEnumerable<FlagRule> rules, VariationOrRollout fallthrough, int? offVariation,
+            IEnumerable<LdValue> variations, string salt, bool trackEvents, bool trackEventsFallthrough, UnixMillisecondTime? debugEventsUntilDate,
+            bool clientSide)
         {
             Key = key;
             Version = version;
+            Deleted = deleted;
             On = on;
-            Prerequisites = prerequisites ?? new List<Prerequisite>();
-            Salt = salt;
-            Targets = targets ?? new List<Target>();
-            Rules = rules ?? new List<Rule>();
+            Prerequisites = prerequisites ?? Enumerable.Empty<Prerequisite>();
+            Targets = targets ?? Enumerable.Empty<Target>();
+            Rules = rules ?? Enumerable.Empty<FlagRule>();
             Fallthrough = fallthrough;
             OffVariation = offVariation;
-            Variations = variations;
+            Variations = variations ?? Enumerable.Empty<LdValue>();
+            Salt = salt;
             TrackEvents = trackEvents;
             TrackEventsFallthrough = trackEventsFallthrough;
             DebugEventsUntilDate = debugEventsUntilDate;
-            Deleted = deleted;
             ClientSide = clientSide;
-        }
-
-        internal FeatureFlag()
-        {
-        }
-
-        internal FeatureFlag(string key, int version, bool deleted)
-        {
-            Key = key;
-            Version = version;
-            Deleted = deleted;
         }
     }
 
-    internal class Rollout
+    internal struct Rollout
     {
-        [JsonProperty(PropertyName = "variations")]
-        internal List<WeightedVariation> Variations { get; private set; }
-        [JsonProperty(PropertyName = "bucketBy")]
+        internal IEnumerable<WeightedVariation> Variations { get; private set; }
         internal UserAttribute? BucketBy { get; private set; }
 
-        [JsonConstructor]
-        internal Rollout(List<WeightedVariation> variations, UserAttribute? bucketBy)
+        internal Rollout(IEnumerable<WeightedVariation> variations, UserAttribute? bucketBy)
         {
-            Variations = variations;
+            Variations = variations ?? Enumerable.Empty<WeightedVariation>();
             BucketBy = bucketBy;
         }
     }
 
-    internal class WeightedVariation
+    internal struct VariationOrRollout
     {
-        [JsonProperty(PropertyName = "variation")]
-        internal int Variation { get; private set; }
-        [JsonProperty(PropertyName = "weight")]
-        internal int Weight { get; private set; }
+        internal int? Variation { get; }
+        internal Rollout? Rollout { get; }
 
-        [JsonConstructor]
+        internal VariationOrRollout(int? variation, Rollout? rollout)
+        {
+            Variation = variation;
+            Rollout = rollout;
+        }
+    }
+
+    internal struct WeightedVariation
+    {
+        internal int Variation { get; }
+        internal int Weight { get; }
+
         internal WeightedVariation(int variation, int weight)
         {
             Variation = variation;
@@ -102,33 +84,45 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         }
     }
 
-    internal class Target
+    internal struct Target
     {
-        [JsonProperty(PropertyName = "values")]
-        internal List<string> Values { get; private set; }
-        [JsonProperty(PropertyName = "variation")]
-        internal int Variation { get; private set; }
+        internal IEnumerable<string> Values { get; }
+        internal int Variation { get; }
 
-        [JsonConstructor]
-        internal Target(List<string> values, int variation)
+        internal Target(IEnumerable<string> values, int variation)
         {
-            Values = values;
+            Values = values ?? Enumerable.Empty<string>();
             Variation = variation;
         }
     }
 
-    internal class Prerequisite
+    internal struct Prerequisite
     {
-        [JsonProperty(PropertyName = "key")]
-        internal string Key { get; private set; }
-        [JsonProperty(PropertyName = "variation")]
-        internal int Variation { get; private set; }
+        internal string Key { get; }
+        internal int Variation { get; }
 
-        [JsonConstructor]
         internal Prerequisite(string key, int variation)
         {
             Key = key;
             Variation = variation;
+        }
+    }
+
+    internal struct FlagRule
+    {
+        internal int? Variation { get; }
+        internal Rollout? Rollout { get; }
+        internal string Id { get; }
+        internal IEnumerable<Clause> Clauses { get; }
+        internal bool TrackEvents { get; }
+
+        internal FlagRule(int? variation, Rollout? rollout, string id, IEnumerable<Clause> clauses, bool trackEvents)
+        {
+            Variation = variation;
+            Rollout = rollout;
+            Id = id;
+            Clauses = clauses ?? Enumerable.Empty<Clause>();
+            TrackEvents = trackEvents;
         }
     }
 

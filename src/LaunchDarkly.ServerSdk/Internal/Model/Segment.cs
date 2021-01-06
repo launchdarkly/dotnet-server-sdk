@@ -1,40 +1,45 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using LaunchDarkly.JsonStream;
+using LaunchDarkly.Sdk.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-    internal sealed class Segment
+    [JsonStreamConverter(typeof(SegmentSerialization))]
+    internal sealed class Segment : IJsonSerializable
     {
-        [JsonProperty(PropertyName = "key")]
-        public string Key { get; private set; }
-        [JsonProperty(PropertyName = "version")]
-        public int Version { get; set; }
-        [JsonProperty(PropertyName = "included")]
-        internal List<string> Included { get; private set; }
-        [JsonProperty(PropertyName = "excluded")]
-        internal List<string> Excluded { get; private set; }
-        [JsonProperty(PropertyName = "salt")]
-        internal string Salt { get; private set; }
-        [JsonProperty(PropertyName = "rules")]
-        internal List<SegmentRule> Rules { get; private set; }
-        [JsonProperty(PropertyName = "deleted")]
-        public bool Deleted { get; set; }
+        public string Key { get; }
+        public int Version { get; }
+        public bool Deleted { get; }
+        internal IEnumerable<string> Included { get; }
+        internal IEnumerable<string> Excluded { get; }
+        internal IEnumerable<SegmentRule> Rules { get; }
+        internal string Salt { get; }
 
-        [JsonConstructor]
-        internal Segment(string key, int version, List<string> included, List<string> excluded,
-                         string salt, List<SegmentRule> rules, bool deleted)
+        internal Segment(string key, int version, bool deleted, IEnumerable<string> included, IEnumerable<string> excluded,
+                         IEnumerable<SegmentRule> rules, string salt)
         {
             Key = key;
             Version = version;
-            Included = included;
-            Excluded = excluded;
-            Salt = salt;
-            Rules = rules ?? new List<SegmentRule>();
             Deleted = deleted;
+            Included = included ?? Enumerable.Empty<string>();
+            Excluded = excluded ?? Enumerable.Empty<string>();
+            Rules = rules ?? Enumerable.Empty<SegmentRule>();
+            Salt = salt;
         }
+    }
 
-        internal Segment()
+    internal struct SegmentRule
+    {
+        internal IEnumerable<Clause> Clauses { get; }
+        internal int? Weight { get; }
+        internal UserAttribute? BucketBy { get; }
+
+        internal SegmentRule(IEnumerable<Clause> clauses, int? weight, UserAttribute? bucketBy)
         {
+            Clauses = clauses ?? Enumerable.Empty<Clause>();
+            Weight = weight;
+            BucketBy = bucketBy;
         }
     }
 }

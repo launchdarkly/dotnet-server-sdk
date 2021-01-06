@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using Xunit;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -25,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server
             var flag = MustParseFlag(expectedJson.ToJsonString());
             AssertFlagHasAllProperties(flag);
             var s = DataModel.Features.Serialize(new ItemDescriptor(flag.Version, flag));
-            Assert.Equal(expectedJson, LdValue.Parse(s));
+            AssertHelpers.JsonEqual(expectedJson, LdValue.Parse(s));
         }
 
         [Fact]
@@ -35,7 +36,7 @@ namespace LaunchDarkly.Sdk.Server
             var segment = MustParseSegment(expectedJson.ToJsonString());
             AssertSegmentHasAllProperties(segment);
             var s = DataModel.Segments.Serialize(new ItemDescriptor(segment.Version, segment));
-            Assert.Equal(expectedJson, LdValue.Parse(s));
+            AssertHelpers.JsonEqual(expectedJson, LdValue.Parse(s));
         }
 
         [Fact]
@@ -48,10 +49,10 @@ namespace LaunchDarkly.Sdk.Server
             var expected = LdValue.BuildObject().Add("version", 2).Add("deleted", true).Build();
 
             var s1 = DataModel.Features.Serialize(deletedItem);
-            Assert.Equal(expected, LdValue.Parse(s1));
+            AssertHelpers.JsonEqual(expected, LdValue.Parse(s1));
 
             var s2 = DataModel.Segments.Serialize(deletedItem);
-            Assert.Equal(expected, LdValue.Parse(s2));                
+            AssertHelpers.JsonEqual(expected, LdValue.Parse(s2));                
         }
 
         [Fact]
@@ -140,7 +141,7 @@ namespace LaunchDarkly.Sdk.Server
             },
             ""clauses"": [],
             ""trackEvents"": false
-        },
+        }
     ],
     ""fallthrough"": { ""variation"": 1 },
     ""offVariation"": 2,
@@ -170,7 +171,7 @@ namespace LaunchDarkly.Sdk.Server
                 t =>
                 {
                     Assert.Equal(1, t.Variation);
-                    Assert.Equal(new HashSet<string> { "key1", "key2" }, t.Values);
+                    Assert.Equal(ImmutableList.Create("key1", "key2"), t.Values);
                 });
 
             Assert.Collection(flag.Rules,
@@ -185,7 +186,7 @@ namespace LaunchDarkly.Sdk.Server
                         {
                             Assert.Equal(UserAttribute.Name, c.Attribute);
                             Assert.Equal("in", c.Op);
-                            Assert.Equal(new List<LdValue> { LdValue.Of("Lucy"), LdValue.Of("Mina") }, c.Values);
+                            Assert.Equal(ImmutableList.Create(LdValue.Of("Lucy"), LdValue.Of("Mina")), c.Values);
                             Assert.True(c.Negate);
                         });
                 },
@@ -195,13 +196,13 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.False(r.TrackEvents);
                     Assert.Null(r.Variation);
                     Assert.NotNull(r.Rollout);
-                    Assert.Collection(r.Rollout.Variations,
+                    Assert.Collection(r.Rollout.Value.Variations,
                         v =>
                         {
                             Assert.Equal(2, v.Variation);
                             Assert.Equal(100000, v.Weight);
                         });
-                    Assert.Equal(UserAttribute.Email, r.Rollout.BucketBy);
+                    Assert.Equal(UserAttribute.Email, r.Rollout.Value.BucketBy);
                     Assert.Collection(r.Clauses);
                 });
 
@@ -209,7 +210,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal(1, flag.Fallthrough.Variation);
             Assert.Null(flag.Fallthrough.Rollout);
             Assert.Equal(2, flag.OffVariation);
-            Assert.Equal(new List<LdValue> { LdValue.Of("a"), LdValue.Of("b"), LdValue.Of("c") }, flag.Variations);
+            Assert.Equal(ImmutableList.Create(LdValue.Of("a"), LdValue.Of("b"), LdValue.Of("c")), flag.Variations);
             Assert.True(flag.ClientSide);
             Assert.True(flag.TrackEvents);
             Assert.True(flag.TrackEventsFallthrough);
@@ -250,8 +251,8 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal("segment-key", segment.Key);
             Assert.Equal(99, segment.Version);
             Assert.Equal("123", segment.Salt);
-            Assert.Equal(new HashSet<string> { "key1", "key2" }, segment.Included);
-            Assert.Equal(new HashSet<string> { "key3", "key4" }, segment.Excluded);
+            Assert.Equal(ImmutableList.Create("key1", "key2"), segment.Included);
+            Assert.Equal(ImmutableList.Create("key3", "key4"), segment.Excluded);
 
             Assert.Collection(segment.Rules,
                 r =>

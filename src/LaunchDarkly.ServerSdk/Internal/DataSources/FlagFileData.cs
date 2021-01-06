@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -8,13 +7,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
     // transferring its contents into the format used by the data store.
     internal sealed class FlagFileData
     {
-        [JsonProperty(PropertyName = "flags", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, JToken> Flags { get; set; }
+        public Dictionary<string, FeatureFlag> Flags { get; set; }
 
-        [JsonProperty(PropertyName = "flagValues", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, JToken> FlagValues { get; set; }
+        public Dictionary<string, LdValue> FlagValues { get; set; }
 
-        [JsonProperty(PropertyName = "segments", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, JToken> Segments { get; set; }
+        public Dictionary<string, Segment> Segments { get; set; }
     }
 }
