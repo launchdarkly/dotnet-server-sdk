@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -28,17 +29,18 @@ namespace LaunchDarkly.Client
             TimeSpan initialReconnectDelay
             )
         {
+            var httpConfig = config.HttpConfiguration;
             var streamProperties = new StreamProperties(new Uri(baseUri, "/all"),
                 HttpMethod.Get, null);
             var streamManagerConfig = new StreamManagerConfigImpl
             {
                 HttpAuthorizationKey = config.SdkKey,
-                HttpClientHandler = config.HttpClientHandler,
-                HttpClientTimeout = config.HttpClientTimeout,
-                ReadTimeout = config.ReadTimeout,
+                HttpClientHandler = httpConfig.MessageHandler as HttpClientHandler,
+                HttpClientTimeout = httpConfig.ConnectTimeout,
+                ReadTimeout = httpConfig.ReadTimeout,
                 ReconnectTime = initialReconnectDelay,
-                WrapperName = config.WrapperName,
-                WrapperVersion = config.WrapperVersion
+                WrapperName = (httpConfig as IHttpConfigurationInternal)?.WrapperName,
+                WrapperVersion = (httpConfig as IHttpConfigurationInternal)?.WrapperVersion
             };
             _streamManager = new StreamManager(this,
                 streamProperties,

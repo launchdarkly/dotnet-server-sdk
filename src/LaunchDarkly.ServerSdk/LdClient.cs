@@ -120,8 +120,9 @@ namespace LaunchDarkly.Client
         /// <example>
         /// <code>
         ///     var config = Configuration.Builder("my-sdk-key")
-        ///         .AllAttributesPrivate(true)
-        ///         .EventCapacity(1000)
+        ///         .Events(
+        ///             Components.SendEvents().AllAttributesPrivate(true).EventCapacity(1000)
+        ///         )
         ///         .Build();
         ///     var client = new LDClient(config);
         /// </code>

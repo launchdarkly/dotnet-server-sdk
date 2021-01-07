@@ -81,13 +81,14 @@ namespace LaunchDarkly.Client
             var sdkInfo = LdValue.BuildObject()
                 .Add("name", "dotnet-server-sdk")
                 .Add("version", ServerSideClientEnvironment.Instance.Version.ToString());
-            if (Config.WrapperName != null)
+            var httpConfig = Config.HttpConfiguration as IHttpConfigurationInternal;
+            if (httpConfig?.WrapperName != null)
             {
-                sdkInfo.Add("wrapperName", Config.WrapperName);
+                sdkInfo.Add("wrapperName", httpConfig.WrapperName);
             }
-            if (Config.WrapperVersion != null)
+            if (httpConfig?.WrapperVersion != null)
             {
-                sdkInfo.Add("wrapperVersion", Config.WrapperVersion);
+                sdkInfo.Add("wrapperVersion", httpConfig.WrapperVersion);
             }
             return sdkInfo.Build();
         }
@@ -95,10 +96,6 @@ namespace LaunchDarkly.Client
         private LdValue InitEventConfig()
         {
             var configInfo = LdValue.BuildObject();
-            configInfo.Add("connectTimeoutMillis", Config.HttpClientTimeout.TotalMilliseconds);
-            configInfo.Add("socketTimeoutMillis", Config.ReadTimeout.TotalMilliseconds);
-            configInfo.Add("usingProxy", false);
-            configInfo.Add("usingProxyAuthenticator", false);
             configInfo.Add("offline", Config.Offline);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
             configInfo.Add("dataStoreType", NormalizeDataStoreType(Config.FeatureStoreFactory));
@@ -107,6 +104,7 @@ namespace LaunchDarkly.Client
 #pragma warning disable CS0618 // using obsolete API
             MergeComponentProperties(configInfo, Config.DataSource ?? Components.DefaultUpdateProcessor, null);
             MergeComponentProperties(configInfo, Config.EventProcessorFactory ?? Components.DefaultEventProcessor, null);
+            MergeComponentProperties(configInfo, Config.HttpConfigurationFactory ?? new DefaultHttpConfigurationFactory(), null);
 #pragma warning restore CS0618
 
             return configInfo.Build();

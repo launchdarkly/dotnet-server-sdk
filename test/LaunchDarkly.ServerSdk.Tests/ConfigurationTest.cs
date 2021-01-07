@@ -36,14 +36,11 @@ namespace LaunchDarkly.Tests
             TestSetter(b => b.DiagnosticOptOut, c => c.DiagnosticOptOut, true);
             TestSetter(b => b.Events, c => c.EventProcessorFactory,
                 TestUtils.SpecificEventProcessor(new TestEventProcessor()));
-            TestSetter(b => b.HttpClientHandler, c => c.HttpClientHandler, new HttpClientHandler());
-            TestSetter(b => b.HttpClientTimeout, c => c.HttpClientTimeout, time);
+            TestSetter(b => b.Http, c => c.HttpConfigurationFactory,
+                Components.HttpConfiguration());
             TestSetter(b => b.Offline, c => c.Offline, true);
-            TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
             TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
             TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
-            TestSetter(b => b.WrapperName, c => c.WrapperName, "name");
-            TestSetter(b => b.WrapperVersion, c => c.WrapperVersion, "version");
         }
 
         private void TestSetter<T>(Func<IConfigurationBuilder, Func<T, IConfigurationBuilder>> setter,
@@ -73,6 +70,8 @@ namespace LaunchDarkly.Tests
             TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
             TestSetter(b => b.FeatureStoreFactory, c => c.FeatureStoreFactory,
                 TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
+            TestSetter(b => b.HttpClientHandler, c => c.HttpClientHandler, new HttpClientHandler());
+            TestSetter(b => b.HttpClientTimeout, c => c.HttpClientTimeout, time);
             TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
             TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
             TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
@@ -83,6 +82,8 @@ namespace LaunchDarkly.Tests
             TestSetter(b => b.UseLdd, c => c.UseLdd, true);
             TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
             TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
+            TestSetter(b => b.WrapperName, c => c.WrapperName, "name");
+            TestSetter(b => b.WrapperVersion, c => c.WrapperVersion, "version");
         }
 
         [Fact]

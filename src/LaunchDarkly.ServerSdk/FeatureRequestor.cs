@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Common.Logging;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -15,14 +16,14 @@ namespace LaunchDarkly.Client
         private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureRequestor));
         private readonly Uri _allUri;
         private readonly HttpClient _httpClient;
-        private readonly Configuration _config;
+        private readonly IHttpConfiguration _httpConfig;
         private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
 
         internal FeatureRequestor(Configuration config, Uri baseUri)
         {
-            _config = config;
             _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
             _httpClient = Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
+            _httpConfig = config.HttpConfiguration;
         }
 
         void IDisposable.Dispose()
@@ -64,7 +65,7 @@ namespace LaunchDarkly.Client
                 }
             }
 
-            using (var cts = new CancellationTokenSource(_config.HttpClientTimeout))
+            using (var cts = new CancellationTokenSource(_httpConfig.ConnectTimeout))
             {
                 try
                 {
@@ -104,7 +105,7 @@ namespace LaunchDarkly.Client
                     }
                     //Otherwise this was a request timeout.
                     throw new TimeoutException("Get item with URL: " + path.AbsoluteUri +
-                                                " timed out after : " + _config.HttpClientTimeout);
+                                                " timed out after : " + _httpConfig.ConnectTimeout);
                 }
             }
         }
