@@ -373,6 +373,10 @@ namespace LaunchDarkly.Client
         internal IHttpConfiguration HttpConfiguration =>
             (HttpConfigurationFactory ?? new DefaultHttpConfigurationFactory()).CreateHttpConfiguration(this);
 
+        // This is a bit oddly placed because it's a compromise to get the encapsulation of HTTP stuff
+        // without having to add an extra parameter to a bunch of methods/constructors. In the 6.0 SDK
+        // the LdClientContext class serves as the main place to get stuff from instead of Config, so
+        // this isn't necessary.
         internal IHttpRequestConfiguration HttpRequestConfiguration
         {
             get
