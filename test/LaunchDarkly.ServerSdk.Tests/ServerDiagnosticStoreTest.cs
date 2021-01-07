@@ -49,8 +49,10 @@ namespace LaunchDarkly.Tests
             .Build();
 
         private IDiagnosticStore CreateDiagnosticStore() {
+#pragma warning disable CS0618 // Type or member is obsolete
             Configuration config = Configuration.Builder("SDK_KEY")
                 .IsStreamingEnabled(false)
+#pragma warning restore CS0618
                 .BaseUri(new Uri("http://fake"))
                 .StartWaitTime(TimeSpan.Zero)
                 .WrapperName("Xamarin")

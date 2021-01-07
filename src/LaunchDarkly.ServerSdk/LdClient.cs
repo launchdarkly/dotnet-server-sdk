@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Security.Cryptography;
 using Common.Logging;
 using Newtonsoft.Json.Linq;
@@ -14,7 +13,7 @@ namespace LaunchDarkly.Client
     /// </summary>
     public sealed class LdClient : IDisposable, ILdClient
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
+        internal static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
 
         private readonly Configuration _configuration;
         internal readonly IEventProcessor _eventProcessor;
@@ -44,7 +43,9 @@ namespace LaunchDarkly.Client
 
             if (eventProcessor == null)
             {
-                IEventProcessorFactory eventProcessorFactory = _configuration.EventProcessorFactory ?? Components.DefaultEventProcessor;
+                var eventProcessorFactory =
+                    config.Offline ? Components.NoEvents :
+                    (_configuration.EventProcessorFactory ?? Components.DefaultEventProcessor);
                 if (eventProcessorFactory is IEventProcessorFactoryWithDiagnostics epfwd)
                 {
                     _eventProcessor = epfwd.CreateEventProcessor(_configuration, diagnosticStore);
@@ -80,7 +81,9 @@ namespace LaunchDarkly.Client
             }
             _featureStore = new FeatureStoreClientWrapper(store);
 
-            IUpdateProcessorFactory updateProcessorFactory = _configuration.UpdateProcessorFactory ?? Components.DefaultUpdateProcessor;
+            var updateProcessorFactory =
+                config.Offline ? Components.ExternalUpdatesOnly :
+                (_configuration.UpdateProcessorFactory ?? Components.DefaultUpdateProcessor);
             if (updateProcessorFactory is IUpdateProcessorFactoryWithDiagnostics upfwd)
             {
                 _updateProcessor = upfwd.CreateUpdateProcessor(_configuration, _featureStore, diagnosticStore);

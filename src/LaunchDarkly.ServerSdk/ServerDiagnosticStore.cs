@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
 {
-
     internal class ServerDiagnosticStore : IDiagnosticStore
     {
         private readonly Configuration Config;
@@ -95,31 +95,46 @@ namespace LaunchDarkly.Client
         private LdValue InitEventConfig()
         {
             var configInfo = LdValue.BuildObject();
-            configInfo.Add("customBaseURI", !(Configuration.DefaultUri.Equals(Config.BaseUri)));
-            configInfo.Add("customEventsURI", !(Configuration.DefaultEventsUri.Equals(Config.EventsUri)));
-            configInfo.Add("customStreamURI", !(Configuration.DefaultStreamUri.Equals(Config.StreamUri)));
-            configInfo.Add("eventsCapacity", Config.EventCapacity);
             configInfo.Add("connectTimeoutMillis", Config.HttpClientTimeout.TotalMilliseconds);
             configInfo.Add("socketTimeoutMillis", Config.ReadTimeout.TotalMilliseconds);
-            configInfo.Add("eventsFlushIntervalMillis", Config.EventFlushInterval.TotalMilliseconds);
             configInfo.Add("usingProxy", false);
             configInfo.Add("usingProxyAuthenticator", false);
-            configInfo.Add("streamingDisabled", !Config.IsStreamingEnabled);
-            configInfo.Add("usingRelayDaemon", Config.UseLdd);
             configInfo.Add("offline", Config.Offline);
-            configInfo.Add("allAttributesPrivate", Config.AllAttributesPrivate);
-            configInfo.Add("pollingIntervalMillis", (long)Config.PollingInterval.TotalMilliseconds);
             configInfo.Add("startWaitMillis", (long)Config.StartWaitTime.TotalMilliseconds);
-#pragma warning disable 618
-            configInfo.Add("samplingInterval", Config.EventSamplingInterval);
-#pragma warning restore 618
-            configInfo.Add("reconnectTimeMillis", (long)Config.ReconnectTime.TotalMilliseconds);
-            configInfo.Add("userKeysCapacity", Config.UserKeysCapacity);
-            configInfo.Add("userKeysFlushIntervalMillis", (long)Config.UserKeysFlushInterval.TotalMilliseconds);
-            configInfo.Add("inlineUsersInEvents", Config.InlineUsersInEvents);
-            configInfo.Add("diagnosticRecordingIntervalMillis", (long)Config.DiagnosticRecordingInterval.TotalMilliseconds);
             configInfo.Add("dataStoreType", NormalizeDataStoreType(Config.FeatureStoreFactory));
+
+            // Allow each pluggable component to describe its own relevant properties.
+#pragma warning disable CS0618 // using obsolete API
+            MergeComponentProperties(configInfo, Config.DataSource ?? Components.DefaultUpdateProcessor, null);
+            MergeComponentProperties(configInfo, Config.EventProcessorFactory ?? Components.DefaultEventProcessor, null);
+#pragma warning restore CS0618
+
             return configInfo.Build();
+        }
+
+        private void MergeComponentProperties(LdValue.ObjectBuilder builder, object component,
+            string defaultPropertyName)
+        {
+            if (!(component is IDiagnosticDescription))
+            {
+                if (!string.IsNullOrEmpty(defaultPropertyName))
+                {
+                    builder.Add(defaultPropertyName, "custom");
+                }
+                return;
+            }
+            var componentDesc = (component as IDiagnosticDescription).DescribeConfiguration(Config);
+            if (!string.IsNullOrEmpty(defaultPropertyName))
+            {
+                builder.Add(defaultPropertyName, componentDesc.IsString ? componentDesc : LdValue.Of("custom"));
+            }
+            else if (componentDesc.Type == LdValueType.Object)
+            {
+                foreach (KeyValuePair<string, LdValue> prop in componentDesc.AsDictionary(LdValue.Convert.Json))
+                {
+                    builder.Add(prop.Key, prop.Value); // TODO: filter allowable properties
+                }
+            }
         }
 
         private string NormalizeDataStoreType(IFeatureStoreFactory storeFactory)

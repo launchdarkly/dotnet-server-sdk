@@ -14,16 +14,23 @@ namespace LaunchDarkly.Client
         private readonly Configuration _config;
         private readonly IFeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
+        private readonly TimeSpan _pollInterval;
         private int _initialized = UNINITIALIZED;
         private readonly TaskCompletionSource<bool> _initTask;
         private volatile bool _disposed;
 
 
-        internal PollingProcessor(Configuration config, IFeatureRequestor featureRequestor, IFeatureStore featureStore)
+        internal PollingProcessor(
+            Configuration config,
+            IFeatureRequestor featureRequestor,
+            IFeatureStore featureStore,
+            TimeSpan pollInterval
+            )
         {
             _config = config;
             _featureRequestor = featureRequestor;
             _featureStore = featureStore;
+            _pollInterval = pollInterval;
             _initTask = new TaskCompletionSource<bool>();
         }
 
@@ -35,7 +42,7 @@ namespace LaunchDarkly.Client
         Task<bool> IUpdateProcessor.Start()
         {
             Log.InfoFormat("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
-                _config.PollingInterval.TotalMilliseconds);
+                _pollInterval.TotalMilliseconds);
 
             Task.Run(() => UpdateTaskLoopAsync());
             return _initTask.Task;
@@ -46,7 +53,7 @@ namespace LaunchDarkly.Client
             while (!_disposed)
             {
                 await UpdateTaskAsync();
-                await Task.Delay(_config.PollingInterval);
+                await Task.Delay(_pollInterval);
             }
         }
 

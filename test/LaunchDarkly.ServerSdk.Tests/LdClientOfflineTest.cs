@@ -55,7 +55,7 @@ namespace LaunchDarkly.Tests
                 new FeatureFlagBuilder("key").OffWithValue(new JValue(true)).Build());
             var config = Configuration.Builder("SDK_KEY")
                 .Offline(true)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
+                .DataStore(TestUtils.SpecificFeatureStore(featureStore))
                 .Build();
             using (var client = new LdClient(config))
             {

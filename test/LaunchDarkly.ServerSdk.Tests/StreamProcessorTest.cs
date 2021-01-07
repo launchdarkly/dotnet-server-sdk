@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Client;
+using LaunchDarkly.Client.Integrations;
 using LaunchDarkly.Common;
 using LaunchDarkly.EventSource;
 using Moq;
@@ -24,6 +25,7 @@ namespace LaunchDarkly.Tests
         IEventSource _eventSource;
         TestEventSourceFactory _eventSourceFactory;
         InMemoryFeatureStore _featureStore;
+        StreamingDataSourceBuilder _dataSourceBuilder;
         Client.Configuration _config;
 
         public StreamProcessorTest()
@@ -33,15 +35,15 @@ namespace LaunchDarkly.Tests
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _featureStore = TestUtils.InMemoryFeatureStore();
-            _config = Client.Configuration.Builder(SDK_KEY)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore))
-                .Build();
+            _config = Client.Configuration.Builder(SDK_KEY).Build();
+            _dataSourceBuilder = Components.StreamingDataSource()
+                .EventSourceCreator(_eventSourceFactory.Create());
         }
 
         [Fact]
         public void StreamUriHasCorrectEndpoint()
         {
-            _config = Client.Configuration.Builder(_config).StreamUri(new Uri("http://stream.test.com")).Build();
+            _dataSourceBuilder.BaseUri(new Uri("http://stream.test.com"));
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.Equal(new Uri("http://stream.test.com/all"),
                 _eventSourceFactory.ReceivedProperties.StreamUri);
@@ -178,8 +180,7 @@ namespace LaunchDarkly.Tests
         
         private StreamProcessor CreateProcessor()
         {
-            return new StreamProcessor(_config, _featureStore,
-                _eventSourceFactory.Create(), null);
+            return (StreamProcessor)_dataSourceBuilder.CreateUpdateProcessor(_config, _featureStore);
         }
 
         private StreamProcessor CreateAndStartProcessor()
