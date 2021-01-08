@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -190,7 +189,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             SimulateMessageReceived("delete", data);
 
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
-                _dataStore.Get(DataKinds.Features, FEATURE_KEY));
+                _dataStore.Get(DataModel.Features, FEATURE_KEY));
         }
 
         [Fact]
@@ -206,7 +205,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             SimulateMessageReceived("delete", data);
 
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
-                _dataStore.Get(DataKinds.Segments, SEGMENT_KEY));
+                _dataStore.Get(DataModel.Segments, SEGMENT_KEY));
         }
 
         [Fact]
@@ -537,12 +536,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         
         private void AssertFeatureInStore(FeatureFlag f)
         {
-            Assert.Equal(f.Version, _dataStore.Get(DataKinds.Features, f.Key).Value.Version);
+            Assert.Equal(f.Version, _dataStore.Get(DataModel.Features, f.Key).Value.Version);
         }
 
         private void AssertSegmentInStore(Segment s)
         {
-            Assert.Equal(s.Version, _dataStore.Get(DataKinds.Segments, s.Key).Value.Version);
+            Assert.Equal(s.Version, _dataStore.Get(DataModel.Segments, s.Key).Value.Version);
         }
     }
 

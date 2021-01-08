@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         public bool TrackEvents { get; private set; }
         [JsonProperty(PropertyName = "trackEventsFallthrough")]
         public bool TrackEventsFallthrough { get; private set; }
-        [JsonProperty(PropertyName = "debugEventsUntilDate")]
+        [JsonProperty(PropertyName = "debugEventsUntilDate", NullValueHandling = NullValueHandling.Ignore)]
         public UnixMillisecondTime? DebugEventsUntilDate { get; private set; }
         [JsonProperty(PropertyName = "deleted")]
         public bool Deleted { get; set; }
@@ -46,10 +46,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Key = key;
             Version = version;
             On = on;
-            Prerequisites = prerequisites;
+            Prerequisites = prerequisites ?? new List<Prerequisite>();
             Salt = salt;
-            Targets = targets;
-            Rules = rules;
+            Targets = targets ?? new List<Target>();
+            Rules = rules ?? new List<Rule>();
             Fallthrough = fallthrough;
             OffVariation = offVariation;
             Variations = variations;

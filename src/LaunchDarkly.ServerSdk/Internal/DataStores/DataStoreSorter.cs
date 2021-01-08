@@ -62,11 +62,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         
         private static int GetDataKindOrdering(DataKind kind)
         {
-            if (kind == DataKinds.Features)
+            if (kind == DataModel.Features)
             {
                 return 2;
             }
-            else if (kind == DataKinds.Segments)
+            else if (kind == DataModel.Segments)
             {
                 return 1;
             }
@@ -75,7 +75,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         private static Func<object, IEnumerable<string>> GetDependenciesFunction(DataKind kind)
         {
-            if (kind == DataKinds.Features)
+            if (kind == DataModel.Features)
             {
                 return o =>
                 {

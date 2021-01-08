@@ -27,7 +27,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </code>
     /// </example>
     /// </remarks>
-    public sealed class HttpConfigurationBuilder : IHttpConfigurationFactory
+    public sealed class HttpConfigurationBuilder : IHttpConfigurationFactory, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="ConnectTimeout(TimeSpan)"/>: two seconds.
@@ -108,11 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             return this;
         }
 
-        /// <summary>
-        /// Called internally by the SDK to create the configuration object.
-        /// </summary>
-        /// <param name="basicConfiguration">basic configuration properties</param>
-        /// <returns>the configuration object</returns>
+        /// <inheritdoc/>
         public IHttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
         {
             var httpProperties = HttpProperties.Default
@@ -123,6 +119,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
                 .WithWrapper(_wrapperName, _wrapperVersion);
             return new HttpConfigurationImpl(httpProperties);
+        }
+
+        /// <inheritdoc/>
+        public LdValue DescribeConfiguration(BasicConfiguration basic)
+        {
+            return LdValue.BuildObject()
+                .Add("connectTimeoutMillis", _connectTimeout.TotalMilliseconds)
+                .Add("socketTimeoutMillis", _readTimeout.TotalMilliseconds)
+                .Add("usingProxy", false)
+                .Add("usingProxyAuthenticator", false)
+                .Build();
         }
 
         internal sealed class HttpConfigurationImpl : IHttpConfiguration

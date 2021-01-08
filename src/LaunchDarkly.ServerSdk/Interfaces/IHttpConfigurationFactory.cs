@@ -9,7 +9,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IHttpConfigurationFactory
     {
         /// <summary>
-        /// Creates the configuration object. This is called internally by the SDK.
+        /// Called internally by the SDK to create an implementation instance. Applications do not need
+        /// to call this method.
         /// </summary>
         /// <param name="basicConfiguration">provides the basic SDK configuration properties</param>
         /// <returns>an <see cref="IHttpConfiguration"/></returns>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
@@ -39,7 +38,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             eventSink2.ExpectNoValue();
 
             var flagV1 = new FeatureFlagBuilder(flagKey).Version(1).Build();
-            dataSourceUpdates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV1));
+            dataSourceUpdates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV1));
 
             var event1 = eventSink1.ExpectValue();
             var event2 = eventSink2.ExpectValue();
@@ -52,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             tracker.FlagChanged -= listener2;
 
             var flagV2 = new FeatureFlagBuilder(flagKey).Version(2).Build();
-            dataSourceUpdates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV2));
+            dataSourceUpdates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV2));
 
             var event3 = eventSink1.ExpectValue();
             Assert.Equal(flagKey, event3.Key);
@@ -94,7 +93,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             // make the flag true for the first user only, and broadcast a flag change event
             resultMap[new KeyValuePair<string, User>(flagKey, user)] = LdValue.Of(true);
             var flagV1 = new FeatureFlagBuilder(flagKey).Version(1).Build();
-            dataSourceUpdates.Upsert(DataKinds.Features, flagKey, DescriptorOf(flagV1));
+            dataSourceUpdates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV1));
 
             // eventSink1 receives a value change event
             var event1 = eventSink1.ExpectValue();

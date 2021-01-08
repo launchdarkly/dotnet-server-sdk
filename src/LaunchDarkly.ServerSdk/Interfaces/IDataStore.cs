@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <remarks>
         /// <para>
         /// This is normally only true for persistent data stores created with
-        /// <see cref="Components.PersistentStore(IPersistentDataStoreFactory)"/>, but it could
+        /// <see cref="Components.PersistentDataStore(IPersistentDataStoreFactory)"/>, but it could
         /// also be true for any custom <see cref="IDataStore"/> implementation that makes use of the
         /// <see cref="IDataStoreUpdates"/> mechanism. Returning true means that the store guarantees
         /// that if it ever enters an invalid state (that is, an operation has failed or it knows

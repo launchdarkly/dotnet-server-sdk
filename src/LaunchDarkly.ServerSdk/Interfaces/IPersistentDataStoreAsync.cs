@@ -75,11 +75,12 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// Interface for a factory that creates some implementation of <see cref="IPersistentDataStoreAsync"/>.
     /// </summary>
     /// <seealso cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>
-    /// <seealso cref="Components.PersistentStore(IPersistentDataStoreAsyncFactory)"/>
+    /// <seealso cref="Components.PersistentDataStore(IPersistentDataStoreAsyncFactory)"/>
     public interface IPersistentDataStoreAsyncFactory
     {
         /// <summary>
-        /// Creates an implementation instance.
+        /// Called internally by the SDK to create an implementation instance. Applications do not need
+        /// to call this method.
         /// </summary>
         /// <param name="context">configuration of the current client instance</param>
         /// <returns>a <see cref="IPersistentDataStoreAsync"/> instance</returns>

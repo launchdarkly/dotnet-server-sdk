@@ -9,7 +9,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IDataSourceFactory
     {
         /// <summary>
-        /// Creates an implementation instance. This is called internally by the SDK.
+        /// Called internally by the SDK to create an implementation instance. Applications do not need
+        /// to call this method.
         /// </summary>
         /// <param name="context">configuration of the current client instance</param>
         /// <param name="dataSourceUpdates">the destination for pushing data and status updates</param>

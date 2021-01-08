@@ -21,7 +21,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IDiagnosticDescription
     {
         /// <summary>
-        /// Used internally by the SDK to inspect the configuration.
+        /// Called internally by the SDK to inspect the configuration. Applications do not need to call
+        /// this method.
         /// </summary>
         /// <param name="basic">the basic global configuration of the SDK</param>
         /// <returns>a JSON value</returns>

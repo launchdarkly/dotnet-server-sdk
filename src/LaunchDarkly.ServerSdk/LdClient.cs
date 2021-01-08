@@ -256,7 +256,7 @@ namespace LaunchDarkly.Sdk.Server
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
-            KeyedItems<ItemDescriptor> flags = _dataStore.GetAll(DataKinds.Features);
+            KeyedItems<ItemDescriptor> flags = _dataStore.GetAll(DataModel.Features);
             foreach (var pair in flags.Items)
             {
                 if (pair.Value.Item is null || !(pair.Value.Item is FeatureFlag flag))
@@ -478,7 +478,7 @@ namespace LaunchDarkly.Sdk.Server
 
         private FeatureFlag GetFlag(string key)
         {
-            var maybeItem = _dataStore.Get(DataKinds.Features, key);
+            var maybeItem = _dataStore.Get(DataModel.Features, key);
             if (maybeItem.HasValue && maybeItem.Value.Item != null && maybeItem.Value.Item is FeatureFlag f)
             {
                 return f;
@@ -488,7 +488,7 @@ namespace LaunchDarkly.Sdk.Server
 
         private Segment GetSegment(string key)
         {
-            var maybeItem = _dataStore.Get(DataKinds.Segments, key);
+            var maybeItem = _dataStore.Get(DataModel.Segments, key);
             if (maybeItem.HasValue && maybeItem.Value.Item != null && maybeItem.Value.Item is Segment s)
             {
                 return s;

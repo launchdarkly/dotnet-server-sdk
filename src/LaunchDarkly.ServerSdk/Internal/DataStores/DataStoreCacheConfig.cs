@@ -8,7 +8,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     /// <remarks>
     /// <para>
     /// Application code cannot see this class and instead uses the configuration methods on
-    /// <see cref="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreConfiguration"/>.
+    /// <see cref="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder"/>.
     /// </para>
     /// </remarks>
     internal sealed class DataStoreCacheConfig
@@ -33,29 +33,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         /// <summary>
         /// True if caching is enabled.
         /// </summary>
-        public bool IsEnabled
-        {
-            get
-            {
-                return !(Ttl == TimeSpan.Zero);
-            }
-        }
+        public bool IsEnabled => Ttl != TimeSpan.Zero;
 
         /// <summary>
         /// True if caching is enabled and does not have a finite TTL.
         /// </summary>
-        public bool IsInfiniteTtl
-        {
-            get
-            {
-                return Ttl.TotalMilliseconds < 0;
-            }
-        }
+        public bool IsInfiniteTtl => Ttl < TimeSpan.Zero;
 
         /// <summary>
         /// The maximum number of entries that can be held in the cache at a time.
         /// </summary>
-        public int? MaximumEntries { get; private set; }
+        public int? MaximumEntries { get; }
 
         /// <summary>
         /// Returns a parameter object indicating that caching should be disabled.

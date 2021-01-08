@@ -1,5 +1,4 @@
-﻿using LaunchDarkly.Sdk.Server.Internal.Model;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -58,11 +57,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private static string GetDataKindPath(DataKind kind)
         {
-            if (kind == DataKinds.Features)
+            if (kind == DataModel.Features)
             {
                 return "/flags/";
             }
-            else if (kind == DataKinds.Segments)
+            else if (kind == DataModel.Segments)
             {
                 return "/segments/";
             }

@@ -164,13 +164,13 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// This method takes an <see cref="IPersistentDataStoreFactory"/> that is provided by
         /// some persistent data store implementation (i.e. a database integration), and converts
-        /// it to a <see cref="PersistentDataStoreConfiguration"/> which can be used to add
-        /// caching behavior. You can then pass the <see cref="PersistentDataStoreConfiguration"/>
+        /// it to a <see cref="PersistentDataStoreBuilder"/> which can be used to add
+        /// caching behavior. You can then pass the <see cref="PersistentDataStoreBuilder"/>
         /// object to <see cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/> to use this
         /// configuration in the SDK. Example usage:
         /// </para>
         /// <code>
-        ///     var myStore = Components.PersistentStore(Redis.FeatureStore())
+        ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
         ///         .CacheTtl(TimeSpan.FromSeconds(45));
         ///     var config = Configuration.Builder(sdkKey)
         ///         .DataStore(myStore)
@@ -183,10 +183,10 @@ namespace LaunchDarkly.Sdk.Server
         /// </para>
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
-        /// <returns>a <see cref="PersistentDataStoreConfiguration"/></returns>
-        public static PersistentDataStoreConfiguration PersistentStore(IPersistentDataStoreFactory storeFactory)
+        /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
+        public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreFactory storeFactory)
         {
-            return new PersistentDataStoreConfiguration(storeFactory);
+            return new PersistentDataStoreBuilder(storeFactory);
         }
 
         /// <summary>
@@ -196,13 +196,13 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// This method takes an <see cref="IPersistentDataStoreFactory"/> that is provided by
         /// some persistent data store implementation (i.e. a database integration), and converts
-        /// it to a <see cref="PersistentDataStoreConfiguration"/> which can be used to add
-        /// caching behavior. You can then pass the <see cref="PersistentDataStoreConfiguration"/>
+        /// it to a <see cref="PersistentDataStoreBuilder"/> which can be used to add
+        /// caching behavior. You can then pass the <see cref="PersistentDataStoreBuilder"/>
         /// object to <see cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/> to use this
         /// configuration in the SDK. Example usage:
         /// </para>
         /// <code>
-        ///     var myStore = Components.PersistentStore(Redis.FeatureStore())
+        ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
         ///         .CacheTtl(TimeSpan.FromSeconds(45));
         ///     var config = Configuration.Builder(sdkKey)
         ///         .DataStore(myStore)
@@ -215,10 +215,10 @@ namespace LaunchDarkly.Sdk.Server
         /// </para>
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
-        /// <returns>a <see cref="PersistentDataStoreConfiguration"/></returns>
-        public static PersistentDataStoreConfiguration PersistentStore(IPersistentDataStoreAsyncFactory storeFactory)
+        /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
+        public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreAsyncFactory storeFactory)
         {
-            return new PersistentDataStoreConfiguration(storeFactory);
+            return new PersistentDataStoreBuilder(storeFactory);
         }
 
         /// <summary>

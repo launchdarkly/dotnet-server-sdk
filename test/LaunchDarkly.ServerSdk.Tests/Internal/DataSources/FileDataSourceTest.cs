@@ -5,7 +5,6 @@ using System.Threading;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
-using LaunchDarkly.Sdk.Server.Internal.Model;
 using YamlDotNet.Serialization;
 using Xunit;
 using Xunit.Abstractions;
@@ -301,12 +300,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         
         private int CountFlagsInStore()
         {
-            return store.GetAll(DataKinds.Features).Items.Count();
+            return store.GetAll(DataModel.Features).Items.Count();
         }
 
         private int CountSegmentsInStore()
         {
-            return store.GetAll(DataKinds.Segments).Items.Count();
+            return store.GetAll(DataModel.Segments).Items.Count();
         }
 
         private bool WaitForCondition(TimeSpan maxTime, Func<bool> test)

@@ -24,10 +24,57 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         internal TaskExecutor _taskExecutor;
         internal DataStoreUpdatesImpl _dataStoreUpdates;
 
-        // the following are strings instead of enums because Xunit's InlineData can't use enums
-        const string Uncached = "Uncached";
-        const string Cached = "Cached";
-        const string CachedIndefinitely = "CachedIndefinitely";
+        internal class CacheMode
+        {
+            internal string Name { get; set; }
+            internal TimeSpan Ttl { get; set; }
+            public override string ToString() => Name;
+            internal bool IsCached => Ttl != TimeSpan.Zero;
+            internal bool IsUncached => Ttl == TimeSpan.Zero;
+            internal bool IsCachedIndefinitely => Ttl < TimeSpan.Zero;
+            internal DataStoreCacheConfig CacheConfig =>
+                Ttl == TimeSpan.Zero ?
+                    DataStoreCacheConfig.Disabled :
+                    DataStoreCacheConfig.Enabled.WithTtl(Ttl);
+        }
+
+        internal class PersistMode
+        {
+            internal bool PersistOnlyAsString { get; set; }
+            public override string ToString() => PersistOnlyAsString ? "PersistOnlyAsString" : "PersistWithMetadata";
+        }
+
+        public class TestParams
+        {
+            internal CacheMode CacheMode { get; set; }
+            internal PersistMode PersistMode { get; set; }
+
+            public override string ToString() => "(" + CacheMode + "," + PersistMode + ")";
+        }
+
+        internal static readonly CacheMode Uncached = new CacheMode { Name = "Uncached", Ttl = TimeSpan.Zero };
+        internal static readonly CacheMode Cached = new CacheMode { Name = "Cached", Ttl = TimeSpan.FromSeconds(30) };
+        internal static readonly CacheMode CachedIndefinitely = new CacheMode { Name = "CachedIndefinitely", Ttl = Timeout.InfiniteTimeSpan };
+
+        // PersistOnlyAsString means we're simulating a persistent store that can only hold one string
+        // value per item, with no other metadata - like Redis. This affects the logic for updates and
+        // deleted items.
+        internal static readonly PersistMode PersistOnlyAsString = new PersistMode { PersistOnlyAsString = true };
+
+        // PersistWithMetadata means we're simulating a persistent store that's able to hold the version
+        // number and deletion status separately fro the string value.
+        internal static readonly PersistMode PersistWithMetadata = new PersistMode { PersistOnlyAsString = false };
+
+        public static IEnumerable<object[]> AllTestParams()
+        {
+            foreach (var cacheMode in new CacheMode[] { Uncached, Cached, CachedIndefinitely })
+            {
+                foreach (var persistMode in new PersistMode[] { PersistWithMetadata, PersistOnlyAsString })
+                {
+                    yield return new object[] { new TestParams { CacheMode = cacheMode, PersistMode = persistMode } };
+                }
+            }
+        }
 
         private static readonly Exception FakeError = new NotImplementedException("sorry");
         
@@ -38,54 +85,48 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             _dataStoreUpdates = new DataStoreUpdatesImpl(_taskExecutor);
         }
 
-        internal abstract PersistentStoreWrapper MakeWrapperWithCacheConfig(DataStoreCacheConfig config);
+        internal abstract PersistentStoreWrapper MakeWrapper(TestParams testParams);
 
         [Theory]
-        [InlineData(Uncached)]
-        [InlineData(Cached)]
-        [InlineData(CachedIndefinitely)]
-        public void GetItem(string mode)
+        [MemberData(nameof(AllTestParams))]
+        public void GetItem(TestParams testParams)
         {
-            var wrapper = MakeWrapper(mode);
+            var wrapper = MakeWrapper(testParams);
             var key = "flag";
             var itemv1 = new TestItem("itemv1");
             var itemv2 = new TestItem("itemv2");
 
             _core.ForceSet(TestDataKind, key, 1, itemv1);
-            Assert.Equal(wrapper.Get(TestDataKind, key), itemv1.WithVersion(1));
+            Assert.Equal(itemv1.WithVersion(1), wrapper.Get(TestDataKind, key));
 
             _core.ForceSet(TestDataKind, key, 2, itemv2);
             var result = wrapper.Get(TestDataKind, key);
             // if cached, we will not see the new underlying value yet
-            Assert.Equal(mode == Uncached ? itemv2.WithVersion(2) : itemv1.WithVersion(1), result);
+            Assert.Equal(testParams.CacheMode.IsUncached ? itemv2.WithVersion(2) : itemv1.WithVersion(1), result);
         }
 
         [Theory]
-        [InlineData(Uncached)]
-        [InlineData(Cached)]
-        [InlineData(CachedIndefinitely)]
-        public void GetDeletedItem(string mode)
+        [MemberData(nameof(AllTestParams))]
+        public void GetDeletedItem(TestParams testParams)
         {
-            var wrapper = MakeWrapper(mode);
+            var wrapper = MakeWrapper(testParams);
             var key = "flag";
             var itemv2 = new TestItem("itemv2");
 
             _core.ForceSet(TestDataKind, key, 1, null);
-            Assert.Equal(wrapper.Get(TestDataKind, key), new ItemDescriptor(1, null));
+            Assert.Equal(new ItemDescriptor(1, null), wrapper.Get(TestDataKind, key));
 
             _core.ForceSet(TestDataKind, key, 2, itemv2);
             var result = wrapper.Get(TestDataKind, key);
             // if cached, we will not see the new underlying value yet
-            Assert.Equal(mode == Uncached ? itemv2.WithVersion(2) : ItemDescriptor.Deleted(1), result);
+            Assert.Equal(testParams.CacheMode.IsUncached ? itemv2.WithVersion(2) : ItemDescriptor.Deleted(1), result);
         }
 
         [Theory]
-        [InlineData(Uncached)]
-        [InlineData(Cached)]
-        [InlineData(CachedIndefinitely)]
-        public void GetMissingItem(string mode)
+        [MemberData(nameof(AllTestParams))]
+        public void GetMissingItem(TestParams testParams)
         {
-            var wrapper = MakeWrapper(mode);
+            var wrapper = MakeWrapper(testParams);
             var key = "flag";
             var item = new TestItem("item");
 
@@ -93,7 +134,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
             _core.ForceSet(TestDataKind, key, 1, item);
             var result = wrapper.Get(TestDataKind, key);
-            if (mode != Uncached)
+            if (testParams.CacheMode.IsCached)
             {
                 Assert.Null(result); // the cache can retain a null result
             }
@@ -122,12 +163,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
 
         [Theory]
-        [InlineData(Uncached)]
-        [InlineData(Cached)]
-        [InlineData(CachedIndefinitely)]
-        public void GetAll(string mode)
+        [MemberData(nameof(AllTestParams))]
+        public void GetAll(TestParams testParams)
         {
-            var wrapper = MakeWrapper(mode);
+            var wrapper = MakeWrapper(testParams);
             var itemA = new TestItem("itemA");
             var itemB = new TestItem("itemB");
 
@@ -142,7 +181,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
             _core.ForceRemove(TestDataKind, "keyB");
             items = wrapper.GetAll(TestDataKind).Items.ToDictionary(kv => kv.Key, kv => kv.Value);
-            if (mode != Uncached)
+            if (testParams.CacheMode.IsCached)
             {
                 Assert.Equal(expected, items);
             }
@@ -155,12 +194,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
 
         [Theory]
-        [InlineData(Uncached)]
-        [InlineData(Cached)]
-        [InlineData(CachedIndefinitely)]
-        public void GetAllDoesNotRemoveDeletedItems(string mode)
+        [MemberData(nameof(AllTestParams))]
+        public void GetAllDoesNotRemoveDeletedItems(TestParams testParams)
         {
-            var wrapper = MakeWrapper(mode);
+            var wrapper = MakeWrapper(testParams);
             var itemA = new TestItem("itemA");
 
             _core.ForceSet(TestDataKind, "keyA", 1, itemA);
@@ -224,12 +261,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
 
         [Theory]
-        [InlineData(Uncached)]
-        [InlineData(Cached)]
-        [InlineData(CachedIndefinitely)]
-        public void UpsertSuccessful(string mode)
+        [MemberData(nameof(AllTestParams))]
+        public void UpsertSuccessful(TestParams testParams)
         {
-            var wrapper = MakeWrapper(mode);
+            var wrapper = MakeWrapper(testParams);
             var key = "flag";
             var itemv1 = new TestItem("itemv1");
             var itemv2 = new TestItem("itemv2");
@@ -244,7 +279,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
             // if we have a cache, verify that the new item is now cached by writing a different value
             // to the underlying data - Get should still return the cached item
-            if (mode != Uncached)
+            if (testParams.CacheMode.IsCached)
             {
                 var itemv3 = new TestItem("itemv3");
                 _core.ForceSet(TestDataKind, key, 3, itemv3);
@@ -447,12 +482,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
 
         [Theory]
-        [InlineData(Uncached)]
-        [InlineData(Cached)]
-        [InlineData(CachedIndefinitely)]
-        public void StatusListenerIsNotifiedOnFailureAndRecovery(string cacheMode)
+        [MemberData(nameof(AllTestParams))]
+        public void StatusListenerIsNotifiedOnFailureAndRecovery(TestParams testParams)
         {
-            using (var wrapper = MakeWrapper(cacheMode))
+            using (var wrapper = MakeWrapper(testParams))
             {
                 var dataStoreStatusProvider = new DataStoreStatusProviderImpl(wrapper, _dataStoreUpdates);
 
@@ -471,7 +504,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
                 var status2 = statuses.ExpectValue();
                 Assert.True(status2.Available);
-                Assert.Equal(cacheMode != CachedIndefinitely, status2.RefreshNeeded);
+                Assert.Equal(!testParams.CacheMode.IsCachedIndefinitely, status2.RefreshNeeded);
 
                 Assert.True(logCapture.HasMessageWithRegex(LogLevel.Warn, "Persistent store is available again"));
             }
@@ -602,23 +635,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             }
         }
 
-        private PersistentStoreWrapper MakeWrapper(string mode)
-        {
-            DataStoreCacheConfig config;
-            switch (mode)
-            {
-                case Cached:
-                    config = DataStoreCacheConfig.Enabled.WithTtlSeconds(30);
-                    break;
-                case CachedIndefinitely:
-                    config = DataStoreCacheConfig.Enabled.WithTtl(System.Threading.Timeout.InfiniteTimeSpan);
-                    break;
-                default:
-                    config = DataStoreCacheConfig.Disabled;
-                    break;
-            }
-            return MakeWrapperWithCacheConfig(config);
-        }
+        private PersistentStoreWrapper MakeWrapper(CacheMode cacheMode) =>
+            MakeWrapper(new TestParams { CacheMode = cacheMode, PersistMode = PersistWithMetadata });
 
         private void CauseStoreError(MockCoreBase core, PersistentStoreWrapper wrapper)
         {
@@ -639,6 +657,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     {
         public IDictionary<DataKind, IDictionary<string, SerializedItemDescriptor>> Data =
             new Dictionary<DataKind, IDictionary<string, SerializedItemDescriptor>>();
+        public bool PersistOnlyAsString = false;
         public bool Inited;
         public int InitedQueryCount;
         public int InitCalledCount;
@@ -655,6 +674,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             {
                 if (items.TryGetValue(key, out var item))
                 {
+                    if (PersistOnlyAsString)
+                    {
+                        // This simulates the kind of store implementation that can't track metadata separately
+                        return new SerializedItemDescriptor(0, false, item.SerializedItem);
+                    }
                     return item;
                 }
             }
@@ -678,7 +702,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             Data.Clear();
             foreach (var e in allData.Data)
             {
-                Data[e.Key] = e.Value.Items.ToDictionary(kv => kv.Key, kv => kv.Value);
+                var kind = e.Key;
+                Data[kind] = e.Value.Items.ToDictionary(kv => kv.Key, kv => StorableItem(kind, kv.Value));
             }
             Inited = true;
         }
@@ -692,12 +717,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             }
             if (Data[kind].TryGetValue(key, out var oldItem))
             {
-                if (oldItem.Version >= item.Version)
+                // If PersistOnlyAsString is true, simulate the kind of implementation where we can't see the
+                // version as a separate attribute in the database and must deserialize the item to get it.
+                var oldVersion = PersistOnlyAsString ?
+                    kind.Deserialize(oldItem.SerializedItem).Version :
+                    oldItem.Version;
+                if (oldVersion >= item.Version)
                 {
                     return false;
                 }
             }
-            Data[kind][key] = item;
+            Data[kind][key] = StorableItem(kind, item);
             return true;
         }
 
@@ -719,8 +749,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             {
                 Data[kind] = new Dictionary<string, SerializedItemDescriptor>();
             }
-            Data[kind][key] = new SerializedItemDescriptor(version,
-                item is null ? null : kind.Serialize(item));
+            var serializedItemDesc = new SerializedItemDescriptor(version,
+                item is null, kind.Serialize(new ItemDescriptor(version, item)));
+            Data[kind][key] = StorableItem(kind, serializedItemDesc);
         }
 
         public void ForceRemove(DataKind kind, string key)
@@ -729,6 +760,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             {
                 Data[kind].Remove(key);
             }
+        }
+
+        private SerializedItemDescriptor StorableItem(DataKind kind, SerializedItemDescriptor item)
+        {
+            if (item.Deleted && !PersistOnlyAsString)
+            {
+                // This simulates the kind of store implementation that *can* track metadata separately, so we don't
+                // have to persist the placeholder string for deleted items
+                return new SerializedItemDescriptor(item.Version, true, null);
+            }
+            return item;
         }
 
         private void MaybeThrowError()

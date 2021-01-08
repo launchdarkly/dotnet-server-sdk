@@ -18,14 +18,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 _name = name;
             }
 
-            public static TestItem Deserialize(string s) => new TestItem(s);
+            public static ItemDescriptor Deserialize(string s)
+            {
+                var parts = s.Split(':');
+                var version = int.Parse(parts[1]);
+                return new ItemDescriptor(version,
+                    parts[0] == "DELETED" ? null : new TestItem(parts[0]));
+            }
 
-            public string Serialize() => Name;
+            public static string Serialize(ItemDescriptor item) =>
+                (item.Item is null ? "DELETED" : (item.Item as TestItem).Name) +
+                ":" + item.Version;
 
             public ItemDescriptor WithVersion(int version) => new ItemDescriptor(version, this);
 
             public SerializedItemDescriptor SerializedWithVersion(int version) =>
-                new SerializedItemDescriptor(version, Serialize());
+                new SerializedItemDescriptor(version, false,
+                    Serialize(new ItemDescriptor(version, this)));
 
             public override bool Equals(object o) => (o is TestItem other && other.Name == Name);
 
@@ -35,11 +44,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
 
         internal static readonly DataKind TestDataKind = new DataKind("testdata",
-            item => (item as TestItem).Serialize(),
+            TestItem.Serialize,
             TestItem.Deserialize);
 
         internal static readonly DataKind OtherDataKind = new DataKind("otherdata",
-            item => (item as TestItem).Name,
+            TestItem.Serialize,
             TestItem.Deserialize);
 
         internal class TestDataBuilder

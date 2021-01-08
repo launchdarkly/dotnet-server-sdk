@@ -3,6 +3,9 @@ using System.Net;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Integrations;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Events;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,8 +19,6 @@ namespace LaunchDarkly.Sdk.Server
         private const string sdkKey = "SDK_KEY";
         private const string testWrapperName = "wrapper-name";
         private const string testWrapperVersion = "1.2.3";
-        private static readonly LdValue expectedPlatform =
-            LdValue.BuildObject().Add("name", "dotnet").Build();
         private static readonly LdValue expectedSdk = LdValue.BuildObject()
             .Add("name", "dotnet-server-sdk")
             .Add("version", AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
@@ -65,13 +66,23 @@ namespace LaunchDarkly.Sdk.Server
 
                 var data = LdValue.Parse(payload.Data);
                 Assert.Equal("diagnostic-init", data.Get("kind").AsString);
-                AssertJsonEqual(expectedPlatform, data.Get("platform"));
+                AssertJsonEqual(ExpectedPlatform(), data.Get("platform"));
                 AssertJsonEqual(expectedSdk, data.Get("sdk"));
                 Assert.Equal("DK_KEY", data.Get("id").Get("sdkKeySuffix").AsString);
 
                 var timestamp = data.Get("creationDate").AsLong;
                 Assert.NotEqual(0, timestamp);
             }
+        }
+
+        private static LdValue ExpectedPlatform()
+        {
+            return LdValue.BuildObject().Add("name", "dotnet")
+                .Add("dotNetTargetFramework", ServerDiagnosticStore.GetDotNetTargetFramework())
+                .Add("osName", ServerDiagnosticStore.GetOSName())
+                .Add("osVersion", ServerDiagnosticStore.GetOSVersion())
+                .Add("osArch", ServerDiagnosticStore.GetOSArch())
+                .Build();
         }
 
         [Fact]
@@ -125,6 +136,7 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
+                    .WithStoreDefaults()
                     .WithEventsDefaults()
                     .WithStreamingDefaults()
                 );
@@ -143,6 +155,7 @@ namespace LaunchDarkly.Sdk.Server
                     .StartWaitTime(TimeSpan.FromMilliseconds(2)),
                 null,
                 LdValue.BuildObject()
+                    .WithStoreDefaults()
                     .WithEventsDefaults()
                     .WithStreamingDefaults()
                     .Add("connectTimeoutMillis", 1001)
@@ -164,6 +177,7 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
+                    .WithStoreDefaults()
                     .WithEventsDefaults()
                     .Add("customBaseURI", false)
                     .Add("customStreamURI", false)
@@ -181,6 +195,7 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
+                    .WithStoreDefaults()
                     .WithEventsDefaults()
                     .Add("customBaseURI", false)
                     .Add("customStreamURI", true)
@@ -201,6 +216,7 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
                 null,
                 ExpectedConfigProps.Base()
+                    .WithStoreDefaults()
                     .WithEventsDefaults()
                     .Add("customBaseURI", false)
                     .Add("customStreamURI", false)
@@ -218,6 +234,7 @@ namespace LaunchDarkly.Sdk.Server
                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
                 null,
                 ExpectedConfigProps.Base()
+                    .WithStoreDefaults()
                     .WithEventsDefaults()
                     .Add("customBaseURI", true)
                     .Add("customStreamURI", false)
@@ -234,6 +251,7 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.DataSource(Components.ExternalUpdatesOnly),
                 null,
                 ExpectedConfigProps.Base()
+                    .WithStoreDefaults()
                     .WithEventsDefaults()
                     .Add("customBaseURI", false)
                     .Add("customStreamURI", false)
@@ -256,6 +274,7 @@ namespace LaunchDarkly.Sdk.Server
                     .UserKeysCapacity(444)
                     .UserKeysFlushInterval(TimeSpan.FromMinutes(23)),
                 ExpectedConfigProps.Base()
+                    .WithStoreDefaults()
                     .WithStreamingDefaults()
                     .Add("allAttributesPrivate", true)
                     .Add("customEventsURI", true)
@@ -266,6 +285,101 @@ namespace LaunchDarkly.Sdk.Server
                     .Add("samplingInterval", 0) // obsolete, no way to set this
                     .Add("userKeysCapacity", 444)
                     .Add("userKeysFlushIntervalMillis", TimeSpan.FromMinutes(23).TotalMilliseconds)
+                );
+        }
+
+        [Fact]
+        public void CustomConfigForCustomDataStore()
+        {
+            TestDiagnosticConfig(
+                c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") }),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "my-test-store")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(new DataStoreFactoryWithoutDiagnosticDescription()),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "custom")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) }),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "custom")
+                );
+        }
+
+        [Fact]
+        public void CustomConfigForPersistentDataStore()
+        {
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(
+                    new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "my-test-store")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(
+                    new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "my-test-store")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(
+                    new PersistentDataStoreFactoryWithoutDiagnosticDescription())),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "custom")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(
+                    new PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription())),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "custom")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(
+                    new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "custom")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(
+                    new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                    .Add("dataStoreType", "custom")
                 );
         }
 
@@ -297,6 +411,54 @@ namespace LaunchDarkly.Sdk.Server
                 AssertJsonEqual(expected.Build(), data.Get("configuration"));
             }
         }
+
+        private class DataStoreFactoryWithDiagnosticDescription : IDataStoreFactory, IDiagnosticDescription
+        {
+            internal LdValue Description { get; set; }
+
+            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
+                Components.InMemoryDataStore.CreateDataStore(context, dataStoreUpdates);
+
+            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
+        }
+
+        private class DataStoreFactoryWithoutDiagnosticDescription : IDataStoreFactory
+        {
+            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
+                Components.InMemoryDataStore.CreateDataStore(context, dataStoreUpdates);
+        }
+
+        private class PersistentDataStoreFactoryWithDiagnosticDescription : IPersistentDataStoreFactory, IDiagnosticDescription
+        {
+            internal LdValue Description { get; set; }
+
+            public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) =>
+                new MockCoreSync();
+
+            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
+        }
+
+        private class PersistentDataStoreFactoryWithoutDiagnosticDescription : IPersistentDataStoreFactory
+        {
+            public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) =>
+                new MockCoreSync();
+        }
+
+        private class PersistentDataStoreAsyncFactoryWithDiagnosticDescription : IPersistentDataStoreAsyncFactory, IDiagnosticDescription
+        {
+            internal LdValue Description { get; set; }
+
+            public IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context) =>
+                new MockCoreAsync();
+
+            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
+        }
+
+        private class PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription : IPersistentDataStoreAsyncFactory
+        {
+            public IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context) =>
+                new MockCoreAsync();
+        }
     }
 
     static class ExpectedConfigProps
@@ -308,6 +470,9 @@ namespace LaunchDarkly.Sdk.Server
                 .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
                 .Add("usingProxy", false)
                 .Add("usingProxyAuthenticator", false);
+
+        public static LdValue.ObjectBuilder WithStoreDefaults(this LdValue.ObjectBuilder b) =>
+            b.Add("dataStoreType", "memory");
 
         public static LdValue.ObjectBuilder WithStreamingDefaults(this LdValue.ObjectBuilder b) =>
             b.Add("customBaseURI", false)

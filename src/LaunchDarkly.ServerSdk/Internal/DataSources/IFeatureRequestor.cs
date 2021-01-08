@@ -32,9 +32,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         internal FullDataSet<ItemDescriptor> ToInitData()
         {
             return new FullDataSet<ItemDescriptor>(ImmutableList.Create(
-                new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(DataKinds.Features,
+                new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(DataModel.Features,
                     new KeyedItems<ItemDescriptor>(Flags.ToImmutableDictionary(kv => kv.Key, kv => new ItemDescriptor(kv.Value.Version, kv.Value)))),
-                new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(DataKinds.Segments,
+                new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(DataModel.Segments,
                     new KeyedItems<ItemDescriptor>(Segments.ToImmutableDictionary(kv => kv.Key, kv => new ItemDescriptor(kv.Value.Version, kv.Value))))
             ));
         }
