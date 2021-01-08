@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Integrations;
@@ -23,10 +24,23 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         TimeSpan ConnectTimeout { get; }
 
+        ///
+        IEnumerable<KeyValuePair<string, string>> CustomHeaders { get; }
+
         /// <summary>
         /// A custom handler for HTTP requests, or null to use the platform's default handler.
         /// </summary>
         HttpMessageHandler MessageHandler { get; }
+
+        /// <summary>
+        /// The proxy configuration, if any.
+        /// </summary>
+        /// <remarks>
+        /// This is only present if a proxy was specified programmatically with
+        /// <see cref="HttpConfigurationBuilder.Proxy(IWebProxy)"/>, not if it was
+        /// specified with an environment variable.
+        /// </remarks>
+        IWebProxy Proxy { get; }
 
         /// <summary>
         /// The network read timeout (socket timeout).
@@ -86,8 +100,14 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             var ret = HttpProperties.Default
                 .WithConnectTimeout(httpConfig.ConnectTimeout)
                 .WithReadTimeout(httpConfig.ReadTimeout)
-                .WithHttpMessageHandler(httpConfig.MessageHandler);
+                .WithHttpMessageHandlerFactory(httpConfig.MessageHandler is null ?
+                    (Func<HttpProperties, HttpMessageHandler>)null :
+                    _ => httpConfig.MessageHandler);
             foreach (var kv in httpConfig.DefaultHeaders)
+            {
+                ret = ret.WithHeader(kv.Key, kv.Value);
+            }
+            foreach (var kv in httpConfig.CustomHeaders)
             {
                 ret = ret.WithHeader(kv.Key, kv.Value);
             }

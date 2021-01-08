@@ -28,7 +28,7 @@
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
     <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.0.0-beta.9" />
     <PackageReference Include="LaunchDarkly.EventSource" Version="4.0.0-alpha.1" />
-    <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.0.0-alpha.5" />
+    <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.0.0-alpha.8" />
     <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.0-alpha.6" />
     <PackageReference Include="LaunchDarkly.Logging" Version="1.0.0-alpha.3" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />

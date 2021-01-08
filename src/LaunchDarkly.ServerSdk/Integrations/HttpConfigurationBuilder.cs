@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Net;
 using System.Net.Http;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Http;
@@ -40,7 +42,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromSeconds(10);
 
         internal TimeSpan _connectTimeout = DefaultConnectTimeout;
+        internal List<KeyValuePair<string, string>> _customHeaders = new List<KeyValuePair<string, string>>();
         internal HttpMessageHandler _messageHandler = null;
+        internal IWebProxy _proxy = null;
         internal TimeSpan _readTimeout = DefaultReadTimeout;
         internal string _wrapperName = null;
         internal string _wrapperVersion = null;
@@ -60,6 +64,22 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
+        /// Specifies a custom HTTP header that should be added to all SDK requests.
+        /// </summary>
+        /// <remarks>
+        /// This may be helpful if you are using a gateway or proxy server that requires a specific header in
+        /// requests. You may add any number of headers.
+        /// </remarks>
+        /// <param name="name">the header name</param>
+        /// <param name="value">the header value</param>
+        /// <returns>the builder</returns>
+        public HttpConfigurationBuilder CustomHeader(string name, string value)
+        {
+            _customHeaders.Add(new KeyValuePair<string, string>(name, value));
+            return this;
+        }
+
+        /// <summary>
         /// Specifies a custom HTTP message handler implementation.
         /// </summary>
         /// <remarks>
@@ -71,6 +91,39 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public HttpConfigurationBuilder MessageHandler(HttpMessageHandler messageHandler)
         {
             _messageHandler = messageHandler;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets an HTTP proxy for making connections to LaunchDarkly.
+        /// </summary>
+        /// <remarks>
+        /// This is ignored if you have specified a custom message handler with <see cref="MessageHandler(HttpMessageHandler)"/>,
+        /// since proxy behavior is implemented by the message handler.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     // Example of using an HTTP proxy with basic authentication
+        ///     
+        ///     var proxyUri = new Uri("http://my-proxy-host:8080");
+        ///     var proxy = new System.Net.WebProxy(proxyUri);
+        ///     var credentials = new System.Net.CredentialCache();
+        ///     credentials.Add(proxyUri, "Basic",
+        ///         new System.Net.NetworkCredential("username", "password"));
+        ///     proxy.Credentials = credentials;
+        ///     
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .Http(
+        ///             Components.HttpConfiguration().Proxy(proxy)
+        ///         )
+        ///         .Build();
+        /// </code>
+        /// </example>
+        /// <param name="proxy">any implementation of <c>System.Net.IWebProxy</c></param>
+        /// <returns>the builder</returns>
+        public HttpConfigurationBuilder Proxy(IWebProxy proxy)
+        {
+            _proxy = proxy;
             return this;
         }
 
@@ -109,28 +162,30 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IHttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
-        {
-            var httpProperties = HttpProperties.Default
-                .WithAuthorizationKey(basicConfiguration.SdkKey)
-                .WithConnectTimeout(_connectTimeout)
-                .WithHttpMessageHandler(_messageHandler)
-                .WithReadTimeout(_readTimeout)
-                .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
-                .WithWrapper(_wrapperName, _wrapperVersion);
-            return new HttpConfigurationImpl(httpProperties);
-        }
+        public IHttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration) =>
+            new HttpConfigurationImpl(this, basicConfiguration.SdkKey);
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic)
-        {
-            return LdValue.BuildObject()
+        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+            LdValue.BuildObject()
                 .Add("connectTimeoutMillis", _connectTimeout.TotalMilliseconds)
                 .Add("socketTimeoutMillis", _readTimeout.TotalMilliseconds)
-                .Add("usingProxy", false)
-                .Add("usingProxyAuthenticator", false)
+                .Add("usingProxy", DetectProxy())
+                .Add("usingProxyAuthenticator", DetectProxyAuth())
                 .Build();
-        }
+
+        // DetectProxy and DetectProxyAuth do not cover every mechanism that could be used to configure
+        // a proxy; for instance, there is HttpClient.DefaultProxy, which only exists in .NET Core 3.x and
+        // .NET 5.x. But since we're only trying to gather diagnostic stats, this doesn't have to be perfect.
+        private bool DetectProxy() =>
+            _proxy != null ||
+            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("HTTP_PROXY")) ||
+            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("HTTPS_PROXY")) ||
+            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("ALL_PROXY"));
+
+        private bool DetectProxyAuth() =>
+            _proxy is WebProxy wp &&
+            (wp.Credentials != null || wp.UseDefaultCredentials);
 
         internal sealed class HttpConfigurationImpl : IHttpConfiguration
         {
@@ -138,13 +193,37 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             internal HttpProperties HttpProperties => _httpProperties;
 
-            public TimeSpan ConnectTimeout => _httpProperties.ConnectTimeout;
-            public HttpMessageHandler MessageHandler => _httpProperties.HttpMessageHandler;
-            public TimeSpan ReadTimeout => _httpProperties.ReadTimeout;
+            public TimeSpan ConnectTimeout { get; }
+            public IEnumerable<KeyValuePair<string, string>> CustomHeaders { get; }
+            public HttpMessageHandler MessageHandler { get; }
+            public IWebProxy Proxy { get; }
+            public TimeSpan ReadTimeout { get; }
             public IEnumerable<KeyValuePair<string, string>> DefaultHeaders => _httpProperties.BaseHeaders;
 
-            internal HttpConfigurationImpl(HttpProperties httpProperties)
+            internal HttpConfigurationImpl(HttpConfigurationBuilder builder, string sdkKey)
             {
+                ConnectTimeout = builder._connectTimeout;
+                CustomHeaders = builder._customHeaders.ToImmutableList();
+                MessageHandler = builder._messageHandler;
+                Proxy = builder._proxy;
+                ReadTimeout = builder._readTimeout;
+
+                var httpProperties = HttpProperties.Default
+                    .WithAuthorizationKey(sdkKey)
+                    .WithConnectTimeout(builder._connectTimeout)
+                    .WithHttpMessageHandlerFactory(MessageHandler is null ?
+                        (Func<HttpProperties, HttpMessageHandler>)null :
+                        _ => MessageHandler)
+                    .WithProxy(builder._proxy)
+                    .WithReadTimeout(builder._readTimeout)
+                    .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
+                    .WithWrapper(builder._wrapperName, builder._wrapperVersion);
+
+                foreach (var kv in builder._customHeaders)
+                {
+                    httpProperties = httpProperties.WithHeader(kv.Key, kv.Value);
+                }
+
                 _httpProperties = httpProperties;
             }
         }
