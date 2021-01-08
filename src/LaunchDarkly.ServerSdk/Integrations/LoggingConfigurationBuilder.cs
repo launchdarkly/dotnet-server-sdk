@@ -46,6 +46,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <c>LaunchDarkly.Logging.Logs</c> methods, or a custom implementation, to handle log output differently.
         /// For instance, in .NET Core, specify <c>Logs.CoreLogging</c> to use the standard .NET Core logging framework.
         /// </para>
+        /// <para>
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// SDK reference guide</a>.
+        /// </para>
         /// </remarks>
         /// <example>
         /// <code>
