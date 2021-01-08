@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Newtonsoft.Json;
 using Xunit;
@@ -14,14 +14,13 @@ namespace LaunchDarkly.Sdk.Server
     public class LdClientEvaluationTest : BaseTest
     {
         private static readonly User user = User.WithKey("userkey");
-        private readonly IDataStore dataStore = new InMemoryDataStore();
+        private readonly TestData testData = TestData.DataSource();
         private readonly ILdClient client;
 
         public LdClientEvaluationTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             var config = Configuration.Builder("SDK_KEY")
-                .DataStore(new SpecificDataStoreFactory(dataStore))
-                .DataSource(Components.ExternalUpdatesOnly)
+                .DataSource(testData)
                 .Events(Components.NoEvents)
                 .Logging(Components.Logging(testLogging))
                 .Build();
@@ -31,8 +30,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BoolVariationReturnsFlagValue()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
 
             Assert.True(client.BoolVariation("key", user, false));
         }
@@ -46,8 +44,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BoolVariationReturnsDefaultValueForWrongType()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
 
             Assert.Equal(false, client.BoolVariation("key", user, false));
         }
@@ -55,8 +52,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BoolVariationDetailReturnsValueAndReason()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
 
             var expected = new EvaluationDetail<bool>(true, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.BoolVariationDetail("key", user, false));
@@ -65,8 +61,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void IntVariationReturnsFlagValue()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build());
 
             Assert.Equal(2, client.IntVariation("key", user, 1));
         }
@@ -74,8 +69,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void IntVariationReturnsFlagValueEvenIfEncodedAsFloat()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.25f)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.25f)).Build());
 
             Assert.Equal(2, client.IntVariation("key", user, 1));
         }
@@ -83,14 +77,10 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void IntVariationRoundsToNearestIntFromFloat()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("flag1").OffWithValue(LdValue.Of(2.25f)).Build());
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("flag2").OffWithValue(LdValue.Of(2.75f)).Build());
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("flag3").OffWithValue(LdValue.Of(-2.25f)).Build());
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("flag4").OffWithValue(LdValue.Of(-2.75f)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("flag1").OffWithValue(LdValue.Of(2.25f)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("flag2").OffWithValue(LdValue.Of(2.75f)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("flag3").OffWithValue(LdValue.Of(-2.25f)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("flag4").OffWithValue(LdValue.Of(-2.75f)).Build());
             Assert.Equal(2, client.IntVariation("flag1", user, 1));
             Assert.Equal(3, client.IntVariation("flag2", user, 1));
             Assert.Equal(-2, client.IntVariation("flag3", user, 1));
@@ -106,8 +96,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void IntVariationReturnsDefaultValueForWrongType()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
 
             Assert.Equal(1, client.IntVariation("key", user, 1));
         }
@@ -115,8 +104,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void IntVariationDetailReturnsValueAndReason()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build());
 
             var expected = new EvaluationDetail<int>(2, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.IntVariationDetail("key", user, 1));
@@ -125,8 +113,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void FloatVariationReturnsFlagValue()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5f)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5f)).Build());
 
             Assert.Equal(2.5f, client.FloatVariation("key", user, 1.0f));
         }
@@ -134,8 +121,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void FloatVariationReturnsFlagValueEvenIfEncodedAsInt()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build());
 
             Assert.Equal(2.0f, client.FloatVariation("key", user, 1.0f));
         }
@@ -149,8 +135,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void FloatVariationReturnsDefaultValueForWrongType()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
 
             Assert.Equal(1.0f, client.FloatVariation("key", user, 1.0f));
         }
@@ -158,8 +143,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void FloatVariationDetailReturnsValueAndReason()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5f)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5f)).Build());
 
             var expected = new EvaluationDetail<float>(2.5f, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.FloatVariationDetail("key", user, 1.0f));
@@ -168,8 +152,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StringVariationReturnsFlagValue()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
 
             Assert.Equal("b", client.StringVariation("key", user, "a"));
         }
@@ -177,8 +160,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StringVariationWithNullDefaultReturnsFlagValue()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
 
             Assert.Equal("b", client.StringVariation("key", user, null));
         }
@@ -198,8 +180,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StringVariationReturnsDefaultValueForWrongType()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(1)).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(1)).Build());
 
             Assert.Equal("a", client.StringVariation("key", user, "a"));
         }
@@ -207,8 +188,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StringVariationDetailReturnsValueAndReason()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
 
             var expected = new EvaluationDetail<string>("b", 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.StringVariationDetail("key", user, "a"));
@@ -218,8 +198,7 @@ namespace LaunchDarkly.Sdk.Server
         public void JsonVariationReturnsFlagValue()
         {
             var data = LdValue.Convert.String.ObjectFrom(new Dictionary<string, string> { { "thing", "stuff" } });
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(data).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(data).Build());
 
             Assert.Equal(data, client.JsonVariation("key", user, LdValue.Of(42)));
         }
@@ -235,8 +214,7 @@ namespace LaunchDarkly.Sdk.Server
         public void JsonVariationDetailReturnsValueAndReason()
         {
             var data = LdValue.Convert.String.ObjectFrom(new Dictionary<string, string> { { "thing", "stuff" } });
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(data).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(data).Build());
 
             var expected = new EvaluationDetail<LdValue>(data, 0, EvaluationReason.OffReason);
             Assert.Equal(expected, client.JsonVariationDetail("key", user, LdValue.Of(42)));
@@ -253,8 +231,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void VariationDetailReturnsDefaultForNullUser()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
@@ -264,8 +241,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void VariationDetailReturnsDefaultForUserWithNullKey()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
@@ -275,8 +251,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void VariationDetailReturnsDefaultForFlagThatEvaluatesToNull()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").On(false).OffVariation(null).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").On(false).OffVariation(null).Build());
 
             var expected = new EvaluationDetail<string>("default", null, EvaluationReason.OffReason);
             Assert.Equal(expected, client.StringVariationDetail("key", user, "default"));
@@ -285,8 +260,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void VariationDetailReturnsDefaultForWrongType()
         {
-            TestUtils.UpsertFlag(dataStore,
-                new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
 
             var expected = new EvaluationDetail<int>(1, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
@@ -297,11 +271,11 @@ namespace LaunchDarkly.Sdk.Server
         public void CanMatchUserBySegment()
         {
             var segment = new Segment("segment1", 1, new List<string> { user.Key }, null, "", null, false);
-            TestUtils.UpsertSegment(dataStore, segment);
+            testData.UsePreconfiguredSegment(segment);
 
             var clause = new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of("segment1")).Build();
             var feature = new FeatureFlagBuilder("feature").BooleanWithClauses(clause).Build();
-            TestUtils.UpsertFlag(dataStore, feature);
+            testData.UsePreconfiguredFlag(feature);
 
             Assert.True(client.BoolVariation("feature", user, false));
         }
@@ -316,8 +290,8 @@ namespace LaunchDarkly.Sdk.Server
                 .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value2"))
                 .TrackEvents(true).DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
-            TestUtils.UpsertFlag(dataStore, flag1);
-            TestUtils.UpsertFlag(dataStore, flag2);
+            testData.UsePreconfiguredFlag(flag1);
+            testData.UsePreconfiguredFlag(flag2);
 
             var state = client.AllFlagsState(user);
             Assert.True(state.Valid);
@@ -348,8 +322,8 @@ namespace LaunchDarkly.Sdk.Server
                 .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value2"))
                 .TrackEvents(true).DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
-            TestUtils.UpsertFlag(dataStore, flag1);
-            TestUtils.UpsertFlag(dataStore, flag2);
+            testData.UsePreconfiguredFlag(flag1);
+            testData.UsePreconfiguredFlag(flag2);
 
             var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
             Assert.True(state.Valid);
@@ -379,10 +353,10 @@ namespace LaunchDarkly.Sdk.Server
                 .OffWithValue(LdValue.Of("value1")).Build();
             var flag4 = new FeatureFlagBuilder("client-side-2").ClientSide(true)
                 .OffWithValue(LdValue.Of("value2")).Build();
-            TestUtils.UpsertFlag(dataStore, flag1);
-            TestUtils.UpsertFlag(dataStore, flag2);
-            TestUtils.UpsertFlag(dataStore, flag3);
-            TestUtils.UpsertFlag(dataStore, flag4);
+            testData.UsePreconfiguredFlag(flag1);
+            testData.UsePreconfiguredFlag(flag2);
+            testData.UsePreconfiguredFlag(flag3);
+            testData.UsePreconfiguredFlag(flag4);
 
             var state = client.AllFlagsState(user, FlagsStateOption.ClientSideOnly);
             Assert.True(state.Valid);
@@ -409,9 +383,9 @@ namespace LaunchDarkly.Sdk.Server
                 .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value3"))
                 .DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
-            TestUtils.UpsertFlag(dataStore, flag1);
-            TestUtils.UpsertFlag(dataStore, flag2);
-            TestUtils.UpsertFlag(dataStore, flag3);
+            testData.UsePreconfiguredFlag(flag1);
+            testData.UsePreconfiguredFlag(flag2);
+            testData.UsePreconfiguredFlag(flag3);
 
             var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
             Assert.True(state.Valid);
@@ -438,7 +412,7 @@ namespace LaunchDarkly.Sdk.Server
         public void AllFlagsStateReturnsEmptyStateForNullUser()
         {
             var flag = new FeatureFlagBuilder("key1").OffWithValue(LdValue.Of("value1")).Build();
-            TestUtils.UpsertFlag(dataStore, flag);
+            testData.UsePreconfiguredFlag(flag);
 
             var state = client.AllFlagsState(null);
             Assert.False(state.Valid);
@@ -449,7 +423,7 @@ namespace LaunchDarkly.Sdk.Server
         public void AllFlagsStateReturnsEmptyStateForUserWithNullKey()
         {
             var flag = new FeatureFlagBuilder("key1").OffWithValue(LdValue.Of("value1")).Build();
-            TestUtils.UpsertFlag(dataStore, flag);
+            testData.UsePreconfiguredFlag(flag);
 
             var state = client.AllFlagsState(User.WithKey(null));
             Assert.False(state.Valid);

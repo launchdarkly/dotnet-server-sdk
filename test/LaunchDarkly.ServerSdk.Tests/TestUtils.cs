@@ -102,6 +102,21 @@ namespace LaunchDarkly.Sdk.Server
                 logger,
                 null
                 );
+
+        // Ensures that a data set is sorted by namespace and then by key
+        internal static FullDataSet<ItemDescriptor> NormalizeDataSet(FullDataSet<ItemDescriptor> data)
+        {
+            return new FullDataSet<ItemDescriptor>(
+                data.Data.OrderBy(kindAndItems => kindAndItems.Key.Name)
+                    .Select(kindAndItems => new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(
+                        kindAndItems.Key,
+                        new KeyedItems<ItemDescriptor>(
+                            kindAndItems.Value.Items.OrderBy(keyAndItem => keyAndItem.Key)
+                            )
+                        )
+                    )
+                );
+        }
     }
 
     public class SpecificDataStoreFactory : IDataStoreFactory
@@ -192,39 +207,39 @@ namespace LaunchDarkly.Sdk.Server
         public void Dispose() { }
     }
 
-    public class CapturingDataSourceFactory : IDataSourceFactory
+    public class CapturingDataSourceUpdates : IDataSourceUpdates
     {
-        public volatile LdClientContext Context;
-        public volatile IDataSourceUpdates DataSourceUpdates;
-        private readonly Func<Task<bool>> _startFn;
+        public readonly BlockingCollection<FullDataSet<ItemDescriptor>> Inits =
+            new BlockingCollection<FullDataSet<ItemDescriptor>>();
+        public readonly BlockingCollection<UpsertParams> Upserts =
+            new BlockingCollection<UpsertParams>();
+        public DataSourceState State;
 
-        public CapturingDataSourceFactory(Func<Task<bool>> startFn = null)
+        public IDataStoreStatusProvider DataStoreStatusProvider => throw new NotImplementedException();
+
+        public bool Init(FullDataSet<ItemDescriptor> allData)
         {
-            _startFn = startFn;
+            Inits.Add(allData);
+            return true;
         }
 
-        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        public void UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)
         {
-            Context = context;
-            DataSourceUpdates = dataSourceUpdates;
-            return new DataSourceImpl(_startFn);
+            State = newState;
         }
 
-        private class DataSourceImpl : IDataSource
+        public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
-            internal readonly Func<Task<bool>> _startFn;
-
-            internal DataSourceImpl(Func<Task<bool>> startFn)
-            {
-                _startFn = startFn;
-            }
-
-            public Task<bool> Start() => _startFn is null ? Task.FromResult(true) : _startFn();
-
-            public bool Initialized() => true;
-
-            public void Dispose() { }
+            Upserts.Add(new UpsertParams { Kind = kind, Key = key, Item = item });
+            return true;
         }
+    }
+
+    public struct UpsertParams
+    {
+        public DataKind Kind { get; set; }
+        public string Key { get; set; }
+        public ItemDescriptor Item { get; set; }
     }
 
     public class CapturingDataStoreFactory : IDataStoreFactory

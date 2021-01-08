@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server
         /// class constructor</param>
         /// <returns>a log adapter</returns>
         public static ILogAdapter TestOutputAdapter(ITestOutputHelper testOutputHelper) =>
-            new TestOutputAdapterImpl(testOutputHelper);
+            Logs.ToMethod(line => testOutputHelper.WriteLine("LOG OUTPUT >> " + line));
 
         /// <summary>
         /// Creates a <see cref="Logger"/> that sends logging to the Xunit output buffer. Use this when testing
@@ -44,68 +44,5 @@ namespace LaunchDarkly.Sdk.Server
         /// Convenience property for getting a millisecond timestamp string.
         /// </summary>
         public static string TimestampString => DateTime.Now.ToString("O");
-
-        private class TestOutputAdapterImpl : ILogAdapter
-        {
-            private readonly ITestOutputHelper _testOutputHelper;
-
-            public TestOutputAdapterImpl(ITestOutputHelper testOutputHelper)
-            {
-                _testOutputHelper = testOutputHelper;
-            }
-
-            public IChannel NewChannel(string name)
-            {
-                return new TestOutputChannelImpl(_testOutputHelper, name);
-            }
-        }
-
-        private class TestOutputChannelImpl : IChannel
-        {
-            private readonly ITestOutputHelper _testOutputHelper;
-            private readonly string _name;
-
-            public TestOutputChannelImpl(ITestOutputHelper testOutputHelper, string name)
-            {
-                _testOutputHelper = testOutputHelper;
-                _name = "testlog" + (name == "" || name.StartsWith(".") ? "" : ".") + name;
-            }
-
-            public bool IsEnabled(LogLevel level)
-            {
-                return true;
-            }
-
-            public void Log(LogLevel level, object message)
-            {
-                LogMessage(level, message.ToString());
-            }
-
-            public void Log(LogLevel level, string format, object param)
-            {
-                LogMessage(level, string.Format(format, param));
-            }
-
-            public void Log(LogLevel level, string format, object param1, object param2)
-            {
-                LogMessage(level, string.Format(format, param1, param2));
-            }
-
-            public void Log(LogLevel level, string format, params object[] allParams)
-            {
-                LogMessage(level, string.Format(format, allParams));
-            }
-
-            private void LogMessage(LogLevel level, string message)
-            {
-                _testOutputHelper.WriteLine(
-                    "{0} [{1}] {2}: {3}",
-                    TimestampString,
-                    _name,
-                    level,
-                    message
-                    );
-            }
-        }
     }
 }

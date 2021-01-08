@@ -5,10 +5,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// Integration between the LaunchDarkly SDK and file data.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// The file data source allows you to use local files as a source of feature flag state. This would
     /// typically be used in a test environment, to operate using a predetermined feature flag state
-    ///  without an actual LaunchDarkly connection. See <see cref="DataSource"/> for details.
+    /// without an actual LaunchDarkly connection. See <see cref="DataSource"/> for details.
+    /// </para>
+    /// <para>
+    /// This is different from {@link TestData}, which allows you to simulate flag configurations
+    /// programmatically rather than using a file.
+    /// </para>
     /// </remarks>
+    /// <seealso cref="TestData"/>
     public static class FileData
     {
         /// <summary>
