@@ -395,7 +395,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnPutCausesStreamRestartWhenNotUsingPersistentStore()
+        public void StoreFailureOnPutCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
             // If StatusMonitoringEnabled is false, it means we're using either an in-memory store or some kind
             // of custom implementation that doesn't support our usual "wait till the database is up again and
@@ -420,7 +420,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnPatchCausesStreamRestart()
+        public void StoreFailureOnPatchCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
@@ -439,7 +439,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnDeleteCausesStreamRestart()
+        public void StoreFailureOnDeleteCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
