@@ -308,15 +308,12 @@ namespace LaunchDarkly.Client
                 Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
                 return new NullUpdateProcessor();
             }
-            else
+            var factory = GetConfiguredFactory(config);
+            if (factory is IUpdateProcessorFactoryWithDiagnostics upfwd)
             {
-                var factory = GetConfiguredFactory(config);
-                if (factory is IUpdateProcessorFactoryWithDiagnostics upfwd)
-                {
-                    return upfwd.CreateUpdateProcessor(config, featureStore, diagnosticStore);
-                }
-                return factory.CreateUpdateProcessor(config, featureStore);
+                return upfwd.CreateUpdateProcessor(config, featureStore, diagnosticStore);
             }
+            return factory.CreateUpdateProcessor(config, featureStore);
         }
 
         private IUpdateProcessorFactory GetConfiguredFactory(Configuration config)
