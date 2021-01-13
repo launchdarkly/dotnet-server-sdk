@@ -14,8 +14,6 @@ namespace LaunchDarkly.Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FeatureRequestor));
         private readonly Uri _allUri;
-        private readonly Uri _flagsUri;
-        private readonly Uri _segmentsUri;
         private readonly HttpClient _httpClient;
         private readonly Configuration _config;
         private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
@@ -24,8 +22,6 @@ namespace LaunchDarkly.Client
         {
             _config = config;
             _allUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-all");
-            _flagsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-flags/");
-            _segmentsUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-segments/");
             _httpClient = Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
         }
 
@@ -54,20 +50,6 @@ namespace LaunchDarkly.Client
                     ret.Flags.Keys.Count, ret.Segments.Keys.Count);
             }
             return ret;
-        }
-
-        // Returns the latest version of a flag, or null if it has not been modified. Throws an exception if there
-        // was a problem getting flags.
-        public async Task<FeatureFlag> GetFlagAsync(string featureKey)
-        {
-            return await GetAsync<FeatureFlag>(new Uri(_flagsUri, featureKey));
-        }
-
-        // Returns the latest version of a segment, or null if it has not been modified. Throws an exception if there
-        // was a problem getting segments.
-        public async Task<Segment> GetSegmentAsync(string segmentKey)
-        {
-            return await GetAsync<Segment>(new Uri(_segmentsUri, segmentKey));
         }
 
         private async Task<T> GetAsync<T>(Uri path) where T : class
