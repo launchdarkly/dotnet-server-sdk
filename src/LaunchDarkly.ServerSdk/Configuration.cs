@@ -63,22 +63,22 @@ namespace LaunchDarkly.Client
         /// </summary>
         public IUpdateProcessorFactory DataSource { get; internal set; }
         /// <summary>
-        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
         [Obsolete]
         public int EventCapacity { get; internal set; }
         /// <summary>
-        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
         [Obsolete]
         public int EventQueueCapacity => EventCapacity;
         /// <summary>
-        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
         [Obsolete]
         public TimeSpan EventFlushInterval { get; internal set; }
         /// <summary>
-        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
         [Obsolete]
         public TimeSpan EventQueueFrequency => EventFlushInterval;
