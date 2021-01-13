@@ -58,7 +58,7 @@ namespace LaunchDarkly.Client
         [Obsolete]
         public bool IsStreamingEnabled { get; internal set; }
         /// <summary>
-        /// A factory object that creates an the component that will receive feature flag data.
+        /// A factory object that creates the component that will receive feature flag data.
         /// </summary>
         public IUpdateProcessorFactory DataSource { get; internal set; }
         /// <summary>
@@ -99,7 +99,7 @@ namespace LaunchDarkly.Client
         [Obsolete("This feature will be removed in a future version.")]
         public int EventSamplingInterval { get; internal set; }
         /// <summary>
-        /// Obsolete property for the the polling interval in polling mode.
+        /// Obsolete property for the polling interval in polling mode.
         /// </summary>
         /// <seealso cref="Components.PollingDataSource"/>
         [Obsolete]

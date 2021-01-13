@@ -13,7 +13,7 @@ namespace LaunchDarkly.Client
     /// <remarks>
     /// Some of the configuration options in <see cref="IConfigurationBuilder"/> affect the entire SDK, but others are
     /// specific to one area of functionality, such as how the SDK receives feature flag updates or processes
-    /// analytics events.For the latter, the standard way to specify a configuration is to call one of the
+    /// analytics events. For the latter, the standard way to specify a configuration is to call one of the
     /// static methods in <see cref="Components"/> (such as <see cref="Components.StreamingDataSource"/>),
     /// apply any desired configuration change to the object that that method returns (such as
     /// <see cref="StreamingDataSourceBuilder.InitialReconnectDelay(TimeSpan)"/>), and then use the
