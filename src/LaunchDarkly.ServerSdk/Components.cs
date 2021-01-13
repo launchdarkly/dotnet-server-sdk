@@ -13,7 +13,7 @@ namespace LaunchDarkly.Client
     /// <remarks>
     /// Some of the configuration options in <see cref="IConfigurationBuilder"/> affect the entire SDK, but others are
     /// specific to one area of functionality, such as how the SDK receives feature flag updates or processes
-    /// analytics events.For the latter, the standard way to specify a configuration is to call one of the
+    /// analytics events. For the latter, the standard way to specify a configuration is to call one of the
     /// static methods in <see cref="Components"/> (such as <see cref="Components.StreamingDataSource"/>),
     /// apply any desired configuration change to the object that that method returns (such as
     /// <see cref="StreamingDataSourceBuilder.InitialReconnectDelay(TimeSpan)"/>), and then use the
@@ -63,26 +63,6 @@ namespace LaunchDarkly.Client
         /// </code>
         /// </example>
         public static IUpdateProcessorFactory ExternalUpdatesOnly => _nullUpdateProcessorFactory;
-
-        /// <summary>
-        /// Returns a configuration builder for the SDK's networking configuration.
-        /// </summary>
-        /// <remarks>
-        /// Passing this to <see cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/> applies this
-        /// configuration to all HTTP/HTTPS requests made by the SDK.
-        /// </remarks>
-        /// <example>
-        /// <code>
-        ///     var config = Configuration.Builder(sdkKey)
-        ///         .Http(
-        ///             Components.HttpConfiguration()
-        ///                 .ConnectTimeout(TimeSpan.FromMilliseconds(3000))
-        ///         )
-        ///         .Build();
-        /// </code>
-        /// </example>
-        /// <returns>a configurable factory object</returns>
-        public static HttpConfigurationBuilder HttpConfiguration() => new HttpConfigurationBuilder();
 
         /// <summary>
         /// Returns a configuration object that disables analytics events.
@@ -266,9 +246,9 @@ namespace LaunchDarkly.Client
         /// </para>
         /// <list type="bullet">
         /// <item> If you have set <see cref="IConfigurationBuilder.Offline(bool)"/> to true, the SDK
-        /// will not send events to LaunchDarkly. </item>
+        /// will not send events to LaunchDarkly.</item>
         /// <item> Otherwise, it will send events, using the properties set by the deprecated events
-        /// configuration methods such as <see cref="IConfigurationBuilder.EventCapacity(int)"/>. </item>
+        /// configuration methods such as <see cref="IConfigurationBuilder.EventCapacity(int)"/>.</item>
         /// </list>
         /// </remarks>
         [Obsolete("Use SendEvents")]
@@ -287,14 +267,14 @@ namespace LaunchDarkly.Client
         /// <list type="bullet">
         /// <item> If you have set <see cref="IConfigurationBuilder.Offline(bool)"/> or
         /// <see cref="IConfigurationBuilder.UseLdd(bool)"/> to true, the SDK will not connect
-        /// to LaunchDarkly for feature flag data. </item>
+        /// to LaunchDarkly for feature flag data.</item>
         /// <item> If you have set <see cref="IConfigurationBuilder.IsStreamingEnabled(bool)"/> to false,
         /// it will use polling mode-- equivalent to using <see cref="Components.PollingDataSource"/>
         /// with the options set by <see cref="IConfigurationBuilder.BaseUri(Uri)"/> and
-        /// <see cref="IConfigurationBuilder.PollingInterval(TimeSpan)"/>. </item>
+        /// <see cref="IConfigurationBuilder.PollingInterval(TimeSpan)"/>.</item>
         /// <item> Otherwise, it will use streaming mode-- equivalent to using <see cref="Components.StreamingDataSource"/>
         /// with the options set by <see cref="IConfigurationBuilder.StreamUri(Uri)"/> and
-        /// <see cref="IConfigurationBuilder.ReconnectTime(TimeSpan)"/>. </item>
+        /// <see cref="IConfigurationBuilder.ReconnectTime(TimeSpan)"/>.</item>
         /// </list>
         /// </remarks>
         [Obsolete("Use StreamingDataSource, PollingDataSource, or ExternalUpdatesOnly")]
@@ -321,8 +301,6 @@ namespace LaunchDarkly.Client
 
     internal class DefaultEventProcessorFactory : IEventProcessorFactoryWithDiagnostics, IDiagnosticDescription
     {
-#pragma warning disable CS0612 // using obsolete APIs
-#pragma warning disable CS0618 // using obsolete APIs
         IEventProcessor IEventProcessorFactory.CreateEventProcessor(Configuration config) =>
             CreateEventProcessor(config, null);
 
@@ -338,20 +316,22 @@ namespace LaunchDarkly.Client
         private static EventProcessorBuilder GetConfiguredFactory(Configuration config) =>
             Components.SendEvents()
                 .AllAttributesPrivate(config.AllAttributesPrivate)
+#pragma warning disable CS0612 // using obsolete property
                 .BaseUri(config.EventsUri)
+#pragma warning restore CS0612
                 .Capacity(config.EventCapacity)
                 .DiagnosticRecordingInterval(config.DiagnosticRecordingInterval)
                 .FlushInterval(config.EventFlushInterval)
                 .InlineUsersInEvents(config.InlineUsersInEvents)
                 .PrivateAttributeNames(config.PrivateAttributeNames.ToArray())
+#pragma warning disable CS0618 // using obsolete property
                 .SamplingInterval(config.EventSamplingInterval)
+#pragma warning restore CS0618
                 .UserKeysCapacity(config.UserKeysCapacity)
                 .UserKeysFlushInterval(config.UserKeysFlushInterval);
 
         public LdValue DescribeConfiguration(Configuration config) =>
             GetConfiguredFactory(config).DescribeConfiguration(config);
-#pragma warning restore CS0618
-#pragma warning restore CS0612
     }
 
     internal class NullEventProcessorFactory : IEventProcessorFactory
@@ -374,7 +354,9 @@ namespace LaunchDarkly.Client
 
     internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactoryWithDiagnostics, IDiagnosticDescription
     {
-#pragma warning disable CS0612 // deprecated API
+        // Note, logger uses LDClient class name for backward compatibility
+        private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
+
         IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
             return CreateUpdateProcessor(config, featureStore, null);
@@ -384,23 +366,20 @@ namespace LaunchDarkly.Client
         {
             if (config.Offline)
             {
-                LdClient.Log.Info("Starting Launchdarkly client in offline mode.");
+                Log.Info("Starting Launchdarkly client in offline mode.");
                 return new NullUpdateProcessor();
             }
             if (config.UseLdd)
             {
-                LdClient.Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
+                Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
                 return new NullUpdateProcessor();
             }
-            else
+            var factory = GetConfiguredFactory(config);
+            if (factory is IUpdateProcessorFactoryWithDiagnostics upfwd)
             {
-                var factory = GetConfiguredFactory(config);
-                if (factory is IUpdateProcessorFactoryWithDiagnostics upfwd)
-                {
-                    return upfwd.CreateUpdateProcessor(config, featureStore, diagnosticStore);
-                }
-                return factory.CreateUpdateProcessor(config, featureStore);
+                return upfwd.CreateUpdateProcessor(config, featureStore, diagnosticStore);
             }
+            return factory.CreateUpdateProcessor(config, featureStore);
         }
 
         private IUpdateProcessorFactory GetConfiguredFactory(Configuration config)
@@ -409,6 +388,7 @@ namespace LaunchDarkly.Client
             {
                 return Components.ExternalUpdatesOnly;
             }
+#pragma warning disable CS0612 // deprecated API
             if (config.IsStreamingEnabled)
             {
                 return Components.StreamingDataSource()
@@ -418,11 +398,11 @@ namespace LaunchDarkly.Client
             return Components.PollingDataSource()
                 .BaseUri(config.BaseUri)
                 .PollInterval(config.PollingInterval);
+#pragma warning restore CS0612
         }
 
         public LdValue DescribeConfiguration(Configuration config) =>
             (GetConfiguredFactory(config) as IDiagnosticDescription).DescribeConfiguration(config);
-#pragma warning restore CS0612
     }
 
     internal class NullUpdateProcessorFactory : IUpdateProcessorFactory, IDiagnosticDescription
@@ -456,23 +436,5 @@ namespace LaunchDarkly.Client
                 .Add("usingRelayDaemon", true)
                 .Build();
         }
-    }
-
-    internal sealed class DefaultHttpConfigurationFactory : IHttpConfigurationFactory, IDiagnosticDescription
-    {
-        public IHttpConfiguration CreateHttpConfiguration(Configuration config) =>
-            GetConfiguredFactory(config).CreateHttpConfiguration(config);
-
-        public LdValue DescribeConfiguration(Configuration config) =>
-            GetConfiguredFactory(config).DescribeConfiguration(config);
-
-        private static HttpConfigurationBuilder GetConfiguredFactory(Configuration config) =>
-            Components.HttpConfiguration()
-#pragma warning disable CS0612 // obsolete API
-                .ConnectTimeout(config.HttpClientTimeout)
-                .MessageHandler(config.HttpClientHandler)
-                .ReadTimeout(config.ReadTimeout)
-                .Wrapper(config.WrapperName, config.WrapperVersion);
-#pragma warning restore CS0612
     }
 }
