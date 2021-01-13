@@ -62,6 +62,7 @@ namespace LaunchDarkly.Client
         /// <returns>the same builder</returns>
         /// <seealso cref="Components.PollingDataSource"/>
         /// <seealso cref="PollingDataSourceBuilder.BaseUri(Uri)"/>
+        [Obsolete("Use Components.PollingDataSource and PollingDataSourceBuilder.BaseUri")]
         IConfigurationBuilder BaseUri(Uri baseUri);
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace LaunchDarkly.Client
         /// </para>
         /// <para>
         /// Note that the interface is currently named <see cref="IUpdateProcessorFactory"/>, but in a future version it
-        /// will be renamed to <c>IDataStoreFactory</c>.
+        /// will be renamed to <c>IDataSourceFactory</c>.
         /// </para>
         /// </remarks>
         /// <param name="dataSourceFactory">the factory object</param>

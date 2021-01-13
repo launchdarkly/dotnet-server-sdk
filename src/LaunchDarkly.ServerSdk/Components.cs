@@ -184,7 +184,7 @@ namespace LaunchDarkly.Client
         /// <item> If you have set <see cref="IConfigurationBuilder.Offline(bool)"/> to true, the SDK
         /// will not send events to LaunchDarkly.</item>
         /// <item> Otherwise, it will send events, using the properties set by the deprecated events
-        /// configuration methods such as <see cref="IConfigurationBuilder.EventCapacity(int)"/>.
+        /// configuration methods such as <see cref="IConfigurationBuilder.EventCapacity(int)"/>.</item>
         /// </list>
         /// </remarks>
         [Obsolete("Use SendEvents")]
@@ -210,8 +210,8 @@ namespace LaunchDarkly.Client
         /// <see cref="IConfigurationBuilder.PollingInterval(TimeSpan)"/>.</item>
         /// <item> Otherwise, it will use streaming mode-- equivalent to using <see cref="Components.StreamingDataSource"/>
         /// with the options set by <see cref="IConfigurationBuilder.StreamUri(Uri)"/> and
-        /// <see cref="IConfigurationBuilder.ReconnectTime(TimeSpan)"/>.
-        /// </item>
+        /// <see cref="IConfigurationBuilder.ReconnectTime(TimeSpan)"/>.</item>
+        /// </list>
         /// </remarks>
         [Obsolete("Use StreamingDataSource, PollingDataSource, or ExternalUpdatesOnly")]
         public static IUpdateProcessorFactory DefaultUpdateProcessor => _defaultUpdateProcessorFactory;
@@ -252,7 +252,9 @@ namespace LaunchDarkly.Client
         private static EventProcessorBuilder GetConfiguredFactory(Configuration config) =>
             Components.SendEvents()
                 .AllAttributesPrivate(config.AllAttributesPrivate)
+#pragma warning disable CS0612 // using obsolete property
                 .BaseUri(config.EventsUri)
+#pragma warning restore CS0612
                 .Capacity(config.EventCapacity)
                 .DiagnosticRecordingInterval(config.DiagnosticRecordingInterval)
                 .FlushInterval(config.EventFlushInterval)

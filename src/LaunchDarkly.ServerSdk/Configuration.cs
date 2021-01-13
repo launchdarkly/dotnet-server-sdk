@@ -44,7 +44,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Obsolete property for the base URI of the LaunchDarkly analytics events service.
         /// </summary>
-        /// [Obsolete]
+        [Obsolete]
         public Uri EventsUri { get; internal set; }
         /// <summary>
         /// The SDK key for your LaunchDarkly environment.
