@@ -12,6 +12,7 @@ namespace LaunchDarkly.Tests
     {
         private readonly FeatureFlag Flag = new FeatureFlagBuilder("flagkey").Build();
         private readonly Segment Segment = new Segment("segkey", 1, null, null, "", null, false);
+        private static readonly TimeSpan _longInterval = TimeSpan.FromHours(1);
 
         Mock<IFeatureRequestor> _mockFeatureRequestor;
         IFeatureRequestor _featureRequestor;
@@ -31,7 +32,7 @@ namespace LaunchDarkly.Tests
         {
             AllData allData = MakeAllData();
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
+            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore, _longInterval))
             {
                 var initTask = ((IUpdateProcessor)pp).Start();
                 initTask.Wait();
@@ -46,7 +47,7 @@ namespace LaunchDarkly.Tests
         {
             AllData allData = MakeAllData();
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(allData);
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
+            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore, _longInterval))
             {
                 var initTask = ((IUpdateProcessor)pp).Start();
                 initTask.Wait();
@@ -58,7 +59,7 @@ namespace LaunchDarkly.Tests
         public void ConnectionErrorDoesNotCauseImmediateFailure()
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(new InvalidOperationException("no"));
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
+            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore, _longInterval))
             {
                 var startTime = DateTime.Now;
                 var initTask = ((IUpdateProcessor)pp).Start();
@@ -103,7 +104,7 @@ namespace LaunchDarkly.Tests
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
+            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore, _longInterval))
             {
                 var initTask = ((IUpdateProcessor)pp).Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(1000));
@@ -116,7 +117,7 @@ namespace LaunchDarkly.Tests
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
-            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore))
+            using (PollingProcessor pp = new PollingProcessor(_config, _featureRequestor, _featureStore, _longInterval))
             {
                 var initTask = ((IUpdateProcessor)pp).Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));

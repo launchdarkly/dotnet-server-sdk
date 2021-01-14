@@ -315,7 +315,7 @@ namespace LaunchDarkly.Client
         [Obsolete(ObsoleteMessage)]
         public static Configuration WithUpdateProcessorFactory(this Configuration configuration, IUpdateProcessorFactory factory)
         {
-            configuration.UpdateProcessorFactory = factory;
+            configuration.DataSource = factory;
             return configuration;
         }
 

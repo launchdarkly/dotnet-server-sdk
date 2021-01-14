@@ -18,10 +18,10 @@ namespace LaunchDarkly.Client
         private readonly Configuration _config;
         private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
 
-        internal FeatureRequestor(Configuration config)
+        internal FeatureRequestor(Configuration config, Uri baseUri)
         {
             _config = config;
-            _allUri = new Uri(config.BaseUri.AbsoluteUri + "sdk/latest-all");
+            _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
             _httpClient = Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
         }
 

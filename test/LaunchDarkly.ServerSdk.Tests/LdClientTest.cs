@@ -13,6 +13,8 @@ namespace LaunchDarkly.Tests
     // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
     public class LdClientTest
     {
+#pragma warning disable 0612
+#pragma warning disable 0618
         private Mock<IUpdateProcessor> mockUpdateProcessor;
         private IUpdateProcessor updateProcessor;
         private Task<bool> initTask;
@@ -29,8 +31,7 @@ namespace LaunchDarkly.Tests
         public void ClientHasDefaultEventProcessorByDefault()
         {
             var config = Configuration.Builder("SDK_KEY")
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+                .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -43,8 +44,22 @@ namespace LaunchDarkly.Tests
         public void StreamingClientHasStreamProcessor()
         {
             var config = Configuration.Builder("SDK_KEY")
-                .IsStreamingEnabled(true)
-                .BaseUri(new Uri("http://fake"))
+                .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
+                .Events(Components.NoEvents)
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<StreamProcessor>(client._updateProcessor);
+            }
+        }
+
+        [Fact]
+        public void StreamingClientHasStreamProcessorWithDeprecatedProperties()
+        {
+            var config = Configuration.Builder("SDK_KEY")
+                .Events(Components.NoEvents)
+                .StreamUri(new Uri("http://fake"))
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
@@ -55,6 +70,20 @@ namespace LaunchDarkly.Tests
 
         [Fact]
         public void PollingClientHasPollingProcessor()
+        {
+            var config = Configuration.Builder("SDK_KEY")
+                .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
+                .Events(Components.NoEvents)
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<PollingProcessor>(client._updateProcessor);
+            }
+        }
+
+        [Fact]
+        public void PollingClientHasPollingProcessorWithDeprecatedProperties()
         {
             var config = Configuration.Builder("SDK_KEY")
                 .IsStreamingEnabled(false)
@@ -73,11 +102,9 @@ namespace LaunchDarkly.Tests
             var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
             var upfwd = new Mock<IUpdateProcessorFactoryWithDiagnostics>();
             var config = Configuration.Builder("SDK_KEY")
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
                 .StartWaitTime(TimeSpan.Zero)
-                .EventProcessorFactory(epfwd.Object)
-                .UpdateProcessorFactory(upfwd.Object)
+                .Events(epfwd.Object)
+                .DataSource(upfwd.Object)
                 .Build();
 
             IDiagnosticStore eventProcessorDiagnosticStore = null;
@@ -85,7 +112,7 @@ namespace LaunchDarkly.Tests
 
             epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
                 .Callback<Configuration, IDiagnosticStore>((c, ds) => eventProcessorDiagnosticStore = ds)
-                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
+                .Returns(Components.NoEvents.CreateEventProcessor(config));
             upfwd.Setup(upf => upf.CreateUpdateProcessor(config, It.IsAny<IFeatureStore>(), It.IsAny<IDiagnosticStore>()))
                 .Callback<Configuration, IFeatureStore, IDiagnosticStore>((c, fs, ds) => updateProcessorDiagnosticStore = ds)
                 .Returns(updateProcessor);
@@ -228,9 +255,7 @@ namespace LaunchDarkly.Tests
 
             using (var client = new LdClient(config))
             {
-#pragma warning disable 0618
                 Assert.Null(client.AllFlags(User.WithKey("user")));
-#pragma warning restore 0618
             }
         }
         
@@ -250,9 +275,7 @@ namespace LaunchDarkly.Tests
 
             using (var client = new LdClient(config))
             {
-#pragma warning disable 0618
                 IDictionary<string, JToken> result = client.AllFlags(User.WithKey("user"));
-#pragma warning restore 0618
                 Assert.NotNull(result);
                 Assert.Equal(new JValue(1), result["key"]);
             }
@@ -347,5 +370,7 @@ namespace LaunchDarkly.Tests
                 }
             }
         };
+#pragma warning restore 0618
+#pragma warning restore 0612
     }
 }

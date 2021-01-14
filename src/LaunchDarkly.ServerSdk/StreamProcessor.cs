@@ -16,26 +16,36 @@ namespace LaunchDarkly.Client
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(StreamProcessor));
 
-        private readonly Configuration _config;
         private readonly StreamManager _streamManager;
         private readonly IFeatureStore _featureStore;
 
-        internal StreamProcessor(Configuration config,
-            IFeatureStore featureStore, StreamManager.EventSourceCreator eventSourceCreator, IDiagnosticStore diagnosticStore)
+        internal StreamProcessor(
+            Configuration config,
+            IFeatureStore featureStore,
+            StreamManager.EventSourceCreator eventSourceCreator,
+            IDiagnosticStore diagnosticStore,
+            Uri baseUri,
+            TimeSpan initialReconnectDelay
+            )
         {
+            var streamProperties = new StreamProperties(new Uri(baseUri, "/all"),
+                HttpMethod.Get, null);
+            var streamManagerConfig = new StreamManagerConfigImpl
+            {
+                HttpAuthorizationKey = config.SdkKey,
+                HttpClientHandler = config.HttpClientHandler,
+                HttpClientTimeout = config.HttpClientTimeout,
+                ReadTimeout = config.ReadTimeout,
+                ReconnectTime = initialReconnectDelay,
+                WrapperName = config.WrapperName,
+                WrapperVersion = config.WrapperVersion
+            };
             _streamManager = new StreamManager(this,
-                MakeStreamProperties(config),
-                config.StreamManagerConfiguration,
+                streamProperties,
+                streamManagerConfig,
                 ServerSideClientEnvironment.Instance,
                 eventSourceCreator, diagnosticStore);
-            _config = config;
             _featureStore = featureStore;
-        }
-
-        private StreamProperties MakeStreamProperties(Configuration config)
-        {
-            return new StreamProperties(new Uri(config.StreamUri, "/all"),
-                HttpMethod.Get, null);
         }
 
         #region IUpdateProcessor
@@ -53,8 +63,10 @@ namespace LaunchDarkly.Client
         #endregion
 
         #region IStreamProcessor
-        
+
+#pragma warning disable CS1998 // we know there are no awaits in this method
         public async Task HandleMessage(StreamManager streamManager, string messageType, string messageData)
+#pragma warning restore CS1998
         {
             switch (messageType)
             {
@@ -161,6 +173,17 @@ namespace LaunchDarkly.Client
                 Path = path;
                 Version = version;
             }
+        }
+
+        internal struct StreamManagerConfigImpl : IStreamManagerConfiguration
+        {
+            public string HttpAuthorizationKey { get; internal set; }
+            public HttpClientHandler HttpClientHandler { get; internal set; }
+            public TimeSpan HttpClientTimeout { get; internal set; }
+            public TimeSpan ReadTimeout { get; internal set; }
+            public TimeSpan ReconnectTime { get; internal set; }
+            public string WrapperName { get; internal set; }
+            public string WrapperVersion { get; internal set; }
         }
     }
 }

@@ -18,7 +18,7 @@ namespace LaunchDarkly.Tests
         private readonly IFeatureStore store = TestUtils.InMemoryFeatureStore();
         private readonly FileDataSourceFactory factory = FileComponents.FileDataSource();
         private readonly Configuration config = Configuration.Builder("sdkKey")
-            .EventProcessorFactory(Components.NullEventProcessor)
+            .Events(Components.NoEvents)
             .Build();
         private readonly User user = User.WithKey("key");
 
@@ -119,7 +119,7 @@ namespace LaunchDarkly.Tests
             mockReader.Setup(fr => fr.ReadAllText(path)).Returns(data);
             factory.WithFileReader(mockReader.Object);
             factory.WithFilePaths(path);
-            var config1 = Configuration.Builder(config).UpdateProcessorFactory(factory).Build();
+            var config1 = Configuration.Builder(config).DataSource(factory).Build();
             using (var client = new LdClient(config1))
             {
                 Assert.Equal("value", client.StringVariation("key", user, ""));
@@ -284,7 +284,7 @@ namespace LaunchDarkly.Tests
         public void FullFlagDefinitionEvaluatesAsExpected()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE);
-            var config1 = Configuration.Builder(config).UpdateProcessorFactory(factory).Build();
+            var config1 = Configuration.Builder(config).DataSource(factory).Build();
             using (var client = new LdClient(config1))
             {
                 Assert.Equal("on", client.StringVariation("flag1", user, ""));
@@ -295,7 +295,7 @@ namespace LaunchDarkly.Tests
         public void SimplifiedFlagEvaluatesAsExpected()
         {
             factory.WithFilePaths(ALL_DATA_JSON_FILE);
-            var config1 = Configuration.Builder(config).UpdateProcessorFactory(factory).Build();
+            var config1 = Configuration.Builder(config).DataSource(factory).Build();
             using (var client = new LdClient(config1))
             {
                 Assert.Equal("value2", client.StringVariation("flag2", user, ""));

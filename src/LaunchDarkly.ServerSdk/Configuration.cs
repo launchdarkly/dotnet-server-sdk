@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using Common.Logging;
+using LaunchDarkly.Client.Integrations;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -30,28 +30,37 @@ namespace LaunchDarkly.Client
 #pragma warning restore 618
     {
         /// <summary>
-        /// The base URI of the LaunchDarkly server.
+        /// Obsolete property for the base URI of the LaunchDarkly polling service.
         /// </summary>
+        /// <seealso cref="Components.PollingDataSource"/>
+        [Obsolete]
         public Uri BaseUri { get; internal set; }
         /// <summary>
-        /// The base URL of the LaunchDarkly streaming server.
+        /// Obsolete property for the base URI of the LaunchDarkly streaming service.
         /// </summary>
+        /// <seealso cref="Components.StreamingDataSource"/>
+        [Obsolete]
         public Uri StreamUri { get; internal set; }
         /// <summary>
-        /// The base URL of the LaunchDarkly analytics event server.
+        /// Obsolete property for the base URI of the LaunchDarkly analytics events service.
         /// </summary>
+        [Obsolete]
         public Uri EventsUri { get; internal set; }
         /// <summary>
         /// The SDK key for your LaunchDarkly environment.
         /// </summary>
         public string SdkKey { get; internal set; }
         /// <summary>
-        /// Whether or not the streaming API should be used to receive flag updates.
+        /// Obsolete property for enabling or disabling streaming mode.
         /// </summary>
-        /// <remarks>
-        /// This is true by default. Streaming should only be disabled on the advice of LaunchDarkly support.
-        /// </remarks>
+        /// <seealso cref="Components.StreamingDataSource"/>
+        /// <seealso cref="Components.PollingDataSource"/>
+        [Obsolete]
         public bool IsStreamingEnabled { get; internal set; }
+        /// <summary>
+        /// A factory object that creates the component that will receive feature flag data.
+        /// </summary>
+        public IUpdateProcessorFactory DataSource { get; internal set; }
         /// <summary>
         /// The capacity of the events buffer.
         /// </summary>
@@ -90,8 +99,10 @@ namespace LaunchDarkly.Client
         [Obsolete("This feature will be removed in a future version.")]
         public int EventSamplingInterval { get; internal set; }
         /// <summary>
-        /// Set the polling interval (when streaming is disabled). The default value is 30 seconds.
+        /// Obsolete property for the polling interval in polling mode.
         /// </summary>
+        /// <seealso cref="Components.PollingDataSource"/>
+        [Obsolete]
         public TimeSpan PollingInterval { get; internal set; }
         /// <summary>
         /// How long the client constructor will block awaiting a successful connection to
@@ -107,12 +118,10 @@ namespace LaunchDarkly.Client
         /// </summary>
         public TimeSpan ReadTimeout { get; internal set; }
         /// <summary>
-        /// The reconnect base time for the streaming connection.
+        /// Obsolete property for the reconnect base time for the streaming connection.
         /// </summary>
-        /// <remarks>
-        /// The streaming connection uses an exponential backoff algorithm (with jitter) for reconnects,
-        /// but will start the backoff with a value near the value specified here. The default value is 1 second.
-        /// </remarks>
+        /// <seealso cref="Components.StreamingDataSource"/>
+        [Obsolete]
         public TimeSpan ReconnectTime { get; internal set; }
         /// <summary>
         /// The connection timeout. The default value is 10 seconds.
@@ -187,14 +196,10 @@ namespace LaunchDarkly.Client
         /// </remarks>
         public IEventProcessorFactory EventProcessorFactory { get; internal set; }
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="IUpdateProcessor"/>, which will
-        /// receive feature flag data.
+        /// Obsolete name for <see cref="DataSource"/>.
         /// </summary>
-        /// <remarks>
-        /// The default is <see cref="Components.DefaultUpdateProcessor"/>, but you may provide a custom
-        /// implementation.
-        /// </remarks>
-        public IUpdateProcessorFactory UpdateProcessorFactory { get; internal set; }
+        [Obsolete("Use DataSource")]
+        public IUpdateProcessorFactory UpdateProcessorFactory => DataSource;
         /// <summary>
         /// A string that will be sent to LaunchDarkly to identify the SDK type.
         /// </summary>
@@ -335,17 +340,18 @@ namespace LaunchDarkly.Client
 
         internal Configuration(ConfigurationBuilder builder)
         {
+#pragma warning disable 612
+#pragma warning disable 618
             // Let's try to keep these alphabetical so it's easy to see if everything is here
             AllAttributesPrivate = builder._allAttributesPrivate;
             BaseUri = builder._baseUri;
+            DataSource = builder._updateProcessorFactory;
             DiagnosticOptOut = builder._diagnosticOptOut;
             DiagnosticRecordingInterval = builder._diagnosticRecordingInterval;
             EventCapacity = builder._eventCapacity;
             EventFlushInterval = builder._eventFlushInterval;
             EventProcessorFactory = builder._eventProcessorFactory;
-#pragma warning disable 618
             EventSamplingInterval = builder._eventSamplingInterval;
-#pragma warning restore 618
             EventsUri = builder._eventsUri;
             FeatureStore = builder._featureStore;
             FeatureStoreFactory = builder._featureStoreFactory;
@@ -362,57 +368,22 @@ namespace LaunchDarkly.Client
             SdkKey = builder._sdkKey;
             StreamUri = builder._streamUri;
             StartWaitTime = builder._startWaitTime;
-            UpdateProcessorFactory = builder._updateProcessorFactory;
             UseLdd = builder._useLdd;
             UserKeysCapacity = builder._userKeysCapacity;
             UserKeysFlushInterval = builder._userKeysFlushInterval;
             WrapperName = builder._wrapperName;
             WrapperVersion = builder._wrapperVersion;
-        }
-        
-        internal IEventProcessorConfiguration EventProcessorConfiguration => new EventProcessorAdapter { Config = this };
-        internal IHttpRequestConfiguration HttpRequestConfiguration => new HttpRequestAdapter { Config = this };
-        internal IStreamManagerConfiguration StreamManagerConfiguration => new StreamManagerAdapter { Config = this };
-
-        private struct EventProcessorAdapter : IEventProcessorConfiguration
-        {
-            internal Configuration Config { get; set; }
-            public bool AllAttributesPrivate => Config.AllAttributesPrivate;
-            public bool DiagnosticOptOut => Config.DiagnosticOptOut;
-            public TimeSpan DiagnosticRecordingInterval => Config.DiagnosticRecordingInterval;
-            public int EventCapacity => Config.EventCapacity;
-            public TimeSpan EventFlushInterval => Config.EventFlushInterval;
-#pragma warning disable 618
-            public int EventSamplingInterval => Config.EventSamplingInterval;
 #pragma warning restore 618
-            public Uri EventsUri => new Uri(Config.EventsUri, "bulk");
-            public Uri DiagnosticUri => new Uri(Config.EventsUri, "diagnostic");
-            public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
-            public bool InlineUsersInEvents => Config.InlineUsersInEvents;
-            public ISet<string> PrivateAttributeNames => Config.PrivateAttributeNames;
-            public TimeSpan ReadTimeout => Config.ReadTimeout;
-            public TimeSpan ReconnectTime => Config.ReconnectTime;
-            public int UserKeysCapacity => Config.UserKeysCapacity;
-            public TimeSpan UserKeysFlushInterval => Config.UserKeysFlushInterval;
+#pragma warning restore 612
         }
+
+        internal IHttpRequestConfiguration HttpRequestConfiguration => new HttpRequestAdapter { Config = this };
 
         private struct HttpRequestAdapter : IHttpRequestConfiguration
         {
             internal Configuration Config { get; set; }
             public string HttpAuthorizationKey => Config.SdkKey;
             public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
-            public string WrapperName => Config.WrapperName;
-            public string WrapperVersion => Config.WrapperVersion;
-        }
-
-        private struct StreamManagerAdapter : IStreamManagerConfiguration
-        {
-            internal Configuration Config { get; set; }
-            public string HttpAuthorizationKey => Config.SdkKey;
-            public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
-            public TimeSpan HttpClientTimeout => Config.HttpClientTimeout;
-            public TimeSpan ReadTimeout => Config.ReadTimeout;
-            public TimeSpan ReconnectTime => Config.ReconnectTime;
             public string WrapperName => Config.WrapperName;
             public string WrapperVersion => Config.WrapperVersion;
         }
