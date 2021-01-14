@@ -9,7 +9,7 @@ namespace LaunchDarkly.Client
     /// In-memory, thread-safe implementation of <see cref="IFeatureStore"/>.
     /// </summary>
     /// <remarks>
-    /// Referencing this class directly is deprecated; please use <see cref="Components.InMemoryFeatureStore"/>
+    /// Referencing this class directly is deprecated; please use <see cref="Components.InMemoryDataStore"/>
     /// in <see cref="Components"/> instead.
     /// </remarks>
     public class InMemoryFeatureStore : IFeatureStore
@@ -22,9 +22,9 @@ namespace LaunchDarkly.Client
 
         /// <summary>
         /// Creates a new empty feature store instance. Constructing this class directly is deprecated;
-        /// please use <see cref="Components.InMemoryFeatureStore"/> in <see cref="Components"/> instead.
+        /// please use <see cref="Components.InMemoryDataStore"/> in <see cref="Components"/> instead.
         /// </summary>
-        [Obsolete("Constructing this class directly is deprecated; please use Components.InMemoryFeatureStore")]
+        [Obsolete("Constructing this class directly is deprecated; please use Components.InMemoryDataStore")]
         public InMemoryFeatureStore() { }
 
         /// <inheritdoc/>

@@ -110,11 +110,7 @@ namespace LaunchDarkly.Client.Integrations
                 _initialReconnectDelay
                 );
 
-        /// <summary>
-        /// Used internally by the SDK to inspect the configuration.
-        /// </summary>
-        /// <param name="config">the current configuration</param>
-        /// <returns>diagnostic properties</returns>
+        /// <inheritdoc/>
         public LdValue DescribeConfiguration(Configuration config)
         {
             return LdValue.BuildObject()

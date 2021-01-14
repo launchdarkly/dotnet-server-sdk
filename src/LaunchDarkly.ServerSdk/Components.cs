@@ -101,6 +101,70 @@ namespace LaunchDarkly.Client
         public static IEventProcessorFactory NoEvents => _nullEventProcessorFactory;
 
         /// <summary>
+        /// Returns a configurable factory for a persistent data store.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method takes an <see cref="IPersistentDataStoreFactory"/> that is provided by
+        /// some persistent data store implementation (i.e. a database integration), and converts
+        /// it to a <see cref="PersistentDataStoreBuilder"/> which can be used to add
+        /// caching behavior. You can then pass the <see cref="PersistentDataStoreBuilder"/>
+        /// object to <see cref="ConfigurationBuilder.DataStore(IFeatureStoreFactory)"/> to use this
+        /// configuration in the SDK. Example usage:
+        /// </para>
+        /// <code>
+        ///     var myStore = Components.PersistentDataStore(Redis.DataStore())
+        ///         .CacheTtl(TimeSpan.FromSeconds(45));
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .DataStore(myStore)
+        ///         .Build();
+        /// </code>
+        /// <para>
+        /// The method is overloaded because some persistent data store implementations
+        /// use <see cref="IPersistentDataStoreFactory"/> while others use
+        /// <see cref="IPersistentDataStoreAsyncFactory"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="storeFactory">the factory for the underlying data store</param>
+        /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
+        public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreFactory storeFactory)
+        {
+            return new PersistentDataStoreBuilder(storeFactory);
+        }
+
+        /// <summary>
+        /// Returns a configurable factory for a persistent data store.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method takes an <see cref="IPersistentDataStoreFactory"/> that is provided by
+        /// some persistent data store implementation (i.e. a database integration), and converts
+        /// it to a <see cref="PersistentDataStoreBuilder"/> which can be used to add
+        /// caching behavior. You can then pass the <see cref="PersistentDataStoreBuilder"/>
+        /// object to <see cref="ConfigurationBuilder.DataStore(IFeatureStoreFactory)"/> to use this
+        /// configuration in the SDK. Example usage:
+        /// </para>
+        /// <code>
+        ///     var myStore = Components.PersistentDataStore(Redis.DataStore())
+        ///         .CacheTtl(TimeSpan.FromSeconds(45));
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .DataStore(myStore)
+        ///         .Build();
+        /// </code>
+        /// <para>
+        /// The method is overloaded because some persistent data store implementations
+        /// use <see cref="IPersistentDataStoreFactory"/> while others use
+        /// <see cref="IPersistentDataStoreAsyncFactory"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="storeFactory">the factory for the underlying data store</param>
+        /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
+        public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreAsyncFactory storeFactory)
+        {
+            return new PersistentDataStoreBuilder(storeFactory);
+        }
+
+        /// <summary>
         /// Returns a configurable factory for using polling mode to get feature flag data.
         /// </summary>
         /// <remarks>
