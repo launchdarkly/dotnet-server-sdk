@@ -8,10 +8,10 @@ namespace LaunchDarkly.Client
         private readonly LRUCacheSet<string> _userKeys;
         private readonly TimeSpan _flushInterval;
 
-        internal DefaultUserDeduplicator(Configuration config)
+        internal DefaultUserDeduplicator(int capacity, TimeSpan interval)
         {
-            _userKeys = new LRUCacheSet<string>(config.UserKeysCapacity);
-            _flushInterval = config.UserKeysFlushInterval;
+            _userKeys = new LRUCacheSet<string>(capacity);
+            _flushInterval = interval;
         }
 
         TimeSpan? IUserDeduplicator.FlushInterval

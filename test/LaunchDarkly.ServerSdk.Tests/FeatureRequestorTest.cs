@@ -18,7 +18,7 @@ namespace LaunchDarkly.Tests
         private IFeatureRequestor MakeRequestor(FluentMockServer server)
         {
             var config = Configuration.Builder("key")
-                .HttpClientTimeout(TimeSpan.FromDays(1))
+                .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
                 .Build();
             return new FeatureRequestor(config, new Uri(server.Urls[0]));
         }

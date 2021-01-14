@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Common.Logging;
 using LaunchDarkly.Common;
 using LaunchDarkly.Client.Integrations;
 using LaunchDarkly.Client.Interfaces;
@@ -63,6 +62,26 @@ namespace LaunchDarkly.Client
         /// </code>
         /// </example>
         public static IUpdateProcessorFactory ExternalUpdatesOnly => _nullUpdateProcessorFactory;
+
+        /// <summary>
+        /// Returns a configuration builder for the SDK's networking configuration.
+        /// </summary>
+        /// <remarks>
+        /// Passing this to <see cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/> applies this
+        /// configuration to all HTTP/HTTPS requests made by the SDK.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .Http(
+        ///             Components.HttpConfiguration()
+        ///                 .ConnectTimeout(TimeSpan.FromMilliseconds(3000))
+        ///         )
+        ///         .Build();
+        /// </code>
+        /// </example>
+        /// <returns>a configurable factory object</returns>
+        public static HttpConfigurationBuilder HttpConfiguration() => new HttpConfigurationBuilder();
 
         /// <summary>
         /// Returns a configuration object that disables analytics events.
@@ -251,20 +270,20 @@ namespace LaunchDarkly.Client
 
         private static EventProcessorBuilder GetConfiguredFactory(Configuration config) =>
             Components.SendEvents()
-                .AllAttributesPrivate(config.AllAttributesPrivate)
 #pragma warning disable CS0612 // using obsolete property
+#pragma warning disable CS0618 // using obsolete property
+                .AllAttributesPrivate(config.AllAttributesPrivate)
                 .BaseUri(config.EventsUri)
-#pragma warning restore CS0612
                 .Capacity(config.EventCapacity)
                 .DiagnosticRecordingInterval(config.DiagnosticRecordingInterval)
                 .FlushInterval(config.EventFlushInterval)
                 .InlineUsersInEvents(config.InlineUsersInEvents)
                 .PrivateAttributeNames(config.PrivateAttributeNames.ToArray())
-#pragma warning disable CS0618 // using obsolete property
                 .SamplingInterval(config.EventSamplingInterval)
-#pragma warning restore CS0618
                 .UserKeysCapacity(config.UserKeysCapacity)
                 .UserKeysFlushInterval(config.UserKeysFlushInterval);
+#pragma warning restore CS0618
+#pragma warning restore CS0612
 
         public LdValue DescribeConfiguration(Configuration config) =>
             GetConfiguredFactory(config).DescribeConfiguration(config);
@@ -290,9 +309,6 @@ namespace LaunchDarkly.Client
 
     internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactoryWithDiagnostics, IDiagnosticDescription
     {
-        // Note, logger uses LDClient class name for backward compatibility
-        private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
-
         IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
             return CreateUpdateProcessor(config, featureStore, null);
@@ -302,12 +318,14 @@ namespace LaunchDarkly.Client
         {
             if (config.Offline)
             {
-                Log.Info("Starting Launchdarkly client in offline mode.");
+                LdClient.Log.Info("Starting Launchdarkly client in offline mode.");
                 return new NullUpdateProcessor();
             }
+#pragma warning disable CS0612 // deprecated API
             if (config.UseLdd)
+#pragma warning restore CS0612
             {
-                Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
+                LdClient.Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
                 return new NullUpdateProcessor();
             }
             var factory = GetConfiguredFactory(config);
@@ -320,11 +338,11 @@ namespace LaunchDarkly.Client
 
         private IUpdateProcessorFactory GetConfiguredFactory(Configuration config)
         {
+#pragma warning disable CS0612 // deprecated API
             if (config.UseLdd)
             {
                 return Components.ExternalUpdatesOnly;
             }
-#pragma warning disable CS0612 // deprecated API
             if (config.IsStreamingEnabled)
             {
                 return Components.StreamingDataSource()
@@ -372,5 +390,23 @@ namespace LaunchDarkly.Client
                 .Add("usingRelayDaemon", true)
                 .Build();
         }
+    }
+
+    internal sealed class DefaultHttpConfigurationFactory : IHttpConfigurationFactory, IDiagnosticDescription
+    {
+        public IHttpConfiguration CreateHttpConfiguration(Configuration config) =>
+            GetConfiguredFactory(config).CreateHttpConfiguration(config);
+
+        public LdValue DescribeConfiguration(Configuration config) =>
+            GetConfiguredFactory(config).DescribeConfiguration(config);
+
+        private static HttpConfigurationBuilder GetConfiguredFactory(Configuration config) =>
+            Components.HttpConfiguration()
+#pragma warning disable CS0612 // obsolete API
+                .ConnectTimeout(config.HttpClientTimeout)
+                .MessageHandler(config.HttpClientHandler)
+                .ReadTimeout(config.ReadTimeout)
+                .Wrapper(config.WrapperName, config.WrapperVersion);
+#pragma warning restore CS0612
     }
 }

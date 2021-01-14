@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using LaunchDarkly.Client.Integrations;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -30,19 +31,19 @@ namespace LaunchDarkly.Client
 #pragma warning restore 618
     {
         /// <summary>
-        /// Obsolete property for the base URI of the LaunchDarkly polling service.
+        /// Obsolete property that is now set via <see cref="PollingDataSourceBuilder"/>.
         /// </summary>
         /// <seealso cref="Components.PollingDataSource"/>
         [Obsolete]
         public Uri BaseUri { get; internal set; }
         /// <summary>
-        /// Obsolete property for the base URI of the LaunchDarkly streaming service.
+        /// Obsolete property that is now set via <see cref="StreamingDataSourceBuilder"/>.
         /// </summary>
         /// <seealso cref="Components.StreamingDataSource"/>
         [Obsolete]
         public Uri StreamUri { get; internal set; }
         /// <summary>
-        /// Obsolete property for the base URI of the LaunchDarkly analytics events service.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
         [Obsolete]
         public Uri EventsUri { get; internal set; }
@@ -62,31 +63,24 @@ namespace LaunchDarkly.Client
         /// </summary>
         public IUpdateProcessorFactory DataSource { get; internal set; }
         /// <summary>
-        /// The capacity of the events buffer.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        /// <remarks>
-        /// The client buffers up to this many events in memory before flushing. If the capacity is exceeded
-        /// before the buffer is flushed, events will be discarded. Increasing the capacity means that events
-        /// are less likely to be discarded, at the cost of consuming more memory.
-        /// </remarks>
+        [Obsolete]
         public int EventCapacity { get; internal set; }
         /// <summary>
-        /// Deprecated name for <see cref="EventCapacity"/>.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        [Obsolete("Use EventCapacity")]
+        [Obsolete]
         public int EventQueueCapacity => EventCapacity;
         /// <summary>
-        /// The time between flushes of the event buffer.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        /// <remarks>
-        /// Decreasing the flush interval means that the event buffer is less likely to reach capacity.
-        /// The default value is 5 seconds.
-        /// </remarks>
+        [Obsolete]
         public TimeSpan EventFlushInterval { get; internal set; }
         /// <summary>
-        /// Deprecated name for <see cref="EventFlushInterval"/>.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        [Obsolete("Use EventFlushInterval")]
+        [Obsolete]
         public TimeSpan EventQueueFrequency => EventFlushInterval;
         /// <summary>
         /// Enables event sampling if non-zero.
@@ -99,7 +93,7 @@ namespace LaunchDarkly.Client
         [Obsolete("This feature will be removed in a future version.")]
         public int EventSamplingInterval { get; internal set; }
         /// <summary>
-        /// Obsolete property for the polling interval in polling mode.
+        /// Obsolete property that is now set via <see cref="PollingDataSourceBuilder"/>.
         /// </summary>
         /// <seealso cref="Components.PollingDataSource"/>
         [Obsolete]
@@ -114,66 +108,59 @@ namespace LaunchDarkly.Client
         /// </remarks>
         public TimeSpan StartWaitTime { get; internal set; }
         /// <summary>
-        /// The timeout when reading data from the EventSource API. The default value is 5 minutes.
+        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
         /// </summary>
+        [Obsolete]
         public TimeSpan ReadTimeout { get; internal set; }
         /// <summary>
-        /// Obsolete property for the reconnect base time for the streaming connection.
+        /// Obsolete property that is now set via <see cref="StreamingDataSourceBuilder"/>.
         /// </summary>
         /// <seealso cref="Components.StreamingDataSource"/>
         [Obsolete]
         public TimeSpan ReconnectTime { get; internal set; }
         /// <summary>
-        /// The connection timeout. The default value is 10 seconds.
+        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
         /// </summary>
+        [Obsolete]
         public TimeSpan HttpClientTimeout { get; internal set; }
         /// <summary>
-        /// The object to be used for sending HTTP requests. This is exposed for testing purposes.
+        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
         /// </summary>
+        [Obsolete]
         public HttpClientHandler HttpClientHandler { get; internal set; }
         /// <summary>
         /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
         /// </summary>
         public bool Offline { get; internal set; }
         /// <summary>
-        /// Whether or not user attributes (other than the key) should be private (not sent to
-        /// the LaunchDarkly server).
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        /// <remarks>
-        /// If this is true, all of the user attributes will be private, not just attributes that are
-        /// marked as private  on the <see cref="User"/> object. By default, this is false.
-        /// </remarks>
+        [Obsolete]
         public bool AllAttributesPrivate { get; internal set; }
         /// <summary>
-        /// Marks a set of attribute names as private.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        /// <remarks>
-        /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
-        /// names removed, even if you did specify them as private on the <see cref="User"/> object.
-        /// </remarks>
+        [Obsolete]
         public ISet<string> PrivateAttributeNames { get; internal set; }
         /// <summary>
-        /// The number of user keys that the event processor can remember at any one time, so that
-        /// duplicate user details will not be sent in analytics events.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
+        [Obsolete]
         public int UserKeysCapacity { get; internal set; }
         /// <summary>
-        /// The interval at which the event processor will reset its set of known user keys. The
-        /// default value is five minutes.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
+        [Obsolete]
         public TimeSpan UserKeysFlushInterval { get; internal set; }
         /// <summary>
-        /// True if full user details should be included in every analytics event.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        /// <remarks>
-        /// The default is false (events will only include the user key, except for one "index" event
-        /// that provides the full details for the user).
-        /// </remarks>
+        [Obsolete]
         public bool InlineUsersInEvents { get; internal set; }
         /// <summary>
-        /// True if this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
-        /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
+        /// Obsolete property that is now set via <see cref="Components.ExternalUpdatesOnly"/>.
         /// </summary>
+        [Obsolete]
         public bool UseLdd { get; internal set; }
         // (Used internally, was never public, will remove when WithFeatureStore is removed)
         internal IFeatureStore FeatureStore { get; set; }
@@ -205,21 +192,26 @@ namespace LaunchDarkly.Client
         /// </summary>
         public string UserAgentType { get { return "DotNetClient"; } }
         /// <summary>
-        /// The time between sending periodic diagnostic events.
+        /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
+        [Obsolete]
         public TimeSpan DiagnosticRecordingInterval { get; internal set; }
         /// <summary>
         /// True if diagnostic events have been disabled.
         /// </summary>
         public bool DiagnosticOptOut { get; internal set; }
         /// <summary>
-        /// Name specifying a wrapper library, to be included in request headers.
+        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
         /// </summary>
+        [Obsolete]
         public string WrapperName { get; internal set; }
         /// <summary>
-        /// Version of a wrapper library, to be included in request headers.
+        /// Obsolete property that is now set via <see cref="HttpConfigurationBuilder"/>.
         /// </summary>
+        [Obsolete]
         public string WrapperVersion { get; internal set; }
+
+        internal IHttpConfigurationFactory HttpConfigurationFactory { get; private set; }
 
         /// <summary>
         /// Default value for <see cref="PollingInterval"/>.
@@ -357,6 +349,7 @@ namespace LaunchDarkly.Client
             FeatureStoreFactory = builder._featureStoreFactory;
             HttpClientHandler = builder._httpClientHandler;
             HttpClientTimeout = builder._httpClientTimeout;
+            HttpConfigurationFactory = builder._httpConfigurationFactory;
             InlineUsersInEvents = builder._inlineUsersInEvents;
             IsStreamingEnabled = builder._isStreamingEnabled;
             Offline = builder._offline;
@@ -377,15 +370,30 @@ namespace LaunchDarkly.Client
 #pragma warning restore 612
         }
 
-        internal IHttpRequestConfiguration HttpRequestConfiguration => new HttpRequestAdapter { Config = this };
+        internal IHttpConfiguration HttpConfiguration =>
+            (HttpConfigurationFactory ?? new DefaultHttpConfigurationFactory()).CreateHttpConfiguration(this);
 
-        private struct HttpRequestAdapter : IHttpRequestConfiguration
+        internal IHttpRequestConfiguration HttpRequestConfiguration
         {
-            internal Configuration Config { get; set; }
-            public string HttpAuthorizationKey => Config.SdkKey;
-            public HttpClientHandler HttpClientHandler => Config.HttpClientHandler;
-            public string WrapperName => Config.WrapperName;
-            public string WrapperVersion => Config.WrapperVersion;
+            get
+            {
+                var httpConfig = HttpConfiguration;
+                return new HttpRequestConfigurationImpl
+                {
+                    HttpAuthorizationKey = SdkKey,
+                    HttpClientHandler = httpConfig.MessageHandler as HttpClientHandler,
+                    WrapperName = (httpConfig as IHttpConfigurationInternal)?.WrapperName,
+                    WrapperVersion = (httpConfig as IHttpConfigurationInternal)?.WrapperVersion
+                };
+            }
+        }
+
+        private struct HttpRequestConfigurationImpl : IHttpRequestConfiguration
+        {
+            public string HttpAuthorizationKey { get; internal set; }
+            public HttpClientHandler HttpClientHandler { get; internal set; }
+            public string WrapperName { get; internal set; }
+            public string WrapperVersion { get; internal set; }
         }
     }
 }

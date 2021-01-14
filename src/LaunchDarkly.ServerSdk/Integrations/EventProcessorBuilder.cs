@@ -258,6 +258,7 @@ namespace LaunchDarkly.Client.Integrations
         /// <inheritdoc/>
         IEventProcessor IEventProcessorFactoryWithDiagnostics.CreateEventProcessor(Configuration config, IDiagnosticStore diagnosticStore)
         {
+            var httpConfig = config.HttpConfiguration;
             var eventsConfig = new EventProcessorConfigImpl
             {
                 AllAttributesPrivate = _allAttributesPrivate,
@@ -268,10 +269,10 @@ namespace LaunchDarkly.Client.Integrations
                 EventSamplingInterval = _samplingInterval,
                 EventsUri = new Uri(_baseUri, "bulk"),
                 DiagnosticUri = new Uri(_baseUri, "diagnostic"),
-                HttpClientTimeout = config.HttpClientTimeout,
+                HttpClientTimeout = httpConfig.ConnectTimeout,
                 InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
-                ReadTimeout = config.ReadTimeout,
+                ReadTimeout = httpConfig.ReadTimeout,
                 ReconnectTime = TimeSpan.FromSeconds(1),
                 UserKeysCapacity = _userKeysCapacity,
                 UserKeysFlushInterval = _userKeysFlushInterval
@@ -279,7 +280,7 @@ namespace LaunchDarkly.Client.Integrations
 
             return new DefaultEventProcessor(
                 eventsConfig,
-                new DefaultUserDeduplicator(config),
+                new DefaultUserDeduplicator(_userKeysCapacity, _userKeysFlushInterval),
                 Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
                 diagnosticStore,
                 null,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Common.Logging;
 using LaunchDarkly.Client.Integrations;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client
 {
@@ -188,17 +189,28 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder FeatureStoreFactory(IFeatureStoreFactory featureStoreFactory);
 
         /// <summary>
-        /// Sets the object to be used for sending HTTP requests. This is exposed for testing purposes.
+        /// Sets the SDK's networking configuration, using a factory object. This object is normally a
+        /// configuration builder obtained from <see cref="Components.HttpConfiguration()"/>, which has
+        /// methods for setting individual HTTP-related properties.
         /// </summary>
-        /// <param name="httpClientHandler">the <c>HttpClientHandler</c> to use</param>
+        /// <param name="httpConfigurationFactory">a builder/factory object for HTTP configuration</param>
         /// <returns>the same builder</returns>
+        IConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory);
+
+        /// <summary>
+        /// Obsolete method for setting the object to be used for sending HTTP requests.
+        /// </summary>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.MessageHandler(HttpMessageHandler)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.MessageHandler")]
         IConfigurationBuilder HttpClientHandler(HttpClientHandler httpClientHandler);
 
         /// <summary>
-        /// Sets the connection timeout. The default value is 10 seconds.
+        /// Obsolete method for setting the connection timeout.
         /// </summary>
-        /// <param name="httpClientTimeout">the connection timeout</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.ConnectTimeout(TimeSpan)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.ConnectTimeout")]
         IConfigurationBuilder HttpClientTimeout(TimeSpan httpClientTimeout);
 
         /// <summary>
@@ -263,13 +275,11 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder PrivateAttribute(string privateAtributeName);
 
         /// <summary>
-        /// Sets the timeout when reading data from the streaming connection.
+        /// Obsolete method for setting the timeout when reading data from the streaming connection.
         /// </summary>
-        /// <remarks>
-        /// The default value is 5 minutes.
-        /// </remarks>
-        /// <param name="readTimeout">the read timeout</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.ReadTimeout(TimeSpan)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.ReadTimeout")]
         IConfigurationBuilder ReadTimeout(TimeSpan readTimeout);
 
         /// <summary>
@@ -373,20 +383,19 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval);
 
         /// <summary>
-        /// For use by wrapper libraries to set an identifying name for the wrapper being used. This
-        /// will be sent in request headers during requests to the LaunchDarkly servers to allow
-        /// recording metrics on the usage of these wrapper libraries.
+        /// Obsolete method for identifying a wrapper library.
         /// </summary>
-        /// <param name="wrapperName">The name of the wrapper to include in request headers</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.Wrapper(string, string)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.Wrapper")]
         IConfigurationBuilder WrapperName(string wrapperName);
 
         /// <summary>
-        /// For use by wrapper libraries to set version to be included alongside a WrapperName. If
-        /// WrapperName is unset or null, this field will be ignored.
+        /// Obsolete method for identifying a wrapper library.
         /// </summary>
-        /// <param name="wrapperVersion">The version of the wrapper to include in request headers</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.Wrapper(string, string)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.Wrapper")]
         IConfigurationBuilder WrapperVersion(string wrapperVersion);
     }
 
@@ -406,6 +415,7 @@ namespace LaunchDarkly.Client
         internal IFeatureStoreFactory _featureStoreFactory = null;
         internal HttpClientHandler _httpClientHandler = new HttpClientHandler();
         internal TimeSpan _httpClientTimeout = Configuration.DefaultHttpClientTimeout;
+        internal IHttpConfigurationFactory _httpConfigurationFactory = null;
         internal bool _inlineUsersInEvents = false;
         internal bool _isStreamingEnabled = true;
         internal bool _offline = false;
@@ -447,6 +457,7 @@ namespace LaunchDarkly.Client
             _featureStoreFactory = copyFrom.FeatureStoreFactory;
             _httpClientHandler = copyFrom.HttpClientHandler;
             _httpClientTimeout = copyFrom.HttpClientTimeout;
+            _httpConfigurationFactory = copyFrom.HttpConfigurationFactory;
             _inlineUsersInEvents = copyFrom.InlineUsersInEvents;
             _isStreamingEnabled = copyFrom.IsStreamingEnabled;
             _offline = copyFrom.Offline;
@@ -546,6 +557,12 @@ namespace LaunchDarkly.Client
 
         public IConfigurationBuilder FeatureStoreFactory(IFeatureStoreFactory featureStoreFactory) =>
             DataStore(featureStoreFactory);
+
+        public IConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory)
+        {
+            _httpConfigurationFactory = httpConfigurationFactory;
+            return this;
+        }
 
         public IConfigurationBuilder HttpClientHandler(HttpClientHandler httpClientHandler)
         {
