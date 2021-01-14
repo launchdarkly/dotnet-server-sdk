@@ -9,6 +9,17 @@ namespace LaunchDarkly.Sdk.Server
     /// <summary>
     /// Provides factories for the standard implementations of LaunchDarkly component interfaces.
     /// </summary>
+    /// <remarks>
+    /// Some of the configuration options in <see cref="ConfigurationBuilder"/> affect the entire SDK, but others are
+    /// specific to one area of functionality, such as how the SDK receives feature flag updates or processes
+    /// analytics events. For the latter, the standard way to specify a configuration is to call one of the
+    /// static methods in <see cref="Components"/> (such as <see cref="Components.StreamingDataSource"/>),
+    /// apply any desired configuration change to the object that that method returns (such as
+    /// <see cref="StreamingDataSourceBuilder.InitialReconnectDelay(TimeSpan)"/>), and then use the
+    /// corresponding method in <see cref="ConfigurationBuilder"/> (such as
+    /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>) to use that
+    /// configured component in the SDK.
+    /// </remarks>
     public static class Components
     {
         /// <summary>
