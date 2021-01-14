@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Common.Logging;
 using LaunchDarkly.Common;
 using LaunchDarkly.Client.Integrations;
 using LaunchDarkly.Client.Interfaces;
@@ -310,9 +309,6 @@ namespace LaunchDarkly.Client
 
     internal class DefaultUpdateProcessorFactory : IUpdateProcessorFactoryWithDiagnostics, IDiagnosticDescription
     {
-        // Note, logger uses LDClient class name for backward compatibility
-        private static readonly ILog Log = LogManager.GetLogger(typeof(LdClient));
-
         IUpdateProcessor IUpdateProcessorFactory.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
         {
             return CreateUpdateProcessor(config, featureStore, null);
@@ -322,14 +318,14 @@ namespace LaunchDarkly.Client
         {
             if (config.Offline)
             {
-                Log.Info("Starting Launchdarkly client in offline mode.");
+                LdClient.Log.Info("Starting Launchdarkly client in offline mode.");
                 return new NullUpdateProcessor();
             }
 #pragma warning disable CS0612 // deprecated API
             if (config.UseLdd)
 #pragma warning restore CS0612
             {
-                Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
+                LdClient.Log.Info("Starting LaunchDarkly in LDD mode. Skipping direct feature retrieval.");
                 return new NullUpdateProcessor();
             }
             var factory = GetConfiguredFactory(config);

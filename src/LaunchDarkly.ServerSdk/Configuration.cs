@@ -45,7 +45,7 @@ namespace LaunchDarkly.Client
         /// <summary>
         /// Obsolete property that is now set via <see cref="EventProcessorBuilder"/>.
         /// </summary>
-        /// [Obsolete]
+        [Obsolete]
         public Uri EventsUri { get; internal set; }
         /// <summary>
         /// The SDK key for your LaunchDarkly environment.
@@ -59,7 +59,7 @@ namespace LaunchDarkly.Client
         [Obsolete]
         public bool IsStreamingEnabled { get; internal set; }
         /// <summary>
-        /// A factory object that creates an the component that will receive feature flag data.
+        /// A factory object that creates the component that will receive feature flag data.
         /// </summary>
         public IUpdateProcessorFactory DataSource { get; internal set; }
         /// <summary>
