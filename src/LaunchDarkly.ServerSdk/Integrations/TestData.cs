@@ -236,7 +236,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <remarks>
         /// Use this if you want to test the behavior of application code that uses
         /// <see cref="ILdClient.DataSourceStatusProvider"/> to track whether the data source is having
-        /// problems (for example, a network failure interruptsingthe streaming connection). It does
+        /// problems (for example, a network failure interrupting the streaming connection). It does
         /// not actually stop the <see cref="TestData"/> data source from working, so even if you have
         /// simulated an outage, calling <see cref="Update(FlagBuilder)"/> will still send updates.
         /// </remarks>
@@ -604,7 +604,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             }
 
             /// <summary>
-            /// Starts defining a flag rule, using the "is one of" operator.
+            /// Starts defining a flag rule, using the "is not one of" operator.
             /// </summary>
             /// <remarks>
             /// <para>
