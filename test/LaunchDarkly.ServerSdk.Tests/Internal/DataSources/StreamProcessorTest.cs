@@ -395,8 +395,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnPutCausesStreamRestart()
+        public void StoreFailureOnPutCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
+            // If StatusMonitoringEnabled is false, it means we're using either an in-memory store or some kind
+            // of custom implementation that doesn't support our usual "wait till the database is up again and
+            // then re-request the updates if necessary" logic. That's an unlikely case but the expected behavior
+            // is that the stream gets immediately restarted.
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
             mockDataStore.Setup(d => d.StatusMonitoringEnabled).Returns(false);
@@ -416,7 +420,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnPatchCausesStreamRestart()
+        public void StoreFailureOnPatchCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
@@ -435,7 +439,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnDeleteCausesStreamRestart()
+        public void StoreFailureOnDeleteCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
@@ -517,7 +521,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
             // Wait on the signal that our mock StartAsync method triggers, because StreamProcessor.Restart
             // runs asynchronously so it may not have happened yet.
-            Assert.True(_esStartedReady.WaitOne(TimeSpan.FromSeconds(5)));
+            Assert.True(_esStartedReady.WaitOne(TimeSpan.FromSeconds(5)), "timed out waiting for stream restart");
 
             _mockEventSource.Verify(es => es.Close(), Times.Once);
             _mockEventSource.Verify(es => es.StartAsync(), Times.Once);

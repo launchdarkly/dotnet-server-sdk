@@ -145,7 +145,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _es.Close();
 
             // Everything after this point is async and done in the background - Restart returns immediately after the Close
-            _ = FinishRestart(sleepTime);
+            _ = Task.Run(() => FinishRestart(sleepTime));
         }
 
         private async Task FinishRestart(TimeSpan sleepTime)
