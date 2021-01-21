@@ -58,7 +58,7 @@ namespace LaunchDarkly.Sdk.Server
 
         private static ItemDescriptor DeserializeFlag(ref JReader r)
         {
-            var flag = FeatureFlagSerialization.Instance.ReadJson(ref r);
+            var flag = FeatureFlagSerialization.Instance.ReadJson(ref r) as FeatureFlag;
             return flag.Deleted ? ItemDescriptor.Deleted(flag.Version) :
                 new ItemDescriptor(flag.Version, flag);
         }
@@ -68,7 +68,7 @@ namespace LaunchDarkly.Sdk.Server
 
         private static ItemDescriptor DeserializeSegment(ref JReader r)
         {
-            var segment = SegmentSerialization.Instance.ReadJson(ref r);
+            var segment = SegmentSerialization.Instance.ReadJson(ref r) as Segment;
             return segment.Deleted ? ItemDescriptor.Deleted(segment.Version) :
                 new ItemDescriptor(segment.Version, segment);
         }
