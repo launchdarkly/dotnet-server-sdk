@@ -228,13 +228,20 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    internal class FeatureFlagsStateConverter : IJsonStreamConverter<FeatureFlagsState>
+    internal class FeatureFlagsStateConverter : IJsonStreamConverter
     {
-        private static readonly IJsonStreamConverter<LdValue> valueConverter = new LdJsonConverters.LdValueConverter();
-        private static readonly IJsonStreamConverter<EvaluationReason> reasonConverter = new LdJsonConverters.EvaluationReasonConverter();
+        private static readonly IJsonStreamConverter valueConverter = new LdJsonConverters.LdValueConverter();
+        private static readonly IJsonStreamConverter reasonConverter = new LdJsonConverters.EvaluationReasonConverter();
 
-        public void WriteJson(FeatureFlagsState state, IValueWriter writer)
+        public void WriteJson(object value, IValueWriter writer)
         {
+            var state = value as FeatureFlagsState;
+            if (state is null)
+            {
+                writer.Null();
+                return;
+            }
+
             var obj = writer.Object();
 
             foreach (var entry in state._flags)
@@ -265,7 +272,7 @@ namespace LaunchDarkly.Sdk.Server
             obj.End();
         }
 
-        public FeatureFlagsState ReadJson(ref JReader reader)
+        public object ReadJson(ref JReader reader)
         {
             var valid = true;
             var flags = new Dictionary<string, FlagState>();
@@ -302,7 +309,7 @@ namespace LaunchDarkly.Sdk.Server
                                             (UnixMillisecondTime?)null;
                                         break;
                                     case "reason":
-                                        flag.Reason = reasonConverter.ReadJson(ref reader);
+                                        flag.Reason = (EvaluationReason)reasonConverter.ReadJson(ref reader);
                                         break;
                                 }
                             }
@@ -312,7 +319,7 @@ namespace LaunchDarkly.Sdk.Server
 
                     default:
                         var flagForValue = flags.ContainsKey(key) ? flags[key] : new FlagState();
-                        flagForValue.Value = valueConverter.ReadJson(ref reader);
+                        flagForValue.Value = (LdValue)valueConverter.ReadJson(ref reader);
                         flags[key] = flagForValue;
                         break;
                 }
