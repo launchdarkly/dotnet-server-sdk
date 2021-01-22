@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using LaunchDarkly.JsonStream;
-using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+
+using static LaunchDarkly.Sdk.Json.LdJsonConverters;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -72,7 +73,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     case "flagValues":
                         for (var subObj = r.ObjectOrNull(); subObj.Next(ref r);)
                         {
-                            ret.FlagValues[subObj.Name.ToString()] = (LdValue)new LdJsonConverters.LdValueConverter().ReadJson(ref r);
+                            ret.FlagValues[subObj.Name.ToString()] = LdValueConverter.ReadJsonValue(ref r);
                         }
                         break;
 
