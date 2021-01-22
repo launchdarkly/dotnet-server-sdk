@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using LaunchDarkly.JsonStream;
-using LaunchDarkly.Sdk.Json;
+
+using static LaunchDarkly.Sdk.Json.LdJsonConverters;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-    internal class FeatureFlagSerialization : IJsonStreamConverter<FeatureFlag>
+    internal class FeatureFlagSerialization : IJsonStreamConverter
     {
         internal static readonly FeatureFlagSerialization Instance = new FeatureFlagSerialization();
         internal static readonly string[] _requiredProperties = new string[] { "version" };
 
-        public void WriteJson(FeatureFlag flag, IValueWriter writer)
+        public void WriteJson(object value, IValueWriter writer)
         {
+            var flag = (FeatureFlag)value;
             var obj = writer.Object();
 
             obj.Name("key").String(flag.Key);
@@ -72,7 +74,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             obj.End();
         }
 
-        public FeatureFlag ReadJson(ref JReader reader)
+        public object ReadJson(ref JReader reader)
         {
             string key = null;
             int version = 0;
@@ -291,13 +293,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         }
     }
 
-    internal class SegmentSerialization : IJsonStreamConverter<Segment>
+    internal class SegmentSerialization : IJsonStreamConverter
     {
         internal static readonly SegmentSerialization Instance = new SegmentSerialization();
         internal static readonly string[] _requiredProperties = new string[] { "version" };
 
-        public void WriteJson(Segment segment, IValueWriter writer)
+        public void WriteJson(object value, IValueWriter writer)
         {
+            var segment = (Segment)value;
             var obj = writer.Object();
 
             obj.Name("key").String(segment.Key);
@@ -327,7 +330,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             obj.End();
         }
 
-        public Segment ReadJson(ref JReader reader)
+        public object ReadJson(ref JReader reader)
         {
             string key = null;
             int version = 0;
@@ -403,8 +406,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal static class SerializationHelpers
     {
-        internal static readonly IJsonStreamConverter<LdValue> ValueConverter = new LdJsonConverters.LdValueConverter();
-        
         internal static void WriteVariationOrRollout(ref ObjectWriter obj, int? variation, Rollout? rollout)
         {
             if (variation.HasValue)
@@ -459,7 +460,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var arr = writer.Array();
             foreach (var v in values)
             {
-                ValueConverter.WriteJson(v, arr);
+                LdValueConverter.WriteJsonValue(v, arr);
             }
             arr.End();
         }
@@ -512,7 +513,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var builder = ImmutableList.CreateBuilder<LdValue>();
             for (var arr = r.ArrayOrNull(); arr.Next(ref r);)
             {
-                builder.Add(ValueConverter.ReadJson(ref r));
+                builder.Add(LdValueConverter.ReadJsonValue(ref r));
             }
             return builder.ToImmutable();
         }

@@ -7,6 +7,8 @@ using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
+using static LaunchDarkly.Sdk.Json.LdJsonConverters;
+
 namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
@@ -228,18 +230,22 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    internal class FeatureFlagsStateConverter : IJsonStreamConverter<FeatureFlagsState>
+    internal class FeatureFlagsStateConverter : IJsonStreamConverter
     {
-        private static readonly IJsonStreamConverter<LdValue> valueConverter = new LdJsonConverters.LdValueConverter();
-        private static readonly IJsonStreamConverter<EvaluationReason> reasonConverter = new LdJsonConverters.EvaluationReasonConverter();
-
-        public void WriteJson(FeatureFlagsState state, IValueWriter writer)
+        public void WriteJson(object value, IValueWriter writer)
         {
+            var state = value as FeatureFlagsState;
+            if (state is null)
+            {
+                writer.Null();
+                return;
+            }
+
             var obj = writer.Object();
 
             foreach (var entry in state._flags)
             {
-                valueConverter.WriteJson(entry.Value.Value, obj.Name(entry.Key));
+                LdValueConverter.WriteJsonValue(entry.Value.Value, obj.Name(entry.Key));
             }
 
             obj.Name("$valid").Bool(state._valid);
@@ -256,7 +262,7 @@ namespace LaunchDarkly.Sdk.Server
                     .Long(meta.DebugEventsUntilDate?.Value ?? 0);
                 if (meta.Reason.HasValue)
                 {
-                    reasonConverter.WriteJson(meta.Reason.Value, flagMetadataObj.Name("reason"));
+                    EvaluationReasonConverter.WriteJsonValue(meta.Reason.Value, flagMetadataObj.Name("reason"));
                 }
                 flagMetadataObj.End();
             }
@@ -265,7 +271,7 @@ namespace LaunchDarkly.Sdk.Server
             obj.End();
         }
 
-        public FeatureFlagsState ReadJson(ref JReader reader)
+        public object ReadJson(ref JReader reader)
         {
             var valid = true;
             var flags = new Dictionary<string, FlagState>();
@@ -302,7 +308,7 @@ namespace LaunchDarkly.Sdk.Server
                                             (UnixMillisecondTime?)null;
                                         break;
                                     case "reason":
-                                        flag.Reason = reasonConverter.ReadJson(ref reader);
+                                        flag.Reason = EvaluationReasonConverter.ReadJsonNullableValue(ref reader);
                                         break;
                                 }
                             }
@@ -312,7 +318,7 @@ namespace LaunchDarkly.Sdk.Server
 
                     default:
                         var flagForValue = flags.ContainsKey(key) ? flags[key] : new FlagState();
-                        flagForValue.Value = valueConverter.ReadJson(ref reader);
+                        flagForValue.Value = LdValueConverter.ReadJsonValue(ref reader);
                         flags[key] = flagForValue;
                         break;
                 }

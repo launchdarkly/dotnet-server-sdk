@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using LaunchDarkly.JsonStream;
-using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+
+using static LaunchDarkly.Sdk.Json.LdJsonConverters;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -65,21 +66,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     case "flags":
                         for (var subObj = r.ObjectOrNull(); subObj.Next(ref r);)
                         {
-                            ret.Flags[subObj.Name.ToString()] = FeatureFlagSerialization.Instance.ReadJson(ref r);
+                            ret.Flags[subObj.Name.ToString()] = FeatureFlagSerialization.Instance.ReadJson(ref r) as FeatureFlag;
                         }
                         break;
 
                     case "flagValues":
                         for (var subObj = r.ObjectOrNull(); subObj.Next(ref r);)
                         {
-                            ret.FlagValues[subObj.Name.ToString()] = new LdJsonConverters.LdValueConverter().ReadJson(ref r);
+                            ret.FlagValues[subObj.Name.ToString()] = LdValueConverter.ReadJsonValue(ref r);
                         }
                         break;
 
                     case "segments":
                         for (var subObj = r.ObjectOrNull(); subObj.Next(ref r);)
                         {
-                            ret.Segments[subObj.Name.ToString()] = SegmentSerialization.Instance.ReadJson(ref r);
+                            ret.Segments[subObj.Name.ToString()] = SegmentSerialization.Instance.ReadJson(ref r) as Segment;
                         }
                         break;
                 }
