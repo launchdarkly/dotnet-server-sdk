@@ -86,7 +86,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             var ret = HttpProperties.Default
                 .WithConnectTimeout(httpConfig.ConnectTimeout)
                 .WithReadTimeout(httpConfig.ReadTimeout)
-                .WithHttpMessageHandler(httpConfig.MessageHandler);
+                .WithHttpMessageHandlerFactory(httpConfig.MessageHandler is null ?
+                    (Func<HttpProperties, HttpMessageHandler>)null :
+                    _ => httpConfig.MessageHandler);
             foreach (var kv in httpConfig.DefaultHeaders)
             {
                 ret = ret.WithHeader(kv.Key, kv.Value);

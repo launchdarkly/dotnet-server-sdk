@@ -114,11 +114,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var httpProperties = HttpProperties.Default
                 .WithAuthorizationKey(basicConfiguration.SdkKey)
                 .WithConnectTimeout(_connectTimeout)
-                .WithHttpMessageHandler(_messageHandler)
+                .WithHttpMessageHandlerFactory(_messageHandler is null ?
+                    (Func<HttpProperties, HttpMessageHandler>)null :
+                    _ => _messageHandler)
                 .WithReadTimeout(_readTimeout)
                 .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
                 .WithWrapper(_wrapperName, _wrapperVersion);
-            return new HttpConfigurationImpl(httpProperties);
+            return new HttpConfigurationImpl(httpProperties, _messageHandler);
         }
 
         /// <inheritdoc/>
@@ -139,13 +141,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             internal HttpProperties HttpProperties => _httpProperties;
 
             public TimeSpan ConnectTimeout => _httpProperties.ConnectTimeout;
-            public HttpMessageHandler MessageHandler => _httpProperties.HttpMessageHandler;
+            public HttpMessageHandler MessageHandler { get; }
             public TimeSpan ReadTimeout => _httpProperties.ReadTimeout;
             public IEnumerable<KeyValuePair<string, string>> DefaultHeaders => _httpProperties.BaseHeaders;
 
-            internal HttpConfigurationImpl(HttpProperties httpProperties)
+            internal HttpConfigurationImpl(HttpProperties httpProperties, HttpMessageHandler httpMessageHandler)
             {
                 _httpProperties = httpProperties;
+                MessageHandler = httpMessageHandler;
             }
         }
     }

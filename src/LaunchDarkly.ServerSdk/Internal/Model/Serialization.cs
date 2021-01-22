@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using LaunchDarkly.JsonStream;
-using LaunchDarkly.Sdk.Json;
+
+using static LaunchDarkly.Sdk.Json.LdJsonConverters;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
@@ -405,8 +406,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal static class SerializationHelpers
     {
-        internal static readonly IJsonStreamConverter ValueConverter = new LdJsonConverters.LdValueConverter();
-        
         internal static void WriteVariationOrRollout(ref ObjectWriter obj, int? variation, Rollout? rollout)
         {
             if (variation.HasValue)
@@ -461,7 +460,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var arr = writer.Array();
             foreach (var v in values)
             {
-                ValueConverter.WriteJson(v, arr);
+                LdValueConverter.WriteJsonValue(v, arr);
             }
             arr.End();
         }
@@ -514,7 +513,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var builder = ImmutableList.CreateBuilder<LdValue>();
             for (var arr = r.ArrayOrNull(); arr.Next(ref r);)
             {
-                builder.Add((LdValue)ValueConverter.ReadJson(ref r));
+                builder.Add(LdValueConverter.ReadJsonValue(ref r));
             }
             return builder.ToImmutable();
         }
