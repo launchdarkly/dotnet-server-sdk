@@ -92,7 +92,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         EvaluationDetail<int> IntVariationDetail(string key, User user, int defaultValue);
 
         /// <summary>
-        /// Calculates the floating point numeric value of a feature flag for a given user.
+        /// Calculates the single-precision floating-point numeric value of a feature flag for a
+        /// given user.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -108,11 +109,13 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
+        /// <seealso cref="FloatVariationDetail(string, User, float)"/>
+        /// <seealso cref="DoubleVariation(string, User, double)"/>
         float FloatVariation(string key, User user, float defaultValue);
 
         /// <summary>
-        /// Calculates the floating point numeric value of a feature flag for a given user, and returns
-        /// an object that describes the way the value was determined.
+        /// Calculates the single-precision floating-point numeric value of a feature flag for a
+        /// given user, and returns an object that describes the way the value was determined.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -127,8 +130,53 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="user">the end user requesting the flag</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
+        /// <seealso cref="FloatVariation(string, User, float)"
+        /// <seealso cref="DoubleVariationDetail(string, User, double)"/>
         EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue);
-        
+
+        /// <summary>
+        /// Calculates the double-precision floating-point numeric value of a feature flag for a
+        /// given user.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If the flag variation does not have a numeric value, <c>defaultValue</c> is returned.
+        /// </para>
+        /// <para>
+        /// If an error makes it impossible to evaluate the flag (for instance, the feature flag key
+        /// does not match any existing flag), <c>defaultValue</c> is returned.
+        /// </para>
+        /// </remarks>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
+        /// be evaluated</returns>
+        /// <seealso cref="DoubleVariationDetail(string, User, double)"/>
+        /// <seealso cref="FloatVariation(string, User, float)"/>
+        double DoubleVariation(string key, User user, double defaultValue);
+
+        /// <summary>
+        /// Calculates the double-precision floating-point numeric value of a feature flag for a
+        /// given user, and returns an object that describes the way the value was determined.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The <see cref="EvaluationDetail{T}.Reason"/> property in the result will also be included
+        /// in analytics events, if you are capturing detailed event data for this flag.
+        /// </para>
+        /// <para>
+        /// The behavior is otherwise identical to <see cref="FloatVariation"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
+        /// <seealso cref="DoubleVariation(string, User, double)"/>
+        /// <seealso cref="FloatVariationDetail(string, User, float)"/>
+        EvaluationDetail<double> DoubleVariationDetail(string key, User user, double defaultValue);
+
         /// <summary>
         /// Calculates the value of a feature flag for a given user as any JSON value type.
         /// </summary>
