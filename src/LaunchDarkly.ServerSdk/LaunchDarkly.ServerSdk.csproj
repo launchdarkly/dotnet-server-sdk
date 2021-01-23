@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>6.0.0-alpha.5</Version>
+    <Version>6.0.0-alpha.6</Version>
     <TargetFrameworks>netstandard2.0;net452;net471</TargetFrameworks>
     <!-- Note: whenever we add or remove supported target frameworks, we must update ServerDiagnosticStore.GetDotNetTargetFramework() -->
     <DebugType>portable</DebugType>
