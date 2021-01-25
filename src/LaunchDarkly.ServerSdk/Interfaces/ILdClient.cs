@@ -130,7 +130,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="user">the end user requesting the flag</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        /// <seealso cref="FloatVariation(string, User, float)"
+        /// <seealso cref="FloatVariation(string, User, float)"/>
         /// <seealso cref="DoubleVariationDetail(string, User, double)"/>
         EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue);
 
