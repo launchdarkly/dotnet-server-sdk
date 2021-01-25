@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -461,6 +462,30 @@ namespace LaunchDarkly.Sdk.Server
             var state = client.AllFlagsState(User.WithKey(null));
             Assert.False(state.Valid);
             Assert.Equal(0, state.ToValuesJsonMap().Count);
+        }
+
+        [Fact]
+        public void ExceptionWhenEvaluatingFlagIsHandledCorrectly()
+        {
+            // We can't simulate an error from the actual evaluation logic, but we can simulate an error
+            // from the data store. The expected behavior is that it logs a message and returns the
+            // default value; the exception should not propagate to the caller.
+            var ex = new Exception("fake-error");
+            var storeThatThrowsException = new DataStoreThatThrowsException { Exception = ex };
+            var configWithCustomStore = Configuration.Builder("sdk-key")
+                .DataStore(new SpecificDataStoreFactory(storeThatThrowsException))
+                .DataSource(Components.ExternalUpdatesOnly)
+                .Logging(testLogging)
+                .Build();
+            using (var clientWithCustomStore = new LdClient(configWithCustomStore))
+            {
+                var defaultValue = "default-value";
+                var result = clientWithCustomStore.StringVariationDetail("flag-key", user, defaultValue);
+                Assert.Equal(defaultValue, result.Value);
+                Assert.Null(result.VariationIndex);
+                Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.Exception), result.Reason);
+                Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error, ex.Message));
+            }
         }
     }
 }

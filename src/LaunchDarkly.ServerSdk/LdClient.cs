@@ -374,7 +374,7 @@ namespace LaunchDarkly.Sdk.Server
             catch (Exception e)
             {
                 LogHelpers.LogException(_log,
-                    string.Format("Exception when evaluating feature key \"{1}\" for user key \"{2}\"", featureKey, user.Key),
+                    string.Format("Exception when evaluating feature key \"{0}\" for user key \"{1}\"", featureKey, user.Key),
                     e);
                 var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.Exception);
                 if (featureFlag == null)

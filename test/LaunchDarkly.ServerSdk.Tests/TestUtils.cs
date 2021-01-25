@@ -214,6 +214,25 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
+    public class DataStoreThatThrowsException : IDataStore
+    {
+        public Exception Exception { get; set; } = new Exception("sorry");
+
+        public bool StatusMonitoringEnabled => true;
+
+        public void Dispose() { }
+
+        public ItemDescriptor? Get(DataKind kind, string key) => throw Exception;
+
+        public KeyedItems<ItemDescriptor> GetAll(DataKind kind) => throw Exception;
+
+        public void Init(FullDataSet<ItemDescriptor> allData) => throw Exception;
+
+        public bool Initialized() => throw Exception;
+
+        public bool Upsert(DataKind kind, string key, ItemDescriptor item) => throw Exception;
+    }
+
     public class TestEventProcessor : IEventProcessor
     {
         public List<object> Events = new List<object>();
