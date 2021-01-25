@@ -4,6 +4,7 @@ using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -465,15 +466,16 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void ExceptionWhenEvaluatingFlagIsHandledCorrectly()
+        public void ExceptionWhenGettingOneFlagIsHandledCorrectly()
         {
-            // We can't simulate an error from the actual evaluation logic, but we can simulate an error
-            // from the data store. The expected behavior is that it logs a message and returns the
-            // default value; the exception should not propagate to the caller.
+            // If the data store's Get method throws an error, the expected behavior is that we log
+            // a message and return the default value. The exception should not propagate to the caller.
             var ex = new Exception("fake-error");
-            var storeThatThrowsException = new DataStoreThatThrowsException { Exception = ex };
+            var flagKey = "flag-key";
+            var mockStore = new Mock<IDataStore>();
+            mockStore.Setup(s => s.Get(DataModel.Features, flagKey)).Throws(ex);
             var configWithCustomStore = Configuration.Builder("sdk-key")
-                .DataStore(new SpecificDataStoreFactory(storeThatThrowsException))
+                .DataStore(new SpecificDataStoreFactory(mockStore.Object))
                 .DataSource(Components.ExternalUpdatesOnly)
                 .Logging(testLogging)
                 .Build();
@@ -486,6 +488,67 @@ namespace LaunchDarkly.Sdk.Server
                 Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.Exception), result.Reason);
                 Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error, ex.Message));
             }
+        }
+
+        [Fact]
+        public void ExceptionWhenEvaluatingOneFlagIsHandledCorrectly()
+        {
+            // Same as ExceptionWhenGettingOneFlagIsHandledCorrectly, except the exception happens
+            // after we've retrieved the flag, when we try to evaluate it. The evaluator logic isn't
+            // supposed to throw any exceptions, but you never know, so we've instrumented it with a
+            // mechanism for causing a spurious error.
+            testData.Update(testData.Flag(Evaluator.FlagKeyToTriggerErrorForTesting));
+            var defaultValue = "default-value";
+            var result = client.StringVariationDetail(Evaluator.FlagKeyToTriggerErrorForTesting, user, defaultValue);
+            Assert.Equal(defaultValue, result.Value);
+            Assert.Null(result.VariationIndex);
+            Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.Exception), result.Reason);
+            Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error, Evaluator.ErrorMessageForTesting));
+        }
+
+        [Fact]
+        public void ExceptionWhenGettingAllFlagsIsHandledCorrectly()
+        {
+            // Just like the Variation methods, AllFlagsState should not propagate exceptions from the
+            // data store - we don't want to disrupt application code in that way. We'll just set the
+            // FeatureFlagsState.Valid property to false to indicate that there was an issue, and log
+            // the error.
+            var ex = new Exception("fake-error");
+            var mockStore = new Mock<IDataStore>();
+            mockStore.Setup(s => s.GetAll(DataModel.Features)).Throws(ex);
+            var configWithCustomStore = Configuration.Builder("sdk-key")
+                .DataStore(new SpecificDataStoreFactory(mockStore.Object))
+                .DataSource(Components.ExternalUpdatesOnly)
+                .Logging(testLogging)
+                .Build();
+            using (var clientWithCustomStore = new LdClient(configWithCustomStore))
+            {
+                var state = clientWithCustomStore.AllFlagsState(user);
+                Assert.NotNull(state);
+                Assert.False(state.Valid);
+                Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error, ex.Message));
+            }
+        }
+
+        [Fact]
+        public void ExceptionWhenEvaluatingFlagInAllFlagsIsHandledCorrectly()
+        {
+            // Same as ExceptionWhenGettingAllFlagsIsHandledCorrectly, except here we get an
+            // unexpected exception from the Evaluator for just one flag. The expected behavior is
+            // that that flag gets an error result but the rest of the FeatureFlagsState is valid.
+            var goodFlagKey = "good-flag";
+            testData.Update(testData.Flag(Evaluator.FlagKeyToTriggerErrorForTesting));
+            testData.Update(testData.Flag(goodFlagKey).VariationForAllUsers(true));
+
+            var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
+            Assert.NotNull(state);
+            Assert.True(state.Valid);
+            Assert.Equal(LdValue.Null, state.GetFlagValueJson(Evaluator.FlagKeyToTriggerErrorForTesting));
+            Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.Exception),
+                state.GetFlagReason(Evaluator.FlagKeyToTriggerErrorForTesting));
+            Assert.Equal(LdValue.Of(true), state.GetFlagValueJson(goodFlagKey));
+            Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error,
+                Evaluator.ErrorMessageForTesting));
         }
     }
 }

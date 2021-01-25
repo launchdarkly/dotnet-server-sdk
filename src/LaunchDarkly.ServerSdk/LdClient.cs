@@ -265,7 +265,16 @@ namespace LaunchDarkly.Sdk.Server
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
-            KeyedItems<ItemDescriptor> flags = _dataStore.GetAll(DataModel.Features);
+            KeyedItems<ItemDescriptor> flags;
+            try
+            {
+                flags = _dataStore.GetAll(DataModel.Features);
+            }
+            catch (Exception e)
+            {
+                LogHelpers.LogException(_log, "Exception while retrieving flags for AllFlagsState", e);
+                return new FeatureFlagsState(false);
+            }
             foreach (var pair in flags.Items)
             {
                 if (pair.Value.Item is null || !(pair.Value.Item is FeatureFlag flag))

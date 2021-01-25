@@ -23,6 +23,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal sealed class Evaluator
     {
+        // To allow us to test our error handling with a real client instance instead of mock components,
+        // this magic flag key value will cause an exception from Evaluate.
+        internal const string FlagKeyToTriggerErrorForTesting = "$ deliberately invalid flag $";
+        internal const string ErrorMessageForTesting = "deliberate error for testing";
+
         private readonly Func<string, FeatureFlag> _featureFlagGetter;
         private readonly Func<string, Segment> _segmentGetter;
         private readonly Logger _logger;
@@ -70,6 +75,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         /// the PrerequisiteEvents list will always be non-null</returns>
         public EvalResult Evaluate(FeatureFlag flag, User user, EventFactory eventFactory)
         {
+            if (flag.Key == FlagKeyToTriggerErrorForTesting)
+            {
+                throw new Exception(ErrorMessageForTesting);
+            }
             if (user == null || user.Key == null)
             {
                 _logger.Warn("User or user key is null when evaluating flag: {0} returning null",
