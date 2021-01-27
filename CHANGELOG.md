@@ -2,6 +2,25 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.14.0] - 2021-01-26
+The purpose of this release is to introduce newer APIs for configuring the SDK, corresponding to how configuration will work in the upcoming 6.0 release. These are very similar to the configuration APIs in the recent 5.x releases of the LaunchDarkly server-side Java and Go SDKs.
+
+The corresponding older APIs are now deprecated. If you update to this release, you will see deprecation warnings where you have used them, but they will still work. This should make it easier to migrate your code to the newer APIs, in order to be ready to update to the 6.0 release in the future without drastic changes. For details, see below, and also see the [API documentation for `IConfigurationBuilder`](http://launchdarkly.github.io/dotnet-server-sdk/html/T_LaunchDarkly_Client_IConfigurationBuilder.htm).
+
+Other than the configuration methods, there are no changes to SDK functionality in this release.
+
+### Added:
+- Previously, most configuration options were set by setter methods in `IConfigurationBuilder`. These are being superseded by builders that are specific to one area of functionality: for instance, [`Components.StreamingDataSource()`](http://launchdarkly.github.io/dotnet-server-sdk/html/M_LaunchDarkly_Client_Components_StreamingDataSource.htm) and [`Components.PollingDataSource()`](http://launchdarkly.github.io/dotnet-server-sdk/html/M_LaunchDarkly_Client_Components_PollingDataSource.htm) provide builders/factories that have options specific to streaming or polling, the SDK&#39;s many options related to analytics events are now in a builder returned by [`Components.SendEvents()`](http://launchdarkly.github.io/dotnet-server-sdk/html/M_LaunchDarkly_Client_Components_SendEvents.htm), and HTTP-related options such as `ConnectTimeout` are now in a builder returned by [`Components.HttpConfiguration()`](http://launchdarkly.github.io/dotnet-server-sdk/html/M_LaunchDarkly_Client_Components_HttpConfiguration.htm). Using this newer API makes it clearer which options are for what, and makes it impossible to write contradictory configurations like `.IsStreamingEnabled(false).StreamUri(someUri)`.
+- There is a new API for specifying a persistent data store (usually a database integration). This is now done using the new method `Components.PersistentDataStore` and one of the new integration factories in the namespace `Launchdarkly.Client.Integrations`. The next releases of the integration packages for [Redis](https://github.com/launchdarkly/dotnet-server-sdk-redis), [Consul](https://github.com/launchdarkly/dotnet-server-sdk-consul), and [DynamoDB](https://github.com/launchdarkly/dotnet-server-sdk-dynamodb) will use these semantics.
+
+### Changed:
+- The components &#34;feature store&#34; and &#34;update processor&#34; are being renamed to &#34;data store&#34; and &#34;data source&#34;. The interfaces for these are still called `IFeatureStore` and `IUpdateProcessor` for backward compatibility, but the newer configuration methods use the new names. The interfaces will be renamed in the next major version.
+- In the newer API, the mode formerly named &#34;LDD&#34; (LaunchDarkly daemon), where the SDK [reads feature flags from a database](https://docs.launchdarkly.com/sdk/concepts/feature-store#using-a-persistent-feature-store-without-connecting-to-launchdarkly) that is populated by the LaunchDarkly Relay Proxy or some other process, has been renamed to [`ExternalUpdatesOnly`](http://launchdarkly.github.io/dotnet-server-sdk/html/P_LaunchDarkly_Client_Components_ExternalUpdatesOnly.htm). It is now an option for the [`DataSource`](http://launchdarkly.github.io/dotnet-server-sdk/html/M_LaunchDarkly_Client_IConfigurationBuilder_DataSource.htm) configuration method.
+
+### Deprecated:
+- In `IConfigurationBuilder`: all methods for setting individual properties related to streaming, polling, events, and HTTP configuration; also, the `UseLdd` option (see above).
+- In `Components`: `DefaultEventProcessor`, `DefaultUpdateProcessor`, `InMemoryFeatureStore`, `NullEventProcessor`, `NullUpdateProcessor`. Replacements for these are described in the API documentation.
+
 ## [5.13.1] - 2020-11-05
 ### Changed:
 - Updated the `LaunchDarkly.EventSource` dependency to a version that has a specific target for .NET Standard 2.0. Previously, that package targeted only .NET Standard 1.4 and .NET Framework 4.5. There is no functional difference between these targets, but .NET Core application developers may wish to avoid linking to any .NET Standard 1.x assemblies on general principle.
