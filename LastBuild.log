@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shfbBuild product="Sandcastle Help File Builder and Tools" version="2019.8.24.0" projectFile="C:\Users\circleci\temp\project.shfbproj" started="11/6/2020 2:16:34 AM">
+<shfbBuild product="Sandcastle Help File Builder and Tools" version="2019.8.24.0" projectFile="C:\Users\circleci\temp\project.shfbproj" started="1/27/2021 12:31:00 AM">
 <buildStep step="Initializing">
 Finding tools...
 The Sandcastle tools are located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\&#39;
@@ -32,16 +32,16 @@ Copying XML comments files
 <buildStep step="GenerateSharedContent">
 Generating shared content files (en-US, English (United States))...
 <plugIn name="Lightweight Website Style" behavior="After" priority="1000">
-</plugIn>    Last step completed in 00:00:00.0284
+</plugIn>    Last step completed in 00:00:00.0327
 </buildStep>
 <buildStep step="GenerateApiFilter">
 Generating API filter for MRefBuilder...
-    Last step completed in 00:00:00.0156
+    Last step completed in 00:00:00.0166
 </buildStep>
 <buildStep step="GenerateReflectionInfo">
 Generating reflection information...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - GenerateRefInfo.proj]
-Build started 11/6/2020 2:16:37 AM.
+Build started 1/27/2021 12:31:04 AM.
 Project &quot;C:\Users\circleci\temp\docs\Working\GenerateRefInfo.proj&quot; on node 1 (default targets).
 PrepareForBuild:
   Creating directory &quot;obj\Debug\&quot;.
@@ -51,19 +51,19 @@ GenerateRefInfo:
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   No source code context base path specified.  Source context information is unavailable.
   Loaded 2 assemblies for reflection and 1 dependency assemblies.
-  Wrote information on 5 namespaces, 59 types, and 480 members
+  Wrote information on 7 namespaces, 69 types, and 549 members
   Copying file from &quot;C:\Users\circleci\temp\docs\Working\reflection.org&quot; to &quot;C:\Users\circleci\temp\docs\Working\reflection.all&quot;.
   XslTransform (v2019.8.24.0)
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\MergeDuplicates.xsl&#39;.
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\GenerateRefInfo.proj&quot; (default targets).
-    Last step completed in 00:00:04.2605
+    Last step completed in 00:00:04.7222
 </buildStep>
 <buildStep step="TransformReflectionInfo">
 Transforming reflection output...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - TransformManifest.proj]
-Build started 11/6/2020 2:16:41 AM.
+Build started 1/27/2021 12:31:09 AM.
 Project &quot;C:\Users\circleci\temp\docs\Working\TransformManifest.proj&quot; on node 1 (default targets).
 TransformManifest:
   XslTransform (v2019.8.24.0)
@@ -75,6 +75,7 @@ TransformManifest:
   Copyright c 2006-2019, Microsoft Corporation, All Rights Reserved.
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\AddFilenames.xsl&#39;.
+    Unique name M_LaunchDarkly_Client_Components_PersistentDataStore_1 generated for M:LaunchDarkly.Client.Components.PersistentDataStore(LaunchDarkly.Client.Interfaces.IPersistentDataStoreFactory)
     Unique name M_LaunchDarkly_Client_Configuration_Builder_1 generated for M:LaunchDarkly.Client.Configuration.Builder(System.String)
     Unique name M_LaunchDarkly_Client_ConfigurationExtensions_WithEventsUri_1 generated for M:LaunchDarkly.Client.ConfigurationExtensions.WithEventsUri(LaunchDarkly.Client.Configuration,System.Uri)
     Unique name M_LaunchDarkly_Client_ConfigurationExtensions_WithStreamUri_1 generated for M:LaunchDarkly.Client.ConfigurationExtensions.WithStreamUri(LaunchDarkly.Client.Configuration,System.Uri)
@@ -141,11 +142,11 @@ TransformManifest:
   Portions Copyright c 2006-2019, Eric Woodruff, All Rights Reserved.
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\ReflectionToManifest.xsl&#39;.
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\TransformManifest.proj&quot; (default targets).
-    Last step completed in 00:00:03.0672
+    Last step completed in 00:00:03.3170
 </buildStep>
 <buildStep step="GenerateNamespaceSummaries">
 Generating namespace summary information...
-    Last step completed in 00:00:00.0557
+    Last step completed in 00:00:00.0645
 </buildStep>
 <buildStep step="GenerateInheritedDocumentation">
 Generating inherited documentation...
@@ -159,17 +160,17 @@ Inherited documentation will be written to &#39;_InheritedDocs_.xml&#39;
 Indexing C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\*.xml
 Indexing C:\Users\circleci\temp\docs\Working\LaunchDarkly.ServerSdk.xml
 Indexing C:\Users\circleci\temp\docs\Working\LaunchDarkly.CommonSdk.xml
-Indexed 158252 members in 122 file(s).  2 file(s) to scan for &lt;inheritdoc /&gt; tags.
+Indexed 158331 members in 122 file(s).  2 file(s) to scan for &lt;inheritdoc /&gt; tags.
 Merging inherited documentation...
 
 
 Documentation merged successfully
-    Last step completed in 00:00:03.2894
+    Last step completed in 00:00:03.4426
 </buildStep>
 <buildStep step="CopyAdditionalContent">
 Copying additional content files...
 No additional content to copy
-    Last step completed in 00:00:00.0181
+    Last step completed in 00:00:00.0088
 </buildStep>
 <buildStep step="MergeTablesOfContents">
 Merging conceptual and additional tables of contents...
@@ -178,7 +179,7 @@ Merging conceptual and additional tables of contents...
 <buildStep step="GenerateIntermediateTableOfContents">
 Generating intermediate table of contents file...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - GenerateIntermediateTOC.proj]
-Build started 11/6/2020 2:16:48 AM.
+Build started 1/27/2021 12:31:15 AM.
 Project &quot;C:\Users\circleci\temp\docs\Working\GenerateIntermediateTOC.proj&quot; on node 1 (default targets).
 GenerateIntermediateTOC:
   XslTransform (v2019.8.24.0)
@@ -187,24 +188,24 @@ GenerateIntermediateTOC:
   Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\ProductionTransforms\CreateVSToc.xsl&#39;.
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\GenerateIntermediateTOC.proj&quot; (default targets).
 Generating conceptual content intermediate TOC file...
-    Last step completed in 00:00:02.5823
+    Last step completed in 00:00:02.2908
 </buildStep>
 <buildStep step="CreateBuildAssemblerConfigs">
 Creating Sandcastle configuration files...
     sandcastle.config
-    Last step completed in 00:00:00.0923
+    Last step completed in 00:00:00.1162
 </buildStep>
 <buildStep step="MergeCustomConfigs">
 Merging custom build component configurations
 C:\Users\circleci\temp\docs\Working\sandcastle.config
   Updating reference topic configurations.
   No conceptual content.  Removing conceptual content components.
-    Last step completed in 00:00:00.0146
+    Last step completed in 00:00:00.0186
 </buildStep>
 <buildStep step="BuildTopics">
 Building help topics...
 [C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe - BuildTopics.proj]
-Build started 11/6/2020 2:16:50 AM.
+Build started 1/27/2021 12:31:18 AM.
 Project &quot;C:\Users\circleci\temp\docs\Working\BuildTopics.proj&quot; on node 1 (default targets).
 BuildTopics:
   BuildAssembler (v2019.8.24.0)
@@ -213,6 +214,16 @@ BuildTopics:
   Loading configuration...
   ResolveReferenceLinksComponent: The member ID URL cache &#39;C:\Users\circleci\AppData\Local\EWSoftware\Sandcastle Help File Builder\Cache\MemberIdUrl.cache&#39; does not exist yet.  All IDs will be looked up in this build which will slow it down.
   Processing topics...
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.Components.ExternalUpdatesOnly] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataSource(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.HttpConfiguration] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Http(LaunchDarkly.Client.Interfaces.IHttpConfigurationFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.Components.NoEvents] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Events(LaunchDarkly.Client.IEventProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.PersistentDataStore(LaunchDarkly.Client.Interfaces.IPersistentDataStoreAsyncFactory)] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataStore(LaunchDarkly.Client.IFeatureStoreFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.PersistentDataStore(LaunchDarkly.Client.Interfaces.IPersistentDataStoreFactory)] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataStore(LaunchDarkly.Client.IFeatureStoreFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.PollingDataSource] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataSource(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.PollingDataSource] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Offline(System.Boolean)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.SendEvents] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Events(LaunchDarkly.Client.IEventProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.StreamingDataSource] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataSource(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Components.StreamingDataSource] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Offline(System.Boolean)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;param name=&quot;configuration&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.ConfigurationExtensions.WithFeatureStore(LaunchDarkly.Client.Configuration,LaunchDarkly.Client.IFeatureStore)] Missing &lt;param name=&quot;featureStore&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
@@ -228,7 +239,40 @@ BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Clien
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.FeatureFlagsStateBuilder.AddFlag(System.String,LaunchDarkly.Client.EvaluationDetail{LaunchDarkly.Client.LdValue})] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Default] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [P:LaunchDarkly.Client.FeatureRequestEvent.Value] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
-BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UpdateProcessorFactory(LaunchDarkly.Client.IUpdateProcessorFactory)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.AllAttributesPrivate(System.Boolean)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.AllAttributesPrivate(System.Boolean)] Missing &lt;param name=&quot;allAttributesPrivate&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.DiagnosticRecordingInterval(System.TimeSpan)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.DiagnosticRecordingInterval(System.TimeSpan)] Missing &lt;param name=&quot;diagnosticRecordingInterval&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventCapacity(System.Int32)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventCapacity(System.Int32)] Missing &lt;param name=&quot;eventCapacity&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventFlushInterval(System.TimeSpan)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventFlushInterval(System.TimeSpan)] Missing &lt;param name=&quot;eventflushInterval&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventProcessorFactory(LaunchDarkly.Client.IEventProcessorFactory)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventProcessorFactory(LaunchDarkly.Client.IEventProcessorFactory)] Missing &lt;param name=&quot;eventProcessorFactory&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventsUri(System.Uri)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.EventsUri(System.Uri)] Missing &lt;param name=&quot;eventsUri&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.FeatureStoreFactory(LaunchDarkly.Client.IFeatureStoreFactory)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.FeatureStoreFactory(LaunchDarkly.Client.IFeatureStoreFactory)] Missing &lt;param name=&quot;featureStoreFactory&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.HttpClientHandler(System.Net.Http.HttpClientHandler)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.HttpClientHandler(System.Net.Http.HttpClientHandler)] Missing &lt;param name=&quot;httpClientHandler&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.HttpClientTimeout(System.TimeSpan)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.HttpClientTimeout(System.TimeSpan)] Missing &lt;param name=&quot;httpClientTimeout&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.InlineUsersInEvents(System.Boolean)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.InlineUsersInEvents(System.Boolean)] Missing &lt;param name=&quot;inlineUsersInEvents&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.PrivateAttribute(System.String)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.PrivateAttribute(System.String)] Missing &lt;param name=&quot;privateAtributeName&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.ReadTimeout(System.TimeSpan)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.ReadTimeout(System.TimeSpan)] Missing &lt;param name=&quot;readTimeout&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UseLdd(System.Boolean)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UseLdd(System.Boolean)] Missing &lt;param name=&quot;useLdd&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UserKeysCapacity(System.Int32)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UserKeysCapacity(System.Int32)] Missing &lt;param name=&quot;userKeysCapacity&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UserKeysFlushInterval(System.TimeSpan)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.UserKeysFlushInterval(System.TimeSpan)] Missing &lt;param name=&quot;userKeysFlushInterval&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.WrapperName(System.String)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.WrapperName(System.String)] Missing &lt;param name=&quot;wrapperName&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.WrapperVersion(System.String)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.IConfigurationBuilder.WrapperVersion(System.String)] Missing &lt;param name=&quot;wrapperVersion&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.ILdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [Methods.T:LaunchDarkly.Client.ILdClient] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.ILdClient.AllFlags(LaunchDarkly.Client.User)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
@@ -328,6 +372,20 @@ BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Clien
 BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.UserExtensions.AndPrivateCustomAttribute(LaunchDarkly.Client.User,System.String,Newtonsoft.Json.Linq.JToken)] Unknown reference link target &#39;T:Newtonsoft.Json.Linq.JToken&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.UserExtensions.AndSecondaryKey(LaunchDarkly.Client.User,System.String)] Missing &lt;returns&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Files.FileDataSourceFactory] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.UpdateProcessorFactory(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [N:LaunchDarkly.Client.Integrations] Missing &lt;summary&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Integrations.EventProcessorBuilder] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Events(LaunchDarkly.Client.IEventProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Integrations.EventProcessorBuilder.AllAttributesPrivate(System.Boolean)] Unknown reference link target &#39;T:LaunchDarkly.Client.UserBuilder&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Integrations.EventProcessorBuilder.DiagnosticRecordingInterval(System.TimeSpan)] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DiagnosticOptOut(System.Boolean)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Client.Integrations.EventProcessorBuilder.PrivateAttributeNames(System.String[])] Unknown reference link target &#39;T:LaunchDarkly.Client.UserBuilder&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Integrations.HttpConfigurationBuilder] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Http(LaunchDarkly.Client.Interfaces.IHttpConfigurationFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Integrations.PollingDataSourceBuilder] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataSource(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Integrations.PollingDataSourceBuilder] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Offline(System.Boolean)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Integrations.StreamingDataSourceBuilder] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataSource(LaunchDarkly.Client.IUpdateProcessorFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Integrations.StreamingDataSourceBuilder] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Offline(System.Boolean)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [N:LaunchDarkly.Client.Interfaces] Missing &lt;summary&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Interfaces.IHttpConfigurationFactory] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.Http(LaunchDarkly.Client.Interfaces.IHttpConfigurationFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Interfaces.IPersistentDataStoreAsyncFactory] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataStore(LaunchDarkly.Client.IFeatureStoreFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Client.Interfaces.IPersistentDataStoreFactory] Unknown reference link target &#39;M:LaunchDarkly.Client.ConfigurationBuilder.DataStore(LaunchDarkly.Client.IFeatureStoreFactory)&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Client.Utils.CachingStoreWrapper.Init(System.Collections.Generic.IDictionary{LaunchDarkly.Client.IVersionedDataKind,System.Collections.Generic.IDictionary{System.String,LaunchDarkly.Client.IVersionedData}})] Missing &lt;param name=&quot;items&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Logging.ConsoleAdapter] Unknown reference link target &#39;T:Common.Logging.Factory.AbstractCachingLoggerFactoryAdapter&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [T:LaunchDarkly.Logging.ConsoleAdapter] Unknown reference link target &#39;T:Common.Logging.Simple.AbstractSimpleLoggerFactoryAdapter&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
@@ -400,17 +458,17 @@ BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Logging.Console
 BuildAssembler : warning : ShowMissingComponent: [M:LaunchDarkly.Logging.ConsoleAdapter.CreateLogger(System.String,Common.Logging.LogLevel,System.Boolean,System.Boolean,System.Boolean,System.String)] Missing &lt;param name=&quot;dateTimeFormat&quot;/&gt; documentation [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Logging.ConsoleAdapter.CreateLogger(System.String,Common.Logging.LogLevel,System.Boolean,System.Boolean,System.Boolean,System.String)] Unknown reference link target &#39;T:Common.Logging.LogLevel&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
 BuildAssembler : warning : ResolveReferenceLinksComponent: [M:LaunchDarkly.Logging.ConsoleAdapter.CreateLogger(System.String,Common.Logging.LogLevel,System.Boolean,System.Boolean,System.Boolean,System.String)] Unknown reference link target &#39;T:Common.Logging.ILog&#39;. [C:\Users\circleci\temp\docs\Working\BuildTopics.proj]
-  Processed 633 topic(s)
-  187 warning(s)
+  Processed 731 topic(s)
+  244 warning(s)
   CopyFromIndexComponent: &quot;reflection&quot; in-memory cache entries used: 5 of 15.
   CopyFromIndexComponent: &quot;comments&quot; in-memory cache entries used: 4 of 30.
-  ResolveReferenceLinksComponent: 53 entries added to the member ID URL cache.  New cache size: 53 entries
+  ResolveReferenceLinksComponent: 54 entries added to the member ID URL cache.  New cache size: 54 entries
 Done Building Project &quot;C:\Users\circleci\temp\docs\Working\BuildTopics.proj&quot; (default targets).
-    Last step completed in 00:00:19.8758
+    Last step completed in 00:00:16.4087
 </buildStep>
 <buildStep step="CombiningIntermediateTocFiles">
 Combining conceptual and API intermediate TOC files...
-    Last step completed in 00:00:00.0059
+    Last step completed in 00:00:00.0064
 </buildStep>
 <buildStep step="ExtractingHtmlInfo">
 Extracting HTML info for HTML Help 1 and/or website...
@@ -422,11 +480,11 @@ E-Mail: Eric@EWoodruff.us
 Using LCID &#39;1033&#39;, code page &#39;65001&#39;, encoding charset &#39;UTF-8&#39;.
 
 Processing website files in C:\Users\circleci\temp\docs\Working\Output\Website
-Processed 632 HTML files
+Processed 730 HTML files
 Sorting keywords and generating See Also indices
 Saving website keyword index to C:\Users\circleci\temp\docs\Working\WebKI.xml
 Saving website table of contents to C:\Users\circleci\temp\docs\Working\WebTOC.xml
-    Last step completed in 00:00:01.9194
+    Last step completed in 00:00:02.1160
 </buildStep>
 <buildStep step="CopyStandardHelpContent">
 Copying standard help content...
@@ -508,33 +566,34 @@ C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyle
 C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\branding-Website.js -&gt; C:\Users\circleci\temp\docs\Working\Output\Website\scripts\branding-Website.js
 C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\clipboard.min.js -&gt; C:\Users\circleci\temp\docs\Working\Output\Website\scripts\clipboard.min.js
 C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\jquery-3.3.1.min.js -&gt; C:\Users\circleci\temp\docs\Working\Output\Website\scripts\jquery-3.3.1.min.js
-    Last step completed in 00:00:00.2435
+    Last step completed in 00:00:00.2680
 </buildStep>
 <buildStep step="GenerateHelpFormatTableOfContents">
 Generating website table of contents file...
-    Last step completed in 00:00:00.0066
+    Last step completed in 00:00:00.0099
 </buildStep>
 <buildStep step="GenerateFullTextIndex">
 Generating full-text index for the website...
 
 <plugIn name="Lightweight Website Style" behavior="After" priority="1000">
 Adding lightweight search and TOC elements to each topic...
-</plugIn>    Last step completed in 00:00:00.9441
+</plugIn>    Last step completed in 00:00:01.0813
 </buildStep>
 <buildStep step="CopyingWebsiteFiles">
 Copying website files to output folder...
 
 Copied 500 files
-Copied 894 files for the website content
-    Last step completed in 00:00:00.5532
+Copied 1000 files
+Copied 1021 files for the website content
+    Last step completed in 00:00:01.2992
 </buildStep>
 <buildStep step="CleanIntermediates">
 Removing intermediate files...
-    Last step completed in 00:00:00.1650
+    Last step completed in 00:00:00.1694
 </buildStep>
 <buildStep step="Completed">
 
-Build completed successfully at 11/6/2020 2:17:13 AM.  Total time: 00:00:39.2462
+Build completed successfully at 1/27/2021 12:31:38 AM.  Total time: 00:00:37.6977
 
 </buildStep>
 </shfbBuild>
