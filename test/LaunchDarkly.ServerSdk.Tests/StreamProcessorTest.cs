@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Client;
+using LaunchDarkly.Client.Integrations;
 using LaunchDarkly.Common;
 using LaunchDarkly.EventSource;
 using Moq;
@@ -23,9 +24,8 @@ namespace LaunchDarkly.Tests
         Mock<IEventSource> _mockEventSource;
         IEventSource _eventSource;
         TestEventSourceFactory _eventSourceFactory;
-        Mock<IFeatureRequestor> _mockRequestor;
-        IFeatureRequestor _requestor;
         InMemoryFeatureStore _featureStore;
+        StreamingDataSourceBuilder _dataSourceBuilder;
         Client.Configuration _config;
 
         public StreamProcessorTest()
@@ -34,18 +34,16 @@ namespace LaunchDarkly.Tests
             _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask);
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
-            _mockRequestor = new Mock<IFeatureRequestor>();
-            _requestor = _mockRequestor.Object;
             _featureStore = TestUtils.InMemoryFeatureStore();
-            _config = Client.Configuration.Builder(SDK_KEY)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(_featureStore))
-                .Build();
+            _config = Client.Configuration.Builder(SDK_KEY).Build();
+            _dataSourceBuilder = Components.StreamingDataSource()
+                .EventSourceCreator(_eventSourceFactory.Create());
         }
 
         [Fact]
         public void StreamUriHasCorrectEndpoint()
         {
-            _config = Client.Configuration.Builder(_config).StreamUri(new Uri("http://stream.test.com")).Build();
+            _dataSourceBuilder.BaseUri(new Uri("http://stream.test.com"));
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.Equal(new Uri("http://stream.test.com/all"),
                 _eventSourceFactory.ReceivedProperties.StreamUri);
@@ -179,37 +177,10 @@ namespace LaunchDarkly.Tests
 
             Assert.Null(_featureStore.Get(VersionedDataKind.Segments, SEGMENT_KEY));
         }
-
-        [Fact]
-        public void IndirectPatchRequestsAndStoresFeature()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            _mockRequestor.Setup(r => r.GetFlagAsync(FEATURE_KEY)).ReturnsAsync(FEATURE);
-
-            string path = "/flags/" + FEATURE_KEY;
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(path, null), "indirect/patch");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
-
-            AssertFeatureInStore(FEATURE);
-        }
-
-        [Fact]
-        public void IndirectPatchRequestsAndStoresSegment()
-        {
-            StreamProcessor sp = CreateAndStartProcessor();
-            _mockRequestor.Setup(r => r.GetSegmentAsync(SEGMENT_KEY)).ReturnsAsync(SEGMENT);
-
-            string path = "/segments/" + SEGMENT_KEY;
-            MessageReceivedEventArgs e = new MessageReceivedEventArgs(new MessageEvent(path, null), "indirect/patch");
-            _mockEventSource.Raise(es => es.MessageReceived += null, e);
-
-            AssertSegmentInStore(SEGMENT);
-        }
         
         private StreamProcessor CreateProcessor()
         {
-            return new StreamProcessor(_config, _requestor, _featureStore,
-                _eventSourceFactory.Create(), null);
+            return (StreamProcessor)_dataSourceBuilder.CreateUpdateProcessor(_config, _featureStore);
         }
 
         private StreamProcessor CreateAndStartProcessor()

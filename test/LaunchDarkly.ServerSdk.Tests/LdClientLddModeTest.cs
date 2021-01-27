@@ -7,6 +7,7 @@ namespace LaunchDarkly.Tests
 {
     public class LdClientLddModeTest
     {
+#pragma warning disable CS0618 // obsolete APIs
         [Fact]
         public void LddModeClientHasNullUpdateProcessor()
         {
@@ -52,5 +53,6 @@ namespace LaunchDarkly.Tests
                 Assert.True(client.BoolVariation("key", User.WithKey("user"), false));
             }
         }
+#pragma warning restore CS0618
     }
 }

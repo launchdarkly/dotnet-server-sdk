@@ -9,6 +9,7 @@ namespace LaunchDarkly.Tests
     {
         const string sdkKey = "any-key";
 
+#pragma warning disable 612
 #pragma warning disable 618
         [Fact]
         public void CanOverrideConfiguration()
@@ -57,5 +58,6 @@ namespace LaunchDarkly.Tests
             Assert.Equal(handler, config.HttpClientHandler);
         }
 #pragma warning restore 618
+#pragma warning restore 612
     }
 }

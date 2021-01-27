@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LaunchDarkly.Client.Interfaces;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -13,32 +14,40 @@ namespace LaunchDarkly.Client
         private const String PUT = "put";
         private const String PATCH = "patch";
         private const String DELETE = "delete";
-        private const String INDIRECT_PATCH = "indirect/patch";
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(StreamProcessor));
 
-        private readonly Configuration _config;
         private readonly StreamManager _streamManager;
-        private readonly IFeatureRequestor _featureRequestor;
         private readonly IFeatureStore _featureStore;
 
-        internal StreamProcessor(Configuration config, IFeatureRequestor featureRequestor,
-            IFeatureStore featureStore, StreamManager.EventSourceCreator eventSourceCreator, IDiagnosticStore diagnosticStore)
+        internal StreamProcessor(
+            Configuration config,
+            IFeatureStore featureStore,
+            StreamManager.EventSourceCreator eventSourceCreator,
+            IDiagnosticStore diagnosticStore,
+            Uri baseUri,
+            TimeSpan initialReconnectDelay
+            )
         {
+            var httpConfig = config.HttpConfiguration;
+            var streamProperties = new StreamProperties(new Uri(baseUri, "/all"),
+                HttpMethod.Get, null);
+            var streamManagerConfig = new StreamManagerConfigImpl
+            {
+                HttpAuthorizationKey = config.SdkKey,
+                HttpClientHandler = httpConfig.MessageHandler as HttpClientHandler,
+                HttpClientTimeout = httpConfig.ConnectTimeout,
+                ReadTimeout = httpConfig.ReadTimeout,
+                ReconnectTime = initialReconnectDelay,
+                WrapperName = (httpConfig as IHttpConfigurationInternal)?.WrapperName,
+                WrapperVersion = (httpConfig as IHttpConfigurationInternal)?.WrapperVersion
+            };
             _streamManager = new StreamManager(this,
-                MakeStreamProperties(config),
-                config.StreamManagerConfiguration,
+                streamProperties,
+                streamManagerConfig,
                 ServerSideClientEnvironment.Instance,
                 eventSourceCreator, diagnosticStore);
-            _config = config;
-            _featureRequestor = featureRequestor;
             _featureStore = featureStore;
-        }
-
-        private StreamProperties MakeStreamProperties(Configuration config)
-        {
-            return new StreamProperties(new Uri(config.StreamUri, "/all"),
-                HttpMethod.Get, null);
         }
 
         #region IUpdateProcessor
@@ -56,8 +65,10 @@ namespace LaunchDarkly.Client
         #endregion
 
         #region IStreamProcessor
-        
+
+#pragma warning disable CS1998 // we know there are no awaits in this method
         public async Task HandleMessage(StreamManager streamManager, string messageType, string messageData)
+#pragma warning restore CS1998
         {
             switch (messageType)
             {
@@ -99,9 +110,6 @@ namespace LaunchDarkly.Client
                         Log.WarnFormat("Received delete event with unknown path: {0}", deleteData.Path);
                     }
                     break;
-                case INDIRECT_PATCH:
-                    await UpdateTaskAsync(messageData);
-                    break;
             }
         }
 
@@ -118,58 +126,6 @@ namespace LaunchDarkly.Client
             if (disposing)
             {
                 ((IDisposable)_streamManager).Dispose();
-                _featureRequestor.Dispose();
-            }
-        }
-
-        private async Task UpdateTaskAsync(string objectPath)
-        {
-            try
-            {
-                if (GetKeyFromPath(objectPath, VersionedDataKind.Features, out var key))
-                {
-                    var feature = await _featureRequestor.GetFlagAsync(key);
-                    if (feature != null)
-                    {
-                        _featureStore.Upsert(VersionedDataKind.Features, feature);
-                    }
-                }
-                else if (GetKeyFromPath(objectPath, VersionedDataKind.Segments, out key))
-                {
-                    var segment = await _featureRequestor.GetSegmentAsync(key);
-                    if (segment != null)
-                    {
-                        _featureStore.Upsert(VersionedDataKind.Segments, segment);
-                    }
-                }
-                else
-                {
-                    Log.WarnFormat("Received indirect patch event with unknown path: {0}", objectPath);
-                }
-            }
-            catch (AggregateException ex)
-            {
-                Log.ErrorFormat("Error Updating {0}: '{1}'",
-                    ex, objectPath, Util.ExceptionMessage(ex.Flatten()));
-            }
-            catch (UnsuccessfulResponseException ex) when (ex.StatusCode == 401)
-            {
-                Log.ErrorFormat("Error Updating {0}: '{1}'", objectPath, Util.ExceptionMessage(ex));
-                if (ex.StatusCode == 401)
-                {
-                    Log.Error("Received 401 error, no further streaming connection will be made since SDK key is invalid");
-                    ((IDisposable)this).Dispose();
-                }
-            }
-            catch (TimeoutException ex) {
-                Log.ErrorFormat("Error Updating {0}: '{1}'",
-                    ex, objectPath, Util.ExceptionMessage(ex));
-                _streamManager.Restart();
-            }
-            catch (Exception ex)
-            {
-                Log.ErrorFormat("Error Updating feature: '{0}'",
-                    ex, Util.ExceptionMessage(ex));
             }
         }
 
@@ -219,6 +175,17 @@ namespace LaunchDarkly.Client
                 Path = path;
                 Version = version;
             }
+        }
+
+        internal struct StreamManagerConfigImpl : IStreamManagerConfiguration
+        {
+            public string HttpAuthorizationKey { get; internal set; }
+            public HttpClientHandler HttpClientHandler { get; internal set; }
+            public TimeSpan HttpClientTimeout { get; internal set; }
+            public TimeSpan ReadTimeout { get; internal set; }
+            public TimeSpan ReconnectTime { get; internal set; }
+            public string WrapperName { get; internal set; }
+            public string WrapperVersion { get; internal set; }
         }
     }
 }

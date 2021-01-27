@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using Common.Logging;
+using LaunchDarkly.Client.Integrations;
+using LaunchDarkly.Client.Interfaces;
 
 namespace LaunchDarkly.Client
 {
@@ -32,23 +34,85 @@ namespace LaunchDarkly.Client
         Configuration Build();
 
         /// <summary>
-        /// Sets whether or not user attributes (other than the key) should be private (not sent to
-        /// the LaunchDarkly server).
+        /// Obsolete method for setting whether or not all user attributes should be private.
         /// </summary>
-        /// <remarks>
-        /// If this is true, all of the user attributes will be private, not just the attributes specified with the
-        /// <c>AndPrivate...</c> methods on the <see cref="User"/> object. By default, this is false.
-        /// </remarks>
-        /// <param name="allAttributesPrivate">true if all attributes should be private</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.AllAttributesPrivate(bool)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.AllAttributesPrivate")]
         IConfigurationBuilder AllAttributesPrivate(bool allAttributesPrivate);
 
         /// <summary>
-        /// Sets the base URI of the LaunchDarkly server.
+        /// Obsolete method for setting the base URI for the polling service.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method has no effect if streaming is enabled, or if you have used
+        /// <see cref="DataSource(IUpdateProcessorFactory)"/> to specify the data source options. The
+        /// preferred way to set the property is as follows:
+        /// </para>
+        /// <code>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .DataSource(
+        ///             Components.PollingDataSource()
+        ///                 .BaseUri(baseUri)
+        ///             )
+        ///         .Build();
+        /// </code>
+        /// </remarks>
         /// <param name="baseUri">the base URI</param>
         /// <returns>the same builder</returns>
+        /// <seealso cref="Components.PollingDataSource"/>
+        /// <seealso cref="PollingDataSourceBuilder.BaseUri(Uri)"/>
+        [Obsolete("Use Components.PollingDataSource and PollingDataSourceBuilder.BaseUri")]
         IConfigurationBuilder BaseUri(Uri baseUri);
+
+        /// <summary>
+        /// Sets the implementation of the component that receives feature flag data from LaunchDarkly,
+        /// using a factory object.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Depending on the implementation, the factory may be a builder that allows you to set other
+        /// configuration options as well.
+        /// </para>
+        /// <para>
+        /// The default is <see cref="Components.StreamingDataSource"/>. You may instead use
+        /// <see cref="Components.PollingDataSource"/>, <see cref="Components.ExternalUpdatesOnly"/>, or a
+        /// test fixture such as <see cref="Files.FileComponents.FileDataSource"/>. See those methods for
+        /// details on how to configure them.
+        /// </para>
+        /// <para>
+        /// Note that the interface is currently named <see cref="IUpdateProcessorFactory"/>, but in a future version it
+        /// will be renamed to <c>IDataSourceFactory</c>.
+        /// </para>
+        /// </remarks>
+        /// <param name="dataSourceFactory">the factory object</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder DataSource(IUpdateProcessorFactory dataSourceFactory);
+
+        /// <summary>
+        /// Sets the data store implementation to be used for holding feature flags
+        /// and related data received from LaunchDarkly.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The default is <see cref="Components.InMemoryDataStore"/>, but you may choose to use a custom
+        /// implementation such as a database integration. For the latter, you will normally
+        /// use a component from one of the integration packages such as <c>LaunchDarkly.ServerSdk.Redis</c>.
+        /// </para>
+        /// <para>
+        /// This is specified as a factory because the SDK normally manages the lifecycle of the
+        /// data store; it will create an instance from the factory when an <see cref="LdClient"/>
+        /// is created, and dispose of that instance when disposing of the client.
+        /// </para>
+        /// <para>
+        /// Note that the interface is currently named <see cref="IFeatureStoreFactory"/>, but in a future version it
+        /// will be renamed to <c>IDataStoreFactory</c>.
+        /// </para>
+        /// </remarks>
+        /// <param name="dataStoreFactory">the factory object</param>
+        /// <returns>the same builder</returns>
+        IConfigurationBuilder DataStore(IFeatureStoreFactory dataStoreFactory);
 
         /// <summary>
         ///   Set to true to opt out of sending diagnostic events.
@@ -68,103 +132,115 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder DiagnosticOptOut(bool diagnosticOptOut);
 
         /// <summary>
-        ///   Sets the interval at which periodic diagnostic events will be sent.
+        /// Obsolete method for setting the interval at which periodic diagnostic events will be sent.
         /// </summary>
-        /// <remarks>
-        ///   <para>
-        ///     The default is every 15 minutes and the minimum is every minute.
-        ///   </para>
-        /// </remarks>
-        /// <param name="diagnosticRecordingInterval">the diagnostic recording interval</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.DiagnosticRecordingInterval(TimeSpan)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.DiagnosticRecordingInterval")]
         IConfigurationBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval);
 
         /// <summary>
-        /// Sets the capacity of the events buffer.
+        /// Obsolete method for setting the capacity of the events buffer.
         /// </summary>
-        /// <remarks>
-        /// The client buffers up to this many events in memory before flushing. If the capacity is exceeded
-        /// before the buffer is flushed, events will be discarded. Increasing the capacity means that events
-        /// are less likely to be discarded, at the cost of consuming more memory.
-        /// </remarks>
-        /// <param name="eventCapacity">the capacity of the events buffer</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.Capacity(int)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.Capacity")]
         IConfigurationBuilder EventCapacity(int eventCapacity);
 
         /// <summary>
-        /// Sets the time between flushes of the event buffer.
+        /// Obsolete method for setting the time between flushes of the event buffer.
         /// </summary>
-        /// <remarks>
-        /// Decreasing the flush interval means that the event buffer is less likely to reach capacity. The
-        /// default value is 5 seconds.
-        /// </remarks>
-        /// <param name="eventflushInterval">the flush interval</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.FlushInterval(TimeSpan)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.FlushInterval")]
         IConfigurationBuilder EventFlushInterval(TimeSpan eventflushInterval);
 
         /// <summary>
-        /// Sets the implementation of <see cref="IEventProcessor"/> to be used for processing analytics events.
+        /// Obsolete name for <see cref="Events(IEventProcessorFactory)"/>.
+        /// </summary>
+        /// <seealso cref="Events"/>
+        [Obsolete("Use Events")]
+        IConfigurationBuilder EventProcessorFactory(IEventProcessorFactory eventProcessorFactory);
+
+        /// <summary>
+        /// Sets the implementation of the component that processes analytics events.
         /// </summary>
         /// <remarks>
-        /// The default is <see cref="Components.DefaultEventProcessor"/>, but you may choose to use a custom
-        /// implementation (for instance, a test fixture).
+        /// The default is <see cref="Components.DefaultEventProcessor"/>, but you may choose to set it to a customized
+        /// <see cref="EventProcessorBuilder"/>, a custom implementation (for instance, a test fixture), or
+        /// disable events with <see cref="Components.NoEvents"/>.
         /// </remarks>
-        /// <param name="eventProcessorFactory">the factory object</param>
+        /// <param name="eventProcessorFactory">a builder/factory object for event configuration</param>
         /// <returns>the same builder</returns>
-        IConfigurationBuilder EventProcessorFactory(IEventProcessorFactory eventProcessorFactory);
-        
+        IConfigurationBuilder Events(IEventProcessorFactory eventProcessorFactory);
+
         /// <summary>
-        /// Sets the base URL of the LaunchDarkly analytics event server.
+        /// Obsolete method to set the base URL of the LaunchDarkly analytics event server.
         /// </summary>
-        /// <param name="eventsUri">the events URI</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.BaseUri(Uri)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.BaseUri")]
         IConfigurationBuilder EventsUri(Uri eventsUri);
 
         /// <summary>
-        /// Sets the implementation of <see cref="IFeatureStore"/> to be used for holding feature flags
-        /// and related data received from LaunchDarkly.
+        /// Obsolete name for <see cref="DataStore(IFeatureStoreFactory)"/>.
         /// </summary>
-        /// <remarks>
-        /// The default is <see cref="Components.InMemoryFeatureStore"/>, but you may choose to use a custom
-        /// implementation.
-        /// </remarks>
-        /// <param name="featureStoreFactory">the factory object</param>
-        /// <returns>the same builder</returns>
+        [Obsolete("Use DataStore")]
         IConfigurationBuilder FeatureStoreFactory(IFeatureStoreFactory featureStoreFactory);
 
         /// <summary>
-        /// Sets the object to be used for sending HTTP requests. This is exposed for testing purposes.
+        /// Sets the SDK's networking configuration, using a factory object. This object is normally a
+        /// configuration builder obtained from <see cref="Components.HttpConfiguration()"/>, which has
+        /// methods for setting individual HTTP-related properties.
         /// </summary>
-        /// <param name="httpClientHandler">the <c>HttpClientHandler</c> to use</param>
+        /// <param name="httpConfigurationFactory">a builder/factory object for HTTP configuration</param>
         /// <returns>the same builder</returns>
+        IConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory);
+
+        /// <summary>
+        /// Obsolete method for setting the object to be used for sending HTTP requests.
+        /// </summary>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.MessageHandler(HttpMessageHandler)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.MessageHandler")]
         IConfigurationBuilder HttpClientHandler(HttpClientHandler httpClientHandler);
 
         /// <summary>
-        /// Sets the connection timeout. The default value is 10 seconds.
+        /// Obsolete method for setting the connection timeout.
         /// </summary>
-        /// <param name="httpClientTimeout">the connection timeout</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.ConnectTimeout(TimeSpan)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.ConnectTimeout")]
         IConfigurationBuilder HttpClientTimeout(TimeSpan httpClientTimeout);
 
         /// <summary>
-        /// Sets whether to include full user details in every analytics event.
+        /// Obsolete method for setting whether to include full user details in every analytics event.
         /// </summary>
-        /// <remarks>
-        /// The default is false: events will only include the user key, except for one "index" event that
-        /// provides the full details for the user.
-        /// </remarks>
-        /// <param name="inlineUsersInEvents">true or false</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.InlineUsersInEvents(bool)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.InlineUsersInEvents")]
         IConfigurationBuilder InlineUsersInEvents(bool inlineUsersInEvents);
 
         /// <summary>
-        /// Sets whether or not the streaming API should be used to receive flag updates.
+        /// Obsolete method for enabling or disabling streaming mode.
         /// </summary>
         /// <remarks>
-        /// This is true by default. Streaming should only be disabled on the advice of LaunchDarkly support.
+        /// <para>
+        /// The SDK uses streaming by default. Streaming should only be disabled on the advice of
+        /// LaunchDarkly support.
+        /// </para>
+        /// <para>
+        /// This method has no effect if you have used <see cref="DataSource(IUpdateProcessorFactory)"/>
+        /// to specify the data source options. The preferred way to set the property is to use
+        /// <see cref="DataSource(IUpdateProcessorFactory)"/> with either
+        /// <see cref="Components.StreamingDataSource"/> or <see cref="Components.PollingDataSource"/>.
+        /// </para>
         /// </remarks>
         /// <param name="isStreamingEnabled">true if the streaming API should be used</param>
         /// <returns>the same builder</returns>
+        /// <seealso cref="Components.StreamingDataSource"/>
+        /// <seealso cref="Components.PollingDataSource"/>
+        [Obsolete("Use DataSource")]
         IConfigurationBuilder IsStreamingEnabled(bool isStreamingEnabled);
 
         /// <summary>
@@ -175,46 +251,60 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder Offline(bool offline);
 
         /// <summary>
-        /// Sets the polling interval (when streaming is disabled).
+        /// Obsolete method for setting the polling interval in polling mode.
         /// </summary>
         /// <remarks>
-        /// Values less than the default of 30 seconds will be changed to the default.
+        /// This method has no effect if you have used <see cref="DataSource(IUpdateProcessorFactory)"/>
+        /// to specify the data source options. The preferred way to set the property is to use
+        /// <see cref="DataSource(IUpdateProcessorFactory)"/> with
+        /// <see cref="Components.PollingDataSource"/> and <see cref="PollingDataSourceBuilder.PollInterval(TimeSpan)"/>.
         /// </remarks>
         /// <param name="pollingInterval">the rule update polling interval</param>
         /// <returns>the same builder</returns>
+        /// <seealso cref="Components.PollingDataSource"/>
+        /// <seealso cref="PollingDataSourceBuilder.PollInterval(TimeSpan)"/>
+        [Obsolete("Use Components.PollingDataSource and PollingDataSourceBuilder.PollInterval")]
         IConfigurationBuilder PollingInterval(TimeSpan pollingInterval);
 
         /// <summary>
-        /// Marks an attribute name as private.
+        /// Obsolete method for marking an attribute name as private.
         /// </summary>
-        /// <remarks>
-        /// Any users sent to LaunchDarkly with this configuration active will have attributes with this name
-        /// removed, even if you did not use the <c>AndPrivate...</c> methods on the <see cref="User"/> object.
-        /// You may call this method repeatedly to mark multiple attributes as private.
-        /// </remarks>
-        /// <param name="privateAtributeName">the attribute name</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.PrivateAttributeNames(string[])"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.PrivateAttributeNames")]
         IConfigurationBuilder PrivateAttribute(string privateAtributeName);
 
         /// <summary>
-        /// Sets the timeout when reading data from the streaming connection.
+        /// Obsolete method for setting the timeout when reading data from the streaming connection.
         /// </summary>
-        /// <remarks>
-        /// The default value is 5 minutes.
-        /// </remarks>
-        /// <param name="readTimeout">the read timeout</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.ReadTimeout(TimeSpan)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.ReadTimeout")]
         IConfigurationBuilder ReadTimeout(TimeSpan readTimeout);
 
         /// <summary>
-        /// Sets the reconnect base time for the streaming connection.
+        /// Obsolete method for setting the initial reconnect delay for the streaming connection.
         /// </summary>
         /// <remarks>
-        /// The streaming connection uses an exponential backoff algorithm (with jitter) for reconnects, but
-        /// will start the backoff with a value near the value specified here. The default value is 1 second.
+        /// <para>
+        /// This method has no effect if streaming is disabled, or if you have used
+        /// <see cref="DataSource(IUpdateProcessorFactory)"/> to specify the data source options. The
+        /// preferred way to set the property is as follows:
+        /// </para>
+        /// <code>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .DataSource(
+        ///             Components.StreamingDataSource()
+        ///                 .InitialReconnectDelay(reconnectTime)
+        ///             )
+        ///         .Build();
+        /// </code>
         /// </remarks>
         /// <param name="reconnectTime">the reconnect time base value</param>
         /// <returns>the same builder</returns>
+        /// <seealso cref="Components.StreamingDataSource"/>
+        /// <seealso cref="StreamingDataSourceBuilder.InitialReconnectDelay(TimeSpan)"/>
+        [Obsolete("Use Components.StreamingDataSource and StreamingDataSourceBuilder.InitialReconnectDelay")]
         IConfigurationBuilder ReconnectTime(TimeSpan reconnectTime);
 
         /// <summary>
@@ -237,70 +327,75 @@ namespace LaunchDarkly.Client
         IConfigurationBuilder StartWaitTime(TimeSpan startWaitTime);
 
         /// <summary>
-        /// Sets the base URI of the LaunchDarkly streaming server.
+        /// Obsolete method for setting the base URI for the streaming service.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method has no effect if you have used <see cref="DataSource(IUpdateProcessorFactory)"/> to
+        /// specify the data source options. The preferred way to set the property is as follows:
+        /// </para>
+        /// <code>
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .DataSource(
+        ///             Components.StreamingDataSource()
+        ///                 .BaseUri(streamUri)
+        ///             )
+        ///         .Build();
+        /// </code>
+        /// </remarks>
         /// <param name="streamUri">the stream URI</param>
         /// <returns>the same builder</returns>
+        /// <seealso cref="Components.StreamingDataSource"/>
+        /// <seealso cref="StreamingDataSourceBuilder.BaseUri(Uri)"/>
+        [Obsolete("Use Components.StreamingDataSource and StreamingDataSourceBuilder.BaseUri")]
         IConfigurationBuilder StreamUri(Uri streamUri);
 
         /// <summary>
-        /// Sets the implementation of <see cref="IUpdateProcessor"/> to be used for receiving feature flag data.
+        /// Obsolete name for <see cref="DataSource(IUpdateProcessorFactory)"/>.
         /// </summary>
-        /// <remarks>
-        /// The default is <see cref="Components.DefaultUpdateProcessor"/>, but you may choose to use a custom
-        /// implementation (for instance, a test fixture).
-        /// </remarks>
         /// <param name="updateProcessorFactory">the factory object</param>
+        /// <returns>the same builder</returns>
+        [Obsolete("Use DataSource")]
         IConfigurationBuilder UpdateProcessorFactory(IUpdateProcessorFactory updateProcessorFactory);
 
         /// <summary>
-        /// Sets whether this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
+        /// Obsolete method for setting whether this client should use the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">LaunchDarkly
         /// relay</a> in daemon mode, instead of subscribing to the streaming or polling API.
         /// </summary>
-        /// <remarks>
-        /// For this to work, you must also be using a
-        /// <a href="https://docs.launchdarkly.com/docs/using-a-persistent-feature-store">persistent feature store</a>.
-        /// </remarks>
-        /// <param name="useLdd">true to use the relay in daemon mode; false to use streaming or polling</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.ExternalUpdatesOnly"/>
+        [Obsolete("Use Components.ExternalUpdatesOnly")]
         IConfigurationBuilder UseLdd(bool useLdd);
 
         /// <summary>
-        /// Sets the number of user keys that the event processor can remember at any one time.
+        /// Obsolete method for setting the number of user keys that the event processor can remember at any one time.
         /// </summary>
-        /// <remarks>
-        /// The event processor keeps track of recently seen user keys so that duplicate user details will not
-        /// be sent in analytics events.
-        /// </remarks>
-        /// <param name="userKeysCapacity">the user key cache capacity</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.UserKeysCapacity(int)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.UserKeysCapacity")]
         IConfigurationBuilder UserKeysCapacity(int userKeysCapacity);
 
         /// <summary>
-        /// Sets the interval at which the event processor will clear its cache of known user keys.
+        /// Obsolete method for setting the interval at which the event processor will clear its cache of known user keys.
         /// </summary>
-        /// <remarks>
-        /// The default value is five minutes.
-        /// </remarks>
-        /// <param name="userKeysFlushInterval">the flush interval</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.SendEvents"/>
+        /// <seealso cref="EventProcessorBuilder.UserKeysFlushInterval(TimeSpan)"/>
+        [Obsolete("Use Components.SendEvents and EventProcessorBuilder.UserKeysFlushInterval")]
         IConfigurationBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval);
 
         /// <summary>
-        /// For use by wrapper libraries to set an identifying name for the wrapper being used. This
-        /// will be sent in request headers during requests to the LaunchDarkly servers to allow
-        /// recording metrics on the usage of these wrapper libraries.
+        /// Obsolete method for identifying a wrapper library.
         /// </summary>
-        /// <param name="wrapperName">The name of the wrapper to include in request headers</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.Wrapper(string, string)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.Wrapper")]
         IConfigurationBuilder WrapperName(string wrapperName);
 
         /// <summary>
-        /// For use by wrapper libraries to set version to be included alongside a WrapperName. If
-        /// WrapperName is unset or null, this field will be ignored.
+        /// Obsolete method for identifying a wrapper library.
         /// </summary>
-        /// <param name="wrapperVersion">The version of the wrapper to include in request headers</param>
-        /// <returns>the same builder</returns>
+        /// <seealso cref="Components.HttpConfiguration"/>
+        /// <seealso cref="HttpConfigurationBuilder.Wrapper(string, string)"/>
+        [Obsolete("Use Components.HttpConfiguration and HttpConfigurationBuilder.Wrapper")]
         IConfigurationBuilder WrapperVersion(string wrapperVersion);
     }
 
@@ -320,6 +415,7 @@ namespace LaunchDarkly.Client
         internal IFeatureStoreFactory _featureStoreFactory = null;
         internal HttpClientHandler _httpClientHandler = new HttpClientHandler();
         internal TimeSpan _httpClientTimeout = Configuration.DefaultHttpClientTimeout;
+        internal IHttpConfigurationFactory _httpConfigurationFactory = null;
         internal bool _inlineUsersInEvents = false;
         internal bool _isStreamingEnabled = true;
         internal bool _offline = false;
@@ -346,6 +442,8 @@ namespace LaunchDarkly.Client
 
         public ConfigurationBuilder(Configuration copyFrom)
         {
+#pragma warning disable 0612 // using obsolete properties
+#pragma warning disable 0618 // using obsolete properties
             _allAttributesPrivate = copyFrom.AllAttributesPrivate;
             _baseUri = copyFrom.BaseUri;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
@@ -353,14 +451,13 @@ namespace LaunchDarkly.Client
             _eventCapacity = copyFrom.EventCapacity;
             _eventFlushInterval = copyFrom.EventFlushInterval;
             _eventProcessorFactory = copyFrom.EventProcessorFactory;
-#pragma warning disable 618
             _eventSamplingInterval = copyFrom.EventSamplingInterval;
-#pragma warning restore 618
             _eventsUri = copyFrom.EventsUri;
             _featureStore = copyFrom.FeatureStore;
             _featureStoreFactory = copyFrom.FeatureStoreFactory;
             _httpClientHandler = copyFrom.HttpClientHandler;
             _httpClientTimeout = copyFrom.HttpClientTimeout;
+            _httpConfigurationFactory = copyFrom.HttpConfigurationFactory;
             _inlineUsersInEvents = copyFrom.InlineUsersInEvents;
             _isStreamingEnabled = copyFrom.IsStreamingEnabled;
             _offline = copyFrom.Offline;
@@ -378,6 +475,8 @@ namespace LaunchDarkly.Client
             _userKeysFlushInterval = copyFrom.UserKeysFlushInterval;
             _wrapperName = copyFrom.WrapperName;
             _wrapperVersion = copyFrom.WrapperVersion;
+#pragma warning restore 0618
+#pragma warning restore 0612
         }
 
         public Configuration Build()
@@ -394,6 +493,18 @@ namespace LaunchDarkly.Client
         public IConfigurationBuilder BaseUri(Uri baseUri)
         {
             _baseUri = baseUri;
+            return this;
+        }
+
+        public IConfigurationBuilder DataSource(IUpdateProcessorFactory dataSourceFactory)
+        {
+            _updateProcessorFactory = dataSourceFactory;
+            return this;
+        }
+
+        public IConfigurationBuilder DataStore(IFeatureStoreFactory dataStoreFactory)
+        {
+            _featureStoreFactory = dataStoreFactory;
             return this;
         }
 
@@ -429,21 +540,27 @@ namespace LaunchDarkly.Client
             return this;
         }
 
-        public IConfigurationBuilder EventProcessorFactory(IEventProcessorFactory eventProcessorFactory)
+        public IConfigurationBuilder EventProcessorFactory(IEventProcessorFactory eventProcessorFactory) =>
+            Events(eventProcessorFactory);
+
+        public IConfigurationBuilder Events(IEventProcessorFactory eventProcessorFactory)
         {
             _eventProcessorFactory = eventProcessorFactory;
             return this;
         }
-        
+
         public IConfigurationBuilder EventsUri(Uri eventsUri)
         {
             _eventsUri = eventsUri;
             return this;
         }
 
-        public IConfigurationBuilder FeatureStoreFactory(IFeatureStoreFactory featureStoreFactory)
+        public IConfigurationBuilder FeatureStoreFactory(IFeatureStoreFactory featureStoreFactory) =>
+            DataStore(featureStoreFactory);
+
+        public IConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory)
         {
-            _featureStoreFactory = featureStoreFactory;
+            _httpConfigurationFactory = httpConfigurationFactory;
             return this;
         }
 
@@ -531,11 +648,8 @@ namespace LaunchDarkly.Client
             return this;
         }
 
-        public IConfigurationBuilder UpdateProcessorFactory(IUpdateProcessorFactory updateProcessorFactory)
-        {
-            _updateProcessorFactory = updateProcessorFactory;
-            return this;
-        }
+        public IConfigurationBuilder UpdateProcessorFactory(IUpdateProcessorFactory updateProcessorFactory) =>
+            DataSource(updateProcessorFactory);
 
         public IConfigurationBuilder UseLdd(bool useLdd)
         {
