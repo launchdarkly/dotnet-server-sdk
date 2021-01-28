@@ -265,7 +265,16 @@ namespace LaunchDarkly.Sdk.Server
             var clientSideOnly = FlagsStateOption.HasOption(options, FlagsStateOption.ClientSideOnly);
             var withReasons = FlagsStateOption.HasOption(options, FlagsStateOption.WithReasons);
             var detailsOnlyIfTracked = FlagsStateOption.HasOption(options, FlagsStateOption.DetailsOnlyForTrackedFlags);
-            KeyedItems<ItemDescriptor> flags = _dataStore.GetAll(DataModel.Features);
+            KeyedItems<ItemDescriptor> flags;
+            try
+            {
+                flags = _dataStore.GetAll(DataModel.Features);
+            }
+            catch (Exception e)
+            {
+                LogHelpers.LogException(_log, "Exception while retrieving flags for AllFlagsState", e);
+                return new FeatureFlagsState(false);
+            }
             foreach (var pair in flags.Items)
             {
                 if (pair.Value.Item is null || !(pair.Value.Item is FeatureFlag flag))
@@ -374,7 +383,7 @@ namespace LaunchDarkly.Sdk.Server
             catch (Exception e)
             {
                 LogHelpers.LogException(_log,
-                    string.Format("Exception when evaluating feature key \"{1}\" for user key \"{2}\"", featureKey, user.Key),
+                    string.Format("Exception when evaluating feature key \"{0}\" for user key \"{1}\"", featureKey, user.Key),
                     e);
                 var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.Exception);
                 if (featureFlag == null)
