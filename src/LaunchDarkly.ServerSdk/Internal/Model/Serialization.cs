@@ -437,7 +437,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             {
                 var clauseObj = arr.Object();
                 clauseObj.Name("attribute").String(c.Attribute.AttributeName);
-                clauseObj.Name("op").String(c.Op);
+                clauseObj.Name("op").String(c.Op.Name);
                 WriteValues(clauseObj.Name("values"), c.Values);
                 clauseObj.Name("negate").Bool(c.Negate);
                 clauseObj.End();
@@ -471,7 +471,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             for (var arr = r.ArrayOrNull();  arr.Next(ref r);)
             {
                 UserAttribute attribute;
-                string op = null;
+                Operator op = null;
                 ImmutableList<LdValue> values = null;
                 bool negate = false;
                 for (var obj = r.Object(); obj.Next(ref r);)
@@ -482,7 +482,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                             attribute = UserAttribute.ForName(r.String());
                             break;
                         case var n when n == "op":
-                            op = r.String();
+                            op = Operator.ForName(r.String());
+                            // Operator.ForName never returns null - unrecognized operators return a stub object
                             break;
                         case var n when n == "values":
                             values = ReadValues(ref r);

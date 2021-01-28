@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using Xunit;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -185,7 +185,7 @@ namespace LaunchDarkly.Sdk.Server
                         c =>
                         {
                             Assert.Equal(UserAttribute.Name, c.Attribute);
-                            Assert.Equal("in", c.Op);
+                            Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(ImmutableList.Create(LdValue.Of("Lucy"), LdValue.Of("Mina")), c.Values);
                             Assert.True(c.Negate);
                         });
@@ -263,7 +263,7 @@ namespace LaunchDarkly.Sdk.Server
                         c =>
                         {
                             Assert.Equal(UserAttribute.Name, c.Attribute);
-                            Assert.Equal("in", c.Op);
+                            Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(new List<LdValue> { LdValue.Of("Lucy"), LdValue.Of("Mina") }, c.Values);
                             Assert.True(c.Negate);
                         });

@@ -93,7 +93,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var prereqFlagKeys = flag.Prerequisites.Select(p => p.Key);
                 var segmentKeys = flag.Rules.SelectMany(rule =>
                     rule.Clauses.SelectMany(clause =>
-                        clause.Op == "segmentMatch" ?
+                        clause.Op == Operator.SegmentMatch ?
                             clause.Values.Select(v => v.AsString) :
                             Enumerable.Empty<string>()
                     )

@@ -232,7 +232,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     internal class ClauseBuilder
     {
         private UserAttribute _attribute;
-        private string _op;
+        private Operator _op;
         private List<LdValue> _values = new List<LdValue>();
         private bool _negate;
 
@@ -250,11 +250,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        public ClauseBuilder Op(string op)
+        public ClauseBuilder Op(Operator op)
         {
             _op = op;
             return this;
         }
+
+        public ClauseBuilder Op(string opName) => Op(Operator.ForName(opName));
 
         public ClauseBuilder Values(List<LdValue> values)
         {
