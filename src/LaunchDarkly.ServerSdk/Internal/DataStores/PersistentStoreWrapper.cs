@@ -180,7 +180,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             catch (Exception e)
             {
                 ProcessError(e);
-                throw e;
+                throw;
             }
         }
 
@@ -196,7 +196,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             catch (Exception e)
             {
                 ProcessError(e);
-                throw e;
+                throw;
             }
         }
 
