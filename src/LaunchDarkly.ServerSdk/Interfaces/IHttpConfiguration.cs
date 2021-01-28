@@ -24,9 +24,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         TimeSpan ConnectTimeout { get; }
 
-        ///
-        IEnumerable<KeyValuePair<string, string>> CustomHeaders { get; }
-
         /// <summary>
         /// A custom handler for HTTP requests, or null to use the platform's default handler.
         /// </summary>
@@ -58,7 +55,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// HTTP headers to be added to all HTTP requests made by the SDK.
         /// </summary>
         /// <remarks>
-        /// These include <c>Authorization</c> and <c>User-Agent</c>.
+        /// These include <c>Authorization</c>, <c>User-Agent</c>, and any headers that were
+        /// specified with <see cref="HttpConfigurationBuilder.CustomHeader(string, string)"/>.
         /// </remarks>
         IEnumerable<KeyValuePair<string, string>> DefaultHeaders { get; }
     }
@@ -104,10 +102,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
                     (Func<HttpProperties, HttpMessageHandler>)null :
                     _ => httpConfig.MessageHandler);
             foreach (var kv in httpConfig.DefaultHeaders)
-            {
-                ret = ret.WithHeader(kv.Key, kv.Value);
-            }
-            foreach (var kv in httpConfig.CustomHeaders)
             {
                 ret = ret.WithHeader(kv.Key, kv.Value);
             }

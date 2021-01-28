@@ -26,6 +26,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
+        public void CustomHeaders()
+        {
+            var config = Components.HttpConfiguration()
+                .CustomHeader("header1", "value1")
+                .CustomHeader("header2", "value2")
+                .CreateHttpConfiguration(basicConfig);
+            Assert.Equal("value1", HeadersAsMap(config.DefaultHeaders)["header1"]);
+            Assert.Equal("value2", HeadersAsMap(config.DefaultHeaders)["header2"]);
+        }
+
+        [Fact]
         public void MessageHandler()
         {
             var prop = _tester.Property(c => c.MessageHandler, (b, v) => b.MessageHandler(v));

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Net;
 using System.Net.Http;
 using LaunchDarkly.Sdk.Internal;
@@ -194,16 +193,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             internal HttpProperties HttpProperties => _httpProperties;
 
             public TimeSpan ConnectTimeout { get; }
-            public IEnumerable<KeyValuePair<string, string>> CustomHeaders { get; }
             public HttpMessageHandler MessageHandler { get; }
             public IWebProxy Proxy { get; }
             public TimeSpan ReadTimeout { get; }
-            public IEnumerable<KeyValuePair<string, string>> DefaultHeaders => _httpProperties.BaseHeaders;
+            public IEnumerable<KeyValuePair<string, string>> DefaultHeaders { get; }
 
             internal HttpConfigurationImpl(HttpConfigurationBuilder builder, string sdkKey)
             {
                 ConnectTimeout = builder._connectTimeout;
-                CustomHeaders = builder._customHeaders.ToImmutableList();
                 MessageHandler = builder._messageHandler;
                 Proxy = builder._proxy;
                 ReadTimeout = builder._readTimeout;
@@ -225,6 +222,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 }
 
                 _httpProperties = httpProperties;
+                DefaultHeaders = _httpProperties.BaseHeaders;
             }
         }
     }
