@@ -90,9 +90,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             if (fromKind == DataModel.Features)
             {
                 var flag = fromItem.Item as FeatureFlag;
-                var prereqFlagKeys = (flag.Prerequisites ?? Enumerable.Empty<Prerequisite>()).Select(p => p.Key);
-                var segmentKeys = (flag.Rules ?? Enumerable.Empty<Rule>()).SelectMany(rule =>
-                    (rule.Clauses ?? Enumerable.Empty<Clause>()).SelectMany(clause =>
+                var prereqFlagKeys = flag.Prerequisites.Select(p => p.Key);
+                var segmentKeys = flag.Rules.SelectMany(rule =>
+                    rule.Clauses.SelectMany(clause =>
                         clause.Op == "segmentMatch" ?
                             clause.Values.Select(v => v.AsString) :
                             Enumerable.Empty<string>()

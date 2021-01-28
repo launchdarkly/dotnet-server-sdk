@@ -3,13 +3,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using LaunchDarkly.EventSource;
+using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.Model;
-using Newtonsoft.Json;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.DataSources.StreamProcessorEvents;
@@ -149,7 +148,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _es.Close();
 
             // Everything after this point is async and done in the background - Restart returns immediately after the Close
-            _ = FinishRestart(sleepTime);
+            _ = Task.Run(() => FinishRestart(sleepTime));
         }
 
         private async Task FinishRestart(TimeSpan sleepTime)
@@ -190,7 +189,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 HandleMessage(e.EventName, e.Message.Data);
             }
-            catch (JsonException ex)
+            catch (JsonReadException ex)
             {
                 _log.Error("LaunchDarkly service request failed or received invalid data: {0}",
                     LogValues.ExceptionSummary(ex));
@@ -254,7 +253,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             switch (messageType)
             {
                 case PUT:
-                    if (!_dataSourceUpdates.Init(JsonUtil.DecodeJson<PutData>(messageData).Data.ToInitData()))
+                    var putData = ParsePutData(messageData);
+                    if (!_dataSourceUpdates.Init(putData.Data))
                     {
                         throw new StreamStoreException("failed to write full data set to data store");
                     }
@@ -268,69 +268,35 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     break;
 
                 case PATCH:
-                    PatchData patchData = JsonUtil.DecodeJson<PatchData>(messageData);
-                    DataKind patchKind;
-                    string patchKey;
-                    ItemDescriptor item;
-                    if (GetKeyFromPath(patchData.Path, DataModel.Features, out patchKey))
+                    PatchData patchData = ParsePatchData(messageData);
+                    if (patchData.Kind is null)
                     {
-                        patchKind = DataModel.Features;
-                        FeatureFlag flag = patchData.Data.ToObject<FeatureFlag>();
-                        item = new ItemDescriptor(flag.Version, flag);
-                    }
-                    else if (GetKeyFromPath(patchData.Path, DataModel.Segments, out patchKey))
-                    {
-                        patchKind = DataModel.Segments;
-                        Segment segment = patchData.Data.ToObject<Segment>();
-                        item = new ItemDescriptor(segment.Version, segment);
+                        _log.Warn("Received patch event with unknown path");
                     }
                     else
                     {
-                        patchKind = null;
-                        item = new ItemDescriptor();
-                    }
-                    if (patchKind is null)
-                    {
-                        _log.Warn("Received patch event with unknown path: {0}", patchData.Path);
-                    }
-                    else
-                    {
-                        if (!_dataSourceUpdates.Upsert(patchKind, patchKey, item))
+                        if (!_dataSourceUpdates.Upsert(patchData.Kind, patchData.Key, patchData.Item))
                         {
                             throw new StreamStoreException(string.Format("failed to update \"{0}\" ({1}) in data store",
-                                patchKey, patchKind.Name));
+                                patchData.Key, patchData.Kind.Name));
                         }
                     }
                     _lastStoreUpdateFailed = false;
                     break;
 
                 case DELETE:
-                    DeleteData deleteData = JsonUtil.DecodeJson<DeleteData>(messageData);
-                    var tombstone = new ItemDescriptor(deleteData.Version, null);
-                    DataKind deleteKind;
-                    string deleteKey;
-                    if (GetKeyFromPath(deleteData.Path, DataModel.Features, out deleteKey))
+                    DeleteData deleteData = ParseDeleteData(messageData);
+                    if (deleteData.Kind is null)
                     {
-                        deleteKind = DataModel.Features;
-                    }
-                    else if (GetKeyFromPath(deleteData.Path, DataModel.Segments, out deleteKey))
-                    {
-                        deleteKind = DataModel.Segments;
+                        _log.Warn("Received patch event with unknown path");
                     }
                     else
                     {
-                        deleteKind = null;
-                    }
-                    if (deleteKind is null)
-                    {
-                        _log.Warn("Received delete event with unknown path: {0}", deleteData.Path);
-                    }
-                    else
-                    {
-                        if (!_dataSourceUpdates.Upsert(deleteKind, deleteKey, tombstone))
+                        var tombstone = new ItemDescriptor(deleteData.Version, null);
+                        if (!_dataSourceUpdates.Upsert(deleteData.Kind, deleteData.Key, tombstone))
                         {
                             throw new StreamStoreException(string.Format("failed to delete \"{0}\" ({1}) in data store",
-                                deleteKey, deleteKind.Name));
+                                deleteData.Key, deleteData.Kind.Name));
                         }
                         _lastStoreUpdateFailed = false;
                     }

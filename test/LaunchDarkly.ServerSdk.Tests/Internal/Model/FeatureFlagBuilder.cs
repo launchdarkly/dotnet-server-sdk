@@ -10,7 +10,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private List<Prerequisite> _prerequisites = new List<Prerequisite>();
         private string _salt;
         private List<Target> _targets = new List<Target>();
-        private List<Rule> _rules = new List<Rule>();
+        private List<FlagRule> _rules = new List<FlagRule>();
         private VariationOrRollout _fallthrough;
         private int? _offVariation;
         private List<LdValue> _variations;
@@ -30,13 +30,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             _key = from.Key;
             _version = from.Version;
             _on = from.On;
-            _prerequisites = from.Prerequisites;
+            _prerequisites = new List<Prerequisite>(from.Prerequisites);
             _salt = from.Salt;
-            _targets = from.Targets;
-            _rules = from.Rules;
+            _targets = new List<Target>(from.Targets);
+            _rules = new List<FlagRule>(from.Rules);
             _fallthrough = from.Fallthrough;
             _offVariation = from.OffVariation;
-            _variations = from.Variations;
+            _variations = new List<LdValue>(from.Variations);
             _trackEvents = from.TrackEvents;
             _trackEventsFallthrough = from.TrackEventsFallthrough;
             _debugEventsUntilDate = from.DebugEventsUntilDate;
@@ -46,9 +46,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         internal FeatureFlag Build()
         {
-            return new FeatureFlag(_key, _version, _on, _prerequisites, _salt,
-                _targets, _rules, _fallthrough, _offVariation, _variations,
-                _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _deleted, _clientSide);
+            return new FeatureFlag(_key, _version, _deleted, _on, _prerequisites,
+                _targets, _rules, _fallthrough, _offVariation, _variations, _salt,
+                _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _clientSide);
         }
 
         internal FeatureFlagBuilder Version(int version)
@@ -91,15 +91,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return Targets(new List<Target>(targets));
         }
 
-        internal FeatureFlagBuilder Rules(List<Rule> rules)
+        internal FeatureFlagBuilder Rules(List<FlagRule> rules)
         {
             _rules = rules;
             return this;
         }
 
-        internal FeatureFlagBuilder Rules(params Rule[] rules)
+        internal FeatureFlagBuilder Rules(params FlagRule[] rules)
         {
-            return Rules(new List<Rule>(rules));
+            return Rules(new List<FlagRule>(rules));
         }
 
         internal FeatureFlagBuilder Fallthrough(VariationOrRollout fallthrough)
@@ -184,13 +184,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         private string _id = "";
         private int? _variation = null;
-        private Rollout _rollout = null;
+        private Rollout? _rollout = null;
         private List<Clause> _clauses = new List<Clause>();
         private bool _trackEvents = false;
 
-        internal Rule Build()
+        internal FlagRule Build()
         {
-            return new Rule(_id, _variation, _rollout, _clauses, _trackEvents);
+            return new FlagRule(_variation, _rollout, _id, _clauses, _trackEvents);
         }
 
         internal RuleBuilder Id(string id)

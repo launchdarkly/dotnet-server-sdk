@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -168,7 +169,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             foreach (var instance in instances)
             {
-                instance._updates.Upsert(DataModel.Features, key, newItem);
+                instance.DoUpdate(DataModel.Features, key, newItem);
             }
         }
 
@@ -188,7 +189,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 {
                     if (flag.Version < version)
                     {
-                        flag.Version = version;
+                        flag = new FeatureFlag(flag.Key,
+                            version,
+                            flag.Deleted, flag.On, flag.Prerequisites, flag.Targets, flag.Rules,
+                            flag.Fallthrough, flag.OffVariation, flag.Variations, flag.Salt,
+                            flag.TrackEvents, flag.TrackEventsFallthrough, flag.DebugEventsUntilDate, flag.ClientSide);
                     }
                     return new ItemDescriptor(flag.Version, flag);
                 },
@@ -208,7 +213,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 var newVersion = oldVersion + 1;
                 if (segment.Version < newVersion)
                 {
-                    segment.Version = newVersion;
+                    segment = new Segment(segment.Key,
+                        newVersion,
+                        segment.Deleted, segment.Included, segment.Excluded, segment.Rules, segment.Salt);
                 }
                 newItem = new ItemDescriptor(newVersion, segment);
                 _currentSegments[segment.Key] = newItem;
@@ -217,7 +224,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             foreach (var instance in instances)
             {
-                instance._updates.Upsert(DataModel.Segments, segment.Key, newItem);
+                instance.DoUpdate(DataModel.Segments, segment.Key, newItem);
             }
 
             return this;
@@ -245,7 +252,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             }
             foreach (var instance in instances)
             {
-                instance._updates.UpdateStatus(newState, newError);
+                instance.DoUpdateStatus(newState, newError);
             }
             return this;
         }
@@ -259,7 +266,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <returns>a data source instance</returns>
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
-            var instance = new DataSourceImpl(this, dataSourceUpdates);
+            var instance = new DataSourceImpl(this, dataSourceUpdates, context.Basic.Logger.SubLogger("DataSource.TestData"));
             lock (_lock)
             {
                 _instances.Add(instance);
@@ -839,12 +846,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         internal class DataSourceImpl : IDataSource
         {
             private readonly TestData _parent;
-            internal readonly IDataSourceUpdates _updates;
+            private readonly IDataSourceUpdates _updates;
+            private readonly Logger _log;
 
-            internal DataSourceImpl(TestData parent, IDataSourceUpdates updates)
+            internal DataSourceImpl(TestData parent, IDataSourceUpdates updates, Logger log)
             {
                 _parent = parent;
                 _updates = updates;
+                _log = log;
             }
 
             public Task<bool> Start()
@@ -862,6 +871,33 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             public void Dispose()
             {
                 _parent.ClosedInstance(this);
+            }
+
+            internal void DoInit(FullDataSet<ItemDescriptor> data)
+            {
+                _log.Debug("using initial test data:\n{0}",
+                    LogValues.Defer(() =>
+                        string.Join("\n", data.Data.Select(coll =>
+                            coll.Key.Name + ":\n" + string.Join("\n", coll.Value.Items.Select(kv =>
+                                coll.Key.Serialize(kv.Value)
+                            ))
+                        ))
+                    ));
+                _updates.Init(data);
+            }
+
+            internal void DoUpdate(DataKind kind, string key, ItemDescriptor item)
+            {
+                _log.Debug("updating \"{0}\" in {1} to {2}", key, kind.Name, LogValues.Defer(() =>
+                    kind.Serialize(item)));
+                _updates.Upsert(kind, key, item);
+            }
+
+            internal void DoUpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)
+            {
+                _log.Debug("updating status to {0}{1}", newState,
+                    newError.HasValue ? (" (" + newError.Value + ")") : "");
+                _updates.UpdateStatus(newState, newError);
             }
         }
 

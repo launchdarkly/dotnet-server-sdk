@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using Newtonsoft.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -68,7 +68,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 }
                 else
                 {
-                    if (_dataSourceUpdates.Init(allData.ToInitData()))
+                    if (_dataSourceUpdates.Init(allData.Value))
                     {
                         _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
 
@@ -103,7 +103,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     ((IDisposable)this).Dispose();
                 }
             }
-            catch (JsonException ex)
+            catch (JsonReadException ex)
             {
                 _log.Error("Polling request received malformed data: {0}", LogValues.ExceptionSummary(ex));
                 _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted,

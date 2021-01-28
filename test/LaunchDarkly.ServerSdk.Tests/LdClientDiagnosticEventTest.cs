@@ -10,7 +10,6 @@ using Xunit;
 using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.TestHttpUtils;
-using static LaunchDarkly.Sdk.Server.TestUtils;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -66,8 +65,8 @@ namespace LaunchDarkly.Sdk.Server
 
                 var data = LdValue.Parse(payload.Data);
                 Assert.Equal("diagnostic-init", data.Get("kind").AsString);
-                AssertJsonEqual(ExpectedPlatform(), data.Get("platform"));
-                AssertJsonEqual(expectedSdk, data.Get("sdk"));
+                AssertHelpers.JsonEqual(ExpectedPlatform(), data.Get("platform"));
+                AssertHelpers.JsonEqual(expectedSdk, data.Get("sdk"));
                 Assert.Equal("DK_KEY", data.Get("id").Get("sdkKeySuffix").AsString);
 
                 var timestamp = data.Get("creationDate").AsLong;
@@ -408,7 +407,7 @@ namespace LaunchDarkly.Sdk.Server
                 var data = LdValue.Parse(payload.Data);
                 Assert.Equal("diagnostic-init", data.Get("kind").AsString);
 
-                AssertJsonEqual(expected.Build(), data.Get("configuration"));
+                AssertHelpers.JsonEqual(expected.Build(), data.Get("configuration"));
             }
         }
 

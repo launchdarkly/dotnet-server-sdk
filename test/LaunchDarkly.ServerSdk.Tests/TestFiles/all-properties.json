@@ -1,7 +1,8 @@
 ﻿{
     "flags": {
         "flag1": {
-            "key": "flag1",
+          "key": "flag1",
+          "version": 1,
             "on": true,
             "fallthrough": {
                 "variation": 2
@@ -14,8 +15,9 @@
     },
     "segments": {
         "seg1": {
-            "key": "seg1",
-            "include": [ "user1" ]
+          "key": "seg1",
+          "version":  1,
+          "include": [ "user1" ]
         }
     }
 }

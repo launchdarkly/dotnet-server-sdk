@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using LaunchDarkly.EventSource;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private static readonly FeatureFlag FEATURE = new FeatureFlagBuilder(FEATURE_KEY).Version(FEATURE_VERSION).On(true).Build();
         private const string SEGMENT_KEY = "segment";
         private const int SEGMENT_VERSION = 22;
-        private static readonly Segment SEGMENT = new Segment(SEGMENT_KEY, SEGMENT_VERSION, null, null, null, null, false);
+        private static readonly Segment SEGMENT = new SegmentBuilder(SEGMENT_KEY).Version(SEGMENT_VERSION).Build();
         private const string EmptyPutData = "{\"data\":{\"flags\":{},\"segments\":{}}}";
 
         readonly Mock<IEventSource> _mockEventSource;
@@ -83,8 +83,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void PutCausesFeatureToBeStored()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            string data = "{\"data\":{\"flags\":{\"" +
-                FEATURE_KEY + "\":" + JsonConvert.SerializeObject(FEATURE) + "},\"segments\":{}}}";
+            string data = LdValue.BuildObject()
+                .Add("data", LdValue.BuildObject()
+                    .Add("flags", LdValue.BuildObject()
+                        .Add(FEATURE_KEY, LdValue.Parse(LdJsonSerialization.SerializeObject(FEATURE)))
+                        .Build())
+                    .Add("segments", LdValue.BuildObject().Build())
+                    .Build())
+                .Build().ToJsonString();
             SimulateMessageReceived("put", data);
 
             AssertFeatureInStore(FEATURE);
@@ -94,8 +100,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void PutCausesSegmentToBeStored()
         {
             StreamProcessor sp = CreateAndStartProcessor();
-            string data = "{\"data\":{\"flags\":{},\"segments\":{\"" +
-                SEGMENT_KEY + "\":" + JsonConvert.SerializeObject(SEGMENT) + "}}}";
+            string data = LdValue.BuildObject()
+                .Add("data", LdValue.BuildObject()
+                    .Add("flags", LdValue.BuildObject().Build())
+                    .Add("segments", LdValue.BuildObject()
+                        .Add(SEGMENT_KEY, LdValue.Parse(LdJsonSerialization.SerializeObject(SEGMENT)))
+                        .Build())
+                    .Build())
+                .Build().ToJsonString();
             SimulateMessageReceived("put", data);
 
             AssertSegmentInStore(SEGMENT);
@@ -157,7 +169,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             SimulateMessageReceived("put", EmptyPutData);
 
             string path = "/flags/" + FEATURE_KEY;
-            string data = "{\"path\":\"" + path + "\",\"data\":" + JsonConvert.SerializeObject(FEATURE) + "}";
+            string data = LdValue.BuildObject()
+                .Add("path", path)
+                .Add("data", LdValue.Parse(LdJsonSerialization.SerializeObject(FEATURE)))
+                .Build().ToJsonString();
             SimulateMessageReceived("patch", data);
 
             AssertFeatureInStore(FEATURE);
@@ -170,7 +185,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             SimulateMessageReceived("put", EmptyPutData);
 
             string path = "/segments/" + SEGMENT_KEY;
-            string data = "{\"path\":\"" + path + "\",\"data\":" + JsonConvert.SerializeObject(SEGMENT) + "}";
+            string data = LdValue.BuildObject()
+                .Add("path", path)
+                .Add("data", LdValue.Parse(LdJsonSerialization.SerializeObject(SEGMENT)))
+                .Build().ToJsonString();
             SimulateMessageReceived("patch", data);
 
             AssertSegmentInStore(SEGMENT);
@@ -185,7 +203,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
             string path = "/flags/" + FEATURE_KEY;
             int deletedVersion = FEATURE.Version + 1;
-            string data = "{\"path\":\"" + path + "\",\"version\":" + deletedVersion + "}";
+            string data = LdValue.BuildObject()
+                .Add("path", path)
+                .Add("version", deletedVersion)
+                .Build().ToJsonString();
             SimulateMessageReceived("delete", data);
 
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
@@ -201,7 +222,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
             string path = "/segments/" + SEGMENT_KEY;
             int deletedVersion = SEGMENT.Version + 1;
-            string data = "{\"path\":\"" + path + "\",\"version\":" + deletedVersion + "}";
+            string data = LdValue.BuildObject()
+                .Add("path", path)
+                .Add("version", deletedVersion)
+                .Build().ToJsonString();
             SimulateMessageReceived("delete", data);
 
             Assert.Equal(ItemDescriptor.Deleted(deletedVersion),
@@ -371,8 +395,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnPutCausesStreamRestart()
+        public void StoreFailureOnPutCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
+            // If StatusMonitoringEnabled is false, it means we're using either an in-memory store or some kind
+            // of custom implementation that doesn't support our usual "wait till the database is up again and
+            // then re-request the updates if necessary" logic. That's an unlikely case but the expected behavior
+            // is that the stream gets immediately restarted.
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
             mockDataStore.Setup(d => d.StatusMonitoringEnabled).Returns(false);
@@ -392,7 +420,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnPatchCausesStreamRestart()
+        public void StoreFailureOnPatchCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
@@ -411,7 +439,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         }
 
         [Fact]
-        public void StoreFailureOnDeleteCausesStreamRestart()
+        public void StoreFailureOnDeleteCausesStreamRestartWhenStatusMonitoringIsNotAvailable()
         {
             var mockDataStore = new Mock<IDataStore>();
             _dataStore.WrappedStore = mockDataStore.Object;
@@ -442,7 +470,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             StreamProcessor sp = CreateProcessor();
             sp.Start();
-            _esStartedReady.WaitOne();
+            Assert.True(_esStartedReady.WaitOne(TimeSpan.FromSeconds(5)));
             _esStartedReady.Reset();
             return sp;
         }
@@ -493,7 +521,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
             // Wait on the signal that our mock StartAsync method triggers, because StreamProcessor.Restart
             // runs asynchronously so it may not have happened yet.
-            _esStartedReady.WaitOne();
+            Assert.True(_esStartedReady.WaitOne(TimeSpan.FromSeconds(5)), "timed out waiting for stream restart");
 
             _mockEventSource.Verify(es => es.Close(), Times.Once);
             _mockEventSource.Verify(es => es.StartAsync(), Times.Once);

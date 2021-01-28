@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -224,7 +224,7 @@ namespace LaunchDarkly.Sdk.Server
         public void VariationDetailReturnsDefaultForUnknownFlag()
         {
             var expected = new EvaluationDetail<string>("default", null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.FLAG_NOT_FOUND));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound));
             Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
         }
         
@@ -234,7 +234,7 @@ namespace LaunchDarkly.Sdk.Server
             testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
             Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
         }
 
@@ -244,7 +244,7 @@ namespace LaunchDarkly.Sdk.Server
             testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
 
             var expected = new EvaluationDetail<string>("default", null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.USER_NOT_SPECIFIED));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
             Assert.Equal(expected, client.StringVariationDetail("key", User.WithKey(null), "default"));
         }
 
@@ -263,17 +263,17 @@ namespace LaunchDarkly.Sdk.Server
             testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
 
             var expected = new EvaluationDetail<int>(1, null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType));
             Assert.Equal(expected, client.IntVariationDetail("key", user, 1));
         }
 
         [Fact]
         public void CanMatchUserBySegment()
         {
-            var segment = new Segment("segment1", 1, new List<string> { user.Key }, null, "", null, false);
+            var segment = new SegmentBuilder("segment`").Version(1).Included(user.Key).Build();
             testData.UsePreconfiguredSegment(segment);
 
-            var clause = new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of("segment1")).Build();
+            var clause = new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment.Key)).Build();
             var feature = new FeatureFlagBuilder("feature").BooleanWithClauses(clause).Build();
             testData.UsePreconfiguredFlag(feature);
 
@@ -306,10 +306,8 @@ namespace LaunchDarkly.Sdk.Server
                 },
                 ""$valid"":true
             }";
-            var expectedValue = LdValue.Parse(expectedString);
-            var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = LdValue.Parse(actualString);
-            TestUtils.AssertJsonEqual(expectedValue, actualValue);
+            var actualString = LdJsonSerialization.SerializeObject(state);
+            AssertHelpers.JsonEqual(expectedString, actualString);
         }
 
         [Fact]
@@ -338,10 +336,8 @@ namespace LaunchDarkly.Sdk.Server
                 },
                 ""$valid"":true
             }";
-            var expectedValue = LdValue.Parse(expectedString);
-            var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = LdValue.Parse(actualString);
-            TestUtils.AssertJsonEqual(expectedValue, actualValue);
+            var actualString = LdJsonSerialization.SerializeObject(state);
+            AssertHelpers.JsonEqual(expectedString, actualString);
         }
 
         [Fact]
@@ -402,10 +398,8 @@ namespace LaunchDarkly.Sdk.Server
                 },
                 ""$valid"":true
             }";
-            var expectedValue = LdValue.Parse(expectedString);
-            var actualString = JsonConvert.SerializeObject(state);
-            var actualValue = LdValue.Parse(actualString);
-            TestUtils.AssertJsonEqual(expectedValue, actualValue);
+            var actualString = LdJsonSerialization.SerializeObject(state);
+            AssertHelpers.JsonEqual(expectedString, actualString);
         }
 
         [Fact]

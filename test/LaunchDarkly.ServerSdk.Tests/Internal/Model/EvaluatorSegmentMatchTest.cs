@@ -15,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [Fact]
         public void ExplicitIncludeUser()
         {
-            var s = new Segment("test", 1, new List<string> { "foo" }, null, null, null, false);
+            var s = new SegmentBuilder("test").Version(1).Included("foo").Build();
             var u = User.WithKey("foo");
             Assert.True(SegmentMatchesUser(s, u));
         }
@@ -23,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [Fact]
         public void ExplicitExcludeUser()
         {
-            var s = new Segment("test", 1, null, new List<string> { "foo" }, null, null, false);
+            var s = new SegmentBuilder("test").Version(1).Excluded("foo").Build();
             var u = User.WithKey("foo");
             Assert.False(SegmentMatchesUser(s, u));
         }
@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         [Fact]
         public void ExplicitIncludeHasPrecedence()
         {
-            var s = new Segment("test", 1, new List<string> { "foo" }, new List<string> { "foo" }, null, null, false);
+            var s = new SegmentBuilder("test").Version(1).Included("foo").Excluded("foo").Build();
             var u = User.WithKey("foo");
             Assert.True(SegmentMatchesUser(s, u));
         }
@@ -41,7 +41,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var rule = new SegmentRule(new List<Clause> { clause }, 100000, null);
-            var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
+            var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Build();
             Assert.True(SegmentMatchesUser(s, u));
         }
@@ -51,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var rule = new SegmentRule(new List<Clause> { clause }, 0, null);
-            var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
+            var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Build();
             Assert.False(SegmentMatchesUser(s, u));
         }
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bob")).Build();
             var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null);
-            var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
+            var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();
             Assert.True(SegmentMatchesUser(s, u));
         }
@@ -73,7 +73,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bill")).Build();
             var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null);
-            var s = new Segment("test", 1, null, null, null, new List<SegmentRule> { rule }, false);
+            var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();
             Assert.False(SegmentMatchesUser(s, u));
         }

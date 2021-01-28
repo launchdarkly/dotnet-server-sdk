@@ -296,8 +296,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         private void VerifyFlag(Func<TestData.FlagBuilder, TestData.FlagBuilder> configureFlag, string expectedProps)
         {
             var expectedJson = "{\"key\":\"flagkey\",\"version\":1," + expectedProps +
-                ",\"clientSide\":false,\"deleted\":false,\"prerequisites\":[],\"salt\":\"\"" +
-                ",\"trackEvents\":false,\"trackEventsFallthrough\":false}";
+                ",\"clientSide\":false,\"deleted\":false,\"prerequisites\":[],\"salt\":\"\"}";
 
             var td = TestData.DataSource();
             td.CreateDataSource(_context, _updates).Start();
@@ -307,7 +306,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             Assert.Equal(1, _updates.Upserts.Count);
             var up = _updates.Upserts.Take();
             var json = LdValue.Parse(DataModel.Features.Serialize(up.Item));
-            TestUtils.AssertJsonEqual(LdValue.Parse(expectedJson), json);
+            AssertHelpers.JsonEqual(LdValue.Parse(expectedJson), json);
         }
     }
 }

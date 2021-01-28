@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Internal.Model;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -16,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             const string key = "flag1";
 
-            FeatureFlag initialFeatureFlag = new FeatureFlag(key, version: 0, deleted: false);
+            FeatureFlag initialFeatureFlag = new FeatureFlagBuilder(key).Version(0).Build();
 
             var flagData = new Dictionary<string, ItemDescriptor>
             {
@@ -25,14 +24,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var segmentData = new Dictionary<string, ItemDescriptor>();
             FlagFileData fileData = new FlagFileData
             {
-                Flags = new Dictionary<string, JToken>
+                Flags = new Dictionary<string, FeatureFlag>
                 {
                     {
                         key,
-                        new JObject(
-                            new JProperty("key", key),
-                            new JProperty("version", 1)
-                        )
+                        new FeatureFlagBuilder(key).Version(1).Build()
                     }
                 }
             };
@@ -55,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             const string key = "flag1";
 
-            FeatureFlag initialFeatureFlag = new FeatureFlag(key, version: 0, deleted: false);
+            FeatureFlag initialFeatureFlag = new FeatureFlagBuilder(key).Version(0).Build();
 
             var flagData = new Dictionary<string, ItemDescriptor>
             {
@@ -64,14 +60,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var segmentData = new Dictionary<string, ItemDescriptor>();
             FlagFileData fileData = new FlagFileData
             {
-                Flags = new Dictionary<string, JToken>
+                Flags = new Dictionary<string, FeatureFlag>
                 {
                     {
                         key,
-                        new JObject(
-                            new JProperty("key", key),
-                            new JProperty("version", 1)
-                        )
+                        new FeatureFlagBuilder(key).Version(1).Build()
                     }
                 }
             };

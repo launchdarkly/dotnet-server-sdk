@@ -27,7 +27,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -43,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -59,7 +59,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
@@ -76,12 +76,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.MALFORMED_FLAG));
+                EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
         }
 
-        private FeatureFlag FeatureFlagWithRules(params Rule[] rules)
+        private FeatureFlag FeatureFlagWithRules(params FlagRule[] rules)
         {
             return new FeatureFlagBuilder("feature")
                 .On(true)
