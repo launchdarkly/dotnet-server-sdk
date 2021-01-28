@@ -1,5 +1,5 @@
 ﻿
-namespace LaunchDarkly.Sdk.Server
+namespace LaunchDarkly.Sdk.Server.Internal
 {
     internal static class LogNames
     {

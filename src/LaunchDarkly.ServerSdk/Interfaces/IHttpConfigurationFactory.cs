@@ -2,7 +2,7 @@
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
-    /// Interface for a factory that creates an <see cref="IHttpConfiguration"/>.
+    /// Interface for a factory that creates an <see cref="HttpConfiguration"/>.
     /// </summary>
     /// <seealso cref="Components.HttpConfiguration"/>
     /// <seealso cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/>
@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// to call this method.
         /// </summary>
         /// <param name="basicConfiguration">provides the basic SDK configuration properties</param>
-        /// <returns>an <see cref="IHttpConfiguration"/></returns>
-        IHttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration);
+        /// <returns>an <see cref="HttpConfiguration"/></returns>
+        HttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration);
     }
 }

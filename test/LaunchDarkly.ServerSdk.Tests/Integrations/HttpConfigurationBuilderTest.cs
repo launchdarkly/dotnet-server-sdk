@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         private static readonly BasicConfiguration basicConfig =
             new BasicConfiguration("sdk-key", false, null);
 
-        private readonly BuilderTestUtil<HttpConfigurationBuilder, IHttpConfiguration> _tester =
+        private readonly BuilderTestUtil<HttpConfigurationBuilder, HttpConfiguration> _tester =
             BuilderTestUtil.For(() => Components.HttpConfiguration(),
                 b => b.CreateHttpConfiguration(basicConfig));
 
@@ -23,6 +23,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var prop = _tester.Property(c => c.ConnectTimeout, (b, v) => b.ConnectTimeout(v));
             prop.AssertDefault(HttpConfigurationBuilder.DefaultConnectTimeout);
             prop.AssertCanSet(TimeSpan.FromSeconds(7));
+        }
+
+        [Fact]
+        public void CustomHeaders()
+        {
+            var config = Components.HttpConfiguration()
+                .CustomHeader("header1", "value1")
+                .CustomHeader("header2", "value2")
+                .CreateHttpConfiguration(basicConfig);
+            Assert.Equal("value1", HeadersAsMap(config.DefaultHeaders)["header1"]);
+            Assert.Equal("value2", HeadersAsMap(config.DefaultHeaders)["header2"]);
         }
 
         [Fact]

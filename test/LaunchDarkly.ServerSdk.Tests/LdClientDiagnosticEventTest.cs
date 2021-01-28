@@ -288,6 +288,71 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void CustomConfigForHTTP()
+        {
+            TestDiagnosticConfig(
+                c => c.Http(
+                        Components.HttpConfiguration()
+                            .ConnectTimeout(TimeSpan.FromMilliseconds(8888))
+                            .ReadTimeout(TimeSpan.FromMilliseconds(9999))
+                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
+                    ),
+                null,
+                LdValue.BuildObject()
+                    .Add("connectTimeoutMillis", 8888)
+                    .Add("socketTimeoutMillis", 9999)
+                    .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
+                    .Add("usingProxy", false)
+                    .Add("usingProxyAuthenticator", false)
+                    .WithStoreDefaults()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                );
+
+            var proxyUri = new Uri("http://fake");
+            var proxy = new WebProxy(proxyUri);
+            TestDiagnosticConfig(
+                c => c.Http(
+                        Components.HttpConfiguration()
+                            .Proxy(proxy)
+                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
+                    ),
+                null,
+                LdValue.BuildObject()
+                    .Add("connectTimeoutMillis", HttpConfigurationBuilder.DefaultConnectTimeout.TotalMilliseconds)
+                    .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
+                    .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
+                    .Add("usingProxy", true)
+                    .Add("usingProxyAuthenticator", false)
+                    .WithStoreDefaults()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                );
+
+            var credentials = new CredentialCache();
+            credentials.Add(proxyUri, "Basic", new NetworkCredential("user", "pass"));
+            var proxyWithAuth = new WebProxy(proxyUri);
+            proxyWithAuth.Credentials = credentials;
+            TestDiagnosticConfig(
+                c => c.Http(
+                        Components.HttpConfiguration()
+                            .Proxy(proxyWithAuth)
+                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
+                    ),
+                null,
+                LdValue.BuildObject()
+                    .Add("connectTimeoutMillis", HttpConfigurationBuilder.DefaultConnectTimeout.TotalMilliseconds)
+                    .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
+                    .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
+                    .Add("usingProxy", true)
+                    .Add("usingProxyAuthenticator", true)
+                    .WithStoreDefaults()
+                    .WithStreamingDefaults()
+                    .WithEventsDefaults()
+                );
+        }
+
+        [Fact]
         public void CustomConfigForCustomDataStore()
         {
             TestDiagnosticConfig(

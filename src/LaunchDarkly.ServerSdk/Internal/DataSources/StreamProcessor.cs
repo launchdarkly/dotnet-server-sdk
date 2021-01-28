@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private const String DELETE = "delete";
 
         private readonly IDataSourceUpdates _dataSourceUpdates;
-        private readonly IHttpConfiguration _httpConfig;
+        private readonly HttpConfiguration _httpConfig;
         private readonly TimeSpan _initialReconnectDelay;
         private readonly TaskCompletionSource<bool> _initTask;
         private readonly EventSourceCreator _eventSourceCreator;
@@ -44,7 +44,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         internal DateTime _esStarted; // exposed for testing
 
         internal delegate IEventSource EventSourceCreator(Uri streamUri,
-            IHttpConfiguration httpConfig);
+            HttpConfiguration httpConfig);
 
         internal StreamProcessor(
             LdClientContext context,
@@ -121,7 +121,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         #endregion
 
-        private IEventSource CreateEventSource(Uri uri, IHttpConfiguration httpConfig)
+        private IEventSource CreateEventSource(Uri uri, HttpConfiguration httpConfig)
         {
             var configBuilder = EventSource.Configuration.Builder(uri)
                 .Method(HttpMethod.Get)

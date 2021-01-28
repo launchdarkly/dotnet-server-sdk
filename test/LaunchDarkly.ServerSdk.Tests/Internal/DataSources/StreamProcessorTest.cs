@@ -553,7 +553,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
             public StreamProcessor.EventSourceCreator Create()
             {
-                return (Uri uri, IHttpConfiguration httpConfig) =>
+                return (Uri uri, HttpConfiguration httpConfig) =>
                 {
                     ReceivedUri = uri;
                     ReceivedHeaders = httpConfig.DefaultHeaders.ToDictionary(kv => kv.Key, kv => kv.Value);

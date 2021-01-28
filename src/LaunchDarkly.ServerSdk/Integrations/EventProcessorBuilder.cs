@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
@@ -296,7 +297,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
             var eventSender = _eventSender ??
                 new DefaultEventSender(
-                    context.Http.ToHttpProperties(),
+                    context.Http.HttpProperties,
                     eventsConfig,
                     logger
                     );

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
@@ -21,12 +22,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly Uri _flagsUri;
         private readonly Uri _segmentsUri;
         private readonly HttpClient _httpClient;
+        private readonly HttpProperties _httpProperties;
         private readonly TimeSpan _connectTimeout;
         private readonly Dictionary<Uri, EntityTagHeaderValue> _etags = new Dictionary<Uri, EntityTagHeaderValue>();
         private readonly Logger _log;
 
         internal FeatureRequestor(LdClientContext context, Uri baseUri)
         {
+            _httpProperties = context.Http.HttpProperties;
             _httpClient = context.Http.NewHttpClient();
             _connectTimeout = context.Http.ConnectTimeout;
             _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
@@ -76,6 +79,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _log.Debug("Getting flags with uri: {0}", path.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, path);
+            _httpProperties.AddHeaders(request);
             lock (_etags)
             {
                 if (_etags.TryGetValue(path, out var etag))
