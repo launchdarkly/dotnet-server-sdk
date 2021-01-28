@@ -182,6 +182,12 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <inheritdoc/>
+        public double DoubleVariation(string key, User user, double defaultValue)
+        {
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.Default).Value;
+        }
+
+        /// <inheritdoc/>
         public string StringVariation(string key, User user, string defaultValue)
         {
             return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
@@ -209,6 +215,12 @@ namespace LaunchDarkly.Sdk.Server
         public EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue)
         {
             return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
+        }
+
+        /// <inheritdoc/>
+        public EvaluationDetail<double> DoubleVariationDetail(string key, User user, double defaultValue)
+        {
+            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.DefaultWithReasons);
         }
 
         /// <inheritdoc/>

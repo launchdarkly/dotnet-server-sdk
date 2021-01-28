@@ -150,6 +150,45 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void DoubleVariationReturnsFlagValue()
+        {
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5d)).Build());
+
+            Assert.Equal(2.5d, client.DoubleVariation("key", user, 1.0d));
+        }
+
+        [Fact]
+        public void DoubleVariationReturnsFlagValueEvenIfEncodedAsInt()
+        {
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2)).Build());
+
+            Assert.Equal(2.0d, client.DoubleVariation("key", user, 1.0d));
+        }
+
+        [Fact]
+        public void DoubleVariationReturnsDefaultValueForUnknownFlag()
+        {
+            Assert.Equal(1.0d, client.DoubleVariation("key", user, 1.0d));
+        }
+
+        [Fact]
+        public void DoubleVariationReturnsDefaultValueForWrongType()
+        {
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
+
+            Assert.Equal(1.0d, client.DoubleVariation("key", user, 1.0d));
+        }
+
+        [Fact]
+        public void DoubleVariationDetailReturnsValueAndReason()
+        {
+            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(2.5d)).Build());
+
+            var expected = new EvaluationDetail<double>(2.5d, 0, EvaluationReason.OffReason);
+            Assert.Equal(expected, client.DoubleVariationDetail("key", user, 1.0d));
+        }
+
+        [Fact]
         public void StringVariationReturnsFlagValue()
         {
             testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
