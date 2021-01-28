@@ -23,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             using (var client = new LdClient(_config))
             {
-                Assert.True(client.Initialized());
+                Assert.True(client.Initialized);
             }
         }
 

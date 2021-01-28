@@ -45,6 +45,9 @@ namespace LaunchDarkly.Sdk.Server
         public IFlagTracker FlagTracker => _flagTracker;
 
         /// <inheritdoc/>
+        public bool Initialized => _dataSource.Initialized;
+
+        /// <inheritdoc/>
         public Version Version => AssemblyVersions.GetAssemblyVersionForType(typeof(LdClient));
         
         #endregion
@@ -155,12 +158,6 @@ namespace LaunchDarkly.Sdk.Server
         #region Public methods
 
         /// <inheritdoc/>
-        public bool Initialized()
-        {
-            return IsOffline() || _dataSource.Initialized();
-        }
-
-        /// <inheritdoc/>
         public bool IsOffline()
         {
             return _configuration.Offline;
@@ -234,7 +231,7 @@ namespace LaunchDarkly.Sdk.Server
                 _log.Warn("AllFlagsState() was called when client is in offline mode. Returning empty state.");
                 return new FeatureFlagsState(false);
             }
-            if (!Initialized())
+            if (!Initialized)
             {
                 if (_dataStore.Initialized())
                 {
@@ -289,7 +286,7 @@ namespace LaunchDarkly.Sdk.Server
             bool checkType, EventFactory eventFactory)
         {
             T defaultValueOfType = converter.ToType(defaultValue);
-            if (!Initialized())
+            if (!Initialized)
             {
                 if (_dataStore.Initialized())
                 {

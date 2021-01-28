@@ -35,12 +35,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
-        bool IDataSource.Initialized()
-        {
-            return _initialized.Get();
-        }
+        public bool Initialized => _initialized.Get();
 
-        Task<bool> IDataSource.Start()
+        public Task<bool> Start()
         {
             lock (this)
             {

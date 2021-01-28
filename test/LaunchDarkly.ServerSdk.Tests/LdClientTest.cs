@@ -204,7 +204,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void NoWaitForDataSourceIfWaitMillisIsZero()
         {
-            mockDataSource.Setup(up => up.Initialized()).Returns(true);
+            mockDataSource.Setup(up => up.Initialized).Returns(true);
             var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
                 .DataSource(TestUtils.SpecificDataSource(dataSource))
                 .Events(Components.NoEvents)
@@ -213,7 +213,7 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var client = new LdClient(config))
             {
-                Assert.True(client.Initialized());
+                Assert.True(client.Initialized);
             }
         }
         
@@ -228,7 +228,7 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var client = new LdClient(config))
             {
-                Assert.False(client.Initialized());
+                Assert.False(client.Initialized);
             }
         }
 
@@ -246,7 +246,7 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var client = new LdClient(config))
             {
-                Assert.False(client.Initialized());
+                Assert.False(client.Initialized);
             }
         }
 

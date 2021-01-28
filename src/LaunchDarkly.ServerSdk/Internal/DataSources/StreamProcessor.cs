@@ -75,10 +75,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         #region IDataSource
 
-        public bool Initialized()
-        {
-            return _initialized.Get();
-        }
+        public bool Initialized => _initialized.Get();
 
         public Task<bool> Start()
         {

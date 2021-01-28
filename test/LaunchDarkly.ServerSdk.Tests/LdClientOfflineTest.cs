@@ -42,7 +42,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Logging(Components.Logging(testLogging)).Build();
             using (var client = new LdClient(config))
             {
-                Assert.True(client.Initialized());
+                Assert.True(client.Initialized);
             }
         }
 

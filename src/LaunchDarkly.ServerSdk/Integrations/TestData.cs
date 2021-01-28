@@ -863,10 +863,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 return Task.FromResult(true);
             }
 
-            public bool Initialized()
-            {
-                return true;
-            }
+            public bool Initialized => true;
 
             public void Dispose()
             {

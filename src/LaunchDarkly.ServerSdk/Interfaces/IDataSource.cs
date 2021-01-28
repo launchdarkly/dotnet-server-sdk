@@ -17,15 +17,19 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface IDataSource : IDisposable
     {
         /// <summary>
-        /// Initializes the processor. This is called once from the <see cref="LdClient"/> constructor.
+        /// Initializes the data source. This is called once from the <see cref="LdClient"/> constructor.
         /// </summary>
-        /// <returns>a <c>Task</c> which is completed once the processor has finished starting up</returns>
+        /// <returns>a <c>Task</c> which is completed once the data source has finished starting up</returns>
         Task<bool> Start();
         
         /// <summary>
-        /// Checks whether the processor has finished initializing.
+        /// Checks whether the data source has finished initializing.
         /// </summary>
-        /// <returns>true if fully initialized</returns>
-        bool Initialized();
+        /// <remarks>
+        /// This is true if it has received at least one full set of feature flag data from LaunchDarkly,
+        /// or if it is never going to do so because we are deliberately offline.
+        /// </remarks>
+        /// <value>true if fully initialized</value>
+        bool Initialized { get; }
     }
 }
