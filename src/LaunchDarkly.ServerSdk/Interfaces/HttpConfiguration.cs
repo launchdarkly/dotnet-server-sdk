@@ -69,6 +69,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// Constructs an instance, setting all properties.
         /// </summary>
+        /// <param name="connectTimeout">value for <see cref="ConnectTimeout"/></param>
+        /// <param name="defaultHeaders">value for <see cref="DefaultHeaders"/></param>
+        /// <param name="messageHandler">value for <see cref="MessageHandler"/></param>
+        /// <param name="proxy">value for <see cref="Proxy"/></param>
+        /// <param name="readTimeout">value for <see cref="ReadTimeout"/></param>
         public HttpConfiguration(
             TimeSpan connectTimeout,
             IEnumerable<KeyValuePair<string, string>> defaultHeaders,
