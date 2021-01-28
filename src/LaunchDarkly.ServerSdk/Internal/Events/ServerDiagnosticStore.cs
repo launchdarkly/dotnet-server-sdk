@@ -12,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
     {
         private readonly Configuration Config;
         private readonly BasicConfiguration BasicConfig;
-        private readonly IHttpConfiguration HttpConfig;
+        private readonly HttpConfiguration HttpConfig;
         private readonly DiagnosticEvent InitEvent;
         private readonly DiagnosticId DiagnosticId;
 
@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         DateTime IDiagnosticStore.DataSince => DateTime.FromBinary(Interlocked.Read(ref DataSince));
         #endregion
 
-        internal ServerDiagnosticStore(Configuration config, BasicConfiguration basicConfig, IHttpConfiguration httpConfig)
+        internal ServerDiagnosticStore(Configuration config, BasicConfiguration basicConfig, HttpConfiguration httpConfig)
         {
             DateTime currentTime = DateTime.Now;
             Config = config;

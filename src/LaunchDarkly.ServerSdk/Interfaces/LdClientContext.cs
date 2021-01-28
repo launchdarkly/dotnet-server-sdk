@@ -23,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <summary>
         /// The HTTP configuration for the current client instance.
         /// </summary>
-        public IHttpConfiguration Http { get; }
+        public HttpConfiguration Http { get; }
 
         internal IDiagnosticStore DiagnosticStore { get; }
 
@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
 
         internal LdClientContext(
             BasicConfiguration basic,
-            IHttpConfiguration http,
+            HttpConfiguration http,
             IDiagnosticStore diagnosticStore,
             TaskExecutor taskExecutor
             )

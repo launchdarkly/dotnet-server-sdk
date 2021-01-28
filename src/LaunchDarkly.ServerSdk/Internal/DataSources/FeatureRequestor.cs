@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         internal FeatureRequestor(LdClientContext context, Uri baseUri)
         {
-            _httpProperties = context.Http.ToHttpProperties();
+            _httpProperties = context.Http.HttpProperties;
             _httpClient = context.Http.NewHttpClient();
             _connectTimeout = context.Http.ConnectTimeout;
             _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");

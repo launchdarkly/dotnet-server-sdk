@@ -297,7 +297,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
             var eventSender = _eventSender ??
                 new DefaultEventSender(
-                    context.Http.ToHttpProperties(),
+                    context.Http.HttpProperties,
                     eventsConfig,
                     logger
                     );

@@ -48,8 +48,8 @@ namespace LaunchDarkly.Sdk.Server
         public IEventProcessorFactory EventProcessorFactory { get; }
 
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="IHttpConfiguration"/>, defining the
-        /// SDK's networking behavior.
+        /// A factory object that creates an <see cref="HttpConfiguration"/>, defining the SDK's networking
+        /// behavior.
         /// </summary>
         public IHttpConfigurationFactory HttpConfigurationFactory { get; }
 

@@ -161,8 +161,29 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IHttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration) =>
-            new HttpConfigurationImpl(this, basicConfiguration.SdkKey);
+        public HttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
+        {
+            var httpProperties = HttpProperties.Default
+                .WithAuthorizationKey(basicConfiguration.SdkKey)
+                .WithConnectTimeout(_connectTimeout)
+                .WithHttpMessageHandlerFactory(_messageHandler is null ?
+                    (Func<HttpProperties, HttpMessageHandler>)null :
+                    _ => _messageHandler)
+                .WithProxy(_proxy)
+                .WithReadTimeout(_readTimeout)
+                .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
+                .WithWrapper(_wrapperName, _wrapperVersion);
+
+            foreach (var kv in _customHeaders)
+            {
+                httpProperties = httpProperties.WithHeader(kv.Key, kv.Value);
+            }
+
+            return new HttpConfiguration(
+                httpProperties,
+                _messageHandler
+                );
+        }
 
         /// <inheritdoc/>
         public LdValue DescribeConfiguration(BasicConfiguration basic) =>
@@ -185,45 +206,5 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         private bool DetectProxyAuth() =>
             _proxy is WebProxy wp &&
             (wp.Credentials != null || wp.UseDefaultCredentials);
-
-        internal sealed class HttpConfigurationImpl : IHttpConfiguration
-        {
-            private readonly HttpProperties _httpProperties;
-
-            internal HttpProperties HttpProperties => _httpProperties;
-
-            public TimeSpan ConnectTimeout { get; }
-            public HttpMessageHandler MessageHandler { get; }
-            public IWebProxy Proxy { get; }
-            public TimeSpan ReadTimeout { get; }
-            public IEnumerable<KeyValuePair<string, string>> DefaultHeaders { get; }
-
-            internal HttpConfigurationImpl(HttpConfigurationBuilder builder, string sdkKey)
-            {
-                ConnectTimeout = builder._connectTimeout;
-                MessageHandler = builder._messageHandler;
-                Proxy = builder._proxy;
-                ReadTimeout = builder._readTimeout;
-
-                var httpProperties = HttpProperties.Default
-                    .WithAuthorizationKey(sdkKey)
-                    .WithConnectTimeout(builder._connectTimeout)
-                    .WithHttpMessageHandlerFactory(MessageHandler is null ?
-                        (Func<HttpProperties, HttpMessageHandler>)null :
-                        _ => MessageHandler)
-                    .WithProxy(builder._proxy)
-                    .WithReadTimeout(builder._readTimeout)
-                    .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
-                    .WithWrapper(builder._wrapperName, builder._wrapperVersion);
-
-                foreach (var kv in builder._customHeaders)
-                {
-                    httpProperties = httpProperties.WithHeader(kv.Key, kv.Value);
-                }
-
-                _httpProperties = httpProperties;
-                DefaultHeaders = _httpProperties.BaseHeaders;
-            }
-        }
     }
 }

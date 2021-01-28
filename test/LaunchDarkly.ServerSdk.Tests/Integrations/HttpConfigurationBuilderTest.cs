@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         private static readonly BasicConfiguration basicConfig =
             new BasicConfiguration("sdk-key", false, null);
 
-        private readonly BuilderTestUtil<HttpConfigurationBuilder, IHttpConfiguration> _tester =
+        private readonly BuilderTestUtil<HttpConfigurationBuilder, HttpConfiguration> _tester =
             BuilderTestUtil.For(() => Components.HttpConfiguration(),
                 b => b.CreateHttpConfiguration(basicConfig));
 
