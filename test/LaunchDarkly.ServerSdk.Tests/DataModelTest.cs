@@ -86,6 +86,35 @@ namespace LaunchDarkly.Sdk.Server
             var segmentWithRule = MustParseSegment(@"{""key"":""segmentkey"",""version"":1,""rules"":[ { } ]}");
             Assert.Collection(segmentWithRule.Rules, r => Assert.NotNull(r.Clauses));
         }
+        
+        [Fact]
+        public void OptionalFlagStringPropertiesAreNullable()
+        {
+            var flag1 = MustParseFlag(@"{
+                ""key"": ""flag-key"",
+                ""version"": 99,
+                ""salt"": null
+            }");
+            Assert.Null(flag1.Salt);
+
+            var flag2 = MustParseFlag(@"{
+                ""key"": ""flag-key"",
+                ""version"": 99,
+                ""rules"": [ { ""id"": null } ]
+            }");
+            Assert.Collection(flag2.Rules, r => Assert.Null(r.Id));
+        }
+
+        [Fact]
+        public void OptionalSegmentStringPropertiesAreNullable()
+        {
+            var segment1 = MustParseSegment(@"{
+                ""key"": ""segment-key"",
+                ""version"": 99,
+                ""salt"": null
+            }");
+            Assert.Null(segment1.Salt);
+        }
 
         private FeatureFlag MustParseFlag(string json)
         {

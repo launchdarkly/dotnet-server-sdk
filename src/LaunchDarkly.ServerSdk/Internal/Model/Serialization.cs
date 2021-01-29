@@ -216,7 +216,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 switch (obj.Name)
                 {
                     case var n when n == "id":
-                        id = r.String();
+                        id = r.StringOrNull();
                         break;
                     case var n when n == "variation":
                         variation = r.IntOrNull();

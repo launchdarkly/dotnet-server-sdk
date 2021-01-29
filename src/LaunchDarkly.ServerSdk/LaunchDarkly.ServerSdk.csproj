@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>6.0.0-alpha.7</Version>
+    <Version>6.0.0-alpha.9</Version>
     <TargetFrameworks>netstandard2.0;net452;net471</TargetFrameworks>
     <!-- Note: whenever we add or remove supported target frameworks, we must update ServerDiagnosticStore.GetDotNetTargetFramework() -->
     <DebugType>portable</DebugType>
@@ -30,7 +30,7 @@
     <PackageReference Include="LaunchDarkly.EventSource" Version="4.0.0-alpha.1" />
     <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.0.0-alpha.9" />
     <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.0-alpha.8" />
-    <PackageReference Include="LaunchDarkly.Logging" Version="1.0.0" />
+    <PackageReference Include="LaunchDarkly.Logging" Version="1.0.0-alpha.4" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
