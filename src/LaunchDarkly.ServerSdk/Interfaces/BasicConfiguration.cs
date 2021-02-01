@@ -16,8 +16,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// API to write log messages which will be output or discarded as appropriate by the logging
         /// framework. This is the main logger for the SDK; components that want to tag their log messages
         /// with a more specific logger name can use the <c>SubLogger</c> method: for instance, if the
-        /// base logger's name is "LaunchDarkly.Sdk.Server.LdClient", an event-processing component could
-        /// use <c>SubLogger("Events")</c> to get a logger whose name is "LaunchDarkly.Sdk.Server.LdClient.Events".
+        /// base logger's name is "LaunchDarkly.Sdk", an event-processing component could use
+        /// <c>SubLogger("Events")</c> to get a logger whose name is "LaunchDarkly.Sdk.Events".
         /// </para>
         /// <para>
         /// This property will never be null; if logging is disabled, it will be set to a stub logger

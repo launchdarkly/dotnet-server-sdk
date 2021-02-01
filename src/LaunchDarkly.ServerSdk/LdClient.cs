@@ -30,6 +30,7 @@ namespace LaunchDarkly.Sdk.Server
         private readonly IFlagTracker _flagTracker;
         internal readonly Evaluator _evaluator;
         private readonly Logger _log;
+        private readonly Logger _evalLog;
 
         #endregion
 
@@ -79,9 +80,10 @@ namespace LaunchDarkly.Sdk.Server
 
             var logConfig = (config.LoggingConfigurationFactory ?? Components.Logging())
                 .CreateLoggingConfiguration();
-            _log = logConfig.LogAdapter.Logger(LogNames.Base);
-            _log.Info("Starting LaunchDarkly Client {0}",
+            _log = logConfig.LogAdapter.Logger(logConfig.BaseLoggerName ?? LogNames.DefaultBase);
+            _log.Info("Starting LaunchDarkly client {0}",
                 AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
+            _evalLog = _log.SubLogger(LogNames.EvaluationSubLog);
 
             var basicConfig = new BasicConfiguration(config.SdkKey, config.Offline, _log);
             var httpConfig = (config.HttpConfigurationFactory ?? Components.HttpConfiguration())
@@ -119,13 +121,17 @@ namespace LaunchDarkly.Sdk.Server
 
             if (!(_dataSource is ComponentsImpl.NullDataSource))
             {
-                _log.Info("Waiting up to {0} milliseconds for LaunchDarkly client to start..",
+                _log.Info("Waiting up to {0} milliseconds for LaunchDarkly client to start...",
                     _configuration.StartWaitTime.TotalMilliseconds);
             }
 
             try
             {
-                var unused = initTask.Wait(_configuration.StartWaitTime);
+                var success = initTask.Wait(_configuration.StartWaitTime);
+                if (!success)
+                {
+                    _log.Warn("Timeout encountered waiting for LaunchDarkly client initialization");
+                }
             }
             catch (AggregateException)
             {
@@ -240,24 +246,24 @@ namespace LaunchDarkly.Sdk.Server
         {
             if (IsOffline())
             {
-                _log.Warn("AllFlagsState() was called when client is in offline mode. Returning empty state.");
+                _evalLog.Warn("AllFlagsState() called when client is in offline mode; returning empty state");
                 return new FeatureFlagsState(false);
             }
             if (!Initialized)
             {
                 if (_dataStore.Initialized())
                 {
-                    _log.Warn("AllFlagsState() called before client initialized; using last known values from data store");
+                    _evalLog.Warn("AllFlagsState() called before client initialized; using last known values from data store");
                 }
                 else
                 {
-                    _log.Warn("AllFlagsState() called before client initialized; data store unavailable, returning empty state");
+                    _evalLog.Warn("AllFlagsState() called before client initialized; data store unavailable, returning empty state");
                     return new FeatureFlagsState(false);
                 }
             }
             if (user == null || user.Key == null)
             {
-                _log.Warn("AllFlagsState() called with null user or null user key. Returning empty state");
+                _evalLog.Warn("AllFlagsState() called with null user or null user key; returning empty state");
                 return new FeatureFlagsState(false);
             }
 
@@ -293,7 +299,7 @@ namespace LaunchDarkly.Sdk.Server
                 }
                 catch (Exception e)
                 {
-                    LogHelpers.LogException(_log,
+                    LogHelpers.LogException(_evalLog,
                         string.Format("Exception caught for feature flag \"{0}\" when evaluating all flags", flag.Key),
                         e);
                     EvaluationReason reason = EvaluationReason.ErrorReason(EvaluationErrorKind.Exception);
@@ -311,11 +317,11 @@ namespace LaunchDarkly.Sdk.Server
             {
                 if (_dataStore.Initialized())
                 {
-                    _log.Warn("Flag evaluation before client initialized; using last known values from data store");
+                    _evalLog.Warn("Flag evaluation before client initialized; using last known values from data store");
                 }
                 else
                 {
-                    _log.Warn("Flag evaluation before client initialized; data store unavailable, returning default value");
+                    _evalLog.Warn("Flag evaluation before client initialized; data store unavailable, returning default value");
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.ClientNotReady));
                 }
@@ -327,7 +333,7 @@ namespace LaunchDarkly.Sdk.Server
                 featureFlag = GetFlag(featureKey);
                 if (featureFlag == null)
                 {
-                    _log.Info("Unknown feature flag {0}; returning default value",
+                    _evalLog.Info("Unknown feature flag \"{0}\"; returning default value",
                         featureKey);
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
                         featureKey, user, defaultValue, EvaluationErrorKind.FlagNotFound));
@@ -337,7 +343,7 @@ namespace LaunchDarkly.Sdk.Server
 
                 if (user == null || user.Key == null)
                 {
-                    _log.Warn("Feature flag evaluation called with null user or null user key. Returning default");
+                    _evalLog.Warn("Null user or null user key when evaluating flag \"{0}\"; returning default value", featureKey);
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
                         featureFlag, user, defaultValue, EvaluationErrorKind.UserNotSpecified));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
@@ -363,7 +369,7 @@ namespace LaunchDarkly.Sdk.Server
                 {
                     if (checkType && !defaultValue.IsNull && evalDetail.Value.Type != defaultValue.Type)
                     {
-                        _log.Error("Expected type: {0} but got {1} when evaluating FeatureFlag: {2}. Returning default",
+                        _evalLog.Error("Expected type {0} but got {1} when evaluating feature flag \"{2}\"; returning default value",
                             defaultValue.Type,
                             evalDetail.Value.Type,
                             featureKey);
@@ -382,8 +388,8 @@ namespace LaunchDarkly.Sdk.Server
             }
             catch (Exception e)
             {
-                LogHelpers.LogException(_log,
-                    string.Format("Exception when evaluating feature key \"{0}\" for user key \"{1}\"", featureKey, user.Key),
+                LogHelpers.LogException(_evalLog,
+                    string.Format("Exception when evaluating feature flag \"{0}\"", featureKey),
                     e);
                 var reason = EvaluationReason.ErrorReason(EvaluationErrorKind.Exception);
                 if (featureFlag == null)
@@ -518,7 +524,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             if (disposing) // follow standard IDisposable pattern
             {
-                _log.Info("Closing LaunchDarkly client.");
+                _log.Info("Closing LaunchDarkly client");
                 _eventProcessor.Dispose();
                 _dataStore.Dispose();
                 _dataSource.Dispose();

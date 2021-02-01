@@ -28,6 +28,16 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
+        public void CanSpecifyBaseLoggerName()
+        {
+            var logConfig1 = Components.Logging().CreateLoggingConfiguration();
+            Assert.Null(logConfig1.BaseLoggerName);
+
+            var logConfig2 = Components.Logging().BaseLoggerName("xyz").CreateLoggingConfiguration();
+            Assert.Equal("xyz", logConfig2.BaseLoggerName);
+        }
+
+        [Fact]
         public void DoesNotSetDefaultLevelForCustomAdapter()
         {
             var logCapture = Logs.Capture();

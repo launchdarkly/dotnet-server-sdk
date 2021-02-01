@@ -43,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 if (_canceller == null) // means we already started
                 {
-                    _log.Info("Starting LaunchDarkly PollingProcessor with interval: {0} milliseconds",
+                    _log.Info("Starting LaunchDarkly polling with interval: {0} milliseconds",
                         _pollInterval.TotalMilliseconds);
                     _canceller = _taskExecutor.StartRepeatingTask(TimeSpan.Zero,
                         _pollInterval, () => UpdateTaskAsync());
@@ -55,6 +55,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private async Task UpdateTaskAsync()
         {
+            _log.Info("Polling LaunchDarkly for feature flag updates");
             try
             {
                 var allData = await _featureRequestor.GetAllDataAsync();
@@ -72,7 +73,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                         if (!_initialized.GetAndSet(true))
                         {
                             _initTask.SetResult(true);
-                            _log.Info("Initialized LaunchDarkly Polling Processor.");
+                            _log.Info("First polling request successful");
                         }
                     }
                 }
@@ -130,7 +131,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             if (disposing)
             {
-                _log.Info("Stopping LaunchDarkly PollingProcessor");
                 _canceller?.Cancel();
                 _featureRequestor.Dispose();
             }

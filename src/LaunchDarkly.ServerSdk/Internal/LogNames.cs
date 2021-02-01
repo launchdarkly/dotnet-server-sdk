@@ -3,7 +3,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
 {
     internal static class LogNames
     {
-        internal const string Base = "LaunchDarkly.Sdk.Server.LdClient";
+        internal const string DefaultBase = "LaunchDarkly.Sdk";
 
         internal const string DataSourceSubLog = "DataSource";
 

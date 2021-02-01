@@ -54,8 +54,8 @@ namespace LaunchDarkly.Sdk.Server
         public IHttpConfigurationFactory HttpConfigurationFactory { get; }
 
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="ILoggingConfiguration"/>, defining
-        /// the SDK's logging configuration.
+        /// A factory object that creates a <see cref="LoggingConfiguration"/>, defining the SDK's
+        /// logging configuration.
         /// </summary>
         /// <remarks>
         /// SDK components should not use this property directly; instead, the SDK client will use it to create a

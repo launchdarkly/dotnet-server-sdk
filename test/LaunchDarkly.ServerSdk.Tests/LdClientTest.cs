@@ -45,8 +45,24 @@ namespace LaunchDarkly.Sdk.Server
             using (var client = new LdClient(config))
             {
                 Assert.True(logCapture.HasMessageWithText(LogLevel.Info,
-                    "Starting LaunchDarkly Client " + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient))),
+                    "Starting LaunchDarkly client " + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient))),
                     logCapture.ToString());
+                Assert.All(logCapture.GetMessages(), m => m.LoggerName.StartsWith(LogNames.DefaultBase));
+            }
+        }
+
+        [Fact]
+        public void CanCustomizeBaseLoggerName()
+        {
+            var customLoggerName = "abcdef";
+            var config = Configuration.Builder(sdkKey)
+                .Logging(Components.Logging(testLogging).BaseLoggerName(customLoggerName))
+                .Events(Components.NoEvents)
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.All(logCapture.GetMessages(), m => m.LoggerName.StartsWith(customLoggerName));
             }
         }
 
@@ -127,7 +143,7 @@ namespace LaunchDarkly.Sdk.Server
                     "You should only disable the streaming API if instructed to do so by LaunchDarkly support"),
                     logCapture.ToString());
                 Assert.True(logCapture.HasMessageWithRegex(LogLevel.Info,
-                    "^Starting LaunchDarkly PollingProcessor"),
+                    "^Starting LaunchDarkly polling"),
                     logCapture.ToString());
             }
         }

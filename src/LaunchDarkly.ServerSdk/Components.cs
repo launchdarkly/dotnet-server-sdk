@@ -123,6 +123,9 @@ namespace LaunchDarkly.Sdk.Server
         /// log output will show all logging levels including <c>Debug</c>.
         /// </para>
         /// <para>
+        /// For more about log adapters, see <see cref="LoggingConfigurationBuilder.Adapter(ILogAdapter)"/>.
+        /// </para>
+        /// <para>
         /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
         /// SDK reference guide</a>.
         /// </para>
@@ -137,6 +140,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="adapter">an <c>ILogAdapter</c> for the desired logging implementation</param>
         /// <returns>a configurable factory object</returns>
         /// <seealso cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
+        /// <seealso cref="LoggingConfigurationBuilder.Adapter(ILogAdapter)" />
         /// <seealso cref="Components.Logging() "/>
         /// <seealso cref="Components.NoLogging" />
         public static LoggingConfigurationBuilder Logging(ILogAdapter adapter) =>

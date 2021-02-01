@@ -55,6 +55,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             )
         {
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log.Info("Connecting to LaunchDarkly stream");
 
             _dataSourceUpdates = dataSourceUpdates;
             _httpConfig = context.Http;
@@ -107,7 +108,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             if (disposing)
             {
-                _log.Info("Stopping LaunchDarkly StreamProcessor");
                 if (_es != null)
                 {
                     _es.Close();
@@ -260,7 +260,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     if (!_initialized.GetAndSet(true))
                     {
                         _initTask.SetResult(true);
-                        _log.Info("Initialized LaunchDarkly Stream Processor.");
+                        _log.Info("LaunchDarkly streaming is active");
                     }
                     break;
 

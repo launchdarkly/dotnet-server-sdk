@@ -341,9 +341,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 }
                 else if (userValue.Type == LdValueType.Object)
                 {
-                    _parent._logger.Warn("Got unexpected user attribute type: {0} for user key: {1} and attribute: {2}",
+                    _parent._logger.Warn("Got unexpected user attribute type {0} for user attribute \"{1}\"",
                         userValue.Type,
-                        _user.Key,
                         clause.Attribute);
                     return false;
                 }
