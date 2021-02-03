@@ -7,21 +7,17 @@
     <AssemblyName>LaunchDarkly.ServerSdk</AssemblyName>
     <OutputType>Library</OutputType>
     <PackageId>LaunchDarkly.ServerSdk</PackageId>
+    <Description>LaunchDarkly Server-Side .NET SDK</Description>
+    <Authors>LaunchDarkly</Authors>
+    <Owners>LaunchDarkly</Owners>
     <Company>LaunchDarkly</Company>
     <Copyright>Copyright 2020 LaunchDarkly</Copyright>
-    <LicenseExpression>Apache-2.0</LicenseExpression>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/launchdarkly/dotnet-server-sdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/launchdarkly/dotnet-server-sdk</RepositoryUrl>
     <RepositoryBranch>master</RepositoryBranch>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <RootNamespace>LaunchDarkly.Sdk.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
