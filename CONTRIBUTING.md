@@ -38,6 +38,8 @@ To run all unit tests:
 dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj
 ```
 
+Note that the unit tests can only be run in Debug configuration. There is an `InternalsVisibleTo` directive that allows the test code to access internal members of the library, and assembly strong-naming in the Release configuration interferes with this.
+
 ## Miscellaneous
 
-Much of the implementation of this SDK is shared with the LaunchDarkly Xamarin SDK. The common code that is used by both is in the `LaunchDarkly.CommonSdk` package, whose source code is in the [`dotnet-sdk-common`](https://github.com/launchdarkly/dotnet-sdk-common) repository.
+Much of the implementation of this SDK is shared with the LaunchDarkly Xamarin SDK. The common code that is used by both is in the `LaunchDarkly.CommonSdk` package, whose source code is in the [`dotnet-sdk-common`](https://github.com/launchdarkly/dotnet-sdk-common) repository. Other support code is in [`dotnet-eventsource`](https://github.com/launchdarkly/dotnet-eventsource), [`dotnet-jsonstream`](https://github.com/launchdarkly/dotnet-jsonstream), and [`dotnet-logging`](https://github.com/launchdarkly/dotnet-logging).

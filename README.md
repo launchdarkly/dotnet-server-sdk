@@ -1,8 +1,11 @@
 # LaunchDarkly Server-Side SDK for .NET
 
-[![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-server-sdk/tree/master.svg?style=svg)](https://circleci.com/gh/launchdarkly/dotnet-server-sdk/tree/master)
+[![NuGet](https://img.shields.io/nuget/v/LaunchDarkly.ServerSdk.svg?style=flat-square)](https://www.nuget.org/packages/LaunchDarkly.ServerSdk/)
+[![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-server-sdk.svg?style=shield)](https://circleci.com/gh/launchdarkly/dotnet-server-sdk)
+[![Documentation](https://img.shields.io/static/v1?label=GitHub+Pages&message=API+reference&color=00add8)](https://launchdarkly.github.io/dotnet-server-sdk)
 
 ## LaunchDarkly overview
+
 [LaunchDarkly](https://www.launchdarkly.com) is a feature management platform that serves over 100 billion feature flags daily to help teams build better software, faster. [Get started](https://docs.launchdarkly.com/docs/getting-started) using LaunchDarkly today!
  
 [![Twitter Follow](https://img.shields.io/twitter/follow/launchdarkly.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/intent/follow?screen_name=launchdarkly)
@@ -23,7 +26,7 @@ Refer to the [SDK documentation](https://docs.launchdarkly.com/docs/dotnet-sdk-r
 
 ## Signing
 
-The published version of the `LaunchDarkly.ServerSdk` assembly is digitally signed with Authenticode and [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies). The public key file is in this repository at `LaunchDarkly.pk` as well as here:
+The published version of this assembly is digitally signed with Authenticode and [strong-named](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/strong-named-assemblies). Building the code locally in the default Debug configuration does not use strong-naming and does not require a key file. The public key file is in this repository at `LaunchDarkly.pk` as well as here:
 
 ```
 Public Key:
@@ -35,8 +38,6 @@ edc64131a9efeefd20978dc58c285aa6f548a4282fc6d871fbebeacc13160e88566f427497b625
 
 Public Key Token: f86add69004e6885
 ```
-
-Building the code locally in the default Debug configuration does not sign the assembly and does not require a key file.
 
 ## Learn more
 
@@ -65,4 +66,3 @@ We encourage pull requests and other contributions from the community. Check out
     * [docs.launchdarkly.com](https://docs.launchdarkly.com/  "LaunchDarkly Documentation") for our documentation and SDK reference guides
     * [apidocs.launchdarkly.com](https://apidocs.launchdarkly.com/  "LaunchDarkly API Documentation") for our API documentation
     * [blog.launchdarkly.com](https://blog.launchdarkly.com/  "LaunchDarkly Blog Documentation") for the latest product updates
-    * [Feature Flagging Guide](https://github.com/launchdarkly/featureflags/  "Feature Flagging Guide") for best practices and strategies
