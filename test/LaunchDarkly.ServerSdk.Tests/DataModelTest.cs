@@ -88,7 +88,7 @@ namespace LaunchDarkly.Sdk.Server
         }
         
         [Fact]
-        public void OptionalFlagStringPropertiesAreNullable()
+        public void OptionalFlagPropertiesAreNullable()
         {
             var flag1 = MustParseFlag(@"{
                 ""key"": ""flag-key"",
@@ -103,6 +103,24 @@ namespace LaunchDarkly.Sdk.Server
                 ""rules"": [ { ""id"": null } ]
             }");
             Assert.Collection(flag2.Rules, r => Assert.Null(r.Id));
+
+            // Null rollout is the same as omitting the rollout
+            var flag3 = MustParseFlag(@"{
+                ""key"": ""flag-key"",
+                ""version"": 99,
+                ""fallthrough"": { ""variation"": 0, ""rollout"": null }
+            }");
+            Assert.Null(flag3.Fallthrough.Rollout);
+
+            // Null VariationOrRollout isn't really valid, evaluation will fail (you're supposed to
+            // have either a variation or a rollout), but we should still be able to parse the flag.
+            var flag4 = MustParseFlag(@"{
+                ""key"": ""flag-key"",
+                ""version"": 99,
+                ""fallthrough"": null
+            }");
+            Assert.Null(flag4.Fallthrough.Variation);
+            Assert.Null(flag4.Fallthrough.Rollout);
         }
 
         [Fact]
