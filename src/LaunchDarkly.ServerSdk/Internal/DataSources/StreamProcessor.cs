@@ -31,15 +31,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly HttpConfiguration _httpConfig;
         private readonly TimeSpan _initialReconnectDelay;
         private readonly TaskCompletionSource<bool> _initTask;
-        private readonly EventSourceCreator _eventSourceCreator;
-        private readonly EventSource.ExponentialBackoffWithDecorrelation _backoff;
         private readonly IDiagnosticStore _diagnosticStore;
         private readonly AtomicBoolean _initialized = new AtomicBoolean(false);
         private readonly Uri _streamUri;
         private readonly bool _storeStatusMonitoringEnabled;
         private readonly Logger _log;
 
-        private volatile IEventSource _es;
+        private readonly IEventSource _es;
         private volatile bool _lastStoreUpdateFailed = false;
         internal DateTime _esStarted; // exposed for testing
 
@@ -61,10 +59,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _httpConfig = context.Http;
             _initialReconnectDelay = initialReconnectDelay;
             _diagnosticStore = context.DiagnosticStore;
-            _eventSourceCreator = eventSourceCreator ?? CreateEventSource;
             _initTask = new TaskCompletionSource<bool>();
-            _backoff = new EventSource.ExponentialBackoffWithDecorrelation(initialReconnectDelay,
-                EventSource.Configuration.MaximumRetryDuration);
             _streamUri = new Uri(baseUri, "/all");
 
             _storeStatusMonitoringEnabled = _dataSourceUpdates.DataStoreStatusProvider.StatusMonitoringEnabled;
@@ -72,6 +67,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 _dataSourceUpdates.DataStoreStatusProvider.StatusChanged += OnDataStoreStatusChanged;
             }
+
+            _es = (eventSourceCreator ?? CreateEventSource)(_streamUri, _httpConfig);
+            _es.MessageReceived += OnMessage;
+            _es.Error += OnError;
+            _es.Opened += OnOpen;
         }
 
         #region IDataSource
@@ -80,12 +80,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         public Task<bool> Start()
         {
-            _es = _eventSourceCreator(_streamUri, _httpConfig);
-
-            _es.MessageReceived += OnMessage;
-            _es.Error += OnError;
-            _es.Opened += OnOpen;
-
             Task.Run(() => {
                 _esStarted = DateTime.Now;
                 return _es.StartAsync();
@@ -108,10 +102,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             if (disposing)
             {
-                if (_es != null)
-                {
-                    _es.Close();
-                }
+                _es.Close();
                 if (_storeStatusMonitoringEnabled)
                 {
                     _dataSourceUpdates.DataStoreStatusProvider.StatusChanged -= OnDataStoreStatusChanged;
@@ -125,43 +116,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var configBuilder = EventSource.Configuration.Builder(uri)
                 .Method(HttpMethod.Get)
-                .MessageHandler(httpConfig.MessageHandler)
+                .HttpMessageHandler(httpConfig.MessageHandler)
                 .ConnectionTimeout(httpConfig.ConnectTimeout)
-                .DelayRetryDuration(_initialReconnectDelay)
+                .InitialRetryDelay(_initialReconnectDelay)
                 .ReadTimeout(LaunchDarklyStreamReadTimeout)
                 .RequestHeaders(httpConfig.DefaultHeaders.ToDictionary(kv => kv.Key, kv => kv.Value))
+                .PreferDataAsUtf8Bytes(true) // See StreamProcessorEvents
                 .Logger(_log);
             return new EventSource.EventSource(configBuilder.Build());
-        }
-
-        private void Restart()
-        {
-            TimeSpan sleepTime = _backoff.GetNextBackOff();
-            if (sleepTime != TimeSpan.Zero)
-            {
-                _log.Info("Restarting stream. Waiting {0} milliseconds before reconnecting...",
-                    sleepTime.TotalMilliseconds);
-            }
-            _es.Close();
-
-            // Everything after this point is async and done in the background - Restart returns immediately after the Close
-            _ = Task.Run(() => FinishRestart(sleepTime));
-        }
-
-        private async Task FinishRestart(TimeSpan sleepTime)
-        {
-            await Task.Delay(sleepTime);
-            try
-            {
-                _esStarted = DateTime.Now;
-                await _es.StartAsync();
-                _backoff.ResetReconnectAttemptCount();
-                _log.Info("Reconnected to LaunchDarkly stream");
-            }
-            catch (Exception ex)
-            {
-                LogHelpers.LogException(_log, null, ex);
-            }
         }
 
         private void RecordStreamInit(bool failed)
@@ -184,7 +146,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             try
             {
-                HandleMessage(e.EventName, e.Message.Data);
+                HandleMessage(e.EventName, e.Message.DataUtf8Bytes.Data);
+                // The way the PreferDataAsUtf8Bytes option works in EventSource is that if the
+                // stream really is using UTF-8 encoding, the event data is passed to us directly
+                // in Message.DataUtf8Bytes as a byte array and does not need to be converted to
+                // a string. If the stream is for some reason using a different encoding, then
+                // EventSource reads the data as a string (automatically converted by .NET from
+                // whatever the encoding was), and then calling Message.DataUtf8Bytes converts
+                // that to UTF-8 bytes.
             }
             catch (JsonReadException ex)
             {
@@ -199,7 +168,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 };
                 _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted, errorInfo);
 
-                Restart();
+                _es.Restart(false);
             }
             catch (StreamStoreException)
             {
@@ -209,14 +178,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     {
                         _log.Warn("Restarting stream to ensure that we have the latest data");
                     }
-                    Restart();
+                    _es.Restart(false);
                 }
                 _lastStoreUpdateFailed = true;
             }
             catch (Exception ex)
             {
                 LogHelpers.LogException(_log, "Unexpected error in stream processing", ex);
-                Restart();
+                _es.Restart(false);
             }
         }
 
@@ -245,7 +214,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 errorInfo);
         }
 
-        private void HandleMessage(string messageType, string messageData)
+        private void HandleMessage(string messageType, byte[] messageData)
         {
             switch (messageType)
             {
@@ -308,7 +277,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 // The store has just transitioned from unavailable to available, and we can't guarantee that
                 // all of the latest data got cached, so let's restart the stream to refresh all the data.
                 _log.Warn("Restarting stream to refresh data after data store outage");
-                Restart();
+                _es.Restart(false);
             }
         }
 

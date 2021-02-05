@@ -509,28 +509,26 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockEventSource.ResetCalls();
             action();
-            _mockEventSource.Verify(es => es.Close(), Times.Never);
-            _mockEventSource.Verify(es => es.StartAsync(), Times.Never);
+            _mockEventSource.Verify(es => es.Restart(It.IsAny<bool>()), Times.Never);
             _mockEventSource.ResetCalls();
         }
 
         private void ExpectStreamRestart(Action action)
         {
+            // The Restart call might happen asynchronously (for instance if it's triggered by a data
+            // store status change), so we can't just call Verify after action(). Instead, we'll use a
+            // callback to set a condition we can wait on.
             _mockEventSource.ResetCalls();
+            var restarted = new EventWaitHandle(false, EventResetMode.AutoReset);
+            _mockEventSource.Setup(es => es.Restart(false)).Callback(() => restarted.Set());
             action();
-
-            // Wait on the signal that our mock StartAsync method triggers, because StreamProcessor.Restart
-            // runs asynchronously so it may not have happened yet.
-            Assert.True(_esStartedReady.WaitOne(TimeSpan.FromSeconds(5)), "timed out waiting for stream restart");
-
-            _mockEventSource.Verify(es => es.Close(), Times.Once);
-            _mockEventSource.Verify(es => es.StartAsync(), Times.Once);
+            Assert.True(restarted.WaitOne(TimeSpan.FromSeconds(5)), "timed out waiting for stream restart");
             _mockEventSource.ResetCalls();
         }
 
         private void SimulateMessageReceived(string eventName, string eventData)
         {
-            var evt = new MessageReceivedEventArgs(new MessageEvent(eventData, null), eventName);
+            var evt = new MessageReceivedEventArgs(new MessageEvent(eventName, eventData, null));
             _mockEventSource.Raise(es => es.MessageReceived += null, evt);
         }
 

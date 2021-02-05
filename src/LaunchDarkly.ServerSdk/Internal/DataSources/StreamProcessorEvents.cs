@@ -8,6 +8,27 @@ using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
+    // Deserialization of stream message data is all encapsulated here, so StreamProcessor can
+    // deal with just the logical behavior of the stream and we can test this logic separately.
+    //
+    // All of the parsing methods have the following behavior:
+    //
+    // - They take the input data as a UTF-8 byte array rather than a string. This is because, on
+    // most platforms, LaunchDarkly.JsonStream uses System.Text.Json as its underlying implementation
+    // and that API is designed to operate efficiently on UTF-8 data. And because StreamProcessor sets
+    // the PreferDataAsUtf8Bytes option when creating the EventSource, if the stream's encoding
+    // really is UTF-8 (which it normally is, for the LD streaming service), the message data will
+    // be read as raw bytes and passed to us directly, without the inefficient step of convering it
+    // to a UTF-16 string.
+    //
+    // - A JsonReadException is thrown for any malformed data. That includes 1. totally invalid JSON,
+    // 2. well-formed JSON that is missing a necessary property for this message type.
+    //
+    // - For messages that have a "path" property, which might be for instance "/flags/xyz" to refer
+    // to a feature flag with the key "xyz", an unrecognized path like "/cats/Lucy" is not considered
+    // an error since it might mean LaunchDarkly now supports some new kind of data the SDK can't yet
+    // use and should ignore. In this case we simply return null in place of a DataKind.
+
     internal static class StreamProcessorEvents
     {
         private static readonly string[] _putRequiredProperties = new string[] { "data" };
@@ -100,9 +121,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        internal static PutData ParsePutData(string json)
+        internal static PutData ParsePutData(byte[] json)
         {
-            var r = JReader.FromString(json);
+            var r = JReader.FromUtf8Bytes(json);
             try
             {
                 string path = null;
@@ -158,9 +179,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        internal static PatchData ParsePatchData(string json)
+        internal static PatchData ParsePatchData(byte[] json)
         {
-            var r = JReader.FromString(json);
+            var r = JReader.FromUtf8Bytes(json);
             try
             {
                 DataKind kind = null;
@@ -192,7 +213,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 // If we got here, it means we couldn't parse the data model object yet because we saw the
                 // "data" property first. But we definitely saw both properties (otherwise we would've got
                 // an error due to using WithRequiredProperties) so kind is now non-null.
-                var r1 = JReader.FromString(json);
+                var r1 = JReader.FromUtf8Bytes(json);
                 for (var obj = r1.Object(); obj.Next(ref r1);)
                 {
                     if (obj.Name == "data")
@@ -208,9 +229,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        internal static DeleteData ParseDeleteData(string json)
+        internal static DeleteData ParseDeleteData(byte[] json)
         {
-            var r = JReader.FromString(json);
+            var r = JReader.FromUtf8Bytes(json);
             try
             {
                 DataKind kind = null;
