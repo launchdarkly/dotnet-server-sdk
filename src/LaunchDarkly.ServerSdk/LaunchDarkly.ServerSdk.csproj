@@ -25,11 +25,11 @@
 
   <ItemGroup>
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.0.0-beta.11" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.0.1" />
     <PackageReference Include="LaunchDarkly.EventSource" Version="4.0.0-alpha.5" />
-    <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.0.0-alpha.10" />
-    <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.0-alpha.8" />
-    <PackageReference Include="LaunchDarkly.Logging" Version="1.0.0" />
+    <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.0.0" />
+    <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.0" />
+    <PackageReference Include="LaunchDarkly.Logging" Version="1.0.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 

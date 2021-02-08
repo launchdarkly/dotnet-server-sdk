@@ -1,6 +1,7 @@
 ﻿using LaunchDarkly.Sdk.Server.Interfaces;
 
 using InternalEventProcessor = LaunchDarkly.Sdk.Internal.Events.EventProcessor;
+using InternalEventTypes = LaunchDarkly.Sdk.Internal.Events.EventTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
 {
@@ -13,47 +14,43 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             _impl = impl;
         }
 
-        public void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e)
-        {
-            _impl.RecordEvaluationEvent(
-                e.Timestamp,
-                e.User,
-                e.FlagKey,
-                e.FlagVersion,
-                e.Variation,
-                e.Value,
-                e.Default,
-                e.Reason,
-                e.PrerequisiteOf,
-                e.TrackEvents,
-                e.DebugEventsUntilDate
-                );
-        }
+        public void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e) =>
+            _impl.RecordEvaluationEvent(new InternalEventTypes.EvaluationEvent
+            {
+                Timestamp = e.Timestamp,
+                User = e.User,
+                FlagKey = e.FlagKey,
+                FlagVersion = e.FlagVersion,
+                Variation = e.Variation,
+                Value = e.Value,
+                Default = e.Default,
+                Reason = e.Reason,
+                PrereqOf = e.PrerequisiteOf,
+                TrackEvents = e.TrackEvents,
+                DebugEventsUntilDate = e.DebugEventsUntilDate
+            });
 
-        public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e)
-        {
-            _impl.RecordIdentifyEvent(e.Timestamp, e.User);
-        }
+        public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e) =>
+            _impl.RecordIdentifyEvent(new InternalEventTypes.IdentifyEvent
+            {
+                Timestamp = e.Timestamp,
+                User = e.User
+            });
 
-        public void RecordCustomEvent(EventProcessorTypes.CustomEvent e)
-        {
-            _impl.RecordCustomEvent(
-                e.Timestamp,
-                e.User,
-                e.EventKey,
-                e.Data,
-                e.MetricValue
-                );
-        }
+        public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) =>
+            _impl.RecordCustomEvent(new InternalEventTypes.CustomEvent
+            {
+                Timestamp = e.Timestamp,
+                User = e.User,
+                EventKey = e.EventKey,
+                Data = e.Data,
+                MetricValue = e.MetricValue
+            });
 
-        public void Flush()
-        {
+        public void Flush() =>
             _impl.Flush();
-        }
 
-        public void Dispose()
-        {
+        public void Dispose() =>
             _impl.Dispose();
-        }
     }
 }
