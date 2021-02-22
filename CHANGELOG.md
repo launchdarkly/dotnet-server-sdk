@@ -2,6 +2,60 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.0.0-beta.1] - 2021-02-22
+
+This is the first beta release of the 6.0 SDK-- a major rewrite that introduces a cleaner API design, adds new features, and makes the SDK code easier to maintain and extend. See the [.NET 5.x to 6.0 migration guide](https://docs.launchdarkly.com/sdk/server-side/dotnet/migration-5-to-6) for an in-depth look at the changes in 6.0; the following is a summary.
+
+### Added:
+- You can tell the SDK to notify you whenever a feature flag's configuration has changed (either in general, or in terms of its result for a specific user), using `LDClient.FlagTracker`.
+- You can monitor the status of the SDK's data source (which normally means the streaming connection to the LaunchDarkly service) with `LdClient.DataSourceStatusProvider`. This allows you to check the current connection status, and to be notified if this status changes.
+- You can monitor the status of a persistent data store with `LDClient.DataStoreStatusProvider`. This allows you to check whether database updates are succeeding, or to be notified if this status changes.
+- `HttpConfigurationBuilder.Proxy` allows you to specify an HTTP/HTTPS proxy server programmatically, rather than using .NET's `HTTPS_PROXY` environment variable. That was already possibly to do by specifying an `HttpClientHandler` that had a proxy; this is a shortcut for the same thing.
+- `HttpConfigurationBuilder.CustomHeader` allows you to specify custom HTTP headers that should be added to every HTTP/HTTPS request made by the SDK.
+- There is now a `DoubleVariation` method for getting a numeric flag value as the `double` type (as opposed to `FloatVariation` which returns a `float`).
+- The `Alias` method of `LdClient` is a new LaunchDarkly feature for associating two user keys with each other in analytics data.
+- The `TestData` class in `LaunchDarkly.Sdk.Server.Integrations` is a new way to inject feature flag data programmatically into the SDK for testing—either with fixed values for each flag, or with targets and/or rules that can return different values for different users. Unlike `FileData`, this mechanism does not use any external resources, only the data that your test code has provided.
+- `ConfigurationBuilder.Logging` is a new configuration category for options related to logging. This includes a new mechanism for specifying where log output should be sent, instead of using the `Common.Logging` framework to configure this.
+- `LoggingConfigurationBuilder.LogDataSourceOutageAsErrorAfter` controls the new connection failure logging behavior described below under "behavioral changes".
+- The `LaunchDarkly.Sdk.Json` namespace provides methods for converting types like `User` and `FeatureFlagsState` to and from JSON.
+- The `LaunchDarkly.Sdk.UserAttribute` type provides a less error-prone way to refer to user attribute names in configuration, and can also be used to get an arbitrary attribute from a user.
+- The `LaunchDarkly.Sdk.UnixMillisecondTime` type provides convenience methods for converting to and from the Unix epoch millisecond time format that LaunchDarkly uses for all timestamp values.
+ 
+### Changed (requirements/dependencies/build):
+- The SDK's build targets are now .NET Standard 2.0 and .NET Framework 4.5.2. This means it can be used in applications that run on .NET Core 2.1 and above, .NET Framework 4.5.2 and above, .NET 5.0 and above, or in a portable library that is targeted to .NET Standard 2.0 and above.
+- The SDK no longer has a dependency on `Common.Logging`. Instead, it uses a similar but simpler logging facade, the [`LaunchDarkly.Logging`](https://github.com/launchdarkly/dotnet-logging) package, which has adapters for various logging destinations.
+- The SDK no longer has a dependency on `Newtonsoft.Json`. It uses the `System.Text.Json` API internally on platforms where that is available; on others, such as .NET Framework 4.5.x, it uses a lightweight custom implementation. This removes the potential for dependency version conflicts in applications that use `Newtonsoft.Json` for their own purposes. Converting data types like `User` and `LdValue` to and from JSON with `System.Text.Json` will always work; converting them with `Newtonsoft.Json` requires an extra package, [`LaunchDarkly.CommonSdk.JsonNet`](https://github.com/launchdarkly/dotnet-sdk-common/tree/master/src/LaunchDarkly.CommonSdk.JsonNet).
+- The SDK's dependencies for its own implementation details are now `LaunchDarkly.CommonSdk`, `LaunchDarkly.EventSource`, `LaunchDarkly.InternalSdk`, and `LaunchDarkly.JsonStream`. You should not need to reference these assemblies directly, as they are loaded automatically when you install the main NuGet package `LaunchDarkly.ServerSdk`. Previously there was also a variant called `LaunchDarkly.CommonSdk.StrongName` that was used by the release build of the SDK, but that has been removed.
+ 
+### Changed (API changes):
+- The base namespace has changed: types that were previously in `LaunchDarkly.Client` are now in either `LaunchDarkly.Sdk` or `LaunchDarkly.Sdk.Server`. The `LaunchDarkly.Sdk` namespace contains types that are not specific to the _server-side_ .NET SDK (that is, they will also be used by the Xamarin SDK): `EvaluationDetail`, `LdValue`, `User`, and `UserBuilder`. Types that are specific to the server-side .NET SDK, such as `Configuration` and `LdClient, are in `LaunchDarkly.Sdk.Server`.
+- Many properties have been moved out of `ConfigurationBuilder`, into sub-builders that are specific to one are of functionality (such as streaming, or analytics events). See `ConfigurationBuilder` and `Components`.
+- `User` and `Configuration` objects are now immutable. To specify properties for these classes, you must now use `User.Builder` and `Configuration.Builder`.
+- The following things now use the type `LdValue` instead of `JToken`: custom attribute values in `User.Custom`; JSON flag variations returned by `JsonVariation`, `JsonVariationDetail`, and `AllFlags`; the optional data parameter of `LdClient.Track`.
+- `EvaluationReason` is now a single struct type rather than a base class.
+- `LaunchDarkly.Client.Files.FileComponents` has been moved to `LaunchDarkly.Sdk.Server.Integrations.FileData`.
+- `LdClient.Initialized` is now a read-only property rather than a method.
+- Interfaces for creating custom components, such as `IFeatureStore`, now have a new namespace (`LaunchDarkly.Sdk.Server.Interfaces`), new names, and somewhat different semantics due to changes in the SDK's internal architecture. Any existing custom component implementations will need to be revised to work with .NET SDK 5.x.
+- The `ILdClient` interface is now in `LaunchDarkly.Sdk.Server.Interfaces` instead of the main namespace.
+- The `IConfigurationBuilder` interface has been replaced by the concrete class `ConfigurationBuilder`.
+
+### Changed (behavioral changes):
+- In streaming mode, the SDK will now drop and restart the stream connection if either 1. it receives malformed data (indicating that some data may have been lost before reaching the application) or 2. you are using a database integration (a persistent data store) and a database error happens while trying to store the received data. In both cases, the intention is to make sure updates from LaunchDarkly are not lost; restarting the connection causes LaunchDarkly to re-send the entire flag data set. This makes the .NET SDK's behavior consistent with other LaunchDarkly server-side SDKs.
+- However, if you have set the caching behavior to "cache forever" (see `PersistentDataStoreConfiguration`), the stream will _not_ restart after a database error; instead, all updates will still be accumulated in the cache, and will be written to the database automatically if the database becomes available again.
+- Logging now uses a simpler, more stable set of logger names instead of using the names of specific implementation classes that are subject to change. General messages are logged under `LaunchDarkly.Sdk.Server.LdClient`, while messages about specific areas of functionality are logged under that name plus `.DataSource` (streaming, polling, file data, etc.), `.DataStore` (database integrations), `.Evaluation` (unexpected errors during flag evaluations), or `.Events` (analytics event processing).
+- Network failures and server errors for streaming or polling requests were previously logged at `Error` level in most cases but sometimes at `Warn` level. They are now all at `Warn` level, but with a new behavior: if connection failures continue without a successful retry for a certain amount of time, the SDK will log a special `Error`-level message to warn you that this is not just a brief outage. The amount of time is one minute by default, but can be changed with the new `LogDataSourceOutageAsErrorAfter` option in `LoggingConfigurationBuilder`.
+- Many internal methods have been rewritten to reduce the number of heap allocations in general.
+- Evaluation of rules involving regex matches, date/time values, and semantic versions, has been speeded up by pre-parsing the values in the rules.
+- Evaluation of rules involving an equality match to multiple values (such as "name is one of X, Y, Z") has been speeded up by converting the list of values to a set.
+- If analytics events are disabled with `Components.NoEvents`, the SDK now avoids generating any analytics event objects internally. Previously they were created and then discarded, causing unnecessary heap churn.
+- When accessing a floating-point flag value with `IntVariation`, it will now truncate (round toward zero) rather than rounding to the nearest integer. This is consistent with normal C# behavior and with most other LaunchDarkly SDKs.
+ 
+### Fixed:
+- If an unexpected exception occurred while evaluating one clause in a flag rule, the SDK was simply ignoring the clause. For consistency with the other SDKs, it now treats this as a failed evaluation.
+ 
+### Removed:
+- All types and methods that were deprecated as of the last .NET SDK 5.x release have been removed. This includes many `ConfigurationBuilder` methods, which have been replaced by the modular configuration syntax that was already added in the 5.14.0 release. See the migration guide for details on how to update your configuration code if you were using the older syntax.
+
 ## [5.14.0] - 2021-01-26
 The purpose of this release is to introduce newer APIs for configuring the SDK, corresponding to how configuration will work in the upcoming 6.0 release. These are very similar to the configuration APIs in the recent 5.x releases of the LaunchDarkly server-side Java and Go SDKs.
 
