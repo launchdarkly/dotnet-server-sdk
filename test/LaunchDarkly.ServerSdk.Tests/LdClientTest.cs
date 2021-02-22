@@ -1,217 +1,284 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using LaunchDarkly.Client;
-using LaunchDarkly.Common;
+using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.DataSources;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Moq;
-using Newtonsoft.Json.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
-namespace LaunchDarkly.Tests
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+
+namespace LaunchDarkly.Sdk.Server
 {
     // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
-    public class LdClientTest
+    public class LdClientTest : BaseTest
     {
-#pragma warning disable 0612
-#pragma warning disable 0618
-        private Mock<IUpdateProcessor> mockUpdateProcessor;
-        private IUpdateProcessor updateProcessor;
-        private Task<bool> initTask;
+        private const string sdkKey = "SDK_KEY";
 
-        public LdClientTest()
+        private readonly Mock<IDataSource> mockDataSource;
+        private readonly IDataSource dataSource;
+        private readonly Task<bool> initTask;
+
+        public LdClientTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            mockUpdateProcessor = new Mock<IUpdateProcessor>();
-            updateProcessor = mockUpdateProcessor.Object;
+            mockDataSource = new Mock<IDataSource>();
+            dataSource = mockDataSource.Object;
             initTask = Task.FromResult(true);
-            mockUpdateProcessor.Setup(up => up.Start()).Returns(initTask);
+            mockDataSource.Setup(up => up.Start()).Returns(initTask);
         }
-        
+
         [Fact]
-        public void ClientHasDefaultEventProcessorByDefault()
+        public void ClientStartupMessage()
         {
-            var config = Configuration.Builder("SDK_KEY")
-                .DataSource(Components.ExternalUpdatesOnly)
+            var config = Configuration.Builder(sdkKey)
+                .Logging(Components.Logging(testLogging))
+                .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<DefaultEventProcessor>(client._eventProcessor);
+                Assert.True(logCapture.HasMessageWithText(LogLevel.Info,
+                    "Starting LaunchDarkly client " + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient))),
+                    logCapture.ToString());
+                Assert.All(logCapture.GetMessages(), m => m.LoggerName.StartsWith(LogNames.DefaultBase));
+            }
+        }
+
+        [Fact]
+        public void CanCustomizeBaseLoggerName()
+        {
+            var customLoggerName = "abcdef";
+            var config = Configuration.Builder(sdkKey)
+                .Logging(Components.Logging(testLogging).BaseLoggerName(customLoggerName))
+                .Events(Components.NoEvents)
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.All(logCapture.GetMessages(), m => m.LoggerName.StartsWith(customLoggerName));
+            }
+        }
+
+        [Fact]
+        public void ClientHasDefaultEventProcessorByDefault()
+        {
+            var config = Configuration.Builder(sdkKey)
+                .DataSource(Components.ExternalUpdatesOnly)
+                .StartWaitTime(TimeSpan.Zero)
+                .DiagnosticOptOut(true)
+                .Logging(Components.Logging(testLogging))
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<DefaultEventProcessorWrapper>(client._eventProcessor);
             }
         }
 
         [Fact]
         public void StreamingClientHasStreamProcessor()
         {
-            var config = Configuration.Builder("SDK_KEY")
+            var config = Configuration.Builder(sdkKey)
+                .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
+                .Events(Components.NoEvents)
+                .StartWaitTime(TimeSpan.Zero)
+                .Logging(Components.Logging(testLogging))
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<StreamProcessor>(client._dataSource);
+            }
+        }
+
+        [Fact]
+        public void StreamingClientStartupMessage()
+        {
+            var config = Configuration.Builder(sdkKey)
+                .Logging(Components.Logging(testLogging))
                 .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<StreamProcessor>(client._updateProcessor);
-            }
-        }
-
-        [Fact]
-        public void StreamingClientHasStreamProcessorWithDeprecatedProperties()
-        {
-            var config = Configuration.Builder("SDK_KEY")
-                .Events(Components.NoEvents)
-                .StreamUri(new Uri("http://fake"))
-                .StartWaitTime(TimeSpan.Zero)
-                .Build();
-            using (var client = new LdClient(config))
-            {
-                Assert.IsType<StreamProcessor>(client._updateProcessor);
+                Assert.False(logCapture.HasMessageWithText(LogLevel.Warn,
+                    "You should only disable the streaming API if instructed to do so by LaunchDarkly support"),
+                    logCapture.ToString());
             }
         }
 
         [Fact]
         public void PollingClientHasPollingProcessor()
         {
-            var config = Configuration.Builder("SDK_KEY")
+            var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .Events(Components.NoEvents)
                 .StartWaitTime(TimeSpan.Zero)
+                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<PollingProcessor>(client._updateProcessor);
+                Assert.IsType<PollingProcessor>(client._dataSource);
             }
         }
 
         [Fact]
-        public void PollingClientHasPollingProcessorWithDeprecatedProperties()
+        public void PollingClientStartupMessage()
         {
-            var config = Configuration.Builder("SDK_KEY")
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+            var config = Configuration.Builder(sdkKey)
+                .Logging(Components.Logging(testLogging))
+                .Events(Components.NoEvents)
+                .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
                 .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<PollingProcessor>(client._updateProcessor);
+                Assert.True(logCapture.HasMessageWithText(LogLevel.Warn,
+                    "You should only disable the streaming API if instructed to do so by LaunchDarkly support"),
+                    logCapture.ToString());
+                Assert.True(logCapture.HasMessageWithRegex(LogLevel.Info,
+                    "^Starting LaunchDarkly polling"),
+                    logCapture.ToString());
             }
         }
 
         [Fact]
-        public void DiagnosticStorePassedToFactoriesWhenSupported()
+        public void DiagnosticStorePassedToFactories()
         {
-            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
-            var upfwd = new Mock<IUpdateProcessorFactoryWithDiagnostics>();
-            var config = Configuration.Builder("SDK_KEY")
+            var epf = new Mock<IEventProcessorFactory>();
+            var dsf = new Mock<IDataSourceFactory>();
+            var config = Configuration.Builder(sdkKey)
+                .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
-                .Events(epfwd.Object)
-                .DataSource(upfwd.Object)
+                .Events(epf.Object)
+                .DataSource(dsf.Object)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             IDiagnosticStore eventProcessorDiagnosticStore = null;
-            IDiagnosticStore updateProcessorDiagnosticStore = null;
+            IDiagnosticStore dataSourceDiagnosticStore = null;
 
-            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
-                .Callback<Configuration, IDiagnosticStore>((c, ds) => eventProcessorDiagnosticStore = ds)
-                .Returns(Components.NoEvents.CreateEventProcessor(config));
-            upfwd.Setup(upf => upf.CreateUpdateProcessor(config, It.IsAny<IFeatureStore>(), It.IsAny<IDiagnosticStore>()))
-                .Callback<Configuration, IFeatureStore, IDiagnosticStore>((c, fs, ds) => updateProcessorDiagnosticStore = ds)
-                .Returns(updateProcessor);
+            epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
+                .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
+                .Returns(new ComponentsImpl.NullEventProcessor());
+            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataSourceUpdates>()))
+                .Callback((LdClientContext ctx, IDataSourceUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx, IDataSourceUpdates dsu) => dataSource);
 
             using (var client = new LdClient(config))
             {
-                epfwd.Verify(epf => epf.CreateEventProcessor(config, It.IsNotNull<IDiagnosticStore>()), Times.Once());
-                epfwd.VerifyNoOtherCalls();
-                upfwd.Verify(upf => upf.CreateUpdateProcessor(config, It.IsNotNull<IFeatureStore>(), It.IsNotNull<IDiagnosticStore>()), Times.Once());
-                upfwd.VerifyNoOtherCalls();
-                Assert.True(eventProcessorDiagnosticStore == updateProcessorDiagnosticStore);
+                epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
+                epf.VerifyNoOtherCalls();
+                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataSourceUpdates>()), Times.Once());
+                dsf.VerifyNoOtherCalls();
+                Assert.NotNull(eventProcessorDiagnosticStore);
+                Assert.Same(eventProcessorDiagnosticStore, dataSourceDiagnosticStore);
             }
         }
 
         [Fact]
         public void DiagnosticStoreNotPassedToFactoriesWhenOptedOut()
         {
-            var epfwd = new Mock<IEventProcessorFactoryWithDiagnostics>();
-            var upfwd = new Mock<IUpdateProcessorFactoryWithDiagnostics>();
-            var config = Configuration.Builder("SDK_KEY")
-                .IsStreamingEnabled(false)
-                .BaseUri(new Uri("http://fake"))
+            var epf = new Mock<IEventProcessorFactory>();
+            var dsf = new Mock<IDataSourceFactory>();
+            var config = Configuration.Builder(sdkKey)
+                .DataSource(Components.ExternalUpdatesOnly)
                 .StartWaitTime(TimeSpan.Zero)
-                .EventProcessorFactory(epfwd.Object)
-                .UpdateProcessorFactory(upfwd.Object)
+                .Events(epf.Object)
+                .DataSource(dsf.Object)
                 .DiagnosticOptOut(true)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
-            epfwd.Setup(epf => epf.CreateEventProcessor(config, It.IsAny<IDiagnosticStore>()))
-                .Returns(Components.NullEventProcessor.CreateEventProcessor(config));
-            upfwd.Setup(upf => upf.CreateUpdateProcessor(config, It.IsAny<IFeatureStore>(), It.IsAny<IDiagnosticStore>()))
-                .Returns(updateProcessor);
+            IDiagnosticStore eventProcessorDiagnosticStore = null;
+            IDiagnosticStore dataSourceDiagnosticStore = null;
+
+            epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
+                .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
+                .Returns(new ComponentsImpl.NullEventProcessor());
+            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataSourceUpdates>()))
+                .Callback((LdClientContext ctx, IDataSourceUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx, IDataSourceUpdates dsu) => dataSource);
 
             using (var client = new LdClient(config))
             {
-                epfwd.Verify(epf => epf.CreateEventProcessor(config, null), Times.Once());
-                epfwd.VerifyNoOtherCalls();
-                upfwd.Verify(upf => upf.CreateUpdateProcessor(config, It.IsNotNull<IFeatureStore>(), null), Times.Once());
-                upfwd.VerifyNoOtherCalls();
+                epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
+                epf.VerifyNoOtherCalls();
+                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataSourceUpdates>()), Times.Once());
+                dsf.VerifyNoOtherCalls();
+                Assert.Null(eventProcessorDiagnosticStore);
+                Assert.Null(dataSourceDiagnosticStore);
             }
         }
 
         [Fact]
-        public void NoWaitForUpdateProcessorIfWaitMillisIsZero()
+        public void NoWaitForDataSourceIfWaitMillisIsZero()
         {
-            mockUpdateProcessor.Setup(up => up.Initialized()).Returns(true);
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
+            mockDataSource.Setup(up => up.Initialized).Returns(true);
+            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
+                .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
             {
-                Assert.True(client.Initialized());
+                Assert.True(client.Initialized);
             }
         }
         
         [Fact]
-        public void UpdateProcessorCanTimeOut()
+        public void DataSourceCanTimeOut()
         {
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.FromMilliseconds(10))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
+            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.FromMilliseconds(10))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
+                .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
             {
-                Assert.False(client.Initialized());
+                Assert.False(client.Initialized);
             }
         }
 
         [Fact]
-        public void ExceptionFromUpdateProcessorTaskDoesNotCauseExceptionInInit()
+        public void ExceptionFromDataSourceTaskDoesNotCauseExceptionInInit()
         {
             TaskCompletionSource<bool> errorTaskSource = new TaskCompletionSource<bool>();
-            mockUpdateProcessor.Setup(up => up.Start()).Returns(errorTaskSource.Task);
+            mockDataSource.Setup(up => up.Start()).Returns(errorTaskSource.Task);
             errorTaskSource.SetException(new Exception("bad"));
-            var config = Configuration.Builder("SDK_KEY")
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
+            var config = Configuration.Builder(sdkKey)
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
+                .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
             {
-                Assert.False(client.Initialized());
+                Assert.False(client.Initialized);
             }
         }
 
         [Fact]
-        public void EvaluationReturnsDefaultValueIfNeitherClientNorFeatureStoreIsInited()
+        public void EvaluationReturnsDefaultValueIfNeitherClientNorDataStoreIsInited()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
+            var dataStore = new InMemoryDataStore();
+            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(1)).Build();
+            TestUtils.UpsertFlag(dataStore, flag);
+            // note, the store is still not inited
 
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
+            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
+                .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -221,17 +288,18 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void EvaluationUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
+        public void EvaluationUsesDataStoreIfClientIsNotInitedButStoreIsInited()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
+            var dataStore = new InMemoryDataStore();
+            dataStore.Init(FullDataSet<ItemDescriptor>.Empty());
+            var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(1)).Build();
+            TestUtils.UpsertFlag(dataStore, flag);
 
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
+            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
+                .DataStore(TestUtils.SpecificDataStore(dataStore))
+                .DataSource(TestUtils.SpecificDataSource(dataSource))
+                .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -239,138 +307,37 @@ namespace LaunchDarkly.Tests
                 Assert.Equal(1, client.IntVariation("key", User.WithKey("user"), 0));
             }
         }
-
-        [Fact]
-        public void AllFlagsReturnsNullIfNeitherClientNorFeatureStoreIsInited()
-        {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag); // but the store is still not inited
-
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
-                .Build();
-
-            using (var client = new LdClient(config))
-            {
-                Assert.Null(client.AllFlags(User.WithKey("user")));
-            }
-        }
         
         [Fact]
-        public void AllFlagsUsesFeatureStoreIfClientIsNotInitedButStoreIsInited()
+        public void DataSetIsPassedToDataStoreInCorrectOrder()
         {
-            var featureStore = TestUtils.InMemoryFeatureStore();
-            featureStore.Init(new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>());
-            var flag = new FeatureFlagBuilder("key").OffWithValue(new JValue(1)).Build();
-            featureStore.Upsert(VersionedDataKind.Features, flag);
+            // The underlying functionality here is also covered in DataStoreSorterTest, but we want to verify that the
+            // client object is actually *using* DataStoreSorter.
 
-            var config = Configuration.Builder("SDK_KEY").StartWaitTime(TimeSpan.Zero)
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(featureStore))
-                .UpdateProcessorFactory(TestUtils.SpecificUpdateProcessor(updateProcessor))
-                .EventProcessorFactory(Components.NullEventProcessor)
-                .Build();
-
-            using (var client = new LdClient(config))
-            {
-                IDictionary<string, JToken> result = client.AllFlags(User.WithKey("user"));
-                Assert.NotNull(result);
-                Assert.Equal(new JValue(1), result["key"]);
-            }
-        }
-
-        [Fact]
-        public void DataSetIsPassedToFeatureStoreInCorrectOrder()
-        {
-            var mockStore = new Mock<IFeatureStore>();
+            var mockStore = new Mock<IDataStore>();
             var store = mockStore.Object;
-            IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> receivedData = null;
+            FullDataSet<ItemDescriptor> receivedData = new FullDataSet<ItemDescriptor>();
 
-            mockStore.Setup(s => s.Init(It.IsAny<IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>>()))
-                .Callback((IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>> data) => {
+            mockStore.Setup(s => s.Init(It.IsAny<FullDataSet<ItemDescriptor>>()))
+                .Callback((FullDataSet<ItemDescriptor> data) => {
                     receivedData = data;
                 });
 
-            mockUpdateProcessor.Setup(up => up.Start()).Returns(initTask);
+            mockDataSource.Setup(up => up.Start()).Returns(initTask);
 
-            var config = Configuration.Builder("SDK_KEY")
-                .FeatureStoreFactory(TestUtils.SpecificFeatureStore(store))
-                .UpdateProcessorFactory(TestUtils.UpdateProcessorWithData(DependencyOrderingTestData))
-                .EventProcessorFactory(Components.NullEventProcessor)
+            var config = Configuration.Builder(sdkKey)
+                .DataStore(TestUtils.SpecificDataStore(store))
+                .DataSource(TestUtils.DataSourceWithData(DataStoreSorterTest.DependencyOrderingTestData))
+                .Events(Components.NoEvents)
+                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
             {
                 Assert.NotNull(receivedData);
-                var entries = new List<KeyValuePair<IVersionedDataKind, IDictionary<string, IVersionedData>>>(
-                    receivedData);
-                Assert.Equal(DependencyOrderingTestData.Count, entries.Count);
-
-                // Segments should always come first
-                Assert.Equal(VersionedDataKind.Segments, entries[0].Key);
-                Assert.Equal(DependencyOrderingTestData[VersionedDataKind.Segments].Count,
-                    entries[0].Value.Count);
-
-                // Features should be ordered so that a flag always appears after its prerequisites, if any
-                Assert.Equal(VersionedDataKind.Features, entries[1].Key);
-                Assert.Equal(DependencyOrderingTestData[VersionedDataKind.Features].Count,
-                    entries[1].Value.Count);
-                var flagsMap = entries[1].Value;
-                var orderedItems = new List<IVersionedData>(flagsMap.Values);
-                for (var itemIndex = 0; itemIndex < orderedItems.Count; itemIndex++)
-                {
-                    var item = orderedItems[itemIndex] as FeatureFlag;
-                    foreach (var prereq in item.Prerequisites)
-                    {
-                        var depFlag = flagsMap[prereq.Key];
-                        var depIndex = orderedItems.IndexOf(depFlag);
-                        if (depIndex > itemIndex)
-                        {
-                            var allKeys = from i in orderedItems select i.Key;
-                            Assert.True(false, String.Format("{0} depends on {1}, but {0} was listed first; keys in order are [{2}]",
-                                item.Key, prereq.Key, String.Join(", ", allKeys)));
-                        }
-                    }
-                }
+                DataStoreSorterTest.VerifyDataSetOrder(receivedData, DataStoreSorterTest.DependencyOrderingTestData,
+                    DataStoreSorterTest.ExpectedOrderingForSortedDataSet);
             }
         }
-
-        private static readonly IDictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>
-            DependencyOrderingTestData = new Dictionary<IVersionedDataKind, IDictionary<string, IVersionedData>>()
-        {
-            {
-                VersionedDataKind.Features,
-                new Dictionary<string, IVersionedData>()
-                {
-                    { "a", new FeatureFlagBuilder("a")
-                        .Prerequisites(new List<Prerequisite>() {
-                            new Prerequisite("b", 0),
-                            new Prerequisite("c", 0),
-                            })
-                        .Build() },
-                    { "b", new FeatureFlagBuilder("b")
-                        .Prerequisites(new List<Prerequisite>() {
-                            new Prerequisite("c", 0),
-                            new Prerequisite("e", 0),
-                            })
-                        .Build() },
-                    { "c", new FeatureFlagBuilder("c").Build() },
-                    { "d", new FeatureFlagBuilder("d").Build() },
-                    { "e", new FeatureFlagBuilder("e").Build() },
-                    { "f", new FeatureFlagBuilder("f").Build() }
-                }
-            },
-            {
-                VersionedDataKind.Segments,
-                new Dictionary<string, IVersionedData>()
-                {
-                    { "o", new Segment("o", 1, null, null, null, null, false) }
-                }
-            }
-        };
-#pragma warning restore 0618
-#pragma warning restore 0612
     }
 }

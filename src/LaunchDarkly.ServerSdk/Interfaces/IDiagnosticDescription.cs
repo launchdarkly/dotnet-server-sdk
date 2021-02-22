@@ -1,5 +1,5 @@
 ﻿
-namespace LaunchDarkly.Client.Interfaces
+namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Optional interface for components to describe their own configuration.
@@ -7,7 +7,7 @@ namespace LaunchDarkly.Client.Interfaces
     /// <remarks>
     /// <para>
     /// The SDK uses a simplified JSON representation of its configuration when recording diagnostics data.
-    /// Any class that implements <see cref="IFeatureStoreFactory"/>, <see cref="IUpdateProcessorFactory"/>,
+    /// Any class that implements <see cref="IDataStoreFactory"/>, <see cref="IDataSourceFactory"/>,
     /// <see cref="IEventProcessorFactory"/>, or <see cref="IPersistentDataStoreFactory"/> may choose to
     /// contribute values to this representation, although the SDK may or may not use them.
     /// </para>
@@ -24,8 +24,8 @@ namespace LaunchDarkly.Client.Interfaces
         /// Called internally by the SDK to inspect the configuration. Applications do not need to call
         /// this method.
         /// </summary>
-        /// <param name="config">the global configuration of the SDK</param>
+        /// <param name="basic">the basic global configuration of the SDK</param>
         /// <returns>a JSON value</returns>
-        LdValue DescribeConfiguration(Configuration config);
+        LdValue DescribeConfiguration(BasicConfiguration basic);
     }
 }

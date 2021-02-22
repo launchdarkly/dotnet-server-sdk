@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Client.Utils;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 
-namespace LaunchDarkly.Client.Integrations
+namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
     /// A configurable data store factory that adds caching behavior to a persistent data
@@ -18,23 +18,23 @@ namespace LaunchDarkly.Client.Integrations
     /// <see cref="Components.PersistentDataStore(IPersistentDataStoreFactory)"/>. Example usage:
     /// </para>
     /// <code>
-    ///     var myStore = Components.PersistentDataStore(Redis.DataStore())
-    ///         .CacheSeconds(45);
+    ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
+    ///         .CacheTtl(TimeSpan.FromSeconds(45));
     ///     var config = Configuration.Builder(sdkKey)
     ///         .DataStore(myStore)
     ///         .Build();
     /// </code>
     /// </remarks>
-    public class PersistentDataStoreBuilder : IFeatureStoreFactory, IDiagnosticDescription
+    public class PersistentDataStoreBuilder : IDataStoreFactory, IDiagnosticDescription
     {
         private readonly IPersistentDataStoreFactory _coreFactory;
         private readonly IPersistentDataStoreAsyncFactory _coreAsyncFactory;
-        private FeatureStoreCacheConfig _cacheConfig = FeatureStoreCacheConfig.Enabled;
+        private DataStoreCacheConfig _cacheConfig = DataStoreCacheConfig.Enabled;
 
         /// <summary>
         /// The default cache expiration time.
         /// </summary>
-        public static readonly TimeSpan DefaultTtl = FeatureStoreCacheConfig.DefaultTtl;
+        public static readonly TimeSpan DefaultTtl = DataStoreCacheConfig.DefaultTtl;
 
         internal PersistentDataStoreBuilder(IPersistentDataStoreFactory coreFactory)
         {
@@ -133,24 +133,41 @@ namespace LaunchDarkly.Client.Integrations
         public PersistentDataStoreBuilder CacheForever() => CacheTime(Timeout.InfiniteTimeSpan);
 
         /// <inheritdoc/>
-        public IFeatureStore CreateFeatureStore()
+        public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
         {
-            var builder = _coreFactory != null ?
-                CachingStoreWrapper.Builder(_coreFactory.CreatePersistentDataStore()) :
-                CachingStoreWrapper.Builder(_coreAsyncFactory.CreatePersistentDataStore());
-            return builder.WithCaching(_cacheConfig).Build();
+            if (_coreFactory != null)
+            {
+                return new PersistentStoreWrapper(
+                    _coreFactory.CreatePersistentDataStore(context),
+                    _cacheConfig,
+                    dataStoreUpdates,
+                    context.TaskExecutor,
+                    context.Basic.Logger
+                    );
+            }
+            else if (_coreAsyncFactory != null)
+            {
+                return new PersistentStoreWrapper(
+                    _coreAsyncFactory.CreatePersistentDataStore(context),
+                    _cacheConfig,
+                    dataStoreUpdates,
+                    context.TaskExecutor,
+                    context.Basic.Logger
+                    );
+            }
+            return null;
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(Configuration config)
+        public LdValue DescribeConfiguration(BasicConfiguration basic)
         {
             if (_coreFactory != null && _coreFactory is IDiagnosticDescription dd1)
             {
-                return dd1.DescribeConfiguration(config);
+                return dd1.DescribeConfiguration(basic);
             }
             if (_coreAsyncFactory != null && _coreAsyncFactory is IDiagnosticDescription dd2)
             {
-                return dd2.DescribeConfiguration(config);
+                return dd2.DescribeConfiguration(basic);
             }
             return LdValue.Of("custom");
         }

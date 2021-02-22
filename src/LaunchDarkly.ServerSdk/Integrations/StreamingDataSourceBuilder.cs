@@ -1,8 +1,8 @@
 ﻿using System;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataSources;
 
-namespace LaunchDarkly.Client.Integrations
+namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
     /// Contains methods for configuring the streaming data source.
@@ -12,7 +12,7 @@ namespace LaunchDarkly.Client.Integrations
     /// By default, the SDK uses a streaming connection to receive feature flag data from LaunchDarkly. If you want
     /// to customize the behavior of the connection, create a builder with <see cref="Components.StreamingDataSource"/>,
     /// change its properties with the methods of this class, and pass it to
-    /// <see cref="ConfigurationBuilder.DataSource(IUpdateProcessorFactory)"/>.
+    /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
     /// </para>
     /// <para>
     /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
@@ -27,7 +27,7 @@ namespace LaunchDarkly.Client.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public class StreamingDataSourceBuilder : IUpdateProcessorFactory, IUpdateProcessorFactoryWithDiagnostics, IDiagnosticDescription
+    public sealed class StreamingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {
         internal static readonly Uri DefaultBaseUri = new Uri("https://stream.launchdarkly.com");
 
@@ -38,7 +38,7 @@ namespace LaunchDarkly.Client.Integrations
 
         internal Uri _baseUri = DefaultBaseUri;
         internal TimeSpan _initialReconnectDelay = DefaultInitialReconnectDelay;
-        internal StreamManager.EventSourceCreator _eventSourceCreator = null;
+        internal StreamProcessor.EventSourceCreator _eventSourceCreator = null;
 
         /// <summary>
         /// Sets a custom base URI for the streaming service.
@@ -89,29 +89,26 @@ namespace LaunchDarkly.Client.Integrations
         }
 
         // Exposed for testing
-        internal StreamingDataSourceBuilder EventSourceCreator(StreamManager.EventSourceCreator eventSourceCreator)
+        internal StreamingDataSourceBuilder EventSourceCreator(StreamProcessor.EventSourceCreator eventSourceCreator)
         {
             _eventSourceCreator = eventSourceCreator;
             return this;
         }
 
         /// <inheritdoc/>
-        public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore) =>
-            ((IUpdateProcessorFactoryWithDiagnostics)this).CreateUpdateProcessor(config, featureStore, null);
-
-        /// <inheritdoc/>
-        IUpdateProcessor IUpdateProcessorFactoryWithDiagnostics.CreateUpdateProcessor(Configuration config, IFeatureStore featureStore, IDiagnosticStore diagnosticStore) =>
-            new StreamProcessor(
-                config,
-                featureStore,
-                _eventSourceCreator,
-                diagnosticStore,
-                _baseUri,
-                _initialReconnectDelay
+        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        {
+            return new StreamProcessor(
+                context,
+                dataSourceUpdates,
+                _baseUri ?? DefaultBaseUri,
+                _initialReconnectDelay,
+                _eventSourceCreator
                 );
+        }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(Configuration config)
+        public LdValue DescribeConfiguration(BasicConfiguration basic)
         {
             return LdValue.BuildObject()
                 .Add("streamingDisabled", false)

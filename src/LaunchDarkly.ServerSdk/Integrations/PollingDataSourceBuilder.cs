@@ -1,7 +1,8 @@
 ﻿using System;
-using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.DataSources;
 
-namespace LaunchDarkly.Client.Integrations
+namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
     /// Contains methods for configuring the polling data source.
@@ -15,7 +16,7 @@ namespace LaunchDarkly.Client.Integrations
     /// </para>
     /// <para>
     /// To use polling mode, create a builder with <see cref="Components.PollingDataSource"/>, change its properties
-    /// with the methods of this class, and pass it to <see cref="ConfigurationBuilder.DataSource(IUpdateProcessorFactory)"/>.
+    /// with the methods of this class, and pass it to <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
     /// </para>
     /// <para>
     /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
@@ -30,7 +31,7 @@ namespace LaunchDarkly.Client.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public class PollingDataSourceBuilder : IUpdateProcessorFactory, IDiagnosticDescription
+    public sealed class PollingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {
         internal static readonly Uri DefaultBaseUri = new Uri("https://sdk.launchdarkly.com");
 
@@ -87,15 +88,20 @@ namespace LaunchDarkly.Client.Integrations
         }
 
         /// <inheritdoc/>
-        public IUpdateProcessor CreateUpdateProcessor(Configuration config, IFeatureStore featureStore)
+        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
-            LdClient.Log.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
-            FeatureRequestor requestor = new FeatureRequestor(config, _baseUri);
-            return new PollingProcessor(config, requestor, featureStore, _pollInterval);
+            context.Basic.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
+            FeatureRequestor requestor = new FeatureRequestor(context, _baseUri ?? DefaultBaseUri);
+            return new PollingProcessor(
+                context,
+                requestor,
+                dataSourceUpdates,
+                _pollInterval
+                );
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(Configuration config)
+        public LdValue DescribeConfiguration(BasicConfiguration basic)
         {
             return LdValue.BuildObject()
                 .Add("streamingDisabled", true)
@@ -103,7 +109,6 @@ namespace LaunchDarkly.Client.Integrations
                     !(_baseUri ?? DefaultBaseUri).Equals(DefaultBaseUri))
                 .Add("customStreamURI", false)
                 .Add("pollingIntervalMillis", _pollInterval.TotalMilliseconds)
-                .Add("reconnectTimeMillis", 1000)
                 .Add("usingRelayDaemon", false)
                 .Build();
         }

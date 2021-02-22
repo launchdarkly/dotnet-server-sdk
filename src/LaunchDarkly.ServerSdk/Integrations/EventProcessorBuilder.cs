@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.Events;
 
-namespace LaunchDarkly.Client.Integrations
+namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
     /// Contains methods for configuring delivery of analytics events.
@@ -23,7 +25,7 @@ namespace LaunchDarkly.Client.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class EventProcessorBuilder : IEventProcessorFactory, IEventProcessorFactoryWithDiagnostics, IDiagnosticDescription
+    public sealed class EventProcessorBuilder : IEventProcessorFactory, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="Capacity(int)"/>.
@@ -63,18 +65,17 @@ namespace LaunchDarkly.Client.Integrations
         internal TimeSpan _diagnosticRecordingInterval = DefaultDiagnosticRecordingInterval;
         internal TimeSpan _flushInterval = DefaultFlushInterval;
         internal bool _inlineUsersInEvents = false;
-        internal HashSet<string> _privateAttributes = new HashSet<string>();
+        internal HashSet<UserAttribute> _privateAttributes = new HashSet<UserAttribute>();
         internal int _userKeysCapacity = DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = DefaultUserKeysFlushInterval;
-
-        internal int _samplingInterval = 0; // deprecated
+        internal IEventSender _eventSender = null; // used in testing
 
         /// <summary>
         /// Sets whether or not all optional user attributes should be hidden from LaunchDarkly.
         /// </summary>
         /// <remarks>
         /// If this is <see langword="true"/>, all user attribute values (other than the key) will be private, not just
-        /// the attributes specified in <see cref="PrivateAttributeNames(string[])"/> or on a per-user basis with
+        /// the attributes specified in <see cref="PrivateAttributes(UserAttribute[])"/> or on a per-user basis with
         /// <see cref="UserBuilder"/> methods. By default, it is <see langword="false"/>.
         /// </remarks>
         /// <param name="allAttributesPrivate">true if all user attributes should be private</param>
@@ -158,6 +159,13 @@ namespace LaunchDarkly.Client.Integrations
             return this;
         }
 
+        // Used only in testing
+        internal EventProcessorBuilder EventSender(IEventSender eventSender)
+        {
+            _eventSender = eventSender;
+            return this;
+        }
+
         /// <summary>
         /// Sets the interval between flushes of the event buffer.
         /// </summary>
@@ -194,19 +202,44 @@ namespace LaunchDarkly.Client.Integrations
         /// Marks a set of attribute names as private.
         /// </summary>
         /// <remarks>
+        /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
+        /// names removed. This is in addition to any attributes that were marked as private for an
+        /// individual user with <see cref="UserBuilder"/> methods.
+        /// </remarks>
+        /// <param name="attributes">a set of attributes that will be removed from user data set to LaunchDarkly</param>
+        /// <returns>the builder</returns>
+        /// <seealso cref="PrivateAttributeNames(string[])"/>
+        public EventProcessorBuilder PrivateAttributes(params UserAttribute[] attributes)
+        {
+            foreach (var a in attributes)
+            {
+                _privateAttributes.Add(a);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Marks a set of attribute names as private.
+        /// </summary>
+        /// <remarks>
         /// <para>
         /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
         /// names removed. This is in addition to any attributes that were marked as private for an
         /// individual user with <see cref="UserBuilder"/> methods.
         /// </para>
+        /// <para>
+        /// Using <see cref="PrivateAttributes(UserAttribute[])"/> is preferable to avoid the possibility of
+        /// misspelling a built-in attribute.
+        /// </para>
         /// </remarks>
         /// <param name="attributes">a set of names that will be removed from user data set to LaunchDarkly</param>
         /// <returns>the builder</returns>
+        /// <seealso cref="PrivateAttributes(UserAttribute[])"/>
         public EventProcessorBuilder PrivateAttributeNames(params string[] attributes)
         {
             foreach (var a in attributes)
             {
-                _privateAttributes.Add(a);
+                _privateAttributes.Add(UserAttribute.ForName(a));
             }
             return this;
         }
@@ -245,51 +278,43 @@ namespace LaunchDarkly.Client.Integrations
             return this;
         }
 
-        internal EventProcessorBuilder SamplingInterval(int samplingInterval)
-        {
-            _samplingInterval = samplingInterval;
-            return this;
-        }
-
         /// <inheritdoc/>
-        public IEventProcessor CreateEventProcessor(Configuration config) =>
-            ((IEventProcessorFactoryWithDiagnostics)this).CreateEventProcessor(config, null);
-
-        /// <inheritdoc/>
-        IEventProcessor IEventProcessorFactoryWithDiagnostics.CreateEventProcessor(Configuration config, IDiagnosticStore diagnosticStore)
+        public IEventProcessor CreateEventProcessor(LdClientContext context)
         {
-            var httpConfig = config.HttpConfiguration;
-            var eventsConfig = new EventProcessorConfigImpl
+            var eventsConfig = new EventsConfiguration
             {
                 AllAttributesPrivate = _allAttributesPrivate,
-                DiagnosticOptOut = config.DiagnosticOptOut,
                 DiagnosticRecordingInterval = _diagnosticRecordingInterval,
                 EventCapacity = _capacity,
                 EventFlushInterval = _flushInterval,
-                EventSamplingInterval = _samplingInterval,
                 EventsUri = new Uri(_baseUri, "bulk"),
                 DiagnosticUri = new Uri(_baseUri, "diagnostic"),
-                HttpClientTimeout = httpConfig.ConnectTimeout,
                 InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
-                ReadTimeout = httpConfig.ReadTimeout,
-                ReconnectTime = TimeSpan.FromSeconds(1),
                 UserKeysCapacity = _userKeysCapacity,
                 UserKeysFlushInterval = _userKeysFlushInterval
             };
-
-            return new DefaultEventProcessor(
-                eventsConfig,
-                new DefaultUserDeduplicator(_userKeysCapacity, _userKeysFlushInterval),
-                Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance),
-                diagnosticStore,
-                null,
-                null
-                );
+            var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
+            var eventSender = _eventSender ??
+                new DefaultEventSender(
+                    context.Http.HttpProperties,
+                    eventsConfig,
+                    logger
+                    );
+            return new DefaultEventProcessorWrapper(
+                new EventProcessor(
+                    eventsConfig,
+                    eventSender,
+                    new DefaultUserDeduplicator(_userKeysCapacity, _userKeysFlushInterval),
+                    context.DiagnosticStore,
+                    null,
+                    logger,
+                    null
+                    ));
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(Configuration config)
+        public LdValue DescribeConfiguration(BasicConfiguration basic)
         {
             return LdValue.BuildObject()
                 .Add("allAttributesPrivate", _allAttributesPrivate)
@@ -298,33 +323,10 @@ namespace LaunchDarkly.Client.Integrations
                 .Add("eventsCapacity", _capacity)
                 .Add("eventsFlushIntervalMillis", _flushInterval.TotalMilliseconds)
                 .Add("inlineUsersInEvents", _inlineUsersInEvents)
-                .Add("samplingInterval", _samplingInterval)
+                .Add("samplingInterval", 0) // no longer implemented
                 .Add("userKeysCapacity", _userKeysCapacity)
                 .Add("userKeysFlushIntervalMillis", _userKeysFlushInterval.TotalMilliseconds)
                 .Build();
         }
-
-        internal struct EventProcessorConfigImpl: IEventProcessorConfiguration
-        {
-            internal Configuration Config { get; set; }
-            public bool AllAttributesPrivate { get; internal set; }
-            public bool DiagnosticOptOut { get; internal set; }
-            public TimeSpan DiagnosticRecordingInterval { get; internal set; }
-            public int EventCapacity { get; internal set; }
-            public TimeSpan EventFlushInterval { get; internal set; }
-#pragma warning disable 618
-            public int EventSamplingInterval { get; internal set; }
-#pragma warning restore 618
-            public Uri EventsUri { get; internal set; }
-            public Uri DiagnosticUri { get; internal set; }
-            public TimeSpan HttpClientTimeout { get; internal set; }
-            public bool InlineUsersInEvents { get; internal set; }
-            public ISet<string> PrivateAttributeNames { get; internal set; }
-            public TimeSpan ReadTimeout { get; internal set; }
-            public TimeSpan ReconnectTime { get; internal set; }
-            public int UserKeysCapacity { get; internal set; }
-            public TimeSpan UserKeysFlushInterval { get; internal set; }
-        }
-
     }
 }

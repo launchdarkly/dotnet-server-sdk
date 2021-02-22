@@ -1,13 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using LaunchDarkly.Client;
+using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class ConfigurationTest
     {
+        private readonly BuilderTestUtil<ConfigurationBuilder, Configuration> _tester =
+            BuilderTestUtil.For(() => Configuration.Builder(sdkKey), b => b.Build())
+                .WithCopyConstructor(c => Configuration.Builder(c));
+
         const string sdkKey = "any-key";
 
         [Fact]
@@ -25,110 +29,75 @@ namespace LaunchDarkly.Tests
         }
 
         [Fact]
-        public void CanSetAndCopyProperties()
+        public void DataSource()
         {
-            var uri = new Uri("http://fake");
-            var time = TimeSpan.FromDays(3);
-            TestSetter(b => b.DataSource, c => c.DataSource,
-                Components.ExternalUpdatesOnly);
-            TestSetter(b => b.DataStore, c => c.FeatureStoreFactory,
-                TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
-            TestSetter(b => b.DiagnosticOptOut, c => c.DiagnosticOptOut, true);
-            TestSetter(b => b.Events, c => c.EventProcessorFactory,
-                TestUtils.SpecificEventProcessor(new TestEventProcessor()));
-            TestSetter(b => b.Http, c => c.HttpConfigurationFactory,
-                Components.HttpConfiguration());
-            TestSetter(b => b.Offline, c => c.Offline, true);
-            TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
-            TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
-        }
-
-        private void TestSetter<T>(Func<IConfigurationBuilder, Func<T, IConfigurationBuilder>> setter,
-            Func<Configuration, T> getter, T value)
-        {
-            var config = setter(Configuration.Builder(sdkKey))(value).Build();
-            Assert.Equal(value, getter(config));
-            var copy = Configuration.Builder(config).Build();
-            Assert.Equal(value, getter(copy));
-        }
-
-#pragma warning disable 0612
-#pragma warning disable 0618
-        [Fact]
-        public void CanSetAndCopyDeprecatedProperties()
-        {
-            var uri = new Uri("http://fake");
-            var time = TimeSpan.FromDays(3);
-            TestSetter(b => b.AllAttributesPrivate, c => c.AllAttributesPrivate, true);
-            TestSetter(b => b.BaseUri, c => c.BaseUri, uri);
-            TestSetter(b => b.StreamUri, c => c.StreamUri, uri);
-            TestSetter(b => b.DiagnosticRecordingInterval, c => c.DiagnosticRecordingInterval, time);
-            TestSetter(b => b.EventCapacity, c => c.EventCapacity, 999);
-            TestSetter(b => b.EventFlushInterval, c => c.EventFlushInterval, time);
-            TestSetter(b => b.EventProcessorFactory, c => c.EventProcessorFactory,
-                TestUtils.SpecificEventProcessor(new TestEventProcessor()));
-            TestSetter(b => b.EventsUri, c => c.EventsUri, uri);
-            TestSetter(b => b.FeatureStoreFactory, c => c.FeatureStoreFactory,
-                TestUtils.SpecificFeatureStore(TestUtils.InMemoryFeatureStore()));
-            TestSetter(b => b.HttpClientHandler, c => c.HttpClientHandler, new HttpClientHandler());
-            TestSetter(b => b.HttpClientTimeout, c => c.HttpClientTimeout, time);
-            TestSetter(b => b.InlineUsersInEvents, c => c.InlineUsersInEvents, true);
-            TestSetter(b => b.IsStreamingEnabled, c => c.IsStreamingEnabled, false);
-            TestSetter(b => b.ReadTimeout, c => c.ReadTimeout, time);
-            TestSetter(b => b.SdkKey, c => c.SdkKey, "other-key");
-            TestSetter(b => b.StartWaitTime, c => c.StartWaitTime, time);
-            TestSetter(b => b.UpdateProcessorFactory, c => c.UpdateProcessorFactory,
-                Components.NullUpdateProcessor);
-            TestSetter(b => b.UseLdd, c => c.UseLdd, true);
-            TestSetter(b => b.UserKeysCapacity, c => c.UserKeysCapacity, 999);
-            TestSetter(b => b.UserKeysFlushInterval, c => c.UserKeysFlushInterval, time);
-            TestSetter(b => b.WrapperName, c => c.WrapperName, "name");
-            TestSetter(b => b.WrapperVersion, c => c.WrapperVersion, "version");
+            var prop = _tester.Property(c => c.DataSourceFactory, (b, v) => b.DataSource(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(ComponentsImpl.NullDataSourceFactory.Instance);
         }
 
         [Fact]
-        public void CanSetDeprecatedPrivateAttributes()
+        public void DataStore()
         {
-            var config = Configuration.Builder(sdkKey)
-                .PrivateAttribute("a")
-                .PrivateAttribute("b")
-                .Build();
-            var names = new List<string>(config.PrivateAttributeNames);
-            Assert.Equal(2, config.PrivateAttributeNames.Count);
-            Assert.Contains("a", config.PrivateAttributeNames);
-            Assert.Contains("b", config.PrivateAttributeNames);
+            var prop = _tester.Property(c => c.DataStoreFactory, (b, v) => b.DataStore(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(TestUtils.SpecificDataStore(new InMemoryDataStore()));
         }
 
         [Fact]
-        public void CannotOverrideTooSmallDeprecatedPollingInterval()
+        public void DiagnosticOptOut()
         {
-            var config = Configuration.Builder(sdkKey).PollingInterval(TimeSpan.FromSeconds(29)).Build();
-
-            Assert.Equal(TimeSpan.FromSeconds(30), config.PollingInterval);
+            var prop = _tester.Property(c => c.DiagnosticOptOut, (b, v) => b.DiagnosticOptOut(v));
+            prop.AssertDefault(false);
+            prop.AssertCanSet(true);
         }
 
         [Fact]
-        public void CannotOverrideTooSmallDeprecatedDiagnosticRecordingInterval()
+        public void Events()
         {
-            var config = Configuration.Builder(sdkKey).DiagnosticRecordingInterval(TimeSpan.FromSeconds(59)).Build();
-
-            Assert.Equal(TimeSpan.FromMinutes(1), config.DiagnosticRecordingInterval);
+            var prop = _tester.Property(c => c.EventProcessorFactory, (b, v) => b.Events(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(TestUtils.SpecificEventProcessor(new TestEventProcessor()));
         }
 
         [Fact]
-        public void DeprecatedPropertiesAreEquivalentToNewOnes()
+        public void Logging()
         {
-            var config = Configuration.Builder(sdkKey)
-                .EventCapacity(99)
-                .EventFlushInterval(TimeSpan.FromSeconds(90))
-                .Build();
-
-            Assert.Equal(99, config.EventCapacity);
-            Assert.Equal(TimeSpan.FromSeconds(90), config.EventFlushInterval);
-            Assert.Equal(config.EventCapacity, config.EventQueueCapacity);
-            Assert.Equal(config.EventFlushInterval, config.EventQueueFrequency);
+            var prop = _tester.Property(c => c.LoggingConfigurationFactory, (b, v) => b.Logging(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(Components.Logging(Logs.ToWriter(Console.Out)));
         }
-#pragma warning restore 0618
-#pragma warning restore 0612
+
+        [Fact]
+        public void LoggingAdapterShortcut()
+        {
+            var adapter = Logs.ToWriter(Console.Out);
+            var config = Configuration.Builder("").Logging(adapter).Build();
+            var logConfig = config.LoggingConfigurationFactory.CreateLoggingConfiguration();
+            Assert.Same(adapter, logConfig.LogAdapter);
+        }
+
+        [Fact]
+        public void Offline()
+        {
+            var prop = _tester.Property(c => c.Offline, (b, v) => b.Offline(v));
+            prop.AssertDefault(false);
+            prop.AssertCanSet(true);
+        }
+
+        [Fact]
+        public void SdkKey()
+        {
+            var prop = _tester.Property(c => c.SdkKey, (b, v) => b.SdkKey(v));
+            prop.AssertCanSet("other-key");
+        }
+
+        [Fact]
+        public void StartWaitTime()
+        {
+            var prop = _tester.Property(c => c.StartWaitTime, (b, v) => b.StartWaitTime(v));
+            prop.AssertDefault(ConfigurationBuilder.DefaultStartWaitTime);
+            prop.AssertCanSet(TimeSpan.FromSeconds(7));
+        }
     }
 }

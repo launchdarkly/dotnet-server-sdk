@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LaunchDarkly.Client;
-using Newtonsoft.Json.Linq;
-using Moq;
+﻿using Moq;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 
-namespace LaunchDarkly.Tests
+namespace LaunchDarkly.Sdk.Server
 {
     public class ILdClientExtensionsTests
     {
@@ -89,7 +84,7 @@ namespace LaunchDarkly.Tests
             var client = clientMock.Object;
 
             var result = client.EnumVariationDetail("key", defaultUser, MyEnum.Blue);
-            var expected = new EvaluationDetail<MyEnum>(MyEnum.Blue, 1, EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
+            var expected = new EvaluationDetail<MyEnum>(MyEnum.Blue, 1, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType));
             Assert.Equal(expected, result);
         }
 
@@ -116,7 +111,7 @@ namespace LaunchDarkly.Tests
             var client = clientMock.Object;
 
             var result = client.EnumVariationDetail("key", defaultUser, defaultValue);
-            var expected = new EvaluationDetail<string>(defaultValue, 1, EvaluationReason.ErrorReason(EvaluationErrorKind.WRONG_TYPE));
+            var expected = new EvaluationDetail<string>(defaultValue, 1, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType));
             Assert.Equal(expected, result);
         }
 

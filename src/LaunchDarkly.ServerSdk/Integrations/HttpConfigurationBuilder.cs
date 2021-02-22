@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
-using LaunchDarkly.Client;
-using LaunchDarkly.Client.Interfaces;
-using LaunchDarkly.Common;
+using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Http;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client.Integrations
+namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
     /// Contains methods for configuring the SDK's networking behavior.
@@ -40,7 +41,9 @@ namespace LaunchDarkly.Client.Integrations
         public static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromSeconds(10);
 
         internal TimeSpan _connectTimeout = DefaultConnectTimeout;
-        internal HttpMessageHandler _messageHandler = new HttpClientHandler();
+        internal List<KeyValuePair<string, string>> _customHeaders = new List<KeyValuePair<string, string>>();
+        internal HttpMessageHandler _messageHandler = null;
+        internal IWebProxy _proxy = null;
         internal TimeSpan _readTimeout = DefaultReadTimeout;
         internal string _wrapperName = null;
         internal string _wrapperVersion = null;
@@ -60,6 +63,22 @@ namespace LaunchDarkly.Client.Integrations
         }
 
         /// <summary>
+        /// Specifies a custom HTTP header that should be added to all SDK requests.
+        /// </summary>
+        /// <remarks>
+        /// This may be helpful if you are using a gateway or proxy server that requires a specific header in
+        /// requests. You may add any number of headers.
+        /// </remarks>
+        /// <param name="name">the header name</param>
+        /// <param name="value">the header value</param>
+        /// <returns>the builder</returns>
+        public HttpConfigurationBuilder CustomHeader(string name, string value)
+        {
+            _customHeaders.Add(new KeyValuePair<string, string>(name, value));
+            return this;
+        }
+
+        /// <summary>
         /// Specifies a custom HTTP message handler implementation.
         /// </summary>
         /// <remarks>
@@ -71,6 +90,39 @@ namespace LaunchDarkly.Client.Integrations
         public HttpConfigurationBuilder MessageHandler(HttpMessageHandler messageHandler)
         {
             _messageHandler = messageHandler;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets an HTTP proxy for making connections to LaunchDarkly.
+        /// </summary>
+        /// <remarks>
+        /// This is ignored if you have specified a custom message handler with <see cref="MessageHandler(HttpMessageHandler)"/>,
+        /// since proxy behavior is implemented by the message handler.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     // Example of using an HTTP proxy with basic authentication
+        ///     
+        ///     var proxyUri = new Uri("http://my-proxy-host:8080");
+        ///     var proxy = new System.Net.WebProxy(proxyUri);
+        ///     var credentials = new System.Net.CredentialCache();
+        ///     credentials.Add(proxyUri, "Basic",
+        ///         new System.Net.NetworkCredential("username", "password"));
+        ///     proxy.Credentials = credentials;
+        ///     
+        ///     var config = Configuration.Builder("my-sdk-key")
+        ///         .Http(
+        ///             Components.HttpConfiguration().Proxy(proxy)
+        ///         )
+        ///         .Build();
+        /// </code>
+        /// </example>
+        /// <param name="proxy">any implementation of <c>System.Net.IWebProxy</c></param>
+        /// <returns>the builder</returns>
+        public HttpConfigurationBuilder Proxy(IWebProxy proxy)
+        {
+            _proxy = proxy;
             return this;
         }
 
@@ -109,36 +161,50 @@ namespace LaunchDarkly.Client.Integrations
         }
 
         /// <inheritdoc/>
-        public IHttpConfiguration CreateHttpConfiguration(Configuration config)
+        public HttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
         {
-            return new HttpConfigurationImpl
+            var httpProperties = HttpProperties.Default
+                .WithAuthorizationKey(basicConfiguration.SdkKey)
+                .WithConnectTimeout(_connectTimeout)
+                .WithHttpMessageHandlerFactory(_messageHandler is null ?
+                    (Func<HttpProperties, HttpMessageHandler>)null :
+                    _ => _messageHandler)
+                .WithProxy(_proxy)
+                .WithReadTimeout(_readTimeout)
+                .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
+                .WithWrapper(_wrapperName, _wrapperVersion);
+
+            foreach (var kv in _customHeaders)
             {
-                ConnectTimeout = _connectTimeout,
-                MessageHandler = _messageHandler,
-                ReadTimeout = _readTimeout,
-                WrapperName = _wrapperName,
-                WrapperVersion = _wrapperVersion
-            };
+                httpProperties = httpProperties.WithHeader(kv.Key, kv.Value);
+            }
+
+            return new HttpConfiguration(
+                httpProperties,
+                _messageHandler
+                );
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(Configuration config)
-        {
-            return LdValue.BuildObject()
+        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+            LdValue.BuildObject()
                 .Add("connectTimeoutMillis", _connectTimeout.TotalMilliseconds)
                 .Add("socketTimeoutMillis", _readTimeout.TotalMilliseconds)
-                .Add("usingProxy", false)
-                .Add("usingProxyAuthenticator", false)
+                .Add("usingProxy", DetectProxy())
+                .Add("usingProxyAuthenticator", DetectProxyAuth())
                 .Build();
-        }
 
-        internal sealed class HttpConfigurationImpl : IHttpConfiguration, IHttpConfigurationInternal
-        {
-            public TimeSpan ConnectTimeout { get; internal set; }
-            public HttpMessageHandler MessageHandler { get; internal set; }
-            public TimeSpan ReadTimeout { get; internal set; }
-            public string WrapperName { get; internal set; }
-            public string WrapperVersion { get; internal set; }
-        }
+        // DetectProxy and DetectProxyAuth do not cover every mechanism that could be used to configure
+        // a proxy; for instance, there is HttpClient.DefaultProxy, which only exists in .NET Core 3.x and
+        // .NET 5.x. But since we're only trying to gather diagnostic stats, this doesn't have to be perfect.
+        private bool DetectProxy() =>
+            _proxy != null ||
+            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("HTTP_PROXY")) ||
+            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("HTTPS_PROXY")) ||
+            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("ALL_PROXY"));
+
+        private bool DetectProxyAuth() =>
+            _proxy is WebProxy wp &&
+            (wp.Credentials != null || wp.UseDefaultCredentials);
     }
 }

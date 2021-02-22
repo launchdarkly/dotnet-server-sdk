@@ -1,26 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using LaunchDarkly.JsonStream;
+using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Json;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Client
+using static LaunchDarkly.Sdk.Json.LdJsonConverters;
+
+namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// A snapshot of the state of all feature flags with regard to a specific user. See
     /// calling <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>.
     /// </summary>
     /// <remarks>
-    /// Serializing this object to JSON using <c>JsonConvert.SerializeObject()</c> will produce the
-    /// appropriate data structure for bootstrapping the LaunchDarkly JavaScript client.
+    /// Serializing this object to JSON using <c>System.Text.Json</c> or <see cref="LaunchDarkly.Sdk.Json.LdJsonSerialization"/>
+    /// will produce the appropriate data structure for bootstrapping the LaunchDarkly JavaScript client.
+    /// Using <c>Newtonsoft.Json</c> will not work correctly without special handling; see
+    /// <see cref="LaunchDarkly.Sdk.Json"/> for details.
     /// </remarks>
-    [JsonConverter(typeof(FeatureFlagsStateConverter))]
-    public class FeatureFlagsState
+    [JsonStreamConverter(typeof(FeatureFlagsStateConverter))]
+    public class FeatureFlagsState : IJsonSerializable
     {
         internal readonly bool _valid;
-        internal readonly IDictionary<string, JToken> _flagValues;
-        internal readonly IDictionary<string, FlagMetadata> _flagMetadata;
-        private volatile Dictionary<string, LdValue> _immutableValuesMap; // lazily created
+        internal readonly IDictionary<string, FlagState> _flags;
+        private volatile ImmutableDictionary<string, LdValue> _immutableValuesMap; // lazily created
         
         /// <summary>
         /// True if this object contains a valid snapshot of feature flag state, or false if the
@@ -41,44 +47,23 @@ namespace LaunchDarkly.Client
         internal FeatureFlagsState(bool valid)
         {
             _valid = valid;
-            _flagValues = new Dictionary<string, JToken>();
-            _flagMetadata = new Dictionary<string, FlagMetadata>();
+            _flags = new Dictionary<string, FlagState>();
         }
 
-        internal FeatureFlagsState(bool valid, IDictionary<string, JToken> values,
-            IDictionary<string, FlagMetadata> metadata)
+        internal FeatureFlagsState(bool valid, IDictionary<string, FlagState> flags)
         {
             _valid = valid;
-            _flagValues = values;
-            _flagMetadata = metadata;
+            _flags = flags;
         }
         
         /// <summary>
         /// Returns the value of an individual feature flag at the time the state was recorded.
         /// </summary>
         /// <param name="key">the feature flag key</param>
-        /// <returns>the flag's JSON value; null if the flag returned the default value, or if
-        /// there was no such flag</returns>
-        [Obsolete("Use GetFlagValueJson; JToken will be removed from the public API in the future")]
-        public JToken GetFlagValue(string key)
-        {
-            return GetFlagValueJson(key).InnerValue;
-        }
-
-        /// <summary>
-        /// Returns the value of an individual feature flag at the time the state was recorded.
-        /// </summary>
-        /// <param name="key">the feature flag key</param>
         /// <returns>the flag's JSON value; <see cref="LdValue.Null"/> if the flag returned
         /// the default value, or if there was no such flag</returns>
-        public LdValue GetFlagValueJson(string key)
-        {
-            if (_flagValues.TryGetValue(key, out var value))
-            {
-                return LdValue.FromSafeValue(value);
-            }
-            return LdValue.Null;
-        }
+        public LdValue GetFlagValueJson(string key) =>
+            _flags.TryGetValue(key, out var flag) ? flag.Value : LdValue.Null;
 
         /// <summary>
         /// Returns the evaluation reason of an individual feature flag (as returned by
@@ -88,41 +73,9 @@ namespace LaunchDarkly.Client
         /// <param name="key">the feature flag key</param>
         /// <returns>the evaluation reason; null if reasons were not recorded, or if there was no
         /// such flag</returns>
-        public EvaluationReason GetFlagReason(string key)
-        {
-            if (_flagMetadata.TryGetValue(key, out var meta))
-            {
-                return meta.Reason;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Returns a dictionary of flag keys to flag values.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// If a flag would have evaluated to the default value, its value will be <see langword="null"/>.
-        /// </para>
-        /// <para>
-        /// Do not use this method if you are passing data to the front end to "bootstrap" the
-        /// JavaScript client. Instead, serialize the <see cref="FeatureFlagsState"/> object to JSON
-        /// using <c>JsonConvert.SerializeObject()</c>.
-        /// </para>
-        /// <para>
-        /// Note that for historical reasons this returns a mutable dictionary; modifying the dictionary will
-        /// modify the original state object, and the values might be mutable JSON arrays or objects. It is
-        /// better to use <see cref="ToValuesJsonMap"/>, which returns an immutable dictionary of immutable
-        /// <see cref="LdValue"/> values.
-        /// </para>
-        /// </remarks>
-        /// <returns>a dictionary of flag keys to flag values</returns>
-        [Obsolete("Use ToValuesJsonMap")]
-        public IDictionary<string, JToken> ToValuesMap()
-        {
-            return _flagValues;
-        }
-
+        public EvaluationReason? GetFlagReason(string key) =>
+            _flags.TryGetValue(key, out var flag) ? flag.Reason : (EvaluationReason?)null;
+        
         /// <summary>
         /// Returns a dictionary of flag keys to flag values.
         /// </summary>
@@ -147,31 +100,25 @@ namespace LaunchDarkly.Client
                 if (_immutableValuesMap is null)
                 {
                     // There's a potential race condition here but the result is the same either way, so 
-                    _immutableValuesMap = _flagValues.ToDictionary<KeyValuePair<string, JToken>, string, LdValue>(
-                        pair => pair.Key,
-                        pair => LdValue.FromSafeValue(pair.Value));
+                    _immutableValuesMap = _flags.ToImmutableDictionary(kv => kv.Key, kv => kv.Value.Value);
                 }
                 return _immutableValuesMap;
             }
         }
 
-        /// <see cref="object.Equals(object)"/>
-        public override bool Equals(object other)
-        {
-            if (other is FeatureFlagsState o)
-            {
-                return _valid == o._valid &&
-                    _flagValues.SequenceEqual(o._flagValues) &&
-                    _flagMetadata.SequenceEqual(o._flagMetadata);
-            }
-            return false;
-        }
+        /// <inheritdoc/>
+        public override bool Equals(object other) =>
+            other is FeatureFlagsState o &&
+                _valid == o._valid && DictionariesEqual(_flags, o._flags);
 
-        /// <see cref="object.GetHashCode()"/>
-        public override int GetHashCode()
-        {
-            return ((_flagValues.GetHashCode() * 17) + _flagMetadata.GetHashCode()) * 17 + (_valid ? 1 : 0);
-        }
+        /// <inheritdoc/>
+
+        public override int GetHashCode() =>
+            new HashCodeBuilder().With(_flags).With(_valid).Value;
+        
+        private static bool DictionariesEqual<T, U>(IDictionary<T, U> d0, IDictionary<T, U> d1) =>
+            d0.Count == d1.Count && d0.All(kv =>
+                d1.TryGetValue(kv.Key, out var v) && kv.Value.Equals(v));
     }
 
     /// <summary>
@@ -185,8 +132,7 @@ namespace LaunchDarkly.Client
         private readonly bool _detailsOnlyIfTracked;
         private readonly bool _withReasons;
         private bool _valid = true;
-        private readonly Dictionary<string, JToken> _flagValues = new Dictionary<string, JToken>();
-        private readonly Dictionary<string, FlagMetadata> _flagMetadata = new Dictionary<string, FlagMetadata>();
+        private readonly Dictionary<string, FlagState> _flags= new Dictionary<string, FlagState>();
 
         internal FeatureFlagsStateBuilder(FlagsStateOption[] options)
         {
@@ -200,7 +146,7 @@ namespace LaunchDarkly.Client
         /// <returns>a state object</returns>
         public FeatureFlagsState Build()
         {
-            return new FeatureFlagsState(_valid, _flagValues, _flagMetadata);
+            return new FeatureFlagsState(_valid, _flags);
         }
 
         /// <summary>
@@ -223,59 +169,56 @@ namespace LaunchDarkly.Client
         public FeatureFlagsStateBuilder AddFlag(string flagKey, EvaluationDetail<LdValue> result)
         {
             return AddFlag(flagKey,
-                result?.Value.InnerValue,
-                result?.VariationIndex,
-                result?.Reason,
+                result.Value,
+                result.VariationIndex,
+                result.Reason,
                 0,
                 false,
                 null);
         }
 
-        // This method is defined with internal scope because 1. we don't want application code to use JToken any more and 2. extra
-        // metadata fields like trackEvents aren't relevant to the main external use case for the builder (testing server-side code)
-        internal FeatureFlagsStateBuilder AddFlag(string flagKey, JToken value, int? variationIndex, EvaluationReason reason, int flagVersion, bool flagTrackEvents, long? flagDebugEventsUntilDate)
+        // This method is defined with internal scope because metadata fields like trackEvents aren't
+        // relevant to the main external use case for the builder (testing server-side code)
+        internal FeatureFlagsStateBuilder AddFlag(string flagKey, LdValue value, int? variationIndex, EvaluationReason reason,
+            int flagVersion, bool flagTrackEvents, UnixMillisecondTime? flagDebugEventsUntilDate)
         {
-            _flagValues[flagKey] = value;
-            var meta = new FlagMetadata
+            var flag = new FlagState
             {
+                Value = value,
                 Variation = variationIndex,
                 DebugEventsUntilDate = flagDebugEventsUntilDate
             };
             if (!_detailsOnlyIfTracked || flagTrackEvents || flagDebugEventsUntilDate != null)
             {
-                meta.Version = flagVersion;
-                meta.Reason = _withReasons ? reason : null;
+                flag.Version = flagVersion;
+                flag.Reason = _withReasons ? reason : (EvaluationReason?)null;
             }
             if (flagTrackEvents)
             {
-                meta.TrackEvents = true;
+                flag.TrackEvents = true;
             }
-            _flagMetadata[flagKey] = meta;
+            _flags[flagKey] = flag;
             return this;
         }
     }
 
-    internal class FlagMetadata
+    internal struct FlagState
     {
-        [JsonProperty(PropertyName = "variation", NullValueHandling = NullValueHandling.Ignore)]
+        internal LdValue Value { get; set; }
         internal int? Variation { get; set; }
-        [JsonProperty(PropertyName = "version", NullValueHandling = NullValueHandling.Ignore)]
         internal int? Version { get; set; }
-        [JsonProperty(PropertyName = "trackEvents", NullValueHandling = NullValueHandling.Ignore)]
-        internal bool? TrackEvents { get; set; }
-        [JsonProperty(PropertyName = "debugEventsUntilDate", NullValueHandling = NullValueHandling.Ignore)]
-        internal long? DebugEventsUntilDate { get; set; }
-        [JsonProperty(PropertyName = "reason", NullValueHandling = NullValueHandling.Ignore)]
-        internal EvaluationReason Reason { get; set; }
+        internal bool TrackEvents { get; set; }
+        internal UnixMillisecondTime? DebugEventsUntilDate { get; set; }
+        internal EvaluationReason? Reason { get; set; }
 
         public override bool Equals(object other)
         {
-            if (other is FlagMetadata o)
+            if (other is FlagState o)
             {
                 return Variation == o.Variation &&
                     Version == o.Version &&
                     TrackEvents == o.TrackEvents &&
-                    DebugEventsUntilDate == o.DebugEventsUntilDate &&
+                    DebugEventsUntilDate.Equals(o.DebugEventsUntilDate) &&
                     Object.Equals(Reason, o.Reason);
             }
             return false;
@@ -283,71 +226,104 @@ namespace LaunchDarkly.Client
 
         public override int GetHashCode()
         {
-            return (((((Variation.GetHashCode() * 17) + Version.GetHashCode()) * 17) + TrackEvents.GetHashCode()) * 17 +
-                DebugEventsUntilDate.GetHashCode()) * 17 + (Reason == null ? 0 : Reason.GetHashCode());
+            return new HashCodeBuilder().With(Variation).With(Version).With(TrackEvents).With(DebugEventsUntilDate).With(Reason).Value;
         }
     }
 
-    internal class FeatureFlagsStateConverter : JsonConverter
+    internal class FeatureFlagsStateConverter : IJsonStreamConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public void WriteJson(object value, IValueWriter writer)
         {
-            if (value is FeatureFlagsState state)
+            var state = value as FeatureFlagsState;
+            if (state is null)
             {
-                writer.WriteStartObject();
-                foreach (var entry in state._flagValues)
-                {
-                    writer.WritePropertyName(entry.Key);
-                    serializer.Serialize(writer, entry.Value);
-                }
-                writer.WritePropertyName("$flagsState");
-                writer.WriteStartObject();
-                foreach (var entry in state._flagMetadata)
-                {
-                    writer.WritePropertyName(entry.Key);
-                    serializer.Serialize(writer, entry.Value);
-                }
-                writer.WriteEnd();
-                writer.WritePropertyName("$valid");
-                writer.WriteValue(state._valid);
-                writer.WriteEnd();
+                writer.Null();
+                return;
             }
+
+            var obj = writer.Object();
+
+            foreach (var entry in state._flags)
+            {
+                LdValueConverter.WriteJsonValue(entry.Value.Value, obj.Name(entry.Key));
+            }
+
+            obj.Name("$valid").Bool(state._valid);
+
+            var allMetadataObj = obj.Name("$flagsState").Object();
+            foreach (var entry in state._flags)
+            {
+                var flagMetadataObj = allMetadataObj.Name(entry.Key).Object();
+                var meta = entry.Value;
+                flagMetadataObj.Name("variation").IntOrNull(meta.Variation);
+                flagMetadataObj.Name("version").IntOrNull(meta.Version);
+                flagMetadataObj.MaybeName("trackEvents", meta.TrackEvents).Bool(meta.TrackEvents);
+                flagMetadataObj.MaybeName("debugEventsUntilDate", meta.DebugEventsUntilDate.HasValue)
+                    .Long(meta.DebugEventsUntilDate?.Value ?? 0);
+                if (meta.Reason.HasValue)
+                {
+                    EvaluationReasonConverter.WriteJsonValue(meta.Reason.Value, flagMetadataObj.Name("reason"));
+                }
+                flagMetadataObj.End();
+            }
+            allMetadataObj.End();
+
+            obj.End();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public object ReadJson(ref JReader reader)
         {
             var valid = true;
-            var flagValues = new Dictionary<string, JToken>();
-            var flagMetadata = new Dictionary<string, FlagMetadata>();
-            // This is somewhat inefficient, compared to interacting with the JsonReader directly, but
-            // it's much easier to write this way. Deserialization isn't a typical use case for this
-            // class anyway.
-            JObject o = serializer.Deserialize<JObject>(reader);
-            foreach (var prop in o.Properties())
+            var flags = new Dictionary<string, FlagState>();
+            for (var topLevelObj = reader.Object(); topLevelObj.Next(ref reader);)
             {
-                if (prop.Name == "$flagsState")
+                var key = topLevelObj.Name.ToString();
+                switch (key)
                 {
-                    var o1 = (JObject)prop.Value;
-                    foreach (var prop1 in o1.Properties())
-                    {
-                        flagMetadata[prop1.Name] = o1.GetValue(prop1.Name).ToObject<FlagMetadata>();
-                    }
-                }
-                else if (prop.Name == "$valid")
-                {
-                    valid = (bool)prop.Value;
-                }
-                else
-                {
-                    flagValues[prop.Name] = prop.Value;
+                    case "$valid":
+                        valid = reader.Bool();
+                        break;
+
+                    case "$flagsState":
+                        for (var flagsObj = reader.Object(); flagsObj.Next(ref reader);)
+                        {
+                            var subKey = flagsObj.Name.ToString();
+                            var flag = flags.ContainsKey(subKey) ? flags[subKey] : new FlagState();
+                            for (var metaObj = reader.Object(); metaObj.Next(ref reader);)
+                            {
+                                switch (metaObj.Name.ToString())
+                                {
+                                    case "variation":
+                                        flag.Variation = reader.IntOrNull();
+                                        break;
+                                    case "version":
+                                        flag.Version = reader.IntOrNull();
+                                        break;
+                                    case "trackEvents":
+                                        flag.TrackEvents = reader.Bool();
+                                        break;
+                                    case "debugEventsUntilDate":
+                                        var n = reader.LongOrNull();
+                                        flag.DebugEventsUntilDate = n.HasValue ? UnixMillisecondTime.OfMillis(n.Value) :
+                                            (UnixMillisecondTime?)null;
+                                        break;
+                                    case "reason":
+                                        flag.Reason = EvaluationReasonConverter.ReadJsonNullableValue(ref reader);
+                                        break;
+                                }
+                            }
+                            flags[subKey] = flag;
+                        }
+                        break;
+
+                    default:
+                        var flagForValue = flags.ContainsKey(key) ? flags[key] : new FlagState();
+                        flagForValue.Value = LdValueConverter.ReadJsonValue(ref reader);
+                        flags[key] = flagForValue;
+                        break;
                 }
             }
-            return new FeatureFlagsState(valid, flagValues, flagMetadata);
-        }
-
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(FeatureFlagsState);
+            return new FeatureFlagsState(valid, flags);
         }
     }
 }
