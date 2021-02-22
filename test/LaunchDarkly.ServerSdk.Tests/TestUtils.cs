@@ -232,6 +232,9 @@ namespace LaunchDarkly.Sdk.Server
 
         public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) =>
             Events.Add(e);
+
+        public void RecordAliasEvent(EventProcessorTypes.AliasEvent e) =>
+            Events.Add(e);
     }
 
     public class TestEventSender : LaunchDarkly.Sdk.Internal.Events.IEventSender

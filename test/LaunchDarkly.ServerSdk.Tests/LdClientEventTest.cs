@@ -378,6 +378,28 @@ namespace LaunchDarkly.Sdk.Server
             CheckFeatureEvent(eventSink.Events[0], f0, LdValue.Of("off"), LdValue.Of("default"), null);
         }
 
+        [Fact]
+        public void AliasSendsEvent()
+        {
+            client.Alias(User.WithKey("current"), User.Builder("previous").Anonymous(true).Build());
+
+            Assert.Equal(1, eventSink.Events.Count);
+            var e = Assert.IsType<AliasEvent>(eventSink.Events[0]);
+            Assert.Equal("current", e.CurrentKey);
+            Assert.Equal(ContextKind.User, e.CurrentKind);
+            Assert.Equal("previous", e.PreviousKey);
+            Assert.Equal(ContextKind.AnonymousUser, e.PreviousKind);
+        }
+
+        [Fact]
+        public void AliasWithEmptyUserKeySendsNoEvent()
+        {
+            client.Alias(User.WithKey(""), User.WithKey("previous"));
+            client.Alias(User.WithKey("current"), User.WithKey(""));
+
+            Assert.Empty(eventSink.Events);
+        }
+
         private void CheckFeatureEvent(object e, FeatureFlag flag, LdValue value, LdValue defaultVal, string prereqOf)
         {
             var fe = Assert.IsType<EvaluationEvent>(e);

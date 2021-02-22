@@ -369,7 +369,20 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="data">additional data associated with the event, if any</param>
         /// <param name="user">the user that performed the event</param>
         void Track(string name, User user, LdValue data);
-        
+
+        /// <summary>
+        /// Associates two users for analytics purposes.
+        /// </summary>
+        /// <remarks>
+        /// This can be helpful in the situation where a person is represented by multiple
+        /// LaunchDarkly users. This may happen, for example, when a person initially logs into
+        /// an application-- the person might be represented by an anonymous user prior to logging
+        /// in and a different user after logging in, as denoted by a different user key.
+        /// </remarks>
+        /// <param name="currentUser">the current version of a user</param>
+        /// <param name="previousUser">the previous version of a user</param>
+        void Alias(User currentUser, User previousUser);
+
         /// <summary>
         /// Returns an object that encapsulates the state of all feature flags for a given user, which
         /// can be passed to front-end code.
