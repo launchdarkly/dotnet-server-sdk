@@ -15,6 +15,7 @@ template:
   env:
     # See Releaser docs - this causes the generated documentation to include all public APIs from CommonSdk
     LD_RELEASE_DOCS_ASSEMBLIES: LaunchDarkly.ServerSdk LaunchDarkly.CommonSdk
+    LD_RELEASE_DOCS_TARGET_FRAMEWORK: net452
     LD_RELEASE_TEST_TARGET_FRAMEWORK: net46
 
 documentation:
