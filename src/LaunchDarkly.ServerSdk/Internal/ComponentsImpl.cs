@@ -70,6 +70,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             public void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e) { }
             public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e) { }
             public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) { }
+            public void RecordAliasEvent(EventProcessorTypes.AliasEvent e) { }
             public void Flush() { }
             public void Dispose() { }
         }

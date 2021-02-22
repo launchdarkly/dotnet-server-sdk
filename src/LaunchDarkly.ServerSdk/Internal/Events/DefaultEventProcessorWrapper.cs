@@ -47,6 +47,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 MetricValue = e.MetricValue
             });
 
+        public void RecordAliasEvent(EventProcessorTypes.AliasEvent e) =>
+            _impl.RecordAliasEvent(new InternalEventTypes.AliasEvent
+            {
+                Timestamp = e.Timestamp,
+                Key = e.CurrentKey,
+                ContextKind = (InternalEventTypes.ContextKind)e.CurrentKind,
+                PreviousKey = e.PreviousKey,
+                PreviousContextKind = (InternalEventTypes.ContextKind)e.PreviousKind
+            });
+
         public void Flush() =>
             _impl.Flush();
 
