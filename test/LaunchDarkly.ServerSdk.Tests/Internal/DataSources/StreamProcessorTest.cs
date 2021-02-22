@@ -534,7 +534,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private void SimulateStreamHttpError(int statusCode)
         {
-            var ex = new EventSourceServiceUnsuccessfulResponseException("", statusCode);
+            var ex = new EventSourceServiceUnsuccessfulResponseException(statusCode);
             _mockEventSource.Raise(es => es.Error += null, new EventSource.ExceptionEventArgs(ex));
         }
 
