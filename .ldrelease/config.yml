@@ -17,6 +17,11 @@ template:
     LD_RELEASE_DOCS_ASSEMBLIES: LaunchDarkly.ServerSdk LaunchDarkly.CommonSdk
     LD_RELEASE_TEST_TARGET_FRAMEWORK: net46
 
+releasableBranches:
+  - name: master
+    description: 6.x
+  - name: 5.x
+
 documentation:
   title: LaunchDarkly Server-Side SDK for .NET
   githubPages: true
