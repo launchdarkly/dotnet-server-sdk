@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.14.1] - 2021-03-03
+### Fixed:
+- The long-running task that the SDK uses to process analytics events was being created in a way that could unnecessarily reduce availability of the managed thread pool, potentially causing unexpected delays in asynchronous task scheduling elsewhere in an application.
+
 ## [5.14.0] - 2021-01-26
 The purpose of this release is to introduce newer APIs for configuring the SDK, corresponding to how configuration will work in the upcoming 6.0 release. These are very similar to the configuration APIs in the recent 5.x releases of the LaunchDarkly server-side Java and Go SDKs.
 
