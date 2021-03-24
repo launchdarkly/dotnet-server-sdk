@@ -40,15 +40,18 @@ namespace LaunchDarkly.Tests
                 .EventSourceCreator(_eventSourceFactory.Create());
         }
 
-        [Fact]
-        public void StreamUriHasCorrectEndpoint()
+        [Theory]
+        [InlineData("", "/all")]
+        [InlineData("/basepath", "/basepath/all")]
+        [InlineData("/basepath/", "/basepath/all")]
+        public void StreamRequestHasCorrectUriAndMethod(string baseUriExtraPath, string expectedPath)
         {
-            _dataSourceBuilder.BaseUri(new Uri("http://stream.test.com"));
+            _dataSourceBuilder.BaseUri(new Uri("http://stream.test.com" + baseUriExtraPath));
             StreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal(new Uri("http://stream.test.com/all"),
+            Assert.Equal(new Uri("http://stream.test.com" + expectedPath),
                 _eventSourceFactory.ReceivedProperties.StreamUri);
         }
-        
+
         [Fact]
         public void PutCausesFeatureToBeStored()
         {

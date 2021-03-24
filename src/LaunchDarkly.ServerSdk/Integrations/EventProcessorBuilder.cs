@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Client.Utils;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client.Integrations
@@ -267,8 +268,8 @@ namespace LaunchDarkly.Client.Integrations
                 EventCapacity = _capacity,
                 EventFlushInterval = _flushInterval,
                 EventSamplingInterval = _samplingInterval,
-                EventsUri = new Uri(_baseUri, "bulk"),
-                DiagnosticUri = new Uri(_baseUri, "diagnostic"),
+                EventsUri = _baseUri.AddPath("bulk"),
+                DiagnosticUri = _baseUri.AddPath("diagnostic"),
                 HttpClientTimeout = httpConfig.ConnectTimeout,
                 InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),

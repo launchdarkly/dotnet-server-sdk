@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Common.Logging;
 using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Client.Utils;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -21,7 +22,7 @@ namespace LaunchDarkly.Client
 
         internal FeatureRequestor(Configuration config, Uri baseUri)
         {
-            _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
+            _allUri = baseUri.AddPath("sdk/latest-all");
             _httpClient = Util.MakeHttpClient(config.HttpRequestConfiguration, ServerSideClientEnvironment.Instance);
             _httpConfig = config.HttpConfiguration;
         }
