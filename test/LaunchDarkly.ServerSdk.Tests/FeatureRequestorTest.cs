@@ -1,6 +1,7 @@
 ﻿using LaunchDarkly.Client;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using WireMock;
 using WireMock.Logging;
@@ -21,6 +22,35 @@ namespace LaunchDarkly.Tests
                 .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
                 .Build();
             return new FeatureRequestor(config, new Uri(server.Urls[0]));
+        }
+
+        [Theory]
+        [InlineData("", "/sdk/latest-all")]
+        [InlineData("/basepath", "/basepath/sdk/latest-all")]
+        [InlineData("/basepath/", "/basepath/sdk/latest-all")]
+        public async Task GetAllUsesCorrectUriAndMethodAsync(
+            string baseUriExtraPath,
+            string expectedPath
+            )
+        {
+            using (var server = await TestHttpUtils.StartServerAsync())
+            {
+                server.Given(Request.Create().UsingGet())
+                    .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson));
+
+                var config = Configuration.Builder("key")
+                    .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
+                    .Build();
+                var baseUri = new Uri(server.Urls[0] + baseUriExtraPath);
+
+                using (var requestor = new FeatureRequestor(config, baseUri))
+                {
+                    await requestor.GetAllDataAsync();
+
+                    var req = GetLastRequest(server);
+                    Assert.Equal("GET", req.Method.ToUpper());
+                }
+            }
         }
 
         [Fact]

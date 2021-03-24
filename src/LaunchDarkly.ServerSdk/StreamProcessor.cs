@@ -5,6 +5,7 @@ using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LaunchDarkly.Client.Interfaces;
+using LaunchDarkly.Client.Utils;
 using LaunchDarkly.Common;
 
 namespace LaunchDarkly.Client
@@ -30,7 +31,7 @@ namespace LaunchDarkly.Client
             )
         {
             var httpConfig = config.HttpConfiguration;
-            var streamProperties = new StreamProperties(new Uri(baseUri, "/all"),
+            var streamProperties = new StreamProperties(baseUri.AddPath("/all"),
                 HttpMethod.Get, null);
             var streamManagerConfig = new StreamManagerConfigImpl
             {
