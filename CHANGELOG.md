@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [5.14.2] - 2021-03-24
+### Fixed:
+- Setting a custom base URI to use instead of the regular LaunchDarkly service endpoints did not work correctly if the base URI included a path prefix, as it might if for instance you were using a reverse proxy that would forward requests from `http://my-proxy/launchdarkly-stream/some-endpoint-path` to `https://stream.launchdarkly.com/some-endpoint-path`. In this example, the `/launchdarkly-stream` part was being dropped from the request URL, preventing this type of proxy configuration from working. Now the base path will always be preserved.
+
 ## [5.14.1] - 2021-03-03
 ### Fixed:
 - The long-running task that the SDK uses to process analytics events was being created in a way that could unnecessarily reduce availability of the managed thread pool, potentially causing unexpected delays in asynchronous task scheduling elsewhere in an application.
