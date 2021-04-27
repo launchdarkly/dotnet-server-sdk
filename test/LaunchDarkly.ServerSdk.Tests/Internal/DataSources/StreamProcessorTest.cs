@@ -64,18 +64,22 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .Build();
         }
 
-        [Fact]
-        public void StreamUriHasCorrectEndpoint()
+        [Theory]
+        [InlineData("", "/all")]
+        [InlineData("/basepath", "/basepath/all")]
+        [InlineData("/basepath/", "/basepath/all")]
+        public void StreamRequestHasCorrectUri(string baseUriExtraPath, string expectedPath)
         {
+            var baseUri = new Uri("http://stream.test.com" + baseUriExtraPath);
             _config = Server.Configuration.Builder(_config)
                 .DataSource(
                     Components.StreamingDataSource()
-                        .BaseUri(new Uri("http://stream.test.com"))
+                        .BaseUri(baseUri)
                         .EventSourceCreator(_eventSourceFactory.Create())
                     )
                 .Build();
             StreamProcessor sp = CreateAndStartProcessor();
-            Assert.Equal(new Uri("http://stream.test.com/all"),
+            Assert.Equal(new Uri("http://stream.test.com" + expectedPath),
                 _eventSourceFactory.ReceivedUri);
         }
 

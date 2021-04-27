@@ -27,8 +27,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             .Build().ToJsonString();
 
         public FeatureRequestorTest(ITestOutputHelper testOutput) : base(testOutput) { }
-        
-        private IFeatureRequestor MakeRequestor(HttpServer server)
+
+        private IFeatureRequestor MakeRequestor(HttpServer server) => MakeRequestor(server.Uri);
+
+        private IFeatureRequestor MakeRequestor(Uri baseUri)
         {
             var config = Configuration.Builder(sdkKey)
                 .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
@@ -36,11 +38,40 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .Build();
             return new FeatureRequestor(
                 new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), config),
-                server.Uri);
+                baseUri);
+        }
+
+        [Theory]
+        [InlineData("", "/sdk/latest-all")]
+        [InlineData("/basepath", "/basepath/sdk/latest-all")]
+        [InlineData("/basepath/", "/basepath/sdk/latest-all")]
+        public async Task GetAllUsesCorrectUriAndMethodAsync(
+            string baseUriExtraPath,
+            string expectedPath
+            )
+        {
+            var resp = Handlers.BodyJson(AllDataJson);
+            using (var server = HttpServer.Start(resp))
+            {
+                var config = Configuration.Builder("key")
+                    .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
+                    .Build();
+                var baseUri = new Uri(server.Uri.ToString().TrimEnd('/') + baseUriExtraPath);
+
+                using (var requestor = MakeRequestor(baseUri))
+                {
+                    await requestor.GetAllDataAsync();
+
+                    var req = server.Recorder.RequireRequest();
+
+                    Assert.Equal("GET", req.Method);
+                    Assert.Equal(expectedPath, req.Path);
+                }
+            }
         }
 
         [Fact]
-        public async Task GetAllUsesCorrectUriAndParsesResponseAsync()
+        public async Task GetAllParsesResponseAsync()
         {
             var resp = Handlers.BodyJson(AllDataJson);
             using (var server = HttpServer.Start(resp))

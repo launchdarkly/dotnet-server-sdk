@@ -5,6 +5,7 @@ using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Utils;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
@@ -287,8 +288,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 DiagnosticRecordingInterval = _diagnosticRecordingInterval,
                 EventCapacity = _capacity,
                 EventFlushInterval = _flushInterval,
-                EventsUri = new Uri(_baseUri, "bulk"),
-                DiagnosticUri = new Uri(_baseUri, "diagnostic"),
+                EventsUri = _baseUri.AddPath("bulk"),
+                DiagnosticUri = _baseUri.AddPath("diagnostic"),
                 InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
                 UserKeysCapacity = _userKeysCapacity,
