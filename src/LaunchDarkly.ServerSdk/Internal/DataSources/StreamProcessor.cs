@@ -9,7 +9,6 @@ using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Utils;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.DataSources.StreamProcessorEvents;

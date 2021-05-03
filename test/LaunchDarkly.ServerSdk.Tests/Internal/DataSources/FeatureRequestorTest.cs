@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Json;
-using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using LaunchDarkly.TestHelpers.HttpTest;
