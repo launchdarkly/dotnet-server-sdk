@@ -43,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public StreamProcessorTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _mockEventSource = new Mock<IEventSource>();
-            _mockEventSource.Setup(es => es.StartAsync()).Returns(Task.CompletedTask).Callback(() => _esStartedReady.Set());
+            _mockEventSource.Setup(es => es.StartAsync()).Returns(TestUtils.CompletedTask()).Callback(() => _esStartedReady.Set());
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new DelegatingDataStoreForStreamTests { WrappedStore = new InMemoryDataStore() };

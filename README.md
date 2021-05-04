@@ -4,6 +4,10 @@
 [![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-server-sdk.svg?style=shield)](https://circleci.com/gh/launchdarkly/dotnet-server-sdk)
 [![Documentation](https://img.shields.io/static/v1?label=GitHub+Pages&message=API+reference&color=00add8)](https://launchdarkly.github.io/dotnet-server-sdk)
 
+The LaunchDarkly Server-Side SDK for .NET is designed primarily for use in multi-user systems such as web servers and applications. It follows the server-side LaunchDarkly model for multi-user contexts. It is not intended for use in desktop and embedded systems applications.
+
+For using LaunchDarkly in *client-side* .NET applications, including mobile (Xamarin) applications and desktop applications, refer to our [Xamarin SDK](https://github.com/launchdarkly/xamarin-client-sdk).
+
 ## LaunchDarkly overview
 
 [LaunchDarkly](https://www.launchdarkly.com) is a feature management platform that serves over 100 billion feature flags daily to help teams build better software, faster. [Get started](https://docs.launchdarkly.com/docs/getting-started) using LaunchDarkly today!
@@ -14,11 +18,18 @@
 
 This version of the SDK is built for the following targets:
 
-* .NET Framework 4.5.2: runs on .NET Framework 4.5.x or 4.6.x.
+* .NET Core 2.1: runs on .NET Core 2.1+ and 3.x.
+* .NET 5.0: runs on .NET 5.0 and above.
+* .NET Framework 4.5.2: runs on .NET Framework 4.5.x and 4.6.x.
 * .NET Framework 4.7.1: runs on .NET Framework 4.7.1 and above.
-* .NET Standard 2.0: runs on .NET Core 2.x and 3.x, or .NET 5, in an application; or within a library that is targeted to .NET Standard 2.x or .NET 5.
+* .NET Standard 2.0: runs in any project that is targeted to .NET Standard 2.x rather than to a specific runtime platform.
 
 The .NET build tools should automatically load the most appropriate build of the SDK for whatever platform your application or library is targeted to.
+
+The only differences in the capabilities of the SDK between platforms are these:
+
+* Setting a TCP connection timeout is only supported in .NET Core and .NET 5.0. For more details, see `HttpConfigurationBuilder.ConnectTimeout`.
+* The SDK integrates automatically with the `System.Text.Json` API in .NET Core and .NET 5.0. In .NET Framework and .NET Standard, it uses its own implementation of JSON encoding and decoding. For more about how JSON is implemented in the SDK, see https://github.com/launchdarkly/dotnet-jsonstream.
 
 ## Getting started
 

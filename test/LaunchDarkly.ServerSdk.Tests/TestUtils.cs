@@ -20,6 +20,10 @@ namespace LaunchDarkly.Sdk.Server
     {
         public static readonly Logger NullLogger = Logs.None.Logger("");
 
+#pragma warning disable 1998
+        public static async Task CompletedTask() { } // Task.CompletedTask isn't supported in .NET Framework 4.5.x
+#pragma warning restore 1998
+
         public static string TestFilePath(string name) => "./TestFiles/" + name;
 
         internal static ItemDescriptor DescriptorOf(FeatureFlag item) => new ItemDescriptor(item.Version, item);

@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">netcoreapp2.1</TestFramework>
-    <TargetFramework>$(TESTFRAMEWORK)</TargetFramework>
+    <!-- The TESTFRAMEWORK variable allows us to override the target frameworks with a
+         single framework that we are testing; this allows us to test with older SDK
+         versions that would error out if they saw any newer target frameworks listed
+         here, even if we weren't running those. -->
+    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">netcoreapp2.1;net452</TestFramework>
+    <TargetFrameworks>$(TESTFRAMEWORK)</TargetFrameworks>
     <AssemblyName>LaunchDarkly.ServerSdk.Tests</AssemblyName>
     <PackageId>LaunchDarkly.ServerSdk.Tests</PackageId>
     <IsPackable>false</IsPackable>
