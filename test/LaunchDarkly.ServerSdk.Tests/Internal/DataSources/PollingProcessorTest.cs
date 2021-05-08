@@ -1,5 +1,5 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
@@ -85,37 +85,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        [Fact]
-        public void HTTP401ErrorCausesImmediateFailure()
-        {
-            VerifyUnrecoverableHttpError(401);
-        }
-
-        [Fact]
-        public void HTTP403ErrorCausesImmediateFailure()
-        {
-            VerifyUnrecoverableHttpError(403);
-        }
-
-        [Fact]
-        public void HTTP408ErrorDoesNotCauseImmediateFailure()
-        {
-            VerifyRecoverableHttpError(408);
-        }
-
-        [Fact]
-        public void HTTP429ErrorDoesNotCauseImmediateFailure()
-        {
-            VerifyRecoverableHttpError(429);
-        }
-
-        [Fact]
-        public void HTTP500ErrorDoesNotCauseImmediateFailure()
-        {
-            VerifyRecoverableHttpError(500);
-        }
-
-        private void VerifyUnrecoverableHttpError(int status)
+        [Theory]
+        [InlineData(401)]
+        [InlineData(403)]
+        public void VerifyUnrecoverableHttpError(int status)
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
@@ -129,7 +102,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
         }
 
-        private void VerifyRecoverableHttpError(int status)
+        [Theory]
+        [InlineData(408)]
+        [InlineData(429)]
+        [InlineData(500)]
+        public void VerifyRecoverableHttpError(int status)
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));

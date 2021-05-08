@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>6.0.0-alpha.9</Version>
-    <TargetFrameworks>netstandard2.0;net452;net471</TargetFrameworks>
+    <!-- The BUILDFRAMEWORKS variable allows us to override the target frameworks with a
+         single framework that we are testing; this allows us to test with older SDK
+         versions that would error out if they saw any newer target frameworks listed
+         here, even if we weren't running those. -->
+    <BuildFrameworks Condition="'$(BUILDFRAMEWORKS)' == ''">netstandard2.0;netcoreapp2.1;net452;net471;net50</BuildFrameworks>
+    <TargetFrameworks>$(BUILDFRAMEWORKS)</TargetFrameworks>
     <!-- Note: whenever we add or remove supported target frameworks, we must update ServerDiagnosticStore.GetDotNetTargetFramework() -->
     <DebugType>portable</DebugType>
     <AssemblyName>LaunchDarkly.ServerSdk</AssemblyName>
@@ -21,13 +26,18 @@
     <RepositoryBranch>master</RepositoryBranch>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- CopyLocalLockFileAssemblies causes dependency DLLs to be copied into the
+         build products, which is necessary for our documentation generation logic;
+         this doesn't affect what goes into the NuGet package. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
     <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.0.1" />
-    <PackageReference Include="LaunchDarkly.EventSource" Version="4.0.0" />
-    <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.0.0" />
+    <PackageReference Include="LaunchDarkly.EventSource" Version="4.1.1" />
+    <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.1.1" />
     <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.0" />
     <PackageReference Include="LaunchDarkly.Logging" Version="1.0.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />

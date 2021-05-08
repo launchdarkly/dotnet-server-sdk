@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Json;
-using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
-using WireMock;
-using WireMock.Logging;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
-using WireMock.Server;
+using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -32,8 +27,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             .Build().ToJsonString();
 
         public FeatureRequestorTest(ITestOutputHelper testOutput) : base(testOutput) { }
-        
-        private IFeatureRequestor MakeRequestor(FluentMockServer server)
+
+        private IFeatureRequestor MakeRequestor(HttpServer server) => MakeRequestor(server.Uri);
+
+        private IFeatureRequestor MakeRequestor(Uri baseUri)
         {
             var config = Configuration.Builder(sdkKey)
                 .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
@@ -41,22 +38,49 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .Build();
             return new FeatureRequestor(
                 new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), config),
-                new Uri(server.Urls[0]));
+                baseUri);
+        }
+
+        [Theory]
+        [InlineData("", "/sdk/latest-all")]
+        [InlineData("/basepath", "/basepath/sdk/latest-all")]
+        [InlineData("/basepath/", "/basepath/sdk/latest-all")]
+        public async Task GetAllUsesCorrectUriAndMethodAsync(
+            string baseUriExtraPath,
+            string expectedPath
+            )
+        {
+            var resp = Handlers.BodyJson(AllDataJson);
+            using (var server = HttpServer.Start(resp))
+            {
+                var config = Configuration.Builder("key")
+                    .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
+                    .Build();
+                var baseUri = new Uri(server.Uri.ToString().TrimEnd('/') + baseUriExtraPath);
+
+                using (var requestor = MakeRequestor(baseUri))
+                {
+                    await requestor.GetAllDataAsync();
+
+                    var req = server.Recorder.RequireRequest();
+
+                    Assert.Equal("GET", req.Method);
+                    Assert.Equal(expectedPath, req.Path);
+                }
+            }
         }
 
         [Fact]
-        public async Task GetAllUsesCorrectUriAndParsesResponseAsync()
+        public async Task GetAllParsesResponseAsync()
         {
-            using (var server = await TestHttpUtils.StartServerAsync())
+            var resp = Handlers.BodyJson(AllDataJson);
+            using (var server = HttpServer.Start(resp))
             {
-                server.Given(Request.Create().UsingGet())
-                    .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson));
-
                 using (var requestor = MakeRequestor(server))
                 {
                     var result = await requestor.GetAllDataAsync();
 
-                    var req = GetLastRequest(server);
+                    var req = server.Recorder.RequireRequest();
                     Assert.Equal("/sdk/latest-all", req.Path);
 
                     var expectedData = new DataSetBuilder().Flags(flag1).Segments(segment1).Build();
@@ -68,21 +92,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async Task GetAllStoresAndSendsEtag()
         {
-            using (var server = await TestHttpUtils.StartServerAsync())
+            var etag = @"""abc123"""; // note that etag strings must be quoted
+            var resp = Handlers.Header("Etag", etag).Then(Handlers.BodyJson(AllDataJson));
+            using (var server = HttpServer.Start(resp))
             {
-                var etag = @"""abc123"""; // note that etag strings must be quoted
-                server.Given(Request.Create().UsingGet())
-                .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
-
                 using (var requestor = MakeRequestor(server))
                 {
                     await requestor.GetAllDataAsync();
                     await requestor.GetAllDataAsync();
 
-                    var reqs = new List<LogEntry>(server.LogEntries);
-                    Assert.Equal(2, reqs.Count);
-                    Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
-                    Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
+                    var req1 = server.Recorder.RequireRequest();
+                    var req2 = server.Recorder.RequireRequest();
+                    Assert.Null(req1.Headers.Get("If-None-Match"));
+                    Assert.Equal(etag, req2.Headers.Get("If-None-Match"));
+                    server.Recorder.RequireNoRequests(TimeSpan.FromMilliseconds(100));
                 }
             }
         }
@@ -90,23 +113,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async Task GetAllReturnsNullIfNotModified()
         {
-            using (var server = await TestHttpUtils.StartServerAsync())
+            var etag = @"""abc123"""; // note that etag strings must be quoted
+            using (var server = HttpServer.Start(Handlers.Switchable(out var switcher)))
             {
-                var etag = @"""abc123"""; // note that etag strings must be quoted
-
-                server.Given(Request.Create().UsingGet())
-                    .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
-
                 using (var requestor = MakeRequestor(server))
                 {
+                    switcher.Target = Handlers.Header("Etag", etag).Then(Handlers.BodyJson(AllDataJson));
                     var result1 = await requestor.GetAllDataAsync();
-
-                    server.Reset();
-                    server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
-                        .RespondWith(Response.Create().WithStatusCode(304));
-                    var result2 = await requestor.GetAllDataAsync();
-
                     Assert.NotNull(result1);
+
+                    switcher.Target = Handlers.Status(304);
+                    var result2 = await requestor.GetAllDataAsync();
                     Assert.Null(result2);
                 }
             }
@@ -115,11 +132,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async Task GetAllDoesNotRetryFailedRequest()
         {
-            using (var server = await TestHttpUtils.StartServerAsync())
+            using (var server = HttpServer.Start(Handlers.Status(503)))
             {
-                server.Given(Request.Create().UsingGet())
-                    .RespondWith(Response.Create().WithStatusCode(503));
-
                 using (var requestor = MakeRequestor(server))
                 {
                     try
@@ -131,8 +145,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                         Assert.Equal(503, e.StatusCode);
                     }
 
-                    var reqs = new List<LogEntry>(server.LogEntries);
-                    Assert.Equal(1, reqs.Count);
+                    server.Recorder.RequireRequest();
+                    server.Recorder.RequireNoRequests(TimeSpan.FromMilliseconds(100));
                 }
             }
         }
@@ -140,45 +154,27 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async Task ResponseWithoutEtagClearsPriorEtag()
         {
-            using (var server = await TestHttpUtils.StartServerAsync())
+            var etag = @"""abc123""";
+            using (var server = HttpServer.Start(Handlers.Switchable(out var switcher)))
             {
-                var etag = @"""abc123""";
-
-                server.Given(Request.Create().UsingGet())
-                    .AtPriority(2)
-                    .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
-                server.Given(Request.Create().UsingGet().WithHeader("If-None-Match", etag))
-                    .AtPriority(1)
-                    .RespondWith(Response.Create().WithStatusCode(200).WithBody(AllDataJson)); // respond with no etag
-
                 using (var requestor = MakeRequestor(server))
                 {
-                    var fetch1 = await requestor.GetAllDataAsync();
-                    var fetch2 = await requestor.GetAllDataAsync();
+                    switcher.Target = Handlers.Header("Etag", etag).Then(Handlers.BodyJson(AllDataJson));
+                    var result1 = await requestor.GetAllDataAsync();
+                    var request1 = server.Recorder.RequireRequest();
 
-                    server.Given(Request.Create().UsingGet())
-                        .AtPriority(1)
-                        .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Etag", etag).WithBody(AllDataJson));
+                    switcher.Target = Handlers.BodyJson(AllDataJson); // respond with no etag this time
+                    var result2 = await requestor.GetAllDataAsync();
+                    var request2 = server.Recorder.RequireRequest();
 
-                    var fetch3 = await requestor.GetAllDataAsync();
+                    var result3 = await requestor.GetAllDataAsync();
+                    var request3 = server.Recorder.RequireRequest();
 
-                    var reqs = new List<LogEntry>(server.LogEntries);
-                    Assert.Equal(3, reqs.Count);
-                    Assert.False(reqs[0].RequestMessage.Headers.ContainsKey("If-None-Match"));
-                    Assert.Equal(new List<string> { etag }, reqs[1].RequestMessage.Headers["If-None-Match"]);
-                    Assert.False(reqs[2].RequestMessage.Headers.ContainsKey("If-None-Match"));
+                    Assert.Null(request1.Headers.Get("If-None-Match"));
+                    Assert.Equal(etag, request2.Headers.Get("If-None-Match"));
+                    Assert.Null(request3.Headers.Get("If-None-Match"));
                 }
             }
-        }
-
-        private RequestMessage GetLastRequest(FluentMockServer server)
-        {
-            foreach (LogEntry le in server.LogEntries)
-            {
-                return le.RequestMessage;
-            }
-            Assert.True(false, "Did not receive a request");
-            return null;
         }
     }
 }

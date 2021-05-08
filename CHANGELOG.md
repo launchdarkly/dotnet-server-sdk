@@ -56,6 +56,14 @@ This is the first beta release of the 6.0 SDK-- a major rewrite that introduces 
 ### Removed:
 - All types and methods that were deprecated as of the last .NET SDK 5.x release have been removed. This includes many `ConfigurationBuilder` methods, which have been replaced by the modular configuration syntax that was already added in the 5.14.0 release. See the migration guide for details on how to update your configuration code if you were using the older syntax.
 
+## [5.14.2] - 2021-03-24
+### Fixed:
+- Setting a custom base URI to use instead of the regular LaunchDarkly service endpoints did not work correctly if the base URI included a path prefix, as it might if for instance you were using a reverse proxy that would forward requests from `http://my-proxy/launchdarkly-stream/some-endpoint-path` to `https://stream.launchdarkly.com/some-endpoint-path`. In this example, the `/launchdarkly-stream` part was being dropped from the request URL, preventing this type of proxy configuration from working. Now the base path will always be preserved.
+
+## [5.14.1] - 2021-03-03
+### Fixed:
+- The long-running task that the SDK uses to process analytics events was being created in a way that could unnecessarily reduce availability of the managed thread pool, potentially causing unexpected delays in asynchronous task scheduling elsewhere in an application.
+
 ## [5.14.0] - 2021-01-26
 The purpose of this release is to introduce newer APIs for configuring the SDK, corresponding to how configuration will work in the upcoming 6.0 release. These are very similar to the configuration APIs in the recent 5.x releases of the LaunchDarkly server-side Java and Go SDKs.
 

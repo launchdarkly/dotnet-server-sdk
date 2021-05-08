@@ -60,7 +60,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _initialReconnectDelay = initialReconnectDelay;
             _diagnosticStore = context.DiagnosticStore;
             _initTask = new TaskCompletionSource<bool>();
-            _streamUri = new Uri(baseUri, "/all");
+            _streamUri = baseUri.AddPath("/all");
 
             _storeStatusMonitoringEnabled = _dataSourceUpdates.DataStoreStatusProvider.StatusMonitoringEnabled;
             if (_storeStatusMonitoringEnabled)
@@ -117,7 +117,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var configBuilder = EventSource.Configuration.Builder(uri)
                 .Method(HttpMethod.Get)
                 .HttpMessageHandler(httpConfig.MessageHandler)
-                .ConnectionTimeout(httpConfig.ConnectTimeout)
+                .ResponseStartTimeout(httpConfig.ResponseStartTimeout)
                 .InitialRetryDelay(_initialReconnectDelay)
                 .ReadTimeout(LaunchDarklyStreamReadTimeout)
                 .RequestHeaders(httpConfig.DefaultHeaders.ToDictionary(kv => kv.Key, kv => kv.Value))

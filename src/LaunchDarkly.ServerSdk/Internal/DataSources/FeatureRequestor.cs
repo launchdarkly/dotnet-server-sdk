@@ -19,8 +19,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
     internal class FeatureRequestor : IFeatureRequestor
     {
         private readonly Uri _allUri;
-        private readonly Uri _flagsUri;
-        private readonly Uri _segmentsUri;
         private readonly HttpClient _httpClient;
         private readonly HttpProperties _httpProperties;
         private readonly TimeSpan _connectTimeout;
@@ -32,9 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _httpProperties = context.Http.HttpProperties;
             _httpClient = context.Http.NewHttpClient();
             _connectTimeout = context.Http.ConnectTimeout;
-            _allUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-all");
-            _flagsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-flags/");
-            _segmentsUri = new Uri(baseUri.AbsoluteUri + "sdk/latest-segments/");
+            _allUri = baseUri.AddPath("sdk/latest-all");
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
