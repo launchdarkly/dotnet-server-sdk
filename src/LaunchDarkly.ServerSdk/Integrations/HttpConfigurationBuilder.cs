@@ -40,22 +40,48 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromSeconds(10);
 
+        /// <summary>
+        /// The default value for <see cref="ResponseStartTimeout(TimeSpan)"/>: 10 seconds.
+        /// </summary>
+        public static readonly TimeSpan DefaultResponseStartTimeout = TimeSpan.FromSeconds(10);
+
         internal TimeSpan _connectTimeout = DefaultConnectTimeout;
         internal List<KeyValuePair<string, string>> _customHeaders = new List<KeyValuePair<string, string>>();
         internal HttpMessageHandler _messageHandler = null;
         internal IWebProxy _proxy = null;
         internal TimeSpan _readTimeout = DefaultReadTimeout;
+        internal TimeSpan _responseStartTimeout = DefaultResponseStartTimeout;
         internal string _wrapperName = null;
         internal string _wrapperVersion = null;
 
         /// <summary>
-        /// Sets the connection timeout.
+        /// Sets the network connection timeout.
         /// </summary>
         /// <remarks>
-        /// This is the time allowed for the SDK to make a socket connection to any of the LaunchDarkly services.
+        /// <para>
+        /// This is the time allowed for the underlying HTTP client to connect to the
+        /// LaunchDarkly server, for any individual network connection.
+        /// </para>
+        /// <para>
+        /// It is not the same as <see cref="ConfigurationBuilder.StartWaitTime(TimeSpan)"/>, which
+        /// limits the time for initializing the SDK regardless of how many individual HTTP requests
+        /// are done in that time.
+        /// </para>
+        /// <para>
+        /// Not all .NET platforms support setting a connection timeout. It is implemented as
+        /// a property of <c>System.Net.Http.SocketsHttpHandler</c> in .NET Core 2.1+ and .NET
+        /// 5+, but is unavailable in .NET Framework and .NET Standard. On platforms where it
+        /// is not supported, only <see cref="ResponseStartTimeout"/> will be used.
+        /// </para>
+        /// <para>
+        /// Also, since this is implemented only in <c>SocketsHttpHandler</c>, if you have
+        /// specified some other HTTP handler implementation with <see cref="HttpMessageHandler"/>,
+        /// the <see cref="ConnectTimeout"/> here will be ignored.
+        /// </para>
         /// </remarks>
-        /// <param name="connectTimeout">the connection timeout</param>
+        /// <param name="connectTimeout">the timeout</param>
         /// <returns>the builder</returns>
+        /// <seealso cref="ResponseStartTimeout"/>
         public HttpConfigurationBuilder ConnectTimeout(TimeSpan connectTimeout)
         {
             _connectTimeout = connectTimeout;
@@ -144,6 +170,31 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
+        /// Sets the maximum amount of time to wait for the beginning of an HTTP response.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This limits how long the SDK will wait from the time it begins trying to make a
+        /// network connection for an individual HTTP request to the time it starts receiving
+        /// any data from the server. It is equivalent to the <c>Timeout</c> property in
+        /// <c>HttpClient</c>.
+        /// </para>
+        /// <para>
+        /// It is not the same as <see cref="ConfigurationBuilder.StartWaitTime(TimeSpan)"/>, which
+        /// limits the time for initializing the SDK regardless of how many individual HTTP requests
+        /// are done in that time.
+        /// </para>
+        /// </remarks>
+        /// <param name="responseStartTimeout">the timeout</param>
+        /// <returns>the builder</returns>
+        /// <seealso cref="ConnectTimeout"/>
+        public HttpConfigurationBuilder ResponseStartTimeout(TimeSpan responseStartTimeout)
+        {
+            _responseStartTimeout = responseStartTimeout;
+            return this;
+        }
+
+        /// <summary>
         /// For use by wrapper libraries to set an identifying name for the wrapper being used.
         /// </summary>
         /// <remarks>
@@ -181,7 +232,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             return new HttpConfiguration(
                 httpProperties,
-                _messageHandler
+                _messageHandler,
+                _responseStartTimeout
                 );
         }
 

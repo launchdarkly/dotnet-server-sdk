@@ -53,6 +53,22 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
+        public void ResponseStartTimeout()
+        {
+            var value = TimeSpan.FromMilliseconds(789);
+            var prop = _tester.Property(c => c.ResponseStartTimeout, (b, v) => b.ResponseStartTimeout(v));
+            prop.AssertDefault(HttpConfigurationBuilder.DefaultResponseStartTimeout);
+            prop.AssertCanSet(value);
+
+            var config = Components.HttpConfiguration().ResponseStartTimeout(value)
+                .CreateHttpConfiguration(basicConfig);
+            using (var client = config.NewHttpClient())
+            {
+                Assert.Equal(value, client.Timeout);
+            }
+        }
+
+        [Fact]
         public void SdkKeyHeader()
         {
             var config = Components.HttpConfiguration().CreateHttpConfiguration(basicConfig);
