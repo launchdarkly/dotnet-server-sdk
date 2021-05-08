@@ -21,7 +21,7 @@ This SDK shares part of its implementation and public API with the [Xamarin SDK]
 * `LaunchDarkly.CommonSdk` (in [`launchdarkly/dotnet-sdk-common`](https://github.com/launchdarkly/dotnet-sdk-common): Types such as `User` that are part of the SDK's public API, but are not specific to server-side or client-side use.
 * `LaunchDarkly.InternalSdk` (in [`launchdarkly/dotnet-sdk-internal`](https://github.com/launchdarkly/dotnet-sdk-internal): Support code that is not part of the SDK's public API, such as the implementation of analytics event processing. These types are public in order to be usable from outside of their assembly, but they are not included in the SDK's public API or documentation.
 
-Other support code is in the packages [`LaunchDarkly.Eventsource`](https://github.com/launchdarkly/dotnet-eventsource), [`LaunchDarkly.JsonStream`](https://github.com/launchdarkly/dotnet-jsonstream), and [`LaunchDarkly.Logging`](https://github.com/launchdarkly/dotnet-logging).
+Other support code is in the packages [`LaunchDarkly.EventSource`](https://github.com/launchdarkly/dotnet-eventsource), [`LaunchDarkly.JsonStream`](https://github.com/launchdarkly/dotnet-jsonstream), and [`LaunchDarkly.Logging`](https://github.com/launchdarkly/dotnet-logging).
 
 ### Building
  
