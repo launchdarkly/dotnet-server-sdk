@@ -26,6 +26,11 @@
     <RepositoryBranch>master</RepositoryBranch>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- CopyLocalLockFileAssemblies causes dependency DLLs to be copied into the
+         build products, which is necessary for our documentation generation logic;
+         this doesn't affect what goes into the NuGet package. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
