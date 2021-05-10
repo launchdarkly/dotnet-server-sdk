@@ -43,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
             Assert.Equal("hello", values1.ExpectValue());
 
-            AssertEventually(TimeSpan.FromSeconds(2), TimeSpan.FromMilliseconds(20), () =>
+            AssertEventually(TimeSpan.FromSeconds(10), TimeSpan.FromMilliseconds(20), () =>
                 logCapture.HasMessageWithText(LogLevel.Error, "Unexpected exception from event handler: System.Exception: sorry") &&
                 logCapture.HasMessageWithRegex(LogLevel.Debug, "at LaunchDarkly.Sdk.Server.Internal.TaskExecutorTest"));
         }
@@ -62,11 +62,11 @@ namespace LaunchDarkly.Sdk.Server.Internal
             });
 
             testGate.Set();
-            Assert.True(values.TryTake(out var value1, TimeSpan.FromSeconds(1)));
+            Assert.True(values.TryTake(out var value1, TimeSpan.FromSeconds(2)));
             Assert.Equal(1, value1);
 
             testGate.Set();
-            Assert.True(values.TryTake(out var value2, TimeSpan.FromSeconds(1)));
+            Assert.True(values.TryTake(out var value2, TimeSpan.FromSeconds(2)));
             Assert.Equal(2, value2);
 
             canceller.Cancel();
@@ -98,12 +98,12 @@ namespace LaunchDarkly.Sdk.Server.Internal
             testGate.Set();
             Assert.False(values.TryTake(out _, TimeSpan.FromMilliseconds(100)));
 
-            AssertEventually(TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(20), () =>
+            AssertEventually(TimeSpan.FromSeconds(10), TimeSpan.FromMilliseconds(20), () =>
                 logCapture.HasMessageWithText(LogLevel.Error, "Unexpected exception from repeating task: System.Exception: sorry") &&
                 logCapture.HasMessageWithRegex(LogLevel.Debug, "at LaunchDarkly.Sdk.Server.Internal.TaskExecutorTest"));
 
             testGate.Set();
-            Assert.True(values.TryTake(out var value2, TimeSpan.FromSeconds(1)));
+            Assert.True(values.TryTake(out var value2, TimeSpan.FromSeconds(2)));
             Assert.Equal(2, value2);
 
             canceller.Cancel();
