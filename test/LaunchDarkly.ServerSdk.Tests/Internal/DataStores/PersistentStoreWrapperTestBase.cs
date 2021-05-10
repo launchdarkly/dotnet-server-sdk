@@ -502,7 +502,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
                 MakeStoreAvailable(_core);
 
-                var status2 = statuses.ExpectValue();
+                // We're specifying a longer timeout for the ExpectValue() call here because the status update for
+                // the data store being OK again comes from a polling task that deliberately does not run super fast.
+                var status2 = statuses.ExpectValue(TimeSpan.FromSeconds(2));
                 Assert.True(status2.Available);
                 Assert.Equal(!testParams.CacheMode.IsCachedIndefinitely, status2.RefreshNeeded);
 
