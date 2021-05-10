@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using LaunchDarkly.Sdk.Server.Integrations;
@@ -125,34 +124,28 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void ModifiedFileIsNotReloadedIfAutoUpdateIsOff()
         {
-            var filename = Path.GetTempFileName();
-            factory.FilePaths(filename);
-            try
+            using (var file = TempFile.Create())
             {
-                File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
+                factory.FilePaths(file.Path);
+                file.SetContentFromPath(TestUtils.TestFilePath("flag-only.json"));
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
+                    file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
                     Thread.Sleep(TimeSpan.FromMilliseconds(400));
                     Assert.Equal(1, CountFlagsInStore());
                     Assert.Equal(0, CountSegmentsInStore());
                 }
-            }
-            finally
-            {
-                File.Delete(filename);
             }
         }
 
         [Fact]
         public void ModifiedFileIsReloadedIfAutoUpdateIsOn()
         {
-            var filename = Path.GetTempFileName();
-            factory.FilePaths(filename).AutoUpdate(true);
-            try
+            using (var file = TempFile.Create())
             {
-                File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
+                factory.FilePaths(file.Path).AutoUpdate(true);
+                file.SetContentFromPath(TestUtils.TestFilePath("flag-only.json"));
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
@@ -162,7 +155,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     Thread.Sleep(TimeSpan.FromMilliseconds(1000));
                     // See FilePollingReloader for the reason behind this long sleep
 
-                    File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
+                    file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
                     Assert.True(
                         WaitForCondition(TimeSpan.FromSeconds(5), () => CountSegmentsInStore() == 1),
@@ -170,58 +163,47 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     );
                 }
             }
-            finally
-            {
-                File.Delete(filename);
-            }
         }
 
         [Fact]
         public void ModifiedFileIsNotReloadedIfOneFileIsMissing()
         {
-            var filename1 = Path.GetTempFileName();
-            var filename2 = Path.GetTempFileName();
-            factory.FilePaths(filename1, filename2)
-                .AutoUpdate(true);
-            try
+            using (var file1 = TempFile.Create())
             {
-                File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
-                File.WriteAllText(filename2, "{}");
-                using (var fp = MakeDataSource())
+                using (var file2 = TempFile.Create())
                 {
-                    fp.Start();
-                    Assert.True(store.Initialized());
-                    Assert.Equal(0, CountSegmentsInStore());
+                    factory.FilePaths(file1.Path, file2.Path)
+                        .AutoUpdate(true);
+                    file1.SetContentFromPath(TestUtils.TestFilePath("flag-only.json"));
+                    file2.SetContent("{}");
+                    using (var fp = MakeDataSource())
+                    {
+                        fp.Start();
+                        Assert.True(store.Initialized());
+                        Assert.Equal(0, CountSegmentsInStore());
 
-                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
-                    // See FilePollingReloader for the reason behind this long sleep
+                        Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+                        // See FilePollingReloader for the reason behind this long sleep
+                        file2.Delete();
+                        file1.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    File.Delete(filename2);
-                    File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
-
-                    Thread.Sleep(TimeSpan.FromMilliseconds(400));
-                    Assert.Equal(0, CountSegmentsInStore());
+                        Thread.Sleep(TimeSpan.FromMilliseconds(400));
+                        Assert.Equal(0, CountSegmentsInStore());
+                    }
                 }
-            }
-            finally
-            {
-                File.Delete(filename1);
-                File.Delete(filename2);
             }
         }
 
         [Fact]
         public void ModifiedFileIsReloadedEvenIfOneFileIsMissingIfSkipMissingPathsIsSet()
         {
-            var filename1 = Path.GetTempFileName();
-            var filename2 = Path.GetTempFileName();
-            File.Delete(filename2);
-            factory.FilePaths(filename1, filename2)
-                .SkipMissingPaths(true)
-                .AutoUpdate(true);
-            try
+            using (var file1 = TempFile.Create())
             {
-                File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("flag-only.json")));
+                var filename2 = TempFile.MakePathOfNonexistentFile();
+                factory.FilePaths(file1.Path, filename2)
+                    .SkipMissingPaths(true)
+                    .AutoUpdate(true);
+                file1.SetContentFromPath(TestUtils.TestFilePath("flag-only.json"));
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
@@ -231,7 +213,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     Thread.Sleep(TimeSpan.FromMilliseconds(1000));
                     // See FilePollingReloader for the reason behind this long sleep
 
-                    File.WriteAllText(filename1, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
+                    file1.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
                     Assert.True(
                         WaitForCondition(TimeSpan.FromSeconds(3), () => CountSegmentsInStore() == 1),
@@ -239,21 +221,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     );
                 }
             }
-            finally
-            {
-                File.Delete(filename1);
-                File.Delete(filename2);
-            }
         }
 
         [Fact]
         public void IfFlagsAreBadAtStartTimeAutoUpdateCanStillLoadGoodDataLater()
         {
-            var filename = Path.GetTempFileName();
-            factory.FilePaths(filename).AutoUpdate(true);
-            try
+            using (var file = TempFile.Create())
             {
-                File.WriteAllText(filename, "{not correct}");
+                factory.FilePaths(file.Path).AutoUpdate(true);
+                file.SetContent("{not correct}");
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
@@ -262,17 +238,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     Thread.Sleep(TimeSpan.FromMilliseconds(1000));
                     // See FilePollingReloader for the reason behind this long sleep
 
-                    File.WriteAllText(filename, File.ReadAllText(TestUtils.TestFilePath("segment-only.json")));
+                    file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
                     Assert.True(
                         WaitForCondition(TimeSpan.FromSeconds(5), () => CountSegmentsInStore() == 1),
                         "Did not detect file modification"
                     );
                 }
-            }
-            finally
-            {
-                File.Delete(filename);
             }
         }
 

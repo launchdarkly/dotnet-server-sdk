@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -310,6 +311,42 @@ namespace LaunchDarkly.Sdk.Server
             {
                 Assert.False(true, "expected no event but got one at " + TestLogging.TimestampString);
             }
+        }
+    }
+
+    public class TempFile : IDisposable
+    {
+        public string Path { get; }
+
+        public static TempFile Create() => new TempFile();
+
+        public static string MakePathOfNonexistentFile()
+        {
+            var path = System.IO.Path.GetTempFileName();
+            File.Delete(path);
+            return path;
+        }
+
+        private TempFile()
+        {
+            this.Path = System.IO.Path.GetTempFileName();
+        }
+
+        public void SetContent(string text) =>
+            File.WriteAllText(Path, text);
+
+        public void SetContentFromPath(string path) =>
+            SetContent(File.ReadAllText(path));
+
+        public void Delete() => File.Delete(Path);
+
+        public void Dispose()
+        {
+            try
+            {
+                Delete();
+            }
+            catch { }
         }
     }
 }
