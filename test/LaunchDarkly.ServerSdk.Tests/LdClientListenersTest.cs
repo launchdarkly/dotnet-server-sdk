@@ -125,7 +125,6 @@ namespace LaunchDarkly.Sdk.Server
 
                 var newStatus = client.DataSourceStatusProvider.Status;
                 Assert.Equal(DataSourceState.Off, newStatus.State);
-                Assert.NotEqual(initialStatus.StateSince, newStatus.StateSince);
                 Assert.True(newStatus.StateSince >= errorInfo.Time);
                 Assert.Equal(errorInfo, newStatus.LastError);
             }
