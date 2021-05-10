@@ -20,6 +20,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
     // run only once ([Fact]).
     public abstract class PersistentStoreWrapperTestBase<T> : BaseTest where T : MockCoreBase
     {
+        // We need a longer timeout for calling ExpectValue() in the context of a previously failed data
+        // store becoming available again, because the status update in that scenario comes from a polling
+        // task that deliberately does not run super fast.
+        private static readonly TimeSpan TimeoutForStatusUpdateWhenStoreBecomesAvailableAgain =
+            TimeSpan.FromSeconds(2);
+
         protected T _core;
         internal TaskExecutor _taskExecutor;
         internal DataStoreUpdatesImpl _dataStoreUpdates;
@@ -502,9 +508,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
                 MakeStoreAvailable(_core);
 
-                // We're specifying a longer timeout for the ExpectValue() call here because the status update for
-                // the data store being OK again comes from a polling task that deliberately does not run super fast.
-                var status2 = statuses.ExpectValue(TimeSpan.FromSeconds(2));
+                var status2 = statuses.ExpectValue(TimeoutForStatusUpdateWhenStoreBecomesAvailableAgain);
                 Assert.True(status2.Available);
                 Assert.Equal(!testParams.CacheMode.IsCachedIndefinitely, status2.RefreshNeeded);
 
@@ -558,7 +562,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 MakeStoreAvailable(_core);
 
                 // Wait for the poller to notice this and publish a new status
-                var status2 = statuses.ExpectValue();
+                var status2 = statuses.ExpectValue(TimeoutForStatusUpdateWhenStoreBecomesAvailableAgain);
                 Assert.True(status2.Available);
                 Assert.False(status2.RefreshNeeded);
 
@@ -627,7 +631,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 _core.Error = null;
 
                 // Wait for the poller to notice this and publish a new status
-                var status2 = statuses.ExpectValue();
+                var status2 = statuses.ExpectValue(TimeoutForStatusUpdateWhenStoreBecomesAvailableAgain);
                 Assert.True(status2.Available);
                 Assert.False(status2.RefreshNeeded);
 
