@@ -366,18 +366,26 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 DataSourceStatus.ErrorInfo.FromException(new IOException("x")));
             updates.UpdateStatus(DataSourceState.Interrupted, DataSourceStatus.ErrorInfo.FromHttpError(501));
 
-            Thread.Sleep(outageTimeout.Add(TimeSpan.FromMilliseconds(100)));
-            var messages = logCapture.GetMessages();
-            Assert.Collection(messages,
-                m =>
+            Thread.Sleep(outageTimeout);
+            DateTime deadline = DateTime.Now.AddSeconds(1);
+            while (DateTime.Now < deadline)
+            {
+                var messages = logCapture.GetMessages();
+                if (messages.Count == 1)
                 {
-                    Assert.Equal(LogLevel.Error, m.Level);
-                    Assert.Equal(".DataSource", m.LoggerName);
-                    Assert.Contains("NETWORK_ERROR (1 time)", m.Text);
-                    Assert.Contains("ERROR_RESPONSE(501) (2 times)", m.Text);
-                    Assert.Contains("ERROR_RESPONSE(502) (1 time)", m.Text);
-                });
-            Assert.NotEmpty(messages);
+                    var m = messages[0];
+                    if (m.Level == LogLevel.Error &&
+                        m.LoggerName == ".DataSource" &&
+                        m.Text.Contains("NETWORK_ERROR (1 time)") &&
+                        m.Text.Contains("ERROR_RESPONSE(501) (2 times)") &&
+                        m.Text.Contains("ERROR_RESPONSE(502) (1 time)"))
+                    {
+                        return;
+                    }
+                }
+                Thread.Sleep(TimeSpan.FromMilliseconds(50));
+            }
+            Assert.True(false, "did not see expected log message; log output was: " + logCapture.ToString());
         }
 
         private void ExpectFlagChangeEvents(EventSink<FlagChangeEvent> eventSink, params string[] flagKeys)

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>6.0.0-alpha.9</Version>
+    <Version>6.0.0-rc.2</Version>
     <!-- The BUILDFRAMEWORKS variable allows us to override the target frameworks with a
          single framework that we are testing; this allows us to test with older SDK
          versions that would error out if they saw any newer target frameworks listed
@@ -36,7 +36,7 @@
   <ItemGroup>
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
     <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.0.1" />
-    <PackageReference Include="LaunchDarkly.EventSource" Version="4.1.1" />
+    <PackageReference Include="LaunchDarkly.EventSource" Version="4.1.2" />
     <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.1.1" />
     <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.0" />
     <PackageReference Include="LaunchDarkly.Logging" Version="1.0.1" />

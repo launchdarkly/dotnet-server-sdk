@@ -2,6 +2,12 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.0.0-rc.2] - 2021-05-17
+Other than the fix described below, and improvements in unit test stability, this release candidate is identical to `rc.1`.
+
+### Fixed:
+- Incorporated a fix in [LaunchDarkly.EventSource 4.1.2](https://github.com/launchdarkly/dotnet-eventsource/releases/tag/4.1.2) for a memory leak in previous 4.x versions of that library. The leak did not exist in the 3.x versions of LaunchDarkly.EventSource that were used in LaunchDarkly.ServerSdk 5.x.
+
 ## [6.0.0-rc.1] - 2021-05-07
 This release candidate includes the following changes since [`6.0.0-beta.1`](https://github.com/launchdarkly/dotnet-server-sdk/releases/tag/6.0.0-beta.1). No further changes in the API are expected before the GA release.
 

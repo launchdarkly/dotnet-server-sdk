@@ -117,7 +117,7 @@ namespace LaunchDarkly.Sdk.Server
             {
                 var initialStatus = client.DataSourceStatusProvider.Status;
                 Assert.Equal(DataSourceState.Valid, initialStatus.State);
-                Assert.InRange(initialStatus.StateSince, timeBeforeStarting, timeBeforeStarting.AddSeconds(1));
+                Assert.True(initialStatus.StateSince >= timeBeforeStarting);
                 Assert.Null(initialStatus.LastError);
 
                 var errorInfo = DataSourceStatus.ErrorInfo.FromHttpError(401);
@@ -125,7 +125,7 @@ namespace LaunchDarkly.Sdk.Server
 
                 var newStatus = client.DataSourceStatusProvider.Status;
                 Assert.Equal(DataSourceState.Off, newStatus.State);
-                Assert.InRange(newStatus.StateSince, errorInfo.Time, errorInfo.Time.AddSeconds(1));
+                Assert.True(newStatus.StateSince >= errorInfo.Time);
                 Assert.Equal(errorInfo, newStatus.LastError);
             }
         }
@@ -149,7 +149,7 @@ namespace LaunchDarkly.Sdk.Server
 
                 var newStatus = statuses.ExpectValue();
                 Assert.Equal(DataSourceState.Off, newStatus.State);
-                Assert.InRange(newStatus.StateSince, errorInfo.Time, errorInfo.Time.AddSeconds(1));
+                Assert.True(newStatus.StateSince >= errorInfo.Time);
                 Assert.Equal(errorInfo, newStatus.LastError);
             }
         }

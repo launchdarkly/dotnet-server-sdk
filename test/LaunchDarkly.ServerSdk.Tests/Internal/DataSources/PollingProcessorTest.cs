@@ -75,10 +75,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(new InvalidOperationException("no"));
             using (PollingProcessor pp = MakeProcessor())
             {
-                var startTime = DateTime.Now;
                 var initTask = pp.Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
-                Assert.InRange(DateTime.Now.Subtract(startTime).Milliseconds, 190, 2000);
                 Assert.False(completed);
                 Assert.False(pp.Initialized);
                 Assert.Equal(DataSourceState.Initializing, _dataSourceStatusProvider.Status.State);
