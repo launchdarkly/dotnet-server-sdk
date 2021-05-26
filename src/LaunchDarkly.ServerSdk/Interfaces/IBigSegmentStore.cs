@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -6,8 +7,13 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// Interface for a read-only data store that allows querying of user membership in big segments.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
     /// documentation about user segments: https://docs.launchdarkly.com/home/users
+    /// </para>
+    /// <para>
+    /// All query methods of the store are asynchronous.
+    /// </para>
     /// </remarks>
     public interface IBigSegmentStore : IDisposable
     {
@@ -22,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         /// <param name="userHash">the hashed user identifier</param>
         /// <returns>the user's segment membership state; may be null if no such user exists</returns>
-        BigSegmentStoreTypes.IMembership GetMembership(string userHash);
+        Task<BigSegmentStoreTypes.IMembership> GetMembershipAsync(string userHash);
 
         /// <summary>
         /// Returns information about the overall state of the store.
@@ -31,6 +37,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// This method will be called only when the SDK needs the latest state, so it should not be cached.
         /// </remarks>
         /// <returns>the store metadata</returns>
-        BigSegmentStoreTypes.StoreMetadata GetMetadata();
+        Task<BigSegmentStoreTypes.StoreMetadata> GetMetadataAsync();
     }
 }

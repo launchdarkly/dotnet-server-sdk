@@ -7,7 +7,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public static class BigSegmentStoreTypes
     {
         /// <summary>
-        /// A query interface returned by <see cref="IBigSegmentStore.GetMembership(string)"/>.
+        /// A query interface returned by <see cref="IBigSegmentStore.GetMembershipAsync(string)"/>.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -16,7 +16,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// <para>
         /// This is an immutable snapshot of the state for this user at the time
-        /// <see cref="IBigSegmentStore.GetMembership(string)"/> was called. Calling
+        /// <see cref="IBigSegmentStore.GetMembershipAsync(string)"/> was called. Calling
         /// <see cref="CheckMembership(string)"/> should not cause the state to be queried again.
         /// The object should be safe for concurrent access by multiple goroutines.
         /// </para>
@@ -25,7 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         {
             /// <summary>
             /// Tests whether the user is explicitly included or explicitly excluded in the
-            /// specified segment, or neither/
+            /// specified segment, or neither.
             /// </summary>
             /// <remarks>
             /// <para>
@@ -54,14 +54,14 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         }
 
         /// <summary>
-        /// Values returned by <see cref="IBigSegmentStore.GetMetadata"/>.
+        /// Values returned by <see cref="IBigSegmentStore.GetMetadataAsync"/>.
         /// </summary>
         public struct StoreMetadata
         {
             /// <summary>
             /// The timestamp of the last update to the BigSegmentStore, if known.
             /// </summary>
-            UnixMillisecondTime? LastUpToDate { get; set; }
+            public UnixMillisecondTime? LastUpToDate { get; set; }
         }
     }
 }
