@@ -17,7 +17,7 @@ namespace LaunchDarkly.Sdk.Server
         #region Public properties
 
         /// <summary>
-        /// 
+        /// A factory object that creates an implementation of <see cref="IBigSegmentsConfigurationFactory"/>.
         /// </summary>
         public IBigSegmentsConfigurationFactory BigSegmentsConfigurationFactory { get; }
 
