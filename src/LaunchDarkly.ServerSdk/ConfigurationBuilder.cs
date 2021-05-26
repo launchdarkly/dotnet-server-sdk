@@ -30,6 +30,7 @@ namespace LaunchDarkly.Sdk.Server
 
         // Let's try to keep these properties and methods alphabetical so they're easy to find. Note that they
         // are internal rather than private so that they can be read by the Configuration constructor.
+        internal IBigSegmentsConfigurationFactory _bigSegmentsConfigurationFactory = null;
         internal IDataSourceFactory _dataSourceFactory = null;
         internal IDataStoreFactory _dataStoreFactory = null;
         internal bool _diagnosticOptOut = false;
@@ -51,6 +52,7 @@ namespace LaunchDarkly.Sdk.Server
 
         internal ConfigurationBuilder(Configuration copyFrom)
         {
+            _bigSegmentsConfigurationFactory = copyFrom.BigSegmentsConfigurationFactory;
             _dataSourceFactory = copyFrom.DataSourceFactory;
             _dataStoreFactory = copyFrom.DataStoreFactory;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
@@ -75,6 +77,17 @@ namespace LaunchDarkly.Sdk.Server
         public Configuration Build()
         {
             return new Configuration(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bigSegmentsConfigurationFactory"></param>
+        /// <returns></returns>
+        public ConfigurationBuilder BigSegments(IBigSegmentsConfigurationFactory bigSegmentsConfigurationFactory)
+        {
+            _bigSegmentsConfigurationFactory = bigSegmentsConfigurationFactory;
+            return this;
         }
 
         /// <summary>

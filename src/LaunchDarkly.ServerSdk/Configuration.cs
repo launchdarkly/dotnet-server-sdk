@@ -17,6 +17,11 @@ namespace LaunchDarkly.Sdk.Server
         #region Public properties
 
         /// <summary>
+        /// 
+        /// </summary>
+        public IBigSegmentsConfigurationFactory BigSegmentsConfigurationFactory { get; }
+
+        /// <summary>
         /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
         /// receive feature flag data.
         /// </summary>

@@ -21,6 +21,7 @@ namespace LaunchDarkly.Sdk.Server
     {
         #region Private fields
 
+        private readonly IBigSegmentStoreStatusProvider _bigSegmentStoreStatusProvider;
         private readonly Configuration _configuration;
         internal readonly IEventProcessor _eventProcessor;
         private readonly IDataStore _dataStore;
@@ -35,6 +36,9 @@ namespace LaunchDarkly.Sdk.Server
         #endregion
 
         #region Public properties
+
+        /// <inheritdoc/>
+        public IBigSegmentStoreStatusProvider BigSegmentStoreStatusProvider => _bigSegmentStoreStatusProvider;
 
         /// <inheritdoc/>
         public IDataSourceStatusProvider DataSourceStatusProvider => _dataSourceStatusProvider;
