@@ -151,6 +151,7 @@ namespace LaunchDarkly.Sdk.Server
 
         internal Configuration(ConfigurationBuilder builder)
         {
+            BigSegmentsConfigurationFactory = builder._bigSegmentsConfigurationFactory;
             DataSourceFactory = builder._dataSourceFactory;
             DataStoreFactory = builder._dataStoreFactory;
             DiagnosticOptOut = builder._diagnosticOptOut;

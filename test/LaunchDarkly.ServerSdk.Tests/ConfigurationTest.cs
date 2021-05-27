@@ -29,6 +29,14 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void BigSegments()
+        {
+            var prop = _tester.Property(c => c.BigSegmentsConfigurationFactory, (b, v) => b.BigSegments(v));
+            prop.AssertDefault(null);
+            prop.AssertCanSet(Components.BigSegments(null));
+        }
+
+        [Fact]
         public void DataSource()
         {
             var prop = _tester.Property(c => c.DataSourceFactory, (b, v) => b.DataSource(v));
