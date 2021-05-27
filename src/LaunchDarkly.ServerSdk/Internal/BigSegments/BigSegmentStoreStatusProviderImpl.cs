@@ -4,7 +4,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 {
     // This is the standard implementation of BigSegmentStoreStatusProvider. Most of the work is done by
-    // BigSegmentStoreManager, which exposes the methods that other SDK components need to access the store.
+    // BigSegmentStoreWrapper, which exposes the methods that other SDK components need to access the store.
     //
     // We always create this component regardless of whether there really is a store. If there is no store (so
     // there is no BigSegmentStoreWrapper) then we won't actually be doing any big segments stuff, or sending
