@@ -5,6 +5,8 @@ namespace LaunchDarkly.Sdk.Server.Internal
     {
         internal const string DefaultBase = "LaunchDarkly.Sdk";
 
+        internal const string BigSegmentsSubLog = "BigSegments";
+
         internal const string DataSourceSubLog = "DataSource";
 
         internal const string DataStoreSubLog = "DataStore";

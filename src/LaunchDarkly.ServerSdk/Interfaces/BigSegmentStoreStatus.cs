@@ -37,5 +37,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// of date.
         /// </remarks>
         public bool Stale { get; set; }
+
+        /// <inheritdoc/>
+        public override string ToString() =>
+            string.Format("(Available={0},Stale={1})", Available, Stale);
     }
 }

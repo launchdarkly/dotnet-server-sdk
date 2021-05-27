@@ -1,6 +1,7 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -224,6 +225,56 @@ namespace LaunchDarkly.Sdk.Server
                 dataStoreFactory.DataStoreUpdates.UpdateStatus(newStatus);
 
                 Assert.Equal(newStatus, statuses.ExpectValue());
+            }
+        }
+
+        [Fact]
+        public void BigSegmentStoreStatusProviderReturnsUnavailableStatusWhenNotConfigured()
+        {
+            var config = Configuration.Builder("")
+                .DataSource(Components.ExternalUpdatesOnly)
+                .Events(Components.NoEvents)
+                .Build();
+
+            using (var client = new LdClient(config))
+            {
+                var status = client.BigSegmentStoreStatusProvider.Status;
+                Assert.False(status.Available);
+                Assert.False(status.Stale);
+            }
+        }
+
+        [Fact]
+        public void BigSegmentStoreStatusProviderSendsStatusUpdates()
+        {
+            var storeMock = new Mock<IBigSegmentStore>();
+            var store = storeMock.Object;
+            var storeFactoryMock = new Mock<IBigSegmentStoreFactory>();
+            var storeFactory = storeFactoryMock.Object;
+            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(It.IsAny<LdClientContext>())).Returns(store);
+            storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(
+                new BigSegmentStoreTypes.StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
+
+            var config = Configuration.Builder("")
+                .BigSegments(
+                    Components.BigSegments(storeFactory).StatusPollInterval(TimeSpan.FromMilliseconds(10))
+                )
+                .DataSource(Components.ExternalUpdatesOnly)
+                .Events(Components.NoEvents)
+                .Build();
+
+            using (var client = new LdClient(config))
+            {
+                var status1 = client.BigSegmentStoreStatusProvider.Status;
+                Assert.True(status1.Available);
+
+                var statuses = new EventSink<BigSegmentStoreStatus>();
+                client.BigSegmentStoreStatusProvider.StatusChanged += statuses.Add;
+
+                storeMock.Setup(s => s.GetMetadataAsync()).ThrowsAsync(new Exception("sorry"));
+
+                var status2 = statuses.ExpectValue();
+                Assert.False(status2.Available);
             }
         }
     }

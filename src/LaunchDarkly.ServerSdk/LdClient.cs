@@ -4,6 +4,7 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.BigSegments;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
@@ -22,6 +23,7 @@ namespace LaunchDarkly.Sdk.Server
         #region Private fields
 
         private readonly IBigSegmentStoreStatusProvider _bigSegmentStoreStatusProvider;
+        private readonly BigSegmentStoreWrapper _bigSegmentStoreWrapper;
         private readonly Configuration _configuration;
         internal readonly IEventProcessor _eventProcessor;
         private readonly IDataStore _dataStore;
@@ -103,6 +105,16 @@ namespace LaunchDarkly.Sdk.Server
             _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore)
                 .CreateDataStore(clientContext, dataStoreUpdates);
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, dataStoreUpdates);
+
+            var bigSegmentsConfig = (_configuration.BigSegmentsConfigurationFactory ?? Components.BigSegments(null))
+                .CreateBigSegmentsConfiguration(clientContext);
+            _bigSegmentStoreWrapper = bigSegmentsConfig.Store is null ? null :
+                new BigSegmentStoreWrapper(
+                    bigSegmentsConfig,
+                    taskExecutor,
+                    _log.SubLogger(LogNames.BigSegmentsSubLog)
+                    );
+            _bigSegmentStoreStatusProvider = new BigSegmentStoreStatusProviderImpl(_bigSegmentStoreWrapper);
 
             _evaluator = new Evaluator(GetFlag, GetSegment, _log);
 
@@ -553,6 +565,7 @@ namespace LaunchDarkly.Sdk.Server
                 _eventProcessor.Dispose();
                 _dataStore.Dispose();
                 _dataSource.Dispose();
+                _bigSegmentStoreWrapper?.Dispose();
             }
         }
 

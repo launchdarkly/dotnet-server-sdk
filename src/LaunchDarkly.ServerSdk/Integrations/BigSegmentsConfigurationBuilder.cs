@@ -154,7 +154,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public BigSegmentsConfiguration CreateBigSegmentsConfiguration(LdClientContext context)
         {
-            var store = _storeFactory.CreateBigSegmentStore(context);
+            var store = _storeFactory is null ? null : _storeFactory.CreateBigSegmentStore(context);
             return new BigSegmentsConfiguration(
                 store,
                 _userCacheSize,
