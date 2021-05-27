@@ -192,6 +192,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
                 Assert.True(status3.Available);
                 Assert.Equal(status3, sw.GetStatus());
             }
+
+            Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error,
+                "Big segment store status.*Exception.*sorry"));
         }
 
         [Fact]
