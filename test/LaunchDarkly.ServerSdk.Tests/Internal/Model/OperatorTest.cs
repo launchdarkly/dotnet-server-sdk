@@ -1,4 +1,5 @@
 using System;
+using LaunchDarkly.Sdk.Server.Internal.Evaluation;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model

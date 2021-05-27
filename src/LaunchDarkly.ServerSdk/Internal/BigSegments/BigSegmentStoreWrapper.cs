@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Cache;
@@ -15,8 +13,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 {
     internal class BigSegmentStoreWrapper : IDisposable
     {
-        private static readonly SHA256 _hasher = SHA256.Create();
-
         private readonly IBigSegmentStore _store;
         private readonly TimeSpan _staleTime;
         private readonly ICache<string, IMembership> _cache;
@@ -91,7 +87,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
         private IMembership QueryMembership(string userKey)
         {
-            var hash = HashForUserKey(userKey);
+            var hash = BigSegmentUserKeyHash(userKey);
             _logger.Debug("Querying big segment state for user hash {0}", hash);
             return AsyncUtils.WaitSafely(() => _store.GetMembershipAsync(hash));
         }
@@ -166,10 +162,5 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
         private bool IsStale(UnixMillisecondTime updateTime) =>
             TimeSpan.FromMilliseconds(UnixMillisecondTime.Now.Value - updateTime.Value) >= _staleTime;
-
-        internal static string HashForUserKey(string userKey) =>
-            Convert.ToBase64String(
-                _hasher.ComputeHash(Encoding.UTF8.GetBytes(userKey))
-                );
     }
 }

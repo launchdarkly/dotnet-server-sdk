@@ -16,10 +16,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal IEnumerable<string> Excluded { get; }
         internal IEnumerable<SegmentRule> Rules { get; }
         internal string Salt { get; }
+        internal bool Unbounded { get; }
+        internal int? Generation { get; }
         internal PreprocessedData Preprocessed { get; }
 
-        internal Segment(string key, int version, bool deleted, IEnumerable<string> included, IEnumerable<string> excluded,
-                         IEnumerable<SegmentRule> rules, string salt)
+        internal Segment(
+            string key,
+            int version,
+            bool deleted,
+            IEnumerable<string> included,
+            IEnumerable<string> excluded,
+            IEnumerable<SegmentRule> rules,
+            string salt,
+            bool unbounded,
+            int? generation
+            )
         {
             Key = key;
             Version = version;
@@ -28,6 +39,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Excluded = excluded ?? Enumerable.Empty<string>();
             Rules = rules ?? Enumerable.Empty<SegmentRule>();
             Salt = salt;
+            Unbounded = unbounded;
+            Generation = generation;
             Preprocessed = Preprocess(Included, Excluded);
         }
 
