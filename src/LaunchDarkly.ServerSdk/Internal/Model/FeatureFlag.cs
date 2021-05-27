@@ -51,14 +51,24 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal struct Rollout
     {
-        internal IEnumerable<WeightedVariation> Variations { get; private set; }
-        internal UserAttribute? BucketBy { get; private set; }
+        internal RolloutKind Kind { get; }
+        internal int? Seed { get; }
+        internal IEnumerable<WeightedVariation> Variations { get; }
+        internal UserAttribute? BucketBy { get; }
 
-        internal Rollout(IEnumerable<WeightedVariation> variations, UserAttribute? bucketBy)
+        internal Rollout(RolloutKind kind, int? seed, IEnumerable<WeightedVariation> variations, UserAttribute? bucketBy)
         {
+            Kind = kind;
+            Seed = seed;
             Variations = variations ?? Enumerable.Empty<WeightedVariation>();
             BucketBy = bucketBy;
         }
+    }
+
+    internal enum RolloutKind
+    {
+        Rollout,
+        Experiment
     }
 
     internal struct VariationOrRollout
@@ -77,11 +87,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         internal int Variation { get; }
         internal int Weight { get; }
+        internal bool Untracked { get; }
 
-        internal WeightedVariation(int variation, int weight)
+        internal WeightedVariation(int variation, int weight, bool untracked)
         {
             Variation = variation;
             Weight = weight;
+            Untracked = untracked;
         }
     }
 

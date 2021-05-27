@@ -15,7 +15,46 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private static readonly LdValue fallthroughValue = LdValue.Of("fallthrough");
         private static readonly LdValue offValue = LdValue.Of("off");
         private static readonly LdValue onValue = LdValue.Of("on");
-        
+
+        [Fact]
+        public void FlagReturnsInExperimentForRuleMatchWhenInExperimentVariation()
+        {
+            var user = User.WithKey("userkey");
+            var rollout = BuildRollout(RolloutKind.Experiment, false);
+            var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchUser(user)).Build();
+            var f = FeatureFlagWithRules(rule);
+            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+
+            Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
+            Assert.True(result.Result.Reason.InExperiment);
+        }
+
+        [Fact]
+        public void FlagReturnsNotInExperimentForRuleMatchWhenNotInExperimentVariation()
+        {
+            var user = User.WithKey("userkey");
+            var rollout = BuildRollout(RolloutKind.Experiment, true);
+            var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchUser(user)).Build();
+            var f = FeatureFlagWithRules(rule);
+            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+
+            Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
+            Assert.False(result.Result.Reason.InExperiment);
+        }
+
+        [Fact]
+        public void FlagReturnsInExperimentForRuleMatchWhenInExperimentVariationButNonExperimentRollout()
+        {
+            var user = User.WithKey("userkey");
+            var rollout = BuildRollout(RolloutKind.Rollout, false);
+            var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchUser(user)).Build();
+            var f = FeatureFlagWithRules(rule);
+            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+
+            Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
+            Assert.False(result.Result.Reason.InExperiment);
+        }
+
         [Fact]
         public void RuleWithTooHighVariationReturnsMalformedFlagError()
         {
@@ -70,7 +109,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var user = User.WithKey("userkey");
             var clause = ClauseBuilder.ShouldMatchUser(user);
             var rule = new RuleBuilder().Id("ruleid").Clauses(clause)
-                .Rollout(new Rollout(new List<WeightedVariation>(), null)).Build();
+                .Rollout(new Rollout(RolloutKind.Rollout, null, new List<WeightedVariation>(), null)).Build();
             var f = FeatureFlagWithRules(rule);
 
             var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
@@ -89,6 +128,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
+        }
+
+        private static Rollout BuildRollout(RolloutKind kind, bool untrackedVariations)
+        {
+            var variations = new List<WeightedVariation>()
+            {
+                new WeightedVariation(1, 50000, untrackedVariations),
+                new WeightedVariation(2, 20000, untrackedVariations)
+            };
+            const int seed = 123;
+            return new Rollout(kind, seed, variations, UserAttribute.Key);
         }
     }
 }

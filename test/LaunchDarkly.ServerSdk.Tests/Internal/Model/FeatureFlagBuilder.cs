@@ -114,6 +114,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
+        internal FeatureFlagBuilder FallthroughRollout(Rollout rollout)
+        {
+            return Fallthrough(new VariationOrRollout(null, rollout));
+        }
+
         internal FeatureFlagBuilder OffVariation(int? offVariation)
         {
             _offVariation = offVariation;
@@ -129,6 +134,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal FeatureFlagBuilder Variations(params LdValue[] variations)
         {
             return Variations(new List<LdValue>(variations));
+        }
+
+        internal FeatureFlagBuilder GeneratedVariations(int count)
+        {
+            var list = new List<LdValue>();
+            for (var i = 0; i < count; i++)
+            {
+                list.Add(LdValue.Of(i));
+            }
+            return Variations(list);
         }
 
         internal FeatureFlagBuilder TrackEvents(bool trackEvents)

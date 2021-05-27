@@ -283,6 +283,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             ImmutableList<WeightedVariation> variations = null;
             UserAttribute? bucketBy = null;
+            RolloutKind kind = RolloutKind.Rollout;
+            int? seed = null;
             var obj = r.ObjectOrNull();
             if (!obj.IsDefined)
             {
@@ -297,6 +299,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         for (var arr = r.ArrayOrNull(); arr.Next(ref r);)
                         {
                             int variation = 0, weight = 0;
+                            bool untracked = false;
                             for (var wvObj = r.Object(); wvObj.Next(ref r);)
                             {
                                 switch (wvObj.Name)
@@ -307,9 +310,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                                     case var nn when nn == "weight":
                                         weight = r.Int();
                                         break;
+                                    case var nn when nn == "untracked":
+                                        untracked = r.Bool();
+                                        break;
                                 }
                             }
-                            listBuilder.Add(new WeightedVariation(variation, weight));
+                            listBuilder.Add(new WeightedVariation(variation, weight, untracked));
                         }
                         variations = listBuilder.ToImmutable();
                         break;
@@ -317,9 +323,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         var s = r.StringOrNull();
                         bucketBy = s is null ? (UserAttribute?)null : UserAttribute.ForName(s);
                         break;
+                    case var n when n == "kind":
+                        var kindStr = r.StringOrNull();
+                        kind = "experiment".Equals(kindStr) ? RolloutKind.Experiment : RolloutKind.Rollout;
+                        break;
+                    case var n when n == "seed":
+                        seed = r.IntOrNull();
+                        break;
                 }
             }
-            return new Rollout(variations, bucketBy);
+            return new Rollout(kind, seed, variations, bucketBy);
         }
     }
 
@@ -445,17 +458,32 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             if (rollout.HasValue)
             {
                 var rolloutObj = obj.Name("rollout").Object();
+                switch (rollout.Value.Kind)
+                {
+                    case RolloutKind.Rollout:
+                        break; // that's the default, omit the property
+                    case RolloutKind.Experiment:
+                        rolloutObj.Name("kind").String("experiment");
+                        break;
+                }
+                if (rollout.Value.Seed.HasValue)
+                {
+                    rolloutObj.Name("seed").Int(rollout.Value.Seed.Value);
+                }
                 var variationsArr = rolloutObj.Name("variations").Array();
                 foreach (var v in rollout.Value.Variations)
                 {
                     var variationObj = variationsArr.Object();
                     variationObj.Name("variation").Int(v.Variation);
                     variationObj.Name("weight").Int(v.Weight);
+                    variationObj.MaybeName("untracked", v.Untracked).Bool(v.Untracked);
                     variationObj.End();
                 }
                 variationsArr.End();
-                rolloutObj.Name("bucketBy").String(rollout.Value.BucketBy.HasValue ?
-                    rollout.Value.BucketBy.Value.AttributeName : null);
+                if (rollout.Value.BucketBy.HasValue)
+                {
+                    rolloutObj.Name("bucketBy").String(rollout.Value.BucketBy.Value.AttributeName);
+                }
                 rolloutObj.End();
             }
         }
@@ -500,7 +528,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var builder = ImmutableList.CreateBuilder<Clause>();
             for (var arr = r.ArrayOrNull();  arr.Next(ref r);)
             {
-                UserAttribute attribute;
+                UserAttribute attribute = new UserAttribute();
                 Operator op = null;
                 ImmutableList<LdValue> values = null;
                 bool negate = false;

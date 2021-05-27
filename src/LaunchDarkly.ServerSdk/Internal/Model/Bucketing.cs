@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,36 +8,39 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 
-        internal static float BucketUser(User user, string featureKey, UserAttribute attr, string salt)
+        internal static float BucketUser(int? seed, User user, string key, UserAttribute attr, string salt)
         {
-            var idHash = BucketableStringValue(user.GetAttribute(attr));
-            if (idHash != null)
+            var userValue = user.GetAttribute(attr);
+            var hashInputBuilder = new StringBuilder(100);
+            if (seed.HasValue)
             {
-                if (!string.IsNullOrEmpty(user.Secondary))
-                    idHash += "." + user.Secondary;
-
-                var hash = Hash(String.Format("{0}.{1}.{2}", featureKey, salt, idHash)).Substring(0, 15);
-                var longValue = long.Parse(hash, NumberStyles.HexNumber);
-                return longValue / longScale;
+                hashInputBuilder.Append(seed.Value);
             }
-
-            return 0F;
-        }
-
-        private static string BucketableStringValue(LdValue value)
-        {
-            if (!value.IsNull)
+            else
             {
-                if (value.IsString)
-                {
-                    return value.AsString;
-                }
-                if (value.IsInt)
-                {
-                    return Convert.ToString(value.AsInt);
-                }
+                hashInputBuilder.Append(key).Append(".").Append(salt);
             }
-            return null;
+            hashInputBuilder.Append(".");
+            if (userValue.IsString)
+            {
+                hashInputBuilder.Append(userValue.AsString);
+            }
+            else if (userValue.IsInt)
+            {
+                hashInputBuilder.Append(userValue.AsInt);
+            }
+            else
+            {
+                return 0; // bucket-by values other than strings and ints aren't supported
+            }
+            var secondary = user.Secondary;
+            if (!string.IsNullOrEmpty(secondary))
+            {
+                hashInputBuilder.Append(".").Append(secondary);
+            }
+            var hash = Hash(hashInputBuilder.ToString()).Substring(0, 15);
+            var longValue = long.Parse(hash, NumberStyles.HexNumber);
+            return longValue / longScale;
         }
 
         private static string Hash(string s)
