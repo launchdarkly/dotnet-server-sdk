@@ -132,7 +132,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             {
                 var metadata = await _store.GetMetadataAsync();
                 newStatus.Available = true;
-                newStatus.Stale = !metadata.LastUpToDate.HasValue || IsStale(metadata.LastUpToDate.Value);
+                newStatus.Stale = !metadata.HasValue ||
+                    !metadata.Value.LastUpToDate.HasValue || IsStale(metadata.Value.LastUpToDate.Value);
             }
             catch (Exception e)
             {
