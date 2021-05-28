@@ -26,6 +26,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             _taskExecutor = new TaskExecutor(testLogger);
         }
 
+        private void SetStoreHasNoMetadata() =>
+            _storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync((StoreMetadata?)null);
+        
         private void SetStoreTimestamp(UnixMillisecondTime timestamp) =>
             _storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(new StoreMetadata { LastUpToDate = timestamp });
 
@@ -90,6 +93,26 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         public void MembershipQueryWithStaleStatus()
         {
             SetStoreTimestamp(UnixMillisecondTime.Now.PlusMillis(-1000));
+
+            var expectedMembership = NewMembershipFromSegmentRefs(new string[] { "key1" }, new string[] { "key2 " });
+            var userKey = "userkey";
+            SetStoreMembership(userKey, expectedMembership);
+
+            var bsConfig = Components.BigSegments(_storeFactory)
+                .StaleAfter(TimeSpan.FromMilliseconds(500))
+                .CreateBigSegmentsConfiguration(basicContext);
+            using (var sw = new BigSegmentStoreWrapper(bsConfig, _taskExecutor, testLogger))
+            {
+                var result = sw.GetUserMembership(userKey);
+                Assert.Equal(expectedMembership, result.Membership);
+                Assert.Equal(BigSegmentsStatus.Stale, result.Status);
+            }
+        }
+
+        [Fact]
+        public void MembershipQueryWithStaleStatusDueToNoStoreMetadata()
+        {
+            SetStoreHasNoMetadata();
 
             var expectedMembership = NewMembershipFromSegmentRefs(new string[] { "key1" }, new string[] { "key2 " });
             var userKey = "userkey";
