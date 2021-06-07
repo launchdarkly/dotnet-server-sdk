@@ -30,6 +30,7 @@ namespace LaunchDarkly.Sdk.Server
 
         // Let's try to keep these properties and methods alphabetical so they're easy to find. Note that they
         // are internal rather than private so that they can be read by the Configuration constructor.
+        internal IBigSegmentsConfigurationFactory _bigSegmentsConfigurationFactory = null;
         internal IDataSourceFactory _dataSourceFactory = null;
         internal IDataStoreFactory _dataStoreFactory = null;
         internal bool _diagnosticOptOut = false;
@@ -51,6 +52,7 @@ namespace LaunchDarkly.Sdk.Server
 
         internal ConfigurationBuilder(Configuration copyFrom)
         {
+            _bigSegmentsConfigurationFactory = copyFrom.BigSegmentsConfigurationFactory;
             _dataSourceFactory = copyFrom.DataSourceFactory;
             _dataStoreFactory = copyFrom.DataStoreFactory;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
@@ -75,6 +77,43 @@ namespace LaunchDarkly.Sdk.Server
         public Configuration Build()
         {
             return new Configuration(this);
+        }
+
+        /// <summary>
+        /// Sets the configuration of the SDK's big segments feature.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
+        /// documentation about user segments: https://docs.launchdarkly.com/home/users
+        /// </para>
+        /// <para>
+        /// If you are using this feature, you will normally specify a database implementation that matches how
+        /// the LaunchDarkly Relay Proxy is configured, since the Relay Proxy manages the big segment data.
+        /// </para>
+        /// <para>
+        /// By default, there is no implementation and big segments cannot be evaluated. In this case, any flag
+        /// evaluation that references a big segment will behave as if no users are included in any big
+        /// segments, and the <see cref="EvaluationReason"/> associated with any such flag evaluation will have
+        /// a <see cref="EvaluationReason.BigSegmentsStatus"/> of <see cref="BigSegmentsStatus.NotConfigured"/>.
+        /// </para>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     // This example uses the Redis integration
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .BigSegments(Components.BigSegments(Redis.DataStore().Prefix("app1"))
+        ///             .UserCacheSize(2000))
+        ///         .Build();
+        /// </code>
+        /// </example>
+        /// <param name="bigSegmentsConfigurationFactory">a configuration factory object returned by
+        /// <see cref="Components.BigSegments(IBigSegmentStoreFactory)"/></param>
+        /// <returns>the same builder</returns>
+        public ConfigurationBuilder BigSegments(IBigSegmentsConfigurationFactory bigSegmentsConfigurationFactory)
+        {
+            _bigSegmentsConfigurationFactory = bigSegmentsConfigurationFactory;
+            return this;
         }
 
         /// <summary>

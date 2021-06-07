@@ -12,6 +12,7 @@
     <AssemblyName>LaunchDarkly.ServerSdk</AssemblyName>
     <OutputType>Library</OutputType>
     <PackageId>LaunchDarkly.ServerSdk</PackageId>
+    <RootNamespace>LaunchDarkly.Sdk.Server</RootNamespace>
     <LangVersion>7.3</LangVersion>
     <Description>LaunchDarkly Server-Side .NET SDK</Description>
     <Authors>LaunchDarkly</Authors>
@@ -35,7 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.0.1" />
+    <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.1.0-alpha.bigseg.1" />
     <PackageReference Include="LaunchDarkly.EventSource" Version="4.1.2" />
     <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.1.1" />
     <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.0" />

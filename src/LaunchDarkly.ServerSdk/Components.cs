@@ -23,6 +23,39 @@ namespace LaunchDarkly.Sdk.Server
     public static class Components
     {
         /// <summary>
+        /// Returns a configuration builder for the SDK's big segments feature.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
+        /// documentation about user segments: https://docs.launchdarkly.com/home/users
+        /// </para>
+        /// <para>
+        /// After configuring this object, use <see cref="ConfigurationBuilder.BigSegments(IBigSegmentsConfigurationFactory)"/>
+        /// to store it in your SDK configuration. For example, using the Redis integration:
+        /// </para>
+        /// <code>
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .BigSegments(Components.BigSegments(Redis.DataStore().Prefix("app1"))
+        ///             .UserCacheSize(2000))
+        ///         .Build();
+        /// </code>
+        /// <para>
+        /// You must always specify the <paramref name="storeFactory"/> parameter, to tell the SDK what database
+        /// you are using. Several database integrations exist for the LaunchDarkly SDK, each with its own
+        /// behavior and options specific to that database; this is described via some implementation of
+        /// <see cref="IBigSegmentStoreFactory"/>. The <see cref="BigSegmentsConfigurationBuilder"/> adds
+        /// configuration options for aspects of SDK behavior that are independent of the database. In the
+        /// example above, <code>Prefix</code> is an option specifically for the Redis integration, whereas
+        /// <code>UserCacheSize</code> is an option that can be used for any data store type.
+        /// </para>
+        /// </remarks>
+        /// <param name="storeFactory">the factory for the underlying data store</param>
+        /// <returns>a <see cref="BigSegmentsConfigurationBuilder"/></returns>
+        public static BigSegmentsConfigurationBuilder BigSegments(IBigSegmentStoreFactory storeFactory) =>
+            new BigSegmentsConfigurationBuilder(storeFactory);
+
+        /// <summary>
         /// Returns a configuration object that disables direct connection with LaunchDarkly for feature
         /// flag updates.
         /// </summary>
