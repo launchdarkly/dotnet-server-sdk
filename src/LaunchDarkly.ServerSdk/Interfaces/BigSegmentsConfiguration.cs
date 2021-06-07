@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <param name="store">value for Store</param>
         /// <param name="userCacheSize">value for UserCacheSize</param>
-        /// <param name="userCacheTime">value for UserCacheTie</param>
+        /// <param name="userCacheTime">value for UserCacheTime</param>
         /// <param name="statusPollInterval">value for StatusPollInterval</param>
         /// <param name="staleAfter">value for StaleAfter</param>
         public BigSegmentsConfiguration(

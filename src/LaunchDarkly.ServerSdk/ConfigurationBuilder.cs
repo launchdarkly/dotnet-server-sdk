@@ -109,7 +109,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <param name="bigSegmentsConfigurationFactory">a configuration factory object returned by
         /// <see cref="Components.BigSegments(IBigSegmentStoreFactory)"/></param>
-        /// <returns></returns>
+        /// <returns>the same builder</returns>
         public ConfigurationBuilder BigSegments(IBigSegmentsConfigurationFactory bigSegmentsConfigurationFactory)
         {
             _bigSegmentsConfigurationFactory = bigSegmentsConfigurationFactory;

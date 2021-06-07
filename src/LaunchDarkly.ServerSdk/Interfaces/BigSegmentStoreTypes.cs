@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// This is an immutable snapshot of the state for this user at the time
         /// <see cref="IBigSegmentStore.GetMembershipAsync(string)"/> was called. Calling
         /// <see cref="CheckMembership(string)"/> should not cause the state to be queried again.
-        /// The object should be safe for concurrent access by multiple goroutines.
+        /// The object should be safe for concurrent access by multiple threads.
         /// </para>
         /// </remarks>
         public interface IMembership
