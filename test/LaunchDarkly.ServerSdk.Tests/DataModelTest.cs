@@ -289,7 +289,9 @@ namespace LaunchDarkly.Sdk.Server
         {
             ""clauses"": []
         }
-    ]
+    ],
+    ""unbounded"": true,
+    ""generation"": 51
 }");
         }
 
@@ -300,7 +302,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal("123", segment.Salt);
             Assert.Equal(ImmutableList.Create("key1", "key2"), segment.Included);
             Assert.Equal(ImmutableList.Create("key3", "key4"), segment.Excluded);
-
+            
             Assert.Collection(segment.Rules,
                 r =>
                 {
@@ -321,6 +323,9 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.Null(r.BucketBy);
                     Assert.Collection(r.Clauses);
                 });
+
+            Assert.True(segment.Unbounded);
+            Assert.Equal(51, segment.Generation);
         }
     }
 }

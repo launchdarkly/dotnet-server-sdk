@@ -7,6 +7,7 @@ using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.BigSegments;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Evaluation;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -116,7 +117,13 @@ namespace LaunchDarkly.Sdk.Server
                     );
             _bigSegmentStoreStatusProvider = new BigSegmentStoreStatusProviderImpl(_bigSegmentStoreWrapper);
 
-            _evaluator = new Evaluator(GetFlag, GetSegment, _log);
+            _evaluator = new Evaluator(
+                GetFlag,
+                GetSegment,
+                _bigSegmentStoreWrapper == null ? (Func<string, BigSegmentsInternalTypes.BigSegmentsQueryResult>)null :
+                    _bigSegmentStoreWrapper.GetUserMembership,
+                _log
+                );
 
             var eventProcessorFactory =
                 config.Offline ? Components.NoEvents :

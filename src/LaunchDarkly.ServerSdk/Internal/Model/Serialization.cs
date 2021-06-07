@@ -357,6 +357,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             }
             rulesArr.End();
 
+            obj.MaybeName("unbounded", segment.Unbounded).Bool(segment.Unbounded);
+            obj.MaybeName("generation", segment.Generation.HasValue).IntOrNull(segment.Generation);
+
             obj.End();
         }
 
@@ -368,6 +371,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             ImmutableList<string> included = null, excluded = null;
             ImmutableList<SegmentRule> rules = null;
             string salt = null;
+            bool unbounded = false;
+            int? generation = null;
 
             for (var obj = reader.Object().WithRequiredProperties(_requiredProperties); obj.Next(ref reader);)
             {
@@ -399,13 +404,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     case var n when n == "salt":
                         salt = reader.StringOrNull();
                         break;
+                    case var n when n == "unbounded":
+                        unbounded = reader.Bool();
+                        break;
+                    case var n when n == "generation":
+                        generation = reader.IntOrNull();
+                        break;
                 }
             }
             if (key is null && !deleted)
             {
                 throw new RequiredPropertyException("key", 0);
             }
-            return new Segment(key, version, deleted, included, excluded, rules, salt);
+            return new Segment(key, version, deleted, included, excluded, rules, salt, unbounded, generation);
         }
 
         internal static SegmentRule ReadSegmentRule(ref JReader reader)

@@ -5,6 +5,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 {
@@ -36,11 +37,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             _storeMock.Setup(s => s.GetMetadataAsync()).ThrowsAsync(e);
 
         private void SetStoreMembership(string userKey, IMembership membership) =>
-            _storeMock.Setup(s => s.GetMembershipAsync(BigSegmentStoreWrapper.HashForUserKey(userKey)))
+            _storeMock.Setup(s => s.GetMembershipAsync(BigSegmentUserKeyHash(userKey)))
                 .ReturnsAsync(membership);
 
         private void ShouldHaveQueriedMembershipTimes(string userKey, int times) =>
-            _storeMock.Verify(s => s.GetMembershipAsync(BigSegmentStoreWrapper.HashForUserKey(userKey)),
+            _storeMock.Verify(s => s.GetMembershipAsync(BigSegmentUserKeyHash(userKey)),
                 Times.Exactly(times));
 
         [Fact]
