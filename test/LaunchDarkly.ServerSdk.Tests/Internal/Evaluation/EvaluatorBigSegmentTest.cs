@@ -63,7 +63,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void MatchedWithRule()
         {
-            var clause = new ClauseBuilder().KeyIs(baseUser.Key).Build();
+            var clause = ClauseBuilder.ShouldMatchUser(baseUser);
             var rule = new SegmentRule(new List<Clause> { clause }, null, null);
             var segment = new SegmentBuilder("segmentkey").Unbounded(true).Generation(2)
                 .Rules(rule)
