@@ -2,6 +2,12 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.0.0-rc.3] - 2021-06-07
+Other than the fix described below, this release candidate is identical to `rc.2`.
+
+### Fixed:
+- On platforms that do not support `System.Text.Json`, such as .NET Framework 4.5.2, the SDK's implementation of JSON parsing was rejecting feature flag data (or any other SDK type that you asked to parse from JSON) if it contained a numeric value that had an exponent but no decimal point. For instance, `1e8` (as opposed to `1.0e8`) was incorrectly treated as a syntax error. It now accepts numbers in any of the formats that are valid in JSON.
+
 ## [6.0.0-rc.2] - 2021-05-17
 Other than the fix described below, and improvements in unit test stability, this release candidate is identical to `rc.1`.
 
