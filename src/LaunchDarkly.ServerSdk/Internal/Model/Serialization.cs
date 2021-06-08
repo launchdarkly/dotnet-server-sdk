@@ -500,7 +500,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var builder = ImmutableList.CreateBuilder<Clause>();
             for (var arr = r.ArrayOrNull();  arr.Next(ref r);)
             {
-                UserAttribute attribute;
+                UserAttribute attribute = new UserAttribute();
                 Operator op = null;
                 ImmutableList<LdValue> values = null;
                 bool negate = false;
