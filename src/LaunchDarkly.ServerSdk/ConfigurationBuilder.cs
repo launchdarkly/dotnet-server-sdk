@@ -26,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server
     {
         #region Internal properties
 
-        internal static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(10);
+        internal static readonly TimeSpan DefaultStartWaitTime = TimeSpan.FromSeconds(5);
 
         // Let's try to keep these properties and methods alphabetical so they're easy to find. Note that they
         // are internal rather than private so that they can be read by the Configuration constructor.

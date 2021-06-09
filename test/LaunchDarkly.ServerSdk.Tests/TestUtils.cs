@@ -37,6 +37,22 @@ namespace LaunchDarkly.Sdk.Server
         internal static bool UpsertSegment(IDataStore store, Segment item) =>
             store.Upsert(DataModel.Segments, item.Key, DescriptorOf(item));
 
+        internal static string MakeStreamPutEvent(string flagsData) =>
+            "event: put\ndata: {\"data\":" + flagsData + "}\n\n";
+
+        internal static string MakeFlagsData(params FeatureFlag[] flags)
+        {
+            var flagsBuilder = LdValue.BuildObject();
+            foreach (var flag in flags)
+            {
+                flagsBuilder.Add(flag.Key, LdValue.Parse(DataModel.Features.Serialize(DescriptorOf(flag))));
+            }
+            return LdValue.BuildObject()
+                    .Add("flags", flagsBuilder.Build())
+                    .Add("segments", LdValue.BuildObject().Build())
+                    .Build().ToJsonString();
+        }
+
         public static IDataStoreFactory SpecificDataStore(IDataStore store) =>
             new SpecificDataStoreFactory(store);
 
