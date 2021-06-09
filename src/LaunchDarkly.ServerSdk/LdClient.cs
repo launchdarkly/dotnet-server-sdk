@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server
 
         /// <inheritdoc/>
         public Version Version => AssemblyVersions.GetAssemblyVersionForType(typeof(LdClient));
-        
+
         #endregion
 
         #region Public constructors
@@ -58,7 +58,46 @@ namespace LaunchDarkly.Sdk.Server
         /// <summary>
         /// Creates a new client to connect to LaunchDarkly with a custom configuration.
         /// </summary>
-        /// <param name="config">a client configuration object</param>
+        /// <remarks>
+        /// <para>
+        /// Applications should instantiate a single instance for the lifetime of the application. In
+        /// unusual cases where an application needs to evaluate feature flags from different LaunchDarkly
+        /// projects or environments, you may create multiple clients, but they should still be retained
+        /// for the lifetime of the application rather than created per request or per thread.
+        /// </para>
+        /// <para>
+        /// Normally, the client will begin attempting to connect to LaunchDarkly as soon as you call the
+        /// constructor. The constructor returns as soon as any of the following things has happened:
+        /// </para>
+        /// <list type="number">
+        /// <item> It has successfully connected to LaunchDarkly and received feature flag data. In this
+        /// case, <see cref="Initialized"/> will be true, and the <see cref="DataSourceStatusProvider"/>
+        /// will return a state of <see cref="DataSourceState.Valid"/>. </item>
+        /// <item> It has not succeeded in connecting within the <see cref="ConfigurationBuilder.StartWaitTime(TimeSpan)"/>
+        /// timeout (the default for this is 5 seconds). This could happen due to a network problem or a
+        /// temporary service outage. In this case, <see cref="Initialized"/> will be false, and the
+        /// <see cref="DataSourceStatusProvider"/> will return a state of <see cref="DataSourceState.Initializing"/>,
+        /// indicating that the SDK will still continue trying to connect in the background. </item>
+        /// <item> It has encountered an unrecoverable error: for instance, LaunchDarkly has rejected the
+        /// SDK key. Since an invalid key will not become valid, the SDK will not retry in this case.
+        /// <see cref="Initialized"/> will be false, and the <see cref="DataSourceStatusProvider"/> will
+        /// return a state of <see cref="DataSourceState.Off"/>. </item>
+        /// </list>
+        /// <para>
+        /// If you have specified <see cref="ConfigurationBuilder.Offline"/> mode or
+        /// <see cref="Components.ExternalUpdatesOnly"/>, the constructor returns immediately without
+        /// trying to connect to LaunchDarkly.
+        /// </para>
+        /// <para>
+        /// Failure to connect to LaunchDarkly will never cause the constructor to throw an exception.
+        /// Under any circumstance where it is not able to get feature flag data from LaunchDarkly (and
+        /// therefore <see cref="Initialized"/> is false), if it does not have any other source of data
+        /// (such as a persistent data store) then feature flag evaluations will behave the same as if
+        /// the flags were not found: that is, they will return whatever default value is specified in
+        /// your code.
+        /// </para>
+        /// </remarks>
+        /// <param name="config">a client configuration object (which includes an SDK key)</param>
         /// <example>
         /// <code>
         ///     var config = Configuration.Builder("my-sdk-key")
@@ -68,12 +107,7 @@ namespace LaunchDarkly.Sdk.Server
         ///     var client = new LDClient(config);
         /// </code>
         /// </example>
-        /// <remarks>
-        /// The constructor will block until the client has successfully connected to LaunchDarkly
-        /// (assuming it is not in <see cref="ConfigurationBuilder.Offline(bool)"/> mode), or until
-        /// the timeout specified by <see cref="ConfigurationBuilder.StartWaitTime(TimeSpan)"/> has
-        /// elapsed. If it times out, <see cref="LdClient.Initialized"/> will be false.
-        /// </remarks>
+        /// <seealso cref="LdClient.LdClient(string)"/>
         public LdClient(Configuration config)
         {
             _configuration = config;
@@ -144,17 +178,25 @@ namespace LaunchDarkly.Sdk.Server
         /// <summary>
         /// Creates a new client instance that connects to LaunchDarkly with the default configuration.
         /// </summary>
-        /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
-        /// <example>
-        /// <code>
-        ///     var client = new LDClient("my-sdk-key");
-        /// </code>
-        /// </example>
         /// <remarks>
-        /// The constructor will block until the client has successfully connected to LaunchDarkly, or
-        /// until the default timeout has elapsed (10 seconds). If it times out,
-        /// <see cref="LdClient.Initialized"/> will be false.
+        /// <para>
+        /// If you need to specify any custom SDK options, use <see cref="LdClient.LdClient(Configuration)"/>
+        /// instead.
+        /// </para>
+        /// <para>
+        /// Applications should instantiate a single instance for the lifetime of the application. In
+        /// unusual cases where an application needs to evaluate feature flags from different LaunchDarkly
+        /// projects or environments, you may create multiple clients, but they should still be retained
+        /// for the lifetime of the application rather than created per request or per thread.
+        /// </para>
+        /// <para>
+        /// The constructor will never throw an exception, even if initialization fails. For more details
+        /// about initialization behavior and how to detect error conditions, see
+        /// <see cref="LdClient.LdClient(Configuration)"/>.
+        /// </para>
         /// </remarks>
+        /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
+        /// <seealso cref="LdClient.LdClient(Configuration)"/>
         public LdClient(string sdkKey) : this(Configuration.Default(sdkKey))
         {
         }
