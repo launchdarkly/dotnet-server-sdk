@@ -1,0 +1,313 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IDataSourceUpdates
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IDataSourceUpdates
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates" class="text-break">Interface IDataSourceUpdates
+  </h1>
+  <div class="markdown level0 summary"><p>Interface that an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a> will use to push data into the SDK.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IDataSourceUpdates</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>The data source interacts with this object, rather than manipulating the data store directly, so
+that the SDK can perform any other necessary operations that must happen when data is updated. This
+object also provides a mechanism to report status changes.</p>
+</div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_DataStoreStatusProvider_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.DataStoreStatusProvider*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_DataStoreStatusProvider" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.DataStoreStatusProvider">DataStoreStatusProvider</h4>
+  <div class="markdown level1 summary"><p>An object that provides status tracking for the data store, if applicable.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IDataStoreStatusProvider DataStoreStatusProvider { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStoreStatusProvider.html">IDataStoreStatusProvider</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_DataStoreStatusProvider_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This may be useful if the data source needs to be aware of storage problems that might require it
+to take some special action: for instance, if a database outage may have caused some data to be
+lost and therefore the data should be re-requested from LaunchDarkly.</p>
+</div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_Init_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.Init*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_Init_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_FullDataSet_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor__" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.Init(LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.FullDataSet{LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor})">Init(DataStoreTypes.FullDataSet&lt;DataStoreTypes.ItemDescriptor&gt;)</h4>
+  <div class="markdown level1 summary"><p>Completely overwrites the current contents of the data store with a set of items for each collection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool Init(DataStoreTypes.FullDataSet&lt;DataStoreTypes.ItemDescriptor&gt; allData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.FullDataSet-1.html">DataStoreTypes.FullDataSet</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor.html">DataStoreTypes.ItemDescriptor</a>&gt;</td>
+        <td><span class="parametername">allData</span></td>
+        <td><p>a list of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html">DataStoreTypes.DataKind</a> instances and their
+corresponding data sets</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>true if the update succeeded, false if it failed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_UpdateStatus_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.UpdateStatus*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_UpdateStatus_LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_System_Nullable_LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ErrorInfo__" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.UpdateStatus(LaunchDarkly.Sdk.Server.Interfaces.DataSourceState,System.Nullable{LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo})">UpdateStatus(DataSourceState, Nullable&lt;DataSourceStatus.ErrorInfo&gt;)</h4>
+  <div class="markdown level1 summary"><p>Informs the SDK of a change in the data source&apos;s status.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html">DataSourceState</a></td>
+        <td><span class="parametername">newState</span></td>
+        <td><p>the data source state</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.html">DataSourceStatus.ErrorInfo</a>&gt;</td>
+        <td><span class="parametername">newError</span></td>
+        <td><p>information about a new error, if any</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_UpdateStatus_LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_System_Nullable_LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ErrorInfo___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Data source implementations should use this method if they have any concept of being in a valid
+state, a temporarily disconnected state, or a permanently stopped state.
+</p>
+<p>
+If <code data-dev-comment-type="paramref" class="paramref">newState</code> is different from the previous state, and/or <code data-dev-comment-type="paramref" class="paramref">newError</code>
+is non-null, the SDK will start returning the new status(adding a timestamp for the change) from
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceStatusProvider.html#LaunchDarkly_Sdk_Server_Interfaces_IDataSourceStatusProvider_Status">Status</a>, and will trigger status change events to any
+registered listeners.
+</p>
+<p>
+A special case is that if <code data-dev-comment-type="paramref" class="paramref">newState</code> is <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Interrupted">Interrupted</a>,
+but the previous state was <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Initializing">Initializing</a>, the state will
+remain at <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Initializing">Initializing</a> because
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Interrupted">Interrupted</a> is only meaningful after a successful startup.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_UpdateStatus_LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_System_Nullable_LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ErrorInfo___seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceStatusProvider.html">IDataSourceStatusProvider</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_Upsert_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.Upsert*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_Upsert_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_DataKind_System_String_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.Upsert(LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind,System.String,LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor)">Upsert(DataStoreTypes.DataKind, String, DataStoreTypes.ItemDescriptor)</h4>
+  <div class="markdown level1 summary"><p>Updates or inserts an item in the specified collection. For updates, the object will only be
+updated if the existing version is less than the new version.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool Upsert(DataStoreTypes.DataKind kind, string key, DataStoreTypes.ItemDescriptor item)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html">DataStoreTypes.DataKind</a></td>
+        <td><span class="parametername">kind</span></td>
+        <td><p>specifies which collection to use</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique key for the item within that collection</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor.html">DataStoreTypes.ItemDescriptor</a></td>
+        <td><span class="parametername">item</span></td>
+        <td><p>the item to insert or update</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>true if the update succeeded, false if it failed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_Upsert_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_DataKind_System_String_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor.html">DataStoreTypes.ItemDescriptor</a> may contain a null, to represent a placeholder for a deleted item.</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

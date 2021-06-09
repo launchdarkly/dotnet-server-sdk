@@ -1,0 +1,720 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Components
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Components
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Components">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Server_Components" data-uid="LaunchDarkly.Sdk.Server.Components" class="text-break">Class Components
+  </h1>
+  <div class="markdown level0 summary"><p>Provides factories for the standard implementations of LaunchDarkly component interfaces.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Components</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.html">LaunchDarkly.Sdk.Server</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class Components</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>Some of the configuration options in <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html">ConfigurationBuilder</a> affect the entire SDK, but others are
+specific to one area of functionality, such as how the SDK receives feature flag updates or processes
+analytics events. For the latter, the standard way to specify a configuration is to call one of the
+static methods in <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html">Components</a> (such as <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_StreamingDataSource">StreamingDataSource()</a>),
+apply any desired configuration change to the object that that method returns (such as
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.html#LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_InitialReconnectDelay_System_TimeSpan_">InitialReconnectDelay(TimeSpan)</a>), and then use the
+corresponding method in <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html">ConfigurationBuilder</a> (such as
+<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_">DataSource(IDataSourceFactory)</a>) to use that
+configured component in the SDK.</p>
+</div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Components_ExternalUpdatesOnly_" data-uid="LaunchDarkly.Sdk.Server.Components.ExternalUpdatesOnly*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_ExternalUpdatesOnly" data-uid="LaunchDarkly.Sdk.Server.Components.ExternalUpdatesOnly">ExternalUpdatesOnly</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration object that disables direct connection with LaunchDarkly for feature
+flag updates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IDataSourceFactory ExternalUpdatesOnly { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_ExternalUpdatesOnly_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Passing this to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_">DataSource(IDataSourceFactory)</a> causes the SDK
+not to retrieve feature flag data from LaunchDarkly, regardless of any other configuration. This is
+normally done if you are using the <a href="https://docs.launchdarkly.com/home/advanced/relay-proxy">Relay Proxy</a>
+in &quot;daemon mode&quot;, where an external process-- the Relay Proxy-- connects to LaunchDarkly and populates
+a persistent data store with the feature flag data. The data store could also be populated by
+another process that is running the LaunchDarkly SDK. If there is no external process updating
+the data store, then the SDK will not have any feature flag data and will return application
+default values only.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_ExternalUpdatesOnly_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .DataSource(Components.ExternalUpdatesOnly)
+        .DataStore(Components.PersistentDataStore(Redis.DataStore())) // assuming the Relay Proxy is using Redis
+        .Build();</code></pre>
+
+  <a id="LaunchDarkly_Sdk_Server_Components_InMemoryDataStore_" data-uid="LaunchDarkly.Sdk.Server.Components.InMemoryDataStore*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_InMemoryDataStore" data-uid="LaunchDarkly.Sdk.Server.Components.InMemoryDataStore">InMemoryDataStore</h4>
+  <div class="markdown level1 summary"><p>Returns a factory for the default in-memory implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html">IDataStore</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IDataStoreFactory InMemoryDataStore { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory.html">IDataStoreFactory</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_InMemoryDataStore_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Since it is the default, you do not normally need to call this method, unless you need to create
+a data store instance for testing purposes.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Components_NoEvents_" data-uid="LaunchDarkly.Sdk.Server.Components.NoEvents*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_NoEvents" data-uid="LaunchDarkly.Sdk.Server.Components.NoEvents">NoEvents</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration object that disables analytics events.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IEventProcessorFactory NoEvents { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.html">IEventProcessorFactory</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_NoEvents_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Passing this to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_LaunchDarkly_Sdk_Server_Interfaces_IEventProcessorFactory_">Events(IEventProcessorFactory)</a> causes
+the SDK to discard all analytics events and not send them to LaunchDarkly, regardless of
+any other configuration.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_NoEvents_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .Events(Components.NoEvents)
+        .Build();</code></pre>
+
+  <a id="LaunchDarkly_Sdk_Server_Components_NoLogging_" data-uid="LaunchDarkly.Sdk.Server.Components.NoLogging*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_NoLogging" data-uid="LaunchDarkly.Sdk.Server.Components.NoLogging">NoLogging</h4>
+  <div class="markdown level1 summary"><p>A configuration object that disables logging.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LoggingConfigurationBuilder NoLogging { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html">LoggingConfigurationBuilder</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_NoLogging_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is the same as <code>Logging(LaunchDarkly.Logging.Logs.None)</code>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_NoLogging_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .Logging(Components.NoLogging)
+        .Build();</code></pre>
+
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Components_HttpConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Components.HttpConfiguration*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_HttpConfiguration" data-uid="LaunchDarkly.Sdk.Server.Components.HttpConfiguration">HttpConfiguration()</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration builder for the SDK&apos;s networking configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static HttpConfigurationBuilder HttpConfiguration()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html">HttpConfigurationBuilder</a></td>
+        <td><p>a configurable factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_HttpConfiguration_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Passing this to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_LaunchDarkly_Sdk_Server_Interfaces_IHttpConfigurationFactory_">Http(IHttpConfigurationFactory)</a> applies this
+configuration to all HTTP/HTTPS requests made by the SDK.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_HttpConfiguration_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .Http(
+            Components.HttpConfiguration()
+                .ConnectTimeout(TimeSpan.FromMilliseconds(3000))
+        )
+        .Build();</code></pre>
+
+  <a id="LaunchDarkly_Sdk_Server_Components_Logging_" data-uid="LaunchDarkly.Sdk.Server.Components.Logging*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_Logging" data-uid="LaunchDarkly.Sdk.Server.Components.Logging">Logging()</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration builder for the SDK&apos;s logging configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LoggingConfigurationBuilder Logging()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html">LoggingConfigurationBuilder</a></td>
+        <td><p>a configurable factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_Logging_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Passing this to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory_">Logging(ILoggingConfigurationFactory)</a>,
+after setting any desired properties on the builder, applies this configuration to the SDK.
+</p>
+<p>
+The default behavior, if you do not change any properties, is to send log output to
+<span class="xref">System.Console.Error</span>, with a minimum level of <code>Info</code> (that is, <code>Debug</code> logging
+is disabled).
+</p>
+<p>
+For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+SDK reference guide</a>.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_Logging_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(&quot;my-sdk-key&quot;)
+        .Logging(Components.Logging().Level(LogLevel.Warn)))
+        .Build();</code></pre>
+
+  <h5 id="LaunchDarkly_Sdk_Server_Components_Logging_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory_">Logging(ILoggingConfigurationFactory)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging_LaunchDarkly_Logging_ILogAdapter_">Logging(ILogAdapter)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_NoLogging">NoLogging</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Components_Logging_" data-uid="LaunchDarkly.Sdk.Server.Components.Logging*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_Logging_LaunchDarkly_Logging_ILogAdapter_" data-uid="LaunchDarkly.Sdk.Server.Components.Logging(LaunchDarkly.Logging.ILogAdapter)">Logging(ILogAdapter)</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration builder for the SDK&apos;s logging configuration, specifying the logging implementation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LoggingConfigurationBuilder Logging(ILogAdapter adapter)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">LaunchDarkly.Logging.ILogAdapter</span></td>
+        <td><span class="parametername">adapter</span></td>
+        <td><p>an <code>ILogAdapter</code> for the desired logging implementation</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html">LoggingConfigurationBuilder</a></td>
+        <td><p>a configurable factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_Logging_LaunchDarkly_Logging_ILogAdapter__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This is a shortcut for calling <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging">Logging()</a> and then
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Adapter_LaunchDarkly_Logging_ILogAdapter_">Adapter(ILogAdapter)</a>, to specify a logging implementation
+other than the default one. For instance, in a .NET Core application you can use
+<code>LaunchDarkly.Logging.Logs.CoreLogging</code> to use the standard .NET Core logging framework.
+</p>
+<p>
+If you do not also specify a minimum logging level with <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Level_LaunchDarkly_Logging_LogLevel_">Level(LogLevel)</a>,
+or with some other filtering mechanism that is defined by an external logging framework, then the
+log output will show all logging levels including <code>Debug</code>.
+</p>
+<p>
+For more about log adapters, see <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Adapter_LaunchDarkly_Logging_ILogAdapter_">Adapter(ILogAdapter)</a>.
+</p>
+<p>
+For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+SDK reference guide</a>.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_Logging_LaunchDarkly_Logging_ILogAdapter__examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .Logging(Components.Logging(Logs.CoreLogging(coreLoggingFactory)))
+        .Build();</code></pre>
+
+  <h5 id="LaunchDarkly_Sdk_Server_Components_Logging_LaunchDarkly_Logging_ILogAdapter__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory_">Logging(ILoggingConfigurationFactory)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Adapter_LaunchDarkly_Logging_ILogAdapter_">Adapter(ILogAdapter)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging">Logging()</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_NoLogging">NoLogging</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Components_PersistentDataStore_" data-uid="LaunchDarkly.Sdk.Server.Components.PersistentDataStore*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStoreAsyncFactory_" data-uid="LaunchDarkly.Sdk.Server.Components.PersistentDataStore(LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsyncFactory)">PersistentDataStore(IPersistentDataStoreAsyncFactory)</h4>
+  <div class="markdown level1 summary"><p>Returns a configurable factory for a persistent data store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreAsyncFactory storeFactory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsyncFactory.html">IPersistentDataStoreAsyncFactory</a></td>
+        <td><span class="parametername">storeFactory</span></td>
+        <td><p>the factory for the underlying data store</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStoreAsyncFactory__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This method takes an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html">IPersistentDataStoreFactory</a> that is provided by
+some persistent data store implementation (i.e. a database integration), and converts
+it to a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a> which can be used to add
+caching behavior. You can then pass the <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a>
+object to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataStore_LaunchDarkly_Sdk_Server_Interfaces_IDataStoreFactory_">DataStore(IDataStoreFactory)</a> to use this
+configuration in the SDK. Example usage:
+</p>
+<pre><code>    var myStore = Components.PersistentDataStore(Redis.FeatureStore())
+        .CacheTtl(TimeSpan.FromSeconds(45));
+    var config = Configuration.Builder(sdkKey)
+        .DataStore(myStore)
+        .Build();</code></pre>
+<p>
+The method is overloaded because some persistent data store implementations
+use <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html">IPersistentDataStoreFactory</a> while others use
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsyncFactory.html">IPersistentDataStoreAsyncFactory</a>.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Components_PersistentDataStore_" data-uid="LaunchDarkly.Sdk.Server.Components.PersistentDataStore*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStoreFactory_" data-uid="LaunchDarkly.Sdk.Server.Components.PersistentDataStore(LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory)">PersistentDataStore(IPersistentDataStoreFactory)</h4>
+  <div class="markdown level1 summary"><p>Returns a configurable factory for a persistent data store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreFactory storeFactory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html">IPersistentDataStoreFactory</a></td>
+        <td><span class="parametername">storeFactory</span></td>
+        <td><p>the factory for the underlying data store</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStoreFactory__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This method takes an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html">IPersistentDataStoreFactory</a> that is provided by
+some persistent data store implementation (i.e. a database integration), and converts
+it to a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a> which can be used to add
+caching behavior. You can then pass the <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a>
+object to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataStore_LaunchDarkly_Sdk_Server_Interfaces_IDataStoreFactory_">DataStore(IDataStoreFactory)</a> to use this
+configuration in the SDK. Example usage:
+</p>
+<pre><code>    var myStore = Components.PersistentDataStore(Redis.FeatureStore())
+        .CacheTtl(TimeSpan.FromSeconds(45));
+    var config = Configuration.Builder(sdkKey)
+        .DataStore(myStore)
+        .Build();</code></pre>
+<p>
+The method is overloaded because some persistent data store implementations
+use <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html">IPersistentDataStoreFactory</a> while others use
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsyncFactory.html">IPersistentDataStoreAsyncFactory</a>.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Components_PollingDataSource_" data-uid="LaunchDarkly.Sdk.Server.Components.PollingDataSource*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_PollingDataSource" data-uid="LaunchDarkly.Sdk.Server.Components.PollingDataSource">PollingDataSource()</h4>
+  <div class="markdown level1 summary"><p>Returns a configurable factory for using polling mode to get feature flag data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PollingDataSourceBuilder PollingDataSource()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PollingDataSourceBuilder.html">PollingDataSourceBuilder</a></td>
+        <td><p>a builder for setting polling connection properties</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_PollingDataSource_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This is not the default behavior; by default, the SDK uses a streaming connection to receive feature flag
+data from LaunchDarkly. In polling mode, the SDK instead makes a new HTTP request to LaunchDarkly at regular
+intervals. HTTP caching allows it to avoid redundantly downloading data if there have been no changes, but
+polling is still less efficient than streaming and should only be used on the advice of LaunchDarkly support.
+</p>
+<p>
+To use polling mode, call this method to obtain a builder, change its properties with the
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PollingDataSourceBuilder.html">PollingDataSourceBuilder</a> methods, and pass it to
+<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_">DataSource(IDataSourceFactory)</a>.
+</p>
+<p>
+Setting <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Offline_System_Boolean_">Offline(Boolean)</a> to <span class="xref">true</span> will superseded this
+setting and completely disable network requests.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_PollingDataSource_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .DataSource(Components.PollingDataSource()
+            .PollInterval(TimeSpan.FromSeconds(45)))
+        .Build();</code></pre>
+
+  <a id="LaunchDarkly_Sdk_Server_Components_SendEvents_" data-uid="LaunchDarkly.Sdk.Server.Components.SendEvents*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_SendEvents" data-uid="LaunchDarkly.Sdk.Server.Components.SendEvents">SendEvents()</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration builder for analytics event delivery.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EventProcessorBuilder SendEvents()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>a builder for setting event properties</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_SendEvents_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+The default configuration has events enabled with default settings. If you want to
+customize this behavior, call this method to obtain a builder, change its properties
+with the <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a> methods, and pass it to
+<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_LaunchDarkly_Sdk_Server_Interfaces_IEventProcessorFactory_">Events(IEventProcessorFactory)</a>.
+</p>
+<p>
+To completely disable sending analytics events, use <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_NoEvents">NoEvents</a> instead.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_SendEvents_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .Events(Components.SendEvents()
+            .Capacity(5000)
+            .FlushInterval(TimeSpan.FromSeconds(2)))
+        .Build();</code></pre>
+
+  <a id="LaunchDarkly_Sdk_Server_Components_StreamingDataSource_" data-uid="LaunchDarkly.Sdk.Server.Components.StreamingDataSource*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_StreamingDataSource" data-uid="LaunchDarkly.Sdk.Server.Components.StreamingDataSource">StreamingDataSource()</h4>
+  <div class="markdown level1 summary"><p>Returns a configurable factory for using streaming mode to get feature flag data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static StreamingDataSourceBuilder StreamingDataSource()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.html">StreamingDataSourceBuilder</a></td>
+        <td><p>a builder for setting streaming connection properties</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_StreamingDataSource_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+By default, the SDK uses a streaming connection to receive feature flag data from LaunchDarkly. To use
+the default behavior, you do not need to call this method. However, if you want to customize the behavior
+of the connection, call this method to obtain a builder, change its properties with the
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.html">StreamingDataSourceBuilder</a> methods, and pass it to
+<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_">DataSource(IDataSourceFactory)</a>.
+</p>
+<p>
+Setting <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Offline_System_Boolean_">Offline(Boolean)</a> to <span class="xref">true</span> will superseded this
+setting and completely disable network requests.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_StreamingDataSource_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .DataSource(Components.StreamingDataSource()
+            .InitialReconnectDelay(TimeSpan.FromMilliseconds(500)))
+        .Build();</code></pre>
+
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

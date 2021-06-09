@@ -1,0 +1,486 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class HttpConfiguration
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class HttpConfiguration
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration" class="text-break">Class HttpConfiguration
+  </h1>
+  <div class="markdown level0 summary"><p>Encapsulates top-level HTTP configuration that applies to all SDK components.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">HttpConfiguration</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class HttpConfiguration</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>Use <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html">HttpConfigurationBuilder</a> to construct an instance.</p>
+</div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration__ctor_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration__ctor_System_TimeSpan_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String_System_String___System_Net_Http_HttpMessageHandler_System_Net_IWebProxy_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.#ctor(System.TimeSpan,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}},System.Net.Http.HttpMessageHandler,System.Net.IWebProxy,System.TimeSpan)">HttpConfiguration(TimeSpan, IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt;, HttpMessageHandler, IWebProxy, TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Constructs an instance, setting all properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HttpConfiguration(TimeSpan connectTimeout, IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt; defaultHeaders, HttpMessageHandler messageHandler, IWebProxy proxy, TimeSpan readTimeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">connectTimeout</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout">ConnectTimeout</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.Collections.Generic.KeyValuePair</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;</td>
+        <td><span class="parametername">defaultHeaders</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_DefaultHeaders">DefaultHeaders</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Http.HttpMessageHandler</span></td>
+        <td><span class="parametername">messageHandler</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_MessageHandler">MessageHandler</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.IWebProxy</span></td>
+        <td><span class="parametername">proxy</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_Proxy">Proxy</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">readTimeout</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ReadTimeout">ReadTimeout</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration__ctor_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration__ctor_System_TimeSpan_System_Collections_Generic_IEnumerable_System_Collections_Generic_KeyValuePair_System_String_System_String___System_Net_Http_HttpMessageHandler_System_Net_IWebProxy_System_TimeSpan_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.#ctor(System.TimeSpan,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}},System.Net.Http.HttpMessageHandler,System.Net.IWebProxy,System.TimeSpan,System.TimeSpan)">HttpConfiguration(TimeSpan, IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt;, HttpMessageHandler, IWebProxy, TimeSpan, TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Constructs an instance, setting all properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HttpConfiguration(TimeSpan connectTimeout, IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt; defaultHeaders, HttpMessageHandler messageHandler, IWebProxy proxy, TimeSpan readTimeout, TimeSpan responseStartTimeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">connectTimeout</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout">ConnectTimeout</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.Collections.Generic.KeyValuePair</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;</td>
+        <td><span class="parametername">defaultHeaders</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_DefaultHeaders">DefaultHeaders</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Http.HttpMessageHandler</span></td>
+        <td><span class="parametername">messageHandler</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_MessageHandler">MessageHandler</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.IWebProxy</span></td>
+        <td><span class="parametername">proxy</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_Proxy">Proxy</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">readTimeout</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ReadTimeout">ReadTimeout</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">responseStartTimeout</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ResponseStartTimeout">ResponseStartTimeout</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ConnectTimeout*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ConnectTimeout">ConnectTimeout</h4>
+  <div class="markdown level1 summary"><p>The network connection timeout.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan ConnectTimeout { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This is the time allowed for the underlying HTTP client to connect to the
+LaunchDarkly server, for any individual network connection.
+</p>
+<p>
+Not all .NET platforms support setting a connection timeout. It is implemented as
+a property of <code>System.Net.Http.SocketsHttpHandler</code> in .NET Core 2.1+ and .NET
+5+, but is unavailable in .NET Framework and .NET Standard. On platforms where it
+is not supported, only <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ResponseStartTimeout">ResponseStartTimeout</a> will be used.
+</p>
+<p>
+Since this is implemented only in <code>SocketsHttpHandler</code>, if you have
+specified some other HTTP handler implementation with <span class="xref">System.Net.Http.HttpMessageHandler</span>,
+the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout">ConnectTimeout</a> here will be ignored.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ResponseStartTimeout">ResponseStartTimeout</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_DefaultHeaders_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.DefaultHeaders*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_DefaultHeaders" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.DefaultHeaders">DefaultHeaders</h4>
+  <div class="markdown level1 summary"><p>HTTP headers to be added to all HTTP requests made by the SDK.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt; DefaultHeaders { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.Collections.Generic.KeyValuePair</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_DefaultHeaders_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>These include <code>Authorization</code>, <code>User-Agent</code>, and any headers that were
+specified with <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_CustomHeader_System_String_System_String_">CustomHeader(String, String)</a>.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_MessageHandler_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.MessageHandler*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_MessageHandler" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.MessageHandler">MessageHandler</h4>
+  <div class="markdown level1 summary"><p>A custom handler for HTTP requests, or null to use the platform&apos;s default handler.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HttpMessageHandler MessageHandler { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.Http.HttpMessageHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_Proxy_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.Proxy*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_Proxy" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.Proxy">Proxy</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration, if any.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IWebProxy Proxy { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.IWebProxy</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_Proxy_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is only present if a proxy was specified programmatically with
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_Proxy_System_Net_IWebProxy_">Proxy(IWebProxy)</a>, not if it was
+specified with an environment variable.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ReadTimeout_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ReadTimeout*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ReadTimeout" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ReadTimeout">ReadTimeout</h4>
+  <div class="markdown level1 summary"><p>The network read timeout (socket timeout).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan ReadTimeout { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ReadTimeout_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is the amount of time without receiving data on a connection that the
+SDK will tolerate before signaling an error. This does <em>not</em> apply to
+the streaming connection used by <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_StreamingDataSource">StreamingDataSource()</a>,
+which has its own non-configurable read timeout based on the expected behavior
+of the LaunchDarkly streaming service.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ResponseStartTimeout_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ResponseStartTimeout*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ResponseStartTimeout" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ResponseStartTimeout">ResponseStartTimeout</h4>
+  <div class="markdown level1 summary"><p>The maximum amount of time to wait for the beginning of an HTTP response.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan ResponseStartTimeout { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ResponseStartTimeout_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This limits how long the SDK will wait from the time it begins trying to make a
+network connection for an individual HTTP request to the time it starts receiving
+any data from the server. It is equivalent to the <code>Timeout</code> property in
+<code>HttpClient</code>.
+</p>
+<p>
+It is not the same as <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_StartWaitTime_System_TimeSpan_">StartWaitTime(TimeSpan)</a>,
+which limits the time for initializing the SDK regardless of how many individual HTTP
+requests are done in that time.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ResponseStartTimeout_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_ConnectTimeout">ConnectTimeout</a></div>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_NewHttpClient_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.NewHttpClient*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_HttpConfiguration_NewHttpClient" data-uid="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.NewHttpClient">NewHttpClient()</h4>
+  <div class="markdown level1 summary"><p>Helper method for creating an HTTP client instance using the configured properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HttpClient NewHttpClient()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.Http.HttpClient</span></td>
+        <td><p>a client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

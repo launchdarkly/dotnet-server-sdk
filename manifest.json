@@ -1,0 +1,1232 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/circleci/AppData/Local/Temp/project-releaser-temp/build-docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.EvaluationDetail-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.EvaluationDetail-1.html",
+          "hash": "E85xDM5/mEMzd/L4rMyZYz3SBDqkTieR7noUMBGCF9E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.EvaluationErrorKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.EvaluationErrorKind.html",
+          "hash": "T1kxsocwj6dAcq+sGKzFzVortAHmzyhSYJuXEfOdf3U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.EvaluationReason.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.EvaluationReason.html",
+          "hash": "miktW4plC5SHC1z6505kg7aAzLJzgiUO0wn/n1TS1uI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.EvaluationReasonKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.EvaluationReasonKind.html",
+          "hash": "f3nCkYobf9aWf9W9cgxsjpmyLJE7t+QE8axhS9pbc1k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.IUserBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.IUserBuilder.html",
+          "hash": "JjLOIYIKwAE9oOK7WOo18qgVCLzHu4bqIOK0OFA6yPA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.html",
+          "hash": "vDP8A2fITqzYJPR7/U5gBUGTkbYpcaDuk5wyVVWgXHM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.IJsonSerializable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.IJsonSerializable.html",
+          "hash": "ZvfgeO2g3sSOMKD2tvssvxVmUrSsD2obfRsLA2NjEXw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.JsonException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.JsonException.html",
+          "hash": "jA5cp0O5i5DDNkVOclYuuQ+1BXAMLnYybGPDFMBeJgY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationErrorKindConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationErrorKindConverter.html",
+          "hash": "P/WpLaVdDWt6qbj9M+zvcstlDInfQny/rW4h7vEo+bk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationReasonConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationReasonConverter.html",
+          "hash": "ITeqG48O5ioDI8e4f8nip+SBE0/XQ1fG9GpgejAFPcc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationReasonKindConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationReasonKindConverter.html",
+          "hash": "p7J6Z5u7gAmyvCHGNIm8WaRP+izEwv9AUu54XQUBZO4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.LdValueConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonConverters.LdValueConverter.html",
+          "hash": "tUZ1uCpCgNgmQd8W9mUvvqbG0Bmya22ljWb+VVH/9CM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.UserConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonConverters.UserConverter.html",
+          "hash": "zVvQXC7+kiQ9R5BE1la9vXLxh/GbAykKHxNkP2a3To8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonConverters.html",
+          "hash": "C1ryUaItzrYLlgccV5BR6mrqFSF3GZG22eCAWI6FNqs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonSerialization.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonSerialization.html",
+          "hash": "riePQR8hIHDL8svlKSAM/cklk3ns4G+ocA4Ge7ydxks="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.html",
+          "hash": "C0yhQ//dM0IXhl5j2d1mLw1AFKMW2mB4zG/Rh0tdlFM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.LdValue.ArrayBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.LdValue.ArrayBuilder.html",
+          "hash": "hzzt9wuFjriVK2QqqvwjdxnPSYvhtXMzi2NX3H/+Wr8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.LdValue.Convert.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.LdValue.Convert.html",
+          "hash": "GASiQWVUVx1kLnFybHi7koivvqAp0lOFDTEWnA+nd58="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.LdValue.Converter-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.LdValue.Converter-1.html",
+          "hash": "5/N+bBLWgKsWBJLhFJD14TM7fZ9/jVnzFKgRkbjt3XQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html",
+          "hash": "ZFAEatxvmGw6QqheUkWh994ovDlmBDVRMuOEmdZFHq8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.LdValue.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.LdValue.html",
+          "hash": "+qV/6xSoph1zTCOn7q0OIG/+jLb/AqU5mV+zjWi2JLE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.LdValueType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.LdValueType.html",
+          "hash": "SgorxnSfIugpyA8dar3SBBHCsnJ45nPUFwtmpMkHAJY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Components.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Components.html",
+          "hash": "BIajw+TmvdIhx7LCEaVp8CvDQDCh5VE5T/Oa2U+rYlE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Configuration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Configuration.html",
+          "hash": "rmtvEp0Nf1/FX2CkD7jT8rrNSBY2FeA6hbWO+lKOTXk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html",
+          "hash": "hP+uKp7zF6+dIHvzf4lQoLLRcbYIce8hIkgxnWHF6UM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.DataModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.DataModel.html",
+          "hash": "Hb7rHoLcKRqrI3MZimTcC7LMrHQTTV/4VWpyQiPinSc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.FeatureFlagsState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.FeatureFlagsState.html",
+          "hash": "XOpc1pUCMGxIG01mf9vpIXubnA8atQ0glYFEGeUbmAY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.FeatureFlagsStateBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.FeatureFlagsStateBuilder.html",
+          "hash": "NxBAphNDVhMFnFhxZpauA3lAwQInnCPItpUUcWawPeI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.FlagsStateOption.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.FlagsStateOption.html",
+          "hash": "MfADg+ZAEr3L198OH+R+eWYW/zNTS+U7L78NGls8GMI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.ILdClientExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html",
+          "hash": "RcL168SPaY/T3V4pHHrjGtAu7qJv260IdZHWHAsAoKo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html",
+          "hash": "KSQMNWv3r6G7EUHz3wJnGkcNWOznhGelcESwWNKR2JI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.FileData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.FileData.html",
+          "hash": "zYeYCsDsbkpGjVmuZABTn4AO1BzH+PQjdDsNf6xhOtU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html",
+          "hash": "konpLq/CLoAU2NF2g63tp5YR6WV6z9+QHliVoxosn1U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.html",
+          "hash": "0aj1geKMYr8zRaBwLpUsrO/Tw+B9rgTQc98RdGS3v9Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader.html",
+          "hash": "aIZg0ThWdN6ze/oRzFx0nonbbMMg210CniZQkqElPqc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.html",
+          "hash": "JxJvGxvI/glR/7i40HKpc7IuiCSinIdOK+rmOT/G2I8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html",
+          "hash": "vyWMZYSH/aE+ccqniSRqxUUfPBNX33arMKLYOTiX98M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html",
+          "hash": "YcQshGsS1I/rk7meYJPlU8IXn3GDWx0uDIvNNtNSmHk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html",
+          "hash": "9HzUsV3ggx3AJdRed4nkK/AqBz1W7+LGdSRIjcV3NCA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.PollingDataSourceBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.PollingDataSourceBuilder.html",
+          "hash": "5GuFfQhwHNJiOfEYEiDQrxFafsUBDmKpT6vX4kjo28U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.html",
+          "hash": "LISF0FZaq6M//1nJB1hRA22qeN0sLKCiFSYohkphSoE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html",
+          "hash": "QuHOY6pndcyZgPitD0H2osVEt6GlC+ZO3xfINb5RsfU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html",
+          "hash": "lGbOiF6eJv3ouER669FwJY4OiThesyTpR+H6wBvMaaU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.TestData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.TestData.html",
+          "hash": "w7yIUTSuj5FK15G+L8i07Le2DmyXSbs8AQ+vQ6e48Nw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.html",
+          "hash": "6J3GglTLgP6y4bB9s8/L+JpWJxotypI8S3yI33dza/M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html",
+          "hash": "aAZoPariNJf6llu9te4tlLGgn8DgKHt3NE7xfsF8xfQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html",
+          "hash": "s/pnGLD4mLNQH5UNPfli9Udy6pw0sz6wsCjMzc/sSik="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.html",
+          "hash": "hGQ5kT9kNM0MjXb8L0K+iYZqK/UjRAUDuruuXqMaxrU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.html",
+          "hash": "Q7vH2lB5+Vru7OvoMVGIZurRUrm0MRubC/vbvc8j0Cw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html",
+          "hash": "U6lANsb4KW2A0DGGWfGJJc4xG6ClTIkZtqc5Ch5GrYk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatusExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatusExtensions.html",
+          "hash": "vQmU+kXY13Bl+fEqWbkg0LbJqnQwtq1x65nuy7+vRMM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.html",
+          "hash": "NrBtVCCKNOiDzoDHJKyAM3zK/v6HKJ0jDuDi+DjrJtY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html",
+          "hash": "dvd3chXmOmvZfekBNMJnjTxvyKUCgiydBEdukqDnOC4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.FullDataSet-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.FullDataSet-1.html",
+          "hash": "poSy9KoQrTbANHtwkwr1n52/dgC20EfiD2k8O36MHdQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor.html",
+          "hash": "R8IBF+KKLOhWao6ySvVWfvQXho0vwA9b2vCXSkOOSxI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.KeyedItems-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.KeyedItems-1.html",
+          "hash": "7ERg539x7yuK/7pOGyuJ710trtGy1xifYsyjpZPLVlQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html",
+          "hash": "jPtAMAj8YqctXOa48lJ2KL/hTTI0HMWdok4OfNtPz6k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.html",
+          "hash": "/io6HNolss7qlBvlbaVeSba9PfvRIpAQCtKH8KbfsxA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.AliasEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.AliasEvent.html",
+          "hash": "QjxohOhRaANyH+w0WkccnxIoZFqqOK7BmuLqNCte+q0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.html",
+          "hash": "pxzxjtLzM3YIzdkHViOft3vchg9g0BGtmWgREUFzMng="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.CustomEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.CustomEvent.html",
+          "hash": "/6hWbpYbi42PoYy0z67vLuNKNTctnj55oY43xojXHW8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.EvaluationEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.EvaluationEvent.html",
+          "hash": "0BB1wMs8mK8cRYDLbRAUV0K9wBr9oCShYTBRa/VXFOI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.IdentifyEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.IdentifyEvent.html",
+          "hash": "wEKakftBCrQDx9XSVEapE5464K+4WBYCiEBbyR0Bbrc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.html",
+          "hash": "6zX4Db7yWHRaOTOMeF1viKIm2OrygcG2Cxk1yjzpeKc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.FlagChangeEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.FlagChangeEvent.html",
+          "hash": "hJUObGU+TEIYFU4T3NhkQY6nCMr/iZP5b8f4w6XbWzk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent.html",
+          "hash": "O8MCuIfTDVJ5PEwhxBwNQMqy/VqswUiG1EjByG3k+0s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html",
+          "hash": "4wOx4OADs05iPqNolQXBV890BCCG+4pUmpgElmQOSZg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html",
+          "hash": "dVuLlRzOJdPLjhT5ItVpk7z6t4yofoiMpsaHqFOvG9M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html",
+          "hash": "EQ4Lsxuz8o+aBkySGjCds3+xFEbLf1dSBDrXSxgc5xQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataSourceStatusProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataSourceStatusProvider.html",
+          "hash": "Ml35VGF4GGrFK69HmPL9m8CCf3B+72mSKNMUMZMURnE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.html",
+          "hash": "OLxL0uyKHlJ/tpT72/39IK+wu4Tbofmoh4VHAqs69H0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html",
+          "hash": "OUBe+K5QzgsIppSTnO38SIDrB00dnJ1ZuV+oMkT0/k8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory.html",
+          "hash": "9iB/x0PI7IdPsnD7n22HzNWgXHw3NU19QfIwFvsO7OQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataStoreStatusProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataStoreStatusProvider.html",
+          "hash": "Ecv4UWkbqPmUJ3NFhsV2d30EpV8EBnh2fFB7IaF4kA4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDataStoreUpdates.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDataStoreUpdates.html",
+          "hash": "AI5Q8qRxdbLNlp9AZBut3k9rSrSPAN0kTazja0CVc8s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html",
+          "hash": "h6R6X1MdUyGE/6znMZ4bn6R1g8B5/ruzXCRbuFRlFew="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html",
+          "hash": "9SVQCyjnx3GNvqXNVhjRhpvECWra0ofxQ1ODcEBRNCI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.html",
+          "hash": "YUll1XOI87Hv4vAXVDnD2afMXUabdC1CnDMt9lOLBFo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.html",
+          "hash": "ajUKl0TVABHFwtdXZN2JjtZFL3uxjtShw2DhePyFHMM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IHttpConfigurationFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IHttpConfigurationFactory.html",
+          "hash": "oMnVbOF0bczc2Lgu3Uhog63WxiB7DoGZX2ZsMy87mQk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html",
+          "hash": "oU2eGbmzmvA0xgSstEaTL82b3Kl6DqfIL3JzztbI+w4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory.html",
+          "hash": "j8o9/AVeXQJNoE8Sa5Jhmtnb6SS/+H5G5jIsOUVHYDo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore.html",
+          "hash": "Ig2GjDRJT3ppp0NKqtxqT/vyLhNDkUqtIiPLk8lo87Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsync.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsync.html",
+          "hash": "11S1bVMCQzX9IwTQZU1E3B3eH15wIhOQJ0pEUI/fAog="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsyncFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsyncFactory.html",
+          "hash": "1+QjQfiMO2FwZO79NX03x5wYtflb8hR39PoVQTJ6K0o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html",
+          "hash": "D+VpxBD/BFIlO21MpeMk/Rgyx9YfglC84wRCBihl21g="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html",
+          "hash": "qLRhSc4A93xD4OzXfAHM1+MTA2miDK5noRGaQCmfXYs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.html",
+          "hash": "w6iwqpgNVlrE7rGSAm43zGpLIRWAv4cSxaiwE53GZr4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.html",
+          "hash": "kuFJMxa69FU/DeIFUQWirPeEXHYyCr0nkKXYVSHB6sI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.LdClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.LdClient.html",
+          "hash": "cYfqlz+RFFZ7iA/Fu56D99t5uBumwp+uBkK7TOReHpI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.html",
+          "hash": "fxdN2GD+WAjiJk/3Rn5Lr/iI3gU+qodZLhi9PTWacdw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.UnixMillisecondTime.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.UnixMillisecondTime.html",
+          "hash": "+LO+uK/FVsCu/jamSZ4NvuIdtFP6T27s/mfO/fTtGjE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.User.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.User.html",
+          "hash": "b2wCV0iGTEPCEH3HnpCBtqtGA+NoYNHfLl3kpqfYuqE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.UserAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.UserAttribute.html",
+          "hash": "Yr4YsHdjZZot0C0wHRoxIUycOj3pn3RBeZdQWs10RP0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.html",
+          "hash": "S7qP/nCTEUbmpJA+n+obRncQgEkzeqadXcgiN3nUcw4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "build/api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "8BVfJZGroTz9iwbCaF6+YO/+oEiEOw6CTwkxs7b74NY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "YS4C8maaTL0iYExCNmXFXYC0+CDD355xE5DtLK3dINk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "A+Cz84CkQrJ5hoOc1dQF+4nsvdZWimCwBdfcugGnCxw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "NoAvailableBuildCache"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 1,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 96,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: last post processor info is null.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IEventProcessor
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IEventProcessor
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor" class="text-break">Interface IEventProcessor
+  </h1>
+  <div class="markdown level0 summary"><p>Interface for an object that can send or store analytics events.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.IDisposable.Dispose()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IEventProcessor : IDisposable</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>
+Application code normally does not need to interact with <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html">IEventProcessor</a> or its
+related parameter types. They are provided to allow a custom implementation or test fixture to be
+substituted for the SDK&apos;s normal analytics event logic.
+</p>
+<p>
+All of the <code>Record</code> methods must return as soon as possible without waiting for events to be
+delivered; event delivery is done asynchronously by a background task.
+</p>
+</div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_Flush_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.Flush*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_Flush" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.Flush">Flush()</h4>
+  <div class="markdown level1 summary"><p>Specifies that any buffered events should be sent as soon as possible, rather than waiting
+for the next flush interval.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Flush()</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_Flush_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method triggers an asynchronous task, so events still may not be sent until a later
+until a later time. However, calling <span class="xref">System.IDisposable.Dispose()</span> will synchronously
+deliver any events that were not yet delivered prior to shutting down.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordAliasEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordAliasEvent*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordAliasEvent_LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_AliasEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordAliasEvent(LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.AliasEvent)">RecordAliasEvent(EventProcessorTypes.AliasEvent)</h4>
+  <div class="markdown level1 summary"><p>Records an alias event.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RecordAliasEvent(EventProcessorTypes.AliasEvent e)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.AliasEvent.html">EventProcessorTypes.AliasEvent</a></td>
+        <td><span class="parametername">e</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordCustomEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordCustomEvent*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordCustomEvent_LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_CustomEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordCustomEvent(LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.CustomEvent)">RecordCustomEvent(EventProcessorTypes.CustomEvent)</h4>
+  <div class="markdown level1 summary"><p>Records a custom event.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RecordCustomEvent(EventProcessorTypes.CustomEvent e)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.CustomEvent.html">EventProcessorTypes.CustomEvent</a></td>
+        <td><span class="parametername">e</span></td>
+        <td><p>parameters for a custom event</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordEvaluationEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordEvaluationEvent*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordEvaluationEvent_LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_EvaluationEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordEvaluationEvent(LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.EvaluationEvent)">RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent)</h4>
+  <div class="markdown level1 summary"><p>Records the action of evaluating a feature flag.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.EvaluationEvent.html">EventProcessorTypes.EvaluationEvent</a></td>
+        <td><span class="parametername">e</span></td>
+        <td><p>parameters for an evaluation event</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordEvaluationEvent_LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_EvaluationEvent__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Depending on the feature flag properties and event properties, this may be transmitted to the
+events service as an individual event, or may only be added into summary data.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordIdentifyEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordIdentifyEvent*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordIdentifyEvent_LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_IdentifyEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordIdentifyEvent(LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.IdentifyEvent)">RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent)</h4>
+  <div class="markdown level1 summary"><p>Records a set of user properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.IdentifyEvent.html">EventProcessorTypes.IdentifyEvent</a></td>
+        <td><span class="parametername">e</span></td>
+        <td><p>parameters for an identify event</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

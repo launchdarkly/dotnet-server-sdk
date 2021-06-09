@@ -1,0 +1,912 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class EventProcessorBuilder
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class EventProcessorBuilder
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder" class="text-break">Class EventProcessorBuilder
+  </h1>
+  <div class="markdown level0 summary"><p>Contains methods for configuring delivery of analytics events.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">EventProcessorBuilder</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.html">IEventProcessorFactory</a></div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class EventProcessorBuilder : IEventProcessorFactory, IDiagnosticDescription</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>The SDK normally buffers analytics events and sends them to LaunchDarkly at intervals. If you want
+to customize this behavior, create a builder with <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_SendEvents">SendEvents()</a>, change its
+properties with the methods of this class, and pass it to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_LaunchDarkly_Sdk_Server_Interfaces_IEventProcessorFactory_">Events(IEventProcessorFactory)</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_examples"><strong>Examples</strong></h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .Events(
+            Components.SendEvents().Capacity(5000).FlushInterval(TimeSpan.FromSeconds(2))
+        )
+        .Build();</code></pre>
+
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder__ctor_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder__ctor" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.#ctor">EventProcessorBuilder()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder()</code></pre>
+  </div>
+  <h3 id="fields">Fields
+  </h3>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultCapacity" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DefaultCapacity">DefaultCapacity</h4>
+  <div class="markdown level1 summary"><p>The default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_Capacity_System_Int32_">Capacity(Int32)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int DefaultCapacity = 10000</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultDiagnosticRecordingInterval" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DefaultDiagnosticRecordingInterval">DefaultDiagnosticRecordingInterval</h4>
+  <div class="markdown level1 summary"><p>The default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DiagnosticRecordingInterval_System_TimeSpan_">DiagnosticRecordingInterval(TimeSpan)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan DefaultDiagnosticRecordingInterval</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultFlushInterval" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DefaultFlushInterval">DefaultFlushInterval</h4>
+  <div class="markdown level1 summary"><p>The default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_FlushInterval_System_TimeSpan_">FlushInterval(TimeSpan)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan DefaultFlushInterval</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultUserKeysCapacity" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DefaultUserKeysCapacity">DefaultUserKeysCapacity</h4>
+  <div class="markdown level1 summary"><p>The default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysCapacity_System_Int32_">UserKeysCapacity(Int32)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int DefaultUserKeysCapacity = 1000</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultUserKeysFlushInterval" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DefaultUserKeysFlushInterval">DefaultUserKeysFlushInterval</h4>
+  <div class="markdown level1 summary"><p>The default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysFlushInterval_System_TimeSpan_">UserKeysFlushInterval(TimeSpan)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan DefaultUserKeysFlushInterval</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_MinimumDiagnosticRecordingInterval" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.MinimumDiagnosticRecordingInterval">MinimumDiagnosticRecordingInterval</h4>
+  <div class="markdown level1 summary"><p>The minimum value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DiagnosticRecordingInterval_System_TimeSpan_">DiagnosticRecordingInterval(TimeSpan)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan MinimumDiagnosticRecordingInterval</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_AllAttributesPrivate_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.AllAttributesPrivate*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_AllAttributesPrivate_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.AllAttributesPrivate(System.Boolean)">AllAttributesPrivate(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Sets whether or not all optional user attributes should be hidden from LaunchDarkly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder AllAttributesPrivate(bool allAttributesPrivate)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">allAttributesPrivate</span></td>
+        <td><p>true if all user attributes should be private</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_AllAttributesPrivate_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If this is <span class="xref">true</span>, all user attribute values (other than the key) will be private, not just
+the attributes specified in <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributes_LaunchDarkly_Sdk_UserAttribute___">PrivateAttributes(UserAttribute[])</a> or on a per-user basis with
+<span class="xref">LaunchDarkly.Sdk.UserBuilder</span> methods. By default, it is <span class="xref">false</span>.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_BaseUri_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.BaseUri*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_BaseUri_System_Uri_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.BaseUri(System.Uri)">BaseUri(Uri)</h4>
+  <div class="markdown level1 summary"><p>Sets a custom base URI for the events service.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder BaseUri(Uri baseUri)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Uri</span></td>
+        <td><span class="parametername">baseUri</span></td>
+        <td><p>the base URI of the events service; null to use the default</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_BaseUri_System_Uri__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You will only need to change this value in the following cases:
+<ul><li>
+You are using the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">Relay Proxy</a>.
+Set <code>BaseUri</code> to the base URI of the Relay Proxy instance.
+</li><li>
+You are connecting to a test server or a nonstandard endpoint for the LaunchDarkly service.
+</li></ul></p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_Capacity_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.Capacity*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_Capacity_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.Capacity(System.Int32)">Capacity(Int32)</h4>
+  <div class="markdown level1 summary"><p>Sets the capacity of the events buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder Capacity(int capacity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">capacity</span></td>
+        <td><p>the capacity of the event buffer</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_Capacity_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+The client buffers up to this many events in memory before flushing. If the capacity is exceeded before
+the buffer is flushed (see <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_FlushInterval_System_TimeSpan_">FlushInterval(TimeSpan)</a>), events will be discarded. Increasing the
+capacity means that events are less likely to be discarded, at the cost of consuming more memory.
+</p>
+<p>
+The default value is <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultCapacity">DefaultCapacity</a>. A zero or negative value will be changed to the default.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_CreateEventProcessor_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.CreateEventProcessor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_CreateEventProcessor_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.CreateEventProcessor(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)">CreateEventProcessor(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications do not need
+to call this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEventProcessor CreateEventProcessor(LdClientContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>configuration of the current client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html">IEventProcessor</a></td>
+        <td><p>an <code>IEventProcessor</code> instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DescribeConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DescribeConfiguration*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration)">DescribeConfiguration(BasicConfiguration)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to inspect the configuration. Applications do not need to call
+this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(BasicConfiguration basic)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html">BasicConfiguration</a></td>
+        <td><span class="parametername">basic</span></td>
+        <td><p>the basic global configuration of the SDK</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><p>a JSON value</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DiagnosticRecordingInterval_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DiagnosticRecordingInterval*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DiagnosticRecordingInterval_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.DiagnosticRecordingInterval(System.TimeSpan)">DiagnosticRecordingInterval(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the interval at which periodic diagnostic data is sent.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder DiagnosticRecordingInterval(TimeSpan diagnosticRecordingInterval)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">diagnosticRecordingInterval</span></td>
+        <td><p>the diagnostics interval</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DiagnosticRecordingInterval_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The default value is <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultDiagnosticRecordingInterval">DefaultDiagnosticRecordingInterval</a>; the minimum value is
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_MinimumDiagnosticRecordingInterval">MinimumDiagnosticRecordingInterval</a>. This property is ignored if
+<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DiagnosticOptOut_System_Boolean_">DiagnosticOptOut(Boolean)</a> is set to <span class="xref">true</span>.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_FlushInterval_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.FlushInterval*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_FlushInterval_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.FlushInterval(System.TimeSpan)">FlushInterval(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the interval between flushes of the event buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder FlushInterval(TimeSpan flushInterval)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">flushInterval</span></td>
+        <td><p>the flush interval</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_FlushInterval_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Decreasing the flush interval means that the event buffer is less likely to reach capacity.
+The default value is <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultFlushInterval">DefaultFlushInterval</a>. A zero or negative value will be changed to
+the default.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_InlineUsersInEvents_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.InlineUsersInEvents*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_InlineUsersInEvents_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.InlineUsersInEvents(System.Boolean)">InlineUsersInEvents(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Sets whether to include full user details in every analytics event.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder InlineUsersInEvents(bool inlineUsersInEvents)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">inlineUsersInEvents</span></td>
+        <td><p>true if you want full user details in each event</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_InlineUsersInEvents_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The default value is <span class="xref">false</span>: events will only include the user key, except for one
+&quot;index&quot; event that provides the full details for the user.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributeNames_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.PrivateAttributeNames*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributeNames_System_String___" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.PrivateAttributeNames(System.String[])">PrivateAttributeNames(String[])</h4>
+  <div class="markdown level1 summary"><p>Marks a set of attribute names as private.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder PrivateAttributeNames(params string[] attributes)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span>[]</td>
+        <td><span class="parametername">attributes</span></td>
+        <td><p>a set of names that will be removed from user data set to LaunchDarkly</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributeNames_System_String____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Any users sent to LaunchDarkly with this configuration active will have attributes with these
+names removed. This is in addition to any attributes that were marked as private for an
+individual user with <span class="xref">LaunchDarkly.Sdk.UserBuilder</span> methods.
+</p>
+<p>
+Using <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributes_LaunchDarkly_Sdk_UserAttribute___">PrivateAttributes(UserAttribute[])</a> is preferable to avoid the possibility of
+misspelling a built-in attribute.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributeNames_System_String____seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributes_LaunchDarkly_Sdk_UserAttribute___">PrivateAttributes(UserAttribute[])</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributes_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.PrivateAttributes*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributes_LaunchDarkly_Sdk_UserAttribute___" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.PrivateAttributes(LaunchDarkly.Sdk.UserAttribute[])">PrivateAttributes(UserAttribute[])</h4>
+  <div class="markdown level1 summary"><p>Marks a set of attribute names as private.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder PrivateAttributes(params UserAttribute[] attributes)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a>[]</td>
+        <td><span class="parametername">attributes</span></td>
+        <td><p>a set of attributes that will be removed from user data set to LaunchDarkly</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributes_LaunchDarkly_Sdk_UserAttribute____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Any users sent to LaunchDarkly with this configuration active will have attributes with these
+names removed. This is in addition to any attributes that were marked as private for an
+individual user with <span class="xref">LaunchDarkly.Sdk.UserBuilder</span> methods.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributes_LaunchDarkly_Sdk_UserAttribute____seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_PrivateAttributeNames_System_String___">PrivateAttributeNames(String[])</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysCapacity_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.UserKeysCapacity*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysCapacity_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.UserKeysCapacity(System.Int32)">UserKeysCapacity(Int32)</h4>
+  <div class="markdown level1 summary"><p>Sets the number of user keys that the event processor can remember at any one time.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder UserKeysCapacity(int userKeysCapacity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">userKeysCapacity</span></td>
+        <td><p>the maximum number of user keys to remember</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysCapacity_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>To avoid sending duplicate user details in analytics events, the SDK maintains a cache of
+recently seen user keys, expiring at an interval set by <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysFlushInterval_System_TimeSpan_">UserKeysFlushInterval(TimeSpan)</a>.
+The default value for the size of this cache is <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultUserKeysCapacity">DefaultUserKeysCapacity</a>. A zero or
+negative value will be changed to the default.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysFlushInterval_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.UserKeysFlushInterval*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysFlushInterval_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.UserKeysFlushInterval(System.TimeSpan)">UserKeysFlushInterval(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the interval at which the event processor will reset its cache of known user keys.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventProcessorBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">userKeysFlushInterval</span></td>
+        <td><p>the flush interval</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_UserKeysFlushInterval_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The default value is <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html#LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_DefaultUserKeysFlushInterval">DefaultUserKeysFlushInterval</a>. A zero or negative value will be
+changed to the default.</p>
+</div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.html">IEventProcessorFactory</a>
+  </div>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

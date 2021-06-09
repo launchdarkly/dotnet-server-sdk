@@ -1,0 +1,538 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class FileDataSourceBuilder
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class FileDataSourceBuilder
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder" class="text-break">Class FileDataSourceBuilder
+  </h1>
+  <div class="markdown level0 summary"><p>A builder for configuring the file data source.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">FileDataSourceBuilder</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class FileDataSourceBuilder : IDataSourceFactory</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>To use the file data source, obtain a new instance of this class with <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileData.html#LaunchDarkly_Sdk_Server_Integrations_FileData_DataSource">DataSource()</a>;
+call the builder method {@link #filePaths(String...)} to specify file path(s), and/or
+{@link #classpathResources(String...)} to specify classpath data resources; then pass the resulting
+object to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_">DataSource(IDataSourceFactory)</a>.</p>
+</div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder__ctor_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder__ctor" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.#ctor">FileDataSourceBuilder()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileDataSourceBuilder()</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_AutoUpdate_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.AutoUpdate*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_AutoUpdate_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.AutoUpdate(System.Boolean)">AutoUpdate(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Specifies whether the data source should watch for changes to the source file(s) and reload flags
+whenever there is a change.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileDataSourceBuilder AutoUpdate(bool autoUpdate)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">autoUpdate</span></td>
+        <td><p>true if flags should be reloaded whenever a source file changes</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html">FileDataSourceBuilder</a></td>
+        <td><p>the same factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_AutoUpdate_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This option is off by default: unless you set this option to <code>true</code>, files will only be loaded once.
+</p>
+<p>
+Whenever possible, you should update a file&apos;s entire contents in one atomic operation; in Unix-like OSes,
+that can be done by creating a temporary file, writing to it, and then renaming it to replace the original
+file. In Windows, that is not always possible, so FileDataSource might detect an update before the file has
+been fully written; in that case it will retry until it succeeds.
+</p>
+<p>
+Note that auto-updating may not work if any of the files you specified has an invalid directory path.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_CreateDataSource_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.CreateDataSource*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_CreateDataSource_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.CreateDataSource(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext,LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates)">CreateDataSource(LdClientContext, IDataSourceUpdates)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications do not need
+to call this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>configuration of the current client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.html">IDataSourceUpdates</a></td>
+        <td><span class="parametername">dataSourceUpdates</span></td>
+        <td><p>the destination for pushing data and status updates</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a></td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a> instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_DuplicateKeysHandling_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.DuplicateKeysHandling*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_DuplicateKeysHandling_LaunchDarkly_Sdk_Server_Integrations_FileDataTypes_DuplicateKeysHandling_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.DuplicateKeysHandling(LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling)">DuplicateKeysHandling(FileDataTypes.DuplicateKeysHandling)</h4>
+  <div class="markdown level1 summary"><p>Specifies how to handle keys that are duplicated across files.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileDataSourceBuilder DuplicateKeysHandling(FileDataTypes.DuplicateKeysHandling duplicateKeysHandling)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.html">FileDataTypes.DuplicateKeysHandling</a></td>
+        <td><span class="parametername">duplicateKeysHandling</span></td>
+        <td><p>how duplicate keys should be handled</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html">FileDataSourceBuilder</a></td>
+        <td><p>the same factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_DuplicateKeysHandling_LaunchDarkly_Sdk_Server_Integrations_FileDataTypes_DuplicateKeysHandling__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+By default, the file data source will throw if keys are duplicated across files.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_FilePaths_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.FilePaths*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_FilePaths_System_String___" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.FilePaths(System.String[])">FilePaths(String[])</h4>
+  <div class="markdown level1 summary"><p>Adds any number of source files for loading flag data, specifying each file path as a string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileDataSourceBuilder FilePaths(params string[] paths)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span>[]</td>
+        <td><span class="parametername">paths</span></td>
+        <td><p>path(s) to the source file(s); may be absolute or relative to the current working directory</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html">FileDataSourceBuilder</a></td>
+        <td><p>the same factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_FilePaths_System_String____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+The files will not actually be loaded until the LaunchDarkly client starts up.
+</p>
+<p>
+Files are normally expected to contain JSON; see <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html#LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_Parser_System_Func_System_String_System_Object__">Parser(Func&lt;String, Object&gt;)</a> for alternatives.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_FileReader_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.FileReader*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_FileReader_LaunchDarkly_Sdk_Server_Integrations_FileDataTypes_IFileReader_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.FileReader(LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader)">FileReader(FileDataTypes.IFileReader)</h4>
+  <div class="markdown level1 summary"><p>Specifies an alternate file reader which can support custom OS error handling and retry logic.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileDataSourceBuilder FileReader(FileDataTypes.IFileReader fileReader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader.html">FileDataTypes.IFileReader</a></td>
+        <td><span class="parametername">fileReader</span></td>
+        <td><p>The flag file reader.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html">FileDataSourceBuilder</a></td>
+        <td><p>the same factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_Parser_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.Parser*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_Parser_System_Func_System_String_System_Object__" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.Parser(System.Func{System.String,System.Object})">Parser(Func&lt;String, Object&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies an alternate parsing function to use for non-JSON source files.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileDataSourceBuilder Parser(Func&lt;string, object&gt; parseFn)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">parseFn</span></td>
+        <td><p>the parsing function</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html">FileDataSourceBuilder</a></td>
+        <td><p>the same factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_Parser_System_Func_System_String_System_Object___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p><p>
+By default, the file data source attempts to parse files as JSON objects. You may wish to use another format,
+such as YAML. To avoid bringing in additional dependencies that might conflict with application dependencies,
+the LaunchDarkly SDK does not import a YAML parser, but you can use <code>Parser</code> to specify a parser of
+your choice.
+</p>
+<p>
+The function you provide should take a string and return an <code>object</code> which should contain only the basic
+types that can be represented in JSON: so, for instance, string values should be <code>string</code>, arrays should
+be <code>List</code>, and objects with key-value pairs should be <code>Dictionary&lt;string, object&gt;</code>. It should
+throw an exception if it can&apos;t parse the data.
+</p>
+<p>
+The file data source will still try to parse files as JSON if their first non-whitespace character is &apos;{&apos;,
+but if that fails, it will use the custom parser.
+</p>
+<p>
+Here is an example of how you would do this with the <code>YamlDotNet</code> package:
+</p></p>
+<pre><code>    var yaml = new DeserializerBuilder().Build();
+    var source = FileData.DataSource()
+        .FilePaths(myYamlFilePath)
+        .Parser(s => yaml.Deserialize&lt;object>(s));</code></pre>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_SkipMissingPaths_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.SkipMissingPaths*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_SkipMissingPaths_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.SkipMissingPaths(System.Boolean)">SkipMissingPaths(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Specifies to ignore missing file paths instead of treating them as an error.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileDataSourceBuilder SkipMissingPaths(bool skipMissingPaths)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">skipMissingPaths</span></td>
+        <td><p>If <code>true</code>, missing file paths will be skipped,
+otherwise they will be treated as an error</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html">FileDataSourceBuilder</a></td>
+        <td><p>the same factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a>
+  </div>
+  <h3 id="seealso">See Also</h3>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileData.html">FileData</a></div>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
