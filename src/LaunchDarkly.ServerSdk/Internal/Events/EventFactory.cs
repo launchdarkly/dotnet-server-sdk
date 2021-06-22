@@ -98,6 +98,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 return false;
             }
             var r = reason.Value;
+
+            // If the reason says we're in an experiment, we are. (That is, r.InExperiment would only
+            // have been set to true if the evaluator already determined that this was appropriate.)
+            // Otherwise, apply the legacy rule exclusion logic.
+            if (r.InExperiment)
+            {
+                return true;
+            }
             switch (r.Kind)
             {
                 case EvaluationReasonKind.Fallthrough:

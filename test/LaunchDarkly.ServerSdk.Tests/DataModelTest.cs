@@ -121,6 +121,22 @@ namespace LaunchDarkly.Sdk.Server
             }");
             Assert.Null(flag4.Fallthrough.Variation);
             Assert.Null(flag4.Fallthrough.Rollout);
+
+            // Rollout bucketBy and seed are nullable
+            var flag5 = MustParseFlag(@"{
+                ""key"": ""flag-key"",
+                ""version"": 99,
+                ""fallthrough"": {
+                    ""rollout"": {
+                        ""bucketBy"": null,
+                        ""seed"": null,
+                        ""variations"": [ { ""variation"": 0, ""weight"": 100000 } ]
+                    }
+                }
+            }");
+            Assert.Null(flag5.Fallthrough.Rollout.Value.BucketBy);
+            Assert.Null(flag5.Fallthrough.Rollout.Value.Seed);
+            Assert.Equal(RolloutKind.Rollout, flag5.Fallthrough.Rollout.Value.Kind); // default value
         }
 
         [Fact]
@@ -182,9 +198,12 @@ namespace LaunchDarkly.Sdk.Server
             ""id"": ""id1"",
             ""rollout"": {
                 ""variations"": [
-                    { ""variation"": 2, ""weight"": 100000 }
+                    { ""variation"": 2, ""weight"": 40000 },
+                    { ""variation"": 1, ""weight"": 60000, ""untracked"": true }
                 ],
-                ""bucketBy"": ""email""
+                ""bucketBy"": ""email"",
+                ""kind"": ""experiment"",
+                ""seed"": 123
             },
             ""clauses"": [],
             ""trackEvents"": false
@@ -247,9 +266,18 @@ namespace LaunchDarkly.Sdk.Server
                         v =>
                         {
                             Assert.Equal(2, v.Variation);
-                            Assert.Equal(100000, v.Weight);
+                            Assert.Equal(40000, v.Weight);
+                            Assert.False(v.Untracked);
+                        },
+                        v =>
+                        {
+                            Assert.Equal(1, v.Variation);
+                            Assert.Equal(60000, v.Weight);
+                            Assert.True(v.Untracked);
                         });
                     Assert.Equal(UserAttribute.Email, r.Rollout.Value.BucketBy);
+                    Assert.Equal(RolloutKind.Experiment, r.Rollout.Value.Kind);
+                    Assert.Equal(123, r.Rollout.Value.Seed);
                     Assert.Collection(r.Clauses);
                 });
 
