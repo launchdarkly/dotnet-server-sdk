@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.1.0] - 2021-06-22
+### Added:
+- The SDK now supports the ability to control the proportion of traffic allocation to an experiment. This works in conjunction with a new platform feature now available to early access customers.
+
 ## [6.0.0] - 2021-06-09
 This is a major rewrite that introduces a cleaner API design, adds new features, and makes the SDK code easier to maintain and extend. See the [.NET 5.x to 6.0 migration guide](https://docs.launchdarkly.com/sdk/server-side/dotnet/migration-5-to-6) for an in-depth look at the changes in 6.0.0; the following is a summary.
 
