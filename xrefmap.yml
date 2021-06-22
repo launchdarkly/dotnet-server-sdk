@@ -237,6 +237,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.EvaluationReason.GetHashCode
   fullName: LaunchDarkly.Sdk.EvaluationReason.GetHashCode
   nameWithType: EvaluationReason.GetHashCode
+- uid: LaunchDarkly.Sdk.EvaluationReason.InExperiment
+  name: InExperiment
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_InExperiment
+  commentId: P:LaunchDarkly.Sdk.EvaluationReason.InExperiment
+  fullName: LaunchDarkly.Sdk.EvaluationReason.InExperiment
+  nameWithType: EvaluationReason.InExperiment
+- uid: LaunchDarkly.Sdk.EvaluationReason.InExperiment*
+  name: InExperiment
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_InExperiment_
+  commentId: Overload:LaunchDarkly.Sdk.EvaluationReason.InExperiment
+  fullName: LaunchDarkly.Sdk.EvaluationReason.InExperiment
+  nameWithType: EvaluationReason.InExperiment
 - uid: LaunchDarkly.Sdk.EvaluationReason.Kind
   name: Kind
   href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_Kind
@@ -345,6 +357,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.EvaluationReason.ToString
   fullName: LaunchDarkly.Sdk.EvaluationReason.ToString
   nameWithType: EvaluationReason.ToString
+- uid: LaunchDarkly.Sdk.EvaluationReason.WithInExperiment(System.Boolean)
+  name: WithInExperiment(Boolean)
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_System_Boolean_
+  commentId: M:LaunchDarkly.Sdk.EvaluationReason.WithInExperiment(System.Boolean)
+  fullName: LaunchDarkly.Sdk.EvaluationReason.WithInExperiment(System.Boolean)
+  nameWithType: EvaluationReason.WithInExperiment(Boolean)
+- uid: LaunchDarkly.Sdk.EvaluationReason.WithInExperiment*
+  name: WithInExperiment
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_
+  commentId: Overload:LaunchDarkly.Sdk.EvaluationReason.WithInExperiment
+  fullName: LaunchDarkly.Sdk.EvaluationReason.WithInExperiment
+  nameWithType: EvaluationReason.WithInExperiment
 - uid: LaunchDarkly.Sdk.EvaluationReasonKind
   name: EvaluationReasonKind
   href: api/LaunchDarkly.Sdk.EvaluationReasonKind.html

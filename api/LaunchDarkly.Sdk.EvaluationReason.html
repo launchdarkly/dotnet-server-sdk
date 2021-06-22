@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Struct EvaluationReason
    ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -111,7 +111,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EvaluationErrorKind? ErrorKind { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly EvaluationErrorKind? ErrorKind { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -135,7 +135,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static EvaluationReason FallthroughReason { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static readonly EvaluationReason FallthroughReason { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -152,6 +152,34 @@
       </tr>
     </tbody>
   </table>
+  <a id="LaunchDarkly_Sdk_EvaluationReason_InExperiment_" data-uid="LaunchDarkly.Sdk.EvaluationReason.InExperiment*"></a>
+  <h4 id="LaunchDarkly_Sdk_EvaluationReason_InExperiment" data-uid="LaunchDarkly.Sdk.EvaluationReason.InExperiment">InExperiment</h4>
+  <div class="markdown level1 summary"><p>Whether the evaluation was part of an experiment.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly bool InExperiment { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_EvaluationReason_InExperiment_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is true if the evaluation resulted in an experiment rollout and served one of the
+variations in the experiment. Otherwise it is false.</p>
+</div>
   <a id="LaunchDarkly_Sdk_EvaluationReason_Kind_" data-uid="LaunchDarkly.Sdk.EvaluationReason.Kind*"></a>
   <h4 id="LaunchDarkly_Sdk_EvaluationReason_Kind" data-uid="LaunchDarkly.Sdk.EvaluationReason.Kind">Kind</h4>
   <div class="markdown level1 summary"><p>An enum indicating the general category of the reason.</p>
@@ -159,7 +187,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EvaluationReasonKind Kind { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly EvaluationReasonKind Kind { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -183,7 +211,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static EvaluationReason OffReason { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static readonly EvaluationReason OffReason { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -208,7 +236,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string PrerequisiteKey { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly string PrerequisiteKey { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -232,7 +260,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string RuleId { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly string RuleId { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -256,7 +284,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int? RuleIndex { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly int? RuleIndex { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -280,7 +308,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static EvaluationReason TargetMatchReason { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static readonly EvaluationReason TargetMatchReason { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -524,6 +552,54 @@ otherwise <span class="xref">null</span>.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.ValueType.ToString()</span></div>
+  <a id="LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithInExperiment*"></a>
+  <h4 id="LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_System_Boolean_" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithInExperiment(System.Boolean)">WithInExperiment(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Returns a new instance with the <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_InExperiment">InExperiment</a> property set to the specified
+value, if supported.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EvaluationReason WithInExperiment(bool inExperiment)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">inExperiment</span></td>
+        <td><p>the desired value for the property</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a></td>
+        <td><p>a copy of this instance with the property modified</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Setting <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_InExperiment">InExperiment</a> is only allowed for <a class="xref" href="LaunchDarkly.Sdk.EvaluationReasonKind.html#LaunchDarkly_Sdk_EvaluationReasonKind_Fallthrough">Fallthrough</a>
+and <a class="xref" href="LaunchDarkly.Sdk.EvaluationReasonKind.html#LaunchDarkly_Sdk_EvaluationReasonKind_RuleMatch">RuleMatch</a>. For all other reason kinds, this has no effect.</p>
+</div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
