@@ -4,8 +4,10 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
+using LaunchDarkly.Sdk.Server.Internal.BigSegments;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Evaluation;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -21,6 +23,8 @@ namespace LaunchDarkly.Sdk.Server
     {
         #region Private fields
 
+        private readonly IBigSegmentStoreStatusProvider _bigSegmentStoreStatusProvider;
+        private readonly BigSegmentStoreWrapper _bigSegmentStoreWrapper;
         private readonly Configuration _configuration;
         internal readonly IEventProcessor _eventProcessor;
         private readonly IDataStore _dataStore;
@@ -35,6 +39,9 @@ namespace LaunchDarkly.Sdk.Server
         #endregion
 
         #region Public properties
+
+        /// <inheritdoc/>
+        public IBigSegmentStoreStatusProvider BigSegmentStoreStatusProvider => _bigSegmentStoreStatusProvider;
 
         /// <inheritdoc/>
         public IDataSourceStatusProvider DataSourceStatusProvider => _dataSourceStatusProvider;
@@ -134,7 +141,23 @@ namespace LaunchDarkly.Sdk.Server
                 .CreateDataStore(clientContext, dataStoreUpdates);
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, dataStoreUpdates);
 
-            _evaluator = new Evaluator(GetFlag, GetSegment, _log);
+            var bigSegmentsConfig = (_configuration.BigSegmentsConfigurationFactory ?? Components.BigSegments(null))
+                .CreateBigSegmentsConfiguration(clientContext);
+            _bigSegmentStoreWrapper = bigSegmentsConfig.Store is null ? null :
+                new BigSegmentStoreWrapper(
+                    bigSegmentsConfig,
+                    taskExecutor,
+                    _log.SubLogger(LogNames.BigSegmentsSubLog)
+                    );
+            _bigSegmentStoreStatusProvider = new BigSegmentStoreStatusProviderImpl(_bigSegmentStoreWrapper);
+
+            _evaluator = new Evaluator(
+                GetFlag,
+                GetSegment,
+                _bigSegmentStoreWrapper == null ? (Func<string, BigSegmentsInternalTypes.BigSegmentsQueryResult>)null :
+                    _bigSegmentStoreWrapper.GetUserMembership,
+                _log
+                );
 
             var eventProcessorFactory =
                 config.Offline ? Components.NoEvents :
@@ -591,6 +614,7 @@ namespace LaunchDarkly.Sdk.Server
                 _eventProcessor.Dispose();
                 _dataStore.Dispose();
                 _dataSource.Dispose();
+                _bigSegmentStoreWrapper?.Dispose();
             }
         }
 

@@ -17,6 +17,11 @@ namespace LaunchDarkly.Sdk.Server
         #region Public properties
 
         /// <summary>
+        /// A factory object that creates an implementation of <see cref="IBigSegmentsConfigurationFactory"/>.
+        /// </summary>
+        public IBigSegmentsConfigurationFactory BigSegmentsConfigurationFactory { get; }
+
+        /// <summary>
         /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
         /// receive feature flag data.
         /// </summary>
@@ -98,7 +103,7 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <summary>
-        /// Creates an <see cref="ConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
+        /// Creates a <see cref="ConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
         /// </summary>
         /// <remarks>
         /// This is the only method for building a <see cref="Configuration"/> if you are setting properties
@@ -146,6 +151,7 @@ namespace LaunchDarkly.Sdk.Server
 
         internal Configuration(ConfigurationBuilder builder)
         {
+            BigSegmentsConfigurationFactory = builder._bigSegmentsConfigurationFactory;
             DataSourceFactory = builder._dataSourceFactory;
             DataStoreFactory = builder._dataStoreFactory;
             DiagnosticOptOut = builder._diagnosticOptOut;

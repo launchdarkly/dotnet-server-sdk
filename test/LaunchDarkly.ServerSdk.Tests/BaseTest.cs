@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server
@@ -35,6 +36,11 @@ namespace LaunchDarkly.Sdk.Server
         protected readonly LogCapture logCapture;
 
         /// <summary>
+        /// A minimal LdClientContext that uses the test logger.
+        /// </summary>
+        protected readonly LdClientContext basicContext;
+
+        /// <summary>
         /// This empty constructor disables log output.
         /// </summary>
         public BaseTest()
@@ -43,6 +49,9 @@ namespace LaunchDarkly.Sdk.Server
             testLogging = logCapture;
             testLogger = logCapture.Logger("");
 
+            basicContext = new LdClientContext(new BasicConfiguration("", false, testLogger),
+                Configuration.Default(""));
+            
             // The following line prevents intermittent test failures that happen only in .NET
             // Framework, where background tasks (including calls to Task.Delay) are very excessively
             // slow to start-- on the order of many seconds. The issue appears to be a long-standing

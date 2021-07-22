@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
-namespace LaunchDarkly.Sdk.Server.Internal.Model
+using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
+
+namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
     // Shortcuts for constructing an Evaluator in tests.
 
@@ -13,6 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         public static readonly Evaluator BasicEvaluator = new Evaluator(
             flagKey => throw new Exception("Evaluator unexpectedly tried to query flag: " + flagKey),
             segmentKey => throw new Exception("Evaluator unexpectedly tried to query segment: " + segmentKey),
+            null,
             TestUtils.NullLogger
         );
 
@@ -25,6 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new Evaluator(
                 flagKey => flags.FirstOrDefault(f => f.Key == flagKey) ?? baseEvaluator.FeatureFlagGetter(flagKey),
                 baseEvaluator.SegmentGetter,
+                baseEvaluator.BigSegmentsGetter,
                 baseEvaluator.Logger
             );
         }
@@ -39,6 +46,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new Evaluator(
                 flagKey => flagKey == nonexistentFlagKey ? null : baseEvaluator.FeatureFlagGetter(flagKey),
                 baseEvaluator.SegmentGetter,
+                baseEvaluator.BigSegmentsGetter,
                 baseEvaluator.Logger
             );
         }
@@ -52,6 +60,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new Evaluator(
                 baseEvaluator.FeatureFlagGetter,
                 segmentKey => segments.FirstOrDefault(s => s.Key == segmentKey) ?? baseEvaluator.SegmentGetter(segmentKey),
+                baseEvaluator.BigSegmentsGetter,
                 baseEvaluator.Logger
             );
         }
@@ -66,8 +75,36 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new Evaluator(
                 baseEvaluator.FeatureFlagGetter,
                 segmentKey => segmentKey == nonexistentSegmentKey ? null : baseEvaluator.SegmentGetter(segmentKey),
+                baseEvaluator.BigSegmentsGetter,
                 baseEvaluator.Logger
             );
+        }
+
+        public static Evaluator WithBigSegments(this Evaluator baseEvaluator, MockBigSegmentProvider bigSegments)
+        {
+            return new Evaluator(
+                baseEvaluator.FeatureFlagGetter,
+                baseEvaluator.SegmentGetter,
+                bigSegments.Query,
+                baseEvaluator.Logger
+            );
+        }
+
+        internal sealed class MockBigSegmentProvider
+        {
+            public BigSegmentsStatus Status { get; set; } = BigSegmentsStatus.Healthy;
+            public int MembershipQueryCount { get; set; } = 0;
+            public Dictionary<string, IMembership> Membership { get; } = new Dictionary<string, IMembership>();
+            
+            public BigSegmentsQueryResult Query(string userKey)
+            {
+                MembershipQueryCount++;
+                if (Membership.TryGetValue(userKey, out var membership))
+                {
+                    return new BigSegmentsQueryResult { Membership = membership, Status = Status };
+                }
+                return new BigSegmentsQueryResult { Membership = null, Status = Status };
+            }
         }
     }
 }

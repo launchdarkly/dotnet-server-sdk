@@ -1,8 +1,9 @@
-﻿using System.Globalization;
+using System;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace LaunchDarkly.Sdk.Server.Internal.Model
+namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
     internal static class Bucketing
     {

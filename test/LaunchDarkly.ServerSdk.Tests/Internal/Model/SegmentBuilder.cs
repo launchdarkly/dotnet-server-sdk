@@ -11,6 +11,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private List<SegmentRule> _rules = new List<SegmentRule>();
         private string _salt;
         private bool _deleted;
+        private bool _unbounded;
+        private int? _generation;
 
         internal SegmentBuilder(string key)
         {
@@ -26,11 +28,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             _excluded = new HashSet<string>(from.Excluded);
             _rules = new List<SegmentRule>(from.Rules);
             _salt = from.Salt;
+            _unbounded = from.Unbounded;
+            _generation = from.Generation;
         }
 
         internal Segment Build()
         {
-            return new Segment(_key, _version, _deleted, _included, _excluded, _rules, _salt);
+            return new Segment(_key, _version, _deleted, _included, _excluded, _rules, _salt, _unbounded, _generation);
         }
 
         internal SegmentBuilder Version(int version)
@@ -71,6 +75,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal SegmentBuilder Deleted(bool deleted)
         {
             _deleted = deleted;
+            return this;
+        }
+
+        internal SegmentBuilder Unbounded(bool unbounded)
+        {
+            _unbounded = unbounded;
+            return this;
+        }
+
+        internal SegmentBuilder Generation(int? generation)
+        {
+            _generation = generation;
             return this;
         }
     }

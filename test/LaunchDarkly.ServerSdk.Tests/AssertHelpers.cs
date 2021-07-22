@@ -8,6 +8,19 @@ namespace LaunchDarkly.Sdk.Server
 {
     public static class AssertHelpers
     {
+        public static void FullyEqual<T>(T a, T b)
+        {
+            Assert.Equal(a, b);
+            Assert.Equal(b, a);
+            Assert.Equal(a.GetHashCode(), b.GetHashCode());
+        }
+
+        public static void FullyUnequal<T>(T a, T b)
+        {
+            Assert.NotEqual(a, b);
+            Assert.NotEqual(b, a);
+        }
+
         public static void JsonEqual(string expected, string actual) =>
             JsonEqual(LdValue.Parse(expected), LdValue.Parse(actual));
 

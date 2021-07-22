@@ -1,9 +1,10 @@
 ﻿using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Internal.Model.EvaluatorTestUtil;
+using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTestUtil;
 
-namespace LaunchDarkly.Sdk.Server.Internal.Model
+namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
     // Tests of flag evaluation at the clause level.
 

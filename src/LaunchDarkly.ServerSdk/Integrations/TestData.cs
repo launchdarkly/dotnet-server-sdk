@@ -215,7 +215,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 {
                     segment = new Segment(segment.Key,
                         newVersion,
-                        segment.Deleted, segment.Included, segment.Excluded, segment.Rules, segment.Salt);
+                        segment.Deleted, segment.Included, segment.Excluded, segment.Rules, segment.Salt,
+                        segment.Unbounded, segment.Generation);
                 }
                 newItem = new ItemDescriptor(newVersion, segment);
                 _currentSegments[segment.Key] = newItem;

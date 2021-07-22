@@ -4,10 +4,13 @@ using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
+using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
 using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
+using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 
-namespace LaunchDarkly.Sdk.Server.Internal.Model
+namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
     // Encapsulates the feature flag evaluation logic. The Evaluator has no knowledge of the rest of the SDK environment;
     // if it needs to retrieve flags or segments that are referenced by a flag, it does so through a function that is
@@ -30,11 +33,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         private readonly Func<string, FeatureFlag> _featureFlagGetter;
         private readonly Func<string, Segment> _segmentGetter;
+        private readonly Func<string, BigSegmentsQueryResult> _bigSegmentsGetter;
         private readonly Logger _logger;
 
         // exposed for testing
         internal Func<string, FeatureFlag> FeatureFlagGetter => _featureFlagGetter;
         internal Func<string, Segment> SegmentGetter => _segmentGetter;
+        internal Func<string, BigSegmentsQueryResult> BigSegmentsGetter => _bigSegmentsGetter;
         internal Logger Logger => _logger;
 
         internal struct EvalResult
@@ -54,13 +59,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         /// </summary>
         /// <param name="featureFlagGetter">a function that returns the stored FeatureFlag for a given key, or null if not found</param>
         /// <param name="segmentGetter">a function that returns the stored Segment for a given key, or null if not found </param>
+        /// <param name="bigSegmentsGetter">a function that queries the big segments state for a user key, or null if not available</param>
         /// <param name="logger">log messages will be sent here</param>
         internal Evaluator(Func<string, FeatureFlag> featureFlagGetter,
             Func<string, Segment> segmentGetter,
+            Func<string, BigSegmentsQueryResult> bigSegmentsGetter,
             Logger logger)
         {
             _featureFlagGetter = featureFlagGetter;
             _segmentGetter = segmentGetter;
+            _bigSegmentsGetter = bigSegmentsGetter;
             _logger = logger;
         }
 
@@ -123,6 +131,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             private readonly User _user;
             private readonly EventFactory _eventFactory;
             private LazilyCreatedList<EvaluationEvent> _prereqEvents;
+            private IMembership _bigSegmentsMembership;
+            private BigSegmentsStatus? _bigSegmentsStatus;
 
             internal EvalScope(Evaluator parent, FeatureFlag flag, User user, EventFactory eventFactory)
             {
@@ -131,11 +141,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 _user = user;
                 _eventFactory = eventFactory;
                 _prereqEvents = new LazilyCreatedList<EvaluationEvent>();
+                _bigSegmentsMembership = null;
+                _bigSegmentsStatus = null;
             }
 
             internal EvalResult Evaluate()
             {
                 var details = EvaluateInternal();
+                if (_bigSegmentsStatus.HasValue)
+                {
+                    details = new EvaluationDetail<LdValue>(
+                        details.Value,
+                        details.VariationIndex,
+                        details.Reason.WithBigSegmentsStatus(_bigSegmentsStatus.Value)
+                        );
+                }
                 return new EvalResult(details, _prereqEvents.GetList());
             }
 
@@ -356,7 +376,46 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             private bool MatchSegment(Segment segment)
             {
                 var userKey = _user.Key;
-                if (userKey != null)
+                if (userKey is null)
+                {
+                    return false;
+                }
+                if (segment.Unbounded)
+                {
+                    if (!segment.Generation.HasValue)
+                    {
+                        // Big segment queries can only be done if the generation is known. If it's unset,
+                        // that probably means the data store was populated by an older SDK that doesn't know
+                        // about the Generation property and therefore dropped it from the JSON data. We'll treat
+                        // that as a "not configured" condition.
+                        _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
+                        return false;
+                    }
+                    // Even if multiple big segments are referenced within a single flag evaluation,
+                    // we only need to do this query once, since it returns *all* of the user's segment
+                    // memberships.
+                    if (!_bigSegmentsStatus.HasValue)
+                    {
+                        if (_parent._bigSegmentsGetter is null)
+                        {
+                            // the SDK hasn't been configured to be able to use big segments
+                            _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
+                        }
+                        else
+                        {
+                            var result = _parent._bigSegmentsGetter(userKey);
+                            _bigSegmentsMembership = result.Membership;
+                            _bigSegmentsStatus = result.Status;
+                        }
+                    }
+                    var included = _bigSegmentsMembership is null ? null :
+                        _bigSegmentsMembership.CheckMembership(MakeBigSegmentRef(segment));
+                    if (included.HasValue)
+                    {
+                        return included.Value;
+                    }
+                }
+                else
                 {
                     if (segment.Preprocessed.IncludedSet.Contains(userKey))
                     {
@@ -366,14 +425,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     {
                         return false;
                     }
-                    if (segment.Rules != null)
+                }
+                if (segment.Rules != null)
+                {
+                    foreach (var rule in segment.Rules)
                     {
-                        foreach (var rule in segment.Rules)
+                        if (MatchSegmentRule(segment, rule))
                         {
-                            if (MatchSegmentRule(segment, rule))
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }
