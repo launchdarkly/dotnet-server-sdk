@@ -156,7 +156,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var f = new FeatureFlagBuilder("feature")
                 .On(true)
                 .OffVariation(1)
-                .Fallthrough(new VariationOrRollout(null, new Rollout(new List<WeightedVariation>(), null)))
+                .FallthroughRollout(new Rollout(RolloutKind.Rollout, null, new List<WeightedVariation>(), null))
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
             var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
@@ -165,6 +165,51 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
             Assert.Equal(0, result.PrerequisiteEvents.Count);
+        }
+
+        [Fact]
+        public void FlagReturnsInExperimentForFallthroughWhenInExperimentVariation()
+        {
+            var rollout = BuildRollout(RolloutKind.Experiment, false);
+            var f = new FeatureFlagBuilder("feature")
+                .On(true)
+                .FallthroughRollout(rollout)
+                .Variations(fallthroughValue, offValue, onValue)
+                .Build();
+            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+
+            Assert.Equal(EvaluationReasonKind.Fallthrough, result.Result.Reason.Kind);
+            Assert.True(result.Result.Reason.InExperiment);
+        }
+
+        [Fact]
+        public void FlagReturnsNotInExperimentForFallthroughWhenNotInExperimentVariation()
+        {
+            var rollout = BuildRollout(RolloutKind.Experiment, true);
+            var f = new FeatureFlagBuilder("feature")
+                .On(true)
+                .FallthroughRollout(rollout)
+                .Variations(fallthroughValue, offValue, onValue)
+                .Build();
+            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+
+            Assert.Equal(EvaluationReasonKind.Fallthrough, result.Result.Reason.Kind);
+            Assert.False(result.Result.Reason.InExperiment);
+        }
+
+        [Fact]
+        public void FlagReturnsInExperimentForFallthroughWhenInExperimentVariationButNonExperimentRollout()
+        {
+            var rollout = BuildRollout(RolloutKind.Rollout, false);
+            var f = new FeatureFlagBuilder("feature")
+                .On(true)
+                .FallthroughRollout(rollout)
+                .Variations(fallthroughValue, offValue, onValue)
+                .Build();
+            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+
+            Assert.Equal(EvaluationReasonKind.Fallthrough, result.Result.Reason.Kind);
+            Assert.False(result.Result.Reason.InExperiment);
         }
 
         [Fact]
@@ -357,6 +402,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
+        }
+
+        private static Rollout BuildRollout(RolloutKind kind, bool untrackedVariations)
+        {
+            var variations = new List<WeightedVariation>()
+            {
+                new WeightedVariation(1, 50000, untrackedVariations),
+                new WeightedVariation(2, 20000, untrackedVariations)
+            };
+            const int seed = 123;
+            return new Rollout(kind, seed, variations, UserAttribute.Key);
         }
     }
 }

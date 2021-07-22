@@ -192,26 +192,42 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private void OnError(object sender, EventSource.ExceptionEventArgs e)
         {
             var ex = e.Exception;
-            LogHelpers.LogException(_log, "Encountered EventSource error", ex);
             var recoverable = true;
-            if (ex is EventSource.EventSourceServiceUnsuccessfulResponseException respEx)
+            DataSourceStatus.ErrorInfo errorInfo;
+
+            if (ex is EventSourceServiceUnsuccessfulResponseException respEx)
             {
                 int status = respEx.StatusCode;
-                _log.Error(HttpErrors.ErrorMessage(status, "streaming connection", "will retry"));
+                errorInfo = DataSourceStatus.ErrorInfo.FromHttpError(status);
                 RecordStreamInit(true);
                 if (!HttpErrors.IsRecoverable(status))
                 {
                     recoverable = false;
-                    _initTask.TrySetException(ex); // sends this exception to the client if we haven't already started up
-                    ((IDisposable)this).Dispose();
+                    _log.Error(HttpErrors.ErrorMessage(status, "streaming connection", ""));
+                }
+                else
+                {
+                    _log.Warn(HttpErrors.ErrorMessage(status, "streaming connection", "will retry"));
                 }
             }
+            else
+            {
+                errorInfo = DataSourceStatus.ErrorInfo.FromException(ex);
+                _log.Warn("Encountered EventSource error: {0}", LogValues.ExceptionSummary(ex));
+                _log.Debug(LogValues.ExceptionTrace(ex));
+            }
 
-            var errorInfo = ex is EventSource.EventSourceServiceUnsuccessfulResponseException re ?
-                DataSourceStatus.ErrorInfo.FromHttpError(re.StatusCode) :
-                DataSourceStatus.ErrorInfo.FromException(ex);
             _dataSourceUpdates.UpdateStatus(recoverable ? DataSourceState.Interrupted : DataSourceState.Off,
                 errorInfo);
+
+            if (!recoverable)
+            {
+                // Make _initTask complete to tell the client to stop waiting for initialization. We use
+                // TrySetResult rather than SetResult here because it might have already been completed
+                // (if for instance the stream started successfully, then restarted and got a 401).
+                _initTask.TrySetResult(false);
+                ((IDisposable)this).Dispose();
+            }
         }
 
         private void HandleMessage(string messageType, byte[] messageData)
@@ -228,7 +244,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
                     if (!_initialized.GetAndSet(true))
                     {
-                        _initTask.SetResult(true);
+                        _initTask.TrySetResult(true);
                         _log.Info("LaunchDarkly streaming is active");
                     }
                     break;

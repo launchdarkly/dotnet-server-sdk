@@ -261,43 +261,44 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
             private EvaluationDetail<LdValue> GetValueForVariationOrRollout(int? variation, Rollout? rollout, EvaluationReason reason)
             {
-                var index = VariationIndexForUser(variation, rollout, _flag.Key, _flag.Salt);
-                if (index is null)
-                {
-                    _parent._logger.Error("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", _flag.Key);
-                    return ErrorResult(EvaluationErrorKind.MalformedFlag);
-                }
-                return GetVariation(index.Value, reason);
-            }
-
-            private int? VariationIndexForUser(int? variation, Rollout? rollout, string key, string salt)
-            {
                 if (variation.HasValue)
                 {
-                    return variation.Value;
+                    return GetVariation(variation.Value, reason);
                 }
 
                 if (rollout.HasValue && rollout.Value.Variations.Count() > 0)
                 {
+                    WeightedVariation? selectedVariation = null;
                     var bucketBy = rollout.Value.BucketBy.GetValueOrDefault(UserAttribute.Key);
-                    float bucket = Bucketing.BucketUser(_user, key, bucketBy, salt);
+                    float bucket = Bucketing.BucketUser(rollout.Value.Seed, _user, _flag.Key, bucketBy, _flag.Salt);
                     float sum = 0F;
                     foreach (WeightedVariation wv in rollout.Value.Variations)
                     {
                         sum += (float)wv.Weight / 100000F;
                         if (bucket < sum)
                         {
-                            return wv.Variation;
+                            selectedVariation = wv;
+                            break;
                         }
                     }
-                    // The user's bucket value was greater than or equal to the end of the last bucket. This could happen due
-                    // to a rounding error, or due to the fact that we are scaling to 100000 rather than 99999, or the flag
-                    // data could contain buckets that don't actually add up to 100000. Rather than returning an error in
-                    // this case (or changing the scaling, which would potentially change the results for *all* users), we
-                    // will simply put the user in the last bucket.
-                    return rollout.Value.Variations.Last().Variation;
+                    if (!selectedVariation.HasValue)
+                    {
+                        // The user's bucket value was greater than or equal to the end of the last bucket. This could happen due
+                        // to a rounding error, or due to the fact that we are scaling to 100000 rather than 99999, or the flag
+                        // data could contain buckets that don't actually add up to 100000. Rather than returning an error in
+                        // this case (or changing the scaling, which would potentially change the results for *all* users), we
+                        // will simply put the user in the last bucket.
+                        selectedVariation = rollout.Value.Variations.Last();
+                    }
+                    var inExperiment = (rollout.Value.Kind == RolloutKind.Experiment) && !selectedVariation.Value.Untracked;
+                    return GetVariation(selectedVariation.Value.Variation,
+                        inExperiment ? reason.WithInExperiment(true) : reason);
                 }
-                return null;
+                else
+                {
+                    _parent._logger.Error("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", _flag.Key);
+                    return ErrorResult(EvaluationErrorKind.MalformedFlag);
+                }
             }
 
             private bool MatchRule(FlagRule rule)
@@ -456,7 +457,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
                 // All of the clauses are met. See if the user buckets in
                 var by = segmentRule.BucketBy.GetValueOrDefault(UserAttribute.Key);
-                double bucket = Bucketing.BucketUser(_user, segment.Key, by, segment.Salt);
+                double bucket = Bucketing.BucketUser(null, _user, segment.Key, by, segment.Salt);
                 double weight = (double)segmentRule.Weight / 100000F;
                 return bucket < weight;
             }

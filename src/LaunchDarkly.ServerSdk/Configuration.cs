@@ -103,7 +103,7 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <summary>
-        /// Creates an <see cref="ConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
+        /// Creates a <see cref="ConfigurationBuilder"/> for constructing a configuration object using a fluent syntax.
         /// </summary>
         /// <remarks>
         /// This is the only method for building a <see cref="Configuration"/> if you are setting properties

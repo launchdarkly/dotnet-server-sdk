@@ -87,6 +87,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             return this;
         }
 
+        // Exposed internally for testing
+        internal PollingDataSourceBuilder PollIntervalNoMinimum(TimeSpan pollInterval)
+        {
+            _pollInterval = pollInterval;
+            return this;
+        }
+
         /// <inheritdoc/>
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {

@@ -64,7 +64,6 @@ namespace LaunchDarkly.Sdk.Server
             _startWaitTime = copyFrom.StartWaitTime;
         }
 
-
         #endregion
 
         #region Public methods

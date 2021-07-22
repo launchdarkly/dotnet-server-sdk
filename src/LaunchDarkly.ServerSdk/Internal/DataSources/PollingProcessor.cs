@@ -80,14 +80,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             }
             catch (UnsuccessfulResponseException ex)
             {
-                _log.Error(HttpErrors.ErrorMessage(ex.StatusCode, "polling request", "will retry"));
                 var errorInfo = DataSourceStatus.ErrorInfo.FromHttpError(ex.StatusCode);
+
                 if (HttpErrors.IsRecoverable(ex.StatusCode))
                 {
+                    _log.Warn(HttpErrors.ErrorMessage(ex.StatusCode, "polling request", "will retry"));
                     _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted, errorInfo);
                 }
                 else
                 {
+                    _log.Error(HttpErrors.ErrorMessage(ex.StatusCode, "polling request", ""));
                     _dataSourceUpdates.UpdateStatus(DataSourceState.Off, errorInfo);
                     try
                     {
