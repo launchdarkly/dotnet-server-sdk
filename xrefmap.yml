@@ -7,6 +7,36 @@ references:
   commentId: N:LaunchDarkly.Sdk
   fullName: LaunchDarkly.Sdk
   nameWithType: LaunchDarkly.Sdk
+- uid: LaunchDarkly.Sdk.BigSegmentsStatus
+  name: BigSegmentsStatus
+  href: api/LaunchDarkly.Sdk.BigSegmentsStatus.html
+  commentId: T:LaunchDarkly.Sdk.BigSegmentsStatus
+  fullName: LaunchDarkly.Sdk.BigSegmentsStatus
+  nameWithType: BigSegmentsStatus
+- uid: LaunchDarkly.Sdk.BigSegmentsStatus.Healthy
+  name: Healthy
+  href: api/LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_Healthy
+  commentId: F:LaunchDarkly.Sdk.BigSegmentsStatus.Healthy
+  fullName: LaunchDarkly.Sdk.BigSegmentsStatus.Healthy
+  nameWithType: BigSegmentsStatus.Healthy
+- uid: LaunchDarkly.Sdk.BigSegmentsStatus.NotConfigured
+  name: NotConfigured
+  href: api/LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_NotConfigured
+  commentId: F:LaunchDarkly.Sdk.BigSegmentsStatus.NotConfigured
+  fullName: LaunchDarkly.Sdk.BigSegmentsStatus.NotConfigured
+  nameWithType: BigSegmentsStatus.NotConfigured
+- uid: LaunchDarkly.Sdk.BigSegmentsStatus.Stale
+  name: Stale
+  href: api/LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_Stale
+  commentId: F:LaunchDarkly.Sdk.BigSegmentsStatus.Stale
+  fullName: LaunchDarkly.Sdk.BigSegmentsStatus.Stale
+  nameWithType: BigSegmentsStatus.Stale
+- uid: LaunchDarkly.Sdk.BigSegmentsStatus.StoreError
+  name: StoreError
+  href: api/LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_StoreError
+  commentId: F:LaunchDarkly.Sdk.BigSegmentsStatus.StoreError
+  fullName: LaunchDarkly.Sdk.BigSegmentsStatus.StoreError
+  nameWithType: BigSegmentsStatus.StoreError
 - uid: LaunchDarkly.Sdk.EvaluationDetail`1
   name: EvaluationDetail<T>
   href: api/LaunchDarkly.Sdk.EvaluationDetail-1.html
@@ -177,6 +207,18 @@ references:
   commentId: T:LaunchDarkly.Sdk.EvaluationReason
   fullName: LaunchDarkly.Sdk.EvaluationReason
   nameWithType: EvaluationReason
+- uid: LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus
+  name: BigSegmentsStatus
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus
+  commentId: P:LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus
+  fullName: LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus
+  nameWithType: EvaluationReason.BigSegmentsStatus
+- uid: LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus*
+  name: BigSegmentsStatus
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus_
+  commentId: Overload:LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus
+  fullName: LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus
+  nameWithType: EvaluationReason.BigSegmentsStatus
 - uid: LaunchDarkly.Sdk.EvaluationReason.Equals(System.Object)
   name: Equals(Object)
   href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_Equals_System_Object_
@@ -357,6 +399,21 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.EvaluationReason.ToString
   fullName: LaunchDarkly.Sdk.EvaluationReason.ToString
   nameWithType: EvaluationReason.ToString
+- uid: LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus(System.Nullable{LaunchDarkly.Sdk.BigSegmentsStatus})
+  name: WithBigSegmentsStatus(Nullable<BigSegmentsStatus>)
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_WithBigSegmentsStatus_System_Nullable_LaunchDarkly_Sdk_BigSegmentsStatus__
+  commentId: M:LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus(System.Nullable{LaunchDarkly.Sdk.BigSegmentsStatus})
+  name.vb: WithBigSegmentsStatus(Nullable(Of BigSegmentsStatus))
+  fullName: LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus(System.Nullable<LaunchDarkly.Sdk.BigSegmentsStatus>)
+  fullName.vb: LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus(System.Nullable(Of LaunchDarkly.Sdk.BigSegmentsStatus))
+  nameWithType: EvaluationReason.WithBigSegmentsStatus(Nullable<BigSegmentsStatus>)
+  nameWithType.vb: EvaluationReason.WithBigSegmentsStatus(Nullable(Of BigSegmentsStatus))
+- uid: LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus*
+  name: WithBigSegmentsStatus
+  href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_WithBigSegmentsStatus_
+  commentId: Overload:LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus
+  fullName: LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus
+  nameWithType: EvaluationReason.WithBigSegmentsStatus
 - uid: LaunchDarkly.Sdk.EvaluationReason.WithInExperiment(System.Boolean)
   name: WithInExperiment(Boolean)
   href: api/LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_System_Boolean_
@@ -672,6 +729,78 @@ references:
   commentId: T:LaunchDarkly.Sdk.Json.LdJsonConverters
   fullName: LaunchDarkly.Sdk.Json.LdJsonConverters
   nameWithType: LdJsonConverters
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter
+  name: LdJsonConverters.BigSegmentsStatusConverter
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html
+  commentId: T:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.#ctor
+  name: BigSegmentsStatusConverter()
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter__ctor
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.#ctor
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.BigSegmentsStatusConverter()
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.BigSegmentsStatusConverter()
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.#ctor*
+  name: BigSegmentsStatusConverter
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.#ctor
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.BigSegmentsStatusConverter
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.BigSegmentsStatusConverter
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson(LaunchDarkly.JsonStream.JReader@)
+  name: ReadJson(ref JReader)
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJson_LaunchDarkly_JsonStream_JReader__
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson(LaunchDarkly.JsonStream.JReader@)
+  name.vb: ReadJson(ByRef JReader)
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson(ref LaunchDarkly.JsonStream.JReader)
+  fullName.vb: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson(ByRef LaunchDarkly.JsonStream.JReader)
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.ReadJson(ref JReader)
+  nameWithType.vb: LdJsonConverters.BigSegmentsStatusConverter.ReadJson(ByRef JReader)
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson*
+  name: ReadJson
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJson_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.ReadJson
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(LaunchDarkly.JsonStream.JReader@)
+  name: ReadJsonValue(ref JReader)
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJsonValue_LaunchDarkly_JsonStream_JReader__
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(LaunchDarkly.JsonStream.JReader@)
+  name.vb: ReadJsonValue(ByRef JReader)
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(ref LaunchDarkly.JsonStream.JReader)
+  fullName.vb: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(ByRef LaunchDarkly.JsonStream.JReader)
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(ref JReader)
+  nameWithType.vb: LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(ByRef JReader)
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue*
+  name: ReadJsonValue
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJsonValue_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson(System.Object,LaunchDarkly.JsonStream.IValueWriter)
+  name: WriteJson(Object, IValueWriter)
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJson_System_Object_LaunchDarkly_JsonStream_IValueWriter_
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson(System.Object,LaunchDarkly.JsonStream.IValueWriter)
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson(System.Object, LaunchDarkly.JsonStream.IValueWriter)
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.WriteJson(Object, IValueWriter)
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson*
+  name: WriteJson
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJson_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.WriteJson
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue(LaunchDarkly.Sdk.EvaluationErrorKind,LaunchDarkly.JsonStream.IValueWriter)
+  name: WriteJsonValue(EvaluationErrorKind, IValueWriter)
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJsonValue_LaunchDarkly_Sdk_EvaluationErrorKind_LaunchDarkly_JsonStream_IValueWriter_
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue(LaunchDarkly.Sdk.EvaluationErrorKind,LaunchDarkly.JsonStream.IValueWriter)
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue(LaunchDarkly.Sdk.EvaluationErrorKind, LaunchDarkly.JsonStream.IValueWriter)
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue(EvaluationErrorKind, IValueWriter)
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue*
+  name: WriteJsonValue
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJsonValue_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue
+  nameWithType: LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue
 - uid: LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationErrorKindConverter
   name: LdJsonConverters.EvaluationErrorKindConverter
   href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationErrorKindConverter.html
@@ -1800,6 +1929,18 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.Components
   fullName: LaunchDarkly.Sdk.Server.Components
   nameWithType: Components
+- uid: LaunchDarkly.Sdk.Server.Components.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory)
+  name: BigSegments(IBigSegmentStoreFactory)
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreFactory_
+  commentId: M:LaunchDarkly.Sdk.Server.Components.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory)
+  fullName: LaunchDarkly.Sdk.Server.Components.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory)
+  nameWithType: Components.BigSegments(IBigSegmentStoreFactory)
+- uid: LaunchDarkly.Sdk.Server.Components.BigSegments*
+  name: BigSegments
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_BigSegments_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Components.BigSegments
+  fullName: LaunchDarkly.Sdk.Server.Components.BigSegments
+  nameWithType: Components.BigSegments
 - uid: LaunchDarkly.Sdk.Server.Components.ExternalUpdatesOnly
   name: ExternalUpdatesOnly
   href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ExternalUpdatesOnly
@@ -1938,6 +2079,18 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.Configuration
   fullName: LaunchDarkly.Sdk.Server.Configuration
   nameWithType: Configuration
+- uid: LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory
+  name: BigSegmentsConfigurationFactory
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_BigSegmentsConfigurationFactory
+  commentId: P:LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory
+  fullName: LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory
+  nameWithType: Configuration.BigSegmentsConfigurationFactory
+- uid: LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory*
+  name: BigSegmentsConfigurationFactory
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_BigSegmentsConfigurationFactory_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory
+  fullName: LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory
+  nameWithType: Configuration.BigSegmentsConfigurationFactory
 - uid: LaunchDarkly.Sdk.Server.Configuration.Builder(LaunchDarkly.Sdk.Server.Configuration)
   name: Builder(Configuration)
   href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_Builder_LaunchDarkly_Sdk_Server_Configuration_
@@ -2082,6 +2235,18 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.ConfigurationBuilder
   fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder
   nameWithType: ConfigurationBuilder
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory)
+  name: BigSegments(IBigSegmentsConfigurationFactory)
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_
+  commentId: M:LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory)
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory)
+  nameWithType: ConfigurationBuilder.BigSegments(IBigSegmentsConfigurationFactory)
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments*
+  name: BigSegments
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_
+  commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments
+  nameWithType: ConfigurationBuilder.BigSegments
 - uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.Build
   name: Build()
   href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Build
@@ -2454,6 +2619,96 @@ references:
   commentId: N:LaunchDarkly.Sdk.Server.Integrations
   fullName: LaunchDarkly.Sdk.Server.Integrations
   nameWithType: LaunchDarkly.Sdk.Server.Integrations
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder
+  name: BigSegmentsConfigurationBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html
+  commentId: T:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder
+  nameWithType: BigSegmentsConfigurationBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  name: CreateBigSegmentsConfiguration(LdClientContext)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_CreateBigSegmentsConfiguration_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  nameWithType: BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration(LdClientContext)
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration*
+  name: CreateBigSegmentsConfiguration
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_CreateBigSegmentsConfiguration_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration
+  nameWithType: BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStaleAfter
+  name: DefaultStaleAfter
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultStaleAfter
+  commentId: F:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStaleAfter
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStaleAfter
+  nameWithType: BigSegmentsConfigurationBuilder.DefaultStaleAfter
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStatusPollInterval
+  name: DefaultStatusPollInterval
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultStatusPollInterval
+  commentId: F:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStatusPollInterval
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStatusPollInterval
+  nameWithType: BigSegmentsConfigurationBuilder.DefaultStatusPollInterval
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheSize
+  name: DefaultUserCacheSize
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultUserCacheSize
+  commentId: F:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheSize
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheSize
+  nameWithType: BigSegmentsConfigurationBuilder.DefaultUserCacheSize
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheTime
+  name: DefaultUserCacheTime
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultUserCacheTime
+  commentId: F:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheTime
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheTime
+  nameWithType: BigSegmentsConfigurationBuilder.DefaultUserCacheTime
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter(System.TimeSpan)
+  name: StaleAfter(TimeSpan)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter(System.TimeSpan)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter(System.TimeSpan)
+  nameWithType: BigSegmentsConfigurationBuilder.StaleAfter(TimeSpan)
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter*
+  name: StaleAfter
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter
+  nameWithType: BigSegmentsConfigurationBuilder.StaleAfter
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval(System.TimeSpan)
+  name: StatusPollInterval(TimeSpan)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_System_TimeSpan_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval(System.TimeSpan)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval(System.TimeSpan)
+  nameWithType: BigSegmentsConfigurationBuilder.StatusPollInterval(TimeSpan)
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval*
+  name: StatusPollInterval
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval
+  nameWithType: BigSegmentsConfigurationBuilder.StatusPollInterval
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize(System.Int32)
+  name: UserCacheSize(Int32)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize(System.Int32)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize(System.Int32)
+  nameWithType: BigSegmentsConfigurationBuilder.UserCacheSize(Int32)
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize*
+  name: UserCacheSize
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize
+  nameWithType: BigSegmentsConfigurationBuilder.UserCacheSize
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime(System.TimeSpan)
+  name: UserCacheTime(TimeSpan)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime(System.TimeSpan)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime(System.TimeSpan)
+  nameWithType: BigSegmentsConfigurationBuilder.UserCacheTime(TimeSpan)
+- uid: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime*
+  name: UserCacheTime
+  href: api/LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime
+  fullName: LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime
+  nameWithType: BigSegmentsConfigurationBuilder.UserCacheTime
 - uid: LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder
   name: EventProcessorBuilder
   href: api/LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html
@@ -3678,6 +3933,183 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.SdkKey
   fullName: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.SdkKey
   nameWithType: BasicConfiguration.SdkKey
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration
+  name: BigSegmentsConfiguration
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration
+  nameWithType: BigSegmentsConfiguration
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.#ctor(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore,System.Int32,System.TimeSpan,System.TimeSpan,System.TimeSpan)
+  name: BigSegmentsConfiguration(IBigSegmentStore, Int32, TimeSpan, TimeSpan, TimeSpan)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration__ctor_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_System_Int32_System_TimeSpan_System_TimeSpan_System_TimeSpan_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.#ctor(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore,System.Int32,System.TimeSpan,System.TimeSpan,System.TimeSpan)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.BigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore, System.Int32, System.TimeSpan, System.TimeSpan, System.TimeSpan)
+  nameWithType: BigSegmentsConfiguration.BigSegmentsConfiguration(IBigSegmentStore, Int32, TimeSpan, TimeSpan, TimeSpan)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.#ctor*
+  name: BigSegmentsConfiguration
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.BigSegmentsConfiguration
+  nameWithType: BigSegmentsConfiguration.BigSegmentsConfiguration
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StaleAfter
+  name: StaleAfter
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_StaleAfter
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StaleAfter
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StaleAfter
+  nameWithType: BigSegmentsConfiguration.StaleAfter
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StaleAfter*
+  name: StaleAfter
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_StaleAfter_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StaleAfter
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StaleAfter
+  nameWithType: BigSegmentsConfiguration.StaleAfter
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StatusPollInterval
+  name: StatusPollInterval
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_StatusPollInterval
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StatusPollInterval
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StatusPollInterval
+  nameWithType: BigSegmentsConfiguration.StatusPollInterval
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StatusPollInterval*
+  name: StatusPollInterval
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_StatusPollInterval_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StatusPollInterval
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.StatusPollInterval
+  nameWithType: BigSegmentsConfiguration.StatusPollInterval
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.Store
+  name: Store
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_Store
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.Store
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.Store
+  nameWithType: BigSegmentsConfiguration.Store
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.Store*
+  name: Store
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_Store_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.Store
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.Store
+  nameWithType: BigSegmentsConfiguration.Store
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheSize
+  name: UserCacheSize
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_UserCacheSize
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheSize
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheSize
+  nameWithType: BigSegmentsConfiguration.UserCacheSize
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheSize*
+  name: UserCacheSize
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_UserCacheSize_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheSize
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheSize
+  nameWithType: BigSegmentsConfiguration.UserCacheSize
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheTime
+  name: UserCacheTime
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_UserCacheTime
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheTime
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheTime
+  nameWithType: BigSegmentsConfiguration.UserCacheTime
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheTime*
+  name: UserCacheTime
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentsConfiguration_UserCacheTime_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheTime
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.UserCacheTime
+  nameWithType: BigSegmentsConfiguration.UserCacheTime
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus
+  name: BigSegmentStoreStatus
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus
+  nameWithType: BigSegmentStoreStatus
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Available
+  name: Available
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreStatus_Available
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Available
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Available
+  nameWithType: BigSegmentStoreStatus.Available
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Available*
+  name: Available
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreStatus_Available_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Available
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Available
+  nameWithType: BigSegmentStoreStatus.Available
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Stale
+  name: Stale
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreStatus_Stale
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Stale
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Stale
+  nameWithType: BigSegmentStoreStatus.Stale
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Stale*
+  name: Stale
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreStatus_Stale_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Stale
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.Stale
+  nameWithType: BigSegmentStoreStatus.Stale
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.ToString
+  name: ToString()
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreStatus_ToString
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.ToString
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.ToString()
+  nameWithType: BigSegmentStoreStatus.ToString()
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.ToString*
+  name: ToString
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreStatus_ToString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.ToString
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.ToString
+  nameWithType: BigSegmentStoreStatus.ToString
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes
+  name: BigSegmentStoreTypes
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes
+  nameWithType: BigSegmentStoreTypes
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership
+  name: BigSegmentStoreTypes.IMembership
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership
+  nameWithType: BigSegmentStoreTypes.IMembership
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.CheckMembership(System.String)
+  name: CheckMembership(String)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreTypes_IMembership_CheckMembership_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.CheckMembership(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.CheckMembership(System.String)
+  nameWithType: BigSegmentStoreTypes.IMembership.CheckMembership(String)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.CheckMembership*
+  name: CheckMembership
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreTypes_IMembership_CheckMembership_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.CheckMembership
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.CheckMembership
+  nameWithType: BigSegmentStoreTypes.IMembership.CheckMembership
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.NewMembershipFromSegmentRefs(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})
+  name: NewMembershipFromSegmentRefs(IEnumerable<String>, IEnumerable<String>)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreTypes_NewMembershipFromSegmentRefs_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_System_String__
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.NewMembershipFromSegmentRefs(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})
+  name.vb: NewMembershipFromSegmentRefs(IEnumerable(Of String), IEnumerable(Of String))
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.NewMembershipFromSegmentRefs(System.Collections.Generic.IEnumerable<System.String>, System.Collections.Generic.IEnumerable<System.String>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.NewMembershipFromSegmentRefs(System.Collections.Generic.IEnumerable(Of System.String), System.Collections.Generic.IEnumerable(Of System.String))
+  nameWithType: BigSegmentStoreTypes.NewMembershipFromSegmentRefs(IEnumerable<String>, IEnumerable<String>)
+  nameWithType.vb: BigSegmentStoreTypes.NewMembershipFromSegmentRefs(IEnumerable(Of String), IEnumerable(Of String))
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.NewMembershipFromSegmentRefs*
+  name: NewMembershipFromSegmentRefs
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreTypes_NewMembershipFromSegmentRefs_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.NewMembershipFromSegmentRefs
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.NewMembershipFromSegmentRefs
+  nameWithType: BigSegmentStoreTypes.NewMembershipFromSegmentRefs
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata
+  name: BigSegmentStoreTypes.StoreMetadata
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata
+  nameWithType: BigSegmentStoreTypes.StoreMetadata
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.LastUpToDate
+  name: LastUpToDate
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreTypes_StoreMetadata_LastUpToDate
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.LastUpToDate
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.LastUpToDate
+  nameWithType: BigSegmentStoreTypes.StoreMetadata.LastUpToDate
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.LastUpToDate*
+  name: LastUpToDate
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.html#LaunchDarkly_Sdk_Server_Interfaces_BigSegmentStoreTypes_StoreMetadata_LastUpToDate_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.LastUpToDate
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.LastUpToDate
+  nameWithType: BigSegmentStoreTypes.StoreMetadata.LastUpToDate
 - uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceState
   name: DataSourceState
   href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html
@@ -4775,6 +5207,96 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ResponseStartTimeout
   fullName: LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.ResponseStartTimeout
   nameWithType: HttpConfiguration.ResponseStartTimeout
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory
+  name: IBigSegmentsConfigurationFactory
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory
+  nameWithType: IBigSegmentsConfigurationFactory
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  name: CreateBigSegmentsConfiguration(LdClientContext)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_CreateBigSegmentsConfiguration_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  nameWithType: IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration(LdClientContext)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration*
+  name: CreateBigSegmentsConfiguration
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_CreateBigSegmentsConfiguration_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration
+  nameWithType: IBigSegmentsConfigurationFactory.CreateBigSegmentsConfiguration
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore
+  name: IBigSegmentStore
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore
+  nameWithType: IBigSegmentStore
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMembershipAsync(System.String)
+  name: GetMembershipAsync(String)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMembershipAsync_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMembershipAsync(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMembershipAsync(System.String)
+  nameWithType: IBigSegmentStore.GetMembershipAsync(String)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMembershipAsync*
+  name: GetMembershipAsync
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMembershipAsync_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMembershipAsync
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMembershipAsync
+  nameWithType: IBigSegmentStore.GetMembershipAsync
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMetadataAsync
+  name: GetMetadataAsync()
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMetadataAsync
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMetadataAsync
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMetadataAsync()
+  nameWithType: IBigSegmentStore.GetMetadataAsync()
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMetadataAsync*
+  name: GetMetadataAsync
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMetadataAsync_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMetadataAsync
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.GetMetadataAsync
+  nameWithType: IBigSegmentStore.GetMetadataAsync
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory
+  name: IBigSegmentStoreFactory
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory
+  nameWithType: IBigSegmentStoreFactory
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.CreateBigSegmentStore(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  name: CreateBigSegmentStore(LdClientContext)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreFactory_CreateBigSegmentStore_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.CreateBigSegmentStore(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.CreateBigSegmentStore(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)
+  nameWithType: IBigSegmentStoreFactory.CreateBigSegmentStore(LdClientContext)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.CreateBigSegmentStore*
+  name: CreateBigSegmentStore
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreFactory_CreateBigSegmentStore_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.CreateBigSegmentStore
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.CreateBigSegmentStore
+  nameWithType: IBigSegmentStoreFactory.CreateBigSegmentStore
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider
+  name: IBigSegmentStoreStatusProvider
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider
+  nameWithType: IBigSegmentStoreStatusProvider
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.Status
+  name: Status
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreStatusProvider_Status
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.Status
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.Status
+  nameWithType: IBigSegmentStoreStatusProvider.Status
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.Status*
+  name: Status
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreStatusProvider_Status_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.Status
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.Status
+  nameWithType: IBigSegmentStoreStatusProvider.Status
+- uid: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.StatusChanged
+  name: StatusChanged
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreStatusProvider_StatusChanged
+  commentId: E:LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.StatusChanged
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.StatusChanged
+  nameWithType: IBigSegmentStoreStatusProvider.StatusChanged
 - uid: LaunchDarkly.Sdk.Server.Interfaces.IDataSource
   name: IDataSource
   href: api/LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html
@@ -5264,6 +5786,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.AllFlagsState
   fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.AllFlagsState
   nameWithType: ILdClient.AllFlagsState
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.BigSegmentStoreStatusProvider
+  name: BigSegmentStoreStatusProvider
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BigSegmentStoreStatusProvider
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.BigSegmentStoreStatusProvider
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.BigSegmentStoreStatusProvider
+  nameWithType: ILdClient.BigSegmentStoreStatusProvider
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.BigSegmentStoreStatusProvider*
+  name: BigSegmentStoreStatusProvider
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BigSegmentStoreStatusProvider_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.BigSegmentStoreStatusProvider
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.BigSegmentStoreStatusProvider
+  nameWithType: ILdClient.BigSegmentStoreStatusProvider
 - uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.BoolVariation(System.String,LaunchDarkly.Sdk.User,System.Boolean)
   name: BoolVariation(String, User, Boolean)
   href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BoolVariation_System_String_LaunchDarkly_Sdk_User_System_Boolean_
@@ -5870,6 +6404,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.AllFlagsState
   fullName: LaunchDarkly.Sdk.Server.LdClient.AllFlagsState
   nameWithType: LdClient.AllFlagsState
+- uid: LaunchDarkly.Sdk.Server.LdClient.BigSegmentStoreStatusProvider
+  name: BigSegmentStoreStatusProvider
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_BigSegmentStoreStatusProvider
+  commentId: P:LaunchDarkly.Sdk.Server.LdClient.BigSegmentStoreStatusProvider
+  fullName: LaunchDarkly.Sdk.Server.LdClient.BigSegmentStoreStatusProvider
+  nameWithType: LdClient.BigSegmentStoreStatusProvider
+- uid: LaunchDarkly.Sdk.Server.LdClient.BigSegmentStoreStatusProvider*
+  name: BigSegmentStoreStatusProvider
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_BigSegmentStoreStatusProvider_
+  commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.BigSegmentStoreStatusProvider
+  fullName: LaunchDarkly.Sdk.Server.LdClient.BigSegmentStoreStatusProvider
+  nameWithType: LdClient.BigSegmentStoreStatusProvider
 - uid: LaunchDarkly.Sdk.Server.LdClient.BoolVariation(System.String,LaunchDarkly.Sdk.User,System.Boolean)
   name: BoolVariation(String, User, Boolean)
   href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_BoolVariation_System_String_LaunchDarkly_Sdk_User_System_Boolean_

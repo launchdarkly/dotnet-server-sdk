@@ -124,6 +124,73 @@ chained together.</p>
 
   <h3 id="methods">Methods
   </h3>
+  <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory)">BigSegments(IBigSegmentsConfigurationFactory)</h4>
+  <div class="markdown level1 summary"><p>Sets the configuration of the SDK&apos;s big segments feature.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder BigSegments(IBigSegmentsConfigurationFactory bigSegmentsConfigurationFactory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html">IBigSegmentsConfigurationFactory</a></td>
+        <td><span class="parametername">bigSegmentsConfigurationFactory</span></td>
+        <td><p>a configuration factory object returned by
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreFactory_">BigSegments(IBigSegmentStoreFactory)</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html">ConfigurationBuilder</a></td>
+        <td><p>the same builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+&quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
+documentation about user segments: <a href="https://docs.launchdarkly.com/home/users">https://docs.launchdarkly.com/home/users</a>
+</p>
+<p>
+If you are using this feature, you will normally specify a database implementation that matches how
+the LaunchDarkly Relay Proxy is configured, since the Relay Proxy manages the big segment data.
+</p>
+<p>
+By default, there is no implementation and big segments cannot be evaluated. In this case, any flag
+evaluation that references a big segment will behave as if no users are included in any big
+segments, and the <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a> associated with any such flag evaluation will have
+a <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a> of <a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_NotConfigured">NotConfigured</a>.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory__examples">Examples</h5>
+  <pre><code>    // This example uses the Redis integration
+    var config = Configuration.Builder(sdkKey)
+        .BigSegments(Components.BigSegments(Redis.DataStore().Prefix(&quot;app1&quot;))
+            .UserCacheSize(2000))
+        .Build();</code></pre>
+
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Build*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Build" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Build">Build()</h4>
   <div class="markdown level1 summary"><p>Creates a <a class="xref" href="LaunchDarkly.Sdk.Server.Configuration.html">Configuration</a> based on the properties that have been set on the builder.

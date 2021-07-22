@@ -103,6 +103,35 @@
 </div>
   <h3 id="properties">Properties
   </h3>
+  <a id="LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus_" data-uid="LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus*"></a>
+  <h4 id="LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus" data-uid="LaunchDarkly.Sdk.EvaluationReason.BigSegmentsStatus">BigSegmentsStatus</h4>
+  <div class="markdown level1 summary"><p>Describes the validity of big segment information, if and only if the flag evaluation required querying
+at least one big segment. Otherwise it returns <span class="xref">null</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly BigSegmentsStatus? BigSegmentsStatus { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html">BigSegmentsStatus</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>&quot;Big segments&quot; are a specific kind of user segments. For more information, read the LaunchDarkly
+documentation about user segments: <a href="https://docs.launchdarkly.com/home/users">https://docs.launchdarkly.com/home/users</a></p>
+</div>
   <a id="LaunchDarkly_Sdk_EvaluationReason_ErrorKind_" data-uid="LaunchDarkly.Sdk.EvaluationReason.ErrorKind*"></a>
   <h4 id="LaunchDarkly_Sdk_EvaluationReason_ErrorKind" data-uid="LaunchDarkly.Sdk.EvaluationReason.ErrorKind">ErrorKind</h4>
   <div class="markdown level1 summary"><p>Describes the type of error, if <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_Kind">Kind</a> is <a class="xref" href="LaunchDarkly.Sdk.EvaluationReasonKind.html#LaunchDarkly_Sdk_EvaluationReasonKind_Error">Error</a>, otherwise
@@ -406,7 +435,8 @@ otherwise <span class="xref">null</span>.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a></td>
-        <td></td>
+        <td><p>a reason descriptor</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -552,6 +582,49 @@ otherwise <span class="xref">null</span>.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.ValueType.ToString()</span></div>
+  <a id="LaunchDarkly_Sdk_EvaluationReason_WithBigSegmentsStatus_" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus*"></a>
+  <h4 id="LaunchDarkly_Sdk_EvaluationReason_WithBigSegmentsStatus_System_Nullable_LaunchDarkly_Sdk_BigSegmentsStatus__" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus(System.Nullable{LaunchDarkly.Sdk.BigSegmentsStatus})">WithBigSegmentsStatus(Nullable&lt;BigSegmentsStatus&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a copy of this EvaluationReason with a specific <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a> value added.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EvaluationReason WithBigSegmentsStatus(BigSegmentsStatus? bigSegmentsStatus)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html">BigSegmentsStatus</a>&gt;</td>
+        <td><span class="parametername">bigSegmentsStatus</span></td>
+        <td><p>the new property value</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a></td>
+        <td><p>a reason descriptor</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithInExperiment*"></a>
   <h4 id="LaunchDarkly_Sdk_EvaluationReason_WithInExperiment_System_Boolean_" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithInExperiment(System.Boolean)">WithInExperiment(Boolean)</h4>
   <div class="markdown level1 summary"><p>Returns a new instance with the <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_InExperiment">InExperiment</a> property set to the specified

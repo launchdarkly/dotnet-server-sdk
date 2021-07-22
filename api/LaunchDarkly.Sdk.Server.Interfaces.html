@@ -83,6 +83,12 @@
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html">BasicConfiguration</a></h4>
       <section><p>The most basic properties of the SDK client that are available to all SDK component factories.</p>
 </section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a></h4>
+      <section><p>Encapsulates the SDK&apos;s configuration with regard to big segments.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.html">BigSegmentStoreTypes</a></h4>
+      <section><p>Types that are used by the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html">IBigSegmentStore</a> interface.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatusExtensions.html">DataSourceStatusExtensions</a></h4>
       <section><p>Extension helper methods for use with data source status types.</p>
 </section>
@@ -106,6 +112,13 @@
 </section>
     <h3 id="structs">Structs
   </h3>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html">BigSegmentStoreStatus</a></h4>
+      <section><p>Information about the status of a big segment store, provided by
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html">IBigSegmentStoreStatusProvider</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.html">BigSegmentStoreTypes.StoreMetadata</a></h4>
+      <section><p>Values returned by <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMetadataAsync">GetMetadataAsync()</a>.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html">DataSourceStatus</a></h4>
       <section><p>Information about the data source&apos;s status and about the last status change.</p>
 </section>
@@ -149,6 +162,21 @@ or <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore
 </section>
     <h3 id="interfaces">Interfaces
   </h3>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.IMembership.html">BigSegmentStoreTypes.IMembership</a></h4>
+      <section><p>A query interface returned by <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMembershipAsync_System_String_">GetMembershipAsync(String)</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html">IBigSegmentsConfigurationFactory</a></h4>
+      <section><p>Interface for a factory that creates a <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html">IBigSegmentStore</a></h4>
+      <section><p>Interface for a read-only data store that allows querying of user membership in big segments.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreFactory.html">IBigSegmentStoreFactory</a></h4>
+      <section><p>Interface for a factory that creates some implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html">IBigSegmentStore</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html">IBigSegmentStoreStatusProvider</a></h4>
+      <section><p>An interface for querying the status of a big segment store.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a></h4>
       <section><p>Interface for an object that receives updates to feature flags, user segments, and anything
 else that might come from LaunchDarkly.</p>

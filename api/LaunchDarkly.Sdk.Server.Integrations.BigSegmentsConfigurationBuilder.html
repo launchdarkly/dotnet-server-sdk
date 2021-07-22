@@ -1,0 +1,540 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class BigSegmentsConfigurationBuilder
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class BigSegmentsConfigurationBuilder
+   ">
+    <meta name="generator" content="docfx 2.58.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder" class="text-break">Class BigSegmentsConfigurationBuilder
+  </h1>
+  <div class="markdown level0 summary"><p>Contains methods for configuring the SDK&apos;s big segments behavior.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">BigSegmentsConfigurationBuilder</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html">IBigSegmentsConfigurationFactory</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class BigSegmentsConfigurationBuilder : IBigSegmentsConfigurationFactory</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>
+&quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
+documentation about user segments: <a href="https://docs.launchdarkly.com/home/users">https://docs.launchdarkly.com/home/users</a>
+</p>
+<p>
+If you want to set non-default values for any of these properties, create a builder with
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreFactory_">BigSegments(IBigSegmentStoreFactory)</a>, change its properties with the
+methods of this class, and pass it to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_">BigSegments(IBigSegmentsConfigurationFactory)</a>:
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_examples"><strong>Examples</strong></h5>
+  <pre><code>    // This example uses the Redis integration
+    var config = Configuration.Builder(sdkKey)
+        .BigSegments(Components.BigSegments(Redis.DataStore().Prefix(&quot;app1&quot;))
+            .UserCacheSize(2000))
+        .Build();</code></pre>
+
+  <h3 id="fields">Fields
+  </h3>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultStaleAfter" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStaleAfter">DefaultStaleAfter</h4>
+  <div class="markdown level1 summary"><p>Default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan_">StaleAfter(TimeSpan)</a>: two minutes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan DefaultStaleAfter</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultStatusPollInterval" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultStatusPollInterval">DefaultStatusPollInterval</h4>
+  <div class="markdown level1 summary"><p>Default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_System_TimeSpan_">StatusPollInterval(TimeSpan)</a>: five seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan DefaultStatusPollInterval</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultUserCacheSize" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheSize">DefaultUserCacheSize</h4>
+  <div class="markdown level1 summary"><p>Default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_">UserCacheSize(Int32)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int DefaultUserCacheSize = 1000</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultUserCacheTime" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.DefaultUserCacheTime">DefaultUserCacheTime</h4>
+  <div class="markdown level1 summary"><p>Default value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_">UserCacheTime(TimeSpan)</a>: five seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan DefaultUserCacheTime</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_CreateBigSegmentsConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_CreateBigSegmentsConfiguration_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.CreateBigSegmentsConfiguration(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext)">CreateBigSegmentsConfiguration(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create a configuration instance. Applications do not need
+to call this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigSegmentsConfiguration CreateBigSegmentsConfiguration(LdClientContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>configuration of the current client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a></td>
+        <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a> instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter(System.TimeSpan)">StaleAfter(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum length of time between updates of the big segments data before the data
+is considered out of date.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigSegmentsConfigurationBuilder StaleAfter(TimeSpan staleAfter)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">staleAfter</span></td>
+        <td><p>the time limit for marking the data as stale (any value less
+than or equal to zero will be changed to <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultStaleAfter">DefaultStaleAfter</a>)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html">BigSegmentsConfigurationBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Normally, the LaunchDarkly Relay Proxy updates a timestamp in the big segments store at intervals to
+confirm that it is still in sync with the LaunchDarkly data, even if there have been no changes to the
+data. If the timestamp falls behind the current time by the amount specified in
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan_">StaleAfter(TimeSpan)</a>, the SDK assumes that something is not working correctly in this
+process and that the data may not be accurate.
+</p>
+<p>
+While in a stale state, the SDK will still continue using the last known data, but
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreStatusProvider_Status">Status</a> will return true in its Stale property, and any
+<a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a> generated from a feature flag that references a big segment will have
+a <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a> of <a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_Stale">Stale</a>.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval(System.TimeSpan)">StatusPollInterval(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the interval at which the SDK will poll the big segment store to make sure
+it is available and to determine how long ago it was updated.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigSegmentsConfigurationBuilder StatusPollInterval(TimeSpan statusPollInterval)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">statusPollInterval</span></td>
+        <td><p>the status polling interval (any value less than or
+equal to zero will be changed to <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultStatusPollInterval">DefaultStatusPollInterval</a>)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html">BigSegmentsConfigurationBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_System_TimeSpan__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultStatusPollInterval">DefaultStatusPollInterval</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize(System.Int32)">UserCacheSize(Int32)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum number of users whose big segment state will be cached by the SDK
+at any given time.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigSegmentsConfigurationBuilder UserCacheSize(int userCacheSize)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">userCacheSize</span></td>
+        <td><p>the maximum number of user states to cache</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html">BigSegmentsConfigurationBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+To reduce database traffic, the SDK maintains a least-recently-used cache by user key. When a feature
+flag that references a big segment is evaluated for some user who is not currently in the cache, the
+SDK queries the database for all big segment memberships of that user, and stores them together in a
+single cache entry. If the cache is full, the oldest entry is dropped.
+</p>
+<p>
+A higher value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_">UserCacheSize(Int32)</a> means that database queries for big segments will
+be done less often for recently-referenced users, if the application has many users, at the cost of
+increased memory used by the cache.
+</p>
+<p>
+Cache entries can also expire based on the setting of <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_">UserCacheTime(TimeSpan)</a>.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultUserCacheSize">DefaultUserCacheSize</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime(System.TimeSpan)">UserCacheTime(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum length of time that the big segment state for a user will be cached
+by the SDK.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigSegmentsConfigurationBuilder UserCacheTime(TimeSpan userCacheTime)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">userCacheTime</span></td>
+        <td><p>the cache TTL</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html">BigSegmentsConfigurationBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+See <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_">UserCacheSize(Int32)</a> for more about this cache. A higher value for
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_">UserCacheTime(TimeSpan)</a> means that database queries for the big segment state of any
+given user will be done less often, but that changes to segment membership may not be detected as soon.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_DefaultUserCacheTime">DefaultUserCacheTime</a></div>
+  </div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html">IBigSegmentsConfigurationFactory</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
