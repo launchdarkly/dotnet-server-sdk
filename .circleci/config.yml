@@ -27,6 +27,13 @@ workflows:
           requires:
             - build-all
       - test-netcore-linux:
+          name: .NET 6.0 - Linux
+          docker-image: mcr.microsoft.com/dotnet/sdk:6.0-focal
+          build-target-framework: net5.0
+          test-target-framework: net6.0
+          requires:
+            - build-all
+      - test-netcore-linux:
           # .NET Core 2.0 is not a supported platform, but it is the simplest way to test the
           # .NET Standard 2.0 target-- since a .NET Core 2.1 application would use the .NET
           # Core 2.1 target instead.
