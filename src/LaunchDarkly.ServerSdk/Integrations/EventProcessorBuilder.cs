@@ -98,7 +98,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// Set <c>BaseUri</c> to the base URI of the Relay Proxy instance.
         /// </description></item>
         /// <item><description>
-        /// <description>
         /// You are connecting to a test server or a nonstandard endpoint for the LaunchDarkly service.
         /// </description></item>
         /// </list>
