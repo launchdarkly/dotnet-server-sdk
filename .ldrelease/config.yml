@@ -1,3 +1,5 @@
+version: 2
+
 repo:
   public: dotnet-server-sdk
   private: dotnet-server-sdk-private
@@ -6,26 +8,24 @@ publications:
   - url: https://nuget.org/packages/LaunchDarkly.ServerSdk
     description: NuGet
 
-circleci:
-  windows:
-    context: org-global
+jobs:
+  - docker: {}
+    template:
+      name: dotnet-linux
+    env:
+      # See Releaser docs - this causes the generated documentation to include all public APIs from CommonSdk
+      LD_RELEASE_DOCS_ASSEMBLIES: LaunchDarkly.ServerSdk LaunchDarkly.CommonSdk
+      LD_RELEASE_DOCS_TARGET_FRAMEWORK: netstandard2.0
+      LD_RELEASE_TEST_TARGET_FRAMEWORK: net5.0
 
-template:
-  name: dotnet-windows
-  env:
-    # See Releaser docs - this causes the generated documentation to include all public APIs from CommonSdk
-    LD_RELEASE_DOCS_ASSEMBLIES: LaunchDarkly.ServerSdk LaunchDarkly.CommonSdk
-    LD_RELEASE_DOCS_TARGET_FRAMEWORK: net452
-    LD_RELEASE_TEST_TARGET_FRAMEWORK: net452
-
-releasableBranches:
+branches:
   - name: master
     description: 6.x
   - name: 5.x
 
 documentation:
   title: LaunchDarkly Server-Side SDK for .NET
-  githubPages: true
+  gitHubPages: true
 
 sdk:
   displayName: ".NET"

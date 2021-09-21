@@ -34,15 +34,15 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// implementation can use for persisting this data:
     /// </para>
     /// <list type="number">
-    /// <item>
+    /// <item><description>
     /// Preferably, it should store the version number and the <see cref="SerializedItemDescriptor.Deleted"/>
     /// state separately so that the object does not need to be fully deserialized to read
     /// them. In this case, deleted item placeholders can ignore the value of
     /// <see cref="SerializedItemDescriptor.SerializedItem"/> on writes and can set it to
     /// null on reads. The store should never call <see cref="DataKind.Deserialize(string)"/>
     /// or <see cref="DataKind.Serialize(ItemDescriptor)"/> in this case.
-    /// </item>
-    /// <item>
+    /// </description></item>
+    /// <item><description>
     /// If that isn't possible, then the store should simply persist the exact string from
     /// <see cref="SerializedItemDescriptor.SerializedItem"/> on writes, and return the persisted
     /// string on reads -- setting <see cref="SerializedItemDescriptor.Version"/> to zero and
@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// provide the SDK with enough information to infer the version and the deleted state.
     /// On updates, the store will have to call <see cref="DataKind.Deserialize(string)"/> in
     /// order to inspect the version number of the existing item if any.
-    /// </item>
+    /// </description></item>
     /// </list>
     /// <para>
     /// Error handling is defined as follows: if any data store operation encounters a database
@@ -91,17 +91,17 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// a <see cref="SerializedItemDescriptor"/> as follows:
         /// </para>
         /// <list type="number">
-        /// <item>
+        /// <item><description>
         /// If the version number and deletion state can be determined without fully deserializing
         /// the item, then the store should set those properties in the <see cref="SerializedItemDescriptor"/>
         /// (and can set <see cref="SerializedItemDescriptor.SerializedItem"/> to null for deleted items).
-        /// </item>
-        /// <item>
+        /// </description></item>
+        /// <item><description>
         /// Otherwise, it should simply set <see cref="SerializedItemDescriptor.SerializedItem"/> to
         /// the exact string that was persisted, and can leave the other properties as zero/false. The
         /// SDK will inspect the properties of the item after deserializing it to fill in the rest of
         /// the information.
-        /// </item>
+        /// </description></item>
         /// </list>
         /// </remarks>
         /// <param name="kind">specifies which collection to use</param>
