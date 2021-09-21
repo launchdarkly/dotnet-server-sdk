@@ -93,17 +93,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <remarks>
         /// You will only need to change this value in the following cases:
         /// <list type="bullet">
-        /// <item>
-        /// <description>
+        /// <item><description>
         /// You are using the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">Relay Proxy</a>.
         /// Set <c>BaseUri</c> to the base URI of the Relay Proxy instance.
-        /// </description>
-        /// </item>
-        /// <item>
-        /// <description>
+        /// </description></item>
+        /// <item><description>
         /// You are connecting to a test server or a nonstandard endpoint for the LaunchDarkly service.
-        /// </description>
-        /// </item>
+        /// </description></item>
         /// </list>
         /// </remarks>
         /// <param name="baseUri">the base URI of the events service; null to use the default</param>
