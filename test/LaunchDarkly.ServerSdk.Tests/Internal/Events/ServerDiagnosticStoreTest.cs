@@ -99,7 +99,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             LdValue streamInit = streamInits.Get(0);
             Assert.Equal(UnixMillisecondTime.FromDateTime(timestamp).Value, streamInit.Get("timestamp").AsLong);
             Assert.Equal(200, streamInit.Get("durationMillis").AsInt);
-            Assert.Equal(true, streamInit.Get("failed").AsBool);
+            Assert.True(streamInit.Get("failed").AsBool);
         }
 
         [Fact]

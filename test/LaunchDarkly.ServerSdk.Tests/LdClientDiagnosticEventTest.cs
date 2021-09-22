@@ -6,10 +6,13 @@ using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.TestHttpUtils;
+using static LaunchDarkly.TestHelpers.JsonAssertions;
+using static LaunchDarkly.TestHelpers.JsonTestValue;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -18,12 +21,12 @@ namespace LaunchDarkly.Sdk.Server
         private const string sdkKey = "SDK_KEY";
         private const string testWrapperName = "wrapper-name";
         private const string testWrapperVersion = "1.2.3";
-        private static readonly LdValue expectedSdk = LdValue.BuildObject()
+        private static readonly JsonTestValue expectedSdk = JsonOf(LdValue.BuildObject()
             .Add("name", "dotnet-server-sdk")
             .Add("version", AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
             .Add("wrapperName", testWrapperName)
             .Add("wrapperVersion", testWrapperVersion)
-            .Build();
+            .Build().ToJsonString());
         internal static readonly TimeSpan testStartWaitTime = TimeSpan.FromMilliseconds(1);
 
         private TestEventSender testEventSender = new TestEventSender();
@@ -63,26 +66,23 @@ namespace LaunchDarkly.Sdk.Server
                 Assert.Equal(EventDataKind.DiagnosticEvent, payload.Kind);
                 Assert.Equal(1, payload.EventCount);
 
-                var data = LdValue.Parse(payload.Data);
-                Assert.Equal("diagnostic-init", data.Get("kind").AsString);
-                AssertHelpers.JsonEqual(ExpectedPlatform(), data.Get("platform"));
-                AssertHelpers.JsonEqual(expectedSdk, data.Get("sdk"));
-                Assert.Equal("DK_KEY", data.Get("id").Get("sdkKeySuffix").AsString);
+                var data = JsonOf(payload.Data);
+                AssertJsonEqual(JsonFromValue("diagnostic-init"), data.Property("kind"));
+                AssertJsonEqual(ExpectedPlatform(), data.Property("platform"));
+                AssertJsonEqual(expectedSdk, data.Property("sdk"));
+                AssertJsonEqual(JsonFromValue("DK_KEY"), data.Property("id").Property("sdkKeySuffix"));
 
-                var timestamp = data.Get("creationDate").AsLong;
-                Assert.NotEqual(0, timestamp);
+                data.RequiredProperty("creationDate");
             }
         }
 
-        private static LdValue ExpectedPlatform()
-        {
-            return LdValue.BuildObject().Add("name", "dotnet")
+        private static JsonTestValue ExpectedPlatform() =>
+            JsonOf(LdValue.BuildObject().Add("name", "dotnet")
                 .Add("dotNetTargetFramework", ServerDiagnosticStore.GetDotNetTargetFramework())
                 .Add("osName", ServerDiagnosticStore.GetOSName())
                 .Add("osVersion", ServerDiagnosticStore.GetOSVersion())
                 .Add("osArch", ServerDiagnosticStore.GetOSArch())
-                .Build();
-        }
+                .Build().ToJsonString());
 
         [Fact]
         public void DiagnosticPeriodicEventsAreSent()
@@ -469,10 +469,10 @@ namespace LaunchDarkly.Sdk.Server
                 Assert.Equal(EventDataKind.DiagnosticEvent, payload.Kind);
                 Assert.Equal(1, payload.EventCount);
 
-                var data = LdValue.Parse(payload.Data);
-                Assert.Equal("diagnostic-init", data.Get("kind").AsString);
+                var data = JsonOf(payload.Data);
+                AssertJsonEqual(JsonFromValue("diagnostic-init"), data.Property("kind"));
 
-                AssertHelpers.JsonEqual(expected.Build(), data.Get("configuration"));
+                AssertJsonEqual(JsonOf(expected.Build().ToJsonString()), data.Property("configuration"));
             }
         }
 

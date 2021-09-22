@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using LaunchDarkly.Sdk.Json;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server
@@ -85,7 +86,7 @@ namespace LaunchDarkly.Sdk.Server
                 ""$valid"":true
             }";
             var actualString = LdJsonSerialization.SerializeObject(state);
-            AssertHelpers.JsonEqual(expectedString, actualString);
+            JsonAssertions.AssertJsonEqual(expectedString, actualString);
         }
 
         [Fact]

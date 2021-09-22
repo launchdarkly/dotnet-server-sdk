@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Identify(user);
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var ie = Assert.IsType<IdentifyEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ie.User.Key);
         }
@@ -40,7 +40,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Identify(null);
 
-            Assert.Equal(0, eventSink.Events.Count);
+            Assert.Empty(eventSink.Events);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Identify(User.WithKey(null));
 
-            Assert.Equal(0, eventSink.Events.Count);
+            Assert.Empty(eventSink.Events);
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Identify(User.WithKey(""));
 
-            Assert.Equal(0, eventSink.Events.Count);
+            Assert.Empty(eventSink.Events);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Track("eventkey", user);
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.EventKey);
@@ -78,7 +78,7 @@ namespace LaunchDarkly.Sdk.Server
             var data = LdValue.BuildObject().Add("thing", "stuff").Build();
             client.Track("eventkey", user, data);
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.EventKey);
@@ -91,7 +91,7 @@ namespace LaunchDarkly.Sdk.Server
             var data = LdValue.BuildObject().Add("thing", "stuff").Build();
             client.Track("eventkey", user, data, 1.5);
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.User.Key);
             Assert.Equal("eventkey", ce.EventKey);
@@ -104,7 +104,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Track("eventkey", null);
 
-            Assert.Equal(0, eventSink.Events.Count);
+            Assert.Empty(eventSink.Events);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Track("eventkey", User.WithKey(null));
 
-            Assert.Equal(0, eventSink.Events.Count);
+            Assert.Empty(eventSink.Events);
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Track("eventkey", User.WithKey(""));
 
-            Assert.Equal(0, eventSink.Events.Count);
+            Assert.Empty(eventSink.Events);
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace LaunchDarkly.Sdk.Server
             testData.UsePreconfiguredFlag(flag);
 
             client.BoolVariation("key", user, false);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(true), LdValue.Of(false), null);
         }
 
@@ -138,7 +138,7 @@ namespace LaunchDarkly.Sdk.Server
         public void BoolVariationSendsEventForUnknownFlag()
         {
             client.BoolVariation("key", user, false);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of(false), null);
         }
 
@@ -149,7 +149,7 @@ namespace LaunchDarkly.Sdk.Server
             testData.UsePreconfiguredFlag(flag);
 
             client.IntVariation("key", user, 1);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(2), LdValue.Of(1), null);
         }
 
@@ -157,7 +157,7 @@ namespace LaunchDarkly.Sdk.Server
         public void IntVariationSendsEventForUnknownFlag()
         {
             client.IntVariation("key", user, 1);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of(1), null);
         }
 
@@ -168,7 +168,7 @@ namespace LaunchDarkly.Sdk.Server
             testData.UsePreconfiguredFlag(flag);
 
             client.FloatVariation("key", user, 1.0f);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(2.5f), LdValue.Of(1.0f), null);
         }
 
@@ -176,7 +176,7 @@ namespace LaunchDarkly.Sdk.Server
         public void FloatVariationSendsEventForUnknownFlag()
         {
             client.FloatVariation("key", user, 1.0f);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of(1.0f), null);
         }
 
@@ -187,7 +187,7 @@ namespace LaunchDarkly.Sdk.Server
             testData.UsePreconfiguredFlag(flag);
 
             client.StringVariation("key", user, "a");
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of("b"), LdValue.Of("a"), null);
         }
 
@@ -195,7 +195,7 @@ namespace LaunchDarkly.Sdk.Server
         public void StringVariationSendsEventForUnknownFlag()
         {
             client.StringVariation("key", user, "a");
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of("a"), null);
         }
 
@@ -208,7 +208,7 @@ namespace LaunchDarkly.Sdk.Server
             var defaultVal = LdValue.Of(42);
 
             client.JsonVariation("key", user, defaultVal);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], flag, data, defaultVal, null);
         }
 
@@ -218,7 +218,7 @@ namespace LaunchDarkly.Sdk.Server
             var defaultVal = LdValue.Of(42);
 
             client.JsonVariation("key", user, defaultVal);
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckUnknownFeatureEvent(eventSink.Events[0], "key", defaultVal, null);
         }
         
@@ -240,7 +240,7 @@ namespace LaunchDarkly.Sdk.Server
             // Note, we did not call StringVariationDetail and the flag is not tracked, but we should still get
             // tracking and a reason, because the rule-level trackEvents flag is on for the matched rule.
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.True(e.TrackEvents);
             Assert.Equal(EvaluationReason.RuleMatchReason(0, "rule-id"), e.Reason);
@@ -265,7 +265,7 @@ namespace LaunchDarkly.Sdk.Server
 
             // It matched rule1, which has trackEvents: false, so we don't get the override behavior
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.False(e.TrackEvents);
             Assert.Null(e.Reason);
@@ -288,7 +288,7 @@ namespace LaunchDarkly.Sdk.Server
             // Note, we did not call stringVariationDetail and the flag is not tracked, but we should still get
             // tracking and a reason, because trackEventsFallthrough is on and the evaluation fell through.
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.True(e.TrackEvents);
             Assert.Equal(EvaluationReason.FallthroughReason, e.Reason);
@@ -307,7 +307,7 @@ namespace LaunchDarkly.Sdk.Server
 
             client.StringVariation("flag", user, "default");
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
             Assert.False(e.TrackEvents);
             Assert.Null(e.Reason);
@@ -355,7 +355,7 @@ namespace LaunchDarkly.Sdk.Server
             var result = client.StringVariation(flag.Key, user, defaultVal);
             Assert.Equal(defaultVal, result);
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(defaultVal), LdValue.Of(defaultVal), null);
         }
 
@@ -374,7 +374,7 @@ namespace LaunchDarkly.Sdk.Server
 
             client.StringVariation("feature0", user, "default");
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], f0, LdValue.Of("off"), LdValue.Of("default"), null);
         }
 
@@ -383,7 +383,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             client.Alias(User.WithKey("current"), User.Builder("previous").Anonymous(true).Build());
 
-            Assert.Equal(1, eventSink.Events.Count);
+            Assert.Single(eventSink.Events);
             var e = Assert.IsType<AliasEvent>(eventSink.Events[0]);
             Assert.Equal("current", e.CurrentKey);
             Assert.Equal(ContextKind.User, e.CurrentKind);

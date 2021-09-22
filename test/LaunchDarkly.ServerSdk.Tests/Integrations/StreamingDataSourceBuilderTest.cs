@@ -1,12 +1,13 @@
 ﻿using System;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     public class StreamingDataSourceBuilderTest
     {
-        private readonly BuilderInternalTestUtil<StreamingDataSourceBuilder> _tester =
-            BuilderTestUtil.For(Components.StreamingDataSource);
+        private readonly BuilderBehavior.InternalStateTester<StreamingDataSourceBuilder> _tester =
+            BuilderBehavior.For(Components.StreamingDataSource);
 
         [Fact]
         public void BaseUri()
