@@ -19,8 +19,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <list type="bullet">
     /// <item><description> Log messages are written to standard output. To change this, use a log adapter as
     /// described in <see cref="Adapter(ILogAdapter)"/> and <see cref="Components.Logging(ILogAdapter)"/>. </description></item>
-    /// <item><description> The lowest enabled log level is <see cref="LogLevel.Info"/>, so <see cref="LogLevel.Debug"/>
-    /// messages are not shown. To change this, use <see cref="Level(LogLevel)"/>. </description></item>
+    /// <item><description> The lowest enabled log level is <see cref="LaunchDarkly.Logging.LogLevel.Info"/>,
+    /// so <see cref="LaunchDarkly.Logging.LogLevel.Debug"/> messages are not shown. To change this, use
+    /// <see cref="Level(LaunchDarkly.Logging.LogLevel)"/>. </description></item>
     /// <item><description> The base logger name is <c>LaunchDarkly.Sdk</c>. See <see cref="BaseLoggerName(string)"/>
     /// for more about logger names and how to change the name. </description></item>
     /// </list>
@@ -143,7 +144,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <para>
         /// This adds a log level filter that is applied regardless of what implementation of logging is
         /// being used, so that log messages at lower levels are suppressed. For instance, setting the
-        /// minimum level to <see cref="LogLevel.Info"/> means that <c>Debug</c>-level output is disabled.
+        /// minimum level to <see cref="LaunchDarkly.Logging.LogLevel.Info"/> means that <c>Debug</c>-level output is disabled.
         /// External logging frameworks may also have their own mechanisms for setting a minimum log level.
         /// </para>
         /// <para>
