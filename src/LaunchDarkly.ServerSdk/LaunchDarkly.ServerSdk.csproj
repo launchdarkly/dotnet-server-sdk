@@ -32,6 +32,9 @@
          build products, which is necessary for our documentation generation logic;
          this doesn't affect what goes into the NuGet package. -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    
+    <!-- fail if XML comments are missing or invalid -->
+    <WarningsAsErrors>1570,1571,1572,1573,1574,1580,1581,1584,1591,1710,1711,1712</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
