@@ -26,5 +26,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// This property is not meaningful to application code. It is used internally.
         /// </remarks>
         public bool RefreshNeeded { get; set; }
+
+        /// <inheritdoc/>
+        public override string ToString() =>
+            string.Format("DataStoreStatus({0},{1})", Available, RefreshNeeded);
     }
 }

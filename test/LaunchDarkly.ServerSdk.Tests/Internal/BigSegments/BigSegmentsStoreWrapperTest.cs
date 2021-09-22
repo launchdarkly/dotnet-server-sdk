@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Moq;
 using Xunit;
@@ -24,7 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             _storeFactory = storeFactoryMock.Object;
             storeFactoryMock.Setup(f => f.CreateBigSegmentStore(basicContext)).Returns(_store);
 
-            _taskExecutor = new TaskExecutor(testLogger);
+            _taskExecutor = new TaskExecutor(this, testLogger);
         }
 
         private void SetStoreHasNoMetadata() =>
