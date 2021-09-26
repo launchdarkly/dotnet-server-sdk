@@ -10,7 +10,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// The big segment store is the component that receives information about big segments, normally
     /// from a database populated by the LaunchDarkly Relay Proxy. "Big segments" are a specific type
     /// of user segments. For more information, read the LaunchDarkly documentation about user
-    /// segments: https://docs.launchdarkly.com/home/users
+    /// segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>
     /// <para>
     /// An implementation of this interface is returned by <see cref="LdClient.BigSegmentStoreStatusProvider"/>.

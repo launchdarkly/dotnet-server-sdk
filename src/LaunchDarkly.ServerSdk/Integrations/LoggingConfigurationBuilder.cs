@@ -108,7 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// For instance, in .NET Core, specify <c>Logs.CoreLogging</c> to use the standard .NET Core logging framework.
         /// </para>
         /// <para>
-        /// For more about logging adapters, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// For more about logging adapters, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
         /// reference guide</a>, the <a href="https://launchdarkly.github.io/dotnet-logging/html/N_LaunchDarkly_Logging.htm">API
         /// documentation</a> for <c>LaunchDarkly.Logging</c>, and the
         /// <a href="https://github.com/launchdarkly/dotnet-logging-adapters">third-party adapters</a> that
