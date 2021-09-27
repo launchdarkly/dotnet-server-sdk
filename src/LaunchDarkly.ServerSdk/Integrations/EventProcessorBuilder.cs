@@ -94,7 +94,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// You will only need to change this value in the following cases:
         /// <list type="bullet">
         /// <item><description>
-        /// You are using the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">Relay Proxy</a>.
+        /// You are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>.
         /// Set <c>BaseUri</c> to the base URI of the Relay Proxy instance.
         /// </description></item>
         /// <item><description>

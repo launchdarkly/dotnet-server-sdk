@@ -84,7 +84,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <remarks>
         /// <para>
         /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
-        /// documentation about user segments: https://docs.launchdarkly.com/home/users
+        /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
         /// </para>
         /// <para>
         /// If you are using this feature, you will normally specify a database implementation that matches how
@@ -226,7 +226,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <see cref="Logging(ILogAdapter)"/> instead.
         /// </para>
         /// <para>
-        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
         /// SDK reference guide</a>.
         /// </para>
         /// </remarks>
@@ -256,7 +256,7 @@ namespace LaunchDarkly.Sdk.Server
         /// only want to specify the basic logging destination, and do not need to set other log properties.
         /// </para>
         /// <para>
-        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
         /// SDK reference guide</a>.
         /// </para>
         /// </remarks>
