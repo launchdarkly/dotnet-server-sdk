@@ -1,0 +1,20 @@
+# This file allows us to override the display name and/or destination for any linked symbol.
+# The langword_* identifiers are here because of a DocFX bug (https://github.com/dotnet/docfx/issues/7625)
+# which seems to sometimes cause these built-in language keywords not to be resolved.
+references:
+- uid: langword_csharp_bool
+  name: "bool"
+- uid: langword_csharp_double
+  name: "double"
+- uid: langword_csharp_false
+  name: "false"
+- uid: langword_csharp_float
+  name: "float"
+- uid: langword_csharp_int
+  name: "int"
+- uid: langword_csharp_null
+  name: "null"
+- uid: langword_csharp_string
+  name: "string"
+- uid: langword_csharp_true
+  name: "true"
