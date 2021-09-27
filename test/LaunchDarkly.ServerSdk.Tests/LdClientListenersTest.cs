@@ -1,6 +1,7 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.TestHelpers;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -294,7 +295,7 @@ namespace LaunchDarkly.Sdk.Server
             using (var client = new LdClient(config))
             {
                 var receivedSender = new EventSink<object>();
-                client.FlagTracker.FlagChanged += (s, e) => receivedSender.Add(s, s);
+                client.FlagTracker.FlagChanged += (s, e) => receivedSender.Enqueue(s);
 
                 testData.Update(testData.Flag(flagKey).On(false));
 

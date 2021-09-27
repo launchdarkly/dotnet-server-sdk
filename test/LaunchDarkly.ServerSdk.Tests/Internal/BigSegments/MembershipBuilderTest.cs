@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using LaunchDarkly.TestHelpers;
+using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
 
@@ -19,7 +20,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             Assert.Same(m0, m1);
             Assert.Same(m0, m2);
-            AssertHelpers.FullyEqual(m0, m1);
+            TypeBehavior.AssertEqual(m0, m1);
 
             Assert.Null(m0.CheckMembership("arbitrary"));
         }
@@ -31,14 +32,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var m1 = NewMembershipFromSegmentRefs(new string[] { "key1" }, null);
 
             Assert.NotSame(m0, m1);
-            AssertHelpers.FullyEqual(m0, m1);
+            TypeBehavior.AssertEqual(m0, m1);
 
             Assert.True(m0.CheckMembership("key1"));
             Assert.Null(m0.CheckMembership("key2"));
 
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, new string[] { "key1" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(new string[] { "key2" }, null));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, new string[] { "key1" }));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(new string[] { "key2" }, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, null));
         }
 
         [Fact]
@@ -48,18 +49,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var m1 = NewMembershipFromSegmentRefs(new string[] { "key2", "key1" }, null);
 
             Assert.NotSame(m0, m1);
-            AssertHelpers.FullyEqual(m0, m1);
+            TypeBehavior.AssertEqual(m0, m1);
 
             Assert.True(m0.CheckMembership("key1"));
             Assert.True(m0.CheckMembership("key2"));
             Assert.Null(m0.CheckMembership("key3"));
 
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(
                 new string[] { "key1", "key2" }, new string[] { "key3" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(
                 new string[] { "key1", "key3" }, null));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(new string[] { "key1" }, null));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(new string[] { "key1" }, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, null));
         }
 
         [Fact]
@@ -69,14 +70,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var m1 = NewMembershipFromSegmentRefs(null, new string[] { "key1" });
 
             Assert.NotSame(m0, m1);
-            AssertHelpers.FullyEqual(m0, m1);
+            TypeBehavior.AssertEqual(m0, m1);
 
             Assert.False(m0.CheckMembership("key1"));
             Assert.Null(m0.CheckMembership("key2"));
 
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(new string[] { "key1" }, null));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, new string[] { "key2" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(new string[] { "key1" }, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, new string[] { "key2" }));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, null));
         }
 
         [Fact]
@@ -86,18 +87,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var m1 = NewMembershipFromSegmentRefs(null, new string[] { "key2", "key1" });
 
             Assert.NotSame(m0, m1);
-            AssertHelpers.FullyEqual(m0, m1);
+            TypeBehavior.AssertEqual(m0, m1);
 
             Assert.False(m0.CheckMembership("key1"));
             Assert.False(m0.CheckMembership("key2"));
             Assert.Null(m0.CheckMembership("key3"));
 
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(
                 new string[] { "key3" }, new string[] { "key1", "key2" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(
                 null, new string[] { "key1", "key3" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, new string[] { "key1" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, new string[] { "key1" }));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, null));
         }
 
         [Fact]
@@ -114,7 +115,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
                 new string[] { "key3", "key2" }
                 );
             Assert.NotSame(m0, m1);
-            AssertHelpers.FullyEqual(m0, m0);
+            TypeBehavior.AssertEqual(m0, m0);
 
             Assert.True(m0.CheckMembership("key1"));
             Assert.True(m0.CheckMembership("key2"));
@@ -122,12 +123,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             Assert.Null(m0.CheckMembership("key4"));
 
 
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(
                 new string[] { "key1", "key2" }, new string[] { "key2", "key3", "key4" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(
                 new string[] { "key1", "key2", "key3" }, new string[] { "key2", "key3" }));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(new string[] { "key1" }, null));
-            AssertHelpers.FullyUnequal(m0, NewMembershipFromSegmentRefs(null, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(new string[] { "key1" }, null));
+            TypeBehavior.AssertNotEqual(m0, NewMembershipFromSegmentRefs(null, null));
         }
     }
 }

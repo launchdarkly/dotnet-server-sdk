@@ -4,6 +4,7 @@ using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.TestHelpers.JsonAssertions;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -23,20 +24,20 @@ namespace LaunchDarkly.Sdk.Server
         public void SerializeAndDeserializeFlag()
         {
             var expectedJson = FlagWithAllPropertiesJson();
-            var flag = MustParseFlag(expectedJson.ToJsonString());
+            var flag = MustParseFlag(expectedJson);
             AssertFlagHasAllProperties(flag);
             var s = DataModel.Features.Serialize(new ItemDescriptor(flag.Version, flag));
-            AssertHelpers.JsonEqual(expectedJson, LdValue.Parse(s));
+            AssertJsonEqual(expectedJson, s);
         }
 
         [Fact]
         public void SerializeAndDeserializeSegment()
         {
             var expectedJson = SegmentWithAllPropertiesJson();
-            var segment = MustParseSegment(expectedJson.ToJsonString());
+            var segment = MustParseSegment(expectedJson);
             AssertSegmentHasAllProperties(segment);
             var s = DataModel.Segments.Serialize(new ItemDescriptor(segment.Version, segment));
-            AssertHelpers.JsonEqual(expectedJson, LdValue.Parse(s));
+            AssertJsonEqual(expectedJson, s);
         }
 
         [Fact]
@@ -46,13 +47,13 @@ namespace LaunchDarkly.Sdk.Server
             // of our existing database integrations aren't able to store the version number separately from
             // the JSON data.
             var deletedItem = ItemDescriptor.Deleted(2);
-            var expected = LdValue.BuildObject().Add("version", 2).Add("deleted", true).Build();
+            var expected = LdValue.BuildObject().Add("version", 2).Add("deleted", true).Build().ToJsonString();
 
             var s1 = DataModel.Features.Serialize(deletedItem);
-            AssertHelpers.JsonEqual(expected, LdValue.Parse(s1));
+            AssertJsonEqual(expected, s1);
 
             var s2 = DataModel.Segments.Serialize(deletedItem);
-            AssertHelpers.JsonEqual(expected, LdValue.Parse(s2));                
+            AssertJsonEqual(expected, s2);
         }
 
         [Fact]
@@ -166,9 +167,7 @@ namespace LaunchDarkly.Sdk.Server
             return segment;
         }
 
-        private LdValue FlagWithAllPropertiesJson()
-        {
-            return LdValue.Parse(@"{
+        private string FlagWithAllPropertiesJson() => @"{
     ""key"": ""flag-key"",
     ""version"": 99,
     ""deleted"": false,
@@ -216,8 +215,7 @@ namespace LaunchDarkly.Sdk.Server
     ""trackEvents"": true,
     ""trackEventsFallthrough"": true,
     ""debugEventsUntilDate"": 1000
-}");
-        }
+}";
 
         private void AssertFlagHasAllProperties(FeatureFlag flag)
         {
@@ -278,10 +276,9 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.Equal(UserAttribute.Email, r.Rollout.Value.BucketBy);
                     Assert.Equal(RolloutKind.Experiment, r.Rollout.Value.Kind);
                     Assert.Equal(123, r.Rollout.Value.Seed);
-                    Assert.Collection(r.Clauses);
+                    Assert.Empty(r.Clauses);
                 });
 
-            Assert.NotNull(flag.Fallthrough);
             Assert.Equal(1, flag.Fallthrough.Variation);
             Assert.Null(flag.Fallthrough.Rollout);
             Assert.Equal(2, flag.OffVariation);
@@ -292,9 +289,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal(UnixMillisecondTime.OfMillis(1000), flag.DebugEventsUntilDate);
         }
 
-        private LdValue SegmentWithAllPropertiesJson()
-        {
-            return LdValue.Parse(@"{
+        private string SegmentWithAllPropertiesJson() => @"{
     ""key"": ""segment-key"",
     ""version"": 99,
     ""deleted"": false,
@@ -320,8 +315,7 @@ namespace LaunchDarkly.Sdk.Server
     ],
     ""unbounded"": true,
     ""generation"": 51
-}");
-        }
+}";
 
         private void AssertSegmentHasAllProperties(Segment segment)
         {
@@ -349,7 +343,7 @@ namespace LaunchDarkly.Sdk.Server
                 {
                     Assert.Null(r.Weight);
                     Assert.Null(r.BucketBy);
-                    Assert.Collection(r.Clauses);
+                    Assert.Empty(r.Clauses);
                 });
 
             Assert.True(segment.Unbounded);

@@ -77,7 +77,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         {
             InitStore();
             var result = store.GetAll(OtherDataKind);
-            Assert.Equal(0, result.Items.Count());
+            Assert.Empty(result.Items);
         }
 
         [Fact]

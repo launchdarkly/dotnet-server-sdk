@@ -2,14 +2,15 @@
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server
 {
     public class ConfigurationTest
     {
-        private readonly BuilderTestUtil<ConfigurationBuilder, Configuration> _tester =
-            BuilderTestUtil.For(() => Configuration.Builder(sdkKey), b => b.Build())
+        private readonly BuilderBehavior.BuildTester<ConfigurationBuilder, Configuration> _tester =
+            BuilderBehavior.For(() => Configuration.Builder(sdkKey), b => b.Build())
                 .WithCopyConstructor(c => Configuration.Builder(c));
 
         const string sdkKey = "any-key";
