@@ -132,11 +132,11 @@ namespace LaunchDarkly.Sdk.Server
             ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
                 new ServerDiagnosticStore(_configuration, basicConfig, httpConfig);
 
-            var taskExecutor = new TaskExecutor(_log);
+            var taskExecutor = new TaskExecutor(this, _log);
 
             var clientContext = new LdClientContext(basicConfig, httpConfig, diagnosticStore, taskExecutor);
 
-            var dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor);
+            var dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor, _log.SubLogger(LogNames.DataStoreSubLog));
             _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore)
                 .CreateDataStore(clientContext, dataStoreUpdates);
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, dataStoreUpdates);

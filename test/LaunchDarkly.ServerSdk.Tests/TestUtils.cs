@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -71,8 +71,8 @@ namespace LaunchDarkly.Sdk.Server
         internal static DataSourceUpdatesImpl BasicDataSourceUpdates(IDataStore dataStore, Logger logger) =>
             new DataSourceUpdatesImpl(
                 dataStore,
-                new DataStoreStatusProviderImpl(dataStore, new DataStoreUpdatesImpl(new TaskExecutor(logger))),
-                new TaskExecutor(logger),
+                new DataStoreStatusProviderImpl(dataStore, new DataStoreUpdatesImpl(new TaskExecutor(null, logger), logger)),
+                new TaskExecutor(null, logger),
                 logger,
                 null
                 );

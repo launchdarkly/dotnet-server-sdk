@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 using Xunit.Abstractions;
@@ -87,8 +88,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         protected PersistentStoreWrapperTestBase(T core, ITestOutputHelper testOutput) : base(testOutput)
         {
             _core = core;
-            _taskExecutor = new TaskExecutor(testLogger);
-            _dataStoreUpdates = new DataStoreUpdatesImpl(_taskExecutor);
+            _taskExecutor = new TaskExecutor(this, testLogger);
+            _dataStoreUpdates = new DataStoreUpdatesImpl(_taskExecutor, testLogger);
         }
 
         internal abstract PersistentStoreWrapper MakeWrapper(TestParams testParams);

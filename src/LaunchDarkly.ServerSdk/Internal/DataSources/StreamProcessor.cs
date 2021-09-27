@@ -6,6 +6,7 @@ using LaunchDarkly.EventSource;
 using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Concurrent;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;

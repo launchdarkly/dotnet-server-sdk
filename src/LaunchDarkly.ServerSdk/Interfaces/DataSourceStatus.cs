@@ -47,6 +47,10 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         public ErrorInfo? LastError { get; set; }
 
+        /// <inheritdoc/>
+        public override string ToString() =>
+            string.Format("DataSourceStatus({0},{1},{2})", State, StateSince, LastError);
+
         /// <summary>
         /// A description of an error condition that the data source encountered.
         /// </summary>

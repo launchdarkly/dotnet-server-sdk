@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Concurrent;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 
@@ -27,13 +28,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly IDataStore _store;
         private readonly IDataStoreStatusProvider _dataStoreStatusProvider;
         private readonly TaskExecutor _taskExecutor;
+        private readonly StateMonitor<DataSourceStatus, StateAndError> _status;
         private readonly Logger _log;
         private readonly DependencyTracker _dependencyTracker;
         private readonly DataSourceOutageTracker _outageTracker;
-        private readonly MultiNotifier _stateChangedSignal = new MultiNotifier();
-        private readonly object _stateLock = new object();
 
-        private DataSourceStatus _currentStatus;
         private volatile bool _lastStoreUpdateFailed = false;
 
         #endregion
@@ -46,16 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         #region Internal properties
 
-        internal DataSourceStatus LastStatus
-        {
-            get
-            {
-                lock (_stateLock)
-                {
-                    return _currentStatus;
-                }
-            }
-        }
+        internal DataSourceStatus LastStatus => _status.Current;
 
         #endregion
 
@@ -87,12 +77,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _outageTracker = outageLoggingTimeout.HasValue ?
                 new DataSourceOutageTracker(_log, outageLoggingTimeout.Value) : null;
 
-            _currentStatus = new DataSourceStatus
+            var initialStatus = new DataSourceStatus
             {
                 State = DataSourceState.Initializing,
                 StateSince = DateTime.Now,
                 LastError = null
             };
+            _status = new StateMonitor<DataSourceStatus, StateAndError>(initialStatus, MaybeUpdateStatus, _log);            
         }
 
         #endregion
@@ -169,37 +160,43 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             return true;
         }
 
+        private struct StateAndError
+        {
+            public DataSourceState State { get; set; }
+            public DataSourceStatus.ErrorInfo? Error { get; set; }
+        }
+
+        private static DataSourceStatus? MaybeUpdateStatus(
+            DataSourceStatus oldStatus,
+            StateAndError update
+            )
+        {
+            var newState =
+                (update.State == DataSourceState.Interrupted && oldStatus.State == DataSourceState.Initializing)
+                ? DataSourceState.Initializing  // see comment on IDataSourceUpdates.UpdateStatus
+                : update.State;
+
+            if (newState == oldStatus.State && !update.Error.HasValue)
+            {
+                return null;
+            }
+            return new DataSourceStatus
+                {
+                    State = newState,
+                    StateSince = newState == oldStatus.State ? oldStatus.StateSince : DateTime.Now,
+                    LastError = update.Error ?? oldStatus.LastError
+                };
+        }
+
         public void UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)
         {
-            DataSourceStatus? statusToBroadcast = null;
+            var updated = _status.Update(new StateAndError { State = newState, Error = newError },
+                out var newStatus);
 
-            lock (_stateLock)
+            if (updated)
             {
-                var oldStatus = _currentStatus;
-
-                if (newState == DataSourceState.Interrupted && oldStatus.State == DataSourceState.Initializing)
-                {
-                    newState = DataSourceState.Initializing; // see comment on IDataSourceUpdates.UpdateStatus
-                }
-
-                if (newState != oldStatus.State || newError.HasValue)
-                {
-                    _currentStatus = new DataSourceStatus
-                    {
-                        State = newState,
-                        StateSince = newState == oldStatus.State ? oldStatus.StateSince : DateTime.Now,
-                        LastError = newError.HasValue ? newError : oldStatus.LastError
-                    };
-                    statusToBroadcast = _currentStatus;
-                    _stateChangedSignal.NotifyAll();
-                }
-            }
-
-            _outageTracker?.TrackDataSourceState(newState, newError);
-
-            if (statusToBroadcast.HasValue)
-            {
-                _taskExecutor.ScheduleEvent(this, statusToBroadcast.Value, StatusChanged);
+                _outageTracker?.TrackDataSourceState(newStatus.State, newError);
+                _taskExecutor.ScheduleEvent(newStatus, StatusChanged);
             }
         }
 
@@ -209,7 +206,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         public void Dispose()
         {
-            _stateChangedSignal.Dispose();
+            _status.Dispose();
         }
 
         #endregion
@@ -218,45 +215,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         internal async Task<bool> WaitForAsync(DataSourceState desiredState, TimeSpan timeout)
         {
-            var deadline = DateTime.Now.Add(timeout);
-            bool hasTimeout = timeout.CompareTo(TimeSpan.Zero) > 0;
-
-            while (true)
-            {
-                MultiNotifierToken stateAwaiter;
-                TimeSpan timeToWait;
-                lock (_stateLock)
-                {
-                    if (_currentStatus.State == desiredState)
-                    {
-                        return true;
-                    }
-                    if (_currentStatus.State == DataSourceState.Off)
-                    {
-                        return false;
-                    }
-
-                    // Here we're using a slightly roundabout mechanism to keep track of however many tasks might
-                    // be simultaneously waiting on WaitForAsync, because .NET doesn't have an async concurrency
-                    // primitive equivalent to Java's wait/notifyAll(). What we're creating here is a cancellation
-                    // token that will be cancelled (by UpdateStatus) the next time the status is changed in any
-                    // way.
-                    if (hasTimeout)
-                    {
-                        timeToWait = deadline.Subtract(DateTime.Now);
-                        if (timeToWait.CompareTo(TimeSpan.Zero) <= 0)
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        timeToWait = TimeSpan.FromMilliseconds(-1); // special value makes Task.Delay wait indefinitely
-                    }
-                    stateAwaiter = _stateChangedSignal.Token;
-                }
-                await stateAwaiter.WaitAsync(timeToWait);
-            }
+            var newStatus = await _status.WaitForAsync(
+                status => status.State == desiredState || status.State == DataSourceState.Off,
+                timeout
+                );
+            return newStatus.HasValue && newStatus.Value.State == desiredState;
         }
 
         #endregion
@@ -278,7 +241,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 if (item.Kind == DataModel.Features)
                 {
                     var eventArgs = new FlagChangeEvent(item.Key);
-                    _taskExecutor.ScheduleEvent(this, eventArgs, copyOfHandlers);
+                    _taskExecutor.ScheduleEvent(eventArgs, copyOfHandlers);
                 }
             }
         }

@@ -4,7 +4,7 @@ All public types, methods, and properties should have documentation comments in 
 
 Non-public items may have documentation comments as well, since those may be helpful to other developers working on this project, but they will not be included in the HTML documentation.
 
-The HTML documentation also includes documentation comments from `LaunchDarkly.CommonSdk` (see "Prerequisites" above). These are included automatically when the documentation is built on release.
+The HTML documentation also includes documentation comments from `LaunchDarkly.CommonSdk`. These are included automatically when the documentation is built on release, so that developers can see a single unified API in the documentation rather than having to look in two packages.
 
 The `docs-src` subdirectory contains additional Markdown content that is included in the documentation build, as follows:
 

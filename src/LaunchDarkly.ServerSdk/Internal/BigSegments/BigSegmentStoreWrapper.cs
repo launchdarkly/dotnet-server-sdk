@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LaunchDarkly.Cache;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Internal.Concurrent;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
@@ -155,7 +156,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             if (!oldStatus.HasValue || !newStatus.Equals(oldStatus.Value))
             {
                 _logger.Debug("Big segment store status changed from {0} to {1}", oldStatus, newStatus);
-                _taskExecutor.ScheduleEvent(this, newStatus, StatusChanged);
+                _taskExecutor.ScheduleEvent(newStatus, StatusChanged);
             }
 
             return newStatus;
