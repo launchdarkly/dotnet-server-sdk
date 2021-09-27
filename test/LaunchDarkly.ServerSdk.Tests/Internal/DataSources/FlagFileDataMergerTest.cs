@@ -22,16 +22,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                  { key, new ItemDescriptor(1, initialFeatureFlag) }
             };
             var segmentData = new Dictionary<string, ItemDescriptor>();
-            FlagFileData fileData = new FlagFileData
-            {
-                Flags = new Dictionary<string, FeatureFlag>
-                {
-                    {
-                        key,
-                        new FeatureFlagBuilder(key).Version(1).Build()
-                    }
-                }
-            };
+            var fileData = new DataSetBuilder()
+                .Flags(new FeatureFlagBuilder(key).Version(1).Build()).Build();
 
             FlagFileDataMerger merger = new FlagFileDataMerger(FileDataTypes.DuplicateKeysHandling.Throw);
 
@@ -58,16 +50,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 { key, new ItemDescriptor(1, initialFeatureFlag) }
             };
             var segmentData = new Dictionary<string, ItemDescriptor>();
-            FlagFileData fileData = new FlagFileData
-            {
-                Flags = new Dictionary<string, FeatureFlag>
-                {
-                    {
-                        key,
-                        new FeatureFlagBuilder(key).Version(1).Build()
-                    }
-                }
-            };
+            var fileData = new DataSetBuilder()
+                .Flags(new FeatureFlagBuilder(key).Version(1).Build()).Build();
 
             FlagFileDataMerger merger = new FlagFileDataMerger(FileDataTypes.DuplicateKeysHandling.Ignore);
             merger.AddToData(fileData, flagData, segmentData);

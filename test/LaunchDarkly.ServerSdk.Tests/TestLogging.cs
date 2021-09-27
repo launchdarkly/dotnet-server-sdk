@@ -28,7 +28,16 @@ namespace LaunchDarkly.Sdk.Server
         /// class constructor</param>
         /// <returns>a log adapter</returns>
         public static ILogAdapter TestOutputAdapter(ITestOutputHelper testOutputHelper) =>
-            Logs.ToMethod(line => testOutputHelper.WriteLine("LOG OUTPUT >> " + line));
+            Logs.ToMethod(line =>
+            {
+                // ITestOutputHelper.WriteLine can throw an exception if we try to write output after the
+                // end of a test (for instance, from a worker task). We can ignore any such errors.
+                try
+                {
+                    testOutputHelper.WriteLine("LOG OUTPUT >> " + line);
+                }
+                catch { }
+            });
 
         /// <summary>
         /// Creates a <see cref="Logger"/> that sends logging to the Xunit output buffer. Use this when testing
