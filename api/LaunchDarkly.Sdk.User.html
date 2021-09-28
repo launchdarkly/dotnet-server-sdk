@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class User
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -86,29 +86,11 @@
     <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>&gt;</div>
     <div><a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_User_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class User : IEquatable&lt;User&gt;, IJsonSerializable</code></pre>
+    <pre><code class="lang-csharp hljs">public class User : Object, IEquatable&lt;User&gt;, IJsonSerializable</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_User_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -151,7 +133,7 @@ For converting this type to or from JSON, see <a class="xref" href="LaunchDarkly
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public User(string key, string secondary, string ip, string country, string firstName, string lastName, string name, string avatar, string email, bool? anonymous, ImmutableDictionary&lt;string, LdValue&gt; custom, ImmutableHashSet&lt;string&gt; privateAttributeNames)</code></pre>
+    <pre><code class="lang-csharp hljs">public User(string key, string secondary, string ip, string country, string firstName, string lastName, string name, string avatar, string email, Nullable&lt;bool&gt; anonymous, ImmutableDictionary&lt;string, LdValue&gt; custom, ImmutableHashSet&lt;string&gt; privateAttributeNames)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -258,7 +240,7 @@ For converting this type to or from JSON, see <a class="xref" href="LaunchDarkly
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool? AnonymousOptional { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Nullable&lt;bool&gt; AnonymousOptional { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -631,7 +613,7 @@ values in <code>fromUser</code>. Modifying the builder does not affect the origi
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">key</span></td>
-        <td><p>a <span class="xref">langword_csharp_string</span> that uniquely identifies a user</p>
+        <td><p>a <span class="xref">string</span> that uniquely identifies a user</p>
 </td>
       </tr>
     </tbody>
@@ -741,8 +723,6 @@ resulting <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> instance.</
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.Object.Equals(System.Object)</span></div>
   <a id="LaunchDarkly_Sdk_User_GetAttribute_" data-uid="LaunchDarkly.Sdk.User.GetAttribute*"></a>
   <h4 id="LaunchDarkly_Sdk_User_GetAttribute_LaunchDarkly_Sdk_UserAttribute_" data-uid="LaunchDarkly.Sdk.User.GetAttribute(LaunchDarkly.Sdk.UserAttribute)">GetAttribute(UserAttribute)</h4>
   <div class="markdown level1 summary"><p>Gets the value of a user attribute, if present.</p>
@@ -814,8 +794,6 @@ attribute does not exist, it returns <a class="xref" href="LaunchDarkly.Sdk.LdVa
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.Object.GetHashCode()</span></div>
   <a id="LaunchDarkly_Sdk_User_WithKey_" data-uid="LaunchDarkly.Sdk.User.WithKey*"></a>
   <h4 id="LaunchDarkly_Sdk_User_WithKey_System_String_" data-uid="LaunchDarkly.Sdk.User.WithKey(System.String)">WithKey(String)</h4>
   <div class="markdown level1 summary"><p>Creates a user with the given key.</p>
@@ -838,7 +816,7 @@ attribute does not exist, it returns <a class="xref" href="LaunchDarkly.Sdk.LdVa
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">key</span></td>
-        <td><p>a <span class="xref">langword_csharp_string</span> that uniquely identifies a user</p>
+        <td><p>a <span class="xref">string</span> that uniquely identifies a user</p>
 </td>
       </tr>
     </tbody>
@@ -861,7 +839,7 @@ attribute does not exist, it returns <a class="xref" href="LaunchDarkly.Sdk.LdVa
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <span class="xref">System.IEquatable&lt;T&gt;</span>
+      <span class="xref">System.IEquatable&lt;&gt;</span>
   </div>
   <div>
       <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>

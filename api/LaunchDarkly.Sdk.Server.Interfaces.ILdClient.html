@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface ILdClient
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -327,7 +327,7 @@ computed  -  for instance, to filter the set of flags to only include the client
   <div class="markdown level1 remarks"><p>
 The object returned by this method contains the flag values as well as other metadata that
 is used by the LaunchDarkly JavaScript client, so it can be used for
-<a href="https://docs.launchdarkly.com/docs/js-sdk-reference#section-bootstrapping">bootstrapping</a>.
+<a href="https://docs.launchdarkly.com/sdk/features/bootstrapping#javascript">bootstrapping</a>.
 </p>
 <p>
 This method will not send analytics events back to LaunchDarkly.
@@ -1099,7 +1099,7 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
     </tbody>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_ILdClient_SecureModeHash_LaunchDarkly_Sdk_User__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>See <a href="https://docs.launchdarkly.com/docs/js-sdk-reference#section-secure-mode">Secure mode</a> in
+  <div class="markdown level1 remarks"><p>See <a href="https://docs.launchdarkly.com/sdk/features/secure-mode#configuring-secure-mode-in-the-javascript-client-side-sdk">Secure mode</a> in
 the JavaScript SDK Reference.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariation_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.StringVariation*"></a>
@@ -1379,7 +1379,7 @@ metrics. This field will also be returned as part of the custom event for Data E
 parameter. As a result, calling this overload of <code>Track</code> will not yet produce any different
 behavior from calling <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">Track(String, User, LdValue)</a> without a <code>metricValue</code>. Refer
 to the SDK reference guide for the latest status:
-<a href="https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-track">https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-track</a></p>
+<a href="https://docs.launchdarkly.com/sdk/features/events#net">https://docs.launchdarkly.com/sdk/features/events#net</a></p>
 </div>
   <h3 id="extensionmethods">Extension Methods</h3>
   <div>

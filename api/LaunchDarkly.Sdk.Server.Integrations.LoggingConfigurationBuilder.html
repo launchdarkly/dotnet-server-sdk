@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class LoggingConfigurationBuilder
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -85,35 +85,11 @@
     <h5>Implements</h5>
     <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory.html">ILoggingConfigurationFactory</a></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class LoggingConfigurationBuilder : ILoggingConfigurationFactory</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class LoggingConfigurationBuilder : Object, ILoggingConfigurationFactory</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p><p>
@@ -124,7 +100,11 @@ to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#Launc
 <p>
 By default, the SDK has the following logging behavior:
 </p>
-<ul><li></li><li></li><li></li></ul></p>
+<ul><li> Log messages are written to standard output. To change this, use a log adapter as
+described in <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Adapter_LaunchDarkly_Logging_ILogAdapter_">Adapter(ILogAdapter)</a> and <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging_LaunchDarkly_Logging_ILogAdapter_">Logging(ILogAdapter)</a>. </li><li> The lowest enabled log level is <span class="xref">LaunchDarkly.Logging.LogLevel.Info</span>,
+so <span class="xref">LaunchDarkly.Logging.LogLevel.Debug</span> messages are not shown. To change this, use
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Level_LaunchDarkly_Logging_LogLevel_">Level(LogLevel)</a>. </li><li> The base logger name is <code>LaunchDarkly.Sdk</code>. See <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_BaseLoggerName_System_String_">BaseLoggerName(String)</a>
+for more about logger names and how to change the name. </li></ul></p>
 </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_examples"><strong>Examples</strong></h5>
   <pre><code>    var config = Configuration.Builder(&quot;my-sdk-key&quot;)
@@ -221,7 +201,7 @@ The <a href="https://github.com/launchdarkly/dotnet-logging"><code>LaunchDarkly.
 For instance, in .NET Core, specify <code>Logs.CoreLogging</code> to use the standard .NET Core logging framework.
 </p>
 <p>
-For more about logging adapters, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+For more about logging adapters, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
 reference guide</a>, the <a href="https://launchdarkly.github.io/dotnet-logging/html/N_LaunchDarkly_Logging.htm">API
 documentation</a> for <code>LaunchDarkly.Logging</code>, and the
 <a href="https://github.com/launchdarkly/dotnet-logging-adapters">third-party adapters</a> that
@@ -299,7 +279,12 @@ By default, the SDK uses a base logger name of <code>LaunchDarkly.Sdk</code>. Me
 logged either under this name, or with a suffix to indicate what general area of
 functionality is involved:
 </p>
-<ul><li></li><li></li><li></li><li></li></ul>
+<ul><li> <code>.DataSource</code>: problems or status messages regarding how the SDK gets
+feature flag data from LaunchDarkly. </li><li> <code>.DataStore</code>: problems or status messages regarding how the SDK stores its
+feature flag data (for instance, if you are using a database). </li><li> <code>.Evaluation</code>: problems in evaluating a feature flag or flags, which were
+caused by invalid flag data or incorrect usage of the SDK rather than for instance a
+database problem. </li><li> <code>.Events</code> problems or status messages regarding the SDK&apos;s delivery of
+analytics event data to LaunchDarkly. </li></ul>
 <p>
 Setting <code>BaseLoggerName</code> to a non-null value overrides the default. The SDK still
 adds the same suffixes to the name, so for instance if you set it to <code>&quot;LD&quot;</code>, the
@@ -379,7 +364,7 @@ to call this method.</p>
   <div class="markdown level1 remarks"><p>
 This adds a log level filter that is applied regardless of what implementation of logging is
 being used, so that log messages at lower levels are suppressed. For instance, setting the
-minimum level to <see cref="!:LogLevel.Info"></see> means that <code>Debug</code>-level output is disabled.
+minimum level to <span class="xref">LaunchDarkly.Logging.LogLevel.Info</span> means that <code>Debug</code>-level output is disabled.
 External logging frameworks may also have their own mechanisms for setting a minimum log level.
 </p>
 <p>
@@ -401,7 +386,7 @@ level instead of <code>Warn</code> level.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LoggingConfigurationBuilder LogDataSourceOutageAsErrorAfter(TimeSpan? interval)</code></pre>
+    <pre><code class="lang-csharp hljs">public LoggingConfigurationBuilder LogDataSourceOutageAsErrorAfter(Nullable&lt;TimeSpan&gt; interval)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

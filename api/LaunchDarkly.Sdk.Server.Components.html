@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Components
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -81,35 +81,11 @@
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">Components</span></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.html">LaunchDarkly.Sdk.Server</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Components_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static class Components</code></pre>
+    <pre><code class="lang-csharp hljs">public static class Components : Object</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Components_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>Some of the configuration options in <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html">ConfigurationBuilder</a> affect the entire SDK, but others are
@@ -152,7 +128,7 @@ flag updates.</p>
   <h5 id="LaunchDarkly_Sdk_Server_Components_ExternalUpdatesOnly_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Passing this to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_">DataSource(IDataSourceFactory)</a> causes the SDK
 not to retrieve feature flag data from LaunchDarkly, regardless of any other configuration. This is
-normally done if you are using the <a href="https://docs.launchdarkly.com/home/advanced/relay-proxy">Relay Proxy</a>
+normally done if you are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>
 in &quot;daemon mode&quot;, where an external process-- the Relay Proxy-- connects to LaunchDarkly and populates
 a persistent data store with the feature flag data. The data store could also be populated by
 another process that is running the LaunchDarkly SDK. If there is no external process updating
@@ -307,7 +283,7 @@ any other configuration.</p>
   <h5 id="LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreFactory__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 &quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
-documentation about user segments: <a href="https://docs.launchdarkly.com/home/users">https://docs.launchdarkly.com/home/users</a>
+documentation about user segments: <a href="https://docs.launchdarkly.com/home/users/segments">https://docs.launchdarkly.com/home/users/segments</a>
 </p>
 <p>
 After configuring this object, use <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_">BigSegments(IBigSegmentsConfigurationFactory)</a>
@@ -400,7 +376,7 @@ The default behavior, if you do not change any properties, is to send log output
 is disabled).
 </p>
 <p>
-For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
 SDK reference guide</a>.
 </p>
 </div>
@@ -474,7 +450,7 @@ log output will show all logging levels including <code>Debug</code>.
 For more about log adapters, see <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Adapter_LaunchDarkly_Logging_ILogAdapter_">Adapter(ILogAdapter)</a>.
 </p>
 <p>
-For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
 SDK reference guide</a>.
 </p>
 </div>

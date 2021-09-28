@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ConfigurationBuilder
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -81,35 +81,11 @@
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">ConfigurationBuilder</span></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.html">LaunchDarkly.Sdk.Server</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class ConfigurationBuilder</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class ConfigurationBuilder : Object</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>Obtain an instance of this class by calling <a class="xref" href="LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_Builder_System_String_">Builder(String)</a>.</p>
@@ -171,7 +147,7 @@ chained together.</p>
   <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 &quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
-documentation about user segments: <a href="https://docs.launchdarkly.com/home/users">https://docs.launchdarkly.com/home/users</a>
+documentation about user segments: <a href="https://docs.launchdarkly.com/home/users/segments">https://docs.launchdarkly.com/home/users/segments</a>
 </p>
 <p>
 If you are using this feature, you will normally specify a database implementation that matches how
@@ -525,7 +501,7 @@ This is a shortcut for <code>Logging(Components.Logging(logAdapter))</code>. You
 only want to specify the basic logging destination, and do not need to set other log properties.
 </p>
 <p>
-For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
 SDK reference guide</a>.
 </p>
 </div>
@@ -586,7 +562,7 @@ the basic logging destination, and you do not need to set other logging properti
 <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Logging_ILogAdapter_">Logging(ILogAdapter)</a> instead.
 </p>
 <p>
-For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
 SDK reference guide</a>.
 </p>
 </div>

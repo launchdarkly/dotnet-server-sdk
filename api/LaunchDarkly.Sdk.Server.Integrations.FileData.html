@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class FileData
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -81,35 +81,11 @@
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">FileData</span></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileData_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static class FileData</code></pre>
+    <pre><code class="lang-csharp hljs">public static class FileData : Object</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_FileData_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -174,7 +150,7 @@ Flag data files are JSON by default (although it is possible to specify a parser
 such as YAML; see <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileDataSourceBuilder.html#LaunchDarkly_Sdk_Server_Integrations_FileDataSourceBuilder_Parser_System_Func_System_String_System_Object__">Parser(Func&lt;String, Object&gt;)</a>). They
 contain an object with three possible properties:
 </p>
-<ul><li></li><li></li><li></li></ul>
+<ul><li><code>flags</code>: Feature flag definitions.</li><li><code>flagVersions</code>: Simplified feature flags that contain only a value.</li><li><code>segments</code>: User segment definitions.</li></ul>
 <p>
 The format of the data in <code>flags</code> and <code>segments</code> is defined by the LaunchDarkly application
 and is subject to change. Rather than trying to construct these objects yourself, it is simpler

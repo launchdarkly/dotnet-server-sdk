@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IEventProcessor
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -76,12 +76,6 @@
   <div class="markdown level0 summary"><p>Interface for an object that can send or store analytics events.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.IDisposable.Dispose()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_syntax">Syntax</h5>
@@ -113,7 +107,7 @@ for the next flush interval.</p>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_Flush_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This method triggers an asynchronous task, so events still may not be sent until a later
-until a later time. However, calling <span class="xref">System.IDisposable.Dispose()</span> will synchronously
+until a later time. However, calling <span class="xref">System.IDisposable.Dispose</span> will synchronously
 deliver any events that were not yet delivered prior to shutting down.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordAliasEvent_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.RecordAliasEvent*"></a>

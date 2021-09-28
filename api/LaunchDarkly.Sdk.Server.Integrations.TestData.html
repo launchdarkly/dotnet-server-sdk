@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class TestData
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -86,35 +86,11 @@ client in test scenarios.</p>
     <h5>Implements</h5>
     <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class TestData : IDataSourceFactory</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class TestData : Object, IDataSourceFactory</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -358,7 +334,7 @@ unless you call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestD
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData UpdateStatus(DataSourceState newState, Nullable&lt;DataSourceStatus.ErrorInfo&gt; newError)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

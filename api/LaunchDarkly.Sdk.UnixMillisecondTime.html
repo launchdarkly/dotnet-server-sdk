@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Struct UnixMillisecondTime
+    <title>Class UnixMillisecondTime
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Struct UnixMillisecondTime
+    <meta name="title" content="Class UnixMillisecondTime
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -71,36 +71,26 @@
             <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.UnixMillisecondTime">
   
   
-  <h1 id="LaunchDarkly_Sdk_UnixMillisecondTime" data-uid="LaunchDarkly.Sdk.UnixMillisecondTime" class="text-break">Struct UnixMillisecondTime
+  <h1 id="LaunchDarkly_Sdk_UnixMillisecondTime" data-uid="LaunchDarkly.Sdk.UnixMillisecondTime" class="text-break">Class UnixMillisecondTime
   </h1>
   <div class="markdown level0 summary"><p>An instant measured in milliseconds since the Unix epoch.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">UnixMillisecondTime</span></div>
+  </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.UnixMillisecondTime.html">UnixMillisecondTime</a>&gt;</div>
     <div><span class="xref">System.IComparable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.UnixMillisecondTime.html">UnixMillisecondTime</a>&gt;</div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.ValueType.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_UnixMillisecondTime_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public struct UnixMillisecondTime : IEquatable&lt;UnixMillisecondTime&gt;, IComparable&lt;UnixMillisecondTime&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class UnixMillisecondTime : ValueType, IEquatable&lt;UnixMillisecondTime&gt;, IComparable&lt;UnixMillisecondTime&gt;</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_UnixMillisecondTime_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -147,7 +137,7 @@ When converting to or from JSON, it is encoded as an integer.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly DateTime AsDateTime { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public DateTime AsDateTime { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -171,7 +161,7 @@ When converting to or from JSON, it is encoded as an integer.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly UnixMillisecondTime Now { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static UnixMillisecondTime Now { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -195,7 +185,7 @@ When converting to or from JSON, it is encoded as an integer.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly long Value { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public long Value { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -334,8 +324,6 @@ When converting to or from JSON, it is encoded as an integer.
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.Equals(System.Object)</span></div>
   <a id="LaunchDarkly_Sdk_UnixMillisecondTime_FromDateTime_" data-uid="LaunchDarkly.Sdk.UnixMillisecondTime.FromDateTime*"></a>
   <h4 id="LaunchDarkly_Sdk_UnixMillisecondTime_FromDateTime_System_DateTime_" data-uid="LaunchDarkly.Sdk.UnixMillisecondTime.FromDateTime(System.DateTime)">FromDateTime(DateTime)</h4>
   <div class="markdown level1 summary"><p>Converts a <code>DateTime</code> to <code>UnixMillisecondTime</code>.</p>
@@ -402,8 +390,6 @@ When converting to or from JSON, it is encoded as an integer.
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.GetHashCode()</span></div>
   <a id="LaunchDarkly_Sdk_UnixMillisecondTime_OfMillis_" data-uid="LaunchDarkly.Sdk.UnixMillisecondTime.OfMillis*"></a>
   <h4 id="LaunchDarkly_Sdk_UnixMillisecondTime_OfMillis_System_Int64_" data-uid="LaunchDarkly.Sdk.UnixMillisecondTime.OfMillis(System.Int64)">OfMillis(Int64)</h4>
   <div class="markdown level1 summary"><p>Creates a <code>UnixMillisecondTime</code> value.</p>
@@ -764,10 +750,10 @@ When converting to or from JSON, it is encoded as an integer.
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <span class="xref">System.IEquatable&lt;T&gt;</span>
+      <span class="xref">System.IEquatable&lt;&gt;</span>
   </div>
   <div>
-      <span class="xref">System.IComparable&lt;T&gt;</span>
+      <span class="xref">System.IComparable&lt;&gt;</span>
   </div>
 </article>
           </div>

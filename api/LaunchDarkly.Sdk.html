@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace LaunchDarkly.Sdk
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -80,6 +80,25 @@
 </div>
     <h3 id="classes">Classes
   </h3>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html">BigSegmentsStatus</a></h4>
+      <section><p>Defines the possible values of <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a></h4>
+      <section><p>An object returned by the &quot;variation detail&quot; methods of the client, combining the result
+of a flag evaluation with an explanation of how it was calculated.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationErrorKind.html">EvaluationErrorKind</a></h4>
+      <section><p>Enumerated type defining the possible values of <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_ErrorKind">ErrorKind</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a></h4>
+      <section><p>Describes the reason that a flag evaluation produced a particular value.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationReasonKind.html">EvaluationReasonKind</a></h4>
+      <section><p>Enumerated type defining the possible values of <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_Kind">Kind</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></h4>
+      <section><p>An immutable instance of any data type that is allowed in JSON.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.LdValue.ArrayBuilder.html">LdValue.ArrayBuilder</a></h4>
       <section><p>An object returned by <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_BuildArray">BuildArray()</a> for building an array of values.</p>
 </section>
@@ -92,23 +111,14 @@
       <h4><a class="xref" href="LaunchDarkly.Sdk.LdValue.ObjectBuilder.html">LdValue.ObjectBuilder</a></h4>
       <section><p>An object returned by <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_BuildObject">BuildObject()</a> for building an object from keys and values.</p>
 </section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></h4>
-      <section><p>Attributes of a user for whom you are evaluating feature flags.</p>
-</section>
-    <h3 id="structs">Structs
-  </h3>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a></h4>
-      <section><p>An object returned by the &quot;variation detail&quot; methods of the client, combining the result
-of a flag evaluation with an explanation of how it was calculated.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a></h4>
-      <section><p>Describes the reason that a flag evaluation produced a particular value.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></h4>
-      <section><p>An immutable instance of any data type that is allowed in JSON.</p>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.LdValueType.html">LdValueType</a></h4>
+      <section><p>Describes the type of a JSON value.</p>
 </section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.UnixMillisecondTime.html">UnixMillisecondTime</a></h4>
       <section><p>An instant measured in milliseconds since the Unix epoch.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></h4>
+      <section><p>Attributes of a user for whom you are evaluating feature flags.</p>
 </section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a></h4>
       <section><p>Represents a built-in or custom attribute name supported by <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>.</p>
@@ -121,20 +131,6 @@ of a flag evaluation with an explanation of how it was calculated.</p>
       <h4><a class="xref" href="LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.html">IUserBuilderCanMakeAttributePrivate</a></h4>
       <section><p>An extension of <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html">IUserBuilder</a> that allows attributes to be made private via
 the <a class="xref" href="LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.html#LaunchDarkly_Sdk_IUserBuilderCanMakeAttributePrivate_AsPrivateAttribute">AsPrivateAttribute()</a> method.</p>
-</section>
-    <h3 id="enums">Enums
-  </h3>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html">BigSegmentsStatus</a></h4>
-      <section><p>Defines the possible values of <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a>.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationErrorKind.html">EvaluationErrorKind</a></h4>
-      <section><p>Enumerated type defining the possible values of <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_ErrorKind">ErrorKind</a>.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.EvaluationReasonKind.html">EvaluationReasonKind</a></h4>
-      <section><p>Enumerated type defining the possible values of <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_Kind">Kind</a>.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.LdValueType.html">LdValueType</a></h4>
-      <section><p>Describes the type of a JSON value.</p>
 </section>
 </article>
           </div>

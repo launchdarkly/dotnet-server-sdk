@@ -37,6 +37,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.BigSegmentsStatus.StoreError
   fullName: LaunchDarkly.Sdk.BigSegmentsStatus.StoreError
   nameWithType: BigSegmentsStatus.StoreError
+- uid: LaunchDarkly.Sdk.BigSegmentsStatus.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_value__
+  commentId: F:LaunchDarkly.Sdk.BigSegmentsStatus.value__
+  fullName: LaunchDarkly.Sdk.BigSegmentsStatus.value__
+  nameWithType: BigSegmentsStatus.value__
 - uid: LaunchDarkly.Sdk.EvaluationDetail`1
   name: EvaluationDetail<T>
   href: api/LaunchDarkly.Sdk.EvaluationDetail-1.html
@@ -195,6 +201,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.EvaluationErrorKind.UserNotSpecified
   fullName: LaunchDarkly.Sdk.EvaluationErrorKind.UserNotSpecified
   nameWithType: EvaluationErrorKind.UserNotSpecified
+- uid: LaunchDarkly.Sdk.EvaluationErrorKind.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.EvaluationErrorKind.html#LaunchDarkly_Sdk_EvaluationErrorKind_value__
+  commentId: F:LaunchDarkly.Sdk.EvaluationErrorKind.value__
+  fullName: LaunchDarkly.Sdk.EvaluationErrorKind.value__
+  nameWithType: EvaluationErrorKind.value__
 - uid: LaunchDarkly.Sdk.EvaluationErrorKind.WrongType
   name: WrongType
   href: api/LaunchDarkly.Sdk.EvaluationErrorKind.html#LaunchDarkly_Sdk_EvaluationErrorKind_WrongType
@@ -468,6 +480,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.EvaluationReasonKind.TargetMatch
   fullName: LaunchDarkly.Sdk.EvaluationReasonKind.TargetMatch
   nameWithType: EvaluationReasonKind.TargetMatch
+- uid: LaunchDarkly.Sdk.EvaluationReasonKind.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.EvaluationReasonKind.html#LaunchDarkly_Sdk_EvaluationReasonKind_value__
+  commentId: F:LaunchDarkly.Sdk.EvaluationReasonKind.value__
+  fullName: LaunchDarkly.Sdk.EvaluationReasonKind.value__
+  nameWithType: EvaluationReasonKind.value__
 - uid: LaunchDarkly.Sdk.IUserBuilder
   name: IUserBuilder
   href: api/LaunchDarkly.Sdk.IUserBuilder.html
@@ -1917,6 +1935,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.LdValueType.String
   fullName: LaunchDarkly.Sdk.LdValueType.String
   nameWithType: LdValueType.String
+- uid: LaunchDarkly.Sdk.LdValueType.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.LdValueType.html#LaunchDarkly_Sdk_LdValueType_value__
+  commentId: F:LaunchDarkly.Sdk.LdValueType.value__
+  fullName: LaunchDarkly.Sdk.LdValueType.value__
+  nameWithType: LdValueType.value__
 - uid: LaunchDarkly.Sdk.Server
   name: LaunchDarkly.Sdk.Server
   href: api/LaunchDarkly.Sdk.Server.html
@@ -3063,6 +3087,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.Throw
   fullName: LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.Throw
   nameWithType: FileDataTypes.DuplicateKeysHandling.Throw
+- uid: LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.html#LaunchDarkly_Sdk_Server_Integrations_FileDataTypes_DuplicateKeysHandling_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.value__
+  fullName: LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.DuplicateKeysHandling.value__
+  nameWithType: FileDataTypes.DuplicateKeysHandling.value__
 - uid: LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader
   name: FileDataTypes.IFileReader
   href: api/LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader.html
@@ -4140,6 +4170,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.Valid
   fullName: LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.Valid
   nameWithType: DataSourceState.Valid
+- uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.value__
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.value__
+  nameWithType: DataSourceState.value__
 - uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus
   name: DataSourceStatus
   href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html
@@ -4272,6 +4308,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.Unknown
   fullName: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.Unknown
   nameWithType: DataSourceStatus.ErrorKind.Unknown
+- uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ErrorKind_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.value__
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.value__
+  nameWithType: DataSourceStatus.ErrorKind.value__
 - uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.LastError
   name: LastError
   href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_LastError
@@ -4308,6 +4350,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.StateSince
   fullName: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.StateSince
   nameWithType: DataSourceStatus.StateSince
+- uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString
+  name: ToString()
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ToString
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString()
+  nameWithType: DataSourceStatus.ToString()
+- uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString*
+  name: ToString
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ToString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString
+  nameWithType: DataSourceStatus.ToString
 - uid: LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatusExtensions
   name: DataSourceStatusExtensions
   href: api/LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatusExtensions.html
@@ -4362,6 +4416,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.RefreshNeeded
   fullName: LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.RefreshNeeded
   nameWithType: DataStoreStatus.RefreshNeeded
+- uid: LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.ToString
+  name: ToString()
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreStatus_ToString
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.ToString
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.ToString()
+  nameWithType: DataStoreStatus.ToString()
+- uid: LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.ToString*
+  name: ToString
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreStatus_ToString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.ToString
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.ToString
+  nameWithType: DataStoreStatus.ToString
 - uid: LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes
   name: DataStoreTypes
   href: api/LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.html
@@ -4775,6 +4841,12 @@ references:
   commentId: F:LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.User
   fullName: LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.User
   nameWithType: EventProcessorTypes.ContextKind.User
+- uid: LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.html#LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_ContextKind_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.value__
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.value__
+  nameWithType: EventProcessorTypes.ContextKind.value__
 - uid: LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.CustomEvent
   name: EventProcessorTypes.CustomEvent
   href: api/LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.CustomEvent.html

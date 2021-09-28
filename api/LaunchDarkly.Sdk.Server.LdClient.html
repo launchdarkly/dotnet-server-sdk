@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class LdClient
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -87,35 +87,11 @@ a single <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</
     <div><span class="xref">System.IDisposable</span></div>
     <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.html">LaunchDarkly.Sdk.Server</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class LdClient : IDisposable, ILdClient</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class LdClient : Object, IDisposable, ILdClient</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -157,7 +133,16 @@ for the lifetime of the application rather than created per request or per threa
 Normally, the client will begin attempting to connect to LaunchDarkly as soon as you call the
 constructor. The constructor returns as soon as any of the following things has happened:
 </p>
-<ol><li></li><li></li><li></li></ol>
+<ol><li> It has successfully connected to LaunchDarkly and received feature flag data. In this
+case, <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_Initialized">Initialized</a> will be true, and the <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_DataSourceStatusProvider">DataSourceStatusProvider</a>
+will return a state of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Valid">Valid</a>. </li><li> It has not succeeded in connecting within the <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_StartWaitTime_System_TimeSpan_">StartWaitTime(TimeSpan)</a>
+timeout (the default for this is 5 seconds). This could happen due to a network problem or a
+temporary service outage. In this case, <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_Initialized">Initialized</a> will be false, and the
+<a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_DataSourceStatusProvider">DataSourceStatusProvider</a> will return a state of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Initializing">Initializing</a>,
+indicating that the SDK will still continue trying to connect in the background. </li><li> It has encountered an unrecoverable error: for instance, LaunchDarkly has rejected the
+SDK key. Since an invalid key will not become valid, the SDK will not retry in this case.
+<a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_Initialized">Initialized</a> will be false, and the <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_DataSourceStatusProvider">DataSourceStatusProvider</a> will
+return a state of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Off">Off</a>. </li></ol>
 <p>
 If you have specified <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Offline_System_Boolean_">Offline(Boolean)</a> mode or
 <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ExternalUpdatesOnly">ExternalUpdatesOnly</a>, the constructor returns immediately without
@@ -495,7 +480,7 @@ computed  -  for instance, to filter the set of flags to only include the client
   <div class="markdown level1 remarks"><p>
 The object returned by this method contains the flag values as well as other metadata that
 is used by the LaunchDarkly JavaScript client, so it can be used for
-<a href="https://docs.launchdarkly.com/docs/js-sdk-reference#section-bootstrapping">bootstrapping</a>.
+<a href="https://docs.launchdarkly.com/sdk/features/bootstrapping#javascript">bootstrapping</a>.
 </p>
 <p>
 This method will not send analytics events back to LaunchDarkly.
@@ -1318,7 +1303,7 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
     </tbody>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_SecureModeHash_LaunchDarkly_Sdk_User__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>See <a href="https://docs.launchdarkly.com/docs/js-sdk-reference#section-secure-mode">Secure mode</a> in
+  <div class="markdown level1 remarks"><p>See <a href="https://docs.launchdarkly.com/sdk/features/secure-mode#configuring-secure-mode-in-the-javascript-client-side-sdk">Secure mode</a> in
 the JavaScript SDK Reference.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_StringVariation_" data-uid="LaunchDarkly.Sdk.Server.LdClient.StringVariation*"></a>
@@ -1598,7 +1583,7 @@ metrics. This field will also be returned as part of the custom event for Data E
 parameter. As a result, calling this overload of <code>Track</code> will not yet produce any different
 behavior from calling <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">Track(String, User, LdValue)</a> without a <code>metricValue</code>. Refer
 to the SDK reference guide for the latest status:
-<a href="https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-track">https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-track</a></p>
+<a href="https://docs.launchdarkly.com/sdk/features/events#net">https://docs.launchdarkly.com/sdk/features/events#net</a></p>
 </div>
   <h3 id="implements">Implements</h3>
   <div>
@@ -1606,13 +1591,6 @@ to the SDK reference guide for the latest status:
   </div>
   <div>
       <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>
-  </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
-  <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User___0_">ILdClientExtensions.EnumVariation&lt;T&gt;(ILdClient, String, User, T)</a>
-  </div>
-  <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariationDetail__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User___0_">ILdClientExtensions.EnumVariationDetail&lt;T&gt;(ILdClient, String, User, T)</a>
   </div>
 </article>
           </div>

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace LaunchDarkly.Sdk.Server.Interfaces
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -86,38 +86,18 @@
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a></h4>
       <section><p>Encapsulates the SDK&apos;s configuration with regard to big segments.</p>
 </section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.html">BigSegmentStoreTypes</a></h4>
-      <section><p>Types that are used by the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html">IBigSegmentStore</a> interface.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatusExtensions.html">DataSourceStatusExtensions</a></h4>
-      <section><p>Extension helper methods for use with data source status types.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.html">DataStoreTypes</a></h4>
-      <section><p>Types that are used by the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html">IDataStore</a> interface.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html">DataStoreTypes.DataKind</a></h4>
-      <section><p>Represents a separately namespaced collection of storable data items.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.html">EventProcessorTypes</a></h4>
-      <section><p>Parameter types for use by <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html">IEventProcessor</a> implementations.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html">HttpConfiguration</a></h4>
-      <section><p>Encapsulates top-level HTTP configuration that applies to all SDK components.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></h4>
-      <section><p>Encapsulates SDK client context when creating components.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.html">LoggingConfiguration</a></h4>
-      <section><p>Encapsulates the SDK&apos;s general logging configuration.</p>
-</section>
-    <h3 id="structs">Structs
-  </h3>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreStatus.html">BigSegmentStoreStatus</a></h4>
       <section><p>Information about the status of a big segment store, provided by
 <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html">IBigSegmentStoreStatusProvider</a>.</p>
 </section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.html">BigSegmentStoreTypes</a></h4>
+      <section><p>Types that are used by the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html">IBigSegmentStore</a> interface.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes.StoreMetadata.html">BigSegmentStoreTypes.StoreMetadata</a></h4>
       <section><p>Values returned by <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMetadataAsync">GetMetadataAsync()</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html">DataSourceState</a></h4>
+      <section><p>An enumeration of possible values for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_State">State</a>.</p>
 </section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html">DataSourceStatus</a></h4>
       <section><p>Information about the data source&apos;s status and about the last status change.</p>
@@ -125,8 +105,20 @@
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.html">DataSourceStatus.ErrorInfo</a></h4>
       <section><p>A description of an error condition that the data source encountered.</p>
 </section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.html">DataSourceStatus.ErrorKind</a></h4>
+      <section><p>An enumeration describing the general type of an error reported in <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.html">DataSourceStatus.ErrorInfo</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatusExtensions.html">DataSourceStatusExtensions</a></h4>
+      <section><p>Extension helper methods for use with data source status types.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreStatus.html">DataStoreStatus</a></h4>
       <section><p>Information about a data store status change.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.html">DataStoreTypes</a></h4>
+      <section><p>Types that are used by the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html">IDataStore</a> interface.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html">DataStoreTypes.DataKind</a></h4>
+      <section><p>Represents a separately namespaced collection of storable data items.</p>
 </section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.FullDataSet-1.html">DataStoreTypes.FullDataSet&lt;TDescriptor&gt;</a></h4>
       <section><p>Wrapper for a set of storable items being passed to a data store.</p>
@@ -142,8 +134,14 @@ single <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.D
       <section><p>A versioned item (or placeholder) storeable in an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore.html">IPersistentDataStore</a>
 or <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsync.html">IPersistentDataStoreAsync</a>.</p>
 </section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.html">EventProcessorTypes</a></h4>
+      <section><p>Parameter types for use by <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html">IEventProcessor</a> implementations.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.AliasEvent.html">EventProcessorTypes.AliasEvent</a></h4>
       <section><p>Parameters for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html#LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordAliasEvent_LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_AliasEvent_">RecordAliasEvent(EventProcessorTypes.AliasEvent)</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.html">EventProcessorTypes.ContextKind</a></h4>
+      <section><p>Used with <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.AliasEvent.html">EventProcessorTypes.AliasEvent</a> to indicate the category of a key.</p>
 </section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.CustomEvent.html">EventProcessorTypes.CustomEvent</a></h4>
       <section><p>Parameters for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html#LaunchDarkly_Sdk_Server_Interfaces_IEventProcessor_RecordCustomEvent_LaunchDarkly_Sdk_Server_Interfaces_EventProcessorTypes_CustomEvent_">RecordCustomEvent(EventProcessorTypes.CustomEvent)</a>.</p>
@@ -159,6 +157,15 @@ or <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore
 </section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent.html">FlagValueChangeEvent</a></h4>
       <section><p>A parameter class used with <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.html#LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_User_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent__">FlagValueChangeHandler(String, User, EventHandler&lt;FlagValueChangeEvent&gt;)</a>.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html">HttpConfiguration</a></h4>
+      <section><p>Encapsulates top-level HTTP configuration that applies to all SDK components.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></h4>
+      <section><p>Encapsulates SDK client context when creating components.</p>
+</section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.html">LoggingConfiguration</a></h4>
+      <section><p>Encapsulates the SDK&apos;s general logging configuration.</p>
 </section>
     <h3 id="interfaces">Interfaces
   </h3>
@@ -237,17 +244,6 @@ serialized form.</p>
 </section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html">IPersistentDataStoreFactory</a></h4>
       <section><p>Interface for a factory that creates some implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore.html">IPersistentDataStore</a>.</p>
-</section>
-    <h3 id="enums">Enums
-  </h3>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html">DataSourceState</a></h4>
-      <section><p>An enumeration of possible values for <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_State">State</a>.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorKind.html">DataSourceStatus.ErrorKind</a></h4>
-      <section><p>An enumeration describing the general type of an error reported in <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.html">DataSourceStatus.ErrorInfo</a>.</p>
-</section>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.ContextKind.html">EventProcessorTypes.ContextKind</a></h4>
-      <section><p>Used with <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes.AliasEvent.html">EventProcessorTypes.AliasEvent</a> to indicate the category of a key.</p>
 </section>
 </article>
           </div>

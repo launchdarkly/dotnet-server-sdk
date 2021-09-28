@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Struct DataSourceStatus
+    <title>Class DataSourceStatus
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Struct DataSourceStatus
+    <meta name="title" content="Class DataSourceStatus
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -71,37 +71,21 @@
             <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus">
   
   
-  <h1 id="LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus" class="text-break">Struct DataSourceStatus
+  <h1 id="LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus" class="text-break">Class DataSourceStatus
   </h1>
   <div class="markdown level0 summary"><p>Information about the data source&apos;s status and about the last status change.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.ValueType.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.ValueType.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.ValueType.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">DataSourceStatus</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public struct DataSourceStatus</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class DataSourceStatus : ValueType</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
@@ -112,7 +96,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DataSourceStatus.ErrorInfo? LastError { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Nullable&lt;DataSourceStatus.ErrorInfo&gt; LastError { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -187,8 +171,37 @@ and the last error will still be reported in this property even if the state lat
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_StateSince_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The meaning of this depends on the current state:
-<ul><li></li><li></li><li></li><li></li></ul></p>
+<ul><li>For <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Initializing">Initializing</a>, it is the time that the SDK started initializing.</li><li>For <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Valid">Valid</a>, it is the time that the data source most recently entered a valid
+state, after previously having been either <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Initializing">Initializing</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Interrupted">Interrupted</a>.</li><li>For <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Interrupted">Interrupted</a>, it is the time that the data source most recently entered an
+error state, after previously having been <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Valid">Valid</a>.</li><li>For <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html#LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_Off">Off</a>, it is the time that the data source encountered an unrecoverable error
+or that the SDK was explicitly shut down.</li></ul></p>
 </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ToString_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ToString" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="seealso">See Also</h3>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceStatusProvider.html#LaunchDarkly_Sdk_Server_Interfaces_IDataSourceStatusProvider_Status">Status</a></div>

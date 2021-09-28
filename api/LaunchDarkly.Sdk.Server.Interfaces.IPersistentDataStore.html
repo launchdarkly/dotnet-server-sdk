@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IPersistentDataStore
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -77,12 +77,6 @@
 serialized form.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.IDisposable.Dispose()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStore_syntax">Syntax</h5>
@@ -114,7 +108,22 @@ always has a version number, and can represent either a serialized object or a
 placeholder (tombstone) for a deleted item. There are two approaches a persistent store
 implementation can use for persisting this data:
 </p>
-<ol><li></li><li></li></ol>
+<ol><li>
+Preferably, it should store the version number and the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_SerializedItemDescriptor_Deleted">Deleted</a>
+state separately so that the object does not need to be fully deserialized to read
+them. In this case, deleted item placeholders can ignore the value of
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_SerializedItemDescriptor_SerializedItem">SerializedItem</a> on writes and can set it to
+null on reads. The store should never call <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_DataKind_Deserialize_System_String_">Deserialize(String)</a>
+or <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_DataKind_Serialize_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor_">Serialize(DataStoreTypes.ItemDescriptor)</a> in this case.
+</li><li>
+If that isn&apos;t possible, then the store should simply persist the exact string from
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_SerializedItemDescriptor_SerializedItem">SerializedItem</a> on writes, and return the persisted
+string on reads -- setting <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_SerializedItemDescriptor_Version">Version</a> to zero and
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_SerializedItemDescriptor_Deleted">Deleted</a> to false. The string is guaranteed to
+provide the SDK with enough information to infer the version and the deleted state.
+On updates, the store will have to call <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_DataKind_Deserialize_System_String_">Deserialize(String)</a> in
+order to inspect the version number of the existing item if any.
+</li></ol>
 <p>
 Error handling is defined as follows: if any data store operation encounters a database
 error, or is otherwise unable to complete its task, it should throw an exception to make
@@ -132,7 +141,7 @@ to determine when the store has started working again.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">DataStoreTypes.SerializedItemDescriptor? Get(DataStoreTypes.DataKind kind, string key)</code></pre>
+    <pre><code class="lang-csharp hljs">Nullable&lt;DataStoreTypes.SerializedItemDescriptor&gt; Get(DataStoreTypes.DataKind kind, string key)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -180,7 +189,16 @@ deleted data); null if the key is unknown</p>
 If the key is not known at all, the method should return null. Otherwise, it should return
 a <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html">DataStoreTypes.SerializedItemDescriptor</a> as follows:
 </p>
-<ol><li></li><li></li></ol></p>
+<ol><li>
+If the version number and deletion state can be determined without fully deserializing
+the item, then the store should set those properties in the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html">DataStoreTypes.SerializedItemDescriptor</a>
+(and can set <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_SerializedItemDescriptor_SerializedItem">SerializedItem</a> to null for deleted items).
+</li><li>
+Otherwise, it should simply set <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.SerializedItemDescriptor.html#LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_SerializedItemDescriptor_SerializedItem">SerializedItem</a> to
+the exact string that was persisted, and can leave the other properties as zero/false. The
+SDK will inspect the properties of the item after deserializing it to fill in the rest of
+the information.
+</li></ol></p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStore_GetAll_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore.GetAll*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStore_GetAll_LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_DataKind_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStore.GetAll(LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.DataKind)">GetAll(DataStoreTypes.DataKind)</h4>

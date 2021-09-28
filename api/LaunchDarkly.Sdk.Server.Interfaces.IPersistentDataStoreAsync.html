@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IPersistentDataStoreAsync
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -77,12 +77,6 @@
 serialized form.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.IDisposable.Dispose()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStoreAsync_syntax">Syntax</h5>
@@ -145,7 +139,7 @@ implementations that use a task-based asynchronous pattern.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;DataStoreTypes.SerializedItemDescriptor?&gt; GetAsync(DataStoreTypes.DataKind kind, string key)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;Nullable&lt;DataStoreTypes.SerializedItemDescriptor&gt;&gt; GetAsync(DataStoreTypes.DataKind kind, string key)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

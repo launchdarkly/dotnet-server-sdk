@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IBigSegmentStore
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -76,12 +76,6 @@
   <div class="markdown level0 summary"><p>Interface for a read-only data store that allows querying of user membership in big segments.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.IDisposable.Dispose()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_syntax">Syntax</h5>
@@ -91,7 +85,7 @@
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
 &quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
-documentation about user segments: <a href="https://docs.launchdarkly.com/home/users">https://docs.launchdarkly.com/home/users</a>
+documentation about user segments: <a href="https://docs.launchdarkly.com/home/users/segments">https://docs.launchdarkly.com/home/users/segments</a>
 </p>
 <p>
 All query methods of the store are asynchronous.
@@ -163,7 +157,7 @@ data is malformed.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;BigSegmentStoreTypes.StoreMetadata?&gt; GetMetadataAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;Nullable&lt;BigSegmentStoreTypes.StoreMetadata&gt;&gt; GetMetadataAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">

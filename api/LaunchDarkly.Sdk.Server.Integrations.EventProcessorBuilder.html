@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class EventProcessorBuilder
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -86,35 +86,11 @@
     <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.html">IEventProcessorFactory</a></div>
     <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class EventProcessorBuilder : IEventProcessorFactory, IDiagnosticDescription</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class EventProcessorBuilder : Object, IEventProcessorFactory, IDiagnosticDescription</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>The SDK normally buffers analytics events and sends them to LaunchDarkly at intervals. If you want
@@ -374,7 +350,7 @@ the attributes specified in <a class="xref" href="LaunchDarkly.Sdk.Server.Integr
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_EventProcessorBuilder_BaseUri_System_Uri__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>You will only need to change this value in the following cases:
 <ul><li>
-You are using the <a href="https://docs.launchdarkly.com/docs/the-relay-proxy">Relay Proxy</a>.
+You are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>.
 Set <code>BaseUri</code> to the base URI of the Relay Proxy instance.
 </li><li>
 You are connecting to a test server or a nonstandard endpoint for the LaunchDarkly service.

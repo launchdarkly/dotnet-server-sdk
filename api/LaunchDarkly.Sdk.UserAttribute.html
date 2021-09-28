@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Struct UserAttribute
+    <title>Class UserAttribute
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Struct UserAttribute
+    <meta name="title" content="Class UserAttribute
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -71,32 +71,25 @@
             <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.UserAttribute">
   
   
-  <h1 id="LaunchDarkly_Sdk_UserAttribute" data-uid="LaunchDarkly.Sdk.UserAttribute" class="text-break">Struct UserAttribute
+  <h1 id="LaunchDarkly_Sdk_UserAttribute" data-uid="LaunchDarkly.Sdk.UserAttribute" class="text-break">Class UserAttribute
   </h1>
   <div class="markdown level0 summary"><p>Represents a built-in or custom attribute name supported by <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">UserAttribute</span></div>
+  </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a>&gt;</div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_UserAttribute_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public struct UserAttribute : IEquatable&lt;UserAttribute&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class UserAttribute : ValueType, IEquatable&lt;UserAttribute&gt;</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_UserAttribute_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -352,7 +345,7 @@ and <a href="https://docs.launchdarkly.com/home/managing-flags/targeting-users">
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly string AttributeName { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string AttributeName { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -376,7 +369,7 @@ and <a href="https://docs.launchdarkly.com/home/managing-flags/targeting-users">
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool BuiltIn { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool BuiltIn { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -475,8 +468,6 @@ and <a href="https://docs.launchdarkly.com/home/managing-flags/targeting-users">
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.Equals(System.Object)</span></div>
   <a id="LaunchDarkly_Sdk_UserAttribute_ForName_" data-uid="LaunchDarkly.Sdk.UserAttribute.ForName*"></a>
   <h4 id="LaunchDarkly_Sdk_UserAttribute_ForName_System_String_" data-uid="LaunchDarkly.Sdk.UserAttribute.ForName(System.String)">ForName(String)</h4>
   <div class="markdown level1 summary"><p>Returns a UserAttribute instance for the specified attribute name.</p>
@@ -543,8 +534,6 @@ and <a href="https://docs.launchdarkly.com/home/managing-flags/targeting-users">
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.GetHashCode()</span></div>
   <a id="LaunchDarkly_Sdk_UserAttribute_ToString_" data-uid="LaunchDarkly.Sdk.UserAttribute.ToString*"></a>
   <h4 id="LaunchDarkly_Sdk_UserAttribute_ToString" data-uid="LaunchDarkly.Sdk.UserAttribute.ToString">ToString()</h4>
   <div class="markdown level1 summary"></div>
@@ -568,8 +557,6 @@ and <a href="https://docs.launchdarkly.com/home/managing-flags/targeting-users">
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.ToString()</span></div>
   <h3 id="operators">Operators
   </h3>
   <a id="LaunchDarkly_Sdk_UserAttribute_op_Equality_" data-uid="LaunchDarkly.Sdk.UserAttribute.op_Equality*"></a>
@@ -664,7 +651,7 @@ and <a href="https://docs.launchdarkly.com/home/managing-flags/targeting-users">
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <span class="xref">System.IEquatable&lt;T&gt;</span>
+      <span class="xref">System.IEquatable&lt;&gt;</span>
   </div>
   <h3 id="seealso">See Also</h3>
   <div class="seealso">

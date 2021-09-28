@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Struct DataStoreTypes.ItemDescriptor
+    <title>Class DataStoreTypes.ItemDescriptor
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Struct DataStoreTypes.ItemDescriptor
+    <meta name="title" content="Class DataStoreTypes.ItemDescriptor
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -71,34 +71,21 @@
             <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor">
   
   
-  <h1 id="LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor" class="text-break">Struct DataStoreTypes.ItemDescriptor
+  <h1 id="LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor" data-uid="LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes.ItemDescriptor" class="text-break">Class DataStoreTypes.ItemDescriptor
   </h1>
   <div class="markdown level0 summary"><p>A versioned item (or placeholder) storeable in an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html">IDataStore</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.ValueType.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.ValueType.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">DataStoreTypes.ItemDescriptor</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public struct ItemDescriptor</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class ItemDescriptor : ValueType</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_DataStoreTypes_ItemDescriptor_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -161,7 +148,7 @@ Persistent data stores use <a class="xref" href="LaunchDarkly.Sdk.Server.Interfa
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly object Item { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public object Item { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -185,7 +172,7 @@ Persistent data stores use <a class="xref" href="LaunchDarkly.Sdk.Server.Interfa
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly int Version { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public int Version { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -270,8 +257,6 @@ Persistent data stores use <a class="xref" href="LaunchDarkly.Sdk.Server.Interfa
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.ToString()</span></div>
 </article>
           </div>
           

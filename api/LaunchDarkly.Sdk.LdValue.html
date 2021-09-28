@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Struct LdValue
+    <title>Class LdValue
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Struct LdValue
+    <meta name="title" content="Class LdValue
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -71,33 +71,26 @@
             <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.LdValue">
   
   
-  <h1 id="LaunchDarkly_Sdk_LdValue" data-uid="LaunchDarkly.Sdk.LdValue" class="text-break">Struct LdValue
+  <h1 id="LaunchDarkly_Sdk_LdValue" data-uid="LaunchDarkly.Sdk.LdValue" class="text-break">Class LdValue
   </h1>
   <div class="markdown level0 summary"><p>An immutable instance of any data type that is allowed in JSON.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">LdValue</span></div>
+  </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</div>
     <div><a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_LdValue_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public struct LdValue : IEquatable&lt;LdValue&gt;, IJsonSerializable</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class LdValue : ValueType, IEquatable&lt;LdValue&gt;, IJsonSerializable</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_LdValue_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -134,7 +127,7 @@ use <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool AsBool { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool AsBool { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -163,12 +156,12 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
 </div>
   <a id="LaunchDarkly_Sdk_LdValue_AsDouble_" data-uid="LaunchDarkly.Sdk.LdValue.AsDouble*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_AsDouble" data-uid="LaunchDarkly.Sdk.LdValue.AsDouble">AsDouble</h4>
-  <div class="markdown level1 summary"><p>Gets the value as an <span class="xref">langword_csharp_double</span> if it is numeric.</p>
+  <div class="markdown level1 summary"><p>Gets the value as an <span class="xref">double</span> if it is numeric.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly double AsDouble { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public double AsDouble { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -197,12 +190,12 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
 </div>
   <a id="LaunchDarkly_Sdk_LdValue_AsFloat_" data-uid="LaunchDarkly.Sdk.LdValue.AsFloat*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_AsFloat" data-uid="LaunchDarkly.Sdk.LdValue.AsFloat">AsFloat</h4>
-  <div class="markdown level1 summary"><p>Gets the value as an <span class="xref">langword_csharp_float</span> if it is numeric.</p>
+  <div class="markdown level1 summary"><p>Gets the value as an <span class="xref">float</span> if it is numeric.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly float AsFloat { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public float AsFloat { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -231,12 +224,12 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
 </div>
   <a id="LaunchDarkly_Sdk_LdValue_AsInt_" data-uid="LaunchDarkly.Sdk.LdValue.AsInt*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_AsInt" data-uid="LaunchDarkly.Sdk.LdValue.AsInt">AsInt</h4>
-  <div class="markdown level1 summary"><p>Gets the value as an <span class="xref">langword_csharp_int</span> if it is numeric.</p>
+  <div class="markdown level1 summary"><p>Gets the value as an <span class="xref">int</span> if it is numeric.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly int AsInt { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public int AsInt { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -273,7 +266,7 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly long AsLong { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public long AsLong { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -310,7 +303,7 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly string AsString { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string AsString { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -345,7 +338,7 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly int Count { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public int Count { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -369,7 +362,7 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool IsInt { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool IsInt { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -399,7 +392,7 @@ are both true.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool IsNull { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool IsNull { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -423,7 +416,7 @@ are both true.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool IsNumber { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool IsNumber { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -447,7 +440,7 @@ are both true.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool IsString { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool IsString { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -471,7 +464,7 @@ are both true.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly LdValue Null { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static LdValue Null { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -495,7 +488,7 @@ are both true.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly LdValueType Type { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public LdValueType Type { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -884,8 +877,6 @@ a read-only view into the existing array.
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.Equals(System.Object)</span></div>
   <a id="LaunchDarkly_Sdk_LdValue_Get_" data-uid="LaunchDarkly.Sdk.LdValue.Get*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_Get_System_Int32_" data-uid="LaunchDarkly.Sdk.LdValue.Get(System.Int32)">Get(Int32)</h4>
   <div class="markdown level1 summary"><p>Retrieves an array item or object key by index. Never throws an exception.</p>
@@ -995,8 +986,6 @@ a read-only view into the existing array.
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.GetHashCode()</span></div>
   <a id="LaunchDarkly_Sdk_LdValue_ObjectFrom_" data-uid="LaunchDarkly.Sdk.LdValue.ObjectFrom*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_ObjectFrom_System_Collections_Generic_IReadOnlyDictionary_System_String_LaunchDarkly_Sdk_LdValue__" data-uid="LaunchDarkly.Sdk.LdValue.ObjectFrom(System.Collections.Generic.IReadOnlyDictionary{System.String,LaunchDarkly.Sdk.LdValue})">ObjectFrom(IReadOnlyDictionary&lt;String, LdValue&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> as a JSON object, from a dictionary.</p>
@@ -1088,7 +1077,7 @@ a read-only view into the existing array.
   </table>
   <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Double_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Double)">Of(Double)</h4>
-  <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from a <span class="xref">langword_csharp_double</span> value.</p>
+  <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from a <span class="xref">double</span> value.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1131,7 +1120,7 @@ a read-only view into the existing array.
   </table>
   <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Int32_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Int32)">Of(Int32)</h4>
-  <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from an <span class="xref">langword_csharp_int</span> value.</p>
+  <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from an <span class="xref">int</span> value.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1224,7 +1213,7 @@ significant digits than will fit in a <span class="xref">System.Double</span>, i
 </div>
   <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Single_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Single)">Of(Single)</h4>
-  <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from a <span class="xref">langword_csharp_float</span> value.</p>
+  <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from a <span class="xref">float</span> value.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1429,8 +1418,6 @@ significant digits than will fit in a <span class="xref">System.Double</span>, i
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.ToString()</span></div>
   <h3 id="operators">Operators
   </h3>
   <a id="LaunchDarkly_Sdk_LdValue_op_Equality_" data-uid="LaunchDarkly.Sdk.LdValue.op_Equality*"></a>
@@ -1525,7 +1512,7 @@ significant digits than will fit in a <span class="xref">System.Double</span>, i
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <span class="xref">System.IEquatable&lt;T&gt;</span>
+      <span class="xref">System.IEquatable&lt;&gt;</span>
   </div>
   <div>
       <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>

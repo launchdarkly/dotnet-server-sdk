@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Struct EvaluationReason
+    <title>Class EvaluationReason
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Struct EvaluationReason
+    <meta name="title" content="Class EvaluationReason
    ">
-    <meta name="generator" content="docfx 2.58.0.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -71,32 +71,25 @@
             <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.EvaluationReason">
   
   
-  <h1 id="LaunchDarkly_Sdk_EvaluationReason" data-uid="LaunchDarkly.Sdk.EvaluationReason" class="text-break">Struct EvaluationReason
+  <h1 id="LaunchDarkly_Sdk_EvaluationReason" data-uid="LaunchDarkly.Sdk.EvaluationReason" class="text-break">Class EvaluationReason
   </h1>
   <div class="markdown level0 summary"><p>Describes the reason that a flag evaluation produced a particular value.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">EvaluationReason</span></div>
+  </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_EvaluationReason_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public struct EvaluationReason : IJsonSerializable</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class EvaluationReason : ValueType, IJsonSerializable</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_EvaluationReason_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>For converting this type to or from JSON, see <a class="xref" href="LaunchDarkly.Sdk.Json.html">LaunchDarkly.Sdk.Json</a>.</p>
@@ -111,7 +104,7 @@ at least one big segment. Otherwise it returns <span class="xref">null</span>.</
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly BigSegmentsStatus? BigSegmentsStatus { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Nullable&lt;BigSegmentsStatus&gt; BigSegmentsStatus { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -140,7 +133,7 @@ documentation about user segments: <a href="https://docs.launchdarkly.com/home/u
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly EvaluationErrorKind? ErrorKind { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Nullable&lt;EvaluationErrorKind&gt; ErrorKind { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -164,7 +157,7 @@ documentation about user segments: <a href="https://docs.launchdarkly.com/home/u
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly EvaluationReason FallthroughReason { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static EvaluationReason FallthroughReason { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -188,7 +181,7 @@ documentation about user segments: <a href="https://docs.launchdarkly.com/home/u
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool InExperiment { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool InExperiment { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -216,7 +209,7 @@ variations in the experiment. Otherwise it is false.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly EvaluationReasonKind Kind { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EvaluationReasonKind Kind { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -240,7 +233,7 @@ variations in the experiment. Otherwise it is false.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly EvaluationReason OffReason { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static EvaluationReason OffReason { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -265,7 +258,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly string PrerequisiteKey { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string PrerequisiteKey { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -289,7 +282,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly string RuleId { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string RuleId { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -313,7 +306,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly int? RuleIndex { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Nullable&lt;int&gt; RuleIndex { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -337,7 +330,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly EvaluationReason TargetMatchReason { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static EvaluationReason TargetMatchReason { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -396,8 +389,6 @@ otherwise <span class="xref">null</span>.</p>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.Equals(System.Object)</span></div>
   <a id="LaunchDarkly_Sdk_EvaluationReason_ErrorReason_" data-uid="LaunchDarkly.Sdk.EvaluationReason.ErrorReason*"></a>
   <h4 id="LaunchDarkly_Sdk_EvaluationReason_ErrorReason_LaunchDarkly_Sdk_EvaluationErrorKind_" data-uid="LaunchDarkly.Sdk.EvaluationReason.ErrorReason(LaunchDarkly.Sdk.EvaluationErrorKind)">ErrorReason(EvaluationErrorKind)</h4>
   <div class="markdown level1 summary"><p>Returns an EvaluationReason of the kind <a class="xref" href="LaunchDarkly.Sdk.EvaluationReasonKind.html#LaunchDarkly_Sdk_EvaluationReasonKind_Error">Error</a>.</p>
@@ -463,8 +454,6 @@ otherwise <span class="xref">null</span>.</p>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.GetHashCode()</span></div>
   <a id="LaunchDarkly_Sdk_EvaluationReason_PrerequisiteFailedReason_" data-uid="LaunchDarkly.Sdk.EvaluationReason.PrerequisiteFailedReason*"></a>
   <h4 id="LaunchDarkly_Sdk_EvaluationReason_PrerequisiteFailedReason_System_String_" data-uid="LaunchDarkly.Sdk.EvaluationReason.PrerequisiteFailedReason(System.String)">PrerequisiteFailedReason(String)</h4>
   <div class="markdown level1 summary"><p>Returns an EvaluationReason of the kind <a class="xref" href="LaunchDarkly.Sdk.EvaluationReasonKind.html#LaunchDarkly_Sdk_EvaluationReasonKind_PrerequisiteFailed">PrerequisiteFailed</a>.</p>
@@ -580,8 +569,6 @@ otherwise <span class="xref">null</span>.</p>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.ValueType.ToString()</span></div>
   <a id="LaunchDarkly_Sdk_EvaluationReason_WithBigSegmentsStatus_" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus*"></a>
   <h4 id="LaunchDarkly_Sdk_EvaluationReason_WithBigSegmentsStatus_System_Nullable_LaunchDarkly_Sdk_BigSegmentsStatus__" data-uid="LaunchDarkly.Sdk.EvaluationReason.WithBigSegmentsStatus(System.Nullable{LaunchDarkly.Sdk.BigSegmentsStatus})">WithBigSegmentsStatus(Nullable&lt;BigSegmentsStatus&gt;)</h4>
   <div class="markdown level1 summary"><p>Returns a copy of this EvaluationReason with a specific <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a> value added.</p>
@@ -589,7 +576,7 @@ otherwise <span class="xref">null</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EvaluationReason WithBigSegmentsStatus(BigSegmentsStatus? bigSegmentsStatus)</code></pre>
+    <pre><code class="lang-csharp hljs">public EvaluationReason WithBigSegmentsStatus(Nullable&lt;BigSegmentsStatus&gt; bigSegmentsStatus)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
