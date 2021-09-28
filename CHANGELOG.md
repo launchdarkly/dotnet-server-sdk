@@ -2,6 +2,14 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.2.1] - 2021-09-28
+### Changed:
+- When event handlers are called for events such as `IFlagTracker.FlagChanged`, the `sender` parameter will be the `LdClient` instance that generated the event. Previously, `sender` was being set to one of several internal components that were not useful to application code.
+
+### Fixed:
+- When using [`IFlagTracker`](https://launchdarkly.github.io/dotnet-server-sdk/api/LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.html), flag change events would not fire if the data source was [`FileData`](https://launchdarkly.github.io/dotnet-server-sdk/api/LaunchDarkly.Sdk.Server.Integrations.FileData.html) and there was a change in the test data file(s). Now, any change to the test data will cause a flag change event to fire for every flag. ([#144](https://github.com/launchdarkly/dotnet-server-sdk/issues/144))
+- A race condition could cause `IDataSourceStatusProvider.WaitFor` to wait indefinitely or time out even if the desired status was found.
+
 ## [6.2.0] - 2021-07-22
 ### Added:
 - The SDK now supports evaluation of Big Segments. An Early Access Program for creating and syncing Big Segments from customer data platforms is available to enterprise customers.
