@@ -5,6 +5,7 @@ using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Evaluation;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.TestHelpers;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -49,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("wrong")).Build());
 
-            Assert.Equal(false, client.BoolVariation("key", user, false));
+            Assert.False(client.BoolVariation("key", user, false));
         }
 
         [Fact]
@@ -349,7 +350,7 @@ namespace LaunchDarkly.Sdk.Server
                 ""$valid"":true
             }";
             var actualString = LdJsonSerialization.SerializeObject(state);
-            AssertHelpers.JsonEqual(expectedString, actualString);
+            JsonAssertions.AssertJsonEqual(expectedString, actualString);
         }
 
         [Fact]
@@ -379,7 +380,7 @@ namespace LaunchDarkly.Sdk.Server
                 ""$valid"":true
             }";
             var actualString = LdJsonSerialization.SerializeObject(state);
-            AssertHelpers.JsonEqual(expectedString, actualString);
+            JsonAssertions.AssertJsonEqual(expectedString, actualString);
         }
 
         [Fact]
@@ -441,7 +442,7 @@ namespace LaunchDarkly.Sdk.Server
                 ""$valid"":true
             }";
             var actualString = LdJsonSerialization.SerializeObject(state);
-            AssertHelpers.JsonEqual(expectedString, actualString);
+            JsonAssertions.AssertJsonEqual(expectedString, actualString);
         }
 
         [Fact]

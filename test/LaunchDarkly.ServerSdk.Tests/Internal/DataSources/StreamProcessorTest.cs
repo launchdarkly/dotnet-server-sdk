@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.TestHelpers;
 using LaunchDarkly.EventSource;
 using Moq;
 using Xunit;
@@ -47,12 +49,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new DelegatingDataStoreForStreamTests { WrappedStore = new InMemoryDataStore() };
-            _dataStoreUpdates = new DataStoreUpdatesImpl(new TaskExecutor(testLogger));
+            _dataStoreUpdates = new DataStoreUpdatesImpl(new TaskExecutor(null, testLogger), testLogger);
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, _dataStoreUpdates);
             _dataSourceUpdates = new DataSourceUpdatesImpl(
                 _dataStore,
                 _dataStoreStatusProvider,
-                new TaskExecutor(testLogger),
+                new TaskExecutor(null, testLogger),
                 testLogger,
                 null
                 );
@@ -277,7 +279,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var diagnosticStore = mockDiagnosticStore.Object;
             var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
             var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
-                diagnosticStore, new TaskExecutor(testLogger));
+                diagnosticStore, new TaskExecutor(null, testLogger));
 
             using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
                 .CreateDataSource(context, _dataSourceUpdates))
@@ -302,7 +304,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var diagnosticStore = mockDiagnosticStore.Object;
             var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
             var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
-                diagnosticStore, new TaskExecutor(testLogger));
+                diagnosticStore, new TaskExecutor(null, testLogger));
 
             using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
                 .CreateDataSource(context, _dataSourceUpdates))

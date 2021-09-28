@@ -8,7 +8,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// </summary>
     /// <remarks>
     /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
-    /// documentation about user segments: https://docs.launchdarkly.com/home/users
+    /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
     /// </remarks>
     public struct BigSegmentStoreStatus
     {

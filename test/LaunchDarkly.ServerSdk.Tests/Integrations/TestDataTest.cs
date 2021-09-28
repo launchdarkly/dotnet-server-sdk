@@ -5,6 +5,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.TestHelpers.JsonAssertions;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
@@ -30,18 +31,18 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             CreateAndStart();
 
-            Assert.Equal(1, _updates.Inits.Count);
+            Assert.Single(_updates.Inits);
             var data = TestUtils.NormalizeDataSet(_updates.Inits.Take());
             Assert.Collection(data.Data,
                 coll =>
                 {
                     Assert.Equal(DataModel.Features, coll.Key);
-                    Assert.Collection(coll.Value.Items);
+                    Assert.Empty(coll.Value.Items);
                 },
                 coll =>
                 {
                     Assert.Equal(DataModel.Segments, coll.Key);
-                    Assert.Collection(coll.Value.Items);
+                    Assert.Empty(coll.Value.Items);
                 });
         }
 
@@ -53,7 +54,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             CreateAndStart();
 
-            Assert.Equal(1, _updates.Inits.Count);
+            Assert.Single(_updates.Inits);
             var data = TestUtils.NormalizeDataSet(_updates.Inits.Take());
             Assert.Collection(data.Data,
                 coll =>
@@ -69,7 +70,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 coll =>
                 {
                     Assert.Equal(DataModel.Segments, coll.Key);
-                    Assert.Collection(coll.Value.Items);
+                    Assert.Empty(coll.Value.Items);
                 });
         }
 
@@ -80,7 +81,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             _td.Update(_td.Flag("flag1").On(true));
 
-            Assert.Equal(1, _updates.Upserts.Count);
+            Assert.Single(_updates.Upserts);
             var up = _updates.Upserts.Take();
             Assert.Equal(DataModel.Features, up.Kind);
             AssertFlag("flag1", 1, up.Key, up.Item, json =>
@@ -93,11 +94,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             _td.Update(_td.Flag("flag1").On(true));
 
             CreateAndStart();
-            Assert.Equal(0, _updates.Upserts.Count);
+            Assert.Empty(_updates.Upserts);
 
             _td.Update(_td.Flag("flag1").On(true));
 
-            Assert.Equal(1, _updates.Upserts.Count);
+            Assert.Single(_updates.Upserts);
             var up = _updates.Upserts.Take();
             Assert.Equal(DataModel.Features, up.Kind);
             AssertFlag("flag1", 2, up.Key, up.Item, json =>
@@ -303,10 +304,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             td.Update(configureFlag(_td.Flag("flagkey")));
 
-            Assert.Equal(1, _updates.Upserts.Count);
+            Assert.Single(_updates.Upserts);
             var up = _updates.Upserts.Take();
-            var json = LdValue.Parse(DataModel.Features.Serialize(up.Item));
-            AssertHelpers.JsonEqual(LdValue.Parse(expectedJson), json);
+            AssertJsonEqual(expectedJson, DataModel.Features.Serialize(up.Item));
         }
     }
 }

@@ -287,7 +287,7 @@ The NuGet package name and assembly name will also change. In the 5.6.3 release,
 
 ## [5.2.0] - 2018-07-27
 ### Added:
-- New configuration property `UseLdd` allows the client to use the "LaunchDarkly Daemon", i.e. getting feature flag data from a store that is updated by an [`ld-relay`](https://docs.launchdarkly.com/docs/the-relay-proxy) instance. However, this will not be usable until the Redis feature store integration is released (soon).
+- New configuration property `UseLdd` allows the client to use the "LaunchDarkly Daemon", i.e. getting feature flag data from a store that is updated by an [`ld-relay`](https://docs.launchdarkly.com/home/relay-proxy) instance. However, this will not be usable until the Redis feature store integration is released (soon).
 
 ### Changed:
 - If you attempt to evaluate a flag before the client has established a connection, but you are using a feature store that has already been populated, the client will now use the last known values from the store instead of returning default values.
@@ -319,7 +319,7 @@ The NuGet package name and assembly name will also change. In the 5.6.3 release,
 ## [5.0.0] - 2018-05-10
 
 ### Changed:
-- To reduce the network bandwidth used for analytics events, feature request events are now sent as counters rather than individual events, and user details are now sent only at intervals rather than in each event. These behaviors can be modified through the LaunchDarkly UI and with the new configuration option `InlineUsersInEvents`. For more details, see [Analytics Data Stream Reference](https://docs.launchdarkly.com/v2.0/docs/analytics-data-stream-reference).
+- To reduce the network bandwidth used for analytics events, feature request events are now sent as counters rather than individual events, and user details are now sent only at intervals rather than in each event. These behaviors can be modified through the LaunchDarkly UI and with the new configuration option `InlineUsersInEvents`.
 - The `IStoreEvents` interface has been renamed to `IEventProcessor`, has slightly different methods, and includes `IDisposable`. Also, the properties of the `Event` classes have changed. This will only affect developers who created their own implementation of `IStoreEvents`.
 
 ### Added:
@@ -370,7 +370,7 @@ The NuGet package name and assembly name will also change. In the 5.6.3 release,
 
 ## [3.5.0] - 2018-01-29
 ### Added
-- Support for specifying [private user attributes](https://docs.launchdarkly.com/docs/private-user-attributes) in order to prevent user attributes from being sent in analytics events back to LaunchDarkly. See the `AllAttributesPrivate` and `PrivateAttributeNames` methods on `Configuration` as well as the `AndPrivateX` methods on `User`.
+- Support for specifying [private user attributes](https://docs.launchdarkly.com/home/users/attributes#creating-private-user-attributes) in order to prevent user attributes from being sent in analytics events back to LaunchDarkly. See the `AllAttributesPrivate` and `PrivateAttributeNames` methods on `Configuration` as well as the `AndPrivateX` methods on `User`.
 
 ### Changed
 - The stream connection will now restart when a large feature flag update fails repeatedly to ensure that the client is using most recent flag values.
@@ -468,7 +468,7 @@ The NuGet package name and assembly name will also change. In the 5.6.3 release,
 ### Added
 - Support for multivariate feature flags. New methods `StringVariation`, `JsonVariation` and `IntVariation` and `FloatVariation` for multivariates.
 - New `AllFlags` method returns all flag values for a specified user.
-- New `SecureModeHash` function computes a hash suitable for the new LaunchDarkly [JavaScript client's secure mode feature](https://docs.launchdarkly.com/docs/js-sdk-reference#section-secure-mode).
+- New `SecureModeHash` function computes a hash suitable for the new LaunchDarkly [JavaScript client's secure mode feature](https://docs.launchdarkly.com/sdk/features/secure-mode#configuring-secure-mode-in-the-javascript-client-side-sdk).
 
 ### Changed
 - LdClient now implements a new interface: ILdClient

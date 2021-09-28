@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
@@ -13,8 +14,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         private static readonly BasicConfiguration basicConfig =
             new BasicConfiguration("sdk-key", false, null);
 
-        private readonly BuilderTestUtil<HttpConfigurationBuilder, HttpConfiguration> _tester =
-            BuilderTestUtil.For(() => Components.HttpConfiguration(),
+        private readonly BuilderBehavior.BuildTester<HttpConfigurationBuilder, HttpConfiguration> _tester =
+            BuilderBehavior.For(() => Components.HttpConfiguration(),
                 b => b.CreateHttpConfiguration(basicConfig));
 
         [Fact]

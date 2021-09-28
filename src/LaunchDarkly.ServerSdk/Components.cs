@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <remarks>
         /// <para>
         /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
-        /// documentation about user segments: https://docs.launchdarkly.com/home/users
+        /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
         /// </para>
         /// <para>
         /// After configuring this object, use <see cref="ConfigurationBuilder.BigSegments(IBigSegmentsConfigurationFactory)"/>
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <remarks>
         /// Passing this to <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/> causes the SDK
         /// not to retrieve feature flag data from LaunchDarkly, regardless of any other configuration. This is
-        /// normally done if you are using the <a href="https://docs.launchdarkly.com/home/advanced/relay-proxy">Relay Proxy</a>
+        /// normally done if you are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>
         /// in "daemon mode", where an external process-- the Relay Proxy-- connects to LaunchDarkly and populates
         /// a persistent data store with the feature flag data. The data store could also be populated by
         /// another process that is running the LaunchDarkly SDK. If there is no external process updating
@@ -122,7 +122,7 @@ namespace LaunchDarkly.Sdk.Server
         /// is disabled).
         /// </para>
         /// <para>
-        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
         /// SDK reference guide</a>.
         /// </para>
         /// </remarks>
@@ -159,7 +159,7 @@ namespace LaunchDarkly.Sdk.Server
         /// For more about log adapters, see <see cref="LoggingConfigurationBuilder.Adapter(ILogAdapter)"/>.
         /// </para>
         /// <para>
-        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
         /// SDK reference guide</a>.
         /// </para>
         /// </remarks>

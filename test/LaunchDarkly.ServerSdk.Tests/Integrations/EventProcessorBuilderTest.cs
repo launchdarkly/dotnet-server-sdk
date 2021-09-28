@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     public class EventProcessorBuilderTest
     {
-        private readonly BuilderInternalTestUtil<EventProcessorBuilder> _tester =
-            BuilderTestUtil.For(Components.SendEvents);
+        private readonly BuilderBehavior.InternalStateTester<EventProcessorBuilder> _tester =
+            BuilderBehavior.For(Components.SendEvents);
 
         [Fact]
         public void AllAttributesPrivate()

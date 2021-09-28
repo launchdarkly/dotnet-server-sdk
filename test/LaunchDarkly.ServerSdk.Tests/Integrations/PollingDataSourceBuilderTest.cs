@@ -1,12 +1,13 @@
 ﻿using System;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     public class PollingDataSourceBuilderTest
     {
-        private readonly BuilderInternalTestUtil<PollingDataSourceBuilder> _tester =
-            BuilderTestUtil.For(Components.PollingDataSource);
+        private readonly BuilderBehavior.InternalStateTester<PollingDataSourceBuilder> _tester =
+            BuilderBehavior.For(Components.PollingDataSource);
 
         [Fact]
         public void BaseUri()

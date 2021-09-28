@@ -1,6 +1,7 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.TestHelpers;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -275,6 +276,31 @@ namespace LaunchDarkly.Sdk.Server
 
                 var status2 = statuses.ExpectValue();
                 Assert.False(status2.Available);
+            }
+        }
+
+        [Fact]
+        public void EventSenderIsClientInstance()
+        {
+            // We're only checking one kind of events here (FlagChanged), but since the SDK uses the
+            // same TaskExecutor instance for all event dispatches and the sender is configured in
+            // that object, the sender should be the same for all events.
+
+            var flagKey = "flagKey";
+            var testData = TestData.DataSource();
+            testData.Update(testData.Flag(flagKey).On(true));
+            var config = Configuration.Builder("").DataSource(testData)
+                .Events(Components.NoEvents).Build();
+
+            using (var client = new LdClient(config))
+            {
+                var receivedSender = new EventSink<object>();
+                client.FlagTracker.FlagChanged += (s, e) => receivedSender.Enqueue(s);
+
+                testData.Update(testData.Flag(flagKey).On(false));
+
+                var sender = receivedSender.ExpectValue();
+                Assert.Same(client, sender);
             }
         }
     }

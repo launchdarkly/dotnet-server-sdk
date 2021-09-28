@@ -352,7 +352,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// parameter. As a result, calling this overload of <c>Track</c> will not yet produce any different
         /// behavior from calling <see cref="Track(string, User, LdValue)"/> without a <c>metricValue</c>. Refer
         /// to the SDK reference guide for the latest status:
-        /// https://docs.launchdarkly.com/docs/dotnet-sdk-reference#section-track
+        /// https://docs.launchdarkly.com/sdk/features/events#net
         /// </remarks>
         /// <param name="name">the name of the event</param>
         /// <param name="user">the user that performed the event</param>
@@ -401,7 +401,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <para>
         /// The object returned by this method contains the flag values as well as other metadata that
         /// is used by the LaunchDarkly JavaScript client, so it can be used for
-        /// <see href="https://docs.launchdarkly.com/docs/js-sdk-reference#section-bootstrapping">bootstrapping</see>.
+        /// <see href="https://docs.launchdarkly.com/sdk/features/bootstrapping#javascript">bootstrapping</see>.
         /// </para>
         /// <para>
         /// This method will not send analytics events back to LaunchDarkly.
@@ -418,7 +418,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Creates a hash string that can be used by the JavaScript SDK to identify a user.
         /// </summary>
         /// <remarks>
-        /// See <see href="https://docs.launchdarkly.com/docs/js-sdk-reference#section-secure-mode">Secure mode</see> in
+        /// See <see href="https://docs.launchdarkly.com/sdk/features/secure-mode#configuring-secure-mode-in-the-javascript-client-side-sdk">Secure mode</see> in
         /// the JavaScript SDK Reference.
         /// </remarks>
         /// <param name="user">the user to be hashed along with the SDK key</param>

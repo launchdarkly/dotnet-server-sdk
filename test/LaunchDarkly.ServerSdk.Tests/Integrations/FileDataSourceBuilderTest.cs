@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     public class FileDataSourceBuilderTest
     {
-        private readonly BuilderInternalTestUtil<FileDataSourceBuilder> _tester =
-            BuilderTestUtil.For(FileData.DataSource);
+        private readonly BuilderBehavior.InternalStateTester<FileDataSourceBuilder> _tester =
+            BuilderBehavior.For(FileData.DataSource);
 
         [Fact]
         public void AutoUpdate()

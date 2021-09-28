@@ -1,6 +1,6 @@
 ﻿using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Server.Internal;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -45,7 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
                 basic,
                 (configuration.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
                 null,
-                new TaskExecutor(Logs.None.Logger(""))
+                new TaskExecutor("test-sender", Logs.None.Logger(""))
                 ) { }
 
         internal LdClientContext(

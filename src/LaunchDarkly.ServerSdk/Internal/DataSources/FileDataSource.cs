@@ -8,6 +8,7 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
@@ -25,6 +26,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly Logger _logger;
         private volatile bool _started;
         private volatile bool _loadedValidData;
+        private volatile int _lastVersion;
 
         public FileDataSource(IDataSourceUpdates dataSourceUpdates, FileDataTypes.IFileReader fileReader,
             List<string> paths, bool autoUpdate, Func<string, object> alternateParser, bool skipMissingPaths,
@@ -38,6 +40,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _dataMerger = new FlagFileDataMerger(duplicateKeysHandling);
             _fileReader = fileReader;
             _skipMissingPaths = skipMissingPaths;
+            _lastVersion = 0;
             if (autoUpdate)
             {
                 try
@@ -86,6 +89,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private void LoadAll()
         {
+            var version = Interlocked.Increment(ref _lastVersion);
             var flags = new Dictionary<string, ItemDescriptor>();
             var segments = new Dictionary<string, ItemDescriptor>();
             foreach (var path in _paths)
@@ -93,7 +97,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 try
                 {
                     var content = _fileReader.ReadAllText(path);
-                    var data = _parser.Parse(content);
+                    _logger.Debug("file data: {0}", content);
+                    var data = _parser.Parse(content, version);
                     _dataMerger.AddToData(data, flags, segments);
                 }
                 catch (FileNotFoundException) when (_skipMissingPaths)
@@ -115,55 +120,120 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _loadedValidData = true;
         }
 
-        private const int ReadFileRetryDelay = 200;
-        private const int ReadFileRetryAttempts = 30000 / ReadFileRetryDelay;
-
-        private static string ReadFileContent(string path)
-        {
-            int delay = 0;
-            for (int i = 0; ; i++)
-            {
-                try
-                {
-                    string content = File.ReadAllText(path);
-                    return content;
-                }
-                catch (IOException e) when (IsFileLocked(e))
-                {
-                    // Retry for approximately 30 seconds before throwing
-                    if (i > ReadFileRetryAttempts)
-                    {
-                        throw;
-                    }
-                    Thread.Sleep(delay);
-                    // Retry immediately the first time but 200ms thereafter
-                    delay = ReadFileRetryDelay;
-                }
-            }
-        }
-
-        private static bool IsFileLocked(IOException exception)
-        {
-            // We cannot guarantee that these HResult values will be present on non-Windows OSes. However, this
-            // logic is less important on other platforms, because in Unix-like OSes you can atomically replace a
-            // file's contents (by creating a temporary file and then renaming it to overwrite the original file),
-            // so FileDataSource will not try to read an incomplete update; that is not possibble in Windows.
-            int errorCode = exception.HResult & 0xffff;
-            switch (errorCode)
-            {
-                case 0x20: // ERROR_SHARING_VIOLATION
-                case 0x21: // ERROR_LOCK_VIOLATION
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
         private void TriggerReload()
         {
             if (_started)
             {
+                _logger.Info("detected file modification, reloading");
                 LoadAll();
+            }
+        }
+    }
+
+    // Provides the logic for merging sets of feature flag and segment data.
+    internal sealed class FlagFileDataMerger
+    {
+        private readonly FileDataTypes.DuplicateKeysHandling _duplicateKeysHandling;
+
+        public FlagFileDataMerger(FileDataTypes.DuplicateKeysHandling duplicateKeysHandling)
+        {
+            _duplicateKeysHandling = duplicateKeysHandling;
+        }
+
+        public void AddToData(
+            FullDataSet<ItemDescriptor> data,
+            IDictionary<string, ItemDescriptor> flagsOut,
+            IDictionary<string, ItemDescriptor> segmentsOut
+            )
+        {
+            foreach (var kv0 in data.Data)
+            {
+                var kind = kv0.Key;
+                foreach (var kv1 in kv0.Value.Items)
+                {
+                    var items = kind == DataModel.Segments ? segmentsOut : flagsOut;
+                    var key = kv1.Key;
+                    var item = kv1.Value;
+                    if (items.ContainsKey(key))
+                    {
+                        switch (_duplicateKeysHandling)
+                        {
+                            case FileDataTypes.DuplicateKeysHandling.Throw:
+                                throw new System.Exception("in \"" + kind.Name + "\", key \"" + key +
+                                    "\" was already defined");
+                            case FileDataTypes.DuplicateKeysHandling.Ignore:
+                                break;
+                            default:
+                                throw new NotImplementedException("Unknown duplicate keys handling: " + _duplicateKeysHandling);
+                        }
+                    }
+                    else
+                    {
+                        items[key] = item;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Implementation of file monitoring using FileSystemWatcher.
+    /// </summary>
+    internal sealed class FileWatchingReloader : IDisposable
+    {
+        private readonly ISet<string> _filePaths;
+        private readonly Action _reload;
+        private readonly List<FileSystemWatcher> _watchers;
+
+        public FileWatchingReloader(List<string> paths, Action reload)
+        {
+            _reload = reload;
+
+            _filePaths = new HashSet<string>();
+            var dirPaths = new HashSet<string>();
+            foreach (var p in paths)
+            {
+                var absPath = Path.GetFullPath(p);
+                _filePaths.Add(absPath);
+                var dirPath = Path.GetDirectoryName(absPath);
+                dirPaths.Add(dirPath);
+            }
+
+            _watchers = new List<FileSystemWatcher>();
+            foreach (var dir in dirPaths)
+            {
+                var w = new FileSystemWatcher(dir);
+
+                w.Changed += (s, args) => ChangedPath(args.FullPath);
+                w.Created += (s, args) => ChangedPath(args.FullPath);
+                w.Renamed += (s, args) => ChangedPath(args.FullPath);
+                w.EnableRaisingEvents = true;
+
+                _watchers.Add(w);
+            }
+        }
+
+        private void ChangedPath(string path)
+        {
+            if (_filePaths.Contains(path))
+            {
+                _reload();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var w in _watchers)
+                {
+                    w.Dispose();
+                }
             }
         }
     }

@@ -70,7 +70,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.Equal(true, client.BoolVariation("key", User.WithKey("user"), false));
+                Assert.True(client.BoolVariation("key", User.WithKey("user"), false));
             }
         }
 

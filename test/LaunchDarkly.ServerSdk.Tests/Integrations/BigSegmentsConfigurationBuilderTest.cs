@@ -1,5 +1,6 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.TestHelpers;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     {
         private readonly IBigSegmentStore _store;
         private readonly IBigSegmentStoreFactory _storeFactory;
-        private readonly BuilderInternalTestUtil<BigSegmentsConfigurationBuilder> _tester;
+        private readonly BuilderBehavior.InternalStateTester<BigSegmentsConfigurationBuilder> _tester;
 
         public BigSegmentsConfigurationBuilderTest(ITestOutputHelper testOutput) : base(testOutput)
         {
@@ -20,7 +21,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             _storeFactory = storeFactoryMock.Object;
             storeFactoryMock.Setup(f => f.CreateBigSegmentStore(basicContext)).Returns(_store);
 
-            _tester = BuilderTestUtil.For(() => Components.BigSegments(_storeFactory));
+            _tester = BuilderBehavior.For(() => Components.BigSegments(_storeFactory));
         }
 
         [Fact]

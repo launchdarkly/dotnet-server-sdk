@@ -32,13 +32,16 @@
          build products, which is necessary for our documentation generation logic;
          this doesn't affect what goes into the NuGet package. -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    
+    <!-- fail if XML comments are missing or invalid -->
+    <WarningsAsErrors>1570,1571,1572,1573,1574,1580,1581,1584,1591,1710,1711,1712</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
     <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.2.0" />
     <PackageReference Include="LaunchDarkly.EventSource" Version="4.1.2" />
-    <PackageReference Include="LaunchDarkly.InternalSdk" Version="1.1.2" />
+    <PackageReference Include="LaunchDarkly.InternalSdk" Version="2.1.0" />
     <PackageReference Include="LaunchDarkly.JsonStream" Version="1.0.2" />
     <PackageReference Include="LaunchDarkly.Logging" Version="1.0.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />

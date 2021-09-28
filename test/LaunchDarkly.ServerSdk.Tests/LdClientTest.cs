@@ -9,6 +9,7 @@ using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.TestHelpers;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -316,12 +317,10 @@ namespace LaunchDarkly.Sdk.Server
 
             var mockStore = new Mock<IDataStore>();
             var store = mockStore.Object;
-            FullDataSet<ItemDescriptor> receivedData = new FullDataSet<ItemDescriptor>();
+            var dataSink = new EventSink<FullDataSet<ItemDescriptor>>();
 
             mockStore.Setup(s => s.Init(It.IsAny<FullDataSet<ItemDescriptor>>()))
-                .Callback((FullDataSet<ItemDescriptor> data) => {
-                    receivedData = data;
-                });
+                .Callback((FullDataSet<ItemDescriptor> data) => dataSink.Enqueue(data));
 
             mockDataSource.Setup(up => up.Start()).Returns(initTask);
 
@@ -334,7 +333,7 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var client = new LdClient(config))
             {
-                Assert.NotNull(receivedData);
+                var receivedData = dataSink.ExpectValue();
                 DataStoreSorterTest.VerifyDataSetOrder(receivedData, DataStoreSorterTest.DependencyOrderingTestData,
                     DataStoreSorterTest.ExpectedOrderingForSortedDataSet);
             }

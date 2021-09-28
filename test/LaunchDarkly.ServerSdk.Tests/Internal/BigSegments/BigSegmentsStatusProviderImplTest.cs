@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Moq;
 using Xunit;
@@ -43,7 +44,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
                 .StaleAfter(TimeSpan.FromDays(1));
             using (var sw = new BigSegmentStoreWrapper(
                 bsConfig.CreateBigSegmentsConfiguration(basicContext),
-                new TaskExecutor(testLogger),
+                new TaskExecutor(null, testLogger),
                 testLogger
                 ))
             {

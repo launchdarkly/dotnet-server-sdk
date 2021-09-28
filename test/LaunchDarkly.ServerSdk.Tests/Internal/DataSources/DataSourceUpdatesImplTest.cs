@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -41,9 +44,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         public DataSourceUpdatesImplTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            taskExecutor = new TaskExecutor(testLogger);
+            taskExecutor = new TaskExecutor(this, testLogger);
             store = new InMemoryDataStore();
-            dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor);
+            dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor, testLogger);
             dataStoreStatusProvider = new DataStoreStatusProviderImpl(store, dataStoreUpdates);
         }
 
@@ -370,12 +373,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             DateTime deadline = DateTime.Now.AddSeconds(1);
             while (DateTime.Now < deadline)
             {
-                var messages = logCapture.GetMessages();
+                var messages = logCapture.GetMessages().Where(m => m.Level == LogLevel.Error).ToList();
                 if (messages.Count == 1)
                 {
                     var m = messages[0];
-                    if (m.Level == LogLevel.Error &&
-                        m.LoggerName == ".DataSource" &&
+                    if (m.LoggerName == ".DataSource" &&
                         m.Text.Contains("NETWORK_ERROR (1 time)") &&
                         m.Text.Contains("ERROR_RESPONSE(501) (2 times)") &&
                         m.Text.Contains("ERROR_RESPONSE(502) (1 time)"))

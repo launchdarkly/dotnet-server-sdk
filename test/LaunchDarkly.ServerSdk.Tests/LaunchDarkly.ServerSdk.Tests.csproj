@@ -4,7 +4,7 @@
          single framework that we are testing; this allows us to test with older SDK
          versions that would error out if they saw any newer target frameworks listed
          here, even if we weren't running those. -->
-    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">netcoreapp2.1;net452</TestFramework>
+    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">netcoreapp2.1;net452;net5.0</TestFramework>
     <TargetFrameworks>$(TESTFRAMEWORK)</TargetFrameworks>
     <AssemblyName>LaunchDarkly.ServerSdk.Tests</AssemblyName>
     <PackageId>LaunchDarkly.ServerSdk.Tests</PackageId>
@@ -18,11 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.TestHelpers" Version="1.0.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="LaunchDarkly.TestHelpers" Version="1.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.8.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+    <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="YamlDotNet.Signed" Version="5.2.1" />
   </ItemGroup>
 

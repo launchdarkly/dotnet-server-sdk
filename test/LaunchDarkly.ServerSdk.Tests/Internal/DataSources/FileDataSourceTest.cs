@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.TestHelpers;
 using YamlDotNet.Serialization;
 using Xunit;
 using Xunit.Abstractions;
+
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.TestUtils;
+using static LaunchDarkly.TestHelpers.JsonAssertions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -16,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private static readonly string ALL_DATA_JSON_FILE = TestUtils.TestFilePath("all-properties.json");
         private static readonly string ALL_DATA_YAML_FILE = TestUtils.TestFilePath("all-properties.yml");
 
-        private readonly IDataStore store = new InMemoryDataStore();
+        private readonly CapturingDataSourceUpdates _updateSink = new CapturingDataSourceUpdates();
         private readonly FileDataSourceBuilder factory = FileData.DataSource();
         private readonly User user = User.WithKey("key");
 
@@ -25,13 +28,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private Configuration MakeConfig() =>
             Configuration.Builder(sdkKey)
                 .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
+                .Logging(testLogging)
                 .Build();
 
         private IDataSource MakeDataSource() =>
             factory.CreateDataSource(
                 new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), MakeConfig()),
-                TestUtils.BasicDataSourceUpdates(store, testLogger));
+                _updateSink);
 
         [Fact]
         public void FlagsAreNotLoadedUntilStart()
@@ -39,9 +42,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             factory.FilePaths(ALL_DATA_JSON_FILE);
             using (var fp = MakeDataSource())
             {
-                Assert.False(store.Initialized());
-                Assert.Equal(0, CountFlagsInStore());
-                Assert.Equal(0, CountSegmentsInStore());
+                Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(100)));
             }
         }
 
@@ -52,9 +53,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             using (var fp = MakeDataSource())
             {
                 fp.Start();
-                Assert.True(store.Initialized());
-                Assert.Equal(2, CountFlagsInStore());
-                Assert.Equal(1, CountSegmentsInStore());
+                Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFullDataFile(1)), DataSetAsJson(initData));
             }
         }
 
@@ -67,9 +67,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             using (var fp = MakeDataSource())
             {
                 fp.Start();
-                Assert.True(store.Initialized());
-                Assert.Equal(2, CountFlagsInStore());
-                Assert.Equal(1, CountSegmentsInStore());
+                Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFullDataFile(1)), DataSetAsJson(initData));
             }
         }
 
@@ -105,7 +104,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
                 Assert.True(fp.Initialized);
-                Assert.Equal(2, CountFlagsInStore());
+                Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFullDataFile(1)), DataSetAsJson(initData));
             }
         }
 
@@ -131,10 +131,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
+                    Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
-                    Thread.Sleep(TimeSpan.FromMilliseconds(400));
-                    Assert.Equal(1, CountFlagsInStore());
-                    Assert.Equal(0, CountSegmentsInStore());
+                    Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(400)));
                 }
             }
         }
@@ -149,18 +149,41 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    Assert.True(store.Initialized());
-                    Assert.Equal(0, CountSegmentsInStore());
-
-                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
-                    // See FilePollingReloader for the reason behind this long sleep
+                    Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                    AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFlagOnlyFile(1)), DataSetAsJson(initData));
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    Assert.True(
-                        WaitForCondition(TimeSpan.FromSeconds(5), () => CountSegmentsInStore() == 1),
-                        "Did not detect file modification"
-                    );
+                    Assert.True(_updateSink.Inits.TryTake(out var newData, TimeSpan.FromSeconds(5)), "timed out waiting for update");
+
+                    AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
+                }
+            }
+        }
+
+        [Fact]
+        public void FlagChangeEventIsGeneratedWhenModifiedFileIsReloaded()
+        {
+            using (var file = TempFile.Create())
+            {
+                file.SetContent(@"{""flagValues"":{""flag1"":""a""}}");
+
+                var config = Configuration.Builder("")
+                    .DataSource(FileData.DataSource().FilePaths(file.Path).AutoUpdate(true))
+                    .Events(Components.NoEvents)
+                    .Logging(testLogging)
+                    .Build();
+
+                using (var client = new LdClient(config))
+                {
+                    var events = new EventSink<FlagChangeEvent>();
+                    client.FlagTracker.FlagChanged += events.Add;
+
+                    file.SetContent(@"{""flagValues"":{""flag1"":""b""}}");
+
+                    var e = events.ExpectValue(TimeSpan.FromSeconds(5));
+                    Assert.Equal("flag1", e.Key);
+                    Assert.Equal("b", client.StringVariation("flag1", user, ""));
                 }
             }
         }
@@ -179,16 +202,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     using (var fp = MakeDataSource())
                     {
                         fp.Start();
-                        Assert.True(store.Initialized());
-                        Assert.Equal(0, CountSegmentsInStore());
+                        Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                        AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFlagOnlyFile(1)), DataSetAsJson(initData));
 
-                        Thread.Sleep(TimeSpan.FromMilliseconds(1000));
-                        // See FilePollingReloader for the reason behind this long sleep
                         file2.Delete();
                         file1.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                        Thread.Sleep(TimeSpan.FromMilliseconds(400));
-                        Assert.Equal(0, CountSegmentsInStore());
+                        Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(400)), "got unexpected update");
                     }
                 }
             }
@@ -207,18 +227,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    Assert.True(store.Initialized());
-                    Assert.Equal(0, CountSegmentsInStore());
-
-                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
-                    // See FilePollingReloader for the reason behind this long sleep
+                    Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                    AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFlagOnlyFile(1)), DataSetAsJson(initData));
 
                     file1.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    Assert.True(
-                        WaitForCondition(TimeSpan.FromSeconds(3), () => CountSegmentsInStore() == 1),
-                        "Did not detect file modification"
-                    );
+                    Assert.True(_updateSink.Inits.TryTake(out var newData, TimeSpan.FromSeconds(5)), "timed out waiting for update");
+
+                    AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
                 }
             }
         }
@@ -233,17 +249,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    Assert.False(store.Initialized());
-
-                    Thread.Sleep(TimeSpan.FromMilliseconds(1000));
-                    // See FilePollingReloader for the reason behind this long sleep
+                    Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(100)));
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    Assert.True(
-                        WaitForCondition(TimeSpan.FromSeconds(5), () => CountSegmentsInStore() == 1),
-                        "Did not detect file modification"
-                    );
+                    Assert.True(_updateSink.Inits.TryTake(out var newData, TimeSpan.FromSeconds(5)), "timed out waiting for update");
+
+                    AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
+                    // Note that the expected version is 2 because we increment the version on each
+                    // *attempt* to load the files, not on each successful load.
                 }
             }
         }
@@ -269,29 +283,35 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 Assert.Equal("value2", client.StringVariation("flag2", user, ""));
             }
         }
-        
-        private int CountFlagsInStore()
-        {
-            return store.GetAll(DataModel.Features).Items.Count();
-        }
 
-        private int CountSegmentsInStore()
-        {
-            return store.GetAll(DataModel.Segments).Items.Count();
-        }
+        private static FullDataSet<ItemDescriptor> ExpectedDataSetForFullDataFile(int version) =>
+            new DataSetBuilder()
+                .Flags(
+                    new FeatureFlagBuilder("flag1").Version(version).On(true).FallthroughVariation(2)
+                        .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on")).Build(),
+                    new FeatureFlagBuilder("flag2").Version(version).On(true).FallthroughVariation(0)
+                        .Variations(LdValue.Of("value2")).Build()
+                )
+                .Segments(
+                    new SegmentBuilder("seg1").Version(version).Included("user1").Build()
+                )
+                .Build();
 
-        private bool WaitForCondition(TimeSpan maxTime, Func<bool> test)
-        {
-            DateTime deadline = DateTime.Now.Add(maxTime);
-            while (DateTime.Now < deadline)
-            {
-                if (test())
-                {
-                    return true;
-                }
-                Thread.Sleep(TimeSpan.FromMilliseconds(100));
-            }
-            return false;
-        }
+        private static FullDataSet<ItemDescriptor> ExpectedDataSetForFlagOnlyFile(int version) =>
+            new DataSetBuilder()
+                .Flags(
+                    new FeatureFlagBuilder("flag1").Version(version).On(true).FallthroughVariation(2)
+                        .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on")).Build()
+                )
+                .Segments()
+                .Build();
+
+        private static FullDataSet<ItemDescriptor> ExpectedDataSetForSegmentOnlyFile(int version) =>
+            new DataSetBuilder()
+                .Flags()
+                .Segments(
+                    new SegmentBuilder("seg1").Version(version).Included("user1").Build()
+                )
+                .Build();
     }
 }

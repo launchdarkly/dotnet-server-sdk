@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.TestHelpers;
 using System.Threading.Tasks;
-using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
-using LaunchDarkly.Sdk.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -71,8 +71,8 @@ namespace LaunchDarkly.Sdk.Server
         internal static DataSourceUpdatesImpl BasicDataSourceUpdates(IDataStore dataStore, Logger logger) =>
             new DataSourceUpdatesImpl(
                 dataStore,
-                new DataStoreStatusProviderImpl(dataStore, new DataStoreUpdatesImpl(new TaskExecutor(logger))),
-                new TaskExecutor(logger),
+                new DataStoreStatusProviderImpl(dataStore, new DataStoreUpdatesImpl(new TaskExecutor(null, logger), logger)),
+                new TaskExecutor(null, logger),
                 logger,
                 null
                 );
@@ -90,6 +90,21 @@ namespace LaunchDarkly.Sdk.Server
                         )
                     )
                 );
+        }
+
+        internal static JsonTestValue DataSetAsJson(FullDataSet<ItemDescriptor> data)
+        {
+            var ob0 = LdValue.BuildObject();
+            foreach (var kv0 in data.Data)
+            {
+                var ob1 = LdValue.BuildObject();
+                foreach (var kv1 in kv0.Value.Items)
+                {
+                    ob1.Add(kv1.Key, LdValue.Parse(kv0.Key.Serialize(kv1.Value)));
+                }
+                ob0.Add(kv0.Key.Name, ob1.Build());
+            }
+            return JsonTestValue.JsonOf(ob0.Build().ToJsonString());
         }
     }
 
@@ -293,39 +308,6 @@ namespace LaunchDarkly.Sdk.Server
             if (Calls.TryTake(out result, timeout))
             {
                 throw new System.Exception("received an unexpected event payload");
-            }
-        }
-    }
-
-    public class EventSink<T>
-    {
-        private readonly BlockingCollection<T> _queue = new BlockingCollection<T>();
-
-        public void Add(object sender, T args) => _queue.Add(args);
-
-        public T ExpectValue() => ExpectValue(TimeSpan.FromSeconds(1));
-
-        public T ExpectValue(TimeSpan timeout)
-        {
-            if (!_queue.TryTake(out var value, timeout))
-            {
-                Assert.True(false, "expected an event but did not get one at " + TestLogging.TimestampString);
-            }
-            return value;
-        }
-
-        public bool TryTakeValue(out T value)
-        {
-            return _queue.TryTake(out value, TimeSpan.FromSeconds(1));
-        }
-
-        public void ExpectNoValue() => ExpectNoValue(TimeSpan.FromMilliseconds(100));
-
-        public void ExpectNoValue(TimeSpan timeout)
-        {
-            if (_queue.TryTake(out _, timeout))
-            {
-                Assert.False(true, "expected no event but got one at " + TestLogging.TimestampString);
             }
         }
     }

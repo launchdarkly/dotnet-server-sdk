@@ -9,7 +9,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <remarks>
     /// <para>
     /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
-    /// documentation about user segments: https://docs.launchdarkly.com/home/users
+    /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>
     /// <para>
     /// See <see cref="BigSegmentsConfigurationBuilder"/> for more details on these properties.

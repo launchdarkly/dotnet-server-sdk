@@ -1,4 +1,6 @@
-﻿using LaunchDarkly.Sdk.Server.Interfaces;
+﻿using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         public DataStoreUpdatesImplTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            updates = new DataStoreUpdatesImpl(new TaskExecutor(testLogger));
+            updates = new DataStoreUpdatesImpl(new TaskExecutor(this, testLogger), testLogger);
         }
 
         [Fact]

@@ -17,12 +17,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// By default, the SDK has the following logging behavior:
     /// </para>
     /// <list type="bullet">
-    /// <item> Log messages are written to standard output. To change this, use a log adapter as
-    /// described in <see cref="Adapter(ILogAdapter)"/> and <see cref="Components.Logging(ILogAdapter)"/>. </item>
-    /// <item> The lowest enabled log level is <see cref="LogLevel.Info"/>, so <see cref="LogLevel.Debug"/>
-    /// messages are not shown. To change this, use <see cref="Level(LogLevel)"/>. </item>
-    /// <item> The base logger name is <c>LaunchDarkly.Sdk</c>. See <see cref="BaseLoggerName(string)"/>
-    /// for more about logger names and how to change the name. </item>
+    /// <item><description> Log messages are written to standard output. To change this, use a log adapter as
+    /// described in <see cref="Adapter(ILogAdapter)"/> and <see cref="Components.Logging(ILogAdapter)"/>. </description></item>
+    /// <item><description> The lowest enabled log level is <see cref="LaunchDarkly.Logging.LogLevel.Info"/>,
+    /// so <see cref="LaunchDarkly.Logging.LogLevel.Debug"/> messages are not shown. To change this, use
+    /// <see cref="Level(LaunchDarkly.Logging.LogLevel)"/>. </description></item>
+    /// <item><description> The base logger name is <c>LaunchDarkly.Sdk</c>. See <see cref="BaseLoggerName(string)"/>
+    /// for more about logger names and how to change the name. </description></item>
     /// </list>
     /// </remarks>
     /// <example>
@@ -73,15 +74,15 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// functionality is involved:
         /// </para>
         /// <list type="bullet">
-        /// <item> <c>.DataSource</c>: problems or status messages regarding how the SDK gets
-        /// feature flag data from LaunchDarkly. </item>
-        /// <item> <c>.DataStore</c>: problems or status messages regarding how the SDK stores its
-        /// feature flag data (for instance, if you are using a database). </item>
-        /// <item> <c>.Evaluation</c>: problems in evaluating a feature flag or flags, which were
+        /// <item><description> <c>.DataSource</c>: problems or status messages regarding how the SDK gets
+        /// feature flag data from LaunchDarkly. </description></item>
+        /// <item><description> <c>.DataStore</c>: problems or status messages regarding how the SDK stores its
+        /// feature flag data (for instance, if you are using a database). </description></item>
+        /// <item><description> <c>.Evaluation</c>: problems in evaluating a feature flag or flags, which were
         /// caused by invalid flag data or incorrect usage of the SDK rather than for instance a
-        /// database problem. </item>
-        /// <item> <c>.Events</c> problems or status messages regarding the SDK's delivery of
-        /// analytics event data to LaunchDarkly. </item>
+        /// database problem. </description></item>
+        /// <item><description> <c>.Events</c> problems or status messages regarding the SDK's delivery of
+        /// analytics event data to LaunchDarkly. </description></item>
         /// </list>
         /// <para>
         /// Setting <c>BaseLoggerName</c> to a non-null value overrides the default. The SDK still
@@ -107,7 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// For instance, in .NET Core, specify <c>Logs.CoreLogging</c> to use the standard .NET Core logging framework.
         /// </para>
         /// <para>
-        /// For more about logging adapters, see the <a href="https://docs.launchdarkly.com/sdk/server-side/dotnet#logging">SDK
+        /// For more about logging adapters, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
         /// reference guide</a>, the <a href="https://launchdarkly.github.io/dotnet-logging/html/N_LaunchDarkly_Logging.htm">API
         /// documentation</a> for <c>LaunchDarkly.Logging</c>, and the
         /// <a href="https://github.com/launchdarkly/dotnet-logging-adapters">third-party adapters</a> that
@@ -143,7 +144,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <para>
         /// This adds a log level filter that is applied regardless of what implementation of logging is
         /// being used, so that log messages at lower levels are suppressed. For instance, setting the
-        /// minimum level to <see cref="LogLevel.Info"/> means that <c>Debug</c>-level output is disabled.
+        /// minimum level to <see cref="LaunchDarkly.Logging.LogLevel.Info"/> means that <c>Debug</c>-level output is disabled.
         /// External logging frameworks may also have their own mechanisms for setting a minimum log level.
         /// </para>
         /// <para>
