@@ -59,7 +59,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         /// </summary>
         /// <param name="featureFlagGetter">a function that returns the stored FeatureFlag for a given key, or null if not found</param>
         /// <param name="segmentGetter">a function that returns the stored Segment for a given key, or null if not found </param>
-        /// <param name="bigSegmentsGetter">a function that queries the big segments state for a user key, or null if not available</param>
+        /// <param name="bigSegmentsGetter">a function that queries the Big Segments state for a user key, or null if not available</param>
         /// <param name="logger">log messages will be sent here</param>
         internal Evaluator(Func<string, FeatureFlag> featureFlagGetter,
             Func<string, Segment> segmentGetter,
@@ -391,14 +391,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                         _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
                         return false;
                     }
-                    // Even if multiple big segments are referenced within a single flag evaluation,
+                    // Even if multiple Big Segments are referenced within a single flag evaluation,
                     // we only need to do this query once, since it returns *all* of the user's segment
                     // memberships.
                     if (!_bigSegmentsStatus.HasValue)
                     {
                         if (_parent._bigSegmentsGetter is null)
                         {
-                            // the SDK hasn't been configured to be able to use big segments
+                            // the SDK hasn't been configured to be able to use Big Segments
                             _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
                         }
                         else

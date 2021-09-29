@@ -15,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <remarks>
         /// <para>
         /// It is associated with a single user, and provides the ability to check whether that
-        /// user is included in or excluded from any number of big segments.
+        /// user is included in or excluded from any number of Big Segments.
         /// </para>
         /// <para>
         /// This is an immutable snapshot of the state for this user at the time
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This method is intended to be used by big segment store implementations; application code
+        /// This method is intended to be used by Big Segment store implementations; application code
         /// does not need to use it.
         /// </para>
         /// <para>

@@ -7,7 +7,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
     // BigSegmentStoreWrapper, which exposes the methods that other SDK components need to access the store.
     //
     // We always create this component regardless of whether there really is a store. If there is no store (so
-    // there is no BigSegmentStoreWrapper) then we won't actually be doing any big segments stuff, or sending
+    // there is no BigSegmentStoreWrapper) then we won't actually be doing any Big Segments stuff, or sending
     // any status updates, but this API object still exists so your app won't crash if you try to use
     // Status or StatusChanged.
     internal sealed class BigSegmentStoreStatusProviderImpl : IBigSegmentStoreStatusProvider

@@ -23,11 +23,11 @@ namespace LaunchDarkly.Sdk.Server
     public static class Components
     {
         /// <summary>
-        /// Returns a configuration builder for the SDK's big segments feature.
+        /// Returns a configuration builder for the SDK's Big Segments feature.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
+        /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
         /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
         /// </para>
         /// <para>

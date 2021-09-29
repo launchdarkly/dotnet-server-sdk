@@ -3,12 +3,12 @@
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
-    /// An interface for querying the status of a big segment store.
+    /// An interface for querying the status of a Big Segment store.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The big segment store is the component that receives information about big segments, normally
-    /// from a database populated by the LaunchDarkly Relay Proxy. "Big segments" are a specific type
+    /// The Big Segment store is the component that receives information about Big Segments, normally
+    /// from a database populated by the LaunchDarkly Relay Proxy. "Big Segments" are a specific type
     /// of user segments. For more information, read the LaunchDarkly documentation about user
     /// segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>

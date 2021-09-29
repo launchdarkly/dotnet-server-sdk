@@ -220,7 +220,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             }
 
             Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error,
-                "Big segment store status.*Exception.*sorry"));
+                "Big Segment store status.*Exception.*sorry"));
         }
 
         [Fact]

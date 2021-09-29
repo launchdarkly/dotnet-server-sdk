@@ -4,11 +4,11 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
-    /// Contains methods for configuring the SDK's big segments behavior.
+    /// Contains methods for configuring the SDK's Big Segments behavior.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
+    /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
     /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>
     /// <para>
@@ -60,18 +60,18 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets the maximum number of users whose big segment state will be cached by the SDK
+        /// Sets the maximum number of users whose Big Segment state will be cached by the SDK
         /// at any given time.
         /// </summary>
         /// <remarks>
         /// <para>
         /// To reduce database traffic, the SDK maintains a least-recently-used cache by user key. When a feature
-        /// flag that references a big segment is evaluated for some user who is not currently in the cache, the
-        /// SDK queries the database for all big segment memberships of that user, and stores them together in a
+        /// flag that references a Big Segment is evaluated for some user who is not currently in the cache, the
+        /// SDK queries the database for all Big Segment memberships of that user, and stores them together in a
         /// single cache entry. If the cache is full, the oldest entry is dropped.
         /// </para>
         /// <para>
-        /// A higher value for <see cref="UserCacheSize(int)"/> means that database queries for big segments will
+        /// A higher value for <see cref="UserCacheSize(int)"/> means that database queries for Big Segments will
         /// be done less often for recently-referenced users, if the application has many users, at the cost of
         /// increased memory used by the cache.
         /// </para>
@@ -89,13 +89,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets the maximum length of time that the big segment state for a user will be cached
+        /// Sets the maximum length of time that the Big Segment state for a user will be cached
         /// by the SDK.
         /// </summary>
         /// <remarks>
         /// <para>
         /// See <see cref="UserCacheSize(int)"/> for more about this cache. A higher value for
-        /// <see cref="UserCacheTime(TimeSpan)"/> means that database queries for the big segment state of any
+        /// <see cref="UserCacheTime(TimeSpan)"/> means that database queries for the Big Segment state of any
         /// given user will be done less often, but that changes to segment membership may not be detected as soon.
         /// </para>
         /// </remarks>
@@ -109,7 +109,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets the interval at which the SDK will poll the big segment store to make sure
+        /// Sets the interval at which the SDK will poll the Big Segment store to make sure
         /// it is available and to determine how long ago it was updated.
         /// </summary>
         /// <param name="statusPollInterval">the status polling interval (any value less than or
@@ -124,12 +124,12 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets the maximum length of time between updates of the big segments data before the data
+        /// Sets the maximum length of time between updates of the Big Segments data before the data
         /// is considered out of date.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// Normally, the LaunchDarkly Relay Proxy updates a timestamp in the big segments store at intervals to
+        /// Normally, the LaunchDarkly Relay Proxy updates a timestamp in the Big Segments store at intervals to
         /// confirm that it is still in sync with the LaunchDarkly data, even if there have been no changes to the
         /// data. If the timestamp falls behind the current time by the amount specified in
         /// <see cref="StaleAfter(TimeSpan)"/>, the SDK assumes that something is not working correctly in this
@@ -138,7 +138,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <para>
         /// While in a stale state, the SDK will still continue using the last known data, but
         /// <see cref="IBigSegmentStoreStatusProvider.Status"/> will return true in its Stale property, and any
-        /// <see cref="EvaluationReason"/> generated from a feature flag that references a big segment will have
+        /// <see cref="EvaluationReason"/> generated from a feature flag that references a Big Segment will have
         /// a <see cref="EvaluationReason.BigSegmentsStatus"/> of <see cref="BigSegmentsStatus.Stale"/>.
         /// </para>
         /// </remarks>
