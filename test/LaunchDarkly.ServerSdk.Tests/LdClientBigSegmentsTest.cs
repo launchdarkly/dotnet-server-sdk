@@ -17,7 +17,7 @@ namespace LaunchDarkly.Sdk.Server
         private FeatureFlag _flag;
         private Segment _bigSegment;
         private User _user;
-        private Mock<IBigSegmentStore> _storeMock;
+        private MockBigSegmentStore _storeMock;
         private IBigSegmentStoreFactory _storeFactory;
 
         public LdClientBigSegmentsTest(ITestOutputHelper testOutput) : base(testOutput)
@@ -42,14 +42,9 @@ namespace LaunchDarkly.Sdk.Server
             _testData.UsePreconfiguredFlag(_flag);
             _testData.UsePreconfiguredSegment(_bigSegment);
 
-            _storeMock = new Mock<IBigSegmentStore>();
-            var store = _storeMock.Object;
-            var storeFactoryMock = new Mock<IBigSegmentStoreFactory>();
-            _storeFactory = storeFactoryMock.Object;
-            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(It.IsAny<LdClientContext>())).Returns(store);
-
-            _storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(
-                new StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
+            _storeMock = new MockBigSegmentStore();
+            _storeFactory = _storeMock.AsSingletonFactory();
+            _storeMock.SetupMetadataReturns(new StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
         }
 
         private LdClient MakeClient()
@@ -79,8 +74,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var membership = NewMembershipFromSegmentRefs(
                 new string[] { MakeBigSegmentRef(_bigSegment) }, null);
-            _storeMock.Setup(s => s.GetMembershipAsync(BigSegmentUserKeyHash(_user.Key)))
-                .ReturnsAsync(membership);
+            _storeMock.SetupMembershipReturns(BigSegmentUserKeyHash(_user.Key), membership);
 
             using (var client = MakeClient())
             {
@@ -93,8 +87,8 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StoreError()
         {
-            _storeMock.Setup(s => s.GetMembershipAsync(BigSegmentUserKeyHash(_user.Key)))
-                .ThrowsAsync(new Exception("sorry"));
+            _storeMock.SetupMembershipThrows(BigSegmentUserKeyHash(_user.Key),
+                new Exception("sorry"));
 
             using (var client = MakeClient())
             {

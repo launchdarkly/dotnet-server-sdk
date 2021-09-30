@@ -60,7 +60,7 @@ namespace LaunchDarkly.Sdk.Server
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
             var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.ExternalUpdatesOnly)
-                .DataStore(TestUtils.SpecificDataStore(dataStore))
+                .DataStore(dataStore.AsSingletonFactory())
                 .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))

@@ -65,7 +65,7 @@ namespace LaunchDarkly.Sdk.Server
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
             var config = Configuration.Builder(sdkKey)
                 .Offline(true)
-                .DataStore(TestUtils.SpecificDataStore(dataStore))
+                .DataStore(dataStore.AsSingletonFactory())
                 .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
@@ -81,8 +81,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Logging(Components.Logging(testLogging)).Build();
             using (var client = new LdClient(config))
             {
-                Assert.True(logCapture.HasMessageWithText(LogLevel.Info,
-                    "Starting LaunchDarkly client in offline mode"), logCapture.ToString());
+                AssertLogMessage(true, LogLevel.Info, "Starting LaunchDarkly client in offline mode");
             }
         }
 

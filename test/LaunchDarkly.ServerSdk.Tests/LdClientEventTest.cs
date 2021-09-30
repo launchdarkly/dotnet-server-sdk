@@ -12,14 +12,14 @@ namespace LaunchDarkly.Sdk.Server
     {
         private static readonly User user = User.WithKey("userkey");
         private readonly TestData testData = TestData.DataSource();
-        private readonly TestEventProcessor eventSink = new TestEventProcessor();
+        private readonly MockEventProcessor eventSink = new MockEventProcessor();
         private readonly ILdClient client;
 
         public LdClientEventTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             var config = Configuration.Builder("SDK_KEY")
                 .DataSource(testData)
-                .Events(TestUtils.SpecificEventProcessor(eventSink))
+                .Events(eventSink.AsSingletonFactory())
                 .Logging(Components.Logging(testLogging))
                 .Build();
             client = new LdClient(config);

@@ -2,7 +2,6 @@
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.TestHelpers;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -13,38 +12,31 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 {
     public class BigSegmentsStoreWrapperTest : BaseTest
     {
-        private readonly Mock<IBigSegmentStore> _storeMock;
-        private readonly IBigSegmentStore _store;
+        private readonly MockBigSegmentStore _store;
         private readonly IBigSegmentStoreFactory _storeFactory;
         private readonly TaskExecutor _taskExecutor;
 
         public BigSegmentsStoreWrapperTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            _storeMock = new Mock<IBigSegmentStore>();
-            _store = _storeMock.Object;
-            var storeFactoryMock = new Mock<IBigSegmentStoreFactory>();
-            _storeFactory = storeFactoryMock.Object;
-            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(basicContext)).Returns(_store);
+            _store = new MockBigSegmentStore();
+            _storeFactory = _store.AsSingletonFactory();
 
             _taskExecutor = new TaskExecutor(this, testLogger);
         }
 
-        private void SetStoreHasNoMetadata() =>
-            _storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync((StoreMetadata?)null);
+        private void SetStoreHasNoMetadata() => _store.SetupMetadataReturns((StoreMetadata?)null);
         
         private void SetStoreTimestamp(UnixMillisecondTime timestamp) =>
-            _storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(new StoreMetadata { LastUpToDate = timestamp });
+            _store.SetupMetadataReturns(new StoreMetadata { LastUpToDate = timestamp });
 
         private void SetStoreStatusError(Exception e) =>
-            _storeMock.Setup(s => s.GetMetadataAsync()).ThrowsAsync(e);
+            _store.SetupMetadataThrows(e);
 
         private void SetStoreMembership(string userKey, IMembership membership) =>
-            _storeMock.Setup(s => s.GetMembershipAsync(BigSegmentUserKeyHash(userKey)))
-                .ReturnsAsync(membership);
+            _store.SetupMembershipReturns(BigSegmentUserKeyHash(userKey), membership);
 
         private void ShouldHaveQueriedMembershipTimes(string userKey, int times) =>
-            _storeMock.Verify(s => s.GetMembershipAsync(BigSegmentUserKeyHash(userKey)),
-                Times.Exactly(times));
+            Assert.Equal(times, _store.InspectMembershipQueriedCount(BigSegmentUserKeyHash(userKey)));
 
         [Fact]
         public void MembershipQueryWithUncachedResultAndHealthyStatus()
@@ -219,8 +211,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
                 Assert.Equal(status3, sw.GetStatus());
             }
 
-            Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error,
-                "Big Segment store status.*Exception.*sorry"));
+            AssertLogMessageRegex(true, Logging.LogLevel.Error,
+                "Big Segment store status.*Exception.*sorry");
         }
 
         [Fact]

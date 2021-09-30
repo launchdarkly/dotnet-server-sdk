@@ -1,7 +1,9 @@
 ﻿using System.Threading;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -41,6 +43,11 @@ namespace LaunchDarkly.Sdk.Server
         protected readonly LdClientContext basicContext;
 
         /// <summary>
+        /// A TaskExecutor instance that uses the test logger.
+        /// </summary>
+        protected readonly TaskExecutor BasicTaskExecutor;
+
+        /// <summary>
         /// This empty constructor disables log output.
         /// </summary>
         public BaseTest()
@@ -51,7 +58,9 @@ namespace LaunchDarkly.Sdk.Server
 
             basicContext = new LdClientContext(new BasicConfiguration("", false, testLogger),
                 Configuration.Default(""));
-            
+
+            BasicTaskExecutor = new TaskExecutor("test-sender", testLogger);
+
             // The following line prevents intermittent test failures that happen only in .NET
             // Framework, where background tasks (including calls to Task.Delay) are very excessively
             // slow to start-- on the order of many seconds. The issue appears to be a long-standing
@@ -88,5 +97,30 @@ namespace LaunchDarkly.Sdk.Server
             testLogging = Logs.ToMultiple(TestLogging.TestOutputAdapter(testOutput), logCapture);
             testLogger = testLogging.Logger("");
         }
+
+        public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern)
+        {
+            if (logCapture.HasMessageWithRegex(level, pattern) != shouldHave)
+            {
+                ThrowLogMatchException(shouldHave, level, pattern, true);
+            }
+        }
+
+        public void AssertLogMessage(bool shouldHave, LogLevel level, string text)
+        {
+            if (logCapture.HasMessageWithText(level, text) != shouldHave)
+            {
+                ThrowLogMatchException(shouldHave, level, text, true);
+            }
+        }
+
+        private void ThrowLogMatchException(bool shouldHave, LogLevel level, string text, bool isRegex) =>
+            throw new AssertActualExpectedException(shouldHave, !shouldHave,
+                string.Format("Expected log {0} the {1} \"{2}\" at level {3}\n\nActual log output follows:\n{4}",
+                    shouldHave ? "to have" : "not to have",
+                    isRegex ? "pattern" : "exact message",
+                    text,
+                    level,
+                    logCapture.ToString()));
     }
 }

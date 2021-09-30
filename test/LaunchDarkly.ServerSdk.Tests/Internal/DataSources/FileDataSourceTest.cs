@@ -42,7 +42,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             factory.FilePaths(ALL_DATA_JSON_FILE);
             using (var fp = MakeDataSource())
             {
-                Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(100)));
+                _updateSink.Inits.ExpectNoValue();
             }
         }
 
@@ -53,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             using (var fp = MakeDataSource())
             {
                 fp.Start();
-                Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                var initData = _updateSink.Inits.ExpectValue();
                 AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFullDataFile(1)), DataSetAsJson(initData));
             }
         }
@@ -67,7 +67,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             using (var fp = MakeDataSource())
             {
                 fp.Start();
-                Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                var initData = _updateSink.Inits.ExpectValue();
                 AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFullDataFile(1)), DataSetAsJson(initData));
             }
         }
@@ -104,7 +104,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var task = fp.Start();
                 Assert.True(task.IsCompleted);
                 Assert.True(fp.Initialized);
-                Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                var initData = _updateSink.Inits.ExpectValue();
                 AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFullDataFile(1)), DataSetAsJson(initData));
             }
         }
@@ -131,10 +131,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                    var initData = _updateSink.Inits.ExpectValue();
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
-                    Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(400)));
+                    _updateSink.Inits.ExpectNoValue();
                 }
             }
         }
@@ -149,12 +149,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                    var initData = _updateSink.Inits.ExpectValue();
                     AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFlagOnlyFile(1)), DataSetAsJson(initData));
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    Assert.True(_updateSink.Inits.TryTake(out var newData, TimeSpan.FromSeconds(5)), "timed out waiting for update");
+                    var newData = _updateSink.Inits.ExpectValue(TimeSpan.FromSeconds(5));
 
                     AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
                 }
@@ -202,13 +202,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     using (var fp = MakeDataSource())
                     {
                         fp.Start();
-                        Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                        var initData = _updateSink.Inits.ExpectValue();
                         AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFlagOnlyFile(1)), DataSetAsJson(initData));
 
                         file2.Delete();
                         file1.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                        Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(400)), "got unexpected update");
+                        _updateSink.Inits.ExpectNoValue();
                     }
                 }
             }
@@ -227,12 +227,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    Assert.True(_updateSink.Inits.TryTake(out var initData, TimeSpan.FromMilliseconds(100)));
+                    var initData = _updateSink.Inits.ExpectValue();
                     AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFlagOnlyFile(1)), DataSetAsJson(initData));
 
                     file1.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    Assert.True(_updateSink.Inits.TryTake(out var newData, TimeSpan.FromSeconds(5)), "timed out waiting for update");
+                    var newData = _updateSink.Inits.ExpectValue(TimeSpan.FromSeconds(5));
 
                     AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
                 }
@@ -249,11 +249,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 using (var fp = MakeDataSource())
                 {
                     fp.Start();
-                    Assert.False(_updateSink.Inits.TryTake(out _, TimeSpan.FromMilliseconds(100)));
+                    _updateSink.Inits.ExpectNoValue();
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    Assert.True(_updateSink.Inits.TryTake(out var newData, TimeSpan.FromSeconds(5)), "timed out waiting for update");
+                    var newData = _updateSink.Inits.ExpectValue(TimeSpan.FromSeconds(5));
 
                     AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
                     // Note that the expected version is 2 because we increment the version on each
