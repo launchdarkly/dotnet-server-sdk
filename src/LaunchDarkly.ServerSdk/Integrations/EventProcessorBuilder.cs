@@ -58,10 +58,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan MinimumDiagnosticRecordingInterval = TimeSpan.FromMinutes(1);
 
-        internal static readonly Uri DefaultBaseUri = new Uri("https://events.launchdarkly.com");
-
         internal bool _allAttributesPrivate = false;
-        internal Uri _baseUri = DefaultBaseUri;
+        internal Uri _baseUri = null;
         internal int _capacity = DefaultCapacity;
         internal TimeSpan _diagnosticRecordingInterval = DefaultDiagnosticRecordingInterval;
         internal TimeSpan _flushInterval = DefaultFlushInterval;
@@ -88,10 +86,18 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets a custom base URI for the events service.
+        /// Deprecated method for setting a custom base URI for the events service.
         /// </summary>
         /// <remarks>
+        /// <para>
+        /// The preferred way to set this option is now with
+        /// <see cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>. If you set
+        /// this deprecated option, it overrides any value that was set with
+        /// <see cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>.
+        /// </para>
+        /// <para>
         /// You will only need to change this value in the following cases:
+        /// </para>
         /// <list type="bullet">
         /// <item><description>
         /// You are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>.
@@ -104,9 +110,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </remarks>
         /// <param name="baseUri">the base URI of the events service; null to use the default</param>
         /// <returns>the builder</returns>
+        /// <seealso cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>
+        [Obsolete("Use ConfigurationBuilder.ServiceEndpoints instead")]
         public EventProcessorBuilder BaseUri(Uri baseUri)
         {
-            _baseUri = baseUri ?? DefaultBaseUri;
+            _baseUri = baseUri;
             return this;
         }
 
@@ -278,14 +286,21 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public IEventProcessor CreateEventProcessor(LdClientContext context)
         {
+            var configuredBaseUri = ServiceEndpointsBuilder.SelectBaseUri(
+                   context.Basic.ServiceEndpoints.EventsBaseUri,
+                   _baseUri,
+                   StandardEndpoints.DefaultEventsBaseUri,
+                   "Events",
+                   context.Basic.Logger
+                   );
             var eventsConfig = new EventsConfiguration
             {
                 AllAttributesPrivate = _allAttributesPrivate,
                 DiagnosticRecordingInterval = _diagnosticRecordingInterval,
                 EventCapacity = _capacity,
                 EventFlushInterval = _flushInterval,
-                EventsUri = _baseUri.AddPath("bulk"),
-                DiagnosticUri = _baseUri.AddPath("diagnostic"),
+                EventsUri = configuredBaseUri.AddPath(StandardEndpoints.AnalyticsEventsPostRequestPath),
+                DiagnosticUri = configuredBaseUri.AddPath(StandardEndpoints.DiagnosticEventsPostRequestPath),
                 InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
                 UserKeysCapacity = _userKeysCapacity,
@@ -315,7 +330,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             return LdValue.BuildObject()
                 .Add("allAttributesPrivate", _allAttributesPrivate)
-                .Add("customEventsURI", !_baseUri.Equals(DefaultBaseUri))
+                .Add("customEventsURI", basic.ServiceEndpoints.HasCustomEventsBaseUri(_baseUri))
                 .Add("diagnosticRecordingIntervalMillis", _diagnosticRecordingInterval.TotalMilliseconds)
                 .Add("eventsCapacity", _capacity)
                 .Add("eventsFlushIntervalMillis", _flushInterval.TotalMilliseconds)

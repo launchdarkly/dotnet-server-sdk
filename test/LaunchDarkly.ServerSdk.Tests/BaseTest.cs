@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -13,6 +14,9 @@ namespace LaunchDarkly.Sdk.Server
     /// </summary>
     public class BaseTest
     {
+        protected const string BasicSdkKey = "sdk-key";
+        protected static readonly User BasicUser = User.WithKey("user-key");
+
         /// <summary>
         /// Using this <see cref="ILogAdapter"/> in an SDK configuration will cause logging to be sent
         /// to the Xunit output buffer for the current test method, if you used the overloaded
@@ -97,6 +101,17 @@ namespace LaunchDarkly.Sdk.Server
             testLogging = Logs.ToMultiple(TestLogging.TestOutputAdapter(testOutput), logCapture);
             testLogger = testLogging.Logger("");
         }
+
+        // Returns a ConfigurationBuilder with no external data source, events disabled, and logging redirected
+        // to the test output. Using this as a base configuration for tests, and then overriding properties as
+        // needed, protects against accidental interaction with external services and also makes it easier to
+        // see which properties are important in a test.
+        protected ConfigurationBuilder BasicConfig() =>
+            Configuration.Builder(BasicSdkKey)
+                .DataSource(Components.ExternalUpdatesOnly)
+                .Events(Components.NoEvents)
+                .Logging(testLogging)
+                .StartWaitTime(TimeSpan.Zero);
 
         public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern)
         {

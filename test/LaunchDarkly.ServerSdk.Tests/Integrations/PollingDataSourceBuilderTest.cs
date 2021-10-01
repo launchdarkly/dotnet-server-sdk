@@ -12,10 +12,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void BaseUri()
         {
+#pragma warning disable CS0618
             var prop = _tester.Property(b => b._baseUri, (b, v) => b.BaseUri(v));
-            prop.AssertDefault(PollingDataSourceBuilder.DefaultBaseUri);
+#pragma warning restore CS0618
+            prop.AssertDefault(null);
             prop.AssertCanSet(new Uri("http://x"));
-            prop.AssertSetIsChangedTo(null, PollingDataSourceBuilder.DefaultBaseUri);
         }
 
         [Fact]

@@ -73,12 +73,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void StreamRequestHasCorrectUri(string baseUriExtraPath, string expectedPath)
         {
             var baseUri = new Uri("http://stream.test.com" + baseUriExtraPath);
-            _config = Server.Configuration.Builder(_config)
+            _config = Configuration.Builder(_config)
                 .DataSource(
                     Components.StreamingDataSource()
-                        .BaseUri(baseUri)
                         .EventSourceCreator(_eventSourceFactory.Create())
                     )
+                .ServiceEndpoints(Components.ServiceEndpoints().Streaming(baseUri))
                 .Build();
             StreamProcessor sp = CreateAndStartProcessor();
             Assert.Equal(new Uri("http://stream.test.com" + expectedPath),
@@ -465,7 +465,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private StreamProcessor CreateProcessor()
         {
-            var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
+            var basicConfig = new BasicConfiguration(_config, testLogger);
             return _config.DataSourceFactory.CreateDataSource(
                 new LdClientContext(basicConfig, _config),
                 _dataSourceUpdates

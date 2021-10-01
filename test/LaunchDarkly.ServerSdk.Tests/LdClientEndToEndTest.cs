@@ -10,10 +10,8 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientEndToEndTest : BaseTest
     {
-        private const string TestSdkKey = "test-sdk-key";
         private static readonly FeatureFlag AlwaysTrueFlag = new FeatureFlagBuilder("always-true-flag")
             .OffWithValue(LdValue.Of(true)).Build();
-        private static readonly User TestUser = User.WithKey("test-user-key");
 
         public LdClientEndToEndTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
@@ -26,10 +24,10 @@ namespace LaunchDarkly.Sdk.Server
             
             using (var streamServer = HttpServer.Start(streamHandler))
             {
-                var config = Configuration.Builder(TestSdkKey)
-                    .DataSource(Components.StreamingDataSource().BaseUri(streamServer.Uri))
-                    .Events(Components.NoEvents)
-                    .Logging(testLogging)
+                var config = BasicConfig()
+                    .DataSource(Components.StreamingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Streaming(streamServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
                     .Build();
 
                 using (var client = new LdClient(config))
@@ -37,11 +35,11 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.True(client.Initialized);
                     Assert.Equal(DataSourceState.Valid, client.DataSourceStatusProvider.Status.State);
 
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, TestUser, false);
+                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
                     Assert.True(value);
 
                     var request = streamServer.Recorder.RequireRequest();
-                    Assert.Equal(TestSdkKey, request.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
                     Assert.Empty(logCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Warn));
                     Assert.Empty(logCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
@@ -56,10 +54,10 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var streamServer = HttpServer.Start(errorHandler))
             {
-                var config = Configuration.Builder(TestSdkKey)
-                    .DataSource(Components.StreamingDataSource().BaseUri(streamServer.Uri))
-                    .Events(Components.NoEvents)
-                    .Logging(testLogging)
+                var config = BasicConfig()
+                    .DataSource(Components.StreamingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Streaming(streamServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
                     .Build();
 
                 using (var client = new LdClient(config))
@@ -67,11 +65,11 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.False(client.Initialized);
                     Assert.Equal(DataSourceState.Off, client.DataSourceStatusProvider.Status.State);
 
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, TestUser, false);
+                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
                     Assert.False(value);
 
                     var request = streamServer.Recorder.RequireRequest();
-                    Assert.Equal(TestSdkKey, request.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
                     Assert.NotEmpty(logCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Error && m.Text.Contains("error 401") &&
@@ -90,10 +88,10 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var streamServer = HttpServer.Start(failThenSucceedHandler))
             {
-                var config = Configuration.Builder(TestSdkKey)
-                    .DataSource(Components.StreamingDataSource().BaseUri(streamServer.Uri))
-                    .Events(Components.NoEvents)
-                    .Logging(testLogging)
+                var config = BasicConfig()
+                    .DataSource(Components.StreamingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Streaming(streamServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
                     .Build();
 
                 using (var client = new LdClient(config))
@@ -101,13 +99,13 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.True(client.Initialized);
                     Assert.Equal(DataSourceState.Valid, client.DataSourceStatusProvider.Status.State);
 
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, TestUser, false);
+                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
                     Assert.True(value);
 
                     var request1 = streamServer.Recorder.RequireRequest();
                     var request2 = streamServer.Recorder.RequireRequest();
-                    Assert.Equal(TestSdkKey, request1.Headers.Get("Authorization"));
-                    Assert.Equal(TestSdkKey, request2.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request1.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request2.Headers.Get("Authorization"));
 
                     Assert.NotEmpty(logCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Warn && m.Text.Contains("error 503") &&
@@ -124,10 +122,10 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var pollServer = HttpServer.Start(pollHandler))
             {
-                var config = Configuration.Builder(TestSdkKey)
-                    .DataSource(Components.PollingDataSource().BaseUri(pollServer.Uri))
-                    .Events(Components.NoEvents)
-                    .Logging(testLogging)
+                var config = BasicConfig()
+                    .DataSource(Components.PollingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Polling(pollServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
                     .Build();
 
                 using (var client = new LdClient(config))
@@ -135,11 +133,11 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.True(client.Initialized);
                     Assert.Equal(DataSourceState.Valid, client.DataSourceStatusProvider.Status.State);
 
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, TestUser, false);
+                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
                     Assert.True(value);
 
                     var request = pollServer.Recorder.RequireRequest();
-                    Assert.Equal(TestSdkKey, request.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
                     Assert.NotEmpty(logCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Warn &&
@@ -156,10 +154,10 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var pollServer = HttpServer.Start(errorHandler))
             {
-                var config = Configuration.Builder(TestSdkKey)
-                    .DataSource(Components.PollingDataSource().BaseUri(pollServer.Uri))
-                    .Events(Components.NoEvents)
-                    .Logging(testLogging)
+                var config = BasicConfig()
+                    .DataSource(Components.PollingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Polling(pollServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
                     .Build();
 
                 using (var client = new LdClient(config))
@@ -167,11 +165,11 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.False(client.Initialized);
                     Assert.Equal(DataSourceState.Off, client.DataSourceStatusProvider.Status.State);
 
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, TestUser, false);
+                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
                     Assert.False(value);
 
                     var request = pollServer.Recorder.RequireRequest();
-                    Assert.Equal(TestSdkKey, request.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
                     Assert.NotEmpty(logCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Error && m.Text.Contains("error 401") &&
@@ -188,11 +186,11 @@ namespace LaunchDarkly.Sdk.Server
 
             using (var pollServer = HttpServer.Start(failThenSucceedHandler))
             {
-                var config = Configuration.Builder(TestSdkKey)
-                    .DataSource(Components.PollingDataSource().BaseUri(pollServer.Uri)
+                var config = BasicConfig()
+                    .DataSource(Components.PollingDataSource()
                         .PollIntervalNoMinimum(TimeSpan.FromMilliseconds(50)))
-                    .Events(Components.NoEvents)
-                    .Logging(testLogging)
+                    .ServiceEndpoints(Components.ServiceEndpoints().Polling(pollServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
                     .Build();
 
                 using (var client = new LdClient(config))
@@ -200,13 +198,13 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.True(client.Initialized);
                     Assert.Equal(DataSourceState.Valid, client.DataSourceStatusProvider.Status.State);
 
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, TestUser, false);
+                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
                     Assert.True(value);
 
                     var request1 = pollServer.Recorder.RequireRequest();
                     var request2 = pollServer.Recorder.RequireRequest();
-                    Assert.Equal(TestSdkKey, request1.Headers.Get("Authorization"));
-                    Assert.Equal(TestSdkKey, request2.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request1.Headers.Get("Authorization"));
+                    Assert.Equal(BasicSdkKey, request2.Headers.Get("Authorization"));
 
                     Assert.NotEmpty(logCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Warn && m.Text.Contains("error 503") &&
@@ -229,9 +227,10 @@ namespace LaunchDarkly.Sdk.Server
             using (var server = HttpServer.Start(Handlers.Status(202)))
             {
                 var baseUri = server.Uri.ToString().TrimEnd('/') + baseUriExtraPath;
-                var config = Configuration.Builder("key")
-                    .DataSource(Components.ExternalUpdatesOnly)
-                    .Events(Components.SendEvents().BaseUri(new Uri(baseUri)))
+                var config = BasicConfig()
+                    .Events(Components.SendEvents())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Events(baseUri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
                     .Build();
 
                 using (var client = new LdClient(config))
