@@ -163,7 +163,7 @@ namespace LaunchDarkly.Sdk.Server
             }
         }
 
-#pragma warning disable CS0618
+#pragma warning disable CS0618  // using deprecated symbol
         [Fact]
         public void CustomStreamingDataSourceBaseUriWithDeprecatedMethod()
         {

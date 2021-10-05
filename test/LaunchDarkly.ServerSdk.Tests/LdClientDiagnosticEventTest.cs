@@ -187,7 +187,7 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataSource(
-#pragma warning disable CS0618
+#pragma warning disable CS0618  // using deprecated symbol
                     Components.StreamingDataSource()
                         .BaseUri(new Uri("http://custom"))
 #pragma warning restore CS0618
@@ -236,7 +236,7 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataSource(
-#pragma warning disable CS0618
+#pragma warning disable CS0618  // using deprecated symbol
                     Components.PollingDataSource().BaseUri(new Uri("http://custom"))
 #pragma warning restore CS0618
                     )
@@ -306,7 +306,7 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
-#pragma warning disable CS0618
+#pragma warning disable CS0618  // using deprecated symbol
                 e => e.BaseUri(new Uri("http://custom")),
 #pragma warning restore CS0618
                 ExpectedConfigProps.Base().WithStoreDefaults().WithStreamingDefaults().WithEventsDefaults(true)
