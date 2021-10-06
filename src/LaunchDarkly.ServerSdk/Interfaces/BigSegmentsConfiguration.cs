@@ -4,11 +4,11 @@ using LaunchDarkly.Sdk.Server.Integrations;
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
-    /// Encapsulates the SDK's configuration with regard to big segments.
+    /// Encapsulates the SDK's configuration with regard to Big Segments.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
+    /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
     /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>
     /// <para>
@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public sealed class BigSegmentsConfiguration
     {
         /// <summary>
-        /// The data store instance that is used for big segments data.
+        /// The data store instance that is used for Big Segments data.
         /// </summary>
         public IBigSegmentStore Store { get; }
 

@@ -11,10 +11,10 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     public interface ILdClient
     {
         /// <summary>
-        /// A mechanism for tracking the status of a big segment store.
+        /// A mechanism for tracking the status of a Big Segment store.
         /// </summary>
         /// <remarks>
-        /// The returned object has methods for checking whether the big segment store is (as far as the SDK
+        /// The returned object has methods for checking whether the Big Segment store is (as far as the SDK
         /// knows) currently operational and tracking changes in this status. See
         /// <see cref="IBigSegmentStoreStatusProvider"/> for more about this functionality.
         /// </remarks>

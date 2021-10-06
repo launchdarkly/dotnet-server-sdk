@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void BigSegmentWithNoProviderIsNotMatched()
         {
             var segment = new SegmentBuilder("segmentkey").Unbounded(true).Generation(1)
-                .Included(baseUser.Key) // Included should be ignored for a big segment
+                .Included(baseUser.Key) // Included should be ignored for a Big Segment
                 .Build();
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment);

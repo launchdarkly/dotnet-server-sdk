@@ -477,7 +477,7 @@ namespace LaunchDarkly.Sdk.Server
             var mockStore = new Mock<IDataStore>();
             mockStore.Setup(s => s.Get(DataModel.Features, flagKey)).Throws(ex);
             var configWithCustomStore = Configuration.Builder("sdk-key")
-                .DataStore(new SpecificDataStoreFactory(mockStore.Object))
+                .DataStore(mockStore.Object.AsSingletonFactory())
                 .DataSource(Components.ExternalUpdatesOnly)
                 .Logging(testLogging)
                 .Build();
@@ -488,7 +488,7 @@ namespace LaunchDarkly.Sdk.Server
                 Assert.Equal(defaultValue, result.Value);
                 Assert.Null(result.VariationIndex);
                 Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.Exception), result.Reason);
-                Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error, ex.Message));
+                AssertLogMessageRegex(true, Logging.LogLevel.Error, ex.Message);
             }
         }
 
@@ -505,7 +505,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal(defaultValue, result.Value);
             Assert.Null(result.VariationIndex);
             Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.Exception), result.Reason);
-            Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error, Evaluator.ErrorMessageForTesting));
+            AssertLogMessageRegex(true, Logging.LogLevel.Error, Evaluator.ErrorMessageForTesting);
         }
 
         [Fact]
@@ -519,7 +519,7 @@ namespace LaunchDarkly.Sdk.Server
             var mockStore = new Mock<IDataStore>();
             mockStore.Setup(s => s.GetAll(DataModel.Features)).Throws(ex);
             var configWithCustomStore = Configuration.Builder("sdk-key")
-                .DataStore(new SpecificDataStoreFactory(mockStore.Object))
+                .DataStore(mockStore.Object.AsSingletonFactory())
                 .DataSource(Components.ExternalUpdatesOnly)
                 .Logging(testLogging)
                 .Build();
@@ -528,7 +528,7 @@ namespace LaunchDarkly.Sdk.Server
                 var state = clientWithCustomStore.AllFlagsState(user);
                 Assert.NotNull(state);
                 Assert.False(state.Valid);
-                Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error, ex.Message));
+                AssertLogMessageRegex(true, Logging.LogLevel.Error, ex.Message);
             }
         }
 
@@ -549,8 +549,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.Exception),
                 state.GetFlagReason(Evaluator.FlagKeyToTriggerErrorForTesting));
             Assert.Equal(LdValue.Of(true), state.GetFlagValueJson(goodFlagKey));
-            Assert.True(logCapture.HasMessageWithRegex(Logging.LogLevel.Error,
-                Evaluator.ErrorMessageForTesting));
+            AssertLogMessageRegex(true, Logging.LogLevel.Error, Evaluator.ErrorMessageForTesting);
         }
     }
 }

@@ -79,21 +79,21 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <summary>
-        /// Sets the configuration of the SDK's big segments feature.
+        /// Sets the configuration of the SDK's Big Segments feature.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
+        /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
         /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
         /// </para>
         /// <para>
         /// If you are using this feature, you will normally specify a database implementation that matches how
-        /// the LaunchDarkly Relay Proxy is configured, since the Relay Proxy manages the big segment data.
+        /// the LaunchDarkly Relay Proxy is configured, since the Relay Proxy manages the Big Segment data.
         /// </para>
         /// <para>
-        /// By default, there is no implementation and big segments cannot be evaluated. In this case, any flag
-        /// evaluation that references a big segment will behave as if no users are included in any big
-        /// segments, and the <see cref="EvaluationReason"/> associated with any such flag evaluation will have
+        /// By default, there is no implementation and Big Segments cannot be evaluated. In this case, any flag
+        /// evaluation that references a Big Segment will behave as if no users are included in any Big
+        /// Segments, and the <see cref="EvaluationReason"/> associated with any such flag evaluation will have
         /// a <see cref="EvaluationReason.BigSegmentsStatus"/> of <see cref="BigSegmentsStatus.NotConfigured"/>.
         /// </para>
         /// </remarks>

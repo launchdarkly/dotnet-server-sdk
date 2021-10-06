@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var prop = _tester.Property(c => c.DataStoreFactory, (b, v) => b.DataStore(v));
             prop.AssertDefault(null);
-            prop.AssertCanSet(TestUtils.SpecificDataStore(new InMemoryDataStore()));
+            prop.AssertCanSet(new InMemoryDataStore().AsSingletonFactory());
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var prop = _tester.Property(c => c.EventProcessorFactory, (b, v) => b.Events(v));
             prop.AssertDefault(null);
-            prop.AssertCanSet(TestUtils.SpecificEventProcessor(new TestEventProcessor()));
+            prop.AssertCanSet(new MockEventProcessor().AsSingletonFactory());
         }
 
         [Fact]

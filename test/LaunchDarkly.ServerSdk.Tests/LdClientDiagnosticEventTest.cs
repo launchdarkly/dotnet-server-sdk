@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server
             .Build().ToJsonString());
         internal static readonly TimeSpan testStartWaitTime = TimeSpan.FromMilliseconds(1);
 
-        private TestEventSender testEventSender = new TestEventSender();
+        private MockEventSender testEventSender = new MockEventSender();
 
         public LdClientDiagnosticEventTest(ITestOutputHelper testOutput) : base(testOutput) { }
 

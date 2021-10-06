@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
-    /// Interface for a read-only data store that allows querying of user membership in big segments.
+    /// Interface for a read-only data store that allows querying of user membership in Big Segments.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// "Big segments" are a specific type of user segments. For more information, read the LaunchDarkly
+    /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
     /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>
     /// <para>
@@ -23,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <remarks>
         /// <para>
         /// The userHash is a base64-encoded string produced by hashing the user key as defined by
-        /// the big segments specification; the store implementation does not need to know the details
+        /// the Big Segments specification; the store implementation does not need to know the details
         /// of how this is done, because it deals only with already-hashed keys, but the string can be
         /// assumed to only contain characters that are valid in base64.
         /// </para>

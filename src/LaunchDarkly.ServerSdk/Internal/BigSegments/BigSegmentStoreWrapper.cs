@@ -57,7 +57,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         }
 
         /// <summary>
-        /// Called by the evaluator when it needs to get the big segment membership state for
+        /// Called by the evaluator when it needs to get the Big Segment membership state for
         /// a user.
         /// </summary>
         /// <remarks>
@@ -89,7 +89,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         private IMembership QueryMembership(string userKey)
         {
             var hash = BigSegmentUserKeyHash(userKey);
-            _logger.Debug("Querying big segment state for user hash {0}", hash);
+            _logger.Debug("Querying Big Segment state for user hash {0}", hash);
             return AsyncUtils.WaitSafely(() => _store.GetMembershipAsync(hash));
         }
 
@@ -101,7 +101,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         /// <remarks>
         /// If we have not yet obtained that information (the poll task has not executed yet), then this method
         /// immediately does a metadata query and waits for it to succeed or fail. This means that if an
-        /// application using big segments evaluates a feature flag immediately after creating the SDK
+        /// application using Big Segments evaluates a feature flag immediately after creating the SDK
         /// client, before the first status poll has happened, that evaluation may block for however long it
         /// takes to query the store.
         /// </remarks>
@@ -128,7 +128,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         private async Task<BigSegmentStoreStatus> PollStoreAndUpdateStatusAsync()
         {
             var newStatus = new BigSegmentStoreStatus();
-            _logger.Debug("Querying big segment store metadata");
+            _logger.Debug("Querying Big Segment store metadata");
             try
             {
                 var metadata = await _store.GetMetadataAsync();
@@ -138,7 +138,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             }
             catch (Exception e)
             {
-                LogHelpers.LogException(_logger, "Big segment store status query returned error", e);
+                LogHelpers.LogException(_logger, "Big Segment store status query returned error", e);
                 newStatus.Available = false;
             }
 

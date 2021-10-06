@@ -2,7 +2,6 @@
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.TestHelpers;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -175,7 +174,8 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder("")
                 .DataSource(Components.ExternalUpdatesOnly)
-                .DataStore(Components.PersistentDataStore(TestUtils.ArbitraryPersistentDataStore))
+                .DataStore(Components.PersistentDataStore(
+                    new LaunchDarkly.Sdk.Server.Internal.DataStores.MockCoreSync().AsSingletonFactory()))
                 .Events(Components.NoEvents)
                 .Build();
 
@@ -248,12 +248,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BigSegmentStoreStatusProviderSendsStatusUpdates()
         {
-            var storeMock = new Mock<IBigSegmentStore>();
-            var store = storeMock.Object;
-            var storeFactoryMock = new Mock<IBigSegmentStoreFactory>();
-            var storeFactory = storeFactoryMock.Object;
-            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(It.IsAny<LdClientContext>())).Returns(store);
-            storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(
+            var storeMock = new MockBigSegmentStore();
+            var storeFactory = storeMock.AsSingletonFactory();
+            storeMock.SetupMetadataReturns(
                 new BigSegmentStoreTypes.StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
 
             var config = Configuration.Builder("")
@@ -272,7 +269,7 @@ namespace LaunchDarkly.Sdk.Server
                 var statuses = new EventSink<BigSegmentStoreStatus>();
                 client.BigSegmentStoreStatusProvider.StatusChanged += statuses.Add;
 
-                storeMock.Setup(s => s.GetMetadataAsync()).ThrowsAsync(new Exception("sorry"));
+                storeMock.SetupMetadataThrows(new Exception("sorry"));
 
                 var status2 = statuses.ExpectValue();
                 Assert.False(status2.Available);

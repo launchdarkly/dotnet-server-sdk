@@ -2,7 +2,6 @@
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Moq;
 using Xunit;
@@ -20,9 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         
         readonly Mock<IFeatureRequestor> _mockFeatureRequestor;
         readonly IFeatureRequestor _featureRequestor;
-        readonly InMemoryDataStore _dataStore;
-        readonly IDataSourceUpdates _dataSourceUpdates;
-        readonly IDataSourceStatusProvider _dataSourceStatusProvider;
+        readonly CapturingDataSourceUpdates _updates = new CapturingDataSourceUpdates();
         readonly Configuration _config;
         readonly LdClientContext _context;
 
@@ -30,29 +27,27 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockFeatureRequestor = new Mock<IFeatureRequestor>();
             _featureRequestor = _mockFeatureRequestor.Object;
-            _dataStore = new InMemoryDataStore();
-            var dataSourceUpdatesImpl = TestUtils.BasicDataSourceUpdates(_dataStore, testLogger);
-            _dataSourceUpdates = dataSourceUpdatesImpl;
-            _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdatesImpl);
             _config = Configuration.Default(sdkKey);
             _context = new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), _config);
         }
 
         private PollingProcessor MakeProcessor() =>
-            new PollingProcessor(_context, _featureRequestor, _dataSourceUpdates,
+            new PollingProcessor(_context, _featureRequestor, _updates,
                 PollingDataSourceBuilder.DefaultPollInterval);
 
         [Fact]
         public void SuccessfulRequestPutsFeatureDataInStore()
         {
-            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(MakeAllData());
+            var expectedData = MakeAllData();
+            _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(expectedData);
+
             using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = pp.Start();
                 initTask.Wait();
-                Assert.Equal(Flag, _dataStore.Get(DataModel.Features, Flag.Key).Value.Item);
-                Assert.Equal(Segment, _dataStore.Get(DataModel.Segments, Segment.Key).Value.Item);
-                Assert.True(_dataStore.Initialized());
+
+                var receivedData = _updates.Inits.ExpectValue();
+                AssertHelpers.DataSetsEqual(expectedData, receivedData);
             }
         }
 
@@ -60,12 +55,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void SuccessfulRequestSetsInitializedToTrue()
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ReturnsAsync(MakeAllData());
+
             using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = pp.Start();
                 initTask.Wait();
+
                 Assert.True(pp.Initialized);
-                Assert.Equal(DataSourceState.Valid, _dataSourceStatusProvider.Status.State);
+
+                var receivedStatus = _updates.StatusUpdates.ExpectValue();
+                Assert.Equal(DataSourceState.Valid, receivedStatus.State);
             }
         }
 
@@ -73,13 +72,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void ConnectionErrorDoesNotCauseImmediateFailure()
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(new InvalidOperationException("no"));
+
             using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = pp.Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
                 Assert.False(completed);
                 Assert.False(pp.Initialized);
-                Assert.Equal(DataSourceState.Initializing, _dataSourceStatusProvider.Status.State);
+
+                var receivedStatus = _updates.StatusUpdates.ExpectValue();
+                Assert.Equal(DataSourceState.Interrupted, receivedStatus.State);
             }
         }
 
@@ -90,13 +92,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
+
             using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = pp.Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(1000));
                 Assert.True(completed);
                 Assert.False(pp.Initialized);
-                Assert.Equal(DataSourceState.Off, _dataSourceStatusProvider.Status.State);
+
+                var receivedStatus = _updates.StatusUpdates.ExpectValue();
+                Assert.Equal(DataSourceState.Off, receivedStatus.State);
+                Assert.NotNull(receivedStatus.Error);
+                Assert.Equal(status, receivedStatus.Error.Value.StatusCode);
             }
         }
 
@@ -108,12 +115,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             _mockFeatureRequestor.Setup(fr => fr.GetAllDataAsync()).ThrowsAsync(
                 new UnsuccessfulResponseException(status));
+
             using (PollingProcessor pp = MakeProcessor())
             {
                 var initTask = pp.Start();
                 bool completed = initTask.Wait(TimeSpan.FromMilliseconds(200));
                 Assert.False(completed);
                 Assert.False(pp.Initialized);
+
+                var receivedStatus = _updates.StatusUpdates.ExpectValue();
+                Assert.Equal(DataSourceState.Interrupted, receivedStatus.State);
+                Assert.NotNull(receivedStatus.Error);
+                Assert.Equal(status, receivedStatus.Error.Value.StatusCode);
             }
         }
 

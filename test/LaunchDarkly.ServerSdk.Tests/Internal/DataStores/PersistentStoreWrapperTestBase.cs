@@ -506,7 +506,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 Assert.False(status1.Available);
                 Assert.False(status1.RefreshNeeded);
 
-                Assert.True(logCapture.HasMessageWithRegex(LogLevel.Warn, "Detected persistent store unavailability"));
+                AssertLogMessageRegex(true, LogLevel.Warn, "Detected persistent store unavailability");
 
                 MakeStoreAvailable(_core);
 
@@ -514,7 +514,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
                 Assert.True(status2.Available);
                 Assert.Equal(!testParams.CacheMode.IsCachedIndefinitely, status2.RefreshNeeded);
 
-                Assert.True(logCapture.HasMessageWithRegex(LogLevel.Warn, "Persistent store is available again"));
+                AssertLogMessageRegex(true, LogLevel.Warn, "Persistent store is available again");
             }
         }
 

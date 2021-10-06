@@ -61,7 +61,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _dataSourceStatusProvider = new DataSourceStatusProviderImpl(_dataSourceUpdates);
             _config = Configuration.Builder(SDK_KEY)
                 .DataSource(Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create()))
-                .DataStore(TestUtils.SpecificDataStore(_dataStore))
+                .DataStore(_dataStore.AsSingletonFactory())
                 .Logging(Components.Logging(testLogging))
                 .Build();
         }

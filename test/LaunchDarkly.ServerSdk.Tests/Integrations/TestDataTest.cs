@@ -31,8 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             CreateAndStart();
 
-            Assert.Single(_updates.Inits);
-            var data = TestUtils.NormalizeDataSet(_updates.Inits.Take());
+            var data = TestUtils.NormalizeDataSet(_updates.Inits.ExpectValue());
             Assert.Collection(data.Data,
                 coll =>
                 {
@@ -54,8 +53,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             CreateAndStart();
 
-            Assert.Single(_updates.Inits);
-            var data = TestUtils.NormalizeDataSet(_updates.Inits.Take());
+            var data = TestUtils.NormalizeDataSet(_updates.Inits.ExpectValue());
             Assert.Collection(data.Data,
                 coll =>
                 {
@@ -81,8 +79,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             _td.Update(_td.Flag("flag1").On(true));
 
-            Assert.Single(_updates.Upserts);
-            var up = _updates.Upserts.Take();
+            var up = _updates.Upserts.ExpectValue();
             Assert.Equal(DataModel.Features, up.Kind);
             AssertFlag("flag1", 1, up.Key, up.Item, json =>
                 Assert.Equal(LdValue.Of(true), json.Get("on")));
@@ -94,12 +91,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             _td.Update(_td.Flag("flag1").On(true));
 
             CreateAndStart();
-            Assert.Empty(_updates.Upserts);
+            _updates.Upserts.ExpectNoValue();
 
             _td.Update(_td.Flag("flag1").On(true));
 
-            Assert.Single(_updates.Upserts);
-            var up = _updates.Upserts.Take();
+            var up = _updates.Upserts.ExpectValue();
             Assert.Equal(DataModel.Features, up.Kind);
             AssertFlag("flag1", 2, up.Key, up.Item, json =>
                 Assert.Equal(LdValue.Of(true), json.Get("on")));
@@ -279,7 +275,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var ds = _td.CreateDataSource(_context, _updates);
             var started = ds.Start();
             Assert.True(started.IsCompleted);
-            Assert.Equal(DataSourceState.Valid, _updates.State);
+            Assert.Equal(DataSourceState.Valid, _updates.StatusUpdates.ExpectValue().State);
         }
 
         private void AssertFlag(string expectedKey, int version, string actualKey, ItemDescriptor item, Action<LdValue> jsonAssertions)
@@ -304,8 +300,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             td.Update(configureFlag(_td.Flag("flagkey")));
 
-            Assert.Single(_updates.Upserts);
-            var up = _updates.Upserts.Take();
+            var up = _updates.Upserts.ExpectValue();
             AssertJsonEqual(expectedJson, DataModel.Features.Serialize(up.Item));
         }
     }
