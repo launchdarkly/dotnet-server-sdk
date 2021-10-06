@@ -102,7 +102,7 @@ chained together.</p>
   </h3>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory)">BigSegments(IBigSegmentsConfigurationFactory)</h4>
-  <div class="markdown level1 summary"><p>Sets the configuration of the SDK&apos;s big segments feature.</p>
+  <div class="markdown level1 summary"><p>Sets the configuration of the SDK&apos;s Big Segments feature.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -146,17 +146,17 @@ chained together.</p>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
-&quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
+&quot;Big Segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
 documentation about user segments: <a href="https://docs.launchdarkly.com/home/users/segments">https://docs.launchdarkly.com/home/users/segments</a>
 </p>
 <p>
 If you are using this feature, you will normally specify a database implementation that matches how
-the LaunchDarkly Relay Proxy is configured, since the Relay Proxy manages the big segment data.
+the LaunchDarkly Relay Proxy is configured, since the Relay Proxy manages the Big Segment data.
 </p>
 <p>
-By default, there is no implementation and big segments cannot be evaluated. In this case, any flag
-evaluation that references a big segment will behave as if no users are included in any big
-segments, and the <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a> associated with any such flag evaluation will have
+By default, there is no implementation and Big Segments cannot be evaluated. In this case, any flag
+evaluation that references a Big Segment will behave as if no users are included in any Big
+Segments, and the <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a> associated with any such flag evaluation will have
 a <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a> of <a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_NotConfigured">NotConfigured</a>.
 </p>
 </div>

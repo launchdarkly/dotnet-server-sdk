@@ -73,7 +73,7 @@
   
   <h1 id="LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStore" class="text-break">Interface IBigSegmentStore
   </h1>
-  <div class="markdown level0 summary"><p>Interface for a read-only data store that allows querying of user membership in big segments.</p>
+  <div class="markdown level0 summary"><p>Interface for a read-only data store that allows querying of user membership in Big Segments.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.html">LaunchDarkly.Sdk.Server.Interfaces</a></h6>
@@ -84,7 +84,7 @@
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
-&quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
+&quot;Big Segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
 documentation about user segments: <a href="https://docs.launchdarkly.com/home/users/segments">https://docs.launchdarkly.com/home/users/segments</a>
 </p>
 <p>
@@ -139,7 +139,7 @@ All query methods of the store are asynchronous.
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStore_GetMembershipAsync_System_String__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 The userHash is a base64-encoded string produced by hashing the user key as defined by
-the big segments specification; the store implementation does not need to know the details
+the Big Segments specification; the store implementation does not need to know the details
 of how this is done, because it deals only with already-hashed keys, but the string can be
 assumed to only contain characters that are valid in base64.
 </p>

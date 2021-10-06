@@ -73,7 +73,7 @@
   
   <h1 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder" class="text-break">Class BigSegmentsConfigurationBuilder
   </h1>
-  <div class="markdown level0 summary"><p>Contains methods for configuring the SDK&apos;s big segments behavior.</p>
+  <div class="markdown level0 summary"><p>Contains methods for configuring the SDK&apos;s Big Segments behavior.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -93,7 +93,7 @@
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
-&quot;Big segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
+&quot;Big Segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
 documentation about user segments: <a href="https://docs.launchdarkly.com/home/users/segments">https://docs.launchdarkly.com/home/users/segments</a>
 </p>
 <p>
@@ -251,7 +251,7 @@ to call this method.</p>
   </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StaleAfter(System.TimeSpan)">StaleAfter(TimeSpan)</h4>
-  <div class="markdown level1 summary"><p>Sets the maximum length of time between updates of the big segments data before the data
+  <div class="markdown level1 summary"><p>Sets the maximum length of time between updates of the Big Segments data before the data
 is considered out of date.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -296,7 +296,7 @@ than or equal to zero will be changed to <a class="xref" href="LaunchDarkly.Sdk.
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
-Normally, the LaunchDarkly Relay Proxy updates a timestamp in the big segments store at intervals to
+Normally, the LaunchDarkly Relay Proxy updates a timestamp in the Big Segments store at intervals to
 confirm that it is still in sync with the LaunchDarkly data, even if there have been no changes to the
 data. If the timestamp falls behind the current time by the amount specified in
 <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StaleAfter_System_TimeSpan_">StaleAfter(TimeSpan)</a>, the SDK assumes that something is not working correctly in this
@@ -305,13 +305,13 @@ process and that the data may not be accurate.
 <p>
 While in a stale state, the SDK will still continue using the last known data, but
 <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentStoreStatusProvider.html#LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreStatusProvider_Status">Status</a> will return true in its Stale property, and any
-<a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a> generated from a feature flag that references a big segment will have
+<a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">EvaluationReason</a> generated from a feature flag that references a Big Segment will have
 a <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a> of <a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_Stale">Stale</a>.
 </p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_StatusPollInterval_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.StatusPollInterval(System.TimeSpan)">StatusPollInterval(TimeSpan)</h4>
-  <div class="markdown level1 summary"><p>Sets the interval at which the SDK will poll the big segment store to make sure
+  <div class="markdown level1 summary"><p>Sets the interval at which the SDK will poll the Big Segment store to make sure
 it is available and to determine how long ago it was updated.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -360,7 +360,7 @@ equal to zero will be changed to <a class="xref" href="LaunchDarkly.Sdk.Server.I
   </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheSize(System.Int32)">UserCacheSize(Int32)</h4>
-  <div class="markdown level1 summary"><p>Sets the maximum number of users whose big segment state will be cached by the SDK
+  <div class="markdown level1 summary"><p>Sets the maximum number of users whose Big Segment state will be cached by the SDK
 at any given time.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -405,12 +405,12 @@ at any given time.</p>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 To reduce database traffic, the SDK maintains a least-recently-used cache by user key. When a feature
-flag that references a big segment is evaluated for some user who is not currently in the cache, the
-SDK queries the database for all big segment memberships of that user, and stores them together in a
+flag that references a Big Segment is evaluated for some user who is not currently in the cache, the
+SDK queries the database for all Big Segment memberships of that user, and stores them together in a
 single cache entry. If the cache is full, the oldest entry is dropped.
 </p>
 <p>
-A higher value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_">UserCacheSize(Int32)</a> means that database queries for big segments will
+A higher value for <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_">UserCacheSize(Int32)</a> means that database queries for Big Segments will
 be done less often for recently-referenced users, if the application has many users, at the cost of
 increased memory used by the cache.
 </p>
@@ -424,7 +424,7 @@ Cache entries can also expire based on the setting of <a class="xref" href="Laun
   </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.UserCacheTime(System.TimeSpan)">UserCacheTime(TimeSpan)</h4>
-  <div class="markdown level1 summary"><p>Sets the maximum length of time that the big segment state for a user will be cached
+  <div class="markdown level1 summary"><p>Sets the maximum length of time that the Big Segment state for a user will be cached
 by the SDK.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -469,7 +469,7 @@ by the SDK.</p>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 See <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheSize_System_Int32_">UserCacheSize(Int32)</a> for more about this cache. A higher value for
-<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_">UserCacheTime(TimeSpan)</a> means that database queries for the big segment state of any
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.BigSegmentsConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_BigSegmentsConfigurationBuilder_UserCacheTime_System_TimeSpan_">UserCacheTime(TimeSpan)</a> means that database queries for the Big Segment state of any
 given user will be done less often, but that changes to segment membership may not be detected as soon.
 </p>
 </div>
