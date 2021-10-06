@@ -2,6 +2,12 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.2.2] - 2021-10-06
+There are no functional changes in the SDK in this release; its only purpose is to address the version conflict issue mentioned below.
+
+### Fixed:
+- Fixed conflicting dependency versions that existed in several LaunchDarkly packages. In .NET Core these would be resolved automatically, but in .NET Framework they could result in runtime assembly loading errors for `LaunchDarkly.CommonSdk`, `LaunchDarkly.Logging`, or `System.Collections.Immutable`, unless binding redirects were used. Note that it may still be necessary to use a binding redirect if your application (or one of its dependencies) relies on an assembly that is also used by the SDK with a different version.
+
 ## [6.2.1] - 2021-09-28
 ### Changed:
 - When event handlers are called for events such as `IFlagTracker.FlagChanged`, the `sender` parameter will be the `LdClient` instance that generated the event. Previously, `sender` was being set to one of several internal components that were not useful to application code.
