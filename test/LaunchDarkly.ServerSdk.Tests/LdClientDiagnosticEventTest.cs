@@ -187,20 +187,30 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataSource(
+#pragma warning disable CS0618  // using deprecated symbol
                     Components.StreamingDataSource()
                         .BaseUri(new Uri("http://custom"))
-                        .InitialReconnectDelay(TimeSpan.FromSeconds(2))
+#pragma warning restore CS0618
                     )
                     .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
-                ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .Add("customBaseURI", false)
-                    .Add("customStreamURI", true)
-                    .Add("streamingDisabled", false)
-                    .Add("reconnectTimeMillis", 2000)
-                    .Add("usingRelayDaemon", false)
+                ExpectedConfigProps.Base().WithStoreDefaults().WithEventsDefaults().WithStreamingDefaults(true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataSource(Components.StreamingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Streaming("http://custom"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
+                ExpectedConfigProps.Base().WithStoreDefaults().WithEventsDefaults().WithStreamingDefaults(true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataSource(Components.StreamingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://relay"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
+                ExpectedConfigProps.Base().WithStoreDefaults().WithEventsDefaults(true).WithStreamingDefaults(true)
                 );
         }
 
@@ -226,20 +236,29 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataSource(
-                    Components.PollingDataSource()
-                        .BaseUri(new Uri("http://custom"))
-                        .PollInterval(TimeSpan.FromSeconds(45))
+#pragma warning disable CS0618  // using deprecated symbol
+                    Components.PollingDataSource().BaseUri(new Uri("http://custom"))
+#pragma warning restore CS0618
                     )
                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
                 null,
-                ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .Add("customBaseURI", true)
-                    .Add("customStreamURI", false)
-                    .Add("pollingIntervalMillis", 45000)
-                    .Add("streamingDisabled", true)
-                    .Add("usingRelayDaemon", false)
+                ExpectedConfigProps.Base().WithStoreDefaults().WithEventsDefaults().WithPollingDefaults(true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataSource(Components.PollingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Polling("http://custom"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                null,
+                ExpectedConfigProps.Base().WithStoreDefaults().WithEventsDefaults().WithPollingDefaults(true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataSource(Components.PollingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://relay"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                null,
+                ExpectedConfigProps.Base().WithStoreDefaults().WithEventsDefaults(true).WithPollingDefaults(true)
                 );
         }
 
@@ -265,7 +284,6 @@ namespace LaunchDarkly.Sdk.Server
             TestDiagnosticConfig(
                 c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 e => e.AllAttributesPrivate(true)
-                    .BaseUri(new Uri("http://custom"))
                     .Capacity(333)
                     .DiagnosticRecordingInterval(TimeSpan.FromMinutes(32))
                     .FlushInterval(TimeSpan.FromMilliseconds(555))
@@ -276,7 +294,7 @@ namespace LaunchDarkly.Sdk.Server
                     .WithStoreDefaults()
                     .WithStreamingDefaults()
                     .Add("allAttributesPrivate", true)
-                    .Add("customEventsURI", true)
+                    .Add("customEventsURI", false)
                     .Add("diagnosticRecordingIntervalMillis", TimeSpan.FromMinutes(32).TotalMilliseconds)
                     .Add("eventsCapacity", 333)
                     .Add("eventsFlushIntervalMillis", 555)
@@ -284,6 +302,28 @@ namespace LaunchDarkly.Sdk.Server
                     .Add("samplingInterval", 0) // obsolete, no way to set this
                     .Add("userKeysCapacity", 444)
                     .Add("userKeysFlushIntervalMillis", TimeSpan.FromMinutes(23).TotalMilliseconds)
+                );
+
+            TestDiagnosticConfig(
+                c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+#pragma warning disable CS0618  // using deprecated symbol
+                e => e.BaseUri(new Uri("http://custom")),
+#pragma warning restore CS0618
+                ExpectedConfigProps.Base().WithStoreDefaults().WithStreamingDefaults().WithEventsDefaults(true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.ServiceEndpoints(Components.ServiceEndpoints().Events("http://custom"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
+                ExpectedConfigProps.Base().WithStoreDefaults().WithStreamingDefaults().WithEventsDefaults(true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://relay"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
+                ExpectedConfigProps.Base().WithStoreDefaults().WithStreamingDefaults(true).WithEventsDefaults(true)
                 );
         }
 
@@ -538,16 +578,32 @@ namespace LaunchDarkly.Sdk.Server
         public static LdValue.ObjectBuilder WithStoreDefaults(this LdValue.ObjectBuilder b) =>
             b.Add("dataStoreType", "memory");
 
-        public static LdValue.ObjectBuilder WithStreamingDefaults(this LdValue.ObjectBuilder b) =>
-            b.Add("customBaseURI", false)
+        public static LdValue.ObjectBuilder WithPollingDefaults(this LdValue.ObjectBuilder b) =>
+            b.WithPollingDefaults(false);
+
+        public static LdValue.ObjectBuilder WithPollingDefaults(this LdValue.ObjectBuilder b, bool customUri) =>
+            b.Add("customBaseURI", customUri)
                 .Add("customStreamURI", false)
+                .Add("pollingIntervalMillis", PollingDataSourceBuilder.DefaultPollInterval.TotalMilliseconds)
+                .Add("streamingDisabled", true)
+                .Add("usingRelayDaemon", false);
+
+        public static LdValue.ObjectBuilder WithStreamingDefaults(this LdValue.ObjectBuilder b) =>
+            b.WithStreamingDefaults(false);
+
+        public static LdValue.ObjectBuilder WithStreamingDefaults(this LdValue.ObjectBuilder b, bool customUri) =>
+            b.Add("customBaseURI", false)
+                .Add("customStreamURI", customUri)
                 .Add("streamingDisabled", false)
                 .Add("reconnectTimeMillis", StreamingDataSourceBuilder.DefaultInitialReconnectDelay.TotalMilliseconds)
                 .Add("usingRelayDaemon", false);
 
         public static LdValue.ObjectBuilder WithEventsDefaults(this LdValue.ObjectBuilder b) =>
+            b.WithEventsDefaults(false);
+
+        public static LdValue.ObjectBuilder WithEventsDefaults(this LdValue.ObjectBuilder b, bool customUri) =>
             b.Add("allAttributesPrivate", false)
-                .Add("customEventsURI", false)
+                .Add("customEventsURI", customUri)
                 .Add("diagnosticRecordingIntervalMillis", EventProcessorBuilder.DefaultDiagnosticRecordingInterval.TotalMilliseconds)
                 .Add("eventsCapacity", EventProcessorBuilder.DefaultCapacity)
                 .Add("eventsFlushIntervalMillis", EventProcessorBuilder.DefaultFlushInterval.TotalMilliseconds)

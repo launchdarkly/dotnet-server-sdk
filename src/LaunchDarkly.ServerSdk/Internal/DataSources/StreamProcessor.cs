@@ -61,7 +61,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _initialReconnectDelay = initialReconnectDelay;
             _diagnosticStore = context.DiagnosticStore;
             _initTask = new TaskCompletionSource<bool>();
-            _streamUri = baseUri.AddPath("/all");
+            _streamUri = baseUri.AddPath(StandardEndpoints.StreamingRequestPath);
 
             _storeStatusMonitoringEnabled = _dataSourceUpdates.DataStoreStatusProvider.StatusMonitoringEnabled;
             if (_storeStatusMonitoringEnabled)

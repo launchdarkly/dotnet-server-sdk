@@ -123,8 +123,15 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// Sets an HTTP proxy for making connections to LaunchDarkly.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// This is ignored if you have specified a custom message handler with <see cref="MessageHandler(HttpMessageHandler)"/>,
         /// since proxy behavior is implemented by the message handler.
+        /// </para>
+        /// <para>
+        /// Note that this is not the same as the <see href="https://docs.launchdarkly.com/home/relay-proxy">LaunchDarkly
+        /// Relay Proxy</see>, which would be set with
+        /// <see cref="ServiceEndpointsBuilder.RelayProxy(Uri)"/>.
+        /// </para>
         /// </remarks>
         /// <example>
         /// <code>

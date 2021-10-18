@@ -312,6 +312,31 @@ namespace LaunchDarkly.Sdk.Server
             new PollingDataSourceBuilder();
 
         /// <summary>
+        /// Returns a builder for configuring custom service URIs.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Passing this to <see cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)" />,
+        /// after setting any desired properties on the builder, applies this configuration to the SDK.
+        /// </para>
+        /// <para>
+        /// Most applications will never need to use this method. The main use case is when connecting
+        /// to a <a href="https://docs.launchdarkly.com/home/advanced/relay-proxy">LaunchDarkly
+        /// Relay Proxy</a> instance. For more information, see <see cref="ServiceEndpointsBuilder"/>.
+        /// </para>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     var config = Configuration.Builder(mobileKey)
+        ///         .ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://my-relay-hostname:80"))
+        ///         .Build();
+        /// </code>
+        /// </example>
+        /// <returns>a configuration builder</returns>
+        /// <seealso cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)" />
+        public static ServiceEndpointsBuilder ServiceEndpoints() => new ServiceEndpointsBuilder();
+
+        /// <summary>
         /// Returns a configurable factory for using streaming mode to get feature flag data.
         /// </summary>
         /// <remarks>

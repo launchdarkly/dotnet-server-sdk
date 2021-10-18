@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _httpProperties = context.Http.HttpProperties;
             _httpClient = context.Http.NewHttpClient();
             _connectTimeout = context.Http.ConnectTimeout;
-            _allUri = baseUri.AddPath("sdk/latest-all");
+            _allUri = baseUri.AddPath(StandardEndpoints.PollingRequestPath);
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 

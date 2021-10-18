@@ -39,6 +39,7 @@ namespace LaunchDarkly.Sdk.Server
         internal ILoggingConfigurationFactory _loggingConfigurationFactory = null;
         internal bool _offline = false;
         internal string _sdkKey;
+        internal ServiceEndpointsBuilder _serviceEndpointsBuilder = null;
         internal TimeSpan _startWaitTime = DefaultStartWaitTime;
 
         #endregion
@@ -61,6 +62,7 @@ namespace LaunchDarkly.Sdk.Server
             _loggingConfigurationFactory = copyFrom.LoggingConfigurationFactory;
             _offline = copyFrom.Offline;
             _sdkKey = copyFrom.SdkKey;
+            _serviceEndpointsBuilder = new ServiceEndpointsBuilder(copyFrom.ServiceEndpoints);
             _startWaitTime = copyFrom.StartWaitTime;
         }
 
@@ -289,6 +291,24 @@ namespace LaunchDarkly.Sdk.Server
         public ConfigurationBuilder SdkKey(string sdkKey)
         {
             _sdkKey = sdkKey;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the SDK's service URIs, using a configuration builder obtained from
+        /// <see cref="Components.ServiceEndpoints"/>.
+        /// </summary>
+        /// <remarks>
+        /// This overwrites any previous options set with <see cref="ServiceEndpoints(ServiceEndpointsBuilder)"/>.
+        /// If you want to set multiple options, set them on the same <see cref="ServiceEndpointsBuilder"/>.
+        /// </remarks>
+        /// <param name="serviceEndpointsBuilder">the subconfiguration builder object</param>
+        /// <returns>the main configuration builder</returns>
+        /// <seealso cref="Components.ServiceEndpoints"/>
+        /// <seealso cref="ServiceEndpointsBuilder"/>
+        public ConfigurationBuilder ServiceEndpoints(ServiceEndpointsBuilder serviceEndpointsBuilder)
+        {
+            _serviceEndpointsBuilder = serviceEndpointsBuilder;
             return this;
         }
 

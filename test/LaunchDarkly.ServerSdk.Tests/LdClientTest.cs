@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
@@ -23,17 +24,15 @@ namespace LaunchDarkly.Sdk.Server
     public class LdClientTest : BaseTest
     {
         private const string sdkKey = "SDK_KEY";
+        private static readonly ServiceEndpointsBuilder FakeEndpoints =
+            Components.ServiceEndpoints().RelayProxy("http://fake");
 
         public LdClientTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         [Fact]
         public void ClientStartupMessage()
         {
-            var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(testLogging))
-                .Events(Components.NoEvents)
-                .StartWaitTime(TimeSpan.Zero)
-                .Build();
+            var config = BasicConfig().Build();
             using (var client = new LdClient(config))
             {
                 AssertLogMessage(true, LogLevel.Info,
@@ -46,10 +45,8 @@ namespace LaunchDarkly.Sdk.Server
         public void CanCustomizeBaseLoggerName()
         {
             var customLoggerName = "abcdef";
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .Logging(Components.Logging(testLogging).BaseLoggerName(customLoggerName))
-                .Events(Components.NoEvents)
-                .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -62,9 +59,10 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = Configuration.Builder(sdkKey)
                 .DataSource(Components.ExternalUpdatesOnly)
-                .StartWaitTime(TimeSpan.Zero)
                 .DiagnosticOptOut(true)
                 .Logging(Components.Logging(testLogging))
+                .ServiceEndpoints(FakeEndpoints)
+                .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -73,13 +71,26 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void StreamingClientHasStreamProcessor()
+        public void DefaultDataSourceIsStreamProcessor()
         {
             var config = Configuration.Builder(sdkKey)
-                .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
                 .Events(Components.NoEvents)
-                .StartWaitTime(TimeSpan.Zero)
                 .Logging(Components.Logging(testLogging))
+                .ServiceEndpoints(FakeEndpoints)
+                .StartWaitTime(TimeSpan.Zero)
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.IsType<StreamProcessor>(client._dataSource);
+            }
+        }
+
+        [Fact]
+        public void StreamingClientHasStreamProcessor()
+        {
+            var config = BasicConfig()
+                .DataSource(Components.StreamingDataSource())
+                .ServiceEndpoints(FakeEndpoints)
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -90,15 +101,13 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StreamingClientStartupMessage()
         {
-            var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(testLogging))
-                .DataSource(Components.StreamingDataSource().BaseUri(new Uri("http://fake")))
-                .Events(Components.NoEvents)
-                .StartWaitTime(TimeSpan.Zero)
+            var config = BasicConfig()
+                .DataSource(Components.StreamingDataSource())
+                .ServiceEndpoints(FakeEndpoints)
                 .Build();
             using (var client = new LdClient(config))
             {
-                AssertLogMessage(false, LogLevel.Warn,
+AssertLogMessage(false, LogLevel.Warn,
                     "You should only disable the streaming API if instructed to do so by LaunchDarkly support");
             }
         }
@@ -106,11 +115,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void PollingClientHasPollingProcessor()
         {
-            var config = Configuration.Builder(sdkKey)
-                .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
-                .Events(Components.NoEvents)
-                .StartWaitTime(TimeSpan.Zero)
-                .Logging(Components.Logging(testLogging))
+            var config = BasicConfig()
+                .DataSource(Components.PollingDataSource())
+                .ServiceEndpoints(FakeEndpoints)
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -121,11 +128,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void PollingClientStartupMessage()
         {
-            var config = Configuration.Builder(sdkKey)
-                .Logging(Components.Logging(testLogging))
-                .Events(Components.NoEvents)
-                .DataSource(Components.PollingDataSource().BaseUri(new Uri("http://fake")))
-                .StartWaitTime(TimeSpan.Zero)
+            var config = BasicConfig()
+                .DataSource(Components.PollingDataSource())
+                .ServiceEndpoints(FakeEndpoints)
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -207,26 +212,11 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void NoWaitForDataSourceIfWaitMillisIsZero()
-        {
-            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
-                .DataSource(MockDataSourceThatNeverStarts().AsSingletonFactory())
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
-                .Build();
-
-            using (var client = new LdClient(config))
-            {
-            }
-        }
-        
-        [Fact]
         public void DataSourceCanTimeOut()
         {
-            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.FromMilliseconds(10))
+            var config = BasicConfig()
                 .DataSource(MockDataSourceThatNeverStarts().AsSingletonFactory())
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
+                .StartWaitTime(TimeSpan.FromMilliseconds(10))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -241,10 +231,8 @@ namespace LaunchDarkly.Sdk.Server
             TaskCompletionSource<bool> errorTaskSource = new TaskCompletionSource<bool>();
             var dataSource = MockDataSourceWithStartFn(_ => errorTaskSource.Task, () => false);
             errorTaskSource.SetException(new Exception("bad"));
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .DataSource(dataSource.AsSingletonFactory())
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -261,11 +249,9 @@ namespace LaunchDarkly.Sdk.Server
             TestUtils.UpsertFlag(dataStore, flag);
             // note, the store is still not inited
 
-            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
+            var config = BasicConfig()
                 .DataStore(dataStore.AsSingletonFactory())
                 .DataSource(MockDataSourceThatNeverStarts().AsSingletonFactory())
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -282,11 +268,9 @@ namespace LaunchDarkly.Sdk.Server
             var flag = new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(1)).Build();
             TestUtils.UpsertFlag(dataStore, flag);
 
-            var config = Configuration.Builder(sdkKey).StartWaitTime(TimeSpan.Zero)
+            var config = BasicConfig()
                 .DataStore(dataStore.AsSingletonFactory())
                 .DataSource(MockDataSourceThatNeverStarts().AsSingletonFactory())
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -308,11 +292,9 @@ namespace LaunchDarkly.Sdk.Server
             mockStore.Setup(s => s.Init(It.IsAny<FullDataSet<ItemDescriptor>>()))
                 .Callback((FullDataSet<ItemDescriptor> data) => dataSink.Enqueue(data));
 
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .DataStore(store.AsSingletonFactory())
                 .DataSource(MockDataSourceWithData(DataStoreSorterTest.DependencyOrderingTestData).AsSingletonFactory())
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
                 .Build();
 
             using (var client = new LdClient(config))

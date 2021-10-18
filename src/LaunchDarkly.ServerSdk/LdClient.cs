@@ -126,7 +126,7 @@ namespace LaunchDarkly.Sdk.Server
                 AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
             _evalLog = _log.SubLogger(LogNames.EvaluationSubLog);
 
-            var basicConfig = new BasicConfiguration(config.SdkKey, config.Offline, _log);
+            var basicConfig = new BasicConfiguration(config, _log);
             var httpConfig = (config.HttpConfigurationFactory ?? Components.HttpConfiguration())
                 .CreateHttpConfiguration(basicConfig);
             ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :

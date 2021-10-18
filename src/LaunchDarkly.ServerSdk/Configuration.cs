@@ -79,6 +79,11 @@ namespace LaunchDarkly.Sdk.Server
         public string SdkKey { get; }
 
         /// <summary>
+        /// Defines the base service URIs used by SDK components.
+        /// </summary>
+        public ServiceEndpoints ServiceEndpoints { get; }
+
+        /// <summary>
         /// How long the client constructor will block awaiting a successful connection to
         /// LaunchDarkly.
         /// </summary>
@@ -160,6 +165,7 @@ namespace LaunchDarkly.Sdk.Server
             LoggingConfigurationFactory = builder._loggingConfigurationFactory;
             Offline = builder._offline;
             SdkKey = builder._sdkKey;
+            ServiceEndpoints = (builder._serviceEndpointsBuilder ?? Components.ServiceEndpoints()).Build();
             StartWaitTime = builder._startWaitTime;
         }
 
