@@ -6,6 +6,8 @@ using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
+using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
+
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
@@ -123,8 +125,15 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// Sets an HTTP proxy for making connections to LaunchDarkly.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// This is ignored if you have specified a custom message handler with <see cref="MessageHandler(HttpMessageHandler)"/>,
         /// since proxy behavior is implemented by the message handler.
+        /// </para>
+        /// <para>
+        /// Note that this is not the same as the <see href="https://docs.launchdarkly.com/home/relay-proxy">LaunchDarkly
+        /// Relay Proxy</see>, which would be set with
+        /// <see cref="ServiceEndpointsBuilder.RelayProxy(Uri)"/>.
+        /// </para>
         /// </remarks>
         /// <example>
         /// <code>
@@ -214,6 +223,16 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public HttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
         {
+            var httpProperties = MakeHttpProperties(basicConfiguration);
+            return new HttpConfiguration(
+                httpProperties,
+                _messageHandler,
+                _responseStartTimeout
+                );
+        }
+
+        private HttpProperties MakeHttpProperties(BasicConfiguration basicConfiguration)
+        {
             var httpProperties = HttpProperties.Default
                 .WithAuthorizationKey(basicConfiguration.SdkKey)
                 .WithConnectTimeout(_connectTimeout)
@@ -230,33 +249,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 httpProperties = httpProperties.WithHeader(kv.Key, kv.Value);
             }
 
-            return new HttpConfiguration(
-                httpProperties,
-                _messageHandler,
-                _responseStartTimeout
-                );
+            return httpProperties;
         }
 
         /// <inheritdoc/>
         public LdValue DescribeConfiguration(BasicConfiguration basic) =>
             LdValue.BuildObject()
-                .Add("connectTimeoutMillis", _connectTimeout.TotalMilliseconds)
-                .Add("socketTimeoutMillis", _readTimeout.TotalMilliseconds)
-                .Add("usingProxy", DetectProxy())
-                .Add("usingProxyAuthenticator", DetectProxyAuth())
+                .WithHttpProperties(MakeHttpProperties(basic))
                 .Build();
-
-        // DetectProxy and DetectProxyAuth do not cover every mechanism that could be used to configure
-        // a proxy; for instance, there is HttpClient.DefaultProxy, which only exists in .NET Core 3.x and
-        // .NET 5.x. But since we're only trying to gather diagnostic stats, this doesn't have to be perfect.
-        private bool DetectProxy() =>
-            _proxy != null ||
-            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("HTTP_PROXY")) ||
-            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("HTTPS_PROXY")) ||
-            !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("ALL_PROXY"));
-
-        private bool DetectProxyAuth() =>
-            _proxy is WebProxy wp &&
-            (wp.Credentials != null || wp.UseDefaultCredentials);
     }
 }

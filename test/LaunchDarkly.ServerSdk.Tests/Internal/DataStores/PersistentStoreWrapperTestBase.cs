@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.TestHelpers;
 using Xunit;
@@ -29,7 +28,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
             TimeSpan.FromSeconds(2);
 
         protected T _core;
-        internal TaskExecutor _taskExecutor;
         internal DataStoreUpdatesImpl _dataStoreUpdates;
 
         internal class CacheMode
@@ -89,8 +87,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         protected PersistentStoreWrapperTestBase(T core, ITestOutputHelper testOutput) : base(testOutput)
         {
             _core = core;
-            _taskExecutor = new TaskExecutor(this, testLogger);
-            _dataStoreUpdates = new DataStoreUpdatesImpl(_taskExecutor, testLogger);
+            _dataStoreUpdates = new DataStoreUpdatesImpl(BasicTaskExecutor, TestLogger);
         }
 
         internal abstract PersistentStoreWrapper MakeWrapper(TestParams testParams);

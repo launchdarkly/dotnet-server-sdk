@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -13,6 +14,9 @@ namespace LaunchDarkly.Sdk.Server
     /// </summary>
     public class BaseTest
     {
+        protected const string BasicSdkKey = "sdk-key";
+        protected static readonly User BasicUser = User.WithKey("user-key");
+
         /// <summary>
         /// Using this <see cref="ILogAdapter"/> in an SDK configuration will cause logging to be sent
         /// to the Xunit output buffer for the current test method, if you used the overloaded
@@ -20,7 +24,7 @@ namespace LaunchDarkly.Sdk.Server
         /// constructor, logging is disabled. Xunit only shows the buffered output for failed tests.
         /// </summary>
         /// <seealso cref="TestLogging"/>
-        protected readonly ILogAdapter testLogging;
+        protected readonly ILogAdapter TestLogging;
 
         /// <summary>
         /// Using this <see cref="Logger"/> with an SDK component will cause logging to be sent to the
@@ -29,18 +33,18 @@ namespace LaunchDarkly.Sdk.Server
         /// logging is disabled. Xunit only shows the buffered output for failed tests.
         /// </summary>
         /// <seealso cref="TestLogging"/>
-        protected readonly Logger testLogger;
+        protected readonly Logger TestLogger;
 
         /// <summary>
-        /// All log output written via <see cref="testLogger"/> or <see cref="testLogging"/> is copied
+        /// All log output written via <see cref="TestLogger"/> or <see cref="TestLogging"/> is copied
         /// to this buffer (as well as being buffered by Xunit, if applicable).
         /// </summary>
-        protected readonly LogCapture logCapture;
+        protected readonly LogCapture LogCapture;
 
         /// <summary>
         /// A minimal LdClientContext that uses the test logger.
         /// </summary>
-        protected readonly LdClientContext basicContext;
+        protected readonly LdClientContext BasicContext;
 
         /// <summary>
         /// A TaskExecutor instance that uses the test logger.
@@ -52,14 +56,14 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         public BaseTest()
         {
-            logCapture = Logs.Capture();
-            testLogging = logCapture;
-            testLogger = logCapture.Logger("");
+            LogCapture = Logs.Capture();
+            TestLogging = LogCapture;
+            TestLogger = LogCapture.Logger("");
 
-            basicContext = new LdClientContext(new BasicConfiguration("", false, testLogger),
+            BasicContext = new LdClientContext(new BasicConfiguration(Configuration.Default(BasicSdkKey), TestLogger),
                 Configuration.Default(""));
 
-            BasicTaskExecutor = new TaskExecutor("test-sender", testLogger);
+            BasicTaskExecutor = new TaskExecutor("test-sender", TestLogger);
 
             // The following line prevents intermittent test failures that happen only in .NET
             // Framework, where background tasks (including calls to Task.Delay) are very excessively
@@ -94,13 +98,24 @@ namespace LaunchDarkly.Sdk.Server
         /// class constructor</param>
         public BaseTest(ITestOutputHelper testOutput) : this()
         {
-            testLogging = Logs.ToMultiple(TestLogging.TestOutputAdapter(testOutput), logCapture);
-            testLogger = testLogging.Logger("");
+            TestLogging = Logs.ToMultiple(TestLoggingHelpers.TestOutputAdapter(testOutput), LogCapture);
+            TestLogger = TestLogging.Logger("");
         }
+
+        // Returns a ConfigurationBuilder with no external data source, events disabled, and logging redirected
+        // to the test output. Using this as a base configuration for tests, and then overriding properties as
+        // needed, protects against accidental interaction with external services and also makes it easier to
+        // see which properties are important in a test.
+        protected ConfigurationBuilder BasicConfig() =>
+            Configuration.Builder(BasicSdkKey)
+                .DataSource(Components.ExternalUpdatesOnly)
+                .Events(Components.NoEvents)
+                .Logging(TestLogging)
+                .StartWaitTime(TimeSpan.Zero);
 
         public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern)
         {
-            if (logCapture.HasMessageWithRegex(level, pattern) != shouldHave)
+            if (LogCapture.HasMessageWithRegex(level, pattern) != shouldHave)
             {
                 ThrowLogMatchException(shouldHave, level, pattern, true);
             }
@@ -108,7 +123,7 @@ namespace LaunchDarkly.Sdk.Server
 
         public void AssertLogMessage(bool shouldHave, LogLevel level, string text)
         {
-            if (logCapture.HasMessageWithText(level, text) != shouldHave)
+            if (LogCapture.HasMessageWithText(level, text) != shouldHave)
             {
                 ThrowLogMatchException(shouldHave, level, text, true);
             }
@@ -121,6 +136,6 @@ namespace LaunchDarkly.Sdk.Server
                     isRegex ? "pattern" : "exact message",
                     text,
                     level,
-                    logCapture.ToString()));
+                    LogCapture.ToString()));
     }
 }

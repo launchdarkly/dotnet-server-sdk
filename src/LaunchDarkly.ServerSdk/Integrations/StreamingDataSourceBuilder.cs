@@ -1,6 +1,9 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
+
+using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
@@ -29,22 +32,28 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </example>
     public sealed class StreamingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
     {
-        internal static readonly Uri DefaultBaseUri = new Uri("https://stream.launchdarkly.com");
-
         /// <summary>
         /// The default value for <see cref="InitialReconnectDelay(TimeSpan)"/>: 1000 milliseconds.
         /// </summary>
         public static readonly TimeSpan DefaultInitialReconnectDelay = TimeSpan.FromSeconds(1);
 
-        internal Uri _baseUri = DefaultBaseUri;
+        internal Uri _baseUri;
         internal TimeSpan _initialReconnectDelay = DefaultInitialReconnectDelay;
         internal StreamProcessor.EventSourceCreator _eventSourceCreator = null;
 
         /// <summary>
-        /// Sets a custom base URI for the streaming service.
+        /// Deprecated method for setting a custom base URI for the streaming service.
         /// </summary>
         /// <remarks>
+        /// <para>
+        /// The preferred way to set this option is now with
+        /// <see cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>. If you set
+        /// this deprecated option, it overrides any value that was set with
+        /// <see cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>.
+        /// </para>
+        /// <para>
         /// You will only need to change this value in the following cases:
+        /// </para>
         /// <list type="bullet">
         /// <item><description>
         /// You are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>.
@@ -57,9 +66,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </remarks>
         /// <param name="baseUri">the base URI of the streaming service; null to use the default</param>
         /// <returns>the builder</returns>
+        /// <seealso cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>
+        [Obsolete("Use ConfigurationBuilder.ServiceEndpoints instead")]
         public StreamingDataSourceBuilder BaseUri(Uri baseUri)
         {
-            _baseUri = baseUri ?? DefaultBaseUri;
+            _baseUri = baseUri;
             return this;
         }
 
@@ -94,26 +105,26 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
+            var configuredBaseUri = _baseUri ??
+                StandardEndpoints.SelectBaseUri(context.Basic.ServiceEndpoints, e => e.StreamingBaseUri, "Streaming", context.Basic.Logger);
             return new StreamProcessor(
                 context,
                 dataSourceUpdates,
-                _baseUri ?? DefaultBaseUri,
+                configuredBaseUri,
                 _initialReconnectDelay,
                 _eventSourceCreator
                 );
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic)
-        {
-            return LdValue.BuildObject()
-                .Add("streamingDisabled", false)
-                .Add("customBaseURI", false)
-                .Add("customStreamURI",
-                    !(_baseUri ?? DefaultBaseUri).Equals(DefaultBaseUri))
-                .Add("reconnectTimeMillis", _initialReconnectDelay.TotalMilliseconds)
-                .Add("usingRelayDaemon", false)
-                .Build();
-        }
+        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+            LdValue.BuildObject()
+            .WithStreamingProperties(
+                StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, _baseUri, e => e.StreamingBaseUri),
+                false,
+                _initialReconnectDelay
+                )
+            .Set("usingRelayDaemon", false)
+            .Build();
     }
 }

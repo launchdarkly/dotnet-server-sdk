@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -14,6 +13,7 @@ using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.TestUtils;
+using static LaunchDarkly.TestHelpers.Assertions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -31,22 +31,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private IDataStore store;
         private DataStoreUpdatesImpl dataStoreUpdates;
         private DataStoreStatusProviderImpl dataStoreStatusProvider;
-        private TaskExecutor taskExecutor;
 
         private DataSourceUpdatesImpl MakeInstance() =>
             new DataSourceUpdatesImpl(
                 store,
                 dataStoreStatusProvider,
-                taskExecutor,
-                testLogger,
+                BasicTaskExecutor,
+                TestLogger,
                 null
                 );
 
         public DataSourceUpdatesImplTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            taskExecutor = new TaskExecutor(this, testLogger);
             store = new InMemoryDataStore();
-            dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor, testLogger);
+            dataStoreUpdates = new DataStoreUpdatesImpl(BasicTaskExecutor, TestLogger);
             dataStoreStatusProvider = new DataStoreStatusProviderImpl(store, dataStoreUpdates);
         }
 
@@ -348,8 +346,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var updates = new DataSourceUpdatesImpl(
                 store,
                 dataStoreStatusProvider,
-                taskExecutor,
-                testLogger,
+                BasicTaskExecutor,
+                TestLogger,
                 outageTimeout
                 );
 
@@ -370,24 +368,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             updates.UpdateStatus(DataSourceState.Interrupted, DataSourceStatus.ErrorInfo.FromHttpError(501));
 
             Thread.Sleep(outageTimeout);
-            DateTime deadline = DateTime.Now.AddSeconds(1);
-            while (DateTime.Now < deadline)
-            {
-                var messages = logCapture.GetMessages().Where(m => m.Level == LogLevel.Error).ToList();
-                if (messages.Count == 1)
+            AssertEventually(TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(50), () =>
                 {
-                    var m = messages[0];
-                    if (m.LoggerName == ".DataSource" &&
-                        m.Text.Contains("NETWORK_ERROR (1 time)") &&
-                        m.Text.Contains("ERROR_RESPONSE(501) (2 times)") &&
-                        m.Text.Contains("ERROR_RESPONSE(502) (1 time)"))
+                    var messages = LogCapture.GetMessages().Where(m => m.Level == LogLevel.Error).ToList();
+                    if (messages.Count == 1)
                     {
-                        return;
+                        var m = messages[0];
+                        if (m.LoggerName == ".DataSource" &&
+                            m.Text.Contains("NETWORK_ERROR (1 time)") &&
+                            m.Text.Contains("ERROR_RESPONSE(501) (2 times)") &&
+                            m.Text.Contains("ERROR_RESPONSE(502) (1 time)"))
+                        {
+                            return true;
+                        }
                     }
+                    return false;
                 }
-                Thread.Sleep(TimeSpan.FromMilliseconds(50));
-            }
-            Assert.True(false, "did not see expected log message; log output was: " + logCapture.ToString());
+                );
         }
 
         private void ExpectFlagChangeEvents(EventSink<FlagChangeEvent> eventSink, params string[] flagKeys)

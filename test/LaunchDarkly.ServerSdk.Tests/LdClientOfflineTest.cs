@@ -9,15 +9,12 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientOfflineTest : BaseTest
     {
-        private const string sdkKey = "SDK_KEY";
-
         public LdClientOfflineTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         [Fact]
         public void OfflineClientHasNullDataSource()
         {
-            var config = Configuration.Builder(sdkKey).Offline(true)
-                .Logging(Components.Logging(testLogging)).Build();
+            var config = BasicConfig().Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<ComponentsImpl.NullDataSource>(client._dataSource);
@@ -27,8 +24,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void OfflineClientHasNullEventProcessor()
         {
-            var config = Configuration.Builder(sdkKey).Offline(true)
-                .Logging(Components.Logging(testLogging)).Build();
+            var config = BasicConfig().Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.IsType<ComponentsImpl.NullEventProcessor>(client._eventProcessor);
@@ -38,8 +34,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void OfflineClientIsInitialized()
         {
-            var config = Configuration.Builder(sdkKey).Offline(true)
-                .Logging(Components.Logging(testLogging)).Build();
+            var config = BasicConfig().Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.True(client.Initialized);
@@ -49,8 +44,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void OfflineReturnsDefaultValue()
         {
-            var config = Configuration.Builder(sdkKey).Offline(true)
-                .Logging(Components.Logging(testLogging)).Build();
+            var config = BasicConfig().Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.Equal("x", client.StringVariation("key", User.WithKey("user"), "x"));
@@ -63,10 +57,9 @@ namespace LaunchDarkly.Sdk.Server
             var dataStore = new InMemoryDataStore();
             TestUtils.UpsertFlag(dataStore,
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .Offline(true)
                 .DataStore(dataStore.AsSingletonFactory())
-                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -77,8 +70,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void OfflineClientStartupMessage()
         {
-            var config = Configuration.Builder(sdkKey).Offline(true)
-                .Logging(Components.Logging(testLogging)).Build();
+            var config = BasicConfig().Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 AssertLogMessage(true, LogLevel.Info, "Starting LaunchDarkly client in offline mode");
@@ -88,8 +80,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void TestSecureModeHash()
         {
-            var config = Configuration.Builder("secret").Offline(true)
-                .Logging(Components.Logging(testLogging)).Build();
+            var config = BasicConfig().SdkKey("secret").Offline(true).Build();
             using (var client = new LdClient(config))
             {
                 Assert.Equal("aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597",

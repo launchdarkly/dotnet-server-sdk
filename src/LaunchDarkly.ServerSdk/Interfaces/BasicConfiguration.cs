@@ -1,4 +1,5 @@
-﻿using LaunchDarkly.Logging;
+﻿using System;
+using LaunchDarkly.Logging;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
@@ -37,16 +38,36 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         public string SdkKey { get; }
 
         /// <summary>
+        /// Defines the base service URIs used by SDK components.
+        /// </summary>
+        public ServiceEndpoints ServiceEndpoints { get; }
+
+        /// <summary>
         /// Constructs an instance.
         /// </summary>
         /// <param name="sdkKey">the SDK key</param>
         /// <param name="offline">true if the SDK was configured to be completely offline</param>
         /// <param name="logger">the base logger for all SDK components to use</param>
-        public BasicConfiguration(string sdkKey, bool offline, Logger logger)
+        [Obsolete("Use all-parameters constructor")]
+        public BasicConfiguration(string sdkKey, bool offline, Logger logger) :
+            this(sdkKey, offline, null, logger) { }
+
+        /// <summary>
+        /// Constructs an instance.
+        /// </summary>
+        /// <param name="sdkKey">the SDK key</param>
+        /// <param name="offline">true if the SDK was configured to be completely offline</param>
+        /// <param name="serviceEndpoints">configured service URIs</param>
+        /// <param name="logger">the base logger for all SDK components to use</param>
+        public BasicConfiguration(string sdkKey, bool offline, ServiceEndpoints serviceEndpoints, Logger logger)
         {
             SdkKey = sdkKey;
             Offline = offline;
+            ServiceEndpoints = serviceEndpoints ?? Components.ServiceEndpoints().Build();
             Logger = logger;
         }
+
+        internal BasicConfiguration(Configuration config, Logger logger) :
+            this(config.SdkKey, config.Offline, config.ServiceEndpoints, logger) { }
     }
 }

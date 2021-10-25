@@ -17,10 +17,9 @@ namespace LaunchDarkly.Sdk.Server
 
         public LdClientEventTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            var config = Configuration.Builder("SDK_KEY")
+            var config = BasicConfig()
                 .DataSource(testData)
                 .Events(eventSink.AsSingletonFactory())
-                .Logging(Components.Logging(testLogging))
                 .Build();
             client = new LdClient(config);
         }

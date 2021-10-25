@@ -1,5 +1,4 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Moq;
 using Xunit;
@@ -36,16 +35,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var store = storeMock.Object;
             var storeFactoryMock = new Mock<IBigSegmentStoreFactory>();
             var storeFactory = storeFactoryMock.Object;
-            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(basicContext)).Returns(store);
+            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(BasicContext)).Returns(store);
             storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(storeMetadata);
 
             var bsConfig = Components.BigSegments(storeFactory)
                 .StatusPollInterval(TimeSpan.FromMilliseconds(1))
                 .StaleAfter(TimeSpan.FromDays(1));
             using (var sw = new BigSegmentStoreWrapper(
-                bsConfig.CreateBigSegmentsConfiguration(basicContext),
-                new TaskExecutor(null, testLogger),
-                testLogger
+                bsConfig.CreateBigSegmentsConfiguration(BasicContext),
+                BasicTaskExecutor,
+                TestLogger
                 ))
             {
                 var sp = new BigSegmentStoreStatusProviderImpl(sw);

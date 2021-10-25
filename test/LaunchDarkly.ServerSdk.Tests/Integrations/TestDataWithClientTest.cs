@@ -12,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         public TestDataWithClientTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            _config = Configuration.Builder("sdk-key")
+            _config = BasicConfig()
                 .DataSource(_td)
                 .Events(Components.NoEvents)
                 .Build();

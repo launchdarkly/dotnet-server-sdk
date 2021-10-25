@@ -18,7 +18,6 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientDiagnosticEventTest : BaseTest
     {
-        private const string sdkKey = "SDK_KEY";
         private const string testWrapperName = "wrapper-name";
         private const string testWrapperVersion = "1.2.3";
         private static readonly JsonTestValue expectedSdk = JsonOf(LdValue.BuildObject()
@@ -29,18 +28,16 @@ namespace LaunchDarkly.Sdk.Server
             .Build().ToJsonString());
         internal static readonly TimeSpan testStartWaitTime = TimeSpan.FromMilliseconds(1);
 
-        private MockEventSender testEventSender = new MockEventSender();
+        private MockEventSender testEventSender = new MockEventSender { FilterKind = EventDataKind.DiagnosticEvent };
 
         public LdClientDiagnosticEventTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         [Fact]
         public void NoDiagnosticInitEventIsSentIfOptedOut()
         {
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .DiagnosticOptOut(true)
-                .DataSource(Components.ExternalUpdatesOnly)
                 .Events(Components.SendEvents().EventSender(testEventSender))
-                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -51,13 +48,11 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void DiagnosticInitEventIsSent()
         {
-            var config = Configuration.Builder(sdkKey)
-                .DataSource(Components.ExternalUpdatesOnly)
+            var config = BasicConfig()
                 .Events(Components.SendEvents().EventSender(testEventSender))
                 .Http(
                     Components.HttpConfiguration().Wrapper(testWrapperName, testWrapperVersion)
                 )
-                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -68,31 +63,23 @@ namespace LaunchDarkly.Sdk.Server
 
                 var data = JsonOf(payload.Data);
                 AssertJsonEqual(JsonFromValue("diagnostic-init"), data.Property("kind"));
-                AssertJsonEqual(ExpectedPlatform(), data.Property("platform"));
+                AssertJsonEqual(JsonFromValue("dotnet"), data.RequiredProperty("platform").Property("name"));
+                AssertJsonEqual(JsonFromValue(ServerDiagnosticStore.GetDotNetTargetFramework()),
+                    data.RequiredProperty("platform").Property("dotNetTargetFramework"));
                 AssertJsonEqual(expectedSdk, data.Property("sdk"));
-                AssertJsonEqual(JsonFromValue("DK_KEY"), data.Property("id").Property("sdkKeySuffix"));
+                AssertJsonEqual(JsonFromValue("dk-key"), data.Property("id").Property("sdkKeySuffix"));
 
                 data.RequiredProperty("creationDate");
             }
         }
 
-        private static JsonTestValue ExpectedPlatform() =>
-            JsonOf(LdValue.BuildObject().Add("name", "dotnet")
-                .Add("dotNetTargetFramework", ServerDiagnosticStore.GetDotNetTargetFramework())
-                .Add("osName", ServerDiagnosticStore.GetOSName())
-                .Add("osVersion", ServerDiagnosticStore.GetOSVersion())
-                .Add("osArch", ServerDiagnosticStore.GetOSArch())
-                .Build().ToJsonString());
-
         [Fact]
         public void DiagnosticPeriodicEventsAreSent()
         {
-            var config = Configuration.Builder(sdkKey)
-                .DataSource(Components.ExternalUpdatesOnly)
+            var config = BasicConfig()
                 .Events(Components.SendEvents()
                     .EventSender(testEventSender)
                     .DiagnosticRecordingIntervalNoMinimum(TimeSpan.FromMilliseconds(50)))
-                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -135,9 +122,6 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .WithStreamingDefaults()
                 );
         }
 
@@ -145,23 +129,10 @@ namespace LaunchDarkly.Sdk.Server
         public void CustomConfigGeneralProperties()
         {
             TestDiagnosticConfig(
-                c => c.Http(
-                        Components.HttpConfiguration()
-                            .ConnectTimeout(TimeSpan.FromMilliseconds(1001))
-                            .ReadTimeout(TimeSpan.FromMilliseconds(1003))
-                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
-                    )
-                    .StartWaitTime(TimeSpan.FromMilliseconds(2)),
+                c => c.StartWaitTime(TimeSpan.FromMilliseconds(2)),
                 null,
-                LdValue.BuildObject()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .WithStreamingDefaults()
-                    .Add("connectTimeoutMillis", 1001)
-                    .Add("socketTimeoutMillis", 1003)
-                    .Add("startWaitMillis", 2)
-                    .Add("usingProxy", false)
-                    .Add("usingProxyAuthenticator", false)
+                ExpectedConfigProps.Base()
+                    .Set("startWaitMillis", 2)
                 );
         }
 
@@ -176,37 +147,21 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .Add("customBaseURI", false)
-                    .Add("customStreamURI", false)
-                    .Add("streamingDisabled", false)
-                    .Add("reconnectTimeMillis", 2000)
-                    .Add("usingRelayDaemon", false)
-                );
-
-            TestDiagnosticConfig(
-                c => c.DataSource(
-                    Components.StreamingDataSource()
-                        .BaseUri(new Uri("http://custom"))
-                        .InitialReconnectDelay(TimeSpan.FromSeconds(2))
-                    )
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
-                null,
-                ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .Add("customBaseURI", false)
-                    .Add("customStreamURI", true)
-                    .Add("streamingDisabled", false)
-                    .Add("reconnectTimeMillis", 2000)
-                    .Add("usingRelayDaemon", false)
+                    .Set("reconnectTimeMillis", 2000)
                 );
         }
 
         [Fact]
         public void CustomConfigForPolling()
         {
+            TestDiagnosticConfig(
+                c => c.DataSource(Components.PollingDataSource())
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithPollingDefaults()
+                );
+
             TestDiagnosticConfig(
                 c => c.DataSource(
                     Components.PollingDataSource()
@@ -215,31 +170,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .Add("customBaseURI", false)
-                    .Add("customStreamURI", false)
-                    .Add("pollingIntervalMillis", 45000)
-                    .Add("streamingDisabled", true)
-                    .Add("usingRelayDaemon", false)
-                );
-
-            TestDiagnosticConfig(
-                c => c.DataSource(
-                    Components.PollingDataSource()
-                        .BaseUri(new Uri("http://custom"))
-                        .PollInterval(TimeSpan.FromSeconds(45))
-                    )
-                   .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
-                null,
-                ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .Add("customBaseURI", true)
-                    .Add("customStreamURI", false)
-                    .Add("pollingIntervalMillis", 45000)
-                    .Add("streamingDisabled", true)
-                    .Add("usingRelayDaemon", false)
+                    .WithPollingDefaults()
+                    .Set("pollingIntervalMillis", 45000)
                 );
         }
 
@@ -250,12 +182,8 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.DataSource(Components.ExternalUpdatesOnly),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithEventsDefaults()
-                    .Add("customBaseURI", false)
-                    .Add("customStreamURI", false)
-                    .Add("streamingDisabled", false)
-                    .Add("usingRelayDaemon", true)
+                    .Set("usingRelayDaemon", true)
+                    .Remove("reconnectTimeMillis")
                 );
         }
 
@@ -263,9 +191,8 @@ namespace LaunchDarkly.Sdk.Server
         public void CustomConfigForEvents()
         {
             TestDiagnosticConfig(
-                c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
                 e => e.AllAttributesPrivate(true)
-                    .BaseUri(new Uri("http://custom"))
                     .Capacity(333)
                     .DiagnosticRecordingInterval(TimeSpan.FromMinutes(32))
                     .FlushInterval(TimeSpan.FromMilliseconds(555))
@@ -273,17 +200,14 @@ namespace LaunchDarkly.Sdk.Server
                     .UserKeysCapacity(444)
                     .UserKeysFlushInterval(TimeSpan.FromMinutes(23)),
                 ExpectedConfigProps.Base()
-                    .WithStoreDefaults()
-                    .WithStreamingDefaults()
-                    .Add("allAttributesPrivate", true)
-                    .Add("customEventsURI", true)
-                    .Add("diagnosticRecordingIntervalMillis", TimeSpan.FromMinutes(32).TotalMilliseconds)
-                    .Add("eventsCapacity", 333)
-                    .Add("eventsFlushIntervalMillis", 555)
-                    .Add("inlineUsersInEvents", true)
-                    .Add("samplingInterval", 0) // obsolete, no way to set this
-                    .Add("userKeysCapacity", 444)
-                    .Add("userKeysFlushIntervalMillis", TimeSpan.FromMinutes(23).TotalMilliseconds)
+                    .Set("allAttributesPrivate", true)
+                    .Set("customEventsURI", false)
+                    .Set("diagnosticRecordingIntervalMillis", TimeSpan.FromMinutes(32).TotalMilliseconds)
+                    .Set("eventsCapacity", 333)
+                    .Set("eventsFlushIntervalMillis", 555)
+                    .Set("inlineUsersInEvents", true)
+                    .Set("userKeysCapacity", 444)
+                    .Set("userKeysFlushIntervalMillis", TimeSpan.FromMinutes(23).TotalMilliseconds)
                 );
         }
 
@@ -298,15 +222,11 @@ namespace LaunchDarkly.Sdk.Server
                             .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
                     ),
                 null,
-                LdValue.BuildObject()
-                    .Add("connectTimeoutMillis", 8888)
-                    .Add("socketTimeoutMillis", 9999)
-                    .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
-                    .Add("usingProxy", false)
-                    .Add("usingProxyAuthenticator", false)
-                    .WithStoreDefaults()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
+                ExpectedConfigProps.Base()
+                    .Set("connectTimeoutMillis", 8888)
+                    .Set("socketTimeoutMillis", 9999)
+                    .Set("usingProxy", false)
+                    .Set("usingProxyAuthenticator", false)
                 );
 
             var proxyUri = new Uri("http://fake");
@@ -318,15 +238,8 @@ namespace LaunchDarkly.Sdk.Server
                             .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
                     ),
                 null,
-                LdValue.BuildObject()
-                    .Add("connectTimeoutMillis", HttpConfigurationBuilder.DefaultConnectTimeout.TotalMilliseconds)
-                    .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
-                    .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
-                    .Add("usingProxy", true)
-                    .Add("usingProxyAuthenticator", false)
-                    .WithStoreDefaults()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
+                ExpectedConfigProps.Base()
+                    .Set("usingProxy", true)
                 );
 
             var credentials = new CredentialCache();
@@ -340,16 +253,75 @@ namespace LaunchDarkly.Sdk.Server
                             .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
                     ),
                 null,
-                LdValue.BuildObject()
-                    .Add("connectTimeoutMillis", HttpConfigurationBuilder.DefaultConnectTimeout.TotalMilliseconds)
-                    .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
-                    .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
-                    .Add("usingProxy", true)
-                    .Add("usingProxyAuthenticator", true)
-                    .WithStoreDefaults()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
+                ExpectedConfigProps.Base()
+                    .Set("usingProxy", true)
+                    .Set("usingProxyAuthenticator", true)
                 );
+        }
+
+        [Fact]
+        public void TestConfigForServiceEndpoints()
+        {
+            TestDiagnosticConfig(
+                c => c.ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://custom"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
+                ExpectedConfigProps.Base()
+                    .Set("customBaseURI", false) // this is the polling base URI, not relevant in streaming mode
+                    .Set("customStreamURI", true)
+                    .Set("customEventsURI", true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://custom"))
+                    .DataSource(Components.PollingDataSource())
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithPollingDefaults()
+                    .Set("customBaseURI", true)
+                    .Set("customEventsURI", true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.ServiceEndpoints(Components.ServiceEndpoints()
+                        .Streaming("http://custom-streaming")
+                        .Polling("http://custom-polling")
+                        .Events("http://custom-events"))
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
+                ExpectedConfigProps.Base()
+                    .Set("customBaseURI", false) // this is the polling base URI, not relevant in streaming mode
+                    .Set("customStreamURI", true)
+                    .Set("customEventsURI", true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataSource(
+#pragma warning disable CS0618  // using deprecated symbol
+                    Components.StreamingDataSource()
+                        .BaseUri(new Uri("http://custom"))
+#pragma warning restore CS0618
+                    )
+                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                null,
+                ExpectedConfigProps.Base()
+                    .Set("customStreamURI", true)
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataSource(
+#pragma warning disable CS0618  // using deprecated symbol
+                    Components.PollingDataSource().BaseUri(new Uri("http://custom"))
+#pragma warning restore CS0618
+                    )
+                   .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                null,
+                ExpectedConfigProps.Base()
+                    .WithPollingDefaults()
+                    .Set("customBaseURI", true)
+                );
+
         }
 
         [Fact]
@@ -359,27 +331,21 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") }),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "my-test-store")
+                    .Set("dataStoreType", "my-test-store")
                 );
 
             TestDiagnosticConfig(
                 c => c.DataStore(new DataStoreFactoryWithoutDiagnosticDescription()),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "custom")
+                    .Set("dataStoreType", "custom")
                 );
 
             TestDiagnosticConfig(
                 c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) }),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "custom")
+                    .Set("dataStoreType", "custom")
                 );
         }
 
@@ -391,9 +357,7 @@ namespace LaunchDarkly.Sdk.Server
                     new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "my-test-store")
+                    .Set("dataStoreType", "my-test-store")
                 );
 
             TestDiagnosticConfig(
@@ -401,9 +365,7 @@ namespace LaunchDarkly.Sdk.Server
                     new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "my-test-store")
+                    .Set("dataStoreType", "my-test-store")
                 );
 
             TestDiagnosticConfig(
@@ -411,9 +373,7 @@ namespace LaunchDarkly.Sdk.Server
                     new PersistentDataStoreFactoryWithoutDiagnosticDescription())),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "custom")
+                    .Set("dataStoreType", "custom")
                 );
 
             TestDiagnosticConfig(
@@ -421,9 +381,7 @@ namespace LaunchDarkly.Sdk.Server
                     new PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription())),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "custom")
+                    .Set("dataStoreType", "custom")
                 );
 
             TestDiagnosticConfig(
@@ -431,9 +389,7 @@ namespace LaunchDarkly.Sdk.Server
                     new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "custom")
+                    .Set("dataStoreType", "custom")
                 );
 
             TestDiagnosticConfig(
@@ -441,9 +397,7 @@ namespace LaunchDarkly.Sdk.Server
                     new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
                 null,
                 ExpectedConfigProps.Base()
-                    .WithStreamingDefaults()
-                    .WithEventsDefaults()
-                    .Add("dataStoreType", "custom")
+                    .Set("dataStoreType", "custom")
                 );
         }
 
@@ -456,12 +410,12 @@ namespace LaunchDarkly.Sdk.Server
             var eventsBuilder = Components.SendEvents()
                 .EventSender(testEventSender);
             modEvents?.Invoke(eventsBuilder);
-            var configBuilder = Configuration.Builder(sdkKey)
+            var configBuilder = BasicConfig()
+                .DataSource(null)
                 .Events(eventsBuilder)
                 .Http(Components.HttpConfiguration().MessageHandler(new StubMessageHandler(HttpStatusCode.Unauthorized)))
-                .Logging(Components.Logging(testLogging))
                 .StartWaitTime(testStartWaitTime);
-            modConfig?.Invoke(configBuilder);
+            configBuilder = modConfig is null ? configBuilder : modConfig(configBuilder);
             using (var client = new LdClient(configBuilder.Build()))
             {
                 var payload = testEventSender.RequirePayload();
@@ -529,31 +483,30 @@ namespace LaunchDarkly.Sdk.Server
     {
         public static LdValue.ObjectBuilder Base() =>
             LdValue.BuildObject()
+                .Add("allAttributesPrivate", false)
                 .Add("connectTimeoutMillis", HttpConfigurationBuilder.DefaultConnectTimeout.TotalMilliseconds)
-                .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
-                .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
-                .Add("usingProxy", false)
-                .Add("usingProxyAuthenticator", false);
-
-        public static LdValue.ObjectBuilder WithStoreDefaults(this LdValue.ObjectBuilder b) =>
-            b.Add("dataStoreType", "memory");
-
-        public static LdValue.ObjectBuilder WithStreamingDefaults(this LdValue.ObjectBuilder b) =>
-            b.Add("customBaseURI", false)
-                .Add("customStreamURI", false)
-                .Add("streamingDisabled", false)
-                .Add("reconnectTimeMillis", StreamingDataSourceBuilder.DefaultInitialReconnectDelay.TotalMilliseconds)
-                .Add("usingRelayDaemon", false);
-
-        public static LdValue.ObjectBuilder WithEventsDefaults(this LdValue.ObjectBuilder b) =>
-            b.Add("allAttributesPrivate", false)
+                .Add("customBaseURI", false)
                 .Add("customEventsURI", false)
+                .Add("customStreamURI", false)
+                .Add("dataStoreType", "memory")
                 .Add("diagnosticRecordingIntervalMillis", EventProcessorBuilder.DefaultDiagnosticRecordingInterval.TotalMilliseconds)
                 .Add("eventsCapacity", EventProcessorBuilder.DefaultCapacity)
                 .Add("eventsFlushIntervalMillis", EventProcessorBuilder.DefaultFlushInterval.TotalMilliseconds)
                 .Add("inlineUsersInEvents", false)
-                .Add("samplingInterval", 0)
+                .Add("reconnectTimeMillis", StreamingDataSourceBuilder.DefaultInitialReconnectDelay.TotalMilliseconds)
+                .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
+                .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
+                .Add("streamingDisabled", false)
                 .Add("userKeysCapacity", EventProcessorBuilder.DefaultUserKeysCapacity)
-                .Add("userKeysFlushIntervalMillis", EventProcessorBuilder.DefaultUserKeysFlushInterval.TotalMilliseconds);
+                .Add("userKeysFlushIntervalMillis", EventProcessorBuilder.DefaultUserKeysFlushInterval.TotalMilliseconds)
+                .Add("usingProxy", false)
+                .Add("usingProxyAuthenticator", false)
+                .Add("usingRelayDaemon", false);
+
+        public static LdValue.ObjectBuilder WithPollingDefaults(this LdValue.ObjectBuilder b) =>
+            b.Set("streamingDisabled", true)
+                .Set("pollingIntervalMillis", PollingDataSourceBuilder.DefaultPollInterval.TotalMilliseconds)
+                .Remove("customStreamURI")
+                .Remove("reconnectTimeMillis");
     }
 }

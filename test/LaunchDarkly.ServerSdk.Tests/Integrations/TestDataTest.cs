@@ -18,13 +18,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         private readonly TestData _td = TestData.DataSource();
         private readonly CapturingDataSourceUpdates _updates = new CapturingDataSourceUpdates();
-        private readonly LdClientContext _context;
 
-        public TestDataTest(ITestOutputHelper testOutput) : base(testOutput)
-        {
-            _context = new LdClientContext(new BasicConfiguration("", false, testLogger),
-                Configuration.Default(""));
-        }
+        public TestDataTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         [Fact]
         public void InitializesWithEmptyData()
@@ -272,7 +267,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         private void CreateAndStart()
         {
-            var ds = _td.CreateDataSource(_context, _updates);
+            var ds = _td.CreateDataSource(BasicContext, _updates);
             var started = ds.Start();
             Assert.True(started.IsCompleted);
             Assert.Equal(DataSourceState.Valid, _updates.StatusUpdates.ExpectValue().State);
@@ -296,7 +291,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 ",\"clientSide\":false,\"deleted\":false,\"prerequisites\":[],\"salt\":\"\"}";
 
             var td = TestData.DataSource();
-            td.CreateDataSource(_context, _updates).Start();
+            td.CreateDataSource(BasicContext, _updates).Start();
 
             td.Update(configureFlag(_td.Flag("flagkey")));
 

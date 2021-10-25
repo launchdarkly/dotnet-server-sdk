@@ -12,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         internal override PersistentStoreWrapper MakeWrapper(TestParams testParams)
         {
             _core.PersistOnlyAsString = testParams.PersistMode.PersistOnlyAsString;
-            return new PersistentStoreWrapper(_core, testParams.CacheMode.CacheConfig, _dataStoreUpdates, _taskExecutor, testLogger);
+            return new PersistentStoreWrapper(_core, testParams.CacheMode.CacheConfig, _dataStoreUpdates, BasicTaskExecutor, TestLogger);
         }
     }
     

@@ -284,6 +284,7 @@ namespace LaunchDarkly.Sdk.Server
     public class MockEventSender : IEventSender
     {
         public BlockingCollection<Params> Calls = new BlockingCollection<Params>();
+        public EventDataKind? FilterKind = null;
 
         public void Dispose() { }
 
@@ -296,7 +297,10 @@ namespace LaunchDarkly.Sdk.Server
 
         public Task<EventSenderResult> SendEventDataAsync(EventDataKind kind, string data, int eventCount)
         {
-            Calls.Add(new Params { Kind = kind, Data = data, EventCount = eventCount });
+            if (!FilterKind.HasValue || kind == FilterKind.Value)
+            {
+                Calls.Add(new Params { Kind = kind, Data = data, EventCount = eventCount });
+            }
             return Task.FromResult(new EventSenderResult(DeliveryStatus.Succeeded, null));
         }
 

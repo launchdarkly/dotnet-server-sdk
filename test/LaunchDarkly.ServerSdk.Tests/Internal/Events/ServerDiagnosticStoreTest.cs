@@ -2,15 +2,16 @@ using System;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
 {
-    public class ServerDiagnosticStoreTest
+    public class ServerDiagnosticStoreTest : BaseTest
     {
-        private const string sdkKey = "SDK_KEY";
+        public ServerDiagnosticStoreTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         private IDiagnosticStore CreateDiagnosticStore(Action<ConfigurationBuilder> modConfig) {
-            var builder = Configuration.Builder(sdkKey)
+            var builder = BasicConfig()
                 .Http(Components.HttpConfiguration().Wrapper("Xamarin", "1.0.0"))
                 .StartWaitTime(TimeSpan.Zero);
             if (!(modConfig is null))
@@ -18,9 +19,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 modConfig(builder);
             }
             var config = builder.Build();
-            var basicConfig = new BasicConfiguration(sdkKey, false, TestUtils.NullLogger);
-            var httpConfig = (config.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basicConfig);
-            return new ServerDiagnosticStore(config, basicConfig, httpConfig);
+            var httpConfig = config.HttpConfigurationFactory.CreateHttpConfiguration(BasicContext.Basic);
+            return new ServerDiagnosticStore(config, BasicContext.Basic, httpConfig);
         }
 
         [Fact]
