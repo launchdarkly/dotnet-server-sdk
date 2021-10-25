@@ -98,6 +98,12 @@ This is used as the return type of the client&apos;s JsonVariation method, and a
 the type of custom attributes in <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> and <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html">IUserBuilder</a>.
 </p>
 <p>
+LaunchDarkly allows feature flag variations and custom user attributes to be of any JSON
+type, with some restrictions (notably, regarding numeric precision). For more details, see
+our documentation on <a href="https://docs.launchdarkly.com/sdk/concepts/flag-types">flag
+value types</a>.
+</p>
+<p>
 Note that this is a <span class="xref">langword_csharp_struct</span>, not a class, so it is always passed by value
 and is not nullable; JSON nulls are represented by the constant <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Null">Null</a> and can
 be detected with <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_IsNull">IsNull</a>. Whenever possible, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>
@@ -355,6 +361,30 @@ This is equivalent to calling <a class="xref" href="LaunchDarkly.Sdk.LdValue.Con
       </tr>
     </tbody>
   </table>
+  <a id="LaunchDarkly_Sdk_LdValue_Dictionary_" data-uid="LaunchDarkly.Sdk.LdValue.Dictionary*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Dictionary" data-uid="LaunchDarkly.Sdk.LdValue.Dictionary">Dictionary</h4>
+  <div class="markdown level1 summary"><p>Returns an immutable dictionary of values if this value is an object; otherwise an empty dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableDictionary&lt;string, LdValue&gt; Dictionary { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Immutable.ImmutableDictionary</span>&lt;<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_LdValue_IsInt_" data-uid="LaunchDarkly.Sdk.LdValue.IsInt*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_IsInt" data-uid="LaunchDarkly.Sdk.LdValue.IsInt">IsInt</h4>
   <div class="markdown level1 summary"><p>True if the wrapped value is an integer.</p>
@@ -453,6 +483,30 @@ are both true.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_LdValue_List_" data-uid="LaunchDarkly.Sdk.LdValue.List*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_List" data-uid="LaunchDarkly.Sdk.LdValue.List">List</h4>
+  <div class="markdown level1 summary"><p>Returns an immutable list of values if this value is an array; otherwise an empty list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableList&lt;LdValue&gt; List { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Immutable.ImmutableList</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1118,6 +1172,11 @@ a read-only view into the existing array.
       </tr>
     </tbody>
   </table>
+  <h5 id="LaunchDarkly_Sdk_LdValue_Of_System_Double__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Numeric values in LaunchDarkly have some precision limitations. For more details, see our
+documentation on <a href="https://docs.launchdarkly.com/sdk/concepts/flag-types">flag
+value types</a>.</p>
+</div>
   <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Int32_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Int32)">Of(Int32)</h4>
   <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from an <span class="xref">int</span> value.</p>
@@ -1205,11 +1264,9 @@ a read-only view into the existing array.
     </tbody>
   </table>
   <h5 id="LaunchDarkly_Sdk_LdValue_Of_System_Int64__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Note that the LaunchDarkly service, and most of the SDKs, represent numeric values internally
-in 64-bit floating-point, which has slightly less precision than a signed 64-bit
-<span class="xref">langword_csharp_long</span>; therefore, the full range of <span class="xref">langword_csharp_long</span> values cannot be
-accurately represented. If you need to set a user attribute to a numeric value with more
-significant digits than will fit in a <span class="xref">System.Double</span>, it is best to encode it as a string.</p>
+  <div class="markdown level1 remarks"><p>Numeric values in LaunchDarkly have some precision limitations. For more details, see our
+documentation on <a href="https://docs.launchdarkly.com/sdk/concepts/flag-types">flag
+value types</a>.</p>
 </div>
   <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Single_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Single)">Of(Single)</h4>
@@ -1254,6 +1311,11 @@ significant digits than will fit in a <span class="xref">System.Double</span>, i
       </tr>
     </tbody>
   </table>
+  <h5 id="LaunchDarkly_Sdk_LdValue_Of_System_Single__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Numeric values in LaunchDarkly have some precision limitations. For more details, see our
+documentation on <a href="https://docs.launchdarkly.com/sdk/concepts/flag-types">flag
+value types</a>.</p>
+</div>
   <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
   <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_String_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.String)">Of(String)</h4>
   <div class="markdown level1 summary"><p>Initializes an <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> from a string value.</p>

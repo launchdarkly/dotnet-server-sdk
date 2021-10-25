@@ -567,12 +567,24 @@ references:
   commentId: M:LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Boolean)
   fullName: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String, System.Boolean)
   nameWithType: IUserBuilder.Custom(String, Boolean)
+- uid: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Double)
+  name: Custom(String, Double)
+  href: api/LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Custom_System_String_System_Double_
+  commentId: M:LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Double)
+  fullName: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String, System.Double)
+  nameWithType: IUserBuilder.Custom(String, Double)
 - uid: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Int32)
   name: Custom(String, Int32)
   href: api/LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Custom_System_String_System_Int32_
   commentId: M:LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Int32)
   fullName: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String, System.Int32)
   nameWithType: IUserBuilder.Custom(String, Int32)
+- uid: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Int64)
+  name: Custom(String, Int64)
+  href: api/LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Custom_System_String_System_Int64_
+  commentId: M:LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Int64)
+  fullName: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String, System.Int64)
+  nameWithType: IUserBuilder.Custom(String, Int64)
 - uid: LaunchDarkly.Sdk.IUserBuilder.Custom(System.String,System.Single)
   name: Custom(String, Single)
   href: api/LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Custom_System_String_System_Single_
@@ -1602,6 +1614,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.LdValue.Count
   fullName: LaunchDarkly.Sdk.LdValue.Count
   nameWithType: LdValue.Count
+- uid: LaunchDarkly.Sdk.LdValue.Dictionary
+  name: Dictionary
+  href: api/LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Dictionary
+  commentId: P:LaunchDarkly.Sdk.LdValue.Dictionary
+  fullName: LaunchDarkly.Sdk.LdValue.Dictionary
+  nameWithType: LdValue.Dictionary
+- uid: LaunchDarkly.Sdk.LdValue.Dictionary*
+  name: Dictionary
+  href: api/LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Dictionary_
+  commentId: Overload:LaunchDarkly.Sdk.LdValue.Dictionary
+  fullName: LaunchDarkly.Sdk.LdValue.Dictionary
+  nameWithType: LdValue.Dictionary
 - uid: LaunchDarkly.Sdk.LdValue.Equals(LaunchDarkly.Sdk.LdValue)
   name: Equals(LdValue)
   href: api/LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Equals_LaunchDarkly_Sdk_LdValue_
@@ -1698,6 +1722,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.LdValue.IsString
   fullName: LaunchDarkly.Sdk.LdValue.IsString
   nameWithType: LdValue.IsString
+- uid: LaunchDarkly.Sdk.LdValue.List
+  name: List
+  href: api/LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_List
+  commentId: P:LaunchDarkly.Sdk.LdValue.List
+  fullName: LaunchDarkly.Sdk.LdValue.List
+  nameWithType: LdValue.List
+- uid: LaunchDarkly.Sdk.LdValue.List*
+  name: List
+  href: api/LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_List_
+  commentId: Overload:LaunchDarkly.Sdk.LdValue.List
+  fullName: LaunchDarkly.Sdk.LdValue.List
+  nameWithType: LdValue.List
 - uid: LaunchDarkly.Sdk.LdValue.Null
   name: "Null"
   href: api/LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Null
@@ -1764,6 +1800,66 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Build
   fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Build
   nameWithType: LdValue.ObjectBuilder.Build
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Copy(LaunchDarkly.Sdk.LdValue)
+  name: Copy(LdValue)
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Copy_LaunchDarkly_Sdk_LdValue_
+  commentId: M:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Copy(LaunchDarkly.Sdk.LdValue)
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Copy(LaunchDarkly.Sdk.LdValue)
+  nameWithType: LdValue.ObjectBuilder.Copy(LdValue)
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Copy*
+  name: Copy
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Copy_
+  commentId: Overload:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Copy
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Copy
+  nameWithType: LdValue.ObjectBuilder.Copy
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Remove(System.String)
+  name: Remove(String)
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Remove_System_String_
+  commentId: M:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Remove(System.String)
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Remove(System.String)
+  nameWithType: LdValue.ObjectBuilder.Remove(String)
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Remove*
+  name: Remove
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Remove_
+  commentId: Overload:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Remove
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Remove
+  nameWithType: LdValue.ObjectBuilder.Remove
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,LaunchDarkly.Sdk.LdValue)
+  name: Set(String, LdValue)
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Set_System_String_LaunchDarkly_Sdk_LdValue_
+  commentId: M:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,LaunchDarkly.Sdk.LdValue)
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String, LaunchDarkly.Sdk.LdValue)
+  nameWithType: LdValue.ObjectBuilder.Set(String, LdValue)
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.Boolean)
+  name: Set(String, Boolean)
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Set_System_String_System_Boolean_
+  commentId: M:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.Boolean)
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String, System.Boolean)
+  nameWithType: LdValue.ObjectBuilder.Set(String, Boolean)
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.Double)
+  name: Set(String, Double)
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Set_System_String_System_Double_
+  commentId: M:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.Double)
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String, System.Double)
+  nameWithType: LdValue.ObjectBuilder.Set(String, Double)
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.Int64)
+  name: Set(String, Int64)
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Set_System_String_System_Int64_
+  commentId: M:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.Int64)
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String, System.Int64)
+  nameWithType: LdValue.ObjectBuilder.Set(String, Int64)
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.String)
+  name: Set(String, String)
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Set_System_String_System_String_
+  commentId: M:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String,System.String)
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set(System.String, System.String)
+  nameWithType: LdValue.ObjectBuilder.Set(String, String)
+- uid: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set*
+  name: Set
+  href: api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html#LaunchDarkly_Sdk_LdValue_ObjectBuilder_Set_
+  commentId: Overload:LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set
+  fullName: LaunchDarkly.Sdk.LdValue.ObjectBuilder.Set
+  nameWithType: LdValue.ObjectBuilder.Set
 - uid: LaunchDarkly.Sdk.LdValue.ObjectFrom(System.Collections.Generic.IReadOnlyDictionary{System.String,LaunchDarkly.Sdk.LdValue})
   name: ObjectFrom(IReadOnlyDictionary<String, LdValue>)
   href: api/LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_ObjectFrom_System_Collections_Generic_IReadOnlyDictionary_System_String_LaunchDarkly_Sdk_LdValue__
@@ -2085,6 +2181,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Components.SendEvents
   fullName: LaunchDarkly.Sdk.Server.Components.SendEvents
   nameWithType: Components.SendEvents
+- uid: LaunchDarkly.Sdk.Server.Components.ServiceEndpoints
+  name: ServiceEndpoints()
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ServiceEndpoints
+  commentId: M:LaunchDarkly.Sdk.Server.Components.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.Components.ServiceEndpoints()
+  nameWithType: Components.ServiceEndpoints()
+- uid: LaunchDarkly.Sdk.Server.Components.ServiceEndpoints*
+  name: ServiceEndpoints
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ServiceEndpoints_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Components.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.Components.ServiceEndpoints
+  nameWithType: Components.ServiceEndpoints
 - uid: LaunchDarkly.Sdk.Server.Components.StreamingDataSource
   name: StreamingDataSource()
   href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_StreamingDataSource
@@ -2241,6 +2349,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.SdkKey
   fullName: LaunchDarkly.Sdk.Server.Configuration.SdkKey
   nameWithType: Configuration.SdkKey
+- uid: LaunchDarkly.Sdk.Server.Configuration.ServiceEndpoints
+  name: ServiceEndpoints
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_ServiceEndpoints
+  commentId: P:LaunchDarkly.Sdk.Server.Configuration.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.Configuration.ServiceEndpoints
+  nameWithType: Configuration.ServiceEndpoints
+- uid: LaunchDarkly.Sdk.Server.Configuration.ServiceEndpoints*
+  name: ServiceEndpoints
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_ServiceEndpoints_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.Configuration.ServiceEndpoints
+  nameWithType: Configuration.ServiceEndpoints
 - uid: LaunchDarkly.Sdk.Server.Configuration.StartWaitTime
   name: StartWaitTime
   href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_StartWaitTime
@@ -2385,6 +2505,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.SdkKey
   fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.SdkKey
   nameWithType: ConfigurationBuilder.SdkKey
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints(LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder)
+  name: ServiceEndpoints(ServiceEndpointsBuilder)
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_
+  commentId: M:LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints(LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder)
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints(LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder)
+  nameWithType: ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints*
+  name: ServiceEndpoints
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_
+  commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints
+  nameWithType: ConfigurationBuilder.ServiceEndpoints
 - uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.StartWaitTime(System.TimeSpan)
   name: StartWaitTime(TimeSpan)
   href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_StartWaitTime_System_TimeSpan_
@@ -3525,6 +3657,96 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.PollingDataSourceBuilder.PollInterval
   fullName: LaunchDarkly.Sdk.Server.Integrations.PollingDataSourceBuilder.PollInterval
   nameWithType: PollingDataSourceBuilder.PollInterval
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder
+  name: ServiceEndpointsBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html
+  commentId: T:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder
+  nameWithType: ServiceEndpointsBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Build
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Build()
+  nameWithType: ServiceEndpointsBuilder.Build()
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Build_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Build
+  nameWithType: ServiceEndpointsBuilder.Build
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events(System.String)
+  name: Events(String)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Events_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events(System.String)
+  nameWithType: ServiceEndpointsBuilder.Events(String)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events(System.Uri)
+  name: Events(Uri)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Events_System_Uri_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events(System.Uri)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events(System.Uri)
+  nameWithType: ServiceEndpointsBuilder.Events(Uri)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events*
+  name: Events
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Events_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Events
+  nameWithType: ServiceEndpointsBuilder.Events
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling(System.String)
+  name: Polling(String)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Polling_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling(System.String)
+  nameWithType: ServiceEndpointsBuilder.Polling(String)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling(System.Uri)
+  name: Polling(Uri)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Polling_System_Uri_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling(System.Uri)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling(System.Uri)
+  nameWithType: ServiceEndpointsBuilder.Polling(Uri)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling*
+  name: Polling
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Polling_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Polling
+  nameWithType: ServiceEndpointsBuilder.Polling
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy(System.String)
+  name: RelayProxy(String)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_RelayProxy_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy(System.String)
+  nameWithType: ServiceEndpointsBuilder.RelayProxy(String)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy(System.Uri)
+  name: RelayProxy(Uri)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_RelayProxy_System_Uri_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy(System.Uri)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy(System.Uri)
+  nameWithType: ServiceEndpointsBuilder.RelayProxy(Uri)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy*
+  name: RelayProxy
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_RelayProxy_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.RelayProxy
+  nameWithType: ServiceEndpointsBuilder.RelayProxy
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming(System.String)
+  name: Streaming(String)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Streaming_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming(System.String)
+  nameWithType: ServiceEndpointsBuilder.Streaming(String)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming(System.Uri)
+  name: Streaming(Uri)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Streaming_System_Uri_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming(System.Uri)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming(System.Uri)
+  nameWithType: ServiceEndpointsBuilder.Streaming(Uri)
+- uid: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming*
+  name: Streaming
+  href: api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_Streaming_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming
+  fullName: LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.Streaming
+  nameWithType: ServiceEndpointsBuilder.Streaming
 - uid: LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder
   name: StreamingDataSourceBuilder
   href: api/LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.html
@@ -3921,6 +4143,12 @@ references:
   commentId: M:LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.#ctor(System.String,System.Boolean,LaunchDarkly.Logging.Logger)
   fullName: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.BasicConfiguration(System.String, System.Boolean, LaunchDarkly.Logging.Logger)
   nameWithType: BasicConfiguration.BasicConfiguration(String, Boolean, Logger)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.#ctor(System.String,System.Boolean,LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints,LaunchDarkly.Logging.Logger)
+  name: BasicConfiguration(String, Boolean, ServiceEndpoints, Logger)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration__ctor_System_String_System_Boolean_LaunchDarkly_Sdk_Server_Interfaces_ServiceEndpoints_LaunchDarkly_Logging_Logger_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.#ctor(System.String,System.Boolean,LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints,LaunchDarkly.Logging.Logger)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.BasicConfiguration(System.String, System.Boolean, LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints, LaunchDarkly.Logging.Logger)
+  nameWithType: BasicConfiguration.BasicConfiguration(String, Boolean, ServiceEndpoints, Logger)
 - uid: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.#ctor*
   name: BasicConfiguration
   href: api/LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration__ctor_
@@ -3963,6 +4191,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.SdkKey
   fullName: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.SdkKey
   nameWithType: BasicConfiguration.SdkKey
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.ServiceEndpoints
+  name: ServiceEndpoints
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration_ServiceEndpoints
+  commentId: P:LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.ServiceEndpoints
+  nameWithType: BasicConfiguration.ServiceEndpoints
+- uid: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.ServiceEndpoints*
+  name: ServiceEndpoints
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html#LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration_ServiceEndpoints_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.ServiceEndpoints
+  nameWithType: BasicConfiguration.ServiceEndpoints
 - uid: LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration
   name: BigSegmentsConfiguration
   href: api/LaunchDarkly.Sdk.Server.Interfaces.BigSegmentsConfiguration.html
@@ -6425,6 +6665,12 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.LogDataSourceOutageAsErrorAfter
   fullName: LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.LogDataSourceOutageAsErrorAfter
   nameWithType: LoggingConfiguration.LogDataSourceOutageAsErrorAfter
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints
+  name: ServiceEndpoints
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints
+  nameWithType: ServiceEndpoints
 - uid: LaunchDarkly.Sdk.Server.LdClient
   name: LdClient
   href: api/LaunchDarkly.Sdk.Server.LdClient.html

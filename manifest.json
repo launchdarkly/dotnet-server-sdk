@@ -69,7 +69,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.IUserBuilder.html",
-          "hash": "QlfSKXFXqygY2Tpr8I5p4j0tOU+2Knuolmtb2wjarWI="
+          "hash": "XE4XcRmDihPW9MC90mmVU8yUV1glrU3YpxjYM1jdCvQ="
         }
       },
       "is_incremental": false,
@@ -81,7 +81,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.html",
-          "hash": "vDP8A2fITqzYJPR7/U5gBUGTkbYpcaDuk5wyVVWgXHM="
+          "hash": "3iWXzOLnS00E7o/nid4pcW8vYZBDSOEl3ToGWG80rp4="
         }
       },
       "is_incremental": false,
@@ -225,7 +225,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.LdValue.ArrayBuilder.html",
-          "hash": "kLWaVyVlIsLSYhx3qeDdvZwKlRkuWArIveae+14TQI4="
+          "hash": "4yirAzUwyHdYESL8vbHRwQqfa7gP0itmze5qOZMPzx4="
         }
       },
       "is_incremental": false,
@@ -237,7 +237,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.LdValue.Convert.html",
-          "hash": "iUvb10runYz17Zw08EFdG5QDOXk+Oeklw9m/VIdLQbc="
+          "hash": "fT3/y1Z1uN6hi0eT0QhkrGuMxNmTyTjn3Awjyh7K2Rk="
         }
       },
       "is_incremental": false,
@@ -261,7 +261,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.LdValue.ObjectBuilder.html",
-          "hash": "wmZ56r3Z2Islel71y6ySyKYm+9CQSXKyfMCjw36Urq0="
+          "hash": "0kwrnLQMQC0tymzdbyvbdbLLATkmQTgmj0ZE+l8fuaE="
         }
       },
       "is_incremental": false,
@@ -273,7 +273,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.LdValue.html",
-          "hash": "jsj9Q8q9dfiB51H7WpZuQDoe0MuoYwHDLDTRBScu84s="
+          "hash": "2EIfCh5u3W64vVd2nAfS2jsE0Vc5cItipNS4/RbTmNE="
         }
       },
       "is_incremental": false,
@@ -297,7 +297,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Components.html",
-          "hash": "IujefW73LRBlnY0gLNH9et78Jnwr6WEUIbgWR08ClNc="
+          "hash": "28DPdRXOnhP1j31oYgkwasEr7BoW8gJqrd5nL4r4ciE="
         }
       },
       "is_incremental": false,
@@ -309,7 +309,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Configuration.html",
-          "hash": "diJpA6SkigmtuwbufMuRbZgviOb3TIHQQtYHT1HcXWY="
+          "hash": "J2rODHneYH1bKeJmnjuBbz86L9fwfzrwixjsVuf8lPo="
         }
       },
       "is_incremental": false,
@@ -321,7 +321,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html",
-          "hash": "BpNvqlgPtCemGsYMdkZTI6AvQ7RwZMsi9N96nLKrUv0="
+          "hash": "BLBN9gz8icjNuCJBTS/DsybLt8OK+vrOERI7VcLtJQY="
         }
       },
       "is_incremental": false,
@@ -405,7 +405,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html",
-          "hash": "sd3/0SSLeFCjTOGb+8NTgaCukKh3Pl2O6FeaLZpL7vE="
+          "hash": "HvCDrZf+Lx9Yao0oXLtGkdSjSOQoQqDUjapYiuTGoUo="
         }
       },
       "is_incremental": false,
@@ -477,7 +477,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html",
-          "hash": "yJ1gyFBThg6pjrlWSm4WJfPwlMniZww6X/cGXa9MRZ4="
+          "hash": "zJGCFuA+Ny2iWwY2ZEqhH7i3ASvPoTP3KfdNbMhz1/o="
         }
       },
       "is_incremental": false,
@@ -513,7 +513,19 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.PollingDataSourceBuilder.html",
-          "hash": "BtLTbUNi5QhssXjm5mpnOPZb6jlWgh/F0Xip6vHJUQQ="
+          "hash": "a2WfO2+vPBjA1ocWcUMg/NVFvkYOQSH34hxhXTzSfXw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html",
+          "hash": "qniBndvb3W26c1Zf+ymFiDvsnpOomAKz8krqnlTVIy4="
         }
       },
       "is_incremental": false,
@@ -525,7 +537,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.html",
-          "hash": "xwJGhi0r3QtMjIb+DMn7MvZXKdz1aXSOOm1jaZIZ/ws="
+          "hash": "FuxspGqAgkv0Y9cy03hI0pAWray3EFWOBcWVf8kjiUo="
         }
       },
       "is_incremental": false,
@@ -573,7 +585,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.html",
-          "hash": "BER1K7wi55u8m5O6b/DoTbDEGLjk0c9U6+uAZIOdKZM="
+          "hash": "eA/OPZFA7q4snHfuPn3ER9030idx4rQyFKT155t4GUk="
         }
       },
       "is_incremental": false,
@@ -585,7 +597,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html",
-          "hash": "R3PzZuRejknI6kmR9+Y/95RMMeUUlZKPOXqm94fcYP8="
+          "hash": "4x4rYoQkEIcXMqBn+hEqa+TP98bBwFqDqFbnyCr0GM8="
         }
       },
       "is_incremental": false,
@@ -1205,11 +1217,23 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints.html",
+          "hash": "2LC2MhNwoiuHSiHZ+PiaTZPj91Lyn4WLqwHery5XcKo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.yml",
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.html",
-          "hash": "ozP/Zu10QHINrGPFyvZIRpM+92Kyb7wd7g15aTparLA="
+          "hash": "qTTNOMeXvtoT7ErDNgi+EKCC88Y51VjHKCvMHKXApS8="
         }
       },
       "is_incremental": false,
@@ -1293,7 +1317,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "6mUZpQ/5Hx1fejsABe4RxMnWNywCae1cu0pDcm2LsxQ="
+          "hash": "1tjxogbh8NiLUdjoT7PTgqqnu9WMfNSIB/LZAvHM3oE="
         }
       },
       "is_incremental": false,
@@ -1305,7 +1329,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "GNhfKq3WIraecMavazRVbWRbUCydX6pEPwZi3KDi15g="
+          "hash": "OZ9u9VGLiZxPYfPHIgz5gGr6VQxhxAsijC0pFnlCYxQ="
         }
       },
       "is_incremental": false,
@@ -1344,7 +1368,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 108,
+          "total_file_count": 110,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {

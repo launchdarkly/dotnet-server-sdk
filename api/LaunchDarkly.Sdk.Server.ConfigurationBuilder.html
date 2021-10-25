@@ -664,6 +664,59 @@ SDK reference guide</a>.
       </tr>
     </tbody>
   </table>
+  <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.ServiceEndpoints(LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder)">ServiceEndpoints(ServiceEndpointsBuilder)</h4>
+  <div class="markdown level1 summary"><p>Sets the SDK&apos;s service URIs, using a configuration builder obtained from
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ServiceEndpoints">ServiceEndpoints()</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder ServiceEndpoints(ServiceEndpointsBuilder serviceEndpointsBuilder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html">ServiceEndpointsBuilder</a></td>
+        <td><span class="parametername">serviceEndpointsBuilder</span></td>
+        <td><p>the subconfiguration builder object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html">ConfigurationBuilder</a></td>
+        <td><p>the main configuration builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This overwrites any previous options set with <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_">ServiceEndpoints(ServiceEndpointsBuilder)</a>.
+If you want to set multiple options, set them on the same <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html">ServiceEndpointsBuilder</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ServiceEndpoints">ServiceEndpoints()</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html">ServiceEndpointsBuilder</a></div>
+  </div>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_StartWaitTime_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.StartWaitTime*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_StartWaitTime_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.StartWaitTime(System.TimeSpan)">StartWaitTime(TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Sets how long the client constructor will block awaiting a successful connection to

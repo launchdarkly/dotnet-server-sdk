@@ -491,8 +491,15 @@ but can also be used to customize HTTP behavior on platforms where .NET&apos;s d
     </tbody>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_Proxy_System_Net_IWebProxy__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This is ignored if you have specified a custom message handler with <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_MessageHandler_System_Net_Http_HttpMessageHandler_">MessageHandler(HttpMessageHandler)</a>,
-since proxy behavior is implemented by the message handler.</p>
+  <div class="markdown level1 remarks"><p>
+This is ignored if you have specified a custom message handler with <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_MessageHandler_System_Net_Http_HttpMessageHandler_">MessageHandler(HttpMessageHandler)</a>,
+since proxy behavior is implemented by the message handler.
+</p>
+<p>
+Note that this is not the same as the <a href="https://docs.launchdarkly.com/home/relay-proxy">LaunchDarkly
+Relay Proxy</a>, which would be set with
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.ServiceEndpointsBuilder.html#LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_RelayProxy_System_Uri_">RelayProxy(Uri)</a>.
+</p>
 </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_Proxy_System_Net_IWebProxy__examples">Examples</h5>
   <pre><code>    // Example of using an HTTP proxy with basic authentication
