@@ -2,6 +2,17 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.3.0] - 2021-10-25
+### Added:
+- `ConfigurationBuilder.ServiceEndpoints` provides a simpler way of setting custom service base URIs, if you are connecting to a LaunchDarkly Relay Proxy instance, a private LaunchDarkly instance, or a test fixture. Previously, this required setting a `BaseURI` property for each individual service (streaming, events, etc.). If using the Relay Proxy, simply remove any `BaseURI` calls in your SDK configuration and call `ServiceEndpoints(Components.ServiceEndpoints().RelayProxy(myRelayProxyUri))` on the `IConfigurationBuilder`.
+- Convenience methods for working with JSON object and array values: `LdValue.Dictionary`, `LdValue.List`, `LdValue.ObjectBuilder.Set`, `LdValue.ObjectBuilder.Remove`, and `LdValue.ObjectBuilder.Copy`.
+
+### Fixed:
+- When using the adapter that allows SDK types to be deserialized with the `System.Text.Json` API, temporary `JsonDocument` instances are now disposed of immediately rather than leaving them to be garbage-collected. (Thanks, [JeffAshton](https://github.com/launchdarkly/dotnet-jsonstream/pull/8)!)
+
+### Deprecated:
+- `StreamingDataSourceBuilder.BaseURI`, `PollingDataSourceBuilder.BaseURI`, and `EventProcessorBuilder.BaseURI`. The preferred way to set these is now with `ConfigurationBuilder.ServiceEndpoints`.
+
 ## [6.2.2] - 2021-10-06
 There are no functional changes in the SDK in this release; its only purpose is to address the version conflict issue mentioned below.
 
