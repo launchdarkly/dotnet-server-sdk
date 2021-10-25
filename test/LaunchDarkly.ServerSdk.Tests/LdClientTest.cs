@@ -23,7 +23,6 @@ namespace LaunchDarkly.Sdk.Server
     // See also LDClientEvaluationTest, etc. This file contains mostly tests for the startup logic.
     public class LdClientTest : BaseTest
     {
-        private const string sdkKey = "SDK_KEY";
         private static readonly ServiceEndpointsBuilder FakeEndpoints =
             Components.ServiceEndpoints().RelayProxy("http://fake");
 
@@ -37,7 +36,7 @@ namespace LaunchDarkly.Sdk.Server
             {
                 AssertLogMessage(true, LogLevel.Info,
                     "Starting LaunchDarkly client " + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
-                Assert.All(logCapture.GetMessages(), m => m.LoggerName.StartsWith(LogNames.DefaultBase));
+                Assert.All(LogCapture.GetMessages(), m => m.LoggerName.StartsWith(LogNames.DefaultBase));
             }
         }
 
@@ -46,23 +45,20 @@ namespace LaunchDarkly.Sdk.Server
         {
             var customLoggerName = "abcdef";
             var config = BasicConfig()
-                .Logging(Components.Logging(testLogging).BaseLoggerName(customLoggerName))
+                .Logging(Components.Logging(TestLogging).BaseLoggerName(customLoggerName))
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.All(logCapture.GetMessages(), m => m.LoggerName.StartsWith(customLoggerName));
+                Assert.All(LogCapture.GetMessages(), m => m.LoggerName.StartsWith(customLoggerName));
             }
         }
 
         [Fact]
         public void ClientHasDefaultEventProcessorByDefault()
         {
-            var config = Configuration.Builder(sdkKey)
-                .DataSource(Components.ExternalUpdatesOnly)
+            var config = BasicConfig()
                 .DiagnosticOptOut(true)
-                .Logging(Components.Logging(testLogging))
-                .ServiceEndpoints(FakeEndpoints)
-                .StartWaitTime(TimeSpan.Zero)
+                .Events(null) // BasicConfig sets this to NoEvents - restore the default
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -73,11 +69,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void DefaultDataSourceIsStreamProcessor()
         {
-            var config = Configuration.Builder(sdkKey)
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
+            var config = BasicConfig()
+                .DataSource(null) // BasicConfig sets this - restore the default
                 .ServiceEndpoints(FakeEndpoints)
-                .StartWaitTime(TimeSpan.Zero)
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -145,12 +139,9 @@ AssertLogMessage(false, LogLevel.Warn,
         {
             var epf = new Mock<IEventProcessorFactory>();
             var dsf = new Mock<IDataSourceFactory>();
-            var config = Configuration.Builder(sdkKey)
-                .DataSource(Components.ExternalUpdatesOnly)
-                .StartWaitTime(TimeSpan.Zero)
+            var config = BasicConfig()
                 .Events(epf.Object)
                 .DataSource(dsf.Object)
-                .Logging(Components.Logging(testLogging))
                 .Build();
 
             IDiagnosticStore eventProcessorDiagnosticStore = null;
@@ -180,13 +171,10 @@ AssertLogMessage(false, LogLevel.Warn,
         {
             var epf = new Mock<IEventProcessorFactory>();
             var dsf = new Mock<IDataSourceFactory>();
-            var config = Configuration.Builder(sdkKey)
-                .DataSource(Components.ExternalUpdatesOnly)
-                .StartWaitTime(TimeSpan.Zero)
+            var config = BasicConfig()
                 .Events(epf.Object)
                 .DataSource(dsf.Object)
                 .DiagnosticOptOut(true)
-                .Logging(Components.Logging(testLogging))
                 .Build();
 
             IDiagnosticStore eventProcessorDiagnosticStore = null;

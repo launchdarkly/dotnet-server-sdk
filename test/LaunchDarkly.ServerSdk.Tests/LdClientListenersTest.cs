@@ -17,8 +17,7 @@ namespace LaunchDarkly.Sdk.Server
             var flagKey = "flagKey";
             var testData = TestData.DataSource();
             testData.Update(testData.Flag(flagKey).On(true));
-            var config = Configuration.Builder("").DataSource(testData)
-                .Events(Components.NoEvents).Build();
+            var config = BasicConfig().DataSource(testData).Build();
 
             using (var client = new LdClient(config))
             {
@@ -107,10 +106,8 @@ namespace LaunchDarkly.Sdk.Server
         public void DataSourceStatusProviderReturnsLatestStatus()
         {
             var testData = TestData.DataSource();
-            var config = Configuration.Builder("")
+            var config = BasicConfig()
                 .DataSource(testData)
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
                 .Build();
             var timeBeforeStarting = DateTime.Now;
 
@@ -135,10 +132,9 @@ namespace LaunchDarkly.Sdk.Server
         public void DataSourceStatusProviderSendsStatusUpdates()
         {
             var testData = TestData.DataSource();
-            var config = Configuration.Builder("")
+            var config = BasicConfig()
                 .DataSource(testData)
-                .Logging(Components.Logging(testLogging))
-                .Events(Components.NoEvents).Build();
+                .Build();
             
             using (var client = new LdClient(config))
             {
@@ -158,10 +154,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void DataStoreStatusMonitoringIsDisabledForInMemoryDataStore()
         {
-            var config = Configuration.Builder("")
-                .DataSource(Components.ExternalUpdatesOnly)
-                .Events(Components.NoEvents)
-                .Build();
+            var config = BasicConfig().Build();
 
             using (var client = new LdClient(config))
             {
@@ -172,11 +165,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void DataStoreStatusMonitoringIsEnabledForPersistentStore()
         {
-            var config = Configuration.Builder("")
-                .DataSource(Components.ExternalUpdatesOnly)
+            var config = BasicConfig()
                 .DataStore(Components.PersistentDataStore(
                     new LaunchDarkly.Sdk.Server.Internal.DataStores.MockCoreSync().AsSingletonFactory()))
-                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -189,10 +180,8 @@ namespace LaunchDarkly.Sdk.Server
         public void DataStoreStatusProviderReturnsLatestStatus()
         {
             var dataStoreFactory = new CapturingDataStoreFactory(Components.InMemoryDataStore);
-            var config = Configuration.Builder("")
-                .DataSource(Components.ExternalUpdatesOnly)
+            var config = BasicConfig()
                 .DataStore(dataStoreFactory)
-                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -211,10 +200,8 @@ namespace LaunchDarkly.Sdk.Server
         public void DataStoreStatusProviderSendsStatusUpdates()
         {
             var dataStoreFactory = new CapturingDataStoreFactory(Components.InMemoryDataStore);
-            var config = Configuration.Builder("")
-                .DataSource(Components.ExternalUpdatesOnly)
+            var config = BasicConfig()
                 .DataStore(dataStoreFactory)
-                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -232,10 +219,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BigSegmentStoreStatusProviderReturnsUnavailableStatusWhenNotConfigured()
         {
-            var config = Configuration.Builder("")
-                .DataSource(Components.ExternalUpdatesOnly)
-                .Events(Components.NoEvents)
-                .Build();
+            var config = BasicConfig().Build();
 
             using (var client = new LdClient(config))
             {
@@ -253,12 +237,10 @@ namespace LaunchDarkly.Sdk.Server
             storeMock.SetupMetadataReturns(
                 new BigSegmentStoreTypes.StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
 
-            var config = Configuration.Builder("")
+            var config = BasicConfig()
                 .BigSegments(
                     Components.BigSegments(storeFactory).StatusPollInterval(TimeSpan.FromMilliseconds(10))
                 )
-                .DataSource(Components.ExternalUpdatesOnly)
-                .Events(Components.NoEvents)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -286,8 +268,7 @@ namespace LaunchDarkly.Sdk.Server
             var flagKey = "flagKey";
             var testData = TestData.DataSource();
             testData.Update(testData.Flag(flagKey).On(true));
-            var config = Configuration.Builder("").DataSource(testData)
-                .Events(Components.NoEvents).Build();
+            var config = BasicConfig().DataSource(testData).Build();
 
             using (var client = new LdClient(config))
             {

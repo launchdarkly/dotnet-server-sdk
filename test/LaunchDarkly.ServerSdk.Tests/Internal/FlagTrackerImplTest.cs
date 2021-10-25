@@ -25,9 +25,9 @@ namespace LaunchDarkly.Sdk.Server.Internal
             var store = new InMemoryDataStore();
             _dataSourceUpdates = new DataSourceUpdatesImpl(
                 store,
-                new DataStoreStatusProviderImpl(store, new DataStoreUpdatesImpl(BasicTaskExecutor, testLogger)),
+                new DataStoreStatusProviderImpl(store, new DataStoreUpdatesImpl(BasicTaskExecutor, TestLogger)),
                 BasicTaskExecutor,
-                testLogger,
+                TestLogger,
                 null
                 );
         }

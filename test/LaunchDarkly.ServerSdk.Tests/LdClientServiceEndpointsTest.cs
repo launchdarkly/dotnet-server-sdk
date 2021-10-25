@@ -79,7 +79,7 @@ namespace LaunchDarkly.Sdk.Server
                 var req = _stubHandler.Requests.ExpectValue();
                 Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
 
-                Assert.False(logCapture.HasMessageWithRegex(LogLevel.Error,
+                Assert.False(LogCapture.HasMessageWithRegex(LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying"));
             }
         }
@@ -97,7 +97,7 @@ namespace LaunchDarkly.Sdk.Server
                 var req = _stubHandler.Requests.ExpectValue();
                 Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
 
-                Assert.False(logCapture.HasMessageWithRegex(LogLevel.Error,
+                Assert.False(LogCapture.HasMessageWithRegex(LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying"));
             }
         }
@@ -115,8 +115,8 @@ namespace LaunchDarkly.Sdk.Server
                 var req = _stubHandler.Requests.ExpectValue();
                 Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
 
-                Assert.False(logCapture.HasMessageWithRegex(LogLevel.Error,
-                    "You have set custom ServiceEndpoints without specifying"));
+                AssertLogMessageRegex(false, LogLevel.Error,
+                    "You have set custom ServiceEndpoints without specifying");
             }
         }
 
@@ -176,8 +176,8 @@ namespace LaunchDarkly.Sdk.Server
                 var req = _stubHandler.Requests.ExpectValue();
                 Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
 
-                Assert.False(logCapture.HasMessageWithRegex(LogLevel.Error,
-                    "You have set custom ServiceEndpoints without specifying"));
+                AssertLogMessageRegex(false, LogLevel.Error,
+                    "You have set custom ServiceEndpoints without specifying");
             }
         }
 
@@ -193,8 +193,8 @@ namespace LaunchDarkly.Sdk.Server
                 var req = _stubHandler.Requests.ExpectValue();
                 Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
 
-                Assert.False(logCapture.HasMessageWithRegex(LogLevel.Error,
-                    "You have set custom ServiceEndpoints without specifying"));
+                AssertLogMessageRegex(false, LogLevel.Error,
+                    "You have set custom ServiceEndpoints without specifying");
             }
         }
 
@@ -210,8 +210,8 @@ namespace LaunchDarkly.Sdk.Server
                 var req = _stubHandler.Requests.ExpectValue();
                 Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
 
-                Assert.False(logCapture.HasMessageWithRegex(LogLevel.Error,
-                    "You have set custom ServiceEndpoints without specifying"));
+                AssertLogMessageRegex(false, LogLevel.Error,
+                    "You have set custom ServiceEndpoints without specifying");
             }
         }
 #pragma warning restore CS0618

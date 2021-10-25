@@ -17,7 +17,7 @@ namespace LaunchDarkly.Sdk.Server
     /// we can direct output from a component to a specific logger instance, which can be redirected to Xunit.
     /// See <see cref="BaseTest"/> for the simplest way to use this in tests.
     /// </remarks>
-    public class TestLogging
+    public class TestLoggingHelpers
     {
         /// <summary>
         /// Creates an <see cref="ILogAdapter"/> that sends logging to the Xunit output buffer. Use this in

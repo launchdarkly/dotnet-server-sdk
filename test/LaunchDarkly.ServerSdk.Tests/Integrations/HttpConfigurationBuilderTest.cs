@@ -12,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     public class HttpConfigurationBuilderTest
     {
         private static readonly BasicConfiguration basicConfig =
-            new BasicConfiguration("sdk-key", false, null);
+            new BasicConfiguration("sdk-key", false, null, null);
 
         private readonly BuilderBehavior.BuildTester<HttpConfigurationBuilder, HttpConfiguration> _tester =
             BuilderBehavior.For(() => Components.HttpConfiguration(),

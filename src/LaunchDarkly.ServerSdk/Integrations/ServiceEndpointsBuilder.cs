@@ -249,34 +249,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             // error.
             if (_streamingBaseUri is null && _pollingBaseUri is null && _eventsBaseUri is null)
             {
-                return new ServiceEndpoints(
-                    StandardEndpoints.DefaultStreamingBaseUri,
-                    StandardEndpoints.DefaultPollingBaseUri,
-                    StandardEndpoints.DefaultEventsBaseUri
-                    );
+                return StandardEndpoints.BaseUris;
             }
             return new ServiceEndpoints(_streamingBaseUri, _pollingBaseUri, _eventsBaseUri);
-        }
-
-        internal static Uri SelectBaseUri(
-            Uri serviceEndpointsValue,
-            Uri overrideValue,
-            Uri defaultValue,
-            string description,
-            Logger logger
-            )
-        {
-            if (overrideValue != null)
-            {
-                return overrideValue;
-            }
-            if (serviceEndpointsValue != null)
-            {
-                return serviceEndpointsValue;
-            }
-            logger.Error("You have set custom ServiceEndpoints without specifying the {0} base URI; connections may not work properly",
-                description);
-            return defaultValue;
         }
     }
 }

@@ -12,8 +12,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class FeatureRequestorTest : BaseTest
     {
-        private const string sdkKey = "SDK_KEY";
-
         private static readonly FeatureFlag flag1 = new FeatureFlagBuilder("flag1").Version(1).On(true).Build();
         private static readonly Segment segment1 = new SegmentBuilder("seg1").Version(2).Build();
 
@@ -32,12 +30,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private IFeatureRequestor MakeRequestor(Uri baseUri)
         {
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .Http(Components.HttpConfiguration().ConnectTimeout(TimeSpan.FromDays(1)))
-                .Logging(Components.Logging(testLogging))
                 .Build();
             return new FeatureRequestor(
-                new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), config),
+                new LdClientContext(BasicContext.Basic, config),
                 baseUri);
         }
 

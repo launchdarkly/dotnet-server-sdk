@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             _store = storeMock.Object;
             var storeFactoryMock = new Mock<IBigSegmentStoreFactory>();
             _storeFactory = storeFactoryMock.Object;
-            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(basicContext)).Returns(_store);
+            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(BasicContext)).Returns(_store);
 
             _tester = BuilderBehavior.For(() => Components.BigSegments(_storeFactory));
         }
@@ -27,13 +27,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void Store()
         {
-            Assert.Same(_store, Components.BigSegments(_storeFactory).CreateBigSegmentsConfiguration(basicContext).Store);
+            Assert.Same(_store, Components.BigSegments(_storeFactory).CreateBigSegmentsConfiguration(BasicContext).Store);
         }
 
         [Fact]
         public void UserCacheSize()
         {
-            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(basicContext).UserCacheSize,
+            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).UserCacheSize,
                 (b, v) => b.UserCacheSize(v));
             prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultUserCacheSize);
             prop.AssertCanSet(3333);
@@ -42,7 +42,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void UserCacheTime()
         {
-            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(basicContext).UserCacheTime,
+            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).UserCacheTime,
                 (b, v) => b.UserCacheTime(v));
             prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultUserCacheTime);
             prop.AssertCanSet(TimeSpan.FromMilliseconds(3333));
@@ -51,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void StatusPollInterval()
         {
-            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(basicContext).StatusPollInterval,
+            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).StatusPollInterval,
                 (b, v) => b.StatusPollInterval(v));
             prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultStatusPollInterval);
             prop.AssertCanSet(TimeSpan.FromMilliseconds(3333));
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void StaleAfter()
         {
-            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(basicContext).StaleAfter,
+            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).StaleAfter,
                 (b, v) => b.StaleAfter(v));
             prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultStaleAfter);
             prop.AssertCanSet(TimeSpan.FromMilliseconds(3333));

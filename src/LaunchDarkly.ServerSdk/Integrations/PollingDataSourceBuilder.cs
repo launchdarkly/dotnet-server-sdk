@@ -3,6 +3,8 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 
+using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
+
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
@@ -102,13 +104,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
-            var configuredBaseUri = ServiceEndpointsBuilder.SelectBaseUri(
-                context.Basic.ServiceEndpoints.PollingBaseUri,
-                _baseUri,
-                StandardEndpoints.DefaultPollingBaseUri,
-                "Polling",
-                context.Basic.Logger
-                );
+            var configuredBaseUri = _baseUri ??
+                StandardEndpoints.SelectBaseUri(context.Basic.ServiceEndpoints, e => e.PollingBaseUri, "Polling",
+                    context.Basic.Logger);
 
             context.Basic.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
             FeatureRequestor requestor = new FeatureRequestor(context, configuredBaseUri);
@@ -121,15 +119,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic)
-        {
-            return LdValue.BuildObject()
-                .Add("streamingDisabled", true)
-                .Add("customBaseURI", basic.ServiceEndpoints.HasCustomPollingBaseUri(_baseUri))
-                .Add("customStreamURI", false)
-                .Add("pollingIntervalMillis", _pollInterval.TotalMilliseconds)
-                .Add("usingRelayDaemon", false)
+        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+            LdValue.BuildObject()
+                .WithPollingProperties(
+                    StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, _baseUri, e => e.StreamingBaseUri),
+                    _pollInterval
+                )
+                .Add("usingRelayDaemon", false) // this property is specific to the server-side SDK
                 .Build();
-        }
     }
 }

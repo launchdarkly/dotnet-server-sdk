@@ -13,26 +13,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class PollingProcessorTest : BaseTest
     {
-        private const string sdkKey = "SDK_KEY";
         private readonly FeatureFlag Flag = new FeatureFlagBuilder("flagkey").Build();
         private readonly Segment Segment = new SegmentBuilder("segkey").Version(1).Build();
         
         readonly Mock<IFeatureRequestor> _mockFeatureRequestor;
         readonly IFeatureRequestor _featureRequestor;
         readonly CapturingDataSourceUpdates _updates = new CapturingDataSourceUpdates();
-        readonly Configuration _config;
-        readonly LdClientContext _context;
 
         public PollingProcessorTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _mockFeatureRequestor = new Mock<IFeatureRequestor>();
             _featureRequestor = _mockFeatureRequestor.Object;
-            _config = Configuration.Default(sdkKey);
-            _context = new LdClientContext(new BasicConfiguration(sdkKey, false, testLogger), _config);
         }
 
         private PollingProcessor MakeProcessor() =>
-            new PollingProcessor(_context, _featureRequestor, _updates,
+            new PollingProcessor(BasicContext, _featureRequestor, _updates,
                 PollingDataSourceBuilder.DefaultPollInterval);
 
         [Fact]

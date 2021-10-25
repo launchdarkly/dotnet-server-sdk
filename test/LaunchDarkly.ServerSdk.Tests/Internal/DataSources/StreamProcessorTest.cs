@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -21,7 +20,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
     public class StreamProcessorTest : BaseTest
     {
-        private const string SDK_KEY = "sdk_key";
         private const string FEATURE_KEY = "feature";
         private const int FEATURE_VERSION = 11;
         private static readonly FeatureFlag FEATURE = new FeatureFlagBuilder(FEATURE_KEY).Version(FEATURE_VERSION).On(true).Build();
@@ -49,20 +47,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _eventSource = _mockEventSource.Object;
             _eventSourceFactory = new TestEventSourceFactory(_eventSource);
             _dataStore = new DelegatingDataStoreForStreamTests { WrappedStore = new InMemoryDataStore() };
-            _dataStoreUpdates = new DataStoreUpdatesImpl(new TaskExecutor(null, testLogger), testLogger);
+            _dataStoreUpdates = new DataStoreUpdatesImpl(BasicTaskExecutor, TestLogger);
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, _dataStoreUpdates);
             _dataSourceUpdates = new DataSourceUpdatesImpl(
                 _dataStore,
                 _dataStoreStatusProvider,
-                new TaskExecutor(null, testLogger),
-                testLogger,
+                BasicTaskExecutor,
+                TestLogger,
                 null
                 );
             _dataSourceStatusProvider = new DataSourceStatusProviderImpl(_dataSourceUpdates);
-            _config = Configuration.Builder(SDK_KEY)
+            _config = BasicConfig()
                 .DataSource(Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create()))
                 .DataStore(_dataStore.AsSingletonFactory())
-                .Logging(Components.Logging(testLogging))
                 .Build();
         }
 
@@ -277,9 +274,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
             var diagnosticStore = mockDiagnosticStore.Object;
-            var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
-            var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
-                diagnosticStore, new TaskExecutor(null, testLogger));
+            var context = new LdClientContext(BasicContext.Basic,
+                Components.HttpConfiguration().CreateHttpConfiguration(BasicContext.Basic),
+                diagnosticStore, BasicTaskExecutor);
 
             using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
                 .CreateDataSource(context, _dataSourceUpdates))
@@ -302,9 +299,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
             var diagnosticStore = mockDiagnosticStore.Object;
-            var basicConfig = new BasicConfiguration(SDK_KEY, false, testLogger);
-            var context = new LdClientContext(basicConfig, Components.HttpConfiguration().CreateHttpConfiguration(basicConfig),
-                diagnosticStore, new TaskExecutor(null, testLogger));
+            var context = new LdClientContext(BasicContext.Basic,
+                Components.HttpConfiguration().CreateHttpConfiguration(BasicContext.Basic),
+                diagnosticStore, BasicTaskExecutor);
 
             using (var sp = (StreamProcessor)Components.StreamingDataSource().EventSourceCreator(_eventSourceFactory.Create())
                 .CreateDataSource(context, _dataSourceUpdates))
@@ -465,7 +462,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private StreamProcessor CreateProcessor()
         {
-            var basicConfig = new BasicConfiguration(_config, testLogger);
+            var basicConfig = new BasicConfiguration(_config, TestLogger);
             return _config.DataSourceFactory.CreateDataSource(
                 new LdClientContext(basicConfig, _config),
                 _dataSourceUpdates

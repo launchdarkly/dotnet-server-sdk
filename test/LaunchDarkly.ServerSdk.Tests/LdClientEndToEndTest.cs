@@ -41,8 +41,8 @@ namespace LaunchDarkly.Sdk.Server
                     var request = streamServer.Recorder.RequireRequest();
                     Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
-                    Assert.Empty(logCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Warn));
-                    Assert.Empty(logCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
+                    Assert.Empty(LogCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Warn));
+                    Assert.Empty(LogCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Sdk.Server
                     var request = streamServer.Recorder.RequireRequest();
                     Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
-                    Assert.NotEmpty(logCapture.GetMessages().Where(
+                    Assert.NotEmpty(LogCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Error && m.Text.Contains("error 401") &&
                             m.Text.Contains("giving up permanently")));
                 }
@@ -107,10 +107,10 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.Equal(BasicSdkKey, request1.Headers.Get("Authorization"));
                     Assert.Equal(BasicSdkKey, request2.Headers.Get("Authorization"));
 
-                    Assert.NotEmpty(logCapture.GetMessages().Where(
+                    Assert.NotEmpty(LogCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Warn && m.Text.Contains("error 503") &&
                             m.Text.Contains("will retry")));
-                    Assert.Empty(logCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
+                    Assert.Empty(LogCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
                 }
             }
         }
@@ -139,10 +139,10 @@ namespace LaunchDarkly.Sdk.Server
                     var request = pollServer.Recorder.RequireRequest();
                     Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
-                    Assert.NotEmpty(logCapture.GetMessages().Where(
+                    Assert.NotEmpty(LogCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Warn &&
                             m.Text.Contains("You should only disable the streaming API if instructed to do so")));
-                    Assert.Empty(logCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
+                    Assert.Empty(LogCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
                 }
             }
         }
@@ -171,7 +171,7 @@ namespace LaunchDarkly.Sdk.Server
                     var request = pollServer.Recorder.RequireRequest();
                     Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
 
-                    Assert.NotEmpty(logCapture.GetMessages().Where(
+                    Assert.NotEmpty(LogCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Error && m.Text.Contains("error 401") &&
                             m.Text.Contains("giving up permanently")));
                 }
@@ -206,10 +206,10 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.Equal(BasicSdkKey, request1.Headers.Get("Authorization"));
                     Assert.Equal(BasicSdkKey, request2.Headers.Get("Authorization"));
 
-                    Assert.NotEmpty(logCapture.GetMessages().Where(
+                    Assert.NotEmpty(LogCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Warn && m.Text.Contains("error 503") &&
                             m.Text.Contains("will retry")));
-                    Assert.Empty(logCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
+                    Assert.Empty(LogCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
                 }
             }
         }

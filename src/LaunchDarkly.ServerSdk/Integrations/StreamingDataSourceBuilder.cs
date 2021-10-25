@@ -3,6 +3,8 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 
+using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
+
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     /// <summary>
@@ -103,13 +105,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
-            var configuredBaseUri = ServiceEndpointsBuilder.SelectBaseUri(
-                context.Basic.ServiceEndpoints.StreamingBaseUri,
-                _baseUri,
-                StandardEndpoints.DefaultStreamingBaseUri,
-                "Streaming",
-                context.Basic.Logger
-                );
+            var configuredBaseUri = _baseUri ??
+                StandardEndpoints.SelectBaseUri(context.Basic.ServiceEndpoints, e => e.StreamingBaseUri, "Streaming", context.Basic.Logger);
             return new StreamProcessor(
                 context,
                 dataSourceUpdates,
@@ -120,15 +117,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic)
-        {
-            return LdValue.BuildObject()
-                .Add("streamingDisabled", false)
-                .Add("customBaseURI", false)
-                .Add("customStreamURI", basic.ServiceEndpoints.HasCustomStreamingBaseUri(_baseUri))
-                .Add("reconnectTimeMillis", _initialReconnectDelay.TotalMilliseconds)
-                .Add("usingRelayDaemon", false)
-                .Build();
-        }
+        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+            LdValue.BuildObject()
+            .WithStreamingProperties(
+                StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, _baseUri, e => e.StreamingBaseUri),
+                false,
+                _initialReconnectDelay
+                )
+            .Set("usingRelayDaemon", false)
+            .Build();
     }
 }

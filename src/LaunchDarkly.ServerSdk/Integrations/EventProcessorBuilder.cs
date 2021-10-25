@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+
+using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
@@ -286,26 +289,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public IEventProcessor CreateEventProcessor(LdClientContext context)
         {
-            var configuredBaseUri = ServiceEndpointsBuilder.SelectBaseUri(
-                   context.Basic.ServiceEndpoints.EventsBaseUri,
-                   _baseUri,
-                   StandardEndpoints.DefaultEventsBaseUri,
-                   "Events",
-                   context.Basic.Logger
-                   );
-            var eventsConfig = new EventsConfiguration
-            {
-                AllAttributesPrivate = _allAttributesPrivate,
-                DiagnosticRecordingInterval = _diagnosticRecordingInterval,
-                EventCapacity = _capacity,
-                EventFlushInterval = _flushInterval,
-                EventsUri = configuredBaseUri.AddPath(StandardEndpoints.AnalyticsEventsPostRequestPath),
-                DiagnosticUri = configuredBaseUri.AddPath(StandardEndpoints.DiagnosticEventsPostRequestPath),
-                InlineUsersInEvents = _inlineUsersInEvents,
-                PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
-                UserKeysCapacity = _userKeysCapacity,
-                UserKeysFlushInterval = _userKeysFlushInterval
-            };
+            var eventsConfig = MakeEventsConfiguration(context.Basic, true);
             var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
             var eventSender = _eventSender ??
                 new DefaultEventSender(
@@ -325,20 +309,35 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     ));
         }
 
-        /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic)
+        private EventsConfiguration MakeEventsConfiguration(BasicConfiguration basic, bool logConfigErrors)
         {
-            return LdValue.BuildObject()
-                .Add("allAttributesPrivate", _allAttributesPrivate)
-                .Add("customEventsURI", basic.ServiceEndpoints.HasCustomEventsBaseUri(_baseUri))
-                .Add("diagnosticRecordingIntervalMillis", _diagnosticRecordingInterval.TotalMilliseconds)
-                .Add("eventsCapacity", _capacity)
-                .Add("eventsFlushIntervalMillis", _flushInterval.TotalMilliseconds)
-                .Add("inlineUsersInEvents", _inlineUsersInEvents)
-                .Add("samplingInterval", 0) // no longer implemented
-                .Add("userKeysCapacity", _userKeysCapacity)
+            var configuredBaseUri = _baseUri ??
+                StandardEndpoints.SelectBaseUri(basic.ServiceEndpoints, e => e.EventsBaseUri, "Events",
+                    logConfigErrors ? basic.Logger : Logs.None.Logger(""));
+            return new EventsConfiguration
+            {
+                AllAttributesPrivate = _allAttributesPrivate,
+                DiagnosticRecordingInterval = _diagnosticRecordingInterval,
+                EventCapacity = _capacity,
+                EventFlushInterval = _flushInterval,
+                EventsUri = configuredBaseUri.AddPath("bulk"),
+                DiagnosticUri = configuredBaseUri.AddPath("diagnostic"),
+                InlineUsersInEvents = _inlineUsersInEvents,
+                PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
+                UserKeysCapacity = _userKeysCapacity,
+                UserKeysFlushInterval = _userKeysFlushInterval
+            };
+        }
+
+        /// <inheritdoc/>
+        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+            LdValue.BuildObject()
+                .WithEventProperties(
+                    MakeEventsConfiguration(basic, false),
+                    StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, _baseUri, e => e.EventsBaseUri)
+                )
+                .Add("userKeysCapacity", _userKeysCapacity) // these two properties are specific to the server-side SDK
                 .Add("userKeysFlushIntervalMillis", _userKeysFlushInterval.TotalMilliseconds)
                 .Build();
-        }
     }
 }

@@ -9,16 +9,13 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientExternalUpdatesOnlyTest : BaseTest
     {
-        private const string sdkKey = "SDK_KEY";
-
         public LdClientExternalUpdatesOnlyTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         [Fact]
         public void LddModeClientHasNullDataSource()
         {
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .DataSource(Components.ExternalUpdatesOnly)
-                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -29,9 +26,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void LddModeClientHasDefaultEventProcessor()
         {
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .DataSource(Components.ExternalUpdatesOnly)
-                .Logging(Components.Logging(testLogging))
+                .Events(null) // BasicConfig sets this to NoEvents, restore it to the default
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -42,9 +39,8 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void LddModeClientIsInitialized()
         {
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .DataSource(Components.ExternalUpdatesOnly)
-                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {
@@ -58,10 +54,9 @@ namespace LaunchDarkly.Sdk.Server
             var dataStore = new InMemoryDataStore();
             TestUtils.UpsertFlag(dataStore,
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
-            var config = Configuration.Builder(sdkKey)
+            var config = BasicConfig()
                 .DataSource(Components.ExternalUpdatesOnly)
                 .DataStore(dataStore.AsSingletonFactory())
-                .Logging(Components.Logging(testLogging))
                 .Build();
             using (var client = new LdClient(config))
             {

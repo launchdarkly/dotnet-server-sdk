@@ -1,5 +1,4 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.TestHelpers;
 using Xunit;
@@ -15,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
 
         public DataStoreStatusProviderImplTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            _dataStoreUpdates = new DataStoreUpdatesImpl(new TaskExecutor(this, testLogger), testLogger);
+            _dataStoreUpdates = new DataStoreUpdatesImpl(BasicTaskExecutor, TestLogger);
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, _dataStoreUpdates);
         }
 

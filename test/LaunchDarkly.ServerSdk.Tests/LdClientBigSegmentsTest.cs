@@ -49,11 +49,9 @@ namespace LaunchDarkly.Sdk.Server
 
         private LdClient MakeClient()
         {
-            var config = Configuration.Builder("")
+            var config = BasicConfig()
                 .BigSegments(Components.BigSegments(_storeFactory))
                 .DataSource(_testData)
-                .Events(Components.NoEvents)
-                .Logging(testLogging)
                 .Build();
             return new LdClient(config);
         }
@@ -101,10 +99,8 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StoreNotConfigured()
         {
-            var config = Configuration.Builder("")
+            var config = BasicConfig()
                 .DataSource(_testData)
-                .Events(Components.NoEvents)
-                .Logging(testLogging)
                 .Build();
             using (var client = new LdClient(config))
             {

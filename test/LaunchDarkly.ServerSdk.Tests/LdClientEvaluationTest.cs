@@ -23,10 +23,8 @@ namespace LaunchDarkly.Sdk.Server
 
         public LdClientEvaluationTest(ITestOutputHelper testOutput) : base(testOutput)
         {
-            var config = Configuration.Builder("SDK_KEY")
+            var config = BasicConfig()
                 .DataSource(testData)
-                .Events(Components.NoEvents)
-                .Logging(Components.Logging(testLogging))
                 .Build();
             client = new LdClient(config);
         }
@@ -476,10 +474,8 @@ namespace LaunchDarkly.Sdk.Server
             var flagKey = "flag-key";
             var mockStore = new Mock<IDataStore>();
             mockStore.Setup(s => s.Get(DataModel.Features, flagKey)).Throws(ex);
-            var configWithCustomStore = Configuration.Builder("sdk-key")
+            var configWithCustomStore = BasicConfig()
                 .DataStore(mockStore.Object.AsSingletonFactory())
-                .DataSource(Components.ExternalUpdatesOnly)
-                .Logging(testLogging)
                 .Build();
             using (var clientWithCustomStore = new LdClient(configWithCustomStore))
             {
@@ -518,10 +514,8 @@ namespace LaunchDarkly.Sdk.Server
             var ex = new Exception("fake-error");
             var mockStore = new Mock<IDataStore>();
             mockStore.Setup(s => s.GetAll(DataModel.Features)).Throws(ex);
-            var configWithCustomStore = Configuration.Builder("sdk-key")
+            var configWithCustomStore = BasicConfig()
                 .DataStore(mockStore.Object.AsSingletonFactory())
-                .DataSource(Components.ExternalUpdatesOnly)
-                .Logging(testLogging)
                 .Build();
             using (var clientWithCustomStore = new LdClient(configWithCustomStore))
             {
