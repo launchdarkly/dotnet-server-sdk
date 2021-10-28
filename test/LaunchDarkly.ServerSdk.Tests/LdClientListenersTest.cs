@@ -254,7 +254,12 @@ namespace LaunchDarkly.Sdk.Server
                 storeMock.SetupMetadataThrows(new Exception("sorry"));
 
                 var status2 = statuses.ExpectValue();
-                Assert.False(status2.Available);
+                if (status2.Available)
+                {
+                    // depending on timing, we might or might not receive an initial update of Available = true
+                    status2 = statuses.ExpectValue();
+                    Assert.False(status2.Available);
+                }
             }
         }
 

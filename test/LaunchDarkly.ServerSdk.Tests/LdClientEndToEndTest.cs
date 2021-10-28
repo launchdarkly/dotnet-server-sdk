@@ -6,6 +6,8 @@ using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
 using Xunit.Abstractions;
 
+using static LaunchDarkly.Sdk.Server.MockResponses;
+
 namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientEndToEndTest : BaseTest
@@ -13,16 +15,18 @@ namespace LaunchDarkly.Sdk.Server
         private static readonly FeatureFlag AlwaysTrueFlag = new FeatureFlagBuilder("always-true-flag")
             .OffWithValue(LdValue.Of(true)).Build();
 
+        private static Handler ValidPollingResponse =>
+            PollingResponse(MakeExpectedData().Build());
+
+        private static Handler ValidStreamingResponse =>
+            StreamWithInitialData(MakeExpectedData().Build());
+
         public LdClientEndToEndTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         [Fact]
         public void ClientStartsInStreamingMode()
         {
-            var streamHandler = Handlers.SSE.Start()
-                .Then(Handlers.SSE.Event(TestUtils.MakeStreamPutEvent(TestUtils.MakeFlagsData(AlwaysTrueFlag))))
-                .Then(Handlers.SSE.LeaveOpen());
-            
-            using (var streamServer = HttpServer.Start(streamHandler))
+            using (var streamServer = HttpServer.Start(ValidStreamingResponse))
             {
                 var config = BasicConfig()
                     .DataSource(Components.StreamingDataSource())
@@ -32,14 +36,7 @@ namespace LaunchDarkly.Sdk.Server
 
                 using (var client = new LdClient(config))
                 {
-                    Assert.True(client.Initialized);
-                    Assert.Equal(DataSourceState.Valid, client.DataSourceStatusProvider.Status.State);
-
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
-                    Assert.True(value);
-
-                    var request = streamServer.Recorder.RequireRequest();
-                    Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
+                    VerifyClientStartedAndHasExpectedData(client, streamServer);
 
                     Assert.Empty(LogCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Warn));
                     Assert.Empty(LogCapture.GetMessages().Where(m => m.Level == Logging.LogLevel.Error));
@@ -50,9 +47,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void ClientFailsToStartInStreamingModeWith401Error()
         {
-            var errorHandler = Handlers.Status(401);
-
-            using (var streamServer = HttpServer.Start(errorHandler))
+            using (var streamServer = HttpServer.Start(Error401Response))
             {
                 var config = BasicConfig()
                     .DataSource(Components.StreamingDataSource())
@@ -81,10 +76,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void ClientRetriesConnectionInStreamingModeWithNonFatalError()
         {
-            var streamHandler = Handlers.SSE.Start()
-                .Then(Handlers.SSE.Event(TestUtils.MakeStreamPutEvent(TestUtils.MakeFlagsData(AlwaysTrueFlag))))
-                .Then(Handlers.SSE.LeaveOpen());
-            var failThenSucceedHandler = Handlers.Sequential(Handlers.Status(503), streamHandler);
+            var failThenSucceedHandler = Handlers.Sequential(Error503Response, ValidStreamingResponse);
 
             using (var streamServer = HttpServer.Start(failThenSucceedHandler))
             {
@@ -118,9 +110,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void ClientStartsInPollingMode()
         {
-            var pollHandler = Handlers.BodyJson(TestUtils.MakeFlagsData(AlwaysTrueFlag));
-
-            using (var pollServer = HttpServer.Start(pollHandler))
+            using (var pollServer = HttpServer.Start(ValidPollingResponse))
             {
                 var config = BasicConfig()
                     .DataSource(Components.PollingDataSource())
@@ -130,14 +120,7 @@ namespace LaunchDarkly.Sdk.Server
 
                 using (var client = new LdClient(config))
                 {
-                    Assert.True(client.Initialized);
-                    Assert.Equal(DataSourceState.Valid, client.DataSourceStatusProvider.Status.State);
-
-                    var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
-                    Assert.True(value);
-
-                    var request = pollServer.Recorder.RequireRequest();
-                    Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
+                    VerifyClientStartedAndHasExpectedData(client, pollServer);
 
                     Assert.NotEmpty(LogCapture.GetMessages().Where(
                         m => m.Level == Logging.LogLevel.Warn &&
@@ -150,9 +133,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void ClientFailsToStartInPollingModeWith401Error()
         {
-            var errorHandler = Handlers.Status(401);
-
-            using (var pollServer = HttpServer.Start(errorHandler))
+            using (var pollServer = HttpServer.Start(Error401Response))
             {
                 var config = BasicConfig()
                     .DataSource(Components.PollingDataSource())
@@ -181,8 +162,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void ClientRetriesConnectionInPollingModeWithNonFatalError()
         {
-            var pollHandler = Handlers.BodyJson(TestUtils.MakeFlagsData(AlwaysTrueFlag));
-            var failThenSucceedHandler = Handlers.Sequential(Handlers.Status(503), pollHandler);
+            var failThenSucceedHandler = Handlers.Sequential(Error503Response, ValidPollingResponse);
 
             using (var pollServer = HttpServer.Start(failThenSucceedHandler))
             {
@@ -224,7 +204,7 @@ namespace LaunchDarkly.Sdk.Server
             string expectedBasePath
             )
         {
-            using (var server = HttpServer.Start(Handlers.Status(202)))
+            using (var server = HttpServer.Start(EventsAcceptedResponse))
             {
                 var baseUri = server.Uri.ToString().TrimEnd('/') + baseUriExtraPath;
                 var config = BasicConfig()
@@ -255,6 +235,89 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.Equal(expectedBasePath + "/diagnostic", request2.Path);
                 }
             }
+        }
+
+        [Fact]
+        public void HttpConfigurationIsAppliedToStreaming()
+        {
+            TestHttpUtils.TestWithSpecialHttpConfigurations(
+                ValidStreamingResponse,
+                (targetUri, httpConfig, server) =>
+                {
+                    var config = BasicConfig()
+                        .DataSource(Components.StreamingDataSource())
+                        .Http(httpConfig)
+                        .ServiceEndpoints(Components.ServiceEndpoints().Streaming(targetUri))
+                        .StartWaitTime(TimeSpan.FromSeconds(5))
+                        .Build();
+                    using (var client = new LdClient(config))
+                    {
+                        VerifyClientStartedAndHasExpectedData(client, server);
+                    }
+                },
+                TestLogger
+                );
+        }
+
+        [Fact]
+        public void HttpConfigurationIsAppliedToPolling()
+        {
+            TestHttpUtils.TestWithSpecialHttpConfigurations(
+                ValidPollingResponse,
+                (targetUri, httpConfig, server) =>
+                {
+                    var config = BasicConfig()
+                        .DataSource(Components.PollingDataSource())
+                        .Http(httpConfig)
+                        .ServiceEndpoints(Components.ServiceEndpoints().Polling(targetUri))
+                        .StartWaitTime(TimeSpan.FromSeconds(5))
+                        .Build();
+                    using (var client = new LdClient(config))
+                    {
+                        VerifyClientStartedAndHasExpectedData(client, server);
+                    }
+                },
+                TestLogger
+                );
+        }
+
+        [Fact]
+        public void HttpConfigurationIsAppliedToEvents()
+        {
+            TestHttpUtils.TestWithSpecialHttpConfigurations(
+                EventsAcceptedResponse,
+                (targetUri, httpConfig, server) =>
+                {
+                    var config = BasicConfig()
+                        .DiagnosticOptOut(true)
+                        .Events(Components.SendEvents())
+                        .Http(httpConfig)
+                        .ServiceEndpoints(Components.ServiceEndpoints().Events(targetUri))
+                        .StartWaitTime(TimeSpan.FromSeconds(5))
+                        .Build();
+                    using (var client = new LdClient(config))
+                    {
+                        client.Identify(User.WithKey("userkey"));
+                        client.Flush();
+                        server.Recorder.RequireRequest();
+                    }
+                },
+                TestLogger
+                );
+        }
+
+        private static DataSetBuilder MakeExpectedData() => new DataSetBuilder().Flags(AlwaysTrueFlag);
+
+        private static void VerifyClientStartedAndHasExpectedData(LdClient client, HttpServer server)
+        {
+            Assert.Equal(DataSourceState.Valid, client.DataSourceStatusProvider.Status.State);
+            Assert.True(client.Initialized);
+
+            var value = client.BoolVariation(AlwaysTrueFlag.Key, BasicUser, false);
+            Assert.True(value);
+
+            var request = server.Recorder.RequireRequest();
+            Assert.Equal(BasicSdkKey, request.Headers.Get("Authorization"));
         }
     }
 }
