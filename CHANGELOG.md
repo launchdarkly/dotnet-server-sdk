@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.3.1] - 2021-10-28
+### Fixed:
+- The `HttpConfigurationBuilder` methods `Proxy` and `ConnectTimeout` were not working correctly: they were being applied to polling requests and analytics event posts, but not streaming requests. Now they apply to all requests. ([#148](https://github.com/launchdarkly/dotnet-server-sdk/issues/148))
+
 ## [6.3.0] - 2021-10-25
 ### Added:
 - `ConfigurationBuilder.ServiceEndpoints` provides a simpler way of setting custom service base URIs, if you are connecting to a LaunchDarkly Relay Proxy instance, a private LaunchDarkly instance, or a test fixture. Previously, this required setting a `BaseURI` property for each individual service (streaming, events, etc.). If using the Relay Proxy, simply remove any `BaseURI` calls in your SDK configuration and call `ServiceEndpoints(Components.ServiceEndpoints().RelayProxy(myRelayProxyUri))` on the `IConfigurationBuilder`.
