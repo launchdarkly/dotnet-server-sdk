@@ -197,7 +197,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
                 SetStoreStatusError(new Exception("sorry"));
 
                 var status2 = statuses.ExpectValue();
-                Assert.False(status2.Available);
+                if (status2.Available)
+                {
+                    // depending on timing, we might or might not receive an initial update of Available = true
+                    status2 = statuses.ExpectValue();
+                    Assert.False(status2.Available);
+                }
                 Assert.Equal(status2, sw.GetStatus());
 
                 SetStoreTimestamp(UnixMillisecondTime.Now);

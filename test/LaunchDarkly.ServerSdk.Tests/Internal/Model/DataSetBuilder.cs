@@ -13,6 +13,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private readonly Dictionary<string, Segment> _segments =
             new Dictionary<string, Segment>();
 
+        public static FullDataSet<ItemDescriptor> Empty => new DataSetBuilder().Build();
+
         internal DataSetBuilder Flags(params FeatureFlag[] flags)
         {
             foreach (var flag in flags)
@@ -63,5 +65,30 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 }
             );
         }
+    }
+
+    public static class DataSetExtensions
+    {
+        public static string ToJsonString(this FullDataSet<ItemDescriptor> data)
+        {
+            var ob0 = LdValue.BuildObject();
+            foreach (var kv0 in data.Data)
+            {
+                if (kv0.Key == DataModel.Features || kv0.Key == DataModel.Segments)
+                {
+                    var ob1 = LdValue.BuildObject();
+                    foreach (var kv1 in kv0.Value.Items)
+                    {
+                        ob1.Add(kv1.Key, LdValue.Parse(kv0.Key.Serialize(kv1.Value)));
+                    }
+                    ob0.Add(kv0.Key == DataModel.Features ? "flags" : "segments", ob1.Build());
+                }
+            }
+            return ob0.Build().ToJsonString();
+        }
+
+        internal static string ToJsonString(this FeatureFlag item) => DataModel.Features.Serialize(DescriptorOf(item));
+
+        internal static string ToJsonString(this Segment item) => DataModel.Segments.Serialize(DescriptorOf(item));
     }
 }

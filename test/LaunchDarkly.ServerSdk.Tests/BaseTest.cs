@@ -52,13 +52,32 @@ namespace LaunchDarkly.Sdk.Server
         protected readonly TaskExecutor BasicTaskExecutor;
 
         /// <summary>
-        /// This empty constructor disables log output.
+        /// This empty constructor disables log output, but still captures it.
         /// </summary>
-        public BaseTest()
+        public BaseTest() : this(Logs.None) { }
+
+        /// <summary>
+        /// This constructor allows log output to be captured by Xunit. Simply declare a constructor
+        /// with the same <c>ITestOutputHelper</c> parameter for your test class and pass the parameter
+        /// straight through to the base class constructor.
+        /// </summary>
+        /// <example>
+        /// <code>
+        ///     public class MyTestClass : BaseTest
+        ///     {
+        ///         public MyTestClass(ITestOutputHelper testOutput) : base(testOutput) { }
+        ///     }
+        /// </code>
+        /// </example>
+        /// <param name="testOutput">the <see cref="ITestOutputHelper"/> that Xunit passed to the test
+        /// class constructor</param>
+        public BaseTest(ITestOutputHelper testOutput) : this(TestLoggingHelpers.TestOutputAdapter(testOutput)) { }
+
+        protected BaseTest(ILogAdapter extraLogging)
         {
             LogCapture = Logs.Capture();
-            TestLogging = LogCapture;
-            TestLogger = LogCapture.Logger("");
+            TestLogging = Logs.ToMultiple(extraLogging, LogCapture);
+            TestLogger = TestLogging.Logger("");
 
             BasicContext = new LdClientContext(new BasicConfiguration(Configuration.Default(BasicSdkKey), TestLogger),
                 Configuration.Default(""));
@@ -79,27 +98,6 @@ namespace LaunchDarkly.Sdk.Server
             // since that would affect all tasks in the application, we assume that developers would
             // need to tune this parameter in any case, not only because of our SDK.
             ThreadPool.SetMinThreads(100, 100);
-        }
-
-        /// <summary>
-        /// This constructor allows log output to be captured by Xunit. Simply declare a constructor
-        /// with the same <c>ITestOutputHelper</c> parameter for your test class and pass the parameter
-        /// straight through to the base class constructor.
-        /// </summary>
-        /// <example>
-        /// <code>
-        ///     public class MyTestClass : BaseTest
-        ///     {
-        ///         public MyTestClass(ITestOutputHelper testOutput) : base(testOutput) { }
-        ///     }
-        /// </code>
-        /// </example>
-        /// <param name="testOutput">the <see cref="ITestOutputHelper"/> that Xunit passed to the test
-        /// class constructor</param>
-        public BaseTest(ITestOutputHelper testOutput) : this()
-        {
-            TestLogging = Logs.ToMultiple(TestLoggingHelpers.TestOutputAdapter(testOutput), LogCapture);
-            TestLogger = TestLogging.Logger("");
         }
 
         // Returns a ConfigurationBuilder with no external data source, events disabled, and logging redirected

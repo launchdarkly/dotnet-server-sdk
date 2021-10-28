@@ -160,9 +160,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>a client instance</returns>
         public HttpClient NewHttpClient()
         {
-            var httpClient = MessageHandler is null ?
-                new HttpClient() :
-                new HttpClient(MessageHandler, false);
+            var httpClient = HttpProperties.NewHttpClient();
             foreach (var h in DefaultHeaders)
             {
                 httpClient.DefaultRequestHeaders.Add(h.Key, h.Value);
