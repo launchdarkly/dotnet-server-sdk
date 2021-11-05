@@ -10,7 +10,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal sealed class PollingProcessor : IDataSource
+    internal sealed class PollingDataSource : IDataSource
     {
         private readonly IFeatureRequestor _featureRequestor;
         private readonly IDataSourceUpdates _dataSourceUpdates;
@@ -21,7 +21,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly Logger _log;
         private CancellationTokenSource _canceller;
 
-        internal PollingProcessor(
+        internal PollingDataSource(
             LdClientContext context,
             IFeatureRequestor featureRequestor,
             IDataSourceUpdates dataSourceUpdates,
@@ -67,10 +67,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 }
                 else
                 {
-                    if (_dataSourceUpdates.Init(allData.Value))
+                    if (_dataSourceUpdates.Init(allData.Value)) // this also automatically sets the state to Valid
                     {
-                        _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
-
                         if (!_initialized.GetAndSet(true))
                         {
                             _initTask.SetResult(true);
@@ -117,8 +115,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             catch (Exception ex)
             {
                 Exception realEx = (ex is AggregateException ae) ? ae.Flatten() : ex;
-                LogHelpers.LogException(_log, "Polling for feature flag updates failed", realEx);
-
+                _log.Warn("Polling for feature flag updates failed: {0}", LogValues.ExceptionSummary(ex));
+                _log.Debug(LogValues.ExceptionTrace(ex));
                 _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted,
                     DataSourceStatus.ErrorInfo.FromException(realEx));
             }

@@ -4,7 +4,6 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -111,29 +110,21 @@ namespace LaunchDarkly.Sdk.Server
                 .Logging(TestLogging)
                 .StartWaitTime(TimeSpan.Zero);
 
-        public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern)
+        protected LdClientContext ContextFrom(Configuration config)
         {
-            if (LogCapture.HasMessageWithRegex(level, pattern) != shouldHave)
-            {
-                ThrowLogMatchException(shouldHave, level, pattern, true);
-            }
+            var basic = new BasicConfiguration(config.SdkKey, config.Offline, config.ServiceEndpoints, TestLogger);
+            return new LdClientContext(
+                basic,
+                (config.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
+                null,
+                BasicTaskExecutor
+                );
         }
 
-        public void AssertLogMessage(bool shouldHave, LogLevel level, string text)
-        {
-            if (LogCapture.HasMessageWithText(level, text) != shouldHave)
-            {
-                ThrowLogMatchException(shouldHave, level, text, true);
-            }
-        }
+        public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern) =>
+            AssertHelpers.LogMessageRegex(LogCapture, shouldHave, level, pattern);
 
-        private void ThrowLogMatchException(bool shouldHave, LogLevel level, string text, bool isRegex) =>
-            throw new AssertActualExpectedException(shouldHave, !shouldHave,
-                string.Format("Expected log {0} the {1} \"{2}\" at level {3}\n\nActual log output follows:\n{4}",
-                    shouldHave ? "to have" : "not to have",
-                    isRegex ? "pattern" : "exact message",
-                    text,
-                    level,
-                    LogCapture.ToString()));
+        public void AssertLogMessage(bool shouldHave, LogLevel level, string text) =>
+            AssertHelpers.LogMessageText(LogCapture, shouldHave, level, text);
     }
 }

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal;
-using LaunchDarkly.TestHelpers;
+using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,9 +17,15 @@ namespace LaunchDarkly.Sdk.Server
 
         private static readonly Uri CustomUri = new Uri("http://custom");
 
-        private SimpleRecordingHttpMessageHandler _stubHandler = new SimpleRecordingHttpMessageHandler(401);
+        private readonly RequestRecorder _requestRecorder;
+        private readonly HttpMessageHandler _stubHandler;
 
-        public LdClientServiceEndpointsTests(ITestOutputHelper testOutput) : base(testOutput) { }
+        public LdClientServiceEndpointsTests(ITestOutputHelper testOutput) : base(testOutput)
+        {
+            _stubHandler = Handlers.Record(out _requestRecorder)
+                .Then(Handlers.Status(401))
+                .AsMessageHandler();
+        }
 
         [Fact]
         public void DefaultStreamingDataSourceBaseUri()
@@ -33,8 +36,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(StandardEndpoints.DefaultStreamingBaseUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(StandardEndpoints.DefaultStreamingBaseUri, BaseUriOf(req.Uri));
             }
         }
 
@@ -47,8 +50,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(StandardEndpoints.DefaultPollingBaseUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(StandardEndpoints.DefaultPollingBaseUri, BaseUriOf(req.Uri));
             }
         }
 
@@ -61,8 +64,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(StandardEndpoints.DefaultEventsBaseUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(StandardEndpoints.DefaultEventsBaseUri, BaseUriOf(req.Uri));
             }
         }
 
@@ -76,8 +79,8 @@ namespace LaunchDarkly.Sdk.Server
                     .ServiceEndpoints(Components.ServiceEndpoints().Streaming(CustomUri))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
 
                 Assert.False(LogCapture.HasMessageWithRegex(LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying"));
@@ -94,8 +97,8 @@ namespace LaunchDarkly.Sdk.Server
                     .ServiceEndpoints(Components.ServiceEndpoints().Polling(CustomUri))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
 
                 Assert.False(LogCapture.HasMessageWithRegex(LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying"));
@@ -112,8 +115,8 @@ namespace LaunchDarkly.Sdk.Server
                     .ServiceEndpoints(Components.ServiceEndpoints().Events(CustomUri))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
 
                 AssertLogMessageRegex(false, LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying");
@@ -173,8 +176,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
 
                 AssertLogMessageRegex(false, LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying");
@@ -190,8 +193,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
 
                 AssertLogMessageRegex(false, LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying");
@@ -207,8 +210,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
                     .Build()))
             {
-                var req = _stubHandler.Requests.ExpectValue();
-                Assert.Equal(CustomUri, BaseUriOf(req.RequestUri));
+                var req = _requestRecorder.RequireRequest();
+                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
 
                 AssertLogMessageRegex(false, LogLevel.Error,
                     "You have set custom ServiceEndpoints without specifying");
@@ -218,22 +221,5 @@ namespace LaunchDarkly.Sdk.Server
 
         private static Uri BaseUriOf(Uri uri) =>
             new Uri(uri.GetComponents(UriComponents.Scheme | UriComponents.HostAndPort | UriComponents.KeepDelimiter, UriFormat.Unescaped));
-
-        private class SimpleRecordingHttpMessageHandler : HttpMessageHandler
-        {
-            internal readonly EventSink<HttpRequestMessage> Requests = new EventSink<HttpRequestMessage>();
-            private int _statusCode;
-
-            public SimpleRecordingHttpMessageHandler(int statusCode)
-            {
-                _statusCode = statusCode;
-            }
-
-            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-            {
-                Requests.Enqueue(request);
-                return Task.FromResult(new HttpResponseMessage((HttpStatusCode)_statusCode));
-            }
-        }
     }
 }

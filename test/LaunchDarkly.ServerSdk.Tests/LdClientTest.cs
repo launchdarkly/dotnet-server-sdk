@@ -67,7 +67,7 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void DefaultDataSourceIsStreamProcessor()
+        public void DefaultDataSourceIsStreamingDataSource()
         {
             var config = BasicConfig()
                 .DataSource(null) // BasicConfig sets this - restore the default
@@ -75,12 +75,12 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<StreamProcessor>(client._dataSource);
+                Assert.IsType<StreamingDataSource>(client._dataSource);
             }
         }
 
         [Fact]
-        public void StreamingClientHasStreamProcessor()
+        public void StreamingClientHasStreamingDataSource()
         {
             var config = BasicConfig()
                 .DataSource(Components.StreamingDataSource())
@@ -88,7 +88,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<StreamProcessor>(client._dataSource);
+                Assert.IsType<StreamingDataSource>(client._dataSource);
             }
         }
 
@@ -107,7 +107,7 @@ AssertLogMessage(false, LogLevel.Warn,
         }
 
         [Fact]
-        public void PollingClientHasPollingProcessor()
+        public void PollingClientHasPollingDataSource()
         {
             var config = BasicConfig()
                 .DataSource(Components.PollingDataSource())
@@ -115,7 +115,7 @@ AssertLogMessage(false, LogLevel.Warn,
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.IsType<PollingProcessor>(client._dataSource);
+                Assert.IsType<PollingDataSource>(client._dataSource);
             }
         }
 

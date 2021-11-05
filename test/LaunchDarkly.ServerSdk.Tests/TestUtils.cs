@@ -32,9 +32,6 @@ namespace LaunchDarkly.Sdk.Server
         internal static bool UpsertSegment(IDataStore store, Segment item) =>
             store.Upsert(DataModel.Segments, item.Key, DescriptorOf(item));
 
-        internal static string MakeStreamPutEvent(string flagsData) =>
-            "event: put\ndata: {\"data\":" + flagsData + "}\n\n";
-
         internal static string MakeFlagsData(params FeatureFlag[] flags)
         {
             var flagsBuilder = LdValue.BuildObject();

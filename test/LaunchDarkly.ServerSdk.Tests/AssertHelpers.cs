@@ -1,6 +1,10 @@
-﻿using Xunit;
+﻿using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using Xunit;
+using Xunit.Sdk;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.MockResponses;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 
 namespace LaunchDarkly.Sdk.Server
@@ -15,5 +19,30 @@ namespace LaunchDarkly.Sdk.Server
             AssertJsonEqual(kind.Serialize(expected), kind.Serialize(actual));
             Assert.Equal(expected.Version, actual.Version);
         }
+
+        public static void LogMessageRegex(LogCapture logCapture, bool shouldHave, LogLevel level, string pattern)
+        {
+            if (logCapture.HasMessageWithRegex(level, pattern) != shouldHave)
+            {
+                ThrowLogMatchException(logCapture, shouldHave, level, pattern, true);
+            }
+        }
+
+        public static void LogMessageText(LogCapture logCapture, bool shouldHave, LogLevel level, string text)
+        {
+            if (logCapture.HasMessageWithText(level, text) != shouldHave)
+            {
+                ThrowLogMatchException(logCapture, shouldHave, level, text, true);
+            }
+        }
+
+        private static void ThrowLogMatchException(LogCapture logCapture, bool shouldHave, LogLevel level, string text, bool isRegex) =>
+            throw new AssertActualExpectedException(shouldHave, !shouldHave,
+                string.Format("Expected log {0} the {1} \"{2}\" at level {3}\n\nActual log output follows:\n{4}",
+                    shouldHave ? "to have" : "not to have",
+                    isRegex ? "pattern" : "exact message",
+                    text,
+                    level,
+                    logCapture.ToString()));
     }
 }

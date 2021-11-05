@@ -118,6 +118,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 return false;
             }
 
+            // Calling Init implies that the data source is now in a valid state.
+            UpdateStatus(DataSourceState.Valid, null);
+
             // We must always update the dependency graph even if we don't currently have any event listeners, because if
             // listeners are added later, we don't want to have to reread the whole data store to compute the graph
             UpdateDependencyTrackerFromFullDataSet(allData);

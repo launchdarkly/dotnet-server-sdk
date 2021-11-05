@@ -253,6 +253,8 @@ namespace LaunchDarkly.Sdk.Server
 
                 storeMock.SetupMetadataThrows(new Exception("sorry"));
 
+                // Depending on timing, we might or might not receive an initial update that changes
+                // the state to available, before the one that changes it to unavailable.
                 var status2 = statuses.ExpectValue();
                 if (status2.Available)
                 {

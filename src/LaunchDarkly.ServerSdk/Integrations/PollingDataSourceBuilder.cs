@@ -110,7 +110,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             context.Basic.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
             FeatureRequestor requestor = new FeatureRequestor(context, configuredBaseUri);
-            return new PollingProcessor(
+            return new PollingDataSource(
                 context,
                 requestor,
                 dataSourceUpdates,
