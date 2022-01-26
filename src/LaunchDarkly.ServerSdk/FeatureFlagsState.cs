@@ -186,11 +186,11 @@ namespace LaunchDarkly.Sdk.Server
             {
                 Value = value,
                 Variation = variationIndex,
+                Version = flagVersion,
                 DebugEventsUntilDate = flagDebugEventsUntilDate
             };
             if (!_detailsOnlyIfTracked || flagTrackEvents || flagDebugEventsUntilDate != null)
             {
-                flag.Version = flagVersion;
                 flag.Reason = _withReasons ? reason : (EvaluationReason?)null;
             }
             if (flagTrackEvents)
@@ -206,7 +206,7 @@ namespace LaunchDarkly.Sdk.Server
     {
         internal LdValue Value { get; set; }
         internal int? Variation { get; set; }
-        internal int? Version { get; set; }
+        internal int Version { get; set; }
         internal bool TrackEvents { get; set; }
         internal UnixMillisecondTime? DebugEventsUntilDate { get; set; }
         internal EvaluationReason? Reason { get; set; }
@@ -255,8 +255,8 @@ namespace LaunchDarkly.Sdk.Server
             {
                 var flagMetadataObj = allMetadataObj.Name(entry.Key).Object();
                 var meta = entry.Value;
-                flagMetadataObj.Name("variation").IntOrNull(meta.Variation);
-                flagMetadataObj.Name("version").IntOrNull(meta.Version);
+                flagMetadataObj.Name("version").Int(meta.Version);
+                flagMetadataObj.MaybeName("variation", meta.Variation.HasValue).IntOrNull(meta.Variation);
                 flagMetadataObj.MaybeName("trackEvents", meta.TrackEvents).Bool(meta.TrackEvents);
                 flagMetadataObj.MaybeName("debugEventsUntilDate", meta.DebugEventsUntilDate.HasValue)
                     .Long(meta.DebugEventsUntilDate?.Value ?? 0);
@@ -297,7 +297,7 @@ namespace LaunchDarkly.Sdk.Server
                                         flag.Variation = reader.IntOrNull();
                                         break;
                                     case "version":
-                                        flag.Version = reader.IntOrNull();
+                                        flag.Version = reader.Int();
                                         break;
                                     case "trackEvents":
                                         flag.TrackEvents = reader.Bool();

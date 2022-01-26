@@ -73,14 +73,17 @@ namespace LaunchDarkly.Sdk.Server
             var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons)
                 .AddFlag("key1", LdValue.Of("value1"), 0, EvaluationReason.OffReason, 100, false, null)
                 .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, UnixMillisecondTime.OfMillis(1000))
+                .AddFlag("key3", LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag), 300, false, null)
                 .Build();
 
-            var expectedString = @"{""key1"":""value1"",""key2"":""value2"",
+            var expectedString = @"{""key1"":""value1"",""key2"":""value2"",""key3"":null,
                 ""$flagsState"":{
                   ""key1"":{
                     ""variation"":0,""version"":100,""reason"":{""kind"":""OFF""}
                   },""key2"":{
                     ""variation"":1,""version"":200,""reason"":{""kind"":""FALLTHROUGH""},""trackEvents"":true,""debugEventsUntilDate"":1000
+                  },""key3"":{
+                    ""version"":300,""reason"":{""kind"":""ERROR"",""errorKind"":""MALFORMED_FLAG""}
                   }
                 },
                 ""$valid"":true
