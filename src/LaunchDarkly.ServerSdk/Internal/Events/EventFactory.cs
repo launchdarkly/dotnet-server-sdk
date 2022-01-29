@@ -91,7 +91,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             return e;
         }
 
-        private static bool IsExperiment(FeatureFlag flag, EvaluationReason? reason)
+        internal static bool IsExperiment(FeatureFlag flag, EvaluationReason? reason)
         {
             if (!reason.HasValue)
             {
