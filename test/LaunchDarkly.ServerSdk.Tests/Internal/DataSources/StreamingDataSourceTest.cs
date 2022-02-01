@@ -264,16 +264,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async void StreamInitDiagnosticRecordedOnOpen()
         {
+            var receivedFailed = new EventSink<bool>();
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
+            mockDiagnosticStore.Setup(m => m.AddStreamInit(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<bool>()))
+                .Callback((DateTime timestamp, TimeSpan duration, bool failed) => receivedFailed.Enqueue(failed));
 
             using (var server = HttpServer.Start(StreamWithEmptyData))
             {
                 using (var dataSource = MakeDataSourceWithDiagnostics(server.Uri, mockDiagnosticStore.Object))
                 {
                     await dataSource.Start();
-                    
-                    mockDiagnosticStore.Verify(ds => ds.AddStreamInit(It.IsAny<DateTime>(),
-                        It.Is<TimeSpan>(ts => ts > TimeSpan.Zero), false));
+
+                    Assert.False(receivedFailed.ExpectValue());
                 }
             }
         }
@@ -281,7 +283,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async void StreamInitDiagnosticRecordedOnError()
         {
+            var receivedFailed = new EventSink<bool>();
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
+            mockDiagnosticStore.Setup(m => m.AddStreamInit(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<bool>()))
+                .Callback((DateTime timestamp, TimeSpan duration, bool failed) => receivedFailed.Enqueue(failed));
 
             using (var server = HttpServer.Start(Handlers.Status(401)))
             {
@@ -289,8 +294,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 {
                     await dataSource.Start();
 
-                    mockDiagnosticStore.Verify(ds => ds.AddStreamInit(It.IsAny<DateTime>(),
-                        It.Is<TimeSpan>(ts => ts > TimeSpan.Zero), true));
+                    Assert.True(receivedFailed.ExpectValue());
                 }
             }
         }
