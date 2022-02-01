@@ -5,6 +5,7 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.TestHelpers;
 using LaunchDarkly.TestHelpers.HttpTest;
 using Moq;
 using Xunit;
@@ -85,10 +86,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var receivedData = _updateSink.Inits.ExpectValue();
                 AssertHelpers.DataSetsEqual(data, receivedData);
 
-                Assert.True(dataSource.Initialized);
-
-                Assert.True(initTask.IsCompleted);
+                Assert.True(initTask.Wait(TimeSpan.FromSeconds(1)));
                 Assert.False(initTask.IsFaulted);
+
+                Assert.True(dataSource.Initialized);
             });
         }
 
@@ -206,10 +207,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     recorder.RequireRequest();
                     recorder.RequireRequest();
 
-                    Assert.True(initTask.IsCompleted);
-
-                    errorCondition.VerifyLogMessage(LogCapture);
+                    Assert.True(initTask.Wait(TimeSpan.FromSeconds(1)));
+                    Assert.True(dataSource.Initialized);
                 }
+                errorCondition.VerifyLogMessage(LogCapture);
             });
         }
 
@@ -235,7 +236,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     recorder.RequireRequest();
                     recorder.RequireNoRequests(TimeSpan.FromMilliseconds(100));
 
-                    Assert.True(initTask.IsCompleted);
+                    Assert.True(initTask.Wait(TimeSpan.FromSeconds(1)));
+                    Assert.False(dataSource.Initialized);
 
                     errorCondition.VerifyLogMessage(LogCapture);
                 }
@@ -245,16 +247,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async void StreamInitDiagnosticRecordedOnOpen()
         {
+            var receivedFailed = new EventSink<bool>();
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
+            mockDiagnosticStore.Setup(m => m.AddStreamInit(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<bool>()))
+                .Callback((DateTime timestamp, TimeSpan duration, bool failed) => receivedFailed.Enqueue(failed));
 
             using (var server = HttpServer.Start(StreamWithEmptyData))
             {
                 using (var dataSource = MakeDataSourceWithDiagnostics(server.Uri, mockDiagnosticStore.Object))
                 {
                     await dataSource.Start();
-                    
-                    mockDiagnosticStore.Verify(ds => ds.AddStreamInit(It.IsAny<DateTime>(),
-                        It.Is<TimeSpan>(ts => ts > TimeSpan.Zero), false));
+
+                    Assert.False(receivedFailed.ExpectValue());
                 }
             }
         }
@@ -262,7 +266,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public async void StreamInitDiagnosticRecordedOnError()
         {
+            var receivedFailed = new EventSink<bool>();
             var mockDiagnosticStore = new Mock<IDiagnosticStore>();
+            mockDiagnosticStore.Setup(m => m.AddStreamInit(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<bool>()))
+                .Callback((DateTime timestamp, TimeSpan duration, bool failed) => receivedFailed.Enqueue(failed));
 
             using (var server = HttpServer.Start(Handlers.Status(401)))
             {
@@ -270,8 +277,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 {
                     await dataSource.Start();
 
-                    mockDiagnosticStore.Verify(ds => ds.AddStreamInit(It.IsAny<DateTime>(),
-                        It.Is<TimeSpan>(ts => ts > TimeSpan.Zero), true));
+                    Assert.True(receivedFailed.ExpectValue());
                 }
             }
         }
