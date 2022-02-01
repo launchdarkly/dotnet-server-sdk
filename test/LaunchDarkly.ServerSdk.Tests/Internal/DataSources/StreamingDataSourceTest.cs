@@ -86,17 +86,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 var receivedData = _updateSink.Inits.ExpectValue();
                 AssertHelpers.DataSetsEqual(data, receivedData);
 
-                // We need to poll on initTask here rather than just assume it's been completed, because
-                // there is a tiny interval between the Init call being received by updateSink and the
-                // setting of initTask.
-                Assertions.AssertEventually(
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromMilliseconds(5),
-                    () => initTask.IsCompleted);
+                Assert.True(initTask.Wait(TimeSpan.FromSeconds(1)));
+                Assert.False(initTask.IsFaulted);
 
                 Assert.True(dataSource.Initialized);
-
-                Assert.False(initTask.IsFaulted);
             });
         }
 
@@ -214,13 +207,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     recorder.RequireRequest();
                     recorder.RequireRequest();
 
-                    // We need to poll on initTask here rather than just assume it's been completed, because
-                    // there is a tiny interval between the Init call being received by updateSink and the
-                    // setting of initTask.
-                    Assertions.AssertEventually(
-                        TimeSpan.FromSeconds(1),
-                        TimeSpan.FromMilliseconds(5),
-                        () => initTask.IsCompleted);
+                    Assert.True(initTask.Wait(TimeSpan.FromSeconds(1)));
+                    Assert.True(dataSource.Initialized);
                 }
                 errorCondition.VerifyLogMessage(LogCapture);
             });
@@ -248,13 +236,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     recorder.RequireRequest();
                     recorder.RequireNoRequests(TimeSpan.FromMilliseconds(100));
 
-                    // We need to poll on initTask here rather than just assume it's been completed, because
-                    // there is a tiny interval between the Init call being received by updateSink and the
-                    // setting of initTask.
-                    Assertions.AssertEventually(
-                        TimeSpan.FromSeconds(1),
-                        TimeSpan.FromMilliseconds(5),
-                        () => initTask.IsCompleted);
+                    Assert.True(initTask.Wait(TimeSpan.FromSeconds(1)));
+                    Assert.False(dataSource.Initialized);
 
                     errorCondition.VerifyLogMessage(LogCapture);
                 }
