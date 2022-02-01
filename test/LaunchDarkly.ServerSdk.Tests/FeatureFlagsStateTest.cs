@@ -71,9 +71,9 @@ namespace LaunchDarkly.Sdk.Server
         public void CanSerializeToJson()
         {
             var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons)
-                .AddFlag("key1", LdValue.Of("value1"), 0, EvaluationReason.OffReason, 100, false, null)
-                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, UnixMillisecondTime.OfMillis(1000))
-                .AddFlag("key3", LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag), 300, false, null)
+                .AddFlag("key1", LdValue.Of("value1"), 0, EvaluationReason.OffReason, 100, false, false, null)
+                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, false, UnixMillisecondTime.OfMillis(1000))
+                .AddFlag("key3", LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag), 300, false, false, null)
                 .Build();
 
             var expectedString = @"{""key1"":""value1"",""key2"":""value2"",""key3"":null,
@@ -96,8 +96,8 @@ namespace LaunchDarkly.Sdk.Server
         public void CanDeserializeFromJson()
         {
             var state = FeatureFlagsState.Builder(FlagsStateOption.WithReasons)
-                .AddFlag("key1", LdValue.Of("value1"), 0, EvaluationReason.OffReason, 100, false, null)
-                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, UnixMillisecondTime.OfMillis(1000))
+                .AddFlag("key1", LdValue.Of("value1"), 0, EvaluationReason.OffReason, 100, false, false, null)
+                .AddFlag("key2", LdValue.Of("value2"), 1, EvaluationReason.FallthroughReason, 200, true, false, UnixMillisecondTime.OfMillis(1000))
                 .Build();
 
             var jsonString = LdJsonSerialization.SerializeObject(state);

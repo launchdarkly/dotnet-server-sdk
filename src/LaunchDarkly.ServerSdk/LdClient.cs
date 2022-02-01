@@ -359,8 +359,17 @@ namespace LaunchDarkly.Sdk.Server
                 try
                 {
                     Evaluator.EvalResult result = _evaluator.Evaluate(flag, user, EventFactory.Default);
-                    builder.AddFlag(flag.Key, result.Result.Value, result.Result.VariationIndex,
-                        result.Result.Reason, flag.Version, flag.TrackEvents, flag.DebugEventsUntilDate);
+                    bool inExperiment = EventFactory.IsExperiment(flag, result.Result.Reason);
+                    builder.AddFlag(
+                        flag.Key,
+                        result.Result.Value,
+                        result.Result.VariationIndex,
+                        result.Result.Reason,
+                        flag.Version,
+                        flag.TrackEvents || inExperiment,
+                        inExperiment,
+                        flag.DebugEventsUntilDate
+                        );
                 }
                 catch (Exception e)
                 {

@@ -174,29 +174,26 @@ namespace LaunchDarkly.Sdk.Server
                 result.Reason,
                 0,
                 false,
+                false,
                 null);
         }
 
         // This method is defined with internal scope because metadata fields like trackEvents aren't
         // relevant to the main external use case for the builder (testing server-side code)
         internal FeatureFlagsStateBuilder AddFlag(string flagKey, LdValue value, int? variationIndex, EvaluationReason reason,
-            int flagVersion, bool flagTrackEvents, UnixMillisecondTime? flagDebugEventsUntilDate)
+            int flagVersion, bool flagTrackEvents, bool trackReason, UnixMillisecondTime? flagDebugEventsUntilDate)
         {
+            bool flagIsTracked = flagTrackEvents || flagDebugEventsUntilDate != null;
             var flag = new FlagState
             {
                 Value = value,
                 Variation = variationIndex,
-                Version = flagVersion,
-                DebugEventsUntilDate = flagDebugEventsUntilDate
+                Version = (!_detailsOnlyIfTracked || flagIsTracked) ? flagVersion : (int?)null,
+                Reason = trackReason || (_withReasons && (!_detailsOnlyIfTracked || flagIsTracked)) ? reason : (EvaluationReason?)null,
+                DebugEventsUntilDate = flagDebugEventsUntilDate,
+                TrackEvents = flagTrackEvents,
+                TrackReason = trackReason
             };
-            if (!_detailsOnlyIfTracked || flagTrackEvents || flagDebugEventsUntilDate != null)
-            {
-                flag.Reason = _withReasons ? reason : (EvaluationReason?)null;
-            }
-            if (flagTrackEvents)
-            {
-                flag.TrackEvents = true;
-            }
             _flags[flagKey] = flag;
             return this;
         }
@@ -206,8 +203,9 @@ namespace LaunchDarkly.Sdk.Server
     {
         internal LdValue Value { get; set; }
         internal int? Variation { get; set; }
-        internal int Version { get; set; }
+        internal int? Version { get; set; }
         internal bool TrackEvents { get; set; }
+        internal bool TrackReason { get; set; }
         internal UnixMillisecondTime? DebugEventsUntilDate { get; set; }
         internal EvaluationReason? Reason { get; set; }
 
@@ -218,6 +216,7 @@ namespace LaunchDarkly.Sdk.Server
                 return Variation == o.Variation &&
                     Version == o.Version &&
                     TrackEvents == o.TrackEvents &&
+                    TrackReason == o.TrackReason &&
                     DebugEventsUntilDate.Equals(o.DebugEventsUntilDate) &&
                     Object.Equals(Reason, o.Reason);
             }
@@ -226,7 +225,8 @@ namespace LaunchDarkly.Sdk.Server
 
         public override int GetHashCode()
         {
-            return new HashCodeBuilder().With(Variation).With(Version).With(TrackEvents).With(DebugEventsUntilDate).With(Reason).Value;
+            return new HashCodeBuilder().With(Variation).With(Version).With(TrackEvents).With(TrackReason).
+                With(DebugEventsUntilDate).With(Reason).Value;
         }
     }
 
@@ -255,9 +255,10 @@ namespace LaunchDarkly.Sdk.Server
             {
                 var flagMetadataObj = allMetadataObj.Name(entry.Key).Object();
                 var meta = entry.Value;
-                flagMetadataObj.Name("version").Int(meta.Version);
                 flagMetadataObj.MaybeName("variation", meta.Variation.HasValue).IntOrNull(meta.Variation);
+                flagMetadataObj.MaybeName("version", meta.Version.HasValue).IntOrNull(meta.Version);
                 flagMetadataObj.MaybeName("trackEvents", meta.TrackEvents).Bool(meta.TrackEvents);
+                flagMetadataObj.MaybeName("trackReason", meta.TrackReason).Bool(meta.TrackReason);
                 flagMetadataObj.MaybeName("debugEventsUntilDate", meta.DebugEventsUntilDate.HasValue)
                     .Long(meta.DebugEventsUntilDate?.Value ?? 0);
                 if (meta.Reason.HasValue)
@@ -297,7 +298,7 @@ namespace LaunchDarkly.Sdk.Server
                                         flag.Variation = reader.IntOrNull();
                                         break;
                                     case "version":
-                                        flag.Version = reader.Int();
+                                        flag.Version = reader.IntOrNull();
                                         break;
                                     case "trackEvents":
                                         flag.TrackEvents = reader.Bool();
