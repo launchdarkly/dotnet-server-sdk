@@ -6,7 +6,7 @@ using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal struct KindAndKey
+    internal readonly struct KindAndKey
     {
         public DataKind Kind { get; }
         public string Key { get; }

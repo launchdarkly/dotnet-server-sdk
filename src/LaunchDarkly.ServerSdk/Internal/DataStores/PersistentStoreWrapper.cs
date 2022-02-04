@@ -436,7 +436,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataStores
         }
     }
     
-    internal struct CacheKey : IEquatable<CacheKey>
+    internal readonly struct CacheKey : IEquatable<CacheKey>
     {
         public readonly DataKind Kind;
         public readonly string Key;

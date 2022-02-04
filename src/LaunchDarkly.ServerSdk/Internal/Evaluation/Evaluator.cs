@@ -42,9 +42,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         internal Func<string, BigSegmentsQueryResult> BigSegmentsGetter => _bigSegmentsGetter;
         internal Logger Logger => _logger;
 
-        internal struct EvalResult
+        internal readonly struct EvalResult
         {
-            internal EvaluationDetail<LdValue> Result;
+            internal readonly EvaluationDetail<LdValue> Result;
             internal readonly IList<EvaluationEvent> PrerequisiteEvents;
 
             internal EvalResult(EvaluationDetail<LdValue> result, IList<EvaluationEvent> events)

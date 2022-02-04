@@ -46,19 +46,25 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         private static PreprocessedData Preprocess(IEnumerable<string> included, IEnumerable<string> excluded) =>
             new PreprocessedData
-            {
-                IncludedSet = included.ToImmutableHashSet(),
-                ExcludedSet = excluded.ToImmutableHashSet()
-            };
+            (
+                includedSet: included.ToImmutableHashSet(),
+                excludedSet: excluded.ToImmutableHashSet()
+            );
 
-        internal struct PreprocessedData
+        internal readonly struct PreprocessedData
         {
-            internal ImmutableHashSet<string> IncludedSet { get; set; }
-            internal ImmutableHashSet<string> ExcludedSet { get; set; }
+            internal ImmutableHashSet<string> IncludedSet { get; }
+            internal ImmutableHashSet<string> ExcludedSet { get; }
+
+            public PreprocessedData(ImmutableHashSet<string> includedSet, ImmutableHashSet<string> excludedSet)
+            {
+                IncludedSet = includedSet;
+                ExcludedSet = excludedSet;
+            }
         }
     }
 
-    internal struct SegmentRule
+    internal readonly struct SegmentRule
     {
         internal IEnumerable<Clause> Clauses { get; }
         internal int? Weight { get; }

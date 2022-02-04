@@ -101,9 +101,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 MembershipQueryCount++;
                 if (Membership.TryGetValue(userKey, out var membership))
                 {
-                    return new BigSegmentsQueryResult { Membership = membership, Status = Status };
+                    return new BigSegmentsQueryResult( membership: membership, status: Status );
                 }
-                return new BigSegmentsQueryResult { Membership = null, Status = Status };
+                return new BigSegmentsQueryResult( membership: null, status: Status );
             }
         }
     }

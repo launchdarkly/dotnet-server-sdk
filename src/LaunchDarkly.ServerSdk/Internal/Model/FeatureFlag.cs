@@ -49,7 +49,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         }
     }
 
-    internal struct Rollout
+    internal readonly struct Rollout
     {
         internal RolloutKind Kind { get; }
         internal int? Seed { get; }
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         Experiment
     }
 
-    internal struct VariationOrRollout
+    internal readonly struct VariationOrRollout
     {
         internal int? Variation { get; }
         internal Rollout? Rollout { get; }
@@ -83,7 +83,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         }
     }
 
-    internal struct WeightedVariation
+    internal readonly struct WeightedVariation
     {
         internal int Variation { get; }
         internal int Weight { get; }
@@ -97,7 +97,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         }
     }
 
-    internal struct Target
+    internal readonly struct Target
     {
         internal IEnumerable<string> Values { get; }
         internal int Variation { get; }
@@ -112,17 +112,22 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         private static PreprocessedData Preprocess(IEnumerable<string> values) =>
             new PreprocessedData
-            {
-                ValuesSet = values.ToImmutableHashSet()
-            };
+            (
+                valuesSet: values.ToImmutableHashSet()
+            );
 
-        internal struct PreprocessedData
+        internal readonly struct PreprocessedData
         {
-            internal ImmutableHashSet<string> ValuesSet { get; set; }
+            internal ImmutableHashSet<string> ValuesSet { get; }
+
+            public PreprocessedData(ImmutableHashSet<string> valuesSet)
+            {
+                ValuesSet = valuesSet;
+            }
         }
     }
 
-    internal struct Prerequisite
+    internal readonly struct Prerequisite
     {
         internal string Key { get; }
         internal int Variation { get; }
@@ -134,7 +139,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         }
     }
 
-    internal struct FlagRule
+    internal readonly struct FlagRule
     {
         internal int? Variation { get; }
         internal Rollout? Rollout { get; }

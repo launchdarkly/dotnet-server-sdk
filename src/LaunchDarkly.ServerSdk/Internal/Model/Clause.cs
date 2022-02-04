@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-    internal struct Clause
+    internal readonly struct Clause
     {
         internal UserAttribute Attribute { get; }
         internal Operator Op { get; }

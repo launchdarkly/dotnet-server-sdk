@@ -71,19 +71,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         /// <returns>the query result</returns>
         internal BigSegmentsQueryResult GetUserMembership(string userKey)
         {
-            var ret = new BigSegmentsQueryResult();
             try
             {
-                ret.Membership = _cache.Get(userKey); // loads value from store via QueryMembership if not already cached
-                ret.Status = GetStatus().Stale ? BigSegmentsStatus.Stale : BigSegmentsStatus.Healthy;
+                IMembership membership = _cache.Get(userKey); // loads value from store via QueryMembership if not already cached
+                BigSegmentsStatus status = GetStatus().Stale ? BigSegmentsStatus.Stale : BigSegmentsStatus.Healthy;
+                return new BigSegmentsQueryResult(membership, status);
             }
             catch (Exception e)
             {
                 LogHelpers.LogException(_logger, "Big segment store returned error", e);
-                ret.Membership = null;
-                ret.Status = BigSegmentsStatus.StoreError;
+                return new BigSegmentsQueryResult(membership: null, BigSegmentsStatus.StoreError);
             }
-            return ret;
         }
 
         private IMembership QueryMembership(string userKey)

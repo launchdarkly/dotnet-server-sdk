@@ -23,10 +23,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             string.Format("{0}.g{1}", s.Key, s.Generation.Value);
 
         // This type is used when Evaluator is querying Big Segments
-        internal struct BigSegmentsQueryResult
+        internal readonly struct BigSegmentsQueryResult
         {
-            internal IMembership Membership { get; set; }
-            internal BigSegmentsStatus Status { get; set; }
+            internal IMembership Membership { get; }
+            internal BigSegmentsStatus Status { get; }
+
+            public BigSegmentsQueryResult(IMembership membership, BigSegmentsStatus status)
+            {
+                Membership = membership;
+                Status = status;
+            }
         }
     }
 }
