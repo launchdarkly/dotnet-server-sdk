@@ -27,7 +27,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             if (op == Operator.In)
             {
-                return new PreprocessedData { ValuesAsSet = values.ToImmutableHashSet() };
+                return new PreprocessedData(valuesAsSet: values.ToImmutableHashSet());
             }
             if (op == Operator.Matches)
             {
@@ -50,8 +50,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         private static PreprocessedData PreprocessValues(IEnumerable<LdValue> values, Func<LdValue, PreprocessedValue> fn) =>
             new PreprocessedData
-            {
-                Values = values.Select(value =>
+            (
+                values: values.Select(value =>
                 {
                     try
                     {
@@ -63,12 +63,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         return new PreprocessedValue();
                     }
                 }).ToImmutableList()
-            };
+            );
 
-        internal struct PreprocessedData
+        internal readonly struct PreprocessedData
         {
-            internal ImmutableHashSet<LdValue> ValuesAsSet { get; set; }
-            internal ImmutableList<PreprocessedValue> Values { get; set; }
+            internal ImmutableHashSet<LdValue> ValuesAsSet { get; }
+            internal ImmutableList<PreprocessedValue> Values { get; }
+
+            public PreprocessedData(ImmutableHashSet<LdValue> valuesAsSet = null, ImmutableList<PreprocessedValue> values = null)
+            {
+                ValuesAsSet = valuesAsSet;
+                Values = values;
+            }
         }
 
         internal readonly struct PreprocessedValue
