@@ -2,6 +2,16 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.3.2] - 2022-02-04
+### Fixed:
+- When using `AllFlagsState` to produce bootstrap data for the JavaScript SDK, the .NET SDK was not returning the correct metadata for evaluations that involved an experiment. As a result, the analytics events produced by the JavaScript SDK did not correctly reflect experimentation results.
+- Improved efficiency of the logic for processing flag/segment changes, which could cause high CPU usage if there were large numbers of flags. (Thanks, [JeffAshton](https://github.com/launchdarkly/dotnet-server-sdk/pull/153)!)
+- JSON data produced by `AllFlagsState` was sometimes larger than necessary due to the inclusion of null properties.
+- Network errors on polling requests were being logged at `Error` level, inconsistent with other equivalent kinds of errors. They now use `Warn` level.
+- If flag updates were unable to be stored due to a database error, the data store status is supposed to reflect this with the error value `StoreError`. That was not happening.
+- The type `LaunchDarkly.Sdk.UnixMillisecondTime` now serializes and deserializes correctly with `System.Text.Json`.
+- In analytics event data, `index` events were including an unnecessary `contextKind` property for anonymous users; this was not in the schema for that type of event and was ignored by LaunchDarkly.
+
 ## [6.3.1] - 2021-10-28
 ### Fixed:
 - The `HttpConfigurationBuilder` methods `Proxy` and `ConnectTimeout` were not working correctly: they were being applied to polling requests and analytics event posts, but not streaming requests. Now they apply to all requests. ([#148](https://github.com/launchdarkly/dotnet-server-sdk/issues/148))
