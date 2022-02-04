@@ -77,16 +77,10 @@ namespace LaunchDarkly.Sdk.Server
 
     public class CapturingDataSourceUpdates : IDataSourceUpdates
     {
-        public readonly EventSink<FullDataSet<ItemDescriptor>> Inits =
+        internal readonly EventSink<FullDataSet<ItemDescriptor>> Inits =
             new EventSink<FullDataSet<ItemDescriptor>>();
-        public readonly EventSink<UpsertParams> Upserts = new EventSink<UpsertParams>();
-        public readonly EventSink<StatusParams> StatusUpdates = new EventSink<StatusParams>();
-
-        public struct StatusParams
-        {
-            public DataSourceState State;
-            public DataSourceStatus.ErrorInfo? Error;
-        }
+        internal readonly EventSink<UpsertParams> Upserts = new EventSink<UpsertParams>();
+        internal readonly EventSink<DataSourceStatus> StatusUpdates = new EventSink<DataSourceStatus>();
 
         public struct UpsertParams
         {
@@ -95,23 +89,27 @@ namespace LaunchDarkly.Sdk.Server
             public ItemDescriptor Item;
         }
 
-        public DataSourceState State;
+        internal MockDataStoreStatusProvider MockDataStoreStatusProvider = new MockDataStoreStatusProvider();
 
-        public IDataStoreStatusProvider DataStoreStatusProvider => throw new NotImplementedException();
+        internal int InitsShouldFail = 0;
+
+        internal int UpsertsShouldFail = 0;
+
+        public IDataStoreStatusProvider DataStoreStatusProvider => MockDataStoreStatusProvider;
 
         public bool Init(FullDataSet<ItemDescriptor> allData)
         {
             Inits.Enqueue(allData);
-            return true;
+            return InitsShouldFail <= 0 || (--InitsShouldFail < 0);
         }
 
         public void UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError) =>
-            StatusUpdates.Enqueue(new StatusParams { State = newState, Error = newError });
+            StatusUpdates.Enqueue(new DataSourceStatus() { State = newState, LastError = newError });
 
         public bool Upsert(DataKind kind, string key, ItemDescriptor item)
         {
             Upserts.Enqueue(new UpsertParams { Kind = kind, Key = key, Item = item });
-            return true;
+            return UpsertsShouldFail <= 0 || (--UpsertsShouldFail < 0);
         }
     }
 
@@ -256,6 +254,21 @@ namespace LaunchDarkly.Sdk.Server
     internal abstract class MockDataSourceBase
     {
         internal IDataSourceUpdates UpdateSink { get; set; }
+    }
+
+    public sealed class MockDataStoreStatusProvider : IDataStoreStatusProvider
+    {
+        public DataStoreStatus Status { get; set; } = new DataStoreStatus { Available = true };
+
+        public bool StatusMonitoringEnabled { get; set; } = false;
+
+        public event EventHandler<DataStoreStatus> StatusChanged;
+
+        public void FireStatusChanged(DataStoreStatus status)
+        {
+            Status = status;
+            StatusChanged?.Invoke(this, status);
+        }
     }
 
     public class MockEventProcessor : IEventProcessor

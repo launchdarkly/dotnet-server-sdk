@@ -6,6 +6,7 @@ using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
 using Xunit.Abstractions;
 
+using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.MockResponses;
 
 namespace LaunchDarkly.Sdk.Server
@@ -15,11 +16,9 @@ namespace LaunchDarkly.Sdk.Server
         private static readonly FeatureFlag AlwaysTrueFlag = new FeatureFlagBuilder("always-true-flag")
             .OffWithValue(LdValue.Of(true)).Build();
 
-        private static Handler ValidPollingResponse =>
-            PollingResponse(MakeExpectedData().Build());
+        private static Handler ValidPollingResponse => PollingResponse(MakeExpectedData());
 
-        private static Handler ValidStreamingResponse =>
-            StreamWithInitialData(MakeExpectedData().Build());
+        private static Handler ValidStreamingResponse => StreamWithInitialData(MakeExpectedData());
 
         public LdClientEndToEndTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
@@ -306,7 +305,8 @@ namespace LaunchDarkly.Sdk.Server
                 );
         }
 
-        private static DataSetBuilder MakeExpectedData() => new DataSetBuilder().Flags(AlwaysTrueFlag);
+        private static FullDataSet<ItemDescriptor> MakeExpectedData() =>
+            new DataSetBuilder().Flags(AlwaysTrueFlag).Build();
 
         private static void VerifyClientStartedAndHasExpectedData(LdClient client, HttpServer server)
         {

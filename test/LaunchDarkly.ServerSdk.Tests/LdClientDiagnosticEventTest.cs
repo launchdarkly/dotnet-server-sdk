@@ -7,9 +7,11 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.TestHelpers;
+using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
 using Xunit.Abstractions;
 
+using static LaunchDarkly.Sdk.Server.MockResponses;
 using static LaunchDarkly.Sdk.Server.TestHttpUtils;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 using static LaunchDarkly.TestHelpers.JsonTestValue;
@@ -119,7 +121,8 @@ namespace LaunchDarkly.Sdk.Server
             // is enabled, we're setting a fake HTTP message handler so it doesn't try to do any real
             // HTTP requests that would fail and (depending on timing) disrupt the test.
             TestDiagnosticConfig(
-                c => c.Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                c => c.Http(Components.HttpConfiguration().MessageHandler(
+                    StreamWithEmptyData.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                 );
@@ -143,8 +146,7 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.DataSource(
                     Components.StreamingDataSource()
                         .InitialReconnectDelay(TimeSpan.FromSeconds(2))
-                    )
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                    ),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("reconnectTimeMillis", 2000)
@@ -156,7 +158,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             TestDiagnosticConfig(
                 c => c.DataSource(Components.PollingDataSource())
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                    .Http(Components.HttpConfiguration().MessageHandler(EmptyPollingResponse.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithPollingDefaults()
@@ -167,7 +169,7 @@ namespace LaunchDarkly.Sdk.Server
                     Components.PollingDataSource()
                         .PollInterval(TimeSpan.FromSeconds(45))
                     )
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                    .Http(Components.HttpConfiguration().MessageHandler(EmptyPollingResponse.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithPollingDefaults()
@@ -219,7 +221,7 @@ namespace LaunchDarkly.Sdk.Server
                         Components.HttpConfiguration()
                             .ConnectTimeout(TimeSpan.FromMilliseconds(8888))
                             .ReadTimeout(TimeSpan.FromMilliseconds(9999))
-                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
+                            .MessageHandler(StreamWithEmptyData.AsMessageHandler())
                     ),
                 null,
                 ExpectedConfigProps.Base()
@@ -235,7 +237,7 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.Http(
                         Components.HttpConfiguration()
                             .Proxy(proxy)
-                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
+                            .MessageHandler(StreamWithEmptyData.AsMessageHandler())
                     ),
                 null,
                 ExpectedConfigProps.Base()
@@ -250,7 +252,7 @@ namespace LaunchDarkly.Sdk.Server
                 c => c.Http(
                         Components.HttpConfiguration()
                             .Proxy(proxyWithAuth)
-                            .MessageHandler(StubMessageHandler.EmptyStreamingResponse())
+                            .MessageHandler(StreamWithEmptyData.AsMessageHandler())
                     ),
                 null,
                 ExpectedConfigProps.Base()
@@ -264,7 +266,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             TestDiagnosticConfig(
                 c => c.ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://custom"))
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                    .Http(Components.HttpConfiguration().MessageHandler(StreamWithEmptyData.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("customBaseURI", false) // this is the polling base URI, not relevant in streaming mode
@@ -275,7 +277,7 @@ namespace LaunchDarkly.Sdk.Server
             TestDiagnosticConfig(
                 c => c.ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://custom"))
                     .DataSource(Components.PollingDataSource())
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                    .Http(Components.HttpConfiguration().MessageHandler(EmptyPollingResponse.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithPollingDefaults()
@@ -288,7 +290,7 @@ namespace LaunchDarkly.Sdk.Server
                         .Streaming("http://custom-streaming")
                         .Polling("http://custom-polling")
                         .Events("http://custom-events"))
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                    .Http(Components.HttpConfiguration().MessageHandler(StreamWithEmptyData.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("customBaseURI", false) // this is the polling base URI, not relevant in streaming mode
@@ -303,7 +305,7 @@ namespace LaunchDarkly.Sdk.Server
                         .BaseUri(new Uri("http://custom"))
 #pragma warning restore CS0618
                     )
-                    .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyStreamingResponse())),
+                    .Http(Components.HttpConfiguration().MessageHandler(StreamWithEmptyData.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("customStreamURI", true)
@@ -315,7 +317,7 @@ namespace LaunchDarkly.Sdk.Server
                     Components.PollingDataSource().BaseUri(new Uri("http://custom"))
 #pragma warning restore CS0618
                     )
-                   .Http(Components.HttpConfiguration().MessageHandler(StubMessageHandler.EmptyPollingResponse())),
+                   .Http(Components.HttpConfiguration().MessageHandler(EmptyPollingResponse.AsMessageHandler())),
                 null,
                 ExpectedConfigProps.Base()
                     .WithPollingDefaults()
@@ -413,7 +415,7 @@ namespace LaunchDarkly.Sdk.Server
             var configBuilder = BasicConfig()
                 .DataSource(null)
                 .Events(eventsBuilder)
-                .Http(Components.HttpConfiguration().MessageHandler(new StubMessageHandler(HttpStatusCode.Unauthorized)))
+                .Http(Components.HttpConfiguration().MessageHandler(Error401Response.AsMessageHandler()))
                 .StartWaitTime(testStartWaitTime);
             configBuilder = modConfig is null ? configBuilder : modConfig(configBuilder);
             using (var client = new LdClient(configBuilder.Build()))

@@ -39,7 +39,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         internal Uri _baseUri;
         internal TimeSpan _initialReconnectDelay = DefaultInitialReconnectDelay;
-        internal StreamProcessor.EventSourceCreator _eventSourceCreator = null;
 
         /// <summary>
         /// Deprecated method for setting a custom base URI for the streaming service.
@@ -95,24 +94,16 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             return this;
         }
 
-        // Exposed for testing
-        internal StreamingDataSourceBuilder EventSourceCreator(StreamProcessor.EventSourceCreator eventSourceCreator)
-        {
-            _eventSourceCreator = eventSourceCreator;
-            return this;
-        }
-
         /// <inheritdoc/>
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
             var configuredBaseUri = _baseUri ??
                 StandardEndpoints.SelectBaseUri(context.Basic.ServiceEndpoints, e => e.StreamingBaseUri, "Streaming", context.Basic.Logger);
-            return new StreamProcessor(
+            return new StreamingDataSource(
                 context,
                 dataSourceUpdates,
                 configuredBaseUri,
-                _initialReconnectDelay,
-                _eventSourceCreator
+                _initialReconnectDelay
                 );
         }
 

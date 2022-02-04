@@ -16,7 +16,7 @@ using static LaunchDarkly.Sdk.Server.Internal.DataSources.StreamProcessorEvents;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal class StreamProcessor : IDataSource
+    internal class StreamingDataSource : IDataSource
     {
         // The read timeout for the stream is not the same read timeout that can be set in the SDK configuration.
         // It is a fixed value that is set to be slightly longer than the expected interval between heartbeats
@@ -45,12 +45,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         internal delegate IEventSource EventSourceCreator(Uri streamUri,
             HttpConfiguration httpConfig);
 
-        internal StreamProcessor(
+        internal StreamingDataSource(
             LdClientContext context,
             IDataSourceUpdates dataSourceUpdates,
             Uri baseUri,
-            TimeSpan initialReconnectDelay,
-            EventSourceCreator eventSourceCreator
+            TimeSpan initialReconnectDelay
             )
         {
             _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
@@ -69,7 +68,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 _dataSourceUpdates.DataStoreStatusProvider.StatusChanged += OnDataStoreStatusChanged;
             }
 
-            _es = (eventSourceCreator ?? CreateEventSource)(_streamUri, _httpConfig);
+            _es = CreateEventSource(_streamUri, _httpConfig);
             _es.MessageReceived += OnMessage;
             _es.Error += OnError;
             _es.Opened += OnOpen;
@@ -171,8 +170,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
                 _es.Restart(false);
             }
-            catch (StreamStoreException)
+            catch (StreamStoreException ex)
             {
+                var errorInfo = new DataSourceStatus.ErrorInfo
+                {
+                    Kind = DataSourceStatus.ErrorKind.StoreError,
+                    Message = (ex.InnerException ?? ex).Message,
+                    Time = DateTime.Now
+                };
+                _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted, errorInfo);
                 if (!_storeStatusMonitoringEnabled)
                 {
                     if (!_lastStoreUpdateFailed)
@@ -237,12 +243,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 case PUT:
                     var putData = ParsePutData(messageData);
-                    if (!_dataSourceUpdates.Init(putData.Data))
+                    if (!_dataSourceUpdates.Init(putData.Data)) // this also automatically sets the state to Valid
                     {
                         throw new StreamStoreException("failed to write full data set to data store");
                     }
                     _lastStoreUpdateFailed = false;
-                    _dataSourceUpdates.UpdateStatus(DataSourceState.Valid, null);
                     if (!_initialized.GetAndSet(true))
                     {
                         _initTask.TrySetResult(true);
