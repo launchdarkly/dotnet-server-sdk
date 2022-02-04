@@ -85,12 +85,13 @@
     <h5>Implements</h5>
     <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.UnixMillisecondTime.html">UnixMillisecondTime</a>&gt;</div>
     <div><span class="xref">System.IComparable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.UnixMillisecondTime.html">UnixMillisecondTime</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_UnixMillisecondTime_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class UnixMillisecondTime : ValueType, IEquatable&lt;UnixMillisecondTime&gt;, IComparable&lt;UnixMillisecondTime&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class UnixMillisecondTime : ValueType, IEquatable&lt;UnixMillisecondTime&gt;, IComparable&lt;UnixMillisecondTime&gt;, IJsonSerializable</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_UnixMillisecondTime_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -754,6 +755,9 @@ When converting to or from JSON, it is encoded as an integer.
   </div>
   <div>
       <span class="xref">System.IComparable&lt;&gt;</span>
+  </div>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
   </div>
 </article>
           </div>

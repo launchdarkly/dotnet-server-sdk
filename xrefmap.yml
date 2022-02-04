@@ -1134,6 +1134,51 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.LdValueConverter.WriteJsonValue
   fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.LdValueConverter.WriteJsonValue
   nameWithType: LdJsonConverters.LdValueConverter.WriteJsonValue
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter
+  name: LdJsonConverters.UnixMillisecondTimeConverter
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html
+  commentId: T:LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter
+  nameWithType: LdJsonConverters.UnixMillisecondTimeConverter
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.#ctor
+  name: UnixMillisecondTimeConverter()
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_UnixMillisecondTimeConverter__ctor
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.#ctor
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.UnixMillisecondTimeConverter()
+  nameWithType: LdJsonConverters.UnixMillisecondTimeConverter.UnixMillisecondTimeConverter()
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.#ctor*
+  name: UnixMillisecondTimeConverter
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_UnixMillisecondTimeConverter__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.#ctor
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.UnixMillisecondTimeConverter
+  nameWithType: LdJsonConverters.UnixMillisecondTimeConverter.UnixMillisecondTimeConverter
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.ReadJson(LaunchDarkly.JsonStream.JReader@)
+  name: ReadJson(ref JReader)
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_UnixMillisecondTimeConverter_ReadJson_LaunchDarkly_JsonStream_JReader__
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.ReadJson(LaunchDarkly.JsonStream.JReader@)
+  name.vb: ReadJson(ByRef JReader)
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.ReadJson(ref LaunchDarkly.JsonStream.JReader)
+  fullName.vb: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.ReadJson(ByRef LaunchDarkly.JsonStream.JReader)
+  nameWithType: LdJsonConverters.UnixMillisecondTimeConverter.ReadJson(ref JReader)
+  nameWithType.vb: LdJsonConverters.UnixMillisecondTimeConverter.ReadJson(ByRef JReader)
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.ReadJson*
+  name: ReadJson
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_UnixMillisecondTimeConverter_ReadJson_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.ReadJson
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.ReadJson
+  nameWithType: LdJsonConverters.UnixMillisecondTimeConverter.ReadJson
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.WriteJson(System.Object,LaunchDarkly.JsonStream.IValueWriter)
+  name: WriteJson(Object, IValueWriter)
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_UnixMillisecondTimeConverter_WriteJson_System_Object_LaunchDarkly_JsonStream_IValueWriter_
+  commentId: M:LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.WriteJson(System.Object,LaunchDarkly.JsonStream.IValueWriter)
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.WriteJson(System.Object, LaunchDarkly.JsonStream.IValueWriter)
+  nameWithType: LdJsonConverters.UnixMillisecondTimeConverter.WriteJson(Object, IValueWriter)
+- uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.WriteJson*
+  name: WriteJson
+  href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html#LaunchDarkly_Sdk_Json_LdJsonConverters_UnixMillisecondTimeConverter_WriteJson_
+  commentId: Overload:LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.WriteJson
+  fullName: LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.WriteJson
+  nameWithType: LdJsonConverters.UnixMillisecondTimeConverter.WriteJson
 - uid: LaunchDarkly.Sdk.Json.LdJsonConverters.UserConverter
   name: LdJsonConverters.UserConverter
   href: api/LaunchDarkly.Sdk.Json.LdJsonConverters.UserConverter.html

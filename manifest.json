@@ -173,6 +173,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Json.LdJsonConverters.UnixMillisecondTimeConverter.html",
+          "hash": "SibDEk6q8YzIZk/XbKC1qPFpzGI1VZri6nt1lIu+j+0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "build/api/LaunchDarkly.Sdk.Json.LdJsonConverters.UserConverter.yml",
       "output": {
         ".html": {
@@ -213,7 +225,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Json.html",
-          "hash": "umokHWPamSQgWKO/3fXUrGKljHNJo0Enhy1EZC+CTaM="
+          "hash": "wBsnuAQhy8NcEEmJomkm/Jamx8GFh9DUy1xB8rLbWV4="
         }
       },
       "is_incremental": false,
@@ -1269,7 +1281,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.UnixMillisecondTime.html",
-          "hash": "OkrGPVsaYthsgi0yWRhybruAkFmUhogg0cnW4iOhV/k="
+          "hash": "QoF4LyHG1B3GRy/Zc+UT49cvDA0psLgh/mWT4e3e9xE="
         }
       },
       "is_incremental": false,
@@ -1317,7 +1329,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "1tjxogbh8NiLUdjoT7PTgqqnu9WMfNSIB/LZAvHM3oE="
+          "hash": "8zlFsFOle2EAtTMPEmew76zWkSbvmAVTY9WNTcPMk5w="
         }
       },
       "is_incremental": false,
@@ -1329,7 +1341,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "A5Gp19rhsyiymhFQ1Pb2gJYv1dRQzIqf11tVT/9o58g="
+          "hash": "2aXI5ZFvWWJr1SbSlmw2DEuBvXDuawvWPxLy+Xj2/qc="
         }
       },
       "is_incremental": false,
@@ -1368,7 +1380,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 110,
+          "total_file_count": 111,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {
