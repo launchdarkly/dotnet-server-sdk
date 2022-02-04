@@ -32,18 +32,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             if (op == Operator.Matches)
             {
                 return PreprocessValues(values, value =>
-                    value.IsString ? new PreprocessedValue { Regex = new Regex(value.AsString) } :
+                    value.IsString ? new PreprocessedValue(regex: new Regex(value.AsString)) :
                     new PreprocessedValue());
             }
             if (op == Operator.Before || op == Operator.After)
             {
                 return PreprocessValues(values, value =>
-                    new PreprocessedValue { DateTime = Operator.ValueToDate(value) });
+                    new PreprocessedValue(dateTime: Operator.ValueToDate(value) ));
             }
             if (op == Operator.SemVerEqual || op == Operator.SemVerGreaterThan || op == Operator.SemVerLessThan)
             {
                 return PreprocessValues(values, value =>
-                    new PreprocessedValue { SemVer = Operator.ValueToSemVer(value) });
+                    new PreprocessedValue(semVer: Operator.ValueToSemVer(value) ));
             }
             return new PreprocessedData();
         }
@@ -71,11 +71,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             internal ImmutableList<PreprocessedValue> Values { get; set; }
         }
 
-        internal struct PreprocessedValue
+        internal readonly struct PreprocessedValue
         {
-            internal Regex Regex { get; set; }
-            internal DateTime? DateTime { get; set; }
-            internal SemanticVersion? SemVer { get; set; }
+            internal Regex Regex { get; }
+            internal DateTime? DateTime { get; }
+            internal SemanticVersion? SemVer { get; }
+
+            public PreprocessedValue(Regex regex = null, DateTime? dateTime = null, SemanticVersion? semVer = null)
+            {
+                Regex = regex;
+                DateTime = dateTime;
+                SemVer = semVer;
+            }
         }
     }
 }
