@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
@@ -6,7 +7,7 @@ using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
-    internal struct KindAndKey
+    internal readonly struct KindAndKey : IEquatable<KindAndKey>
     {
         public DataKind Kind { get; }
         public string Key { get; }
@@ -15,6 +16,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             Kind = kind;
             Key = key;
+        }
+
+        public bool Equals(KindAndKey other)
+        {
+            return Kind == other.Kind && Key == other.Key;
+        }
+
+        public override int GetHashCode()
+        {
+            return Kind.GetHashCode() * 17 + Key.GetHashCode();
         }
     }
 
