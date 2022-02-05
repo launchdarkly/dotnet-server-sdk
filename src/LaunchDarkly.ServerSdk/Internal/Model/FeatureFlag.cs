@@ -71,17 +71,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         Experiment
     }
 
-    internal struct VariationOrRollout
-    {
-        internal int? Variation { get; }
-        internal Rollout? Rollout { get; }
-
-        internal VariationOrRollout(int? variation, Rollout? rollout)
-        {
-            Variation = variation;
-            Rollout = rollout;
-        }
-    }
+    internal readonly record struct VariationOrRollout(int? Variation, Rollout? Rollout);
 
     internal struct WeightedVariation
     {

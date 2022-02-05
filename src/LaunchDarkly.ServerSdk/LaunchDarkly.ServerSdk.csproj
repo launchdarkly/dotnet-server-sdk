@@ -13,7 +13,7 @@
     <OutputType>Library</OutputType>
     <PackageId>LaunchDarkly.ServerSdk</PackageId>
     <RootNamespace>LaunchDarkly.Sdk.Server</RootNamespace>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <Description>LaunchDarkly Server-Side .NET SDK</Description>
     <Authors>LaunchDarkly</Authors>
     <Owners>LaunchDarkly</Owners>
@@ -38,6 +38,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IsExternalInit" Version="1.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
     <PackageReference Include="LaunchDarkly.CommonSdk" Version="5.5.0" />
     <PackageReference Include="LaunchDarkly.EventSource" Version="4.1.3" />
