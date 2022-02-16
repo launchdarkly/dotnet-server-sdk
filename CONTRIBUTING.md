@@ -27,19 +27,25 @@ Other support code is in the packages [`LaunchDarkly.EventSource`](https://githu
  
 To install all required packages:
 
-```
+```bash
 dotnet restore
 ```
 
 Then, to build the SDK for all target frameworks:
 
-```
+```bash
 dotnet build src/LaunchDarkly.ServerSdk
+```
+
+Or, in Linux:
+
+```bash
+make
 ```
 
 Or, to build for only one target framework (in this example, .NET Standard 2.0):
 
-```
+```bash
 dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
 ```
 
@@ -47,11 +53,23 @@ dotnet build src/LaunchDarkly.ServerSdk -f netstandard2.0
  
 To run all unit tests:
 
-```
+```bash
 dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj
 ```
 
+Or, in Linux:
+
+```bash
+make test
+```
+
 Note that the unit tests can only be run in Debug configuration. There is an `InternalsVisibleTo` directive that allows the test code to access internal members of the library, and assembly strong-naming in the Release configuration interferes with this.
+
+To run the SDK contract test suite in Linux (see [`contract-tests/README.md`](./contract-tests/README.md)):
+
+```bash
+make contract-tests
+```
 
 ## Documentation in code
 
