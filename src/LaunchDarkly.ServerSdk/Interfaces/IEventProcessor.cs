@@ -41,11 +41,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         void RecordCustomEvent(EventProcessorTypes.CustomEvent e);
 
         /// <summary>
-        /// Records an alias event.
-        /// </summary>
-        void RecordAliasEvent(EventProcessorTypes.AliasEvent e);
-
-        /// <summary>
         /// Specifies that any buffered events should be sent as soon as possible, rather than waiting
         /// for the next flush interval.
         /// </summary>

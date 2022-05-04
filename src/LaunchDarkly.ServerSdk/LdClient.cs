@@ -539,27 +539,6 @@ namespace LaunchDarkly.Sdk.Server
             });
         }
 
-        /// <inheritdoc/>
-        public void Alias(User currentUser, User previousUser)
-        {
-            if (currentUser == null || previousUser == null ||
-                string.IsNullOrEmpty(currentUser.Key) || string.IsNullOrEmpty(previousUser.Key))
-            {
-                _log.Warn("Alias called with null user or null user key");
-                return;
-            }
-            _eventProcessor.RecordAliasEvent(new EventProcessorTypes.AliasEvent
-            {
-                Timestamp = UnixMillisecondTime.Now,
-                CurrentKey = currentUser.Key,
-                CurrentKind = currentUser.Anonymous ? EventProcessorTypes.ContextKind.AnonymousUser :
-                    EventProcessorTypes.ContextKind.User,
-                PreviousKey = previousUser.Key,
-                PreviousKind = previousUser.Anonymous ? EventProcessorTypes.ContextKind.AnonymousUser :
-                    EventProcessorTypes.ContextKind.User
-            });
-        }
-
         /// <summary>
         /// Shuts down the client and releases any resources it is using.
         /// </summary>

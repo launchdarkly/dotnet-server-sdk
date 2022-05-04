@@ -66,7 +66,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         internal int _capacity = DefaultCapacity;
         internal TimeSpan _diagnosticRecordingInterval = DefaultDiagnosticRecordingInterval;
         internal TimeSpan _flushInterval = DefaultFlushInterval;
-        internal bool _inlineUsersInEvents = false;
         internal HashSet<UserAttribute> _privateAttributes = new HashSet<UserAttribute>();
         internal int _userKeysCapacity = DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = DefaultUserKeysFlushInterval;
@@ -192,21 +191,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets whether to include full user details in every analytics event.
-        /// </summary>
-        /// <remarks>
-        /// The default value is <see langword="false"/>: events will only include the user key, except for one
-        /// "index" event that provides the full details for the user.
-        /// </remarks>
-        /// <param name="inlineUsersInEvents">true if you want full user details in each event</param>
-        /// <returns>the builder</returns>
-        public EventProcessorBuilder InlineUsersInEvents(bool inlineUsersInEvents)
-        {
-            _inlineUsersInEvents = inlineUsersInEvents;
-            return this;
-        }
-
-        /// <summary>
         /// Marks a set of attribute names as private.
         /// </summary>
         /// <remarks>
@@ -322,7 +306,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 EventFlushInterval = _flushInterval,
                 EventsUri = configuredBaseUri.AddPath("bulk"),
                 DiagnosticUri = configuredBaseUri.AddPath("diagnostic"),
-                InlineUsersInEvents = _inlineUsersInEvents,
                 PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
                 UserKeysCapacity = _userKeysCapacity,
                 UserKeysFlushInterval = _userKeysFlushInterval

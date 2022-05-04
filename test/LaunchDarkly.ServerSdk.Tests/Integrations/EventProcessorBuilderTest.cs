@@ -60,14 +60,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
-        public void InlineUsersInEvents()
-        {
-            var prop = _tester.Property(b => b._inlineUsersInEvents, (b, v) => b.InlineUsersInEvents(v));
-            prop.AssertDefault(false);
-            prop.AssertCanSet(true);
-        }
-
-        [Fact]
         public void PrivateAttributes()
         {
             var b = _tester.New();

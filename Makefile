@@ -12,6 +12,12 @@ TEMP_TEST_OUTPUT=/tmp/sdk-contract-test-service.log
 BUILDFRAMEWORKS ?= netcoreapp2.1
 TESTFRAMEWORK ?= netcoreapp2.1
 
+# temporary skips for contract tests that can't pass till more U2C work is done
+TEST_HARNESS_PARAMS := $(TEST_HARNESS_PARAMS) \
+	-skip events/alias \
+	-skip events/custom \
+	-skip events/user/inlineUsers=true
+
 build-contract-tests:
 	@cd contract-tests && dotnet build TestService.csproj
 

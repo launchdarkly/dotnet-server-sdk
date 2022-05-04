@@ -72,10 +72,6 @@ namespace TestService
                     }
                     break;
 
-                case "aliasEvent":
-                    _client.Alias(command.AliasEvent.User, command.AliasEvent.PreviousUser);
-                    break;
-
                 case "flushEvents":
                     _client.Flush();
                     break;
@@ -225,8 +221,7 @@ namespace TestService
             {
                 endpoints.Events(eventParams.BaseUri);
                 var events = Components.SendEvents()
-                    .AllAttributesPrivate(eventParams.AllAttributesPrivate)
-                    .InlineUsersInEvents(eventParams.InlineUsers);
+                    .AllAttributesPrivate(eventParams.AllAttributesPrivate);
                 if (eventParams.Capacity.HasValue && eventParams.Capacity.Value > 0)
                 {
                     events.Capacity(eventParams.Capacity.Value);

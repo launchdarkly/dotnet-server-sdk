@@ -131,52 +131,5 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// </summary>
             public double? MetricValue { get; set; }
         }
-
-        /// <summary>
-        /// Parameters for <see cref="IEventProcessor.RecordAliasEvent(AliasEvent)"/>.
-        /// </summary>
-        public struct AliasEvent
-        {
-            /// <summary>
-            /// Date/timestamp of the event.
-            /// </summary>
-            public UnixMillisecondTime Timestamp { get; set; }
-
-            /// <summary>
-            /// Key of the new user.
-            /// </summary>
-            public string CurrentKey { get; set; }
-
-            /// <summary>
-            /// Type of the new user.
-            /// </summary>
-            public ContextKind CurrentKind { get; set; }
-
-            /// <summary>
-            /// Key of the previous user.
-            /// </summary>
-            public string PreviousKey { get; set; }
-
-            /// <summary>
-            /// Type of the previous user.
-            /// </summary>
-            public ContextKind PreviousKind { get; set; }
-        }
-
-        /// <summary>
-        /// Used with <see cref="AliasEvent"/> to indicate the category of a key.
-        /// </summary>
-        public enum ContextKind
-        {
-            /// <summary>
-            /// The key belongs to a non-anonymous user.
-            /// </summary>
-            User,
-
-            /// <summary>
-            /// The key belongs to an anonymous user.
-            /// </summary>
-            AnonymousUser
-        }
     }
 }

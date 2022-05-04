@@ -198,7 +198,6 @@ namespace LaunchDarkly.Sdk.Server
                     .Capacity(333)
                     .DiagnosticRecordingInterval(TimeSpan.FromMinutes(32))
                     .FlushInterval(TimeSpan.FromMilliseconds(555))
-                    .InlineUsersInEvents(true)
                     .UserKeysCapacity(444)
                     .UserKeysFlushInterval(TimeSpan.FromMinutes(23)),
                 ExpectedConfigProps.Base()
@@ -207,7 +206,6 @@ namespace LaunchDarkly.Sdk.Server
                     .Set("diagnosticRecordingIntervalMillis", TimeSpan.FromMinutes(32).TotalMilliseconds)
                     .Set("eventsCapacity", 333)
                     .Set("eventsFlushIntervalMillis", 555)
-                    .Set("inlineUsersInEvents", true)
                     .Set("userKeysCapacity", 444)
                     .Set("userKeysFlushIntervalMillis", TimeSpan.FromMinutes(23).TotalMilliseconds)
                 );
