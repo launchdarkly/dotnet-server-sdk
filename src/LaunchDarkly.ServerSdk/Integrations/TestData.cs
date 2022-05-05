@@ -191,7 +191,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     {
                         flag = new FeatureFlag(flag.Key,
                             version,
-                            flag.Deleted, flag.On, flag.Prerequisites, flag.Targets, flag.Rules,
+                            flag.Deleted, flag.On, flag.Prerequisites, flag.Targets, null, flag.Rules,
                             flag.Fallthrough, flag.OffVariation, flag.Variations, flag.Salt,
                             flag.TrackEvents, flag.TrackEventsFallthrough, flag.DebugEventsUntilDate, flag.ClientSide);
                     }
@@ -215,8 +215,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 {
                     segment = new Segment(segment.Key,
                         newVersion,
-                        segment.Deleted, segment.Included, segment.Excluded, segment.Rules, segment.Salt,
-                        segment.Unbounded, segment.Generation);
+                        segment.Deleted, segment.Included, segment.Excluded, segment.IncludedContexts, segment.ExcludedContexts,
+                        segment.Rules, segment.Salt, segment.Unbounded, segment.UnboundedContextKind, segment.Generation);
                 }
                 newItem = new ItemDescriptor(newVersion, segment);
                 _currentSegments[segment.Key] = newItem;

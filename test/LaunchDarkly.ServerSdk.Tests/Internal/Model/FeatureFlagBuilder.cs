@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal FeatureFlag Build()
         {
             return new FeatureFlag(_key, _version, _deleted, _on, _prerequisites,
-                _targets, _rules, _fallthrough, _offVariation, _variations, _salt,
+                _targets, null, _rules, _fallthrough, _offVariation, _variations, _salt,
                 _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _clientSide);
         }
 
@@ -246,20 +246,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal class ClauseBuilder
     {
-        private UserAttribute _attribute;
+        private string _attribute;
         private Operator _op;
         private List<LdValue> _values = new List<LdValue>();
         private bool _negate;
 
         internal Clause Build()
         {
-            return new Clause(_attribute, _op, _values, _negate);
+            return new Clause(null, _attribute, _op, _values, _negate);
         }
 
-        public ClauseBuilder Attribute(string attribute) =>
-            Attribute(UserAttribute.ForName(attribute));
-
-        public ClauseBuilder Attribute(UserAttribute attribute)
+        public ClauseBuilder Attribute(string attribute)
         {
             _attribute = attribute;
             return this;

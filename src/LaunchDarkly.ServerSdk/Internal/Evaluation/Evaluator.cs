@@ -269,8 +269,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 if (rollout.HasValue && rollout.Value.Variations.Count() > 0)
                 {
                     WeightedVariation? selectedVariation = null;
-                    var bucketBy = rollout.Value.BucketBy.GetValueOrDefault(UserAttribute.Key);
-                    float bucket = Bucketing.BucketUser(rollout.Value.Seed, _user, _flag.Key, bucketBy, _flag.Salt);
+                    float bucket = Bucketing.BucketUser(rollout.Value.Seed, _user, _flag.Key, rollout.Value.BucketBy, _flag.Salt);
                     float sum = 0F;
                     foreach (WeightedVariation wv in rollout.Value.Variations)
                     {
@@ -337,7 +336,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
             private bool MatchClauseNoSegments(Clause clause)
             {
-                var userValue = _user.GetAttribute(clause.Attribute);
+                var userValue = _user.GetAttribute(UserAttribute.ForName(clause.Attribute));
                 if (userValue.IsNull)
                 {
                     return false;
@@ -456,8 +455,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
 
                 // All of the clauses are met. See if the user buckets in
-                var by = segmentRule.BucketBy.GetValueOrDefault(UserAttribute.Key);
-                double bucket = Bucketing.BucketUser(null, _user, segment.Key, by, segment.Salt);
+                double bucket = Bucketing.BucketUser(null, _user, segment.Key, segmentRule.BucketBy, segment.Salt);
                 double weight = (double)segmentRule.Weight / 100000F;
                 return bucket < weight;
             }

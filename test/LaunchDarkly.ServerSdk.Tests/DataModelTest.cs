@@ -179,6 +179,10 @@ namespace LaunchDarkly.Sdk.Server
     ""targets"": [
         { ""variation"": 1, ""values"": [""key1"", ""key2""] }
     ],
+    ""contextTargets"": [
+        { ""contextKind"": ""org"", ""variation"": 2, ""values"": [""key3""] },
+        { ""contextKind"": ""user"", ""variation"": 1, ""values"": [] }
+    ],
     ""rules"": [
         {
             ""id"": ""id0"",
@@ -189,6 +193,12 @@ namespace LaunchDarkly.Sdk.Server
                     ""op"": ""in"",
                     ""values"": [ ""Lucy"", ""Mina"" ],
                     ""negate"": true
+                },
+                {
+                    ""contextKind"": ""org"",
+                    ""attribute"": ""key"",
+                    ""op"": ""in"",
+                    ""values"": [ ""org-key"" ]
                 }
             ],
             ""trackEvents"": true
@@ -196,6 +206,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             ""id"": ""id1"",
             ""rollout"": {
+                ""contextKind"": ""org"",
                 ""variations"": [
                     { ""variation"": 2, ""weight"": 40000 },
                     { ""variation"": 1, ""weight"": 60000, ""untracked"": true }
@@ -248,10 +259,19 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.Collection(r.Clauses,
                         c =>
                         {
-                            Assert.Equal(UserAttribute.Name, c.Attribute);
+                            Assert.Null(c.ContextKind);
+                            Assert.Equal("name", c.Attribute);
                             Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(ImmutableList.Create(LdValue.Of("Lucy"), LdValue.Of("Mina")), c.Values);
                             Assert.True(c.Negate);
+                        },
+                        c =>
+                        {
+                            Assert.Equal("org", c.ContextKind);
+                            Assert.Equal("key", c.Attribute);
+                            Assert.Equal(Operator.In, c.Op);
+                            Assert.Equal(ImmutableList.Create(LdValue.Of("org-key")), c.Values);
+                            Assert.False(c.Negate);
                         });
                 },
                 r =>
@@ -260,6 +280,7 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.False(r.TrackEvents);
                     Assert.Null(r.Variation);
                     Assert.NotNull(r.Rollout);
+                    Assert.Equal("org", r.Rollout.Value.ContextKind);
                     Assert.Collection(r.Rollout.Value.Variations,
                         v =>
                         {
@@ -273,7 +294,7 @@ namespace LaunchDarkly.Sdk.Server
                             Assert.Equal(60000, v.Weight);
                             Assert.True(v.Untracked);
                         });
-                    Assert.Equal(UserAttribute.Email, r.Rollout.Value.BucketBy);
+                    Assert.Equal("email", r.Rollout.Value.BucketBy);
                     Assert.Equal(RolloutKind.Experiment, r.Rollout.Value.Kind);
                     Assert.Equal(123, r.Rollout.Value.Seed);
                     Assert.Empty(r.Clauses);
@@ -295,10 +316,17 @@ namespace LaunchDarkly.Sdk.Server
     ""deleted"": false,
     ""included"": [""key1"", ""key2""],
     ""excluded"": [""key3"", ""key4""],
+    ""includedContexts"": [
+        { ""contextKind"": ""org"", ""values"": [""key5""] }
+    ],
+    ""excludedContexts"": [
+        { ""contextKind"": ""org"", ""values"": [""key6""] }
+    ],
     ""salt"": ""123"",
     ""rules"": [
         {
             ""weight"": 50000,
+            ""rolloutContextKind"": ""org"",
             ""bucketBy"": ""email"",
             ""clauses"": [
                 {
@@ -314,6 +342,7 @@ namespace LaunchDarkly.Sdk.Server
         }
     ],
     ""unbounded"": true,
+    ""unboundedContextKind"": ""org"",
     ""generation"": 51
 }";
 
@@ -324,16 +353,28 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal("123", segment.Salt);
             Assert.Equal(ImmutableList.Create("key1", "key2"), segment.Included);
             Assert.Equal(ImmutableList.Create("key3", "key4"), segment.Excluded);
-            
+            Assert.Collection(segment.IncludedContexts,
+                t =>
+                {
+                    Assert.Equal("org", t.ContextKind);
+                    Assert.Equal(ImmutableList.Create("key5"), t.Values);
+                });
+            Assert.Collection(segment.ExcludedContexts,
+                t =>
+                {
+                    Assert.Equal("org", t.ContextKind);
+                    Assert.Equal(ImmutableList.Create("key6"), t.Values);
+                });
             Assert.Collection(segment.Rules,
                 r =>
                 {
                     Assert.Equal(50000, r.Weight);
-                    Assert.Equal(UserAttribute.Email, r.BucketBy);
+                    Assert.Equal("org", r.RolloutContextKind);
+                    Assert.Equal("email", r.BucketBy);
                     Assert.Collection(r.Clauses,
                         c =>
                         {
-                            Assert.Equal(UserAttribute.Name, c.Attribute);
+                            Assert.Equal("name", c.Attribute);
                             Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(new List<LdValue> { LdValue.Of("Lucy"), LdValue.Of("Mina") }, c.Values);
                             Assert.True(c.Negate);
@@ -347,6 +388,7 @@ namespace LaunchDarkly.Sdk.Server
                 });
 
             Assert.True(segment.Unbounded);
+            Assert.Equal("org", segment.UnboundedContextKind);
             Assert.Equal(51, segment.Generation);
         }
     }

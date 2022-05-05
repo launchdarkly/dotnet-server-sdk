@@ -64,7 +64,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void MatchedWithRule()
         {
             var clause = ClauseBuilder.ShouldMatchUser(baseUser);
-            var rule = new SegmentRule(new List<Clause> { clause }, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, null, null, null);
             var segment = new SegmentBuilder("segmentkey").Unbounded(true).Generation(2)
                 .Rules(rule)
                 .Build();
@@ -83,7 +83,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void UnmatchedByExcludeRegardlessOfRule()
         {
             var clause = ClauseBuilder.ShouldMatchUser(baseUser);
-            var rule = new SegmentRule(new List<Clause> { clause }, 0, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, 0, null, null);
             var segment = new SegmentBuilder("segmentkey").Unbounded(true).Generation(2)
                 .Rules(rule)
                 .Build();

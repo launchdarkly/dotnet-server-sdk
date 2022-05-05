@@ -41,7 +41,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void MatchingRuleWithFullRollout()
         {
             var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause }, 100000, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, 100000, null, null);
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Build();
             Assert.True(SegmentMatchesUser(s, u));
@@ -51,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void MatchingRuleWithZeroRollout()
         {
             var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause }, 0, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, 0, null, null);
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Build();
             Assert.False(SegmentMatchesUser(s, u));
@@ -62,7 +62,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bob")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null, null);
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();
             Assert.True(SegmentMatchesUser(s, u));
@@ -73,7 +73,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bill")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null, null);
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
             var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();
             Assert.False(SegmentMatchesUser(s, u));
