@@ -594,7 +594,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 clauseObj.Name("attribute").String(c.Attribute);
                 clauseObj.Name("op").String(c.Op.Name);
                 WriteValues(clauseObj.Name("values"), c.Values);
-                clauseObj.MaybeName("negate", c.Negate).Bool(c.Negate);
+                clauseObj.Name("negate").Bool(c.Negate);
                 clauseObj.End();
             }
             arr.End();

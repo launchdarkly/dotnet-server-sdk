@@ -198,7 +198,8 @@ namespace LaunchDarkly.Sdk.Server
                     ""contextKind"": ""org"",
                     ""attribute"": ""key"",
                     ""op"": ""in"",
-                    ""values"": [ ""org-key"" ]
+                    ""values"": [ ""org-key"" ],
+                    ""negate"": false
                 }
             ],
             ""trackEvents"": true
