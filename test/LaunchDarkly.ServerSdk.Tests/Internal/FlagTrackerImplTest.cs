@@ -74,16 +74,16 @@ namespace LaunchDarkly.Sdk.Server.Internal
         public void FlagValueChangeListener()
         {
             var flagKey = "important-flag";
-            var user = User.WithKey("important-user");
-            var otherUser = User.WithKey("unimportant-user");
+            var user = Context.New("important-user");
+            var otherUser = Context.New("unimportant-user");
             
-            var resultMap = new Dictionary<KeyValuePair<string, User>, LdValue>();
+            var resultMap = new Dictionary<KeyValuePair<string, Context>, LdValue>();
             
             var tracker = new FlagTrackerImpl(_dataSourceUpdates, (key, u) =>
-                resultMap[new KeyValuePair<string, User>(key, u)]);
+                resultMap[new KeyValuePair<string, Context>(key, u)]);
 
-            resultMap[new KeyValuePair<string, User>(flagKey, user)] = LdValue.Of(false);
-            resultMap[new KeyValuePair<string, User>(flagKey, otherUser)] = LdValue.Of(false);
+            resultMap[new KeyValuePair<string, Context>(flagKey, user)] = LdValue.Of(false);
+            resultMap[new KeyValuePair<string, Context>(flagKey, otherUser)] = LdValue.Of(false);
 
             var eventSink1 = new EventSink<FlagValueChangeEvent>();
             var eventSink2 = new EventSink<FlagValueChangeEvent>();
@@ -101,7 +101,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             eventSink3.ExpectNoValue();
 
             // make the flag true for the first user only, and broadcast a flag change event
-            resultMap[new KeyValuePair<string, User>(flagKey, user)] = LdValue.Of(true);
+            resultMap[new KeyValuePair<string, Context>(flagKey, user)] = LdValue.Of(true);
             var flagV1 = new FeatureFlagBuilder(flagKey).Version(1).Build();
             _dataSourceUpdates.Upsert(DataModel.Features, flagKey, DescriptorOf(flagV1));
 

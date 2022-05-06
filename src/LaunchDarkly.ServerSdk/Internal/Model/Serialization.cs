@@ -391,7 +391,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 {
                     ruleObj.Name("rolloutContextKind").String(r.RolloutContextKind);
                 }
-                ruleObj.MaybeName("bucketBy", !string.IsNullOrEmpty(r.BucketBy)).String(r.BucketBy);
+                ruleObj.MaybeName("bucketBy", r.BucketBy.Defined).String(r.BucketBy.ToString());
                 ruleObj.End();
             }
             rulesArr.End();
@@ -575,8 +575,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     variationObj.End();
                 }
                 variationsArr.End();
-                rolloutObj.MaybeName("bucketBy", !string.IsNullOrEmpty(rollout.Value.BucketBy)).
-                    String(rollout.Value.BucketBy);
+                rolloutObj.MaybeName("bucketBy", rollout.Value.BucketBy.Defined).
+                    String(rollout.Value.BucketBy.ToString());
                 rolloutObj.End();
             }
         }
@@ -591,7 +591,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 {
                     clauseObj.Name("contextKind").String(c.ContextKind);
                 }
-                clauseObj.Name("attribute").String(c.Attribute);
+                clauseObj.Name("attribute").String(c.Attribute.ToString());
                 clauseObj.Name("op").String(c.Op.Name);
                 WriteValues(clauseObj.Name("values"), c.Values);
                 clauseObj.Name("negate").Bool(c.Negate);
@@ -677,13 +677,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return builder.ToImmutable();
         }
 
-        internal static string AttrRefOrName(string contextKind, string attrString)
+        internal static AttributeRef AttrRefOrName(string contextKind, string attrString)
         {
-            // This is a placeholder for logic that we will add once we have the AttributeRef type:
             // If contextKind is specified, then attrString should be interpreted as an attribute reference
             // which could be a slash-delimited path. If contextKind is not specified, then attrString should
             // be interpreted as a literal attribute name only.
-            return attrString;
+            if (string.IsNullOrEmpty(attrString))
+            {
+                return new AttributeRef();
+            }
+            if (string.IsNullOrEmpty(contextKind))
+            {
+                return AttributeRef.FromLiteral(attrString);
+            }
+            return AttributeRef.FromPath(attrString);
         }
     }
 }

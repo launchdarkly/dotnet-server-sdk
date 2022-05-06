@@ -58,23 +58,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
         /// <summary>
         /// Called by the evaluator when it needs to get the Big Segment membership state for
-        /// a user.
+        /// a context.
         /// </summary>
         /// <remarks>
-        /// If there is a cached membership state for the user, it returns the cached state. Otherwise,
+        /// If there is a cached membership state for the context, it returns the cached state. Otherwise,
         /// it converts the user key into the hash string used by the BigSegmentStore, queries the store,
         /// and caches the result. The returned status value indicates whether the query succeeded, and
         /// whether the result (regardless of whether it was from a new query or the cache) should be
         /// considered "stale".
         /// </remarks>
-        /// <param name="userKey">the (unhashed) user key</param>
+        /// <param name="contextKey">the (unhashed) context key</param>
         /// <returns>the query result</returns>
-        internal BigSegmentsQueryResult GetUserMembership(string userKey)
+        internal BigSegmentsQueryResult GetUserMembership(string contextKey)
         {
             var ret = new BigSegmentsQueryResult();
             try
             {
-                ret.Membership = _cache.Get(userKey); // loads value from store via QueryMembership if not already cached
+                ret.Membership = _cache.Get(contextKey); // loads value from store via QueryMembership if not already cached
                 ret.Status = GetStatus().Stale ? BigSegmentsStatus.Stale : BigSegmentsStatus.Healthy;
             }
             catch (Exception e)
@@ -86,10 +86,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             return ret;
         }
 
-        private IMembership QueryMembership(string userKey)
+        private IMembership QueryMembership(string contextKey)
         {
-            var hash = BigSegmentUserKeyHash(userKey);
-            _logger.Debug("Querying Big Segment state for user hash {0}", hash);
+            var hash = BigSegmentUserKeyHash(contextKey);
+            _logger.Debug("Querying Big Segment state for context hash {0}", hash);
             return AsyncUtils.WaitSafely(() => _store.GetMembershipAsync(hash));
         }
 

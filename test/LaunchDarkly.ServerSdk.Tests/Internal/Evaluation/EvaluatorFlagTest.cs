@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
 using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTestUtil;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
@@ -13,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
     public class EvaluatorFlagTest
     {
-        private static readonly User baseUser = User.WithKey("userkey");
+        private static readonly Context baseUser = Context.New("userkey");
         private static readonly LdValue fallthroughValue = LdValue.Of("fallthrough");
         private static readonly LdValue offValue = LdValue.Of("off");
         private static readonly LdValue onValue = LdValue.Of("on");
@@ -27,11 +25,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(offValue, 1, EvaluationReason.OffReason);
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -42,11 +40,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.OffReason);
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -58,12 +56,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -75,12 +73,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -92,11 +90,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(0)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(fallthroughValue, 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -108,12 +106,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(999)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -125,12 +123,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughVariation(-1)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -142,12 +140,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Fallthrough(new VariationOrRollout(null, null))
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -156,15 +154,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var f = new FeatureFlagBuilder("feature")
                 .On(true)
                 .OffVariation(1)
-                .FallthroughRollout(new Rollout(RolloutKind.Rollout, null, null, new List<WeightedVariation>(), null))
+                .FallthroughRollout(new Rollout(RolloutKind.Rollout, null, null, new List<WeightedVariation>(), new AttributeRef()))
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -176,7 +174,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughRollout(rollout)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             Assert.Equal(EvaluationReasonKind.Fallthrough, result.Result.Reason.Kind);
             Assert.True(result.Result.Reason.InExperiment);
@@ -191,7 +189,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughRollout(rollout)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             Assert.Equal(EvaluationReasonKind.Fallthrough, result.Result.Reason.Kind);
             Assert.False(result.Result.Reason.InExperiment);
@@ -206,7 +204,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughRollout(rollout)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             Assert.Equal(EvaluationReasonKind.Fallthrough, result.Result.Reason.Kind);
             Assert.False(result.Result.Reason.InExperiment);
@@ -223,12 +221,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
             var evaluator = BasicEvaluator.WithNonexistentFlag("feature1");
-            var result = evaluator.Evaluate(f0, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(f0, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(offValue, 1,
                 EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         [Fact]
@@ -251,18 +249,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1);
 
-            var result = evaluator.Evaluate(f0, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(f0, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(offValue, 1,
                 EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
 
-            Assert.Equal(1, result.PrerequisiteEvents.Count);
-            EvaluationEvent e = result.PrerequisiteEvents[0];
-            Assert.Equal(f1.Key, e.FlagKey);
-            Assert.Equal(LdValue.Of("go"), e.Value);
-            Assert.Equal(f1.Version, e.FlagVersion);
-            Assert.Equal(f0.Key, e.PrerequisiteOf);
+            Assert.Collection(result.PrerequisiteEvals,
+                e =>
+                {
+                    Assert.Equal(f1.Key, e.PrerequisiteFlag.Key);
+                    Assert.Equal(LdValue.Of("go"), e.Result.Value);
+                    Assert.Equal(f1.Version, e.PrerequisiteFlag.Version);
+                    Assert.Equal(f0.Key, e.PrerequisiteOfFlagKey);
+                });
         }
 
         [Fact]
@@ -284,18 +284,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1);
 
-            var result = evaluator.Evaluate(f0, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(f0, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(offValue, 1,
                 EvaluationReason.PrerequisiteFailedReason("feature1"));
             Assert.Equal(expected, result.Result);
 
-            Assert.Equal(1, result.PrerequisiteEvents.Count);
-            EvaluationEvent e = result.PrerequisiteEvents[0];
-            Assert.Equal(f1.Key, e.FlagKey);
-            Assert.Equal(LdValue.Of("nogo"), e.Value);
-            Assert.Equal(f1.Version, e.FlagVersion);
-            Assert.Equal(f0.Key, e.PrerequisiteOf);
+            Assert.Collection(result.PrerequisiteEvals,
+                e =>
+                {
+                    Assert.Equal(f1.Key, e.PrerequisiteFlag.Key);
+                    Assert.Equal(LdValue.Of("nogo"), e.Result.Value);
+                    Assert.Equal(f1.Version, e.PrerequisiteFlag.Version);
+                    Assert.Equal(f0.Key, e.PrerequisiteOfFlagKey);
+                });
         }
 
         [Fact]
@@ -317,17 +319,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1);
 
-            var result = evaluator.Evaluate(f0, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(f0, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(fallthroughValue, 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
 
-            Assert.Equal(1, result.PrerequisiteEvents.Count);
-            EvaluationEvent e = result.PrerequisiteEvents[0];
-            Assert.Equal(f1.Key, e.FlagKey);
-            Assert.Equal(LdValue.Of("go"), e.Value);
-            Assert.Equal(f1.Version, e.FlagVersion);
-            Assert.Equal(f0.Key, e.PrerequisiteOf);
+            Assert.Collection(result.PrerequisiteEvals,
+                e =>
+                {
+                    Assert.Equal(f1.Key, e.PrerequisiteFlag.Key);
+                    Assert.Equal(LdValue.Of("go"), e.Result.Value);
+                    Assert.Equal(f1.Version, e.PrerequisiteFlag.Version);
+                    Assert.Equal(f0.Key, e.PrerequisiteOfFlagKey);
+                });
         }
 
         [Fact]
@@ -356,24 +360,28 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1, f2);
 
-            var result = evaluator.Evaluate(f0, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(f0, baseUser);
 
             var expected = new EvaluationDetail<LdValue>(fallthroughValue, 0, EvaluationReason.FallthroughReason);
             Assert.Equal(expected, result.Result);
 
-            Assert.Equal(2, result.PrerequisiteEvents.Count);
+            Assert.Equal(2, result.PrerequisiteEvals.Count);
 
-            EvaluationEvent e0 = result.PrerequisiteEvents[0];
-            Assert.Equal(f2.Key, e0.FlagKey);
-            Assert.Equal(LdValue.Of("go"), e0.Value);
-            Assert.Equal(f2.Version, e0.FlagVersion);
-            Assert.Equal(f1.Key, e0.PrerequisiteOf);
-
-            EvaluationEvent e1 = result.PrerequisiteEvents[1];
-            Assert.Equal(f1.Key, e1.FlagKey);
-            Assert.Equal(LdValue.Of("go"), e1.Value);
-            Assert.Equal(f1.Version, e1.FlagVersion);
-            Assert.Equal(f0.Key, e1.PrerequisiteOf);
+            Assert.Collection(result.PrerequisiteEvals,
+                e =>
+                {
+                    Assert.Equal(f2.Key, e.PrerequisiteFlag.Key);
+                    Assert.Equal(LdValue.Of("go"), e.Result.Value);
+                    Assert.Equal(f2.Version, e.PrerequisiteFlag.Version);
+                    Assert.Equal(f1.Key, e.PrerequisiteOfFlagKey);
+                },
+                e =>
+                {
+                    Assert.Equal(f1.Key, e.PrerequisiteFlag.Key);
+                    Assert.Equal(LdValue.Of("go"), e.Result.Value);
+                    Assert.Equal(f1.Version, e.PrerequisiteFlag.Version);
+                    Assert.Equal(f0.Key, e.PrerequisiteOfFlagKey);
+                });
         }
         
         [Fact]
@@ -386,12 +394,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .OffVariation(1)
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
-            var user = User.WithKey("userkey");
-            var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
+            var context = Context.New("userkey");
+            var result = BasicEvaluator.Evaluate(f, context);
 
             var expected = new EvaluationDetail<LdValue>(onValue, 2, EvaluationReason.TargetMatchReason);
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Equal(0, result.PrerequisiteEvals.Count);
         }
 
         private FeatureFlag FeatureFlagWithRules(params FlagRule[] rules)
@@ -412,7 +420,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 new WeightedVariation(2, 20000, untrackedVariations)
             };
             const int seed = 123;
-            return new Rollout(kind, null, seed, variations, null);
+            return new Rollout(kind, null, seed, variations, new AttributeRef());
         }
     }
 }

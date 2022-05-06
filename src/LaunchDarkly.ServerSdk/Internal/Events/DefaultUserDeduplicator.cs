@@ -3,37 +3,29 @@ using LaunchDarkly.Sdk.Internal.Events;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
 {
-    internal class DefaultUserDeduplicator : IUserDeduplicator
+    internal class DefaultContextDeduplicator : IContextDeduplicator
     {
-        private readonly LRUCacheSet<string> _userKeys;
+        private readonly LRUCacheSet<string> _contextKeys;
         private readonly TimeSpan _flushInterval;
 
-        internal DefaultUserDeduplicator(int userKeysCapacity, TimeSpan userKeysFlushInterval)
+        internal DefaultContextDeduplicator(int contextKeysCapacity, TimeSpan contextKeysFlushInterval)
         {
-            _userKeys = new LRUCacheSet<string>(userKeysCapacity);
-            _flushInterval = userKeysFlushInterval;
+            _contextKeys = new LRUCacheSet<string>(contextKeysCapacity);
+            _flushInterval = contextKeysFlushInterval;
         }
 
-        TimeSpan? IUserDeduplicator.FlushInterval
-        {
-            get
-            {
-                return _flushInterval;
-            }
-        }
+        public TimeSpan? FlushInterval => _flushInterval;
 
-        bool IUserDeduplicator.ProcessUser(User user)
+        public bool ProcessContext(ref Context context)
         {
-            if (user == null || user.Key == null)
+            if (!context.Valid)
             {
                 return false;
             }
-            return !_userKeys.Add(user.Key);
+            return !_contextKeys.Add(context.Key);
         }
 
-        void IUserDeduplicator.Flush()
-        {
-            _userKeys.Clear();
-        }
+        public void Flush() =>
+            _contextKeys.Clear();
     }
 }

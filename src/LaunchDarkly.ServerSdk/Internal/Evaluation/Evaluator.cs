@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
-using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
 using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
@@ -45,12 +43,27 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         internal struct EvalResult
         {
             internal EvaluationDetail<LdValue> Result;
-            internal readonly IList<EvaluationEvent> PrerequisiteEvents;
+            internal readonly IList<PrerequisiteEvalRecord> PrerequisiteEvals;
 
-            internal EvalResult(EvaluationDetail<LdValue> result, IList<EvaluationEvent> events)
+            internal EvalResult(EvaluationDetail<LdValue> result, IList<PrerequisiteEvalRecord> prerequisiteEvals)
             {
                 Result = result;
-                PrerequisiteEvents = events;
+                PrerequisiteEvals = prerequisiteEvals;
+            }
+        }
+
+        internal struct PrerequisiteEvalRecord
+        {
+            internal readonly FeatureFlag PrerequisiteFlag;
+            internal readonly string PrerequisiteOfFlagKey;
+            internal readonly EvaluationDetail<LdValue> Result;
+
+            internal PrerequisiteEvalRecord(FeatureFlag prerequisiteFlag, string prerequisiteOfFlagKey,
+                EvaluationDetail<LdValue> result)
+            {
+                PrerequisiteFlag = prerequisiteFlag;
+                PrerequisiteOfFlagKey = prerequisiteOfFlagKey;
+                Result = result;
             }
         }
 
@@ -76,28 +89,26 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         /// Evaluates a feature flag for a given user.
         /// </summary>
         /// <param name="flag">the flag; must not be null</param>
-        /// <param name="user">the user</param>
-        /// <param name="eventFactory">an <see cref="EventFactory"/> instance that will be called to produce any necessary
-        /// prerequisite flag events</param>
+        /// <param name="context">the evauluation context</param>
         /// <returns>an <see cref="EvalResult"/> containing the evaluation result as well as any events that were produced;
         /// the PrerequisiteEvents list will always be non-null</returns>
-        public EvalResult Evaluate(FeatureFlag flag, User user, EventFactory eventFactory)
+        public EvalResult Evaluate(in FeatureFlag flag, in Context context)
         {
             if (flag.Key == FlagKeyToTriggerErrorForTesting)
             {
                 throw new Exception(ErrorMessageForTesting);
             }
-            if (user == null || user.Key == null)
+            if (!context.Valid)
             {
-                _logger.Warn("User or user key is null when evaluating flag: {0} returning null",
+                _logger.Warn("Tried to evaluate flag with invalid context: {0} returning null",
                     flag.Key);
 
                 return new EvalResult(
                     new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
-                    ImmutableList.Create<EvaluationEvent>());
+                    ImmutableList.Create<PrerequisiteEvalRecord>());
             }
 
-            var scope = new EvalScope(this, flag, user, eventFactory);
+            var scope = new EvalScope(this, flag, context);
             return scope.Evaluate();
         }
 
@@ -128,19 +139,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             private readonly Evaluator _parent;
             private readonly FeatureFlag _flag;
-            private readonly User _user;
-            private readonly EventFactory _eventFactory;
-            private LazilyCreatedList<EvaluationEvent> _prereqEvents;
+            private readonly Context _context;
+            private LazilyCreatedList<PrerequisiteEvalRecord> _prereqEvals;
             private IMembership _bigSegmentsMembership;
             private BigSegmentsStatus? _bigSegmentsStatus;
 
-            internal EvalScope(Evaluator parent, FeatureFlag flag, User user, EventFactory eventFactory)
+            internal EvalScope(Evaluator parent, FeatureFlag flag, Context context)
             {
                 _parent = parent;
                 _flag = flag;
-                _user = user;
-                _eventFactory = eventFactory;
-                _prereqEvents = new LazilyCreatedList<EvaluationEvent>();
+                _context = context;
+                _prereqEvals = new LazilyCreatedList<PrerequisiteEvalRecord>();
                 _bigSegmentsMembership = null;
                 _bigSegmentsStatus = null;
             }
@@ -156,7 +165,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                         details.Reason.WithBigSegmentsStatus(_bigSegmentsStatus.Value)
                         );
                 }
-                return new EvalResult(details, _prereqEvents.GetList());
+                return new EvalResult(details, _prereqEvals.GetList());
             }
 
             private EvaluationDetail<LdValue> EvaluateInternal()
@@ -173,13 +182,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
 
                 // Check to see if targets match
-                foreach (var target in _flag.Targets)
+                var targetMatchVar = MatchTargets();
+                if (targetMatchVar.HasValue)
                 {
-                    if (target.Preprocessed.ValuesSet.Contains(_user.Key))
-                    {
-                        return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
-                    }
+                    return GetVariation(targetMatchVar.Value, EvaluationReason.TargetMatchReason);
                 }
+
                 // Now walk through the rules and see if any match
                 var ruleIndex = 0;
                 foreach (var rule in _flag.Rules)
@@ -212,7 +220,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     }
                     else
                     {
-                        var prereqScope = new EvalScope(_parent, prereqFeatureFlag, _user, _eventFactory);
+                        var prereqScope = new EvalScope(_parent, prereqFeatureFlag, _context);
                         var prereqEvalResult = prereqScope.Evaluate();
                         var prereqDetails = prereqEvalResult.Result;
                         // Note that if the prerequisite flag is off, we don't consider it a match no matter
@@ -222,12 +230,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                         {
                             prereqOk = false;
                         }
-                        foreach (var subPrereqEvent in prereqEvalResult.PrerequisiteEvents)
+                        foreach (var subPrereqEval in prereqEvalResult.PrerequisiteEvals)
                         {
-                            _prereqEvents.Add(subPrereqEvent);
+                            _prereqEvals.Add(subPrereqEval);
                         }
-                        _prereqEvents.Add(_eventFactory.NewPrerequisiteEvaluationEvent(prereqFeatureFlag, _user,
-                            prereqDetails, _flag));
+                        _prereqEvals.Add(new PrerequisiteEvalRecord(prereqFeatureFlag, _flag.Key, prereqDetails));
                     }
                     if (!prereqOk)
                     {
@@ -240,7 +247,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             private static EvaluationDetail<LdValue> ErrorResult(EvaluationErrorKind kind) =>
                 new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(kind));
 
-            private EvaluationDetail<LdValue> GetVariation(int variation, EvaluationReason reason)
+            private EvaluationDetail<LdValue> GetVariation(int variation, in EvaluationReason reason)
             {
                 if (variation < 0 || variation >= _flag.Variations.Count())
                 {
@@ -250,7 +257,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 return new EvaluationDetail<LdValue>(_flag.Variations.ElementAt(variation), variation, reason);
             }
 
-            private EvaluationDetail<LdValue> GetOffValue(EvaluationReason reason)
+            private EvaluationDetail<LdValue> GetOffValue(in EvaluationReason reason)
             {
                 if (_flag.OffVariation is null) // off variation unspecified - return default value
                 {
@@ -259,7 +266,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 return GetVariation(_flag.OffVariation.Value, reason);
             }
 
-            private EvaluationDetail<LdValue> GetValueForVariationOrRollout(int? variation, Rollout? rollout, EvaluationReason reason)
+            private EvaluationDetail<LdValue> GetValueForVariationOrRollout(int? variation, in Rollout? rollout, in EvaluationReason reason)
             {
                 if (variation.HasValue)
                 {
@@ -269,7 +276,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 if (rollout.HasValue && rollout.Value.Variations.Count() > 0)
                 {
                     WeightedVariation? selectedVariation = null;
-                    float bucket = Bucketing.BucketUser(rollout.Value.Seed, _user, _flag.Key, rollout.Value.BucketBy, _flag.Salt);
+                    float bucket = Bucketing.BucketContext(rollout.Value.Seed, _context, _flag.Key, rollout.Value.BucketBy, _flag.Salt);
                     float sum = 0F;
                     foreach (WeightedVariation wv in rollout.Value.Variations)
                     {
@@ -300,7 +307,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
             }
 
-            private bool MatchRule(FlagRule rule)
+            private int? MatchTargets()
+            {
+                foreach (var t in _flag.Targets)
+                {
+                    if (t.Preprocessed.ValuesSet.Contains(_context.Key))
+                    {
+                        return t.Variation;
+                    }
+                }
+                return null;
+            }
+
+            private bool MatchRule(in FlagRule rule)
             {
                 // A rule matches if ALL of its clauses match
                 foreach (var c in rule.Clauses)
@@ -313,7 +332,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 return true;
             }
 
-            private bool MatchClause(Clause clause)
+            private bool MatchClause(in Clause clause)
             {
                 // A clause matches if ANY of its values match, for the given attribute and operator
                 if (clause.Op == Operator.SegmentMatch)
@@ -334,16 +353,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
             }
 
-            private bool MatchClauseNoSegments(Clause clause)
+            private bool MatchClauseNoSegments(in Clause clause)
             {
-                var userValue = _user.GetAttribute(UserAttribute.ForName(clause.Attribute));
-                if (userValue.IsNull)
+                var contextValue = _context.GetValue(clause.Attribute);
+                if (contextValue.IsNull)
                 {
                     return false;
                 }
-                if (userValue.Type == LdValueType.Array)
+                if (contextValue.Type == LdValueType.Array)
                 {
-                    var list = userValue.AsList(LdValue.Convert.Json);
+                    var list = contextValue.AsList(LdValue.Convert.Json);
                     foreach (var element in list)
                     {
                         if (element.Type == LdValueType.Array || element.Type == LdValueType.Object)
@@ -359,70 +378,60 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     }
                     return MaybeNegate(clause, false);
                 }
-                else if (userValue.Type == LdValueType.Object)
+                else if (contextValue.Type == LdValueType.Object)
                 {
                     _parent._logger.Warn("Got unexpected user attribute type {0} for user attribute \"{1}\"",
-                        userValue.Type,
+                        contextValue.Type,
                         clause.Attribute);
                     return false;
                 }
                 else
                 {
-                    return MaybeNegate(clause, ClauseMatchAny(clause, userValue));
+                    return MaybeNegate(clause, ClauseMatchAny(clause, contextValue));
                 }
             }
 
-            private bool MatchSegment(Segment segment)
+            private bool MatchSegment(in Segment segment)
             {
-                var userKey = _user.Key;
-                if (userKey is null)
-                {
-                    return false;
-                }
                 if (segment.Unbounded)
                 {
-                    if (!segment.Generation.HasValue)
+                    var includedOrExcluded = MatchUnboundedSegment(segment);
+                    if (includedOrExcluded.HasValue)
                     {
-                        // Big segment queries can only be done if the generation is known. If it's unset,
-                        // that probably means the data store was populated by an older SDK that doesn't know
-                        // about the Generation property and therefore dropped it from the JSON data. We'll treat
-                        // that as a "not configured" condition.
-                        _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
-                        return false;
-                    }
-                    // Even if multiple Big Segments are referenced within a single flag evaluation,
-                    // we only need to do this query once, since it returns *all* of the user's segment
-                    // memberships.
-                    if (!_bigSegmentsStatus.HasValue)
-                    {
-                        if (_parent._bigSegmentsGetter is null)
-                        {
-                            // the SDK hasn't been configured to be able to use Big Segments
-                            _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
-                        }
-                        else
-                        {
-                            var result = _parent._bigSegmentsGetter(userKey);
-                            _bigSegmentsMembership = result.Membership;
-                            _bigSegmentsStatus = result.Status;
-                        }
-                    }
-                    var included = _bigSegmentsMembership is null ? null :
-                        _bigSegmentsMembership.CheckMembership(MakeBigSegmentRef(segment));
-                    if (included.HasValue)
-                    {
-                        return included.Value;
+                        return includedOrExcluded.Value;
                     }
                 }
                 else
                 {
-                    if (segment.Preprocessed.IncludedSet.Contains(userKey))
+                    if (!segment.Preprocessed.IncludedSet.IsEmpty || !segment.Preprocessed.ExcludedSet.IsEmpty)
                     {
-                        return true;
+                        if (_context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
+                        {
+                            if (segment.Preprocessed.IncludedSet.Contains(matchContext.Key))
+                            {
+                                return true;
+                            }
+                            if (segment.Preprocessed.ExcludedSet.Contains(matchContext.Key))
+                            {
+                                return false;
+                            }
+                        }
                     }
-                    if (segment.Preprocessed.ExcludedSet.Contains(userKey))
+                    foreach (var target in segment.IncludedContexts)
                     {
-                        return false;
+                        if (_context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
+                            target.PreprocessedValues.Contains(matchContext.Key))
+                        {
+                            return true;
+                        }
+                    }
+                    foreach (var target in segment.ExcludedContexts)
+                    {
+                        if (_context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
+                            target.PreprocessedValues.Contains(matchContext.Key))
+                        {
+                            return false;
+                        }
                     }
                 }
                 if (segment.Rules != null)
@@ -438,7 +447,39 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 return false;
             }
 
-            private bool MatchSegmentRule(Segment segment, SegmentRule segmentRule)
+            private bool? MatchUnboundedSegment(in Segment segment)
+            {
+                if (!segment.Generation.HasValue)
+                {
+                    // Big segment queries can only be done if the generation is known. If it's unset,
+                    // that probably means the data store was populated by an older SDK that doesn't know
+                    // about the Generation property and therefore dropped it from the JSON data. We'll treat
+                    // that as a "not configured" condition.
+                    _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
+                    return false;
+                }
+                // Even if multiple Big Segments are referenced within a single flag evaluation,
+                // we only need to do this query once, since it returns *all* of the user's segment
+                // memberships.
+                if (!_bigSegmentsStatus.HasValue)
+                {
+                    if (_parent._bigSegmentsGetter is null)
+                    {
+                        // the SDK hasn't been configured to be able to use Big Segments
+                        _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
+                    }
+                    else
+                    {
+                        var result = _parent._bigSegmentsGetter(_context.Key);
+                        _bigSegmentsMembership = result.Membership;
+                        _bigSegmentsStatus = result.Status;
+                    }
+                }
+                return _bigSegmentsMembership is null ? null :
+                    _bigSegmentsMembership.CheckMembership(MakeBigSegmentRef(segment));
+            }
+
+            private bool MatchSegmentRule(in Segment segment, in SegmentRule segmentRule)
             {
                 foreach (var c in segmentRule.Clauses)
                 {
@@ -455,18 +496,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
 
                 // All of the clauses are met. See if the user buckets in
-                double bucket = Bucketing.BucketUser(null, _user, segment.Key, segmentRule.BucketBy, segment.Salt);
+                double bucket = Bucketing.BucketContext(null, _context, segment.Key, segmentRule.BucketBy, segment.Salt);
                 double weight = (double)segmentRule.Weight / 100000F;
                 return bucket < weight;
             }
         }
 
-        internal static bool ClauseMatchAny(Clause clause, LdValue userValue)
+        internal static bool ClauseMatchAny(in Clause clause, in LdValue contextValue)
         {
             // Special case for the "in" operator - we preprocess the values to a set for fast lookup
             if (clause.Op == Operator.In && clause.Preprocessed.ValuesAsSet != null)
             {
-                return clause.Preprocessed.ValuesAsSet.Contains(userValue);
+                return clause.Preprocessed.ValuesAsSet.Contains(contextValue);
             }
 
             int index = 0;
@@ -474,7 +515,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             {
                 var preprocessedValue = clause.Preprocessed.Values is null ? (Clause.PreprocessedValue?)null :
                     clause.Preprocessed.Values[index++];
-                if (clause.Op.Apply(userValue, clauseValue, preprocessedValue))
+                if (clause.Op.Apply(contextValue, clauseValue, preprocessedValue))
                 {
                     return true;
                 }

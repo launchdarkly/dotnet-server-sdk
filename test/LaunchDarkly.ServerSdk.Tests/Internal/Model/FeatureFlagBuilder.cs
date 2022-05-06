@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
@@ -47,7 +48,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal FeatureFlag Build()
         {
             return new FeatureFlag(_key, _version, _deleted, _on, _prerequisites,
-                _targets, null, _rules, _fallthrough, _offVariation, _variations, _salt,
+                _targets.ToImmutableList(), null, _rules, _fallthrough, _offVariation, _variations, _salt,
                 _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _clientSide);
         }
 
@@ -246,7 +247,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal class ClauseBuilder
     {
-        private string _attribute;
+        private AttributeRef _attribute;
         private Operator _op;
         private List<LdValue> _values = new List<LdValue>();
         private bool _negate;
@@ -256,7 +257,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new Clause(null, _attribute, _op, _values, _negate);
         }
 
-        public ClauseBuilder Attribute(string attribute)
+        public ClauseBuilder Attribute(string attribute) =>
+            Attribute(AttributeRef.FromPath(attribute));
+
+        public ClauseBuilder Attribute(AttributeRef attribute)
         {
             _attribute = attribute;
             return this;
@@ -292,12 +296,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return Attribute("key").Op("in").Values(LdValue.Of(key));
         }
 
-        public static Clause ShouldMatchUser(User user)
+        public static Clause ShouldMatchUser(Context user)
         {
             return new ClauseBuilder().KeyIs(user.Key).Build();
         }
 
-        public static Clause ShouldNotMatchUser(User user)
+        public static Clause ShouldNotMatchUser(Context user)
         {
             return new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
         }

@@ -10,7 +10,7 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientEventTest : BaseTest
     {
-        private static readonly User user = User.WithKey("userkey");
+        private static readonly Context user = Context.New("userkey");
         private readonly TestData testData = TestData.DataSource();
         private readonly MockEventProcessor eventSink = new MockEventProcessor();
         private readonly ILdClient client;
@@ -31,29 +31,13 @@ namespace LaunchDarkly.Sdk.Server
 
             Assert.Single(eventSink.Events);
             var ie = Assert.IsType<IdentifyEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ie.User.Key);
-        }
-
-        [Fact]
-        public void IdentifyWithNoUserSendsNoEvent()
-        {
-            client.Identify(null);
-
-            Assert.Empty(eventSink.Events);
-        }
-
-        [Fact]
-        public void IdentifyWithNoUserKeySendsNoEvent()
-        {
-            client.Identify(User.WithKey(null));
-
-            Assert.Empty(eventSink.Events);
+            Assert.Equal(user.Key, ie.Context.Key);
         }
 
         [Fact]
         public void IdentifyWithEmptyUserKeySendsNoEvent()
         {
-            client.Identify(User.WithKey(""));
+            client.Identify(Context.New(""));
 
             Assert.Empty(eventSink.Events);
         }
@@ -65,7 +49,7 @@ namespace LaunchDarkly.Sdk.Server
 
             Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
+            Assert.Equal(user.Key, ce.Context.Key);
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(LdValue.Null, ce.Data);
             Assert.Null(ce.MetricValue);
@@ -79,7 +63,7 @@ namespace LaunchDarkly.Sdk.Server
 
             Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
+            Assert.Equal(user.Key, ce.Context.Key);
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(data, ce.Data);
         }
@@ -92,24 +76,16 @@ namespace LaunchDarkly.Sdk.Server
 
             Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
+            Assert.Equal(user.Key, ce.Context.Key);
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(data, ce.Data);
             Assert.Equal(1.5, ce.MetricValue);
         }
 
         [Fact]
-        public void TrackWithNoUserSendsNoEvent()
-        {
-            client.Track("eventkey", null);
-
-            Assert.Empty(eventSink.Events);
-        }
-
-        [Fact]
         public void TrackWithNullUserKeySendsNoEvent()
         {
-            client.Track("eventkey", User.WithKey(null));
+            client.Track("eventkey", Context.New(null));
 
             Assert.Empty(eventSink.Events);
         }
@@ -117,7 +93,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void TrackWithEmptyUserKeySendsNoEvent()
         {
-            client.Track("eventkey", User.WithKey(""));
+            client.Track("eventkey", Context.New(""));
 
             Assert.Empty(eventSink.Events);
         }
@@ -381,7 +357,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var fe = Assert.IsType<EvaluationEvent>(e);
             Assert.Equal(flag.Key, fe.FlagKey);
-            Assert.Equal(user.Key, fe.User.Key);
+            Assert.Equal(user.Key, fe.Context.Key);
             Assert.Equal(flag.Version, fe.FlagVersion);
             Assert.Equal(value, fe.Value);
             Assert.Equal(defaultVal, fe.Default);
@@ -392,7 +368,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var fe = Assert.IsType<EvaluationEvent>(e);
             Assert.Equal(key, fe.FlagKey);
-            Assert.Equal(user.Key, fe.User.Key);
+            Assert.Equal(user.Key, fe.Context.Key);
             Assert.Null(fe.FlagVersion);
             Assert.Equal(defaultVal, fe.Value);
             Assert.Equal(defaultVal, fe.Default);

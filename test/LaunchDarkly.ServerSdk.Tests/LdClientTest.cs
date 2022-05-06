@@ -244,7 +244,7 @@ AssertLogMessage(false, LogLevel.Warn,
 
             using (var client = new LdClient(config))
             {
-                Assert.Equal(0, client.IntVariation("key", User.WithKey("user"), 0));
+                Assert.Equal(0, client.IntVariation("key", Context.New("user"), 0));
             }
         }
 
@@ -263,7 +263,7 @@ AssertLogMessage(false, LogLevel.Warn,
 
             using (var client = new LdClient(config))
             {
-                Assert.Equal(1, client.IntVariation("key", User.WithKey("user"), 0));
+                Assert.Equal(1, client.IntVariation("key", Context.New("user"), 0));
             }
         }
         

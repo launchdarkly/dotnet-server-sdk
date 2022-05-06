@@ -12,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
     public class EvaluatorBigSegmentTest
     {
-        private static readonly User baseUser = User.WithKey("userkey");
+        private static readonly Context baseUser = Context.New("userkey");
 
         [Fact]
         public void BigSegmentWithNoProviderIsNotMatched()
@@ -23,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment);
 
-            var result = evaluator.Evaluate(flag, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, baseUser);
 
             Assert.Equal(LdValue.Of(false), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.NotConfigured, result.Result.Reason.BigSegmentsStatus);
@@ -39,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment).WithBigSegments(bigSegments);
 
-            var result = evaluator.Evaluate(flag, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, baseUser);
 
             Assert.Equal(LdValue.Of(false), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.NotConfigured, result.Result.Reason.BigSegmentsStatus);
@@ -54,7 +54,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment).WithBigSegments(bigSegments);
 
-            var result = evaluator.Evaluate(flag, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, baseUser);
 
             Assert.Equal(LdValue.Of(true), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.Healthy, result.Result.Reason.BigSegmentsStatus);
@@ -64,7 +64,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void MatchedWithRule()
         {
             var clause = ClauseBuilder.ShouldMatchUser(baseUser);
-            var rule = new SegmentRule(new List<Clause> { clause }, null, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, null, null, new AttributeRef());
             var segment = new SegmentBuilder("segmentkey").Unbounded(true).Generation(2)
                 .Rules(rule)
                 .Build();
@@ -73,7 +73,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment).WithBigSegments(bigSegments);
 
-            var result = evaluator.Evaluate(flag, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, baseUser);
 
             Assert.Equal(LdValue.Of(true), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.Healthy, result.Result.Reason.BigSegmentsStatus);
@@ -83,7 +83,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void UnmatchedByExcludeRegardlessOfRule()
         {
             var clause = ClauseBuilder.ShouldMatchUser(baseUser);
-            var rule = new SegmentRule(new List<Clause> { clause }, 0, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, 0, null, new AttributeRef());
             var segment = new SegmentBuilder("segmentkey").Unbounded(true).Generation(2)
                 .Rules(rule)
                 .Build();
@@ -92,7 +92,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment).WithBigSegments(bigSegments);
 
-            var result = evaluator.Evaluate(flag, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, baseUser);
 
             Assert.Equal(LdValue.Of(false), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.Healthy, result.Result.Reason.BigSegmentsStatus);
@@ -108,7 +108,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment).WithBigSegments(bigSegments);
 
-            var result = evaluator.Evaluate(flag, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, baseUser);
 
             Assert.Equal(LdValue.Of(true), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.Stale, result.Result.Reason.BigSegmentsStatus);
@@ -132,7 +132,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment1, segment2).WithBigSegments(bigSegments);
 
-            var result = evaluator.Evaluate(flag, baseUser, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, baseUser);
 
             Assert.Equal(LdValue.Of(true), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.Healthy, result.Result.Reason.BigSegmentsStatus);

@@ -55,8 +55,8 @@ namespace LaunchDarkly.Sdk.Server
         public void ClientSendsFlagValueChangeEvents()
         {
             var flagKey = "flagKey";
-            var user = User.WithKey("important-user");
-            var otherUser = User.WithKey("unimportant-user");
+            var user = Context.New("important-user");
+            var otherUser = Context.New("unimportant-user");
 
             var testData = TestData.DataSource();
             testData.Update(testData.Flag(flagKey).On(false));

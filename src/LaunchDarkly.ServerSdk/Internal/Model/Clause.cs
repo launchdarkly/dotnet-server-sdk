@@ -9,13 +9,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     internal struct Clause
     {
         internal string ContextKind { get; }
-        internal string Attribute { get; }
+        internal AttributeRef Attribute { get; }
         internal Operator Op { get; }
         internal IEnumerable<LdValue> Values { get; }
         internal bool Negate { get; }
         internal PreprocessedData Preprocessed { get; }
 
-        internal Clause(string contextKind, string attribute, Operator op, IEnumerable<LdValue> values, bool negate)
+        internal Clause(string contextKind, AttributeRef attribute, Operator op, IEnumerable<LdValue> values, bool negate)
         {
             ContextKind = contextKind;
             Attribute = attribute;

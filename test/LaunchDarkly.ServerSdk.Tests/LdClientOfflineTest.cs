@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server
             var config = BasicConfig().Offline(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.Equal("x", client.StringVariation("key", User.WithKey("user"), "x"));
+                Assert.Equal("x", client.StringVariation("key", Context.New("user"), "x"));
             }
         }
 
@@ -63,7 +63,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.True(client.BoolVariation("key", User.WithKey("user"), false));
+                Assert.True(client.BoolVariation("key", Context.New("user"), false));
             }
         }
 
@@ -84,7 +84,7 @@ namespace LaunchDarkly.Sdk.Server
             using (var client = new LdClient(config))
             {
                 Assert.Equal("aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597",
-                    client.SecureModeHash(User.WithKey("Message")));
+                    client.SecureModeHash(Context.New("Message")));
             }
         }
     }

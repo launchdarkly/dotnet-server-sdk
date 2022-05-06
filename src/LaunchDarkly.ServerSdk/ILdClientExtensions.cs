@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server
     public static class ILdClientExtensions
     {
         /// <summary>
-        /// Equivalent to <see cref="ILdClient.StringVariation(string, User, string)"/>, but converts the
+        /// Equivalent to <see cref="ILdClient.StringVariation(string, Context, string)"/>, but converts the
         /// flag's string value to an enum value.
         /// </summary>
         /// <remarks>
@@ -30,13 +30,13 @@ namespace LaunchDarkly.Sdk.Server
         /// <typeparam name="T">the enum type</typeparam>
         /// <param name="client">the client instance</param>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag (as an enum value)</param>
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
         /// be evaluated or does not have a valid enum value</returns>
-        public static T EnumVariation<T>(this ILdClient client, string key, User user, T defaultValue)
+        public static T EnumVariation<T>(this ILdClient client, string key, Context context, T defaultValue)
         {
-            var stringVal = client.StringVariation(key, user, defaultValue.ToString());
+            var stringVal = client.StringVariation(key, context, defaultValue.ToString());
             if (stringVal != null)
             {
                 try
@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <summary>
-        /// Equivalent to <see cref="ILdClient.StringVariationDetail(string, User, string)"/>, but converts the
+        /// Equivalent to <see cref="ILdClient.StringVariationDetail(string, Context, string)"/>, but converts the
         /// flag's string value to an enum value.
         /// </summary>
         /// <remarks>
@@ -67,12 +67,12 @@ namespace LaunchDarkly.Sdk.Server
         /// <typeparam name="T">the enum type</typeparam>
         /// <param name="client">the client instance</param>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag (as an enum value)</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        public static EvaluationDetail<T> EnumVariationDetail<T>(this ILdClient client, string key, User user, T defaultValue)
+        public static EvaluationDetail<T> EnumVariationDetail<T>(this ILdClient client, string key, Context context, T defaultValue)
         {
-            var stringDetail = client.StringVariationDetail(key, user, defaultValue.ToString());
+            var stringDetail = client.StringVariationDetail(key, context, defaultValue.ToString());
             if (stringDetail.Value != null)
             {
                 try

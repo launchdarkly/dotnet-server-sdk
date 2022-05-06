@@ -20,7 +20,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private readonly CapturingDataSourceUpdates _updateSink = new CapturingDataSourceUpdates();
         private readonly FileDataSourceBuilder factory = FileData.DataSource();
-        private readonly User user = User.WithKey("key");
+        private readonly Context user = Context.New("key");
 
         public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput) { }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
@@ -11,13 +10,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
     public class EvaluatorSegmentMatchTest
     {
-        private static readonly User baseUser = User.WithKey("userkey");
-
         [Fact]
         public void ExplicitIncludeUser()
         {
             var s = new SegmentBuilder("test").Version(1).Included("foo").Build();
-            var u = User.WithKey("foo");
+            var u = Context.New("foo");
             Assert.True(SegmentMatchesUser(s, u));
         }
 
@@ -25,7 +22,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void ExplicitExcludeUser()
         {
             var s = new SegmentBuilder("test").Version(1).Excluded("foo").Build();
-            var u = User.WithKey("foo");
+            var u = Context.New("foo");
             Assert.False(SegmentMatchesUser(s, u));
         }
 
@@ -33,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void ExplicitIncludeHasPrecedence()
         {
             var s = new SegmentBuilder("test").Version(1).Included("foo").Excluded("foo").Build();
-            var u = User.WithKey("foo");
+            var u = Context.New("foo");
             Assert.True(SegmentMatchesUser(s, u));
         }
 
@@ -41,9 +38,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void MatchingRuleWithFullRollout()
         {
             var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause }, 100000, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, 100000, null, new AttributeRef());
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
-            var u = User.Builder("foo").Email("test@example.com").Build();
+            var u = Context.Builder("foo").Set("email", "test@example.com").Build();
             Assert.True(SegmentMatchesUser(s, u));
         }
 
@@ -51,9 +48,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void MatchingRuleWithZeroRollout()
         {
             var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause }, 0, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause }, 0, null, new AttributeRef());
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
-            var u = User.Builder("foo").Email("test@example.com").Build();
+            var u = Context.Builder("foo").Set("email", "test@example.com").Build();
             Assert.False(SegmentMatchesUser(s, u));
         }
 
@@ -62,9 +59,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bob")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null, new AttributeRef());
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
-            var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();
+            var u = Context.Builder("foo").Set("email", "test@example.com").Name("bob").Build();
             Assert.True(SegmentMatchesUser(s, u));
         }
 
@@ -73,17 +70,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
             var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bill")).Build();
-            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null, null);
+            var rule = new SegmentRule(new List<Clause> { clause1, clause2 }, null, null, new AttributeRef());
             var s = new SegmentBuilder("test").Version(1).Rules(rule).Build();
-            var u = User.Builder("foo").Email("test@example.com").Name("bob").Build();
+            var u = Context.Builder("foo").Set("email", "test@example.com").Name("bob").Build();
             Assert.False(SegmentMatchesUser(s, u));
         }
 
-        private bool SegmentMatchesUser(Segment segment, User user)
+        private bool SegmentMatchesUser(Segment segment, Context context)
         {
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment);
-            var result = evaluator.Evaluate(flag, user, EventFactory.Default);
+            var result = evaluator.Evaluate(flag, context);
             return result.Result.Value.AsBool;
         }
     }

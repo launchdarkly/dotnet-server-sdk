@@ -17,7 +17,7 @@ namespace LaunchDarkly.Sdk.Server
     // supposed to do, regardless of exactly what value we get.
     public class LdClientEvaluationTest : BaseTest
     {
-        private static readonly User user = User.WithKey("userkey");
+        private static readonly Context user = Context.New("userkey");
         private readonly TestData testData = TestData.DataSource();
         private readonly ILdClient client;
 
@@ -266,19 +266,9 @@ namespace LaunchDarkly.Sdk.Server
         {
             var expected = new EvaluationDetail<string>("default", null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound));
-            Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
+            Assert.Equal(expected, client.StringVariationDetail("key", user, "default"));
         }
         
-        [Fact]
-        public void VariationDetailReturnsDefaultForNullUser()
-        {
-            testData.UsePreconfiguredFlag(new FeatureFlagBuilder("key").OffWithValue(LdValue.Of("b")).Build());
-
-            var expected = new EvaluationDetail<string>("default", null,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
-            Assert.Equal(expected, client.StringVariationDetail("key", null, "default"));
-        }
-
         [Fact]
         public void VariationDetailReturnsDefaultForUserWithNullKey()
         {
@@ -286,7 +276,7 @@ namespace LaunchDarkly.Sdk.Server
 
             var expected = new EvaluationDetail<string>("default", null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
-            Assert.Equal(expected, client.StringVariationDetail("key", User.WithKey(null), "default"));
+            Assert.Equal(expected, client.StringVariationDetail("key", Context.New(null), "default"));
         }
 
         [Fact]
@@ -444,23 +434,12 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void AllFlagsStateReturnsEmptyStateForNullUser()
-        {
-            var flag = new FeatureFlagBuilder("key1").OffWithValue(LdValue.Of("value1")).Build();
-            testData.UsePreconfiguredFlag(flag);
-
-            var state = client.AllFlagsState(null);
-            Assert.False(state.Valid);
-            Assert.Equal(0, state.ToValuesJsonMap().Count);
-        }
-
-        [Fact]
         public void AllFlagsStateReturnsEmptyStateForUserWithNullKey()
         {
             var flag = new FeatureFlagBuilder("key1").OffWithValue(LdValue.Of("value1")).Build();
             testData.UsePreconfiguredFlag(flag);
 
-            var state = client.AllFlagsState(User.WithKey(null));
+            var state = client.AllFlagsState(Context.New(null));
             Assert.False(state.Valid);
             Assert.Equal(0, state.ToValuesJsonMap().Count);
         }

@@ -17,16 +17,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <remarks>
         /// <para>
         /// This event is raised whenever the SDK receives any change to any feature flag's
-        /// configuration, or to a user segment that is referenced by a feature flag. If the
+        /// configuration, or to a segment that is referenced by a feature flag. If the
         /// updated flag is used as a prerequisite for other flags, the SDK assumes that those
         /// flags may now behave differently and sends flag change events for them as well.
         /// </para>
         /// <para>
         /// Note that this does not necessarily mean the flag's value has changed for any
-        /// particular user, only that some part of the flag configuration was changed so that
-        /// it <i>may</i> return a different value than it previously returned for some user.
-        /// If you want to track flag value changes, use
-        /// <see cref="FlagValueChangeHandler(string, User, EventHandler{FlagValueChangeEvent})"/>.
+        /// particular evaluation context, only that some part of the flag configuration was
+        /// changed so that it <i>may</i> return a different value than it previously returned
+        /// for some context. If you want to track flag value changes, use
+        /// <see cref="FlagValueChangeHandler(string, Context, EventHandler{FlagValueChangeEvent})"/>.
         /// </para>
         /// <para>
         /// Change events only work if the SDK is actually connecting to LaunchDarkly (or
@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
 
         /// <summary>
         /// Creates a handler for receiving notifications when a specific feature flag's value
-        /// has changed for a specific set of user properties.
+        /// has changed for a specific evaluation context.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -62,24 +62,24 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// events to produce more specific <see cref="FlagValueChangeEvent"/> events.
         /// </para>
         /// <para>
-        /// All feature flag evaluations require an instance of <see cref="User"/>. If the
-        /// feature flag you are tracking does not have any user targeting rules, you must still
-        /// pass a dummy user such as <c>User.WithKey("for-global-flags")</c>. If you do not
-        /// want the user to appear on your dashboard, use the <c>Anonymous</c> property:
-        /// <c>User.Builder("for-global-flags").Anonymous(true).Build()</c>.
+        /// All feature flag evaluations require an instance of <see cref="Context"/>. If the
+        /// feature flag you are tracking does not have any targeting rules, you must still
+        /// pass a dummy context such as <c>Context.New("for-global-flags")</c>. If you do not
+        /// want the user to appear on your dashboard, use the <c>Transient</c> property:
+        /// <c>Context.Builder("for-global-flags").Transient(true).Build()</c>.
         /// </para>
         /// </remarks>
         /// <example>
         /// <code>
         ///     var flagKey = "my-important-flag";
-        ///     var userForFlagEvaluation = User.WithKey("user-for-evaluation");
+        ///     var contextForFlagEvaluation = Context.New("context-for-evaluation");
         ///     var listenForNewValue = client.FlagTracker.FlagValueChangeHandler(
         ///         flagKey,
         ///         userForFlagEvaluation,
         ///         (sender, changeArgs) =>
         ///             {
         ///                 System.Console.WriteLine("flag '" + changeArgs.Key
-        ///                     + "' changed for " + userForFlagEvaluation.Key
+        ///                     + "' changed for " + contextForFlagEvaluation.Key
         ///                     + " from " + changeArgs.OldValue
         ///                     + " to " + changeArgs.NewValue);
         ///             });
@@ -87,11 +87,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </code>
         /// </example>
         /// <param name="flagKey">the flag key to be evaluated</param>
-        /// <param name="user">the user properties for evaluation</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="handler">a handler that will receive a <see cref="FlagValueChangeEvent"/>
         /// </param>
         /// <returns>a handler to be added to <see cref="FlagChanged"/></returns>
-        EventHandler<FlagChangeEvent> FlagValueChangeHandler(string flagKey, User user,
+        EventHandler<FlagChangeEvent> FlagValueChangeHandler(string flagKey, Context context,
             EventHandler<FlagValueChangeEvent> handler);
     }
 
