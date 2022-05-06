@@ -61,6 +61,8 @@ namespace TestService
         public EvaluateAllFlagsParams EvaluateAll { get; set; }
         public IdentifyEventParams IdentifyEvent { get; set; }
         public CustomEventParams CustomEvent { get; set; }
+        public ContextBuildParams ContextBuild { get; set; }
+        public ContextConvertParams ContextConvert { get; set; }
     }
 
     public class EvaluateFlagParams
@@ -111,5 +113,33 @@ namespace TestService
     {
         public bool Available { get; set; }
         public bool Stale { get; set; }
+    }
+
+    public class ContextBuildParams
+    {
+        public ContextBuildSingleParams Single;
+        public ContextBuildSingleParams[] Multi;
+    }
+
+    public class ContextBuildSingleParams
+    {
+        public string Kind;
+        public string Key;
+        public string Name;
+        public bool Transient;
+        public string Secondary;
+        public string[] Private;
+        public Dictionary<string, LdValue> Custom;
+    }
+
+    public class ContextBuildResponse
+    {
+        public string Output;
+        public string Error;
+    }
+
+    public class ContextConvertParams
+    {
+        public string Input;
     }
 }
