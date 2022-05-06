@@ -53,22 +53,22 @@ namespace TestService
                     break;
 
                 case "identifyEvent":
-                    _client.Identify(command.IdentifyEvent.User);
+                    _client.Identify(command.IdentifyEvent.Context);
                     break;
 
                 case "customEvent":
                     var custom = command.CustomEvent;
                     if (custom.MetricValue.HasValue)
                     {
-                        _client.Track(custom.EventKey, custom.User, custom.Data, custom.MetricValue.Value);
+                        _client.Track(custom.EventKey, custom.Context, custom.Data, custom.MetricValue.Value);
                     }
                     else if (custom.OmitNullData && custom.Data.IsNull)
                     {
-                        _client.Track(custom.EventKey, custom.User);
+                        _client.Track(custom.EventKey, custom.Context);
                     }
                     else
                     {
-                        _client.Track(custom.EventKey, custom.User, custom.Data);
+                        _client.Track(custom.EventKey, custom.Context, custom.Data);
                     }
                     break;
 
@@ -95,70 +95,70 @@ namespace TestService
                 case "bool":
                     if (p.Detail)
                     {
-                        var detail = _client.BoolVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsBool);
+                        var detail = _client.BoolVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsBool);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.BoolVariation(p.FlagKey, p.User, p.DefaultValue.AsBool));
+                        resp.Value = LdValue.Of(_client.BoolVariation(p.FlagKey, p.Context, p.DefaultValue.AsBool));
                     }
                     break;
 
                 case "int":
                     if (p.Detail)
                     {
-                        var detail = _client.IntVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsInt);
+                        var detail = _client.IntVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsInt);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.IntVariation(p.FlagKey, p.User, p.DefaultValue.AsInt));
+                        resp.Value = LdValue.Of(_client.IntVariation(p.FlagKey, p.Context, p.DefaultValue.AsInt));
                     }
                     break;
 
                 case "double":
                     if (p.Detail)
                     {
-                        var detail = _client.DoubleVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsDouble);
+                        var detail = _client.DoubleVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsDouble);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.DoubleVariation(p.FlagKey, p.User, p.DefaultValue.AsDouble));
+                        resp.Value = LdValue.Of(_client.DoubleVariation(p.FlagKey, p.Context, p.DefaultValue.AsDouble));
                     }
                     break;
 
                 case "string":
                     if (p.Detail)
                     {
-                        var detail = _client.StringVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsString);
+                        var detail = _client.StringVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsString);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.StringVariation(p.FlagKey, p.User, p.DefaultValue.AsString));
+                        resp.Value = LdValue.Of(_client.StringVariation(p.FlagKey, p.Context, p.DefaultValue.AsString));
                     }
                     break;
 
                 default:
                     if (p.Detail)
                     {
-                        var detail = _client.JsonVariationDetail(p.FlagKey, p.User, p.DefaultValue);
+                        var detail = _client.JsonVariationDetail(p.FlagKey, p.Context, p.DefaultValue);
                         resp.Value = detail.Value;
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = _client.JsonVariation(p.FlagKey, p.User, p.DefaultValue);
+                        resp.Value = _client.JsonVariation(p.FlagKey, p.Context, p.DefaultValue);
                     }
                     break;
             }
@@ -180,7 +180,7 @@ namespace TestService
             {
                 options.Add(FlagsStateOption.WithReasons);
             }
-            var result = _client.AllFlagsState(p.User, options.ToArray());
+            var result = _client.AllFlagsState(p.Context, options.ToArray());
             return new EvaluateAllFlagsResponse
             {
                 State = LdValue.Parse(LdJsonSerialization.SerializeObject(result))
@@ -232,7 +232,7 @@ namespace TestService
                 }
                 if (eventParams.GlobalPrivateAttributes != null)
                 {
-                    events.PrivateAttributeNames(eventParams.GlobalPrivateAttributes);
+                    events.PrivateAttributes(eventParams.GlobalPrivateAttributes);
                 }
                 builder.Events(events);
                 builder.DiagnosticOptOut(!eventParams.EnableDiagnostics);

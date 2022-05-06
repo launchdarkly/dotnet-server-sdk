@@ -9,7 +9,7 @@ namespace TestService
 
     public class BigSegmentStoreGetMembershipParams
     {
-        public string UserHash { get; set; }
+        public string ContextHash { get; set; }
     }
 
     public class BigSegmentStoreGetMembershipResponse

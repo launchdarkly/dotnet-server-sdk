@@ -19,10 +19,10 @@ namespace TestService
         public void Dispose() =>
             _service.Close();
 
-        public async Task<BigSegmentStoreTypes.IMembership> GetMembershipAsync(string userHash)
+        public async Task<BigSegmentStoreTypes.IMembership> GetMembershipAsync(string contextHash)
         {
             var resp = await _service.PostAsync<BigSegmentStoreGetMembershipResponse>("/getMembership",
-                new BigSegmentStoreGetMembershipParams { UserHash = userHash });
+                new BigSegmentStoreGetMembershipParams { ContextHash = contextHash });
             return resp == null ? (BigSegmentStoreTypes.IMembership)null : new MembershipImpl { Values = resp.Values };
         }
 
