@@ -35,8 +35,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             _store = config.Store;
             _staleTime = config.StaleAfter;
             _cache = Caches.KeyValue<string, IMembership>()
-                .WithMaximumEntries(config.UserCacheSize)
-                .WithExpiration(config.UserCacheTime)
+                .WithMaximumEntries(config.ContextCacheSize)
+                .WithExpiration(config.ContextCacheTime)
                 .WithLoader(QueryMembership)
                 .Build();
             _taskExecutor = taskExecutor;
@@ -69,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         /// </remarks>
         /// <param name="contextKey">the (unhashed) context key</param>
         /// <returns>the query result</returns>
-        internal BigSegmentsQueryResult GetUserMembership(string contextKey)
+        internal BigSegmentsQueryResult GetMembership(string contextKey)
         {
             var ret = new BigSegmentsQueryResult();
             try
@@ -88,7 +88,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
         private IMembership QueryMembership(string contextKey)
         {
-            var hash = BigSegmentUserKeyHash(contextKey);
+            var hash = BigSegmentContextKeyHash(contextKey);
             _logger.Debug("Querying Big Segment state for context hash {0}", hash);
             return AsyncUtils.WaitSafely(() => _store.GetMembershipAsync(hash));
         }

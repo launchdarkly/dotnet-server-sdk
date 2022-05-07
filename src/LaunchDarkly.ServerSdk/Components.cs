@@ -27,8 +27,8 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         /// <remarks>
         /// <para>
-        /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
-        /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
+        /// "Big Segments" are a specific type of segments. For more information, read the LaunchDarkly
+        /// documentation about segments: https://docs.launchdarkly.com/home/users/segments
         /// </para>
         /// <para>
         /// After configuring this object, use <see cref="ConfigurationBuilder.BigSegments(IBigSegmentsConfigurationFactory)"/>
@@ -37,7 +37,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <code>
         ///     var config = Configuration.Builder(sdkKey)
         ///         .BigSegments(Components.BigSegments(Redis.DataStore().Prefix("app1"))
-        ///             .UserCacheSize(2000))
+        ///             .ContextCacheSize(2000))
         ///         .Build();
         /// </code>
         /// <para>
@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <see cref="IBigSegmentStoreFactory"/>. The <see cref="BigSegmentsConfigurationBuilder"/> adds
         /// configuration options for aspects of SDK behavior that are independent of the database. In the
         /// example above, <code>Prefix</code> is an option specifically for the Redis integration, whereas
-        /// <code>UserCacheSize</code> is an option that can be used for any data store type.
+        /// <code>ContextCacheSize</code> is an option that can be used for any data store type.
         /// </para>
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
