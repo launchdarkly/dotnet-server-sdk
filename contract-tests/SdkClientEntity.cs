@@ -318,13 +318,13 @@ namespace TestService
                 {
                     bs.StatusPollInterval(TimeSpan.FromMilliseconds(bigSegments.StatusPollIntervalMs.Value));
                 }
-                if (bigSegments.ContextCacheSize.HasValue)
+                if (bigSegments.UserCacheSize.HasValue)
                 {
-                    bs.ContextCacheSize(bigSegments.ContextCacheSize.Value);
+                    bs.ContextCacheSize(bigSegments.UserCacheSize.Value);
                 }
-                if (bigSegments.ContextCacheTimeMs.HasValue)
+                if (bigSegments.UserCacheTimeMs.HasValue)
                 {
-                    bs.ContextCacheTime(TimeSpan.FromMilliseconds(bigSegments.ContextCacheTimeMs.Value));
+                    bs.ContextCacheTime(TimeSpan.FromMilliseconds(bigSegments.UserCacheTimeMs.Value));
                 }
                 builder.BigSegments(bs);
             }
