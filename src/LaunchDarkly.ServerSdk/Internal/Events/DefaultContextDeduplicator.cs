@@ -22,7 +22,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             {
                 return false;
             }
-            return !_contextKeys.Add(context.Key);
+            return !_contextKeys.Add(context.FullyQualifiedKey);
         }
 
         public void Flush() =>
