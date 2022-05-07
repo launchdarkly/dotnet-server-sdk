@@ -50,8 +50,8 @@ namespace TestService
         public Uri CallbackUri { get; set; }
         public long? StaleAfterMs { get; set; }
         public long? StatusPollIntervalMs { get; set; }
-        public int? UserCacheSize { get; set; }
-        public long? UserCacheTimeMs { get; set; }
+        public int? ContextCacheSize { get; set; }
+        public long? ContextCacheTimeMs { get; set; }
     }
 
     public class CommandParams
