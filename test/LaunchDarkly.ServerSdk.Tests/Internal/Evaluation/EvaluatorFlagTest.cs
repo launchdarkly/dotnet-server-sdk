@@ -156,7 +156,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var f = new FeatureFlagBuilder("feature")
                 .On(true)
                 .OffVariation(1)
-                .FallthroughRollout(new Rollout(RolloutKind.Rollout, null, new List<WeightedVariation>(), null))
+                .FallthroughRollout(new Rollout(RolloutKind.Rollout, null, null, new List<WeightedVariation>(), null))
                 .Variations(fallthroughValue, offValue, onValue)
                 .Build();
             var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
@@ -381,7 +381,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var f = new FeatureFlagBuilder("feature")
                 .On(true)
-                .Targets(new Target(new HashSet<string> { "whoever", "userkey" }, 2))
+                .Targets(new Target(null, new HashSet<string> { "whoever", "userkey" }, 2))
                 .FallthroughVariation(0)
                 .OffVariation(1)
                 .Variations(fallthroughValue, offValue, onValue)
@@ -412,7 +412,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 new WeightedVariation(2, 20000, untrackedVariations)
             };
             const int seed = 123;
-            return new Rollout(kind, seed, variations, UserAttribute.Key);
+            return new Rollout(kind, null, seed, variations, null);
         }
     }
 }

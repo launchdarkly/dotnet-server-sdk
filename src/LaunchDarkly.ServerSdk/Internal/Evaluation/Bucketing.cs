@@ -9,9 +9,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 
-        internal static float BucketUser(int? seed, User user, string key, UserAttribute attr, string salt)
+        internal static float BucketUser(int? seed, User user, string key, string bucketBy, string salt)
         {
-            var userValue = user.GetAttribute(attr);
+            var userValue = string.IsNullOrEmpty(bucketBy) ? LdValue.Of(user.Key) : user.GetAttribute(UserAttribute.ForName(bucketBy));
             var hashInputBuilder = new StringBuilder(100);
             if (seed.HasValue)
             {

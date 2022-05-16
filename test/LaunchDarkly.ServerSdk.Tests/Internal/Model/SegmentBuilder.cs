@@ -34,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         internal Segment Build()
         {
-            return new Segment(_key, _version, _deleted, _included, _excluded, _rules, _salt, _unbounded, _generation);
+            return new Segment(_key, _version, _deleted, _included, _excluded, null, null, _rules, _salt, _unbounded, null, _generation);
         }
 
         internal SegmentBuilder Version(int version)

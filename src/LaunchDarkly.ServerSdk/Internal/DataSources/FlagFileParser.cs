@@ -105,7 +105,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             new FeatureFlag(
                 flag.Key,
                 version,
-                flag.Deleted, flag.On, flag.Prerequisites, flag.Targets, flag.Rules, flag.Fallthrough,
+                flag.Deleted, flag.On, flag.Prerequisites, flag.Targets, flag.ContextTargets, flag.Rules, flag.Fallthrough,
                 flag.OffVariation, flag.Variations, flag.Salt, flag.TrackEvents, flag.TrackEventsFallthrough,
                 flag.DebugEventsUntilDate, flag.ClientSide);
 
@@ -129,7 +129,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             new Segment(
                 segment.Key,
                 version,
-                segment.Deleted, segment.Included, segment.Excluded, segment.Rules,
-                segment.Salt, segment.Unbounded, segment.Generation);
+                segment.Deleted, segment.Included, segment.Excluded, segment.IncludedContexts, segment.ExcludedContexts,
+                segment.Rules, segment.Salt, segment.Unbounded, segment.UnboundedContextKind, segment.Generation);
     }
 }

@@ -110,7 +110,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var user = User.WithKey("userkey");
             var clause = ClauseBuilder.ShouldMatchUser(user);
             var rule = new RuleBuilder().Id("ruleid").Clauses(clause)
-                .Rollout(new Rollout(RolloutKind.Rollout, null, new List<WeightedVariation>(), null)).Build();
+                .Rollout(new Rollout(RolloutKind.Rollout, null, null, new List<WeightedVariation>(), null)).Build();
             var f = FeatureFlagWithRules(rule);
 
             var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
@@ -139,7 +139,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 new WeightedVariation(2, 20000, untrackedVariations)
             };
             const int seed = 123;
-            return new Rollout(kind, seed, variations, UserAttribute.Key);
+            return new Rollout(kind, null, seed, variations, null);
         }
     }
 }

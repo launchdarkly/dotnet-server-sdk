@@ -14,9 +14,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal int Version { get; }
         internal bool Deleted { get; }
         internal bool On { get; }
-        internal IEnumerable<Prerequisite> Prerequisites { get; }
-        internal IEnumerable<Target> Targets { get; }
-        internal IEnumerable<FlagRule> Rules { get; }
+        internal ImmutableList<Prerequisite> Prerequisites { get; }
+        internal ImmutableList<Target> Targets { get; }
+        internal ImmutableList<Target> ContextTargets { get; }
+        internal ImmutableList<FlagRule> Rules { get; }
         internal VariationOrRollout Fallthrough { get; }
         internal int? OffVariation { get; }
         internal IEnumerable<LdValue> Variations { get; }
@@ -27,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         public bool ClientSide { get; set; }
 
         internal FeatureFlag(string key, int version, bool deleted, bool on, IEnumerable<Prerequisite> prerequisites,
-            IEnumerable<Target> targets, IEnumerable<FlagRule> rules, VariationOrRollout fallthrough, int? offVariation,
+            IEnumerable<Target> targets, IEnumerable<Target> contextTargets, IEnumerable<FlagRule> rules, VariationOrRollout fallthrough, int? offVariation,
             IEnumerable<LdValue> variations, string salt, bool trackEvents, bool trackEventsFallthrough, UnixMillisecondTime? debugEventsUntilDate,
             bool clientSide)
         {
@@ -35,9 +36,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Version = version;
             Deleted = deleted;
             On = on;
-            Prerequisites = prerequisites ?? Enumerable.Empty<Prerequisite>();
-            Targets = targets ?? Enumerable.Empty<Target>();
-            Rules = rules ?? Enumerable.Empty<FlagRule>();
+            Prerequisites = prerequisites is null ? ImmutableList.Create<Prerequisite>() : prerequisites.ToImmutableList();
+            Targets = targets is null ? ImmutableList.Create<Target>() : targets.ToImmutableList();
+            ContextTargets = contextTargets is null ? ImmutableList.Create<Target>() : contextTargets.ToImmutableList();
+            Rules = rules is null ? ImmutableList.Create<FlagRule>() : rules.ToImmutableList();
             Fallthrough = fallthrough;
             OffVariation = offVariation;
             Variations = variations ?? Enumerable.Empty<LdValue>();
@@ -52,13 +54,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     internal struct Rollout
     {
         internal RolloutKind Kind { get; }
+        internal string ContextKind { get; }
         internal int? Seed { get; }
         internal IEnumerable<WeightedVariation> Variations { get; }
-        internal UserAttribute? BucketBy { get; }
+        internal string BucketBy { get; }
 
-        internal Rollout(RolloutKind kind, int? seed, IEnumerable<WeightedVariation> variations, UserAttribute? bucketBy)
+        internal Rollout(RolloutKind kind, string contextKind, int? seed, IEnumerable<WeightedVariation> variations, string bucketBy)
         {
             Kind = kind;
+            ContextKind = contextKind;
             Seed = seed;
             Variations = variations ?? Enumerable.Empty<WeightedVariation>();
             BucketBy = bucketBy;
@@ -99,12 +103,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal struct Target
     {
+        internal string ContextKind { get; }
         internal IEnumerable<string> Values { get; }
         internal int Variation { get; }
         internal PreprocessedData Preprocessed { get; }
 
-        internal Target(IEnumerable<string> values, int variation)
+        internal Target(string contextKind, IEnumerable<string> values, int variation)
         {
+            ContextKind = contextKind;
             Values = values ?? Enumerable.Empty<string>();
             Variation = variation;
             Preprocessed = Preprocess(Values);

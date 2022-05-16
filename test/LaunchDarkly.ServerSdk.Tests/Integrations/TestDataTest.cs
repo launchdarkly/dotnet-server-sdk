@@ -99,7 +99,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void FlagConfigSimpleBoolean()
         {
-            string basicProps = "\"variations\":[true,false],\"offVariation\":1,\"rules\":[],\"targets\":[]",
+            string basicProps = "\"variations\":[true,false],\"offVariation\":1,\"rules\":[],\"targets\":[],\"contextTargets\":[]",
                 onProps = basicProps + ",\"on\":true",
                 offProps = basicProps + ",\"on\":false",
                 fallthroughTrue = ",\"fallthrough\":{\"variation\":0}",
@@ -120,14 +120,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             VerifyFlag(
                 f => f.FallthroughVariation(false).OffVariation(true),
                 "\"variations\":[true,false],\"on\":true,\"offVariation\":0,\"fallthrough\":{\"variation\":1}"
-                    + ",\"rules\":[],\"targets\":[]"
+                    + ",\"rules\":[],\"targets\":[],\"contextTargets\":[]"
                 );
         }
 
         [Fact]
         public void UsingBooleanConfigMethodsForcesFlagToBeBoolean()
         {
-            string booleanProps = "\"on\":true,\"rules\":[],\"targets\":[]"
+            string booleanProps = "\"on\":true,\"rules\":[],\"targets\":[],\"contextTargets\":[]"
                 + ",\"variations\":[true,false],\"offVariation\":1,\"fallthrough\":{\"variation\":0}";
 
             VerifyFlag(
@@ -150,7 +150,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public void FlagConfigStringVariations()
         {
             string basicProps = "\"variations\":[\"red\",\"green\",\"blue\"],\"on\":true"
-                + ",\"offVariation\":0,\"fallthrough\":{\"variation\":2},\"rules\":[],\"targets\":[]";
+                + ",\"offVariation\":0,\"fallthrough\":{\"variation\":2},\"rules\":[],\"targets\":[],\"contextTargets\":[]";
 
             VerifyFlag(
                 f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2),
@@ -161,7 +161,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void UserTargets()
         {
-            string booleanFlagBasicProps = "\"on\":true,\"variations\":[true,false],\"rules\":[]" +
+            string booleanFlagBasicProps = "\"on\":true,\"variations\":[true,false],\"rules\":[],\"contextTargets\":[]" +
                 ",\"offVariation\":1,\"fallthrough\":{\"variation\":0}";
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("b", true),
@@ -182,7 +182,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                   ",{\"variation\":1,\"values\":[\"a\"]}]"
                 );
 
-            string stringFlagBasicProps = "\"variations\":[\"red\",\"green\",\"blue\"],\"on\":true,\"rules\":[]"
+            string stringFlagBasicProps = "\"variations\":[\"red\",\"green\",\"blue\"],\"on\":true,\"rules\":[],\"contextTargets\":[]"
                 + ",\"offVariation\":0,\"fallthrough\":{\"variation\":2}";
             VerifyFlag(
                 f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2)
@@ -200,7 +200,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void FlagRules()
         {
-            string basicProps = "\"variations\":[true,false],\"targets\":[]" +
+            string basicProps = "\"variations\":[true,false],\"targets\":[],\"contextTargets\":[]" +
                 ",\"on\":true,\"offVariation\":1,\"fallthrough\":{\"variation\":0}";
 
             // match that returns variation 0/true

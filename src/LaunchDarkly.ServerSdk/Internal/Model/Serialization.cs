@@ -56,15 +56,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             }
             prereqsArr.End();
 
-            var targetsArr = obj.Name("targets").Array();
-            foreach (var t in flag.Targets)
-            {
-                var targetObj = targetsArr.Object();
-                targetObj.Name("variation").Int(t.Variation);
-                SerializationHelpers.WriteStrings(targetObj.Name("values"), t.Values);
-                targetObj.End();
-            }
-            targetsArr.End();
+            WriteTargets(flag.Targets, obj.Name("targets"));
+            WriteTargets(flag.ContextTargets, obj.Name("contextTargets"));
 
             var rulesArr = obj.Name("rules").Array();
             foreach (var r in flag.Rules)
@@ -107,6 +100,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             bool on = false;
             ImmutableList<Prerequisite> prerequisites = null;
             ImmutableList<Target> targets = null;
+            ImmutableList<Target> contextTargets = null;
             ImmutableList<FlagRule> rules = null;
             string salt = null;
             VariationOrRollout fallthrough = new VariationOrRollout();
@@ -148,6 +142,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         }
                         targets = targetsBuilder.ToImmutable();
                         break;
+                    case var n when n == "contextTargets":
+                        var contextTargetsBuilder = ImmutableList.CreateBuilder<Target>();
+                        for (var arr = reader.ArrayOrNull(); arr.Next(ref reader);)
+                        {
+                            contextTargetsBuilder.Add(ReadTarget(ref reader));
+                        }
+                        contextTargets = contextTargetsBuilder.ToImmutable();
+                        break;
                     case var n when n == "rules":
                         var rulesBuilder = ImmutableList.CreateBuilder<FlagRule>();
                         for (var arr = reader.ArrayOrNull(); arr.Next(ref reader);)
@@ -187,7 +189,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             {
                 throw new RequiredPropertyException("key", 0);
             }
-            return new FeatureFlag(key, version, deleted, on, prerequisites, targets, rules, fallthrough,
+            return new FeatureFlag(key, version, deleted, on, prerequisites, targets, contextTargets, rules, fallthrough,
                 offVariation, variations, salt, trackEvents, trackEventsFallthrough, debugEventsUntilDate, clientSide);
         }
 
@@ -212,12 +214,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         internal static Target ReadTarget(ref JReader r)
         {
+            string contextKind = null;
             ImmutableList<string> values = null;
             int variation = 0;
             for (var obj = r.Object(); obj.Next(ref r);)
             {
                 switch (obj.Name)
                 {
+                    case var n when n == "contextKind":
+                        contextKind = r.StringOrNull();
+                        break;
                     case var n when n == "values":
                         values = SerializationHelpers.ReadStrings(ref r);
                         break;
@@ -226,7 +232,21 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                 }
             }
-            return new Target(values, variation);
+            return new Target(contextKind, values, variation);
+        }
+
+        internal static void WriteTargets(IEnumerable<Target> targets, IValueWriter w)
+        {
+            var arr = w.Array();
+            foreach (var t in targets)
+            {
+                var targetObj = arr.Object();
+                targetObj.MaybeName("contextKind", !string.IsNullOrEmpty(t.ContextKind)).String(t.ContextKind);
+                targetObj.Name("variation").Int(t.Variation);
+                SerializationHelpers.WriteStrings(targetObj.Name("values"), t.Values);
+                targetObj.End();
+            }
+            arr.End();
         }
 
         internal static FlagRule ReadFlagRule(ref JReader r)
@@ -282,7 +302,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal static Rollout? ReadRollout(ref JReader r)
         {
             ImmutableList<WeightedVariation> variations = null;
-            UserAttribute? bucketBy = null;
+            string contextKind = null;
+            string bucketBy = null;
             RolloutKind kind = RolloutKind.Rollout;
             int? seed = null;
             var obj = r.ObjectOrNull();
@@ -319,9 +340,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         }
                         variations = listBuilder.ToImmutable();
                         break;
+                    case var n when n == "contextKind":
+                        contextKind = r.StringOrNull();
+                        break;
                     case var n when n == "bucketBy":
-                        var s = r.StringOrNull();
-                        bucketBy = s is null ? (UserAttribute?)null : UserAttribute.ForName(s);
+                        bucketBy = r.StringOrNull();
                         break;
                     case var n when n == "kind":
                         var kindStr = r.StringOrNull();
@@ -332,7 +355,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                 }
             }
-            return new Rollout(kind, seed, variations, bucketBy);
+            return new Rollout(kind, contextKind, seed, variations, SerializationHelpers.AttrRefOrName(contextKind, bucketBy));
         }
     }
 
@@ -351,6 +374,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             obj.Name("deleted").Bool(segment.Deleted);
             SerializationHelpers.WriteStrings(obj.Name("included"), segment.Included);
             SerializationHelpers.WriteStrings(obj.Name("excluded"), segment.Excluded);
+            WriteSegmentTargets(segment.IncludedContexts, obj.Name("includedContexts"));
+            WriteSegmentTargets(segment.ExcludedContexts, obj.Name("excludedContexts"));
             obj.Name("salt").String(segment.Salt);
 
             var rulesArr = obj.Name("rules").Array();
@@ -362,15 +387,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 {
                     ruleObj.Name("weight").Int(r.Weight.Value);
                 }
-                if (r.BucketBy.HasValue)
+                if (!string.IsNullOrEmpty(r.RolloutContextKind))
                 {
-                    ruleObj.Name("bucketBy").String(r.BucketBy.Value.AttributeName);
+                    ruleObj.Name("rolloutContextKind").String(r.RolloutContextKind);
                 }
+                ruleObj.MaybeName("bucketBy", !string.IsNullOrEmpty(r.BucketBy)).String(r.BucketBy);
                 ruleObj.End();
             }
             rulesArr.End();
 
             obj.MaybeName("unbounded", segment.Unbounded).Bool(segment.Unbounded);
+            obj.MaybeName("unboundedContextKind", !string.IsNullOrEmpty(segment.UnboundedContextKind)).String(segment.UnboundedContextKind);
             obj.MaybeName("generation", segment.Generation.HasValue).IntOrNull(segment.Generation);
 
             obj.End();
@@ -382,9 +409,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             int version = 0;
             bool deleted = false;
             ImmutableList<string> included = null, excluded = null;
+            ImmutableList<SegmentTarget> includedContexts = null, excludedContexts = null;
             ImmutableList<SegmentRule> rules = null;
             string salt = null;
             bool unbounded = false;
+            string unboundedContextKind = null;
             int? generation = null;
 
             for (var obj = reader.Object().WithRequiredProperties(_requiredProperties); obj.Next(ref reader);)
@@ -406,6 +435,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     case var n when n == "excluded":
                         excluded = SerializationHelpers.ReadStrings(ref reader);
                         break;
+                    case var n when n == "includedContexts":
+                        includedContexts = ReadSegmentTargets(ref reader);
+                        break;
+                    case var n when n == "excludedContexts":
+                        excludedContexts = ReadSegmentTargets(ref reader);
+                        break;
                     case var n when n == "rules":
                         var rulesBuilder = ImmutableList.CreateBuilder<SegmentRule>();
                         for (var rulesArr = reader.Array(); rulesArr.Next(ref reader);)
@@ -420,6 +455,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     case var n when n == "unbounded":
                         unbounded = reader.Bool();
                         break;
+                    case var n when n == "unboundedContextKind":
+                        unboundedContextKind = reader.StringOrNull();
+                        break;
                     case var n when n == "generation":
                         generation = reader.IntOrNull();
                         break;
@@ -429,14 +467,53 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             {
                 throw new RequiredPropertyException("key", 0);
             }
-            return new Segment(key, version, deleted, included, excluded, rules, salt, unbounded, generation);
+            return new Segment(key, version, deleted, included, excluded, includedContexts, excludedContexts,
+                rules, salt, unbounded, unboundedContextKind, generation);
+        }
+
+        internal static ImmutableList<SegmentTarget> ReadSegmentTargets(ref JReader reader)
+        {
+            var builder = ImmutableList.CreateBuilder<SegmentTarget>();
+            for (var arr = reader.ArrayOrNull(); arr.Next(ref reader);)
+            {
+                string contextKind = null;
+                ImmutableList<string> values = null;
+                for (var obj = reader.Object(); obj.Next(ref reader);)
+                {
+                    switch (obj.Name)
+                    {
+                        case var n when n == "contextKind":
+                            contextKind = reader.StringOrNull();
+                            break;
+                        case var n when n == "values":
+                            values = SerializationHelpers.ReadStrings(ref reader);
+                            break;
+                    }
+                }
+                builder.Add(new SegmentTarget(contextKind, values));
+            }
+            return builder.ToImmutable();
+        }
+
+        internal static void WriteSegmentTargets(IEnumerable<SegmentTarget> targets, IValueWriter writer)
+        {
+            var arr = writer.Array();
+            foreach (var t in targets)
+            {
+                var obj = arr.Object();
+                obj.Name("contextKind").String(t.ContextKind);
+                SerializationHelpers.WriteStrings(obj.Name("values"), t.Values);
+                obj.End();
+            }
+            arr.End();
         }
 
         internal static SegmentRule ReadSegmentRule(ref JReader reader)
         {
             ImmutableList<Clause> clauses = null;
             int? weight = null;
-            UserAttribute? bucketBy = null;
+            string rolloutContextKind = null;
+            string bucketBy = null;
             for (var obj = reader.Object(); obj.Next(ref reader);)
             {
                 switch (obj.Name)
@@ -447,13 +524,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     case var n when n == "weight":
                         weight = reader.IntOrNull();
                         break;
+                    case var n when n == "rolloutContextKind":
+                        rolloutContextKind = reader.StringOrNull();
+                        break;
                     case var n when n == "bucketBy":
-                        var s = reader.StringOrNull();
-                        bucketBy = s is null ? (UserAttribute?)null : UserAttribute.ForName(s);
+                        bucketBy = reader.StringOrNull();
                         break;
                 }
             }
-            return new SegmentRule(clauses, weight, bucketBy);
+            return new SegmentRule(clauses, weight, rolloutContextKind,
+                SerializationHelpers.AttrRefOrName(rolloutContextKind, bucketBy));
         }
 
     }
@@ -477,6 +557,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         rolloutObj.Name("kind").String("experiment");
                         break;
                 }
+                if (!string.IsNullOrEmpty(rollout.Value.ContextKind))
+                {
+                    rolloutObj.Name("contextKind").String(rollout.Value.ContextKind);
+                }
                 if (rollout.Value.Seed.HasValue)
                 {
                     rolloutObj.Name("seed").Int(rollout.Value.Seed.Value);
@@ -491,10 +575,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     variationObj.End();
                 }
                 variationsArr.End();
-                if (rollout.Value.BucketBy.HasValue)
-                {
-                    rolloutObj.Name("bucketBy").String(rollout.Value.BucketBy.Value.AttributeName);
-                }
+                rolloutObj.MaybeName("bucketBy", !string.IsNullOrEmpty(rollout.Value.BucketBy)).
+                    String(rollout.Value.BucketBy);
                 rolloutObj.End();
             }
         }
@@ -505,7 +587,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             foreach (var c in clauses)
             {
                 var clauseObj = arr.Object();
-                clauseObj.Name("attribute").String(c.Attribute.AttributeName);
+                if (!string.IsNullOrEmpty(c.ContextKind))
+                {
+                    clauseObj.Name("contextKind").String(c.ContextKind);
+                }
+                clauseObj.Name("attribute").String(c.Attribute);
                 clauseObj.Name("op").String(c.Op.Name);
                 WriteValues(clauseObj.Name("values"), c.Values);
                 clauseObj.Name("negate").Bool(c.Negate);
@@ -537,9 +623,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal static ImmutableList<Clause> ReadClauses(ref JReader r)
         {
             var builder = ImmutableList.CreateBuilder<Clause>();
-            for (var arr = r.ArrayOrNull();  arr.Next(ref r);)
+            for (var arr = r.ArrayOrNull(); arr.Next(ref r);)
             {
-                UserAttribute attribute = new UserAttribute();
+                string contextKind = null;
+                string attribute = null;
                 Operator op = null;
                 ImmutableList<LdValue> values = null;
                 bool negate = false;
@@ -547,8 +634,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 {
                     switch (obj.Name)
                     {
+                        case var n when n == "contextKind":
+                            contextKind = r.String();
+                            break;
                         case var n when n == "attribute":
-                            attribute = UserAttribute.ForName(r.String());
+                            attribute = r.String();
                             break;
                         case var n when n == "op":
                             op = Operator.ForName(r.String());
@@ -562,7 +652,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                             break;
                     }
                 }
-                builder.Add(new Clause(attribute, op, values, negate));
+                builder.Add(new Clause(contextKind, AttrRefOrName(contextKind, attribute), op, values, negate));
             }
             return builder.ToImmutable();
         }
@@ -570,7 +660,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal static ImmutableList<string> ReadStrings(ref JReader r)
         {
             var builder = ImmutableList.CreateBuilder<string>();
-            for (var arr = r.ArrayOrNull();  arr.Next(ref r); )
+            for (var arr = r.ArrayOrNull(); arr.Next(ref r);)
             {
                 builder.Add(r.String());
             }
@@ -585,6 +675,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 builder.Add(LdValueConverter.ReadJsonValue(ref r));
             }
             return builder.ToImmutable();
+        }
+
+        internal static string AttrRefOrName(string contextKind, string attrString)
+        {
+            // This is a placeholder for logic that we will add once we have the AttributeRef type:
+            // If contextKind is specified, then attrString should be interpreted as an attribute reference
+            // which could be a slash-delimited path. If contextKind is not specified, then attrString should
+            // be interpreted as a literal attribute name only.
+            return attrString;
         }
     }
 }
