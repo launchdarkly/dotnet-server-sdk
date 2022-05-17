@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
             // First verify that with our test inputs, the bucket value will be greater than zero and less than 100000,
             // so we can construct a rollout whose second bucket just barely contains that value
-            var bucketValue = (int)(Bucketing.BucketContext(null, user, flagKey, null, salt) * 100000);
+            var bucketValue = (int)(Bucketing.ComputeBucketValue(false, null, user, null, flagKey, null, salt) * 100000);
             Assert.InRange(bucketValue, 1, 99999);
 
             const int badVariationA = 0, matchedVariation = 1, badVariationB = 2;
@@ -40,8 +40,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             const string salt = "salt";
             const int seed = 123;
 
-            var bucketValue1 = Bucketing.BucketContext(null, user, flagKey, null, salt);
-            var bucketValue2 = Bucketing.BucketContext(seed, user, flagKey, null, salt);
+            var bucketValue1 = Bucketing.ComputeBucketValue(false, null, user, null, flagKey, null, salt);
+            var bucketValue2 = Bucketing.ComputeBucketValue(false, seed, user, null, flagKey, null, salt);
             Assert.NotEqual(bucketValue1, bucketValue2);
         }
 
@@ -53,8 +53,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             const string salt = "salt";
             const int seed1 = 123, seed2 = 456;
 
-            var bucketValue1 = Bucketing.BucketContext(seed1, user, flagKey, null, salt);
-            var bucketValue2 = Bucketing.BucketContext(seed2, user, flagKey, null, salt);
+            var bucketValue1 = Bucketing.ComputeBucketValue(false, seed1, user, null, flagKey, null, salt);
+            var bucketValue2 = Bucketing.ComputeBucketValue(false, seed2, user, null, flagKey, null, salt);
             Assert.NotEqual(bucketValue1, bucketValue2);
         }
 
@@ -66,8 +66,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             const string salt1 = "salt", salt2 = "salt2";
             const int seed = 123;
 
-            var bucketValue1 = Bucketing.BucketContext(seed, user, flagKey1, null, salt1);
-            var bucketValue2 = Bucketing.BucketContext(seed, user, flagKey2, null, salt2);
+            var bucketValue1 = Bucketing.ComputeBucketValue(false, seed, user, null, flagKey1, null, salt1);
+            var bucketValue2 = Bucketing.ComputeBucketValue(false, seed, user, null, flagKey2, null, salt2);
             Assert.Equal(bucketValue1, bucketValue2);
         }
 
@@ -79,7 +79,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             const string salt = "salt";
 
             // We'll construct a list of variations that stops right at the target bucket value
-            int bucketValue = (int)(Bucketing.BucketContext(null, user, flagKey, null, salt) * 100000);
+            int bucketValue = (int)(Bucketing.ComputeBucketValue(false, null, user, null, flagKey, null, salt) * 100000);
 
             var variations = new List<WeightedVariation>()
             {
@@ -97,9 +97,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .Set("stringattr", "33333")
                 .Set("intattr", 33333)
                 .Build();
-            var resultForString = Bucketing.BucketContext(null, user, "key", AttributeRef.FromLiteral("stringattr"), "salt");
-            var resultForInt = Bucketing.BucketContext(null, user, "key", AttributeRef.FromLiteral("intattr"), "salt");
+            var resultForString = Bucketing.ComputeBucketValue(false, null, user, null, "key", AttributeRef.FromLiteral("stringattr"), "salt");
+            var resultForInt = Bucketing.ComputeBucketValue(false, null, user, null, "key", AttributeRef.FromLiteral("intattr"), "salt");
             Assert.Equal((double)resultForInt, (double)resultForString, 10);
+
+            var multiContext = Context.NewMulti(
+                Context.NewWithKind("kind1", "key1"),
+                Context.Builder("key2").Kind("kind2")
+                    .Set("stringattr", "33333")
+                    .Set("intattr", 33333)
+                    .Build());
+            var resultForString1 = Bucketing.ComputeBucketValue(false, null, multiContext, "kind2", "key", AttributeRef.FromLiteral("stringattr"), "salt");
+            var resultForInt1 = Bucketing.ComputeBucketValue(false, null, multiContext, "kind2", "key", AttributeRef.FromLiteral("intattr"), "salt");
+            Assert.Equal(resultForString, resultForString1);
+            Assert.Equal(resultForInt, resultForInt1);
         }
 
         [Fact]
@@ -114,7 +125,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 var user = Context.Builder("key")
                     .Set("badattr", attributeValue)
                     .Build();
-                var result = Bucketing.BucketContext(null, user, "key", AttributeRef.FromLiteral("badattr"), "salt");
+                var result = Bucketing.ComputeBucketValue(false, null, user, null, "key", AttributeRef.FromLiteral("badattr"), "salt");
                 if (result != 0f)
                 {
                     Assert.True(false, "got unexpected value " + result + " for attribute value " + attributeValue);
@@ -123,16 +134,29 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         }
 
         [Fact]
-        public void UserSecondaryKeyAffectsBucketValue()
+        public void SecondaryKeyAffectsBucketValueForRollout()
         {
             var user1 = Context.New("key");
             var user2 = Context.Builder("key").Secondary("other").Build();
             const string flagKey = "flagkey";
             const string salt = "salt";
 
-            var result1 = Bucketing.BucketContext(null, user1, flagKey, null, salt);
-            var result2 = Bucketing.BucketContext(null, user2, flagKey, null, salt);
+            var result1 = Bucketing.ComputeBucketValue(false, null, user1, null, flagKey, null, salt);
+            var result2 = Bucketing.ComputeBucketValue(false, null, user2, null, flagKey, null, salt);
             Assert.NotEqual(result1, result2);
+        }
+
+        [Fact]
+        public void SecondaryKeyDoesNotAffectBucketValueForExperiment()
+        {
+            var user1 = Context.New("key");
+            var user2 = Context.Builder("key").Secondary("other").Build();
+            const string flagKey = "flagkey";
+            const string salt = "salt";
+
+            var result1 = Bucketing.ComputeBucketValue(true, null, user1, null, flagKey, null, salt);
+            var result2 = Bucketing.ComputeBucketValue(true, null, user2, null, flagKey, null, salt);
+            Assert.Equal(result1, result2);
         }
 
         private static void AssertVariationIndexFromRollout(

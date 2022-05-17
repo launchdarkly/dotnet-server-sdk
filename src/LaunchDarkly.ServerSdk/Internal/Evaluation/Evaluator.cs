@@ -245,7 +245,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             if (rollout.HasValue && rollout.Value.Variations.Any())
             {
                 WeightedVariation? selectedVariation = null;
-                float bucket = Bucketing.BucketContext(rollout.Value.Seed, _context, _flag.Key, rollout.Value.BucketBy, _flag.Salt);
+                float bucket = Bucketing.ComputeBucketValue(
+                    rollout.Value.Kind == RolloutKind.Experiment,
+                    rollout.Value.Seed,
+                    _context,
+                    rollout.Value.ContextKind,
+                    _flag.Key,
+                    rollout.Value.BucketBy,
+                    _flag.Salt
+                    );
                 float sum = 0F;
                 foreach (WeightedVariation wv in rollout.Value.Variations)
                 {
@@ -394,8 +402,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             }
 
             // All of the clauses are met. See if the user buckets in
-            double bucket = Bucketing.BucketContext(null, _context, segment.Key, segmentRule.BucketBy, segment.Salt);
-            double weight = (double)segmentRule.Weight / 100000F;
+            float bucket = Bucketing.ComputeBucketValue(
+                false,
+                null,
+                _context,
+                segmentRule.RolloutContextKind ?? Context.DefaultKind,
+                segment.Key,
+                segmentRule.BucketBy,
+                segment.Salt
+                );
+            float weight = (float)segmentRule.Weight / 100000F;
             return bucket < weight;
         }
     }

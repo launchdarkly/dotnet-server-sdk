@@ -8,13 +8,39 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 
-        internal static float BucketContext(int? seed, in Context context, string key, in AttributeRef? attr, string salt)
+        internal static float ComputeBucketValue(
+            bool isExperiment,
+            int? seed,
+            in Context context,
+            string contextKind,
+            string key,
+            in AttributeRef? attr,
+            string salt
+            )
         {
-            var contextValue = (attr.HasValue && attr.Value.Defined) ? context.GetValue(attr.Value) : LdValue.Of(context.Key);
-            if (contextValue.IsNull)
+            if (!context.TryGetContextByKind(contextKind ?? Context.DefaultKind, out var matchContext))
             {
-                return 0; // attribute not found
+                return 0;
             }
+
+            LdValue contextValue;
+            if (isExperiment || !attr.HasValue || !attr.Value.Defined) // always bucket by key in an experiment
+            {
+                contextValue = LdValue.Of(matchContext.Key);
+            }
+            else
+            {
+                if (!attr.Value.Valid)
+                {
+                    return 0;
+                }
+                contextValue = matchContext.GetValue(attr.Value);
+                if (contextValue.IsNull)
+                {
+                    return 0;
+                }
+            }
+
             var hashInputBuilder = new StringBuilder(100);
             if (seed.HasValue)
             {
@@ -37,10 +63,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             {
                 return 0; // bucket-by values other than strings and ints aren't supported
             }
-            var secondary = context.Secondary;
-            if (!string.IsNullOrEmpty(secondary))
+            if (!isExperiment)  // secondary key is not supported in experiments
             {
-                hashInputBuilder.Append(".").Append(secondary);
+                var secondary = matchContext.Secondary;
+                if (!(secondary is null))
+                {
+                    hashInputBuilder.Append(".").Append(secondary);
+                }
             }
             var hash = Hash(hashInputBuilder.ToString()).Substring(0, 15);
             var longValue = long.Parse(hash, NumberStyles.HexNumber);
