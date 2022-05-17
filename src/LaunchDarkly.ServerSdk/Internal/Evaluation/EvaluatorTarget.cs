@@ -1,5 +1,4 @@
-﻿using System;
-using LaunchDarkly.Sdk.Server.Internal.Model;
+﻿using LaunchDarkly.Sdk.Server.Internal.Model;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {

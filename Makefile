@@ -21,7 +21,6 @@ TEST_HARNESS_PARAMS := $(TEST_HARNESS_PARAMS) \
 	-skip 'evaluation/bucketing/secondary/an empty string/affects' \
 	-skip 'evaluation/bucketing/selection of context' \
 	-skip 'evaluation/parameterized/bad attribute reference errors' \
-	-skip 'evaluation/parameterized/clause kind matching' \
 	-skip 'evaluation/parameterized/prerequisites' \
 	-skip 'evaluation/parameterized/segment recursion' \
 	-skip 'events/requests/method and headers' \

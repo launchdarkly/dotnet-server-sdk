@@ -79,29 +79,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var scope = new EvalScope(this, flag, context);
             return scope.Evaluate();
         }
-
-        internal static bool ClauseMatchAny(in Clause clause, in LdValue contextValue)
-        {
-            // Special case for the "in" operator - we preprocess the values to a set for fast lookup
-            if (clause.Op == Operator.In && clause.Preprocessed.ValuesAsSet != null)
-            {
-                return clause.Preprocessed.ValuesAsSet.Contains(contextValue);
-            }
-
-            int index = 0;
-            foreach (var clauseValue in clause.Values)
-            {
-                var preprocessedValue = clause.Preprocessed.Values?[index++];
-                if (clause.Op.Apply(contextValue, clauseValue, preprocessedValue))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        internal static bool MaybeNegate(Clause clause, bool b) =>
-            clause.Negate ? !b : b;
     }
 
     /// <summary>
@@ -116,6 +93,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         private LazilyCreatedList<PrerequisiteEvalRecord> _prereqEvals;
         private IMembership _bigSegmentsMembership;
         private BigSegmentsStatus? _bigSegmentsStatus;
+
+        private Logger Logger => _parent.Logger;
 
         private struct LazilyCreatedList<T>
         {
@@ -204,7 +183,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 var prereqFeatureFlag = _parent.FeatureFlagGetter(prereq.Key);
                 if (prereqFeatureFlag == null)
                 {
-                    _parent.Logger.Error("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
+                    Logger.Error("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
                         prereq.Key, _flag.Key);
                     prereqOk = false;
                 }
@@ -241,7 +220,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             if (variation < 0 || variation >= _flag.Variations.Count())
             {
-                _parent.Logger.Error("Data inconsistency in feature flag \"{0}\": invalid variation index", _flag.Key);
+                Logger.Error("Data inconsistency in feature flag \"{0}\": invalid variation index", _flag.Key);
                 return ErrorResult(EvaluationErrorKind.MalformedFlag);
             }
             return new EvaluationDetail<LdValue>(_flag.Variations.ElementAt(variation), variation, reason);
@@ -308,65 +287,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
             }
             return true;
-        }
-
-        private bool MatchClause(in Clause clause)
-        {
-            // A clause matches if ANY of its values match, for the given attribute and operator
-            if (clause.Op == Operator.SegmentMatch)
-            {
-                foreach (var value in clause.Values)
-                {
-                    Segment segment = _parent.SegmentGetter(value.AsString);
-                    if (segment != null && MatchSegment(segment))
-                    {
-                        return Evaluator.MaybeNegate(clause, true);
-                    }
-                }
-                return Evaluator.MaybeNegate(clause, false);
-            }
-            else
-            {
-                return MatchClauseNoSegments(clause);
-            }
-        }
-
-        private bool MatchClauseNoSegments(in Clause clause)
-        {
-            var contextValue = _context.GetValue(clause.Attribute);
-            if (contextValue.IsNull)
-            {
-                return false;
-            }
-            if (contextValue.Type == LdValueType.Array)
-            {
-                var list = contextValue.AsList(LdValue.Convert.Json);
-                foreach (var element in list)
-                {
-                    if (element.Type == LdValueType.Array || element.Type == LdValueType.Object)
-                    {
-                        _parent.Logger.Error("Invalid custom attribute value in user object: {0}",
-                            element);
-                        return false;
-                    }
-                    if (Evaluator.ClauseMatchAny(clause, element))
-                    {
-                        return Evaluator.MaybeNegate(clause, true);
-                    }
-                }
-                return Evaluator.MaybeNegate(clause, false);
-            }
-            else if (contextValue.Type == LdValueType.Object)
-            {
-                _parent.Logger.Warn("Got unexpected user attribute type {0} for user attribute \"{1}\"",
-                    contextValue.Type,
-                    clause.Attribute);
-                return false;
-            }
-            else
-            {
-                return Evaluator.MaybeNegate(clause, Evaluator.ClauseMatchAny(clause, contextValue));
-            }
         }
 
         private bool MatchSegment(in Segment segment)
