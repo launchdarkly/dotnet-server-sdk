@@ -358,7 +358,7 @@ namespace LaunchDarkly.Sdk.Server
                 }
                 try
                 {
-                    Evaluator.EvalResult result = _evaluator.Evaluate(flag, context);
+                    EvaluatorTypes.EvalResult result = _evaluator.Evaluate(flag, context);
                     bool inExperiment = EventFactory.IsExperiment(flag, result.Result.Reason);
                     builder.AddFlag(
                         flag.Key,
@@ -424,8 +424,8 @@ namespace LaunchDarkly.Sdk.Server
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
                 }
-                
-                Evaluator.EvalResult evalResult = _evaluator.Evaluate(featureFlag, context);
+
+                EvaluatorTypes.EvalResult evalResult = _evaluator.Evaluate(featureFlag, context);
                 if (!IsOffline())
                 {
                     foreach (var prereqEvent in evalResult.PrerequisiteEvals)

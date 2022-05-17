@@ -11,6 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private List<Prerequisite> _prerequisites = new List<Prerequisite>();
         private string _salt;
         private List<Target> _targets = new List<Target>();
+        private List<Target> _contextTargets = new List<Target>();
         private List<FlagRule> _rules = new List<FlagRule>();
         private VariationOrRollout _fallthrough;
         private int? _offVariation;
@@ -34,6 +35,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             _prerequisites = new List<Prerequisite>(from.Prerequisites);
             _salt = from.Salt;
             _targets = new List<Target>(from.Targets);
+            _contextTargets = new List<Target>(from.ContextTargets);
             _rules = new List<FlagRule>(from.Rules);
             _fallthrough = from.Fallthrough;
             _offVariation = from.OffVariation;
@@ -48,7 +50,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal FeatureFlag Build()
         {
             return new FeatureFlag(_key, _version, _deleted, _on, _prerequisites,
-                _targets.ToImmutableList(), null, _rules, _fallthrough, _offVariation, _variations, _salt,
+                _targets.ToImmutableList(), _contextTargets.ToImmutableList(), _rules,
+                _fallthrough, _offVariation, _variations, _salt,
                 _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _clientSide);
         }
 
@@ -90,6 +93,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal FeatureFlagBuilder Targets(params Target[] targets)
         {
             return Targets(new List<Target>(targets));
+        }
+
+        internal FeatureFlagBuilder ContextTargets(List<Target> targets)
+        {
+            _contextTargets = targets;
+            return this;
+        }
+
+        internal FeatureFlagBuilder ContextTargets(params Target[] targets)
+        {
+            return ContextTargets(new List<Target>(targets));
         }
 
         internal FeatureFlagBuilder Rules(List<FlagRule> rules)
@@ -310,5 +324,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             return new ClauseBuilder().Attribute("").Op("segmentMatch").Values(LdValue.Of(segmentKey)).Build();
         }
+    }
+
+    internal class TargetBuilder
+    {
+        public static Target ContextTarget(string contextKind, int variation, params string[] values) =>
+            new Target(contextKind, ImmutableList.CreateRange(values), variation);
+
+        public static Target UserTarget(int variation, params string[] values) =>
+            ContextTarget(null, variation, values);
     }
 }

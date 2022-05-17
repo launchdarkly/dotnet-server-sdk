@@ -6,8 +6,8 @@ using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTestUtil;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
-    // Tests of flag evaluation at the highest level. Rule-level and clause-level behavior is covered
-    // in detail in EvaluatorRuleTest, EvaluatorClauseTest, and EvaluatorSegmentMatchTest.
+    // Tests of flag evaluation at the highest level. More specific areas are covered in detail in
+    // EvaluatorTargetTest, EvaluatorRuleTest, EvaluatorClauseTest, and EvaluatorSegmentMatchTest.
 
     public class EvaluatorFlagTest
     {
@@ -384,34 +384,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 });
         }
         
-        [Fact]
-        public void FlagMatchesUserFromTargets()
-        {
-            var f = new FeatureFlagBuilder("feature")
-                .On(true)
-                .Targets(new Target(null, new HashSet<string> { "whoever", "userkey" }, 2))
-                .FallthroughVariation(0)
-                .OffVariation(1)
-                .Variations(fallthroughValue, offValue, onValue)
-                .Build();
-            var context = Context.New("userkey");
-            var result = BasicEvaluator.Evaluate(f, context);
-
-            var expected = new EvaluationDetail<LdValue>(onValue, 2, EvaluationReason.TargetMatchReason);
-            Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvals.Count);
-        }
-
-        private FeatureFlag FeatureFlagWithRules(params FlagRule[] rules)
-        {
-            return new FeatureFlagBuilder("feature")
-                .On(true)
-                .Rules(rules)
-                .FallthroughVariation(0)
-                .Variations(fallthroughValue, offValue, onValue)
-                .Build();
-        }
-
         private static Rollout BuildRollout(RolloutKind kind, bool untrackedVariations)
         {
             var variations = new List<WeightedVariation>()

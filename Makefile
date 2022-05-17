@@ -24,8 +24,6 @@ TEST_HARNESS_PARAMS := $(TEST_HARNESS_PARAMS) \
 	-skip 'evaluation/parameterized/clause kind matching' \
 	-skip 'evaluation/parameterized/prerequisites' \
 	-skip 'evaluation/parameterized/segment recursion' \
-	-skip 'evaluation/parameterized/target match/user targets.*multi-kind' \
-	-skip 'evaluation/parameterized/target match/context targets' \
 	-skip 'events/requests/method and headers' \
 	-skip 'events/summary events/contextKinds'
 
