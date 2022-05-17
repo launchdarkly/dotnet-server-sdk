@@ -16,7 +16,6 @@ TESTFRAMEWORK ?= netcoreapp2.1
 TEST_HARNESS_PARAMS := $(TEST_HARNESS_PARAMS) \
 	-skip 'big segments/evaluation/context kind' \
 	-skip 'big segments/membership caching/context kind' \
-	-skip 'context type' \
 	-skip 'evaluation/bucketing/bucket by non-key' \
 	-skip 'evaluation/bucketing/secondary/a non-empty string/ignored in experiments' \
 	-skip 'evaluation/bucketing/secondary/an empty string/affects' \

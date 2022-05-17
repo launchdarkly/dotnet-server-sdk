@@ -81,6 +81,14 @@ namespace TestService
                     response = new GetBigSegmentStoreStatusResponse { Available = status.Available, Stale = status.Stale };
                     break;
 
+                case "contextBuild":
+                    response = DoContextBuild(command.ContextBuild);
+                    break;
+
+                case "contextConvert":
+                    response = DoContextConvert(command.ContextConvert);
+                    break;
+
                 default:
                     return false;
             }
@@ -185,6 +193,66 @@ namespace TestService
             {
                 State = LdValue.Parse(LdJsonSerialization.SerializeObject(result))
             };
+        }
+
+        private ContextBuildResponse DoContextBuild(ContextBuildParams p)
+        {
+            Context c;
+            if (p.Multi is null)
+            {
+                c = DoContextBuildSingle(p.Single);
+            }
+            else
+            {
+                var b = Context.MultiBuilder();
+                foreach (var s in p.Multi)
+                {
+                    b.Add(DoContextBuildSingle(s));
+                }
+                c = b.Build();
+            }
+            if (c.Valid)
+            {
+                return new ContextBuildResponse { Output = LdJsonSerialization.SerializeObject(c) };
+            }
+            return new ContextBuildResponse { Error = c.Error };
+        }
+
+        private Context DoContextBuildSingle(ContextBuildSingleParams s)
+        {
+            var b = Context.Builder(s.Key)
+                .Kind(s.Kind)
+                .Name(s.Name)
+                .Secondary(s.Secondary)
+                .Transient(s.Transient);
+            if (!(s.Private is null))
+            {
+                b.Private(s.Private);
+            }
+            if (!(s.Custom is null))
+            {
+                foreach (var kv in s.Custom)
+                {
+                    b.Set(kv.Key, kv.Value);
+                }
+            }
+            return b.Build();
+        }
+        private ContextBuildResponse DoContextConvert(ContextConvertParams p)
+        {
+            try
+            {
+                var c = LdJsonSerialization.DeserializeObject<Context>(p.Input);
+                if (c.Valid)
+                {
+                    return new ContextBuildResponse { Output = LdJsonSerialization.SerializeObject(c) };
+                }
+                return new ContextBuildResponse { Error = c.Error };
+            }
+            catch (Exception e)
+            {
+                return new ContextBuildResponse { Error = e.ToString() };
+            }
         }
 
         private static Configuration BuildSdkConfig(SdkConfigParams sdkParams, ILogAdapter logAdapter, string tag)
