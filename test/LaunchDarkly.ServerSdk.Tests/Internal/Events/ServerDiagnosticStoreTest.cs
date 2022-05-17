@@ -1,6 +1,5 @@
 using System;
 using LaunchDarkly.Sdk.Internal.Events;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,8 +18,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 modConfig(builder);
             }
             var config = builder.Build();
-            var httpConfig = config.HttpConfigurationBuilder.CreateHttpConfiguration(BasicContext.Basic);
-            return new ServerDiagnosticStore(config, BasicContext.Basic, httpConfig);
+            var httpConfig = config.HttpConfigurationBuilder.CreateHttpConfiguration(BasicContext);
+            return new ServerDiagnosticStore(config, BasicContext.WithHttp(httpConfig));
         }
 
         [Fact]

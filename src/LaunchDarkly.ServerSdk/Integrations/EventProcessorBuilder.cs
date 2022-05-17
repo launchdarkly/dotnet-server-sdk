@@ -229,8 +229,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <inheritdoc/>
         public IEventProcessor CreateEventProcessor(LdClientContext context)
         {
-            var eventsConfig = MakeEventsConfiguration(context.Basic, true);
-            var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
+            var eventsConfig = MakeEventsConfiguration(context, true);
+            var logger = context.Logger.SubLogger(LogNames.EventsSubLog);
             var eventSender = _eventSender ??
                 new DefaultEventSender(
                     context.Http.HttpProperties,
@@ -249,11 +249,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     ));
         }
 
-        private EventsConfiguration MakeEventsConfiguration(BasicConfiguration basic, bool logConfigErrors)
+        private EventsConfiguration MakeEventsConfiguration(LdClientContext context, bool logConfigErrors)
         {
             var configuredBaseUri = StandardEndpoints.SelectBaseUri(
-                basic.ServiceEndpoints, e => e.EventsBaseUri, "Events",
-                    logConfigErrors ? basic.Logger : Logs.None.Logger(""));
+                context.ServiceEndpoints, e => e.EventsBaseUri, "Events",
+                    logConfigErrors ? context.Logger : Logs.None.Logger(""));
             return new EventsConfiguration
             {
                 AllAttributesPrivate = _allAttributesPrivate,
@@ -267,11 +267,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+        public LdValue DescribeConfiguration(LdClientContext context) =>
             LdValue.BuildObject()
                 .WithEventProperties(
-                    MakeEventsConfiguration(basic, false),
-                    StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, e => e.EventsBaseUri)
+                    MakeEventsConfiguration(context, false),
+                    StandardEndpoints.IsCustomUri(context.ServiceEndpoints, e => e.EventsBaseUri)
                 )
                 .Add("userKeysCapacity", _contextKeysCapacity) // these two properties are specific to the server-side SDK
                 .Add("userKeysFlushIntervalMillis", _contextKeysFlushInterval.TotalMilliseconds)

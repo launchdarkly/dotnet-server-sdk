@@ -37,8 +37,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private IDataSource MakeDataSourceWithDiagnostics(Uri baseUri, IDiagnosticStore diagnosticStore)
         {
-            var context = new LdClientContext(BasicContext.Basic, BasicContext.Http,
-                diagnosticStore, BasicTaskExecutor);
+            var context = BasicContext.WithDiagnosticStore(diagnosticStore);
             return new StreamingDataSource(context, _updateSink, baseUri, BriefReconnectDelay);
         }
 

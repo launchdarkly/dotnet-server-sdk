@@ -221,9 +221,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public HttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
+        public HttpConfiguration CreateHttpConfiguration(LdClientContext context)
         {
-            var httpProperties = MakeHttpProperties(basicConfiguration);
+            var httpProperties = MakeHttpProperties(context);
             return new HttpConfiguration(
                 httpProperties,
                 _messageHandler,
@@ -231,10 +231,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 );
         }
 
-        private HttpProperties MakeHttpProperties(BasicConfiguration basicConfiguration)
+        private HttpProperties MakeHttpProperties(LdClientContext context)
         {
             var httpProperties = HttpProperties.Default
-                .WithAuthorizationKey(basicConfiguration.SdkKey)
+                .WithAuthorizationKey(context.SdkKey)
                 .WithConnectTimeout(_connectTimeout)
                 .WithHttpMessageHandlerFactory(_messageHandler is null ?
                     (Func<HttpProperties, HttpMessageHandler>)null :
@@ -253,9 +253,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+        public LdValue DescribeConfiguration(LdClientContext context) =>
             LdValue.BuildObject()
-                .WithHttpProperties(MakeHttpProperties(basic))
+                .WithHttpProperties(MakeHttpProperties(context))
                 .Build();
     }
 }

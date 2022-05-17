@@ -142,7 +142,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     _cacheConfig,
                     dataStoreUpdates,
                     context.TaskExecutor,
-                    context.Basic.Logger
+                    context.Logger
                     );
             }
             else if (_coreAsyncFactory != null)
@@ -152,22 +152,22 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     _cacheConfig,
                     dataStoreUpdates,
                     context.TaskExecutor,
-                    context.Basic.Logger
+                    context.Logger
                     );
             }
             return null;
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic)
+        public LdValue DescribeConfiguration(LdClientContext context)
         {
             if (_coreFactory != null && _coreFactory is IDiagnosticDescription dd1)
             {
-                return dd1.DescribeConfiguration(basic);
+                return dd1.DescribeConfiguration(context);
             }
             if (_coreAsyncFactory != null && _coreAsyncFactory is IDiagnosticDescription dd2)
             {
-                return dd2.DescribeConfiguration(basic);
+                return dd2.DescribeConfiguration(context);
             }
             return LdValue.Of("custom");
         }

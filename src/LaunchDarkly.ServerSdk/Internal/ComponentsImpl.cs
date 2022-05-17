@@ -16,7 +16,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
             public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates _) => new InMemoryDataStore();
 
-            public LdValue DescribeConfiguration(BasicConfiguration _) => LdValue.Of("memory");
+            public LdValue DescribeConfiguration(LdClientContext _) => LdValue.Of("memory");
         }
 
         internal sealed class NullDataSource : IDataSource
@@ -36,20 +36,20 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
             public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
             {
-                if (context.Basic.Offline)
+                if (context.Offline)
                 {
                     // If they have explicitly called Offline(true) to disable everything, we'll log this slightly
                     // more specific message.
-                    context.Basic.Logger.Info("Starting LaunchDarkly client in offline mode");
+                    context.Logger.Info("Starting LaunchDarkly client in offline mode");
                 }
                 else
                 {
-                    context.Basic.Logger.Info("LaunchDarkly client will not connect to LaunchDarkly for feature flag data");
+                    context.Logger.Info("LaunchDarkly client will not connect to LaunchDarkly for feature flag data");
                 }
                 return NullDataSource.Instance;
             }
 
-            public LdValue DescribeConfiguration(BasicConfiguration basic)
+            public LdValue DescribeConfiguration(LdClientContext context)
             {
                 // The difference between "offline" and "using the Relay daemon" is irrelevant from the data source's
                 // point of view, but we describe them differently in diagnostic events. This is easy because if we were

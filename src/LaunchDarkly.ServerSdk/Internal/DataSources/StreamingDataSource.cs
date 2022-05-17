@@ -52,7 +52,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             TimeSpan initialReconnectDelay
             )
         {
-            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
             _log.Info("Connecting to LaunchDarkly stream");
 
             _dataSourceUpdates = dataSourceUpdates;

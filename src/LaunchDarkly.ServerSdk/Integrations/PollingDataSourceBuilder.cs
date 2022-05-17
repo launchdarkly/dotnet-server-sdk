@@ -71,10 +71,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
             var configuredBaseUri = StandardEndpoints.SelectBaseUri(
-                context.Basic.ServiceEndpoints, e => e.PollingBaseUri, "Polling",
-                    context.Basic.Logger);
+                context.ServiceEndpoints, e => e.PollingBaseUri, "Polling",
+                    context.Logger);
 
-            context.Basic.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
+            context.Logger.Warn("You should only disable the streaming API if instructed to do so by LaunchDarkly support");
             FeatureRequestor requestor = new FeatureRequestor(context, configuredBaseUri);
             return new PollingDataSource(
                 context,
@@ -85,10 +85,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+        public LdValue DescribeConfiguration(LdClientContext context) =>
             LdValue.BuildObject()
                 .WithPollingProperties(
-                    StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, e => e.StreamingBaseUri),
+                    StandardEndpoints.IsCustomUri(context.ServiceEndpoints, e => e.StreamingBaseUri),
                     _pollInterval
                 )
                 .Add("usingRelayDaemon", false) // this property is specific to the server-side SDK
