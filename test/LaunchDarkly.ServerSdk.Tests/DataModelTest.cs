@@ -135,7 +135,7 @@ namespace LaunchDarkly.Sdk.Server
                     }
                 }
             }");
-            Assert.Null(flag5.Fallthrough.Rollout.Value.BucketBy);
+            Assert.Equal(new AttributeRef(), flag5.Fallthrough.Rollout.Value.BucketBy);
             Assert.Null(flag5.Fallthrough.Rollout.Value.Seed);
             Assert.Equal(RolloutKind.Rollout, flag5.Fallthrough.Rollout.Value.Kind); // default value
         }
@@ -261,7 +261,7 @@ namespace LaunchDarkly.Sdk.Server
                         c =>
                         {
                             Assert.Null(c.ContextKind);
-                            Assert.Equal("name", c.Attribute);
+                            Assert.Equal(AttributeRef.FromLiteral("name"), c.Attribute);
                             Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(ImmutableList.Create(LdValue.Of("Lucy"), LdValue.Of("Mina")), c.Values);
                             Assert.True(c.Negate);
@@ -269,7 +269,7 @@ namespace LaunchDarkly.Sdk.Server
                         c =>
                         {
                             Assert.Equal("org", c.ContextKind);
-                            Assert.Equal("key", c.Attribute);
+                            Assert.Equal(AttributeRef.FromLiteral("key"), c.Attribute);
                             Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(ImmutableList.Create(LdValue.Of("org-key")), c.Values);
                             Assert.False(c.Negate);
@@ -295,7 +295,7 @@ namespace LaunchDarkly.Sdk.Server
                             Assert.Equal(60000, v.Weight);
                             Assert.True(v.Untracked);
                         });
-                    Assert.Equal("email", r.Rollout.Value.BucketBy);
+                    Assert.Equal(AttributeRef.FromLiteral("email"), r.Rollout.Value.BucketBy);
                     Assert.Equal(RolloutKind.Experiment, r.Rollout.Value.Kind);
                     Assert.Equal(123, r.Rollout.Value.Seed);
                     Assert.Empty(r.Clauses);
@@ -371,11 +371,11 @@ namespace LaunchDarkly.Sdk.Server
                 {
                     Assert.Equal(50000, r.Weight);
                     Assert.Equal("org", r.RolloutContextKind);
-                    Assert.Equal("email", r.BucketBy);
+                    Assert.Equal(AttributeRef.FromLiteral("email"), r.BucketBy);
                     Assert.Collection(r.Clauses,
                         c =>
                         {
-                            Assert.Equal("name", c.Attribute);
+                            Assert.Equal(AttributeRef.FromLiteral("name"), c.Attribute);
                             Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(new List<LdValue> { LdValue.Of("Lucy"), LdValue.Of("Mina") }, c.Values);
                             Assert.True(c.Negate);
@@ -384,7 +384,7 @@ namespace LaunchDarkly.Sdk.Server
                 r =>
                 {
                     Assert.Null(r.Weight);
-                    Assert.Null(r.BucketBy);
+                    Assert.Equal(new AttributeRef(), r.BucketBy);
                     Assert.Empty(r.Clauses);
                 });
 

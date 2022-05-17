@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,9 +8,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 
-        internal static float BucketUser(int? seed, User user, string key, string bucketBy, string salt)
+        internal static float BucketContext(int? seed, in Context context, string key, in AttributeRef? attr, string salt)
         {
-            var userValue = string.IsNullOrEmpty(bucketBy) ? LdValue.Of(user.Key) : user.GetAttribute(UserAttribute.ForName(bucketBy));
+            var contextValue = (attr.HasValue && attr.Value.Defined) ? context.GetValue(attr.Value) : LdValue.Of(context.Key);
+            if (contextValue.IsNull)
+            {
+                return 0; // attribute not found
+            }
             var hashInputBuilder = new StringBuilder(100);
             if (seed.HasValue)
             {
@@ -22,19 +25,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 hashInputBuilder.Append(key).Append(".").Append(salt);
             }
             hashInputBuilder.Append(".");
-            if (userValue.IsString)
+            if (contextValue.IsString)
             {
-                hashInputBuilder.Append(userValue.AsString);
+                hashInputBuilder.Append(contextValue.AsString);
             }
-            else if (userValue.IsInt)
+            else if (contextValue.IsInt)
             {
-                hashInputBuilder.Append(userValue.AsInt);
+                hashInputBuilder.Append(contextValue.AsInt);
             }
             else
             {
                 return 0; // bucket-by values other than strings and ints aren't supported
             }
-            var secondary = user.Secondary;
+            var secondary = context.Secondary;
             if (!string.IsNullOrEmpty(secondary))
             {
                 hashInputBuilder.Append(".").Append(secondary);

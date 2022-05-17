@@ -3,7 +3,7 @@
 namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
-    /// Optional parameters that can be passed to <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>.
+    /// Optional parameters that can be passed to <see cref="ILdClient.AllFlagsState(Context, FlagsStateOption[])"/>.
     /// </summary>
     public class FlagsStateOption
     {
@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server
 
         /// <summary>
         /// Specifies that evaluation reasons should be included in the state object (as returned by
-        /// <see cref="ILdClient.BoolVariationDetail(string, User, bool)"/>, etc.). By default, they
+        /// <see cref="ILdClient.BoolVariationDetail(string, Context, bool)"/>, etc.). By default, they
         /// are not included.
         /// </summary>
         public static readonly FlagsStateOption WithReasons = new FlagsStateOption("WithReasons");

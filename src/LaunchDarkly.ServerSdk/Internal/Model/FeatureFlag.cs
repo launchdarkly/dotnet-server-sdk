@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         public bool ClientSide { get; set; }
 
         internal FeatureFlag(string key, int version, bool deleted, bool on, IEnumerable<Prerequisite> prerequisites,
-            IEnumerable<Target> targets, IEnumerable<Target> contextTargets, IEnumerable<FlagRule> rules, VariationOrRollout fallthrough, int? offVariation,
+            ImmutableList<Target> targets, ImmutableList<Target> contextTargets, IEnumerable<FlagRule> rules, VariationOrRollout fallthrough, int? offVariation,
             IEnumerable<LdValue> variations, string salt, bool trackEvents, bool trackEventsFallthrough, UnixMillisecondTime? debugEventsUntilDate,
             bool clientSide)
         {
@@ -57,9 +57,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal string ContextKind { get; }
         internal int? Seed { get; }
         internal IEnumerable<WeightedVariation> Variations { get; }
-        internal string BucketBy { get; }
+        internal AttributeRef BucketBy { get; }
 
-        internal Rollout(RolloutKind kind, string contextKind, int? seed, IEnumerable<WeightedVariation> variations, string bucketBy)
+        internal Rollout(RolloutKind kind, string contextKind, int? seed, IEnumerable<WeightedVariation> variations, AttributeRef bucketBy)
         {
             Kind = kind;
             ContextKind = contextKind;

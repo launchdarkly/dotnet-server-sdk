@@ -16,7 +16,7 @@ namespace LaunchDarkly.Sdk.Server
         private TestData _testData;
         private FeatureFlag _flag;
         private Segment _bigSegment;
-        private User _user;
+        private Context _user;
         private MockBigSegmentStore _storeMock;
         private IBigSegmentStoreFactory _storeFactory;
 
@@ -24,7 +24,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             _testData = TestData.DataSource();
 
-            _user = User.WithKey("userkey");
+            _user = Context.New("userkey");
             _bigSegment = new SegmentBuilder("segmentkey")
                 .Unbounded(true)
                 .Generation(1)

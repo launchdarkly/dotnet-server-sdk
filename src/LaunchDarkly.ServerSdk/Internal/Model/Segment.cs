@@ -86,9 +86,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal IEnumerable<Clause> Clauses { get; }
         internal int? Weight { get; }
         internal string RolloutContextKind { get; }
-        internal string BucketBy { get; }
+        internal AttributeRef BucketBy { get; }
 
-        internal SegmentRule(IEnumerable<Clause> clauses, int? weight, string rolloutContextKind, string bucketBy)
+        internal SegmentRule(IEnumerable<Clause> clauses, int? weight, string rolloutContextKind, AttributeRef bucketBy)
         {
             Clauses = clauses ?? Enumerable.Empty<Clause>();
             Weight = weight;

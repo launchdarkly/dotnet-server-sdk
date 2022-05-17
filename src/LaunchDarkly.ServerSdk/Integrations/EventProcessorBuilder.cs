@@ -66,7 +66,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         internal int _capacity = DefaultCapacity;
         internal TimeSpan _diagnosticRecordingInterval = DefaultDiagnosticRecordingInterval;
         internal TimeSpan _flushInterval = DefaultFlushInterval;
-        internal HashSet<UserAttribute> _privateAttributes = new HashSet<UserAttribute>();
+        internal HashSet<AttributeRef> _privateAttributes = new HashSet<AttributeRef>();
         internal int _userKeysCapacity = DefaultUserKeysCapacity;
         internal TimeSpan _userKeysFlushInterval = DefaultUserKeysFlushInterval;
         internal IEventSender _eventSender = null; // used in testing
@@ -76,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         /// <remarks>
         /// If this is <see langword="true"/>, all user attribute values (other than the key) will be private, not just
-        /// the attributes specified in <see cref="PrivateAttributes(UserAttribute[])"/> or on a per-user basis with
+        /// the attributes specified in <see cref="PrivateAttributes(string[])"/> or on a per-user basis with
         /// <see cref="UserBuilder"/> methods. By default, it is <see langword="false"/>.
         /// </remarks>
         /// <param name="allAttributesPrivate">true if all user attributes should be private</param>
@@ -200,8 +200,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </remarks>
         /// <param name="attributes">a set of attributes that will be removed from user data set to LaunchDarkly</param>
         /// <returns>the builder</returns>
-        /// <seealso cref="PrivateAttributeNames(string[])"/>
-        public EventProcessorBuilder PrivateAttributes(params UserAttribute[] attributes)
+        /// <seealso cref="PrivateAttributes(string[])"/>
+        public EventProcessorBuilder PrivateAttributes(params AttributeRef[] attributes)
         {
             foreach (var a in attributes)
             {
@@ -219,19 +219,15 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// names removed. This is in addition to any attributes that were marked as private for an
         /// individual user with <see cref="UserBuilder"/> methods.
         /// </para>
-        /// <para>
-        /// Using <see cref="PrivateAttributes(UserAttribute[])"/> is preferable to avoid the possibility of
-        /// misspelling a built-in attribute.
-        /// </para>
         /// </remarks>
         /// <param name="attributes">a set of names that will be removed from user data set to LaunchDarkly</param>
         /// <returns>the builder</returns>
-        /// <seealso cref="PrivateAttributes(UserAttribute[])"/>
-        public EventProcessorBuilder PrivateAttributeNames(params string[] attributes)
+        /// <seealso cref="PrivateAttributes(AttributeRef[])"/>
+        public EventProcessorBuilder PrivateAttributes(params string[] attributes)
         {
             foreach (var a in attributes)
             {
-                _privateAttributes.Add(UserAttribute.ForName(a));
+                _privateAttributes.Add(AttributeRef.FromPath(a));
             }
             return this;
         }
@@ -285,7 +281,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 new EventProcessor(
                     eventsConfig,
                     eventSender,
-                    new DefaultUserDeduplicator(_userKeysCapacity, _userKeysFlushInterval),
+                    new DefaultContextDeduplicator(_userKeysCapacity, _userKeysFlushInterval),
                     context.DiagnosticStore,
                     null,
                     logger,
@@ -306,9 +302,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 EventFlushInterval = _flushInterval,
                 EventsUri = configuredBaseUri.AddPath("bulk"),
                 DiagnosticUri = configuredBaseUri.AddPath("diagnostic"),
-                PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
-                UserKeysCapacity = _userKeysCapacity,
-                UserKeysFlushInterval = _userKeysFlushInterval
+                PrivateAttributes = _privateAttributes.ToImmutableHashSet()
             };
         }
 

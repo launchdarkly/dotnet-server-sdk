@@ -64,21 +64,23 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             var b = _tester.New();
             Assert.Empty(b._privateAttributes);
-            b.PrivateAttributes(UserAttribute.Name);
-            b.PrivateAttributes(UserAttribute.Email, UserAttribute.ForName("other"));
-            Assert.Equal(new HashSet<UserAttribute> {
-                UserAttribute.Name, UserAttribute.Email, UserAttribute.ForName("other") }, b._privateAttributes);
+            b.PrivateAttributes("name");
+            b.PrivateAttributes("email", "other");
+            Assert.Equal(new HashSet<AttributeRef> {
+                AttributeRef.FromLiteral("name"), AttributeRef.FromLiteral("email"), AttributeRef.FromLiteral("other") },
+                b._privateAttributes);
         }
 
         [Fact]
-        public void PrivateAttributeNames()
+        public void PrivateAttributeRefs()
         {
             var b = _tester.New();
             Assert.Empty(b._privateAttributes);
-            b.PrivateAttributeNames("name");
-            b.PrivateAttributeNames("email", "other");
-            Assert.Equal(new HashSet<UserAttribute> {
-                UserAttribute.Name, UserAttribute.Email, UserAttribute.ForName("other") }, b._privateAttributes);
+            b.PrivateAttributes(AttributeRef.FromLiteral("name"));
+            b.PrivateAttributes(AttributeRef.FromLiteral("email"), AttributeRef.FromLiteral("other"));
+            Assert.Equal(new HashSet<AttributeRef> {
+                AttributeRef.FromLiteral("name"), AttributeRef.FromLiteral("email"), AttributeRef.FromLiteral("other") },
+                b._privateAttributes);
         }
 
         [Fact]

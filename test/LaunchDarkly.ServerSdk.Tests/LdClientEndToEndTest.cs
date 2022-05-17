@@ -214,7 +214,7 @@ namespace LaunchDarkly.Sdk.Server
 
                 using (var client = new LdClient(config))
                 {
-                    client.Identify(User.WithKey("userkey"));
+                    client.Identify(Context.New("userkey"));
                     client.Flush();
 
                     var request1 = server.Recorder.RequireRequest();
@@ -296,7 +296,7 @@ namespace LaunchDarkly.Sdk.Server
                         .Build();
                     using (var client = new LdClient(config))
                     {
-                        client.Identify(User.WithKey("userkey"));
+                        client.Identify(Context.New("userkey"));
                         client.Flush();
                         server.Recorder.RequireRequest();
                     }

@@ -13,7 +13,7 @@ namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// A snapshot of the state of all feature flags with regard to a specific user. See
-    /// calling <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>.
+    /// calling <see cref="ILdClient.AllFlagsState(Context, FlagsStateOption[])"/>.
     /// </summary>
     /// <remarks>
     /// Serializing this object to JSON using <c>System.Text.Json</c> or <see cref="LaunchDarkly.Sdk.Json.LdJsonSerialization"/>
@@ -37,7 +37,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <summary>
         /// Returns a builder for constructing a new instance of this class. May be useful in testing.
         /// </summary>
-        /// <param name="options">the same options that can be passed to <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/></param>
+        /// <param name="options">the same options that can be passed to <see cref="ILdClient.AllFlagsState(Context, FlagsStateOption[])"/></param>
         /// <returns>a new <see cref="FeatureFlagsStateBuilder"/></returns>
         public static FeatureFlagsStateBuilder Builder(params FlagsStateOption[] options)
         {
@@ -67,7 +67,7 @@ namespace LaunchDarkly.Sdk.Server
 
         /// <summary>
         /// Returns the evaluation reason of an individual feature flag (as returned by
-        /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>, etc.) at the time the state
+        /// <see cref="ILdClient.BoolVariation(string, Context, bool)"/>, etc.) at the time the state
         /// was recorded.
         /// </summary>
         /// <param name="key">the feature flag key</param>

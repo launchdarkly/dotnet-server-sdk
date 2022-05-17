@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server
     public class BaseTest
     {
         protected const string BasicSdkKey = "sdk-key";
-        protected static readonly User BasicUser = User.WithKey("user-key");
+        protected static readonly Context BasicUser = Context.New("user-key");
 
         /// <summary>
         /// Using this <see cref="ILogAdapter"/> in an SDK configuration will cause logging to be sent

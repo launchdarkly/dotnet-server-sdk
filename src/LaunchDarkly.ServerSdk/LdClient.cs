@@ -172,7 +172,7 @@ namespace LaunchDarkly.Sdk.Server
             _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataSourceUpdates);
             _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdates);
             _flagTracker = new FlagTrackerImpl(dataSourceUpdates,
-                (string key, User user) => JsonVariation(key, user, LdValue.Null));
+                (string key, Context context) => JsonVariation(key, context, LdValue.Null));
 
             var initTask = _dataSource.Start();
 
@@ -235,79 +235,79 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <inheritdoc/>
-        public bool BoolVariation(string key, User user, bool defaultValue = false)
+        public bool BoolVariation(string key, Context context, bool defaultValue = false)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.Default).Value;
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.Default).Value;
         }
 
         /// <inheritdoc/>
-        public int IntVariation(string key, User user, int defaultValue)
+        public int IntVariation(string key, Context context, int defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.Default).Value;
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.Default).Value;
         }
 
         /// <inheritdoc/>
-        public float FloatVariation(string key, User user, float defaultValue)
+        public float FloatVariation(string key, Context context, float defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.Default).Value;
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.Default).Value;
         }
 
         /// <inheritdoc/>
-        public double DoubleVariation(string key, User user, double defaultValue)
+        public double DoubleVariation(string key, Context context, double defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.Default).Value;
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.Default).Value;
         }
 
         /// <inheritdoc/>
-        public string StringVariation(string key, User user, string defaultValue)
+        public string StringVariation(string key, Context context, string defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
         }
         
         /// <inheritdoc/>
-        public LdValue JsonVariation(string key, User user, LdValue defaultValue)
+        public LdValue JsonVariation(string key, Context context, LdValue defaultValue)
         {
-            return Evaluate(key, user, defaultValue, LdValue.Convert.Json, false, EventFactory.Default).Value;
+            return Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.Default).Value;
         }
 
         /// <inheritdoc/>
-        public EvaluationDetail<bool> BoolVariationDetail(string key, User user, bool defaultValue)
+        public EvaluationDetail<bool> BoolVariationDetail(string key, Context context, bool defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.DefaultWithReasons);
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.DefaultWithReasons);
         }
 
         /// <inheritdoc/>
-        public EvaluationDetail<int> IntVariationDetail(string key, User user, int defaultValue)
+        public EvaluationDetail<int> IntVariationDetail(string key, Context context, int defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.DefaultWithReasons);
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.DefaultWithReasons);
         }
 
         /// <inheritdoc/>
-        public EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue)
+        public EvaluationDetail<float> FloatVariationDetail(string key, Context context, float defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
         }
 
         /// <inheritdoc/>
-        public EvaluationDetail<double> DoubleVariationDetail(string key, User user, double defaultValue)
+        public EvaluationDetail<double> DoubleVariationDetail(string key, Context context, double defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.DefaultWithReasons);
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.DefaultWithReasons);
         }
 
         /// <inheritdoc/>
-        public EvaluationDetail<string> StringVariationDetail(string key, User user, string defaultValue)
+        public EvaluationDetail<string> StringVariationDetail(string key, Context context, string defaultValue)
         {
-            return Evaluate(key, user, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
+            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
         }
         
         /// <inheritdoc/>
-        public EvaluationDetail<LdValue> JsonVariationDetail(string key, User user, LdValue defaultValue)
+        public EvaluationDetail<LdValue> JsonVariationDetail(string key, Context context, LdValue defaultValue)
         {
-            return Evaluate(key, user, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
+            return Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
         }
         
         /// <inheritdoc/>
-        public FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options)
+        public FeatureFlagsState AllFlagsState(Context context, params FlagsStateOption[] options)
         {
             if (IsOffline())
             {
@@ -326,9 +326,9 @@ namespace LaunchDarkly.Sdk.Server
                     return new FeatureFlagsState(false);
                 }
             }
-            if (user == null || user.Key == null)
+            if (!context.Valid)
             {
-                _evalLog.Warn("AllFlagsState() called with null user or null user key; returning empty state");
+                _evalLog.Warn("AllFlagsState() called with invalid context ({0}); returning empty state", context.Error);
                 return new FeatureFlagsState(false);
             }
 
@@ -358,7 +358,7 @@ namespace LaunchDarkly.Sdk.Server
                 }
                 try
                 {
-                    Evaluator.EvalResult result = _evaluator.Evaluate(flag, user, EventFactory.Default);
+                    Evaluator.EvalResult result = _evaluator.Evaluate(flag, context);
                     bool inExperiment = EventFactory.IsExperiment(flag, result.Result.Reason);
                     builder.AddFlag(
                         flag.Key,
@@ -383,7 +383,7 @@ namespace LaunchDarkly.Sdk.Server
             return builder.Build();
         }
 
-        private EvaluationDetail<T> Evaluate<T>(string featureKey, User user, LdValue defaultValue, LdValue.Converter<T> converter,
+        private EvaluationDetail<T> Evaluate<T>(string featureKey, Context context, LdValue defaultValue, LdValue.Converter<T> converter,
             bool checkType, EventFactory eventFactory)
         {
             T defaultValueOfType = converter.ToType(defaultValue);
@@ -410,26 +410,28 @@ namespace LaunchDarkly.Sdk.Server
                     _evalLog.Info("Unknown feature flag \"{0}\"; returning default value",
                         featureKey);
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
-                        featureKey, user, defaultValue, EvaluationErrorKind.FlagNotFound));
+                        featureKey, context, defaultValue, EvaluationErrorKind.FlagNotFound));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound));
                 }
 
-                if (user == null || user.Key == null)
+                if (!context.Valid)
                 {
-                    _evalLog.Warn("Null user or null user key when evaluating flag \"{0}\"; returning default value", featureKey);
+                    _evalLog.Warn("Invalid evaluation context when evaluating flag \"{0}\" ({1}); returning default value", featureKey,
+                        context.Error);
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
-                        featureFlag, user, defaultValue, EvaluationErrorKind.UserNotSpecified));
+                        featureFlag, context, defaultValue, EvaluationErrorKind.UserNotSpecified));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
                 }
                 
-                Evaluator.EvalResult evalResult = _evaluator.Evaluate(featureFlag, user, eventFactory);
+                Evaluator.EvalResult evalResult = _evaluator.Evaluate(featureFlag, context);
                 if (!IsOffline())
                 {
-                    foreach (var prereqEvent in evalResult.PrerequisiteEvents)
+                    foreach (var prereqEvent in evalResult.PrerequisiteEvals)
                     {
-                        _eventProcessor.RecordEvaluationEvent(prereqEvent);
+                        _eventProcessor.RecordEvaluationEvent(eventFactory.NewPrerequisiteEvaluationEvent(
+                            prereqEvent.PrerequisiteFlag, context, prereqEvent.Result, prereqEvent.PrerequisiteOfFlagKey));
                     }
                 }
                 var evalDetail = evalResult.Result;
@@ -449,7 +451,7 @@ namespace LaunchDarkly.Sdk.Server
                             featureKey);
 
                         _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
-                            featureFlag, user, defaultValue, EvaluationErrorKind.WrongType));
+                            featureFlag, context, defaultValue, EvaluationErrorKind.WrongType));
                         return new EvaluationDetail<T>(defaultValueOfType, null,
                             EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType));
                     }
@@ -457,7 +459,7 @@ namespace LaunchDarkly.Sdk.Server
                         evalDetail.VariationIndex, evalDetail.Reason);
                 }
                 _eventProcessor.RecordEvaluationEvent(eventFactory.NewEvaluationEvent(
-                    featureFlag, user, evalDetail, defaultValue));
+                    featureFlag, context, evalDetail, defaultValue));
                 return returnDetail;
             }
             catch (Exception e)
@@ -469,21 +471,21 @@ namespace LaunchDarkly.Sdk.Server
                 if (featureFlag == null)
                 {
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
-                        featureKey, user, defaultValue, EvaluationErrorKind.Exception));
+                        featureKey, context, defaultValue, EvaluationErrorKind.Exception));
                 }
                 else
                 {
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewEvaluationEvent(
-                        featureFlag, user, new EvaluationDetail<LdValue>(defaultValue, null, reason), defaultValue));
+                        featureFlag, context, new EvaluationDetail<LdValue>(defaultValue, null, reason), defaultValue));
                 }
                 return new EvaluationDetail<T>(defaultValueOfType, null, reason);
             }
         }
         
         /// <inheritdoc/>
-        public string SecureModeHash(User user)
+        public string SecureModeHash(Context context)
         {
-            if (user == null || string.IsNullOrEmpty(user.Key))
+            if (!context.Valid)
             {
                 return null;
             }
@@ -491,33 +493,33 @@ namespace LaunchDarkly.Sdk.Server
             byte[] keyBytes = encoding.GetBytes(_configuration.SdkKey);
 
             HMACSHA256 hmacSha256 = new HMACSHA256(keyBytes);
-            byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(user.Key));
+            byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(context.Key));
             return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
         /// <inheritdoc/>
-        public void Track(string name, User user) =>
-            TrackInternal(name, user, LdValue.Null, null);
+        public void Track(string name, Context context) =>
+            TrackInternal(name, context, LdValue.Null, null);
 
         /// <inheritdoc/>
-        public void Track(string name, User user, LdValue data) =>
-            TrackInternal(name, user, data, null);
+        public void Track(string name, Context context, LdValue data) =>
+            TrackInternal(name, context, data, null);
 
         /// <inheritdoc/>
-        public void Track(string name, User user, LdValue data, double metricValue) =>
-            TrackInternal(name, user, data, metricValue);
+        public void Track(string name, Context context, LdValue data, double metricValue) =>
+            TrackInternal(name, context, data, metricValue);
 
-        private void TrackInternal(string key, User user, LdValue data, double? metricValue)
+        private void TrackInternal(string key, Context context, LdValue data, double? metricValue)
         {
-            if (user == null || String.IsNullOrEmpty(user.Key))
+            if (!context.Valid)
             {
-                _log.Warn("Track called with null user or null user key");
+                _log.Warn("Track called with invalid context ({0})", context.Error);
                 return;
             }
             _eventProcessor.RecordCustomEvent(new EventProcessorTypes.CustomEvent
             {
                 Timestamp = UnixMillisecondTime.Now,
-                User = user,
+                Context = context,
                 EventKey = key,
                 Data = data,
                 MetricValue = metricValue
@@ -525,17 +527,17 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <inheritdoc/>
-        public void Identify(User user)
+        public void Identify(Context context)
         {
-            if (user == null || String.IsNullOrEmpty(user.Key))
+            if (!context.Valid)
             {
-                _log.Warn("Identify called with null user or null user key");
+                _log.Warn("Identify called with invalid context ({0})", context.Error);
                 return;
             }
             _eventProcessor.RecordIdentifyEvent(new EventProcessorTypes.IdentifyEvent
             {
                 Timestamp = UnixMillisecondTime.Now,
-                User = user
+                Context = context
             });
         }
 

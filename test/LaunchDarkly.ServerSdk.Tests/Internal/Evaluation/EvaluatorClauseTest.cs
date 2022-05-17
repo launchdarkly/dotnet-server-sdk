@@ -1,5 +1,4 @@
-﻿using LaunchDarkly.Sdk.Server.Internal.Events;
-using LaunchDarkly.Sdk.Server.Internal.Model;
+﻿using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
 using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTestUtil;
@@ -10,16 +9,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
     public class EvaluatorClauseTest
     {
-        private static readonly User baseUser = User.WithKey("userkey");
+        private static readonly Context baseUser = Context.New("userkey");
         
         [Fact]
         public void ClauseCanMatchBuiltInAttribute()
         {
             var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("Bob")).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
-            var user = User.Builder("key").Name("Bob").Build();
+            var user = Context.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(LdValue.Of(true), BasicEvaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(true), BasicEvaluator.Evaluate(f, user).Result.Value);
         }
 
         [Fact]
@@ -27,9 +26,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(LdValue.Of(4)).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
-            var user = User.Builder("key").Custom("legs", 4).Build();
+            var user = Context.Builder("key").Set("legs", 4).Build();
 
-            Assert.Equal(LdValue.Of(true), BasicEvaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(true), BasicEvaluator.Evaluate(f, user).Result.Value);
         }
 
         [Fact]
@@ -37,9 +36,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(LdValue.Of(4)).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
-            var user = User.Builder("key").Name("bob").Build();
+            var user = Context.Builder("key").Name("bob").Build();
 
-            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user).Result.Value);
         }
 
         [Fact]
@@ -48,9 +47,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("Bob"))
                 .Negate(true).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
-            var user = User.Builder("key").Name("Bob").Build();
+            var user = Context.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user).Result.Value);
         }
 
         [Fact]
@@ -58,9 +57,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var clause = new ClauseBuilder().Attribute("name").Op("invalidOp").Values(LdValue.Of("Bob")).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
-            var user = User.Builder("key").Name("Bob").Build();
+            var user = Context.Builder("key").Name("Bob").Build();
 
-            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user).Result.Value);
         }
         
         [Fact]
@@ -70,19 +69,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var evaluator = BasicEvaluator.WithStoredSegments(segment);
 
             var f = new FeatureFlagBuilder("key").BooleanMatchingSegment("segkey").Build();
-            var user = User.WithKey("foo");
+            var user = Context.New("foo");
 
-            Assert.Equal(LdValue.Of(true), evaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(true), evaluator.Evaluate(f, user).Result.Value);
         }
 
         [Fact]
         public void SegmentMatchClauseFallsThroughIfSegmentNotFound()
         {
             var f = new FeatureFlagBuilder("key").BooleanMatchingSegment("segkey").Build();
-            var user = User.WithKey("foo");
+            var user = Context.New("foo");
             var evaluator = BasicEvaluator.WithNonexistentSegment("segkey");
 
-            Assert.Equal(LdValue.Of(false), evaluator.Evaluate(f, user, EventFactory.Default).Result.Value);
+            Assert.Equal(LdValue.Of(false), evaluator.Evaluate(f, user).Result.Value);
         }
     }
 }

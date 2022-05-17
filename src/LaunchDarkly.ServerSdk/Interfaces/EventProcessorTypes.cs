@@ -31,10 +31,10 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             public UnixMillisecondTime Timestamp { get; set; }
 
             /// <summary>
-            /// Attributes of the user who generated the event. Some attributes may not be sent
+            /// The evaluation context for the event. Some attributes may not be sent
             /// to LaunchDarkly if they are private.
             /// </summary>
-            public User User { get; set; }
+            public Context Context { get; set; }
 
             /// <summary>
             /// The unique key of the feature flag involved in the event.
@@ -93,10 +93,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             public UnixMillisecondTime Timestamp { get; set; }
 
             /// <summary>
-            /// Attributes of the user being identified. Some attributes may not be sent
-            /// to LaunchDarkly if they are private.
+            /// The evaluation context. Some attributes may not be sent to LaunchDarkly if they are private.
             /// </summary>
-            public User User { get; set; }
+            public Context Context { get; set; }
         }
 
         /// <summary>
@@ -110,10 +109,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             public UnixMillisecondTime Timestamp { get; set; }
             
             /// <summary>
-            /// Attributes of the user who generated the event. Some attributes may not be sent
-            /// to LaunchDarkly if they are private.
+            /// The evaluation context. Some attributes may not be sent to LaunchDarkly if they are private.
             /// </summary>
-            public User User { get; set; }
+            public Context Context { get; set; }
 
             /// <summary>
             /// The event key.
