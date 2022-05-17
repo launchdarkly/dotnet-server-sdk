@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server
@@ -17,9 +18,9 @@ namespace LaunchDarkly.Sdk.Server
         #region Public properties
 
         /// <summary>
-        /// A factory object that creates an implementation of <see cref="IBigSegmentsConfigurationFactory"/>.
+        /// A builder for <see cref="BigSegmentsConfiguration"/>.
         /// </summary>
-        public IBigSegmentsConfigurationFactory BigSegmentsConfigurationFactory { get; }
+        public BigSegmentsConfigurationBuilder BigSegmentsConfigurationBuilder { get; }
 
         /// <summary>
         /// A factory object that creates an implementation of <see cref="IDataSource"/>, which will
@@ -53,20 +54,20 @@ namespace LaunchDarkly.Sdk.Server
         public IEventProcessorFactory EventProcessorFactory { get; }
 
         /// <summary>
-        /// A factory object that creates an <see cref="HttpConfiguration"/>, defining the SDK's networking
+        /// A builder that creates an <see cref="HttpConfiguration"/>, defining the SDK's networking
         /// behavior.
         /// </summary>
-        public IHttpConfigurationFactory HttpConfigurationFactory { get; }
+        public HttpConfigurationBuilder HttpConfigurationBuilder { get; }
 
         /// <summary>
-        /// A factory object that creates a <see cref="LoggingConfiguration"/>, defining the SDK's
+        /// A builder that creates a <see cref="LoggingConfiguration"/>, defining the SDK's
         /// logging configuration.
         /// </summary>
         /// <remarks>
         /// SDK components should not use this property directly; instead, the SDK client will use it to create a
         /// logger instance which will be in <see cref="LdClientContext"/>.
         /// </remarks>
-        public ILoggingConfigurationFactory LoggingConfigurationFactory { get; }
+        public LoggingConfigurationBuilder LoggingConfigurationBuilder { get; }
 
         /// <summary>
         /// Whether or not this client is offline. If true, no calls to Launchdarkly will be made.
@@ -156,13 +157,13 @@ namespace LaunchDarkly.Sdk.Server
 
         internal Configuration(ConfigurationBuilder builder)
         {
-            BigSegmentsConfigurationFactory = builder._bigSegmentsConfigurationFactory;
+            BigSegmentsConfigurationBuilder = builder._bigSegmentsConfigurationBuilder;
             DataSourceFactory = builder._dataSourceFactory;
             DataStoreFactory = builder._dataStoreFactory;
             DiagnosticOptOut = builder._diagnosticOptOut;
             EventProcessorFactory = builder._eventProcessorFactory;
-            HttpConfigurationFactory = builder._httpConfigurationFactory;
-            LoggingConfigurationFactory = builder._loggingConfigurationFactory;
+            HttpConfigurationBuilder = builder._httpConfigurationBuilder;
+            LoggingConfigurationBuilder = builder._loggingConfigurationBuilder;
             Offline = builder._offline;
             SdkKey = builder._sdkKey;
             ServiceEndpoints = (builder._serviceEndpointsBuilder ?? Components.ServiceEndpoints()).Build();

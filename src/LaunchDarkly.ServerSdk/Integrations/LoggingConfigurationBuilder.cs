@@ -11,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <para>
     /// If you want to set non-default values for any of these properties, create a builder with
     /// <see cref="Components.Logging()"/>, change its properties with the methods of this class, and pass it
-    /// to <see cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />.
+    /// to <see cref="ConfigurationBuilder.Logging(LoggingConfigurationBuilder)" />.
     /// </para>
     /// <para>
     /// By default, the SDK has the following logging behavior:
@@ -33,7 +33,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class LoggingConfigurationBuilder : ILoggingConfigurationFactory
+    public sealed class LoggingConfigurationBuilder
     {
         private string _baseLoggerName = null;
         private ILogAdapter _logAdapter = null;

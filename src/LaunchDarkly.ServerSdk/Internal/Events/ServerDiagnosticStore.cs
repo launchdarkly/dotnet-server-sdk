@@ -38,7 +38,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             yield return GetComponentDescription(_config.DataStoreFactory ?? Components.InMemoryDataStore, "dataStoreType");
             yield return GetComponentDescription(_config.DataSourceFactory ?? Components.StreamingDataSource());
             yield return GetComponentDescription(_config.EventProcessorFactory ?? Components.SendEvents());
-            yield return GetComponentDescription(_config.HttpConfigurationFactory ?? Components.HttpConfiguration());
+            yield return GetComponentDescription(_config.HttpConfigurationBuilder ?? Components.HttpConfiguration());
         }
 
         private LdValue GetComponentDescription(object component, string componentName = null)

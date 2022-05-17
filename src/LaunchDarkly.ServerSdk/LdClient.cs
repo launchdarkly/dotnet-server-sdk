@@ -119,7 +119,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             _configuration = config;
 
-            var logConfig = (config.LoggingConfigurationFactory ?? Components.Logging())
+            var logConfig = (config.LoggingConfigurationBuilder ?? Components.Logging())
                 .CreateLoggingConfiguration();
             _log = logConfig.LogAdapter.Logger(logConfig.BaseLoggerName ?? LogNames.DefaultBase);
             _log.Info("Starting LaunchDarkly client {0}",
@@ -127,7 +127,7 @@ namespace LaunchDarkly.Sdk.Server
             _evalLog = _log.SubLogger(LogNames.EvaluationSubLog);
 
             var basicConfig = new BasicConfiguration(config, _log);
-            var httpConfig = (config.HttpConfigurationFactory ?? Components.HttpConfiguration())
+            var httpConfig = (config.HttpConfigurationBuilder ?? Components.HttpConfiguration())
                 .CreateHttpConfiguration(basicConfig);
             ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
                 new ServerDiagnosticStore(_configuration, basicConfig, httpConfig);
@@ -141,7 +141,7 @@ namespace LaunchDarkly.Sdk.Server
                 .CreateDataStore(clientContext, dataStoreUpdates);
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, dataStoreUpdates);
 
-            var bigSegmentsConfig = (_configuration.BigSegmentsConfigurationFactory ?? Components.BigSegments(null))
+            var bigSegmentsConfig = (_configuration.BigSegmentsConfigurationBuilder ?? Components.BigSegments(null))
                 .CreateBigSegmentsConfiguration(clientContext);
             _bigSegmentStoreWrapper = bigSegmentsConfig.Store is null ? null :
                 new BigSegmentStoreWrapper(

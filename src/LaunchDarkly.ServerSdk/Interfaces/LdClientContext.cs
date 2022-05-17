@@ -43,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             ) :
             this(
                 basic,
-                (configuration.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
+                (configuration.HttpConfigurationBuilder ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
                 null,
                 new TaskExecutor("test-sender", basic.Logger)
                 ) { }

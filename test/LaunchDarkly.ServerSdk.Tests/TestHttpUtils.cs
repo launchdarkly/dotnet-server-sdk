@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal.Http;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
@@ -31,7 +32,7 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         // Used for TestWithSpecialHttpConfigurations
-        public delegate void HttpConfigurationTestAction(Uri targetUri, IHttpConfigurationFactory httpConfig, HttpServer server);
+        public delegate void HttpConfigurationTestAction(Uri targetUri, HttpConfigurationBuilder httpConfig, HttpServer server);
 
         /// <summary>
         /// A test suite for all SDK components that support our standard HTTP configuration options.
@@ -168,7 +169,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="action"></param>
         public static void WithServerErrorCondition(ServerErrorCondition errorCondition,
             Handler successResponseAfterError,
-            Action<Uri, IHttpConfigurationFactory, RequestRecorder> action)
+            Action<Uri, HttpConfigurationBuilder, RequestRecorder> action)
         {
             var responseHandler = successResponseAfterError is null ? errorCondition.Handler :
                 Handlers.Sequential(errorCondition.Handler, successResponseAfterError);
