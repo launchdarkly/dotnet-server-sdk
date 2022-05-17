@@ -12,7 +12,6 @@ using Xunit;
 using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.MockResponses;
-using static LaunchDarkly.Sdk.Server.TestHttpUtils;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 using static LaunchDarkly.TestHelpers.JsonTestValue;
 
@@ -198,8 +197,8 @@ namespace LaunchDarkly.Sdk.Server
                     .Capacity(333)
                     .DiagnosticRecordingInterval(TimeSpan.FromMinutes(32))
                     .FlushInterval(TimeSpan.FromMilliseconds(555))
-                    .UserKeysCapacity(444)
-                    .UserKeysFlushInterval(TimeSpan.FromMinutes(23)),
+                    .ContextKeysCapacity(444)
+                    .ContextKeysFlushInterval(TimeSpan.FromMinutes(23)),
                 ExpectedConfigProps.Base()
                     .Set("allAttributesPrivate", true)
                     .Set("customEventsURI", false)
@@ -295,33 +294,6 @@ namespace LaunchDarkly.Sdk.Server
                     .Set("customStreamURI", true)
                     .Set("customEventsURI", true)
                 );
-
-            TestDiagnosticConfig(
-                c => c.DataSource(
-#pragma warning disable CS0618  // using deprecated symbol
-                    Components.StreamingDataSource()
-                        .BaseUri(new Uri("http://custom"))
-#pragma warning restore CS0618
-                    )
-                    .Http(Components.HttpConfiguration().MessageHandler(StreamWithEmptyData.AsMessageHandler())),
-                null,
-                ExpectedConfigProps.Base()
-                    .Set("customStreamURI", true)
-                );
-
-            TestDiagnosticConfig(
-                c => c.DataSource(
-#pragma warning disable CS0618  // using deprecated symbol
-                    Components.PollingDataSource().BaseUri(new Uri("http://custom"))
-#pragma warning restore CS0618
-                    )
-                   .Http(Components.HttpConfiguration().MessageHandler(EmptyPollingResponse.AsMessageHandler())),
-                null,
-                ExpectedConfigProps.Base()
-                    .WithPollingDefaults()
-                    .Set("customBaseURI", true)
-                );
-
         }
 
         [Fact]
@@ -496,8 +468,8 @@ namespace LaunchDarkly.Sdk.Server
                 .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
                 .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
                 .Add("streamingDisabled", false)
-                .Add("userKeysCapacity", EventProcessorBuilder.DefaultUserKeysCapacity)
-                .Add("userKeysFlushIntervalMillis", EventProcessorBuilder.DefaultUserKeysFlushInterval.TotalMilliseconds)
+                .Add("userKeysCapacity", EventProcessorBuilder.DefaultContextKeysCapacity)
+                .Add("userKeysFlushIntervalMillis", EventProcessorBuilder.DefaultContextKeysFlushInterval.TotalMilliseconds)
                 .Add("usingProxy", false)
                 .Add("usingProxyAuthenticator", false)
                 .Add("usingRelayDaemon", false);

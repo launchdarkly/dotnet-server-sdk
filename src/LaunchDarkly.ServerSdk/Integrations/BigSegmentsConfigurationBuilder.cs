@@ -8,8 +8,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </summary>
     /// <remarks>
     /// <para>
-    /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
-    /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
+    /// "Big Segments" are a specific type of segments. For more information, read the LaunchDarkly
+    /// documentation about segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>
     /// <para>
     /// If you want to set non-default values for any of these properties, create a builder with
@@ -22,21 +22,21 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///     // This example uses the Redis integration
     ///     var config = Configuration.Builder(sdkKey)
     ///         .BigSegments(Components.BigSegments(Redis.DataStore().Prefix("app1"))
-    ///             .UserCacheSize(2000))
+    ///             .ContextCacheSize(2000))
     ///         .Build();
     /// </code>
     /// </example>
     public sealed class BigSegmentsConfigurationBuilder : IBigSegmentsConfigurationFactory
     {
         /// <summary>
-        /// Default value for <see cref="UserCacheSize(int)"/>.
+        /// Default value for <see cref="ContextCacheSize(int)"/>.
         /// </summary>
-        public const int DefaultUserCacheSize = 1000;
+        public const int DefaultContextCacheSize = 1000;
 
         /// <summary>
-        /// Default value for <see cref="UserCacheTime(TimeSpan)"/>: five seconds.
+        /// Default value for <see cref="ContextCacheTime(TimeSpan)"/>: five seconds.
         /// </summary>
-        public static readonly TimeSpan DefaultUserCacheTime = TimeSpan.FromSeconds(5);
+        public static readonly TimeSpan DefaultContextCacheTime = TimeSpan.FromSeconds(5);
 
         /// <summary>
         /// Default value for <see cref="StatusPollInterval(TimeSpan)"/>: five seconds.
@@ -49,8 +49,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public static readonly TimeSpan DefaultStaleAfter = TimeSpan.FromMinutes(2);
 
         private readonly IBigSegmentStoreFactory _storeFactory;
-        private int _userCacheSize = DefaultUserCacheSize;
-        private TimeSpan _userCacheTime = DefaultUserCacheTime;
+        private int _contextCacheSize = DefaultContextCacheSize;
+        private TimeSpan _contextCacheTime = DefaultContextCacheTime;
         private TimeSpan _statusPollInterval = DefaultStatusPollInterval;
         private TimeSpan _staleAfter = DefaultStaleAfter;
 
@@ -60,51 +60,51 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets the maximum number of users whose Big Segment state will be cached by the SDK
+        /// Sets the maximum number of contexts whose Big Segment state will be cached by the SDK
         /// at any given time.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// To reduce database traffic, the SDK maintains a least-recently-used cache by user key. When a feature
-        /// flag that references a Big Segment is evaluated for some user who is not currently in the cache, the
-        /// SDK queries the database for all Big Segment memberships of that user, and stores them together in a
+        /// To reduce database traffic, the SDK maintains a least-recently-used cache by context key. When a feature
+        /// flag that references a Big Segment is evaluated for some context that is not currently in the cache, the
+        /// SDK queries the database for all Big Segment memberships of that context, and stores them together in a
         /// single cache entry. If the cache is full, the oldest entry is dropped.
         /// </para>
         /// <para>
-        /// A higher value for <see cref="UserCacheSize(int)"/> means that database queries for Big Segments will
-        /// be done less often for recently-referenced users, if the application has many users, at the cost of
+        /// A higher value for <see cref="ContextCacheSize(int)"/> means that database queries for Big Segments will
+        /// be done less often for recently-referenced contexts, if the application has many contexts, at the cost of
         /// increased memory used by the cache.
         /// </para>
         /// <para>
-        /// Cache entries can also expire based on the setting of <see cref="UserCacheTime(TimeSpan)"/>.
+        /// Cache entries can also expire based on the setting of <see cref="ContextCacheTime(TimeSpan)"/>.
         /// </para>
         /// </remarks>
-        /// <param name="userCacheSize">the maximum number of user states to cache</param>
+        /// <param name="contextCacheSize">the maximum number of context states to cache</param>
         /// <returns>the builder</returns>
-        /// <seealso cref="DefaultUserCacheSize"/>
-        public BigSegmentsConfigurationBuilder UserCacheSize(int userCacheSize)
+        /// <seealso cref="DefaultContextCacheSize"/>
+        public BigSegmentsConfigurationBuilder ContextCacheSize(int contextCacheSize)
         {
-            _userCacheSize = userCacheSize;
+            _contextCacheSize = contextCacheSize;
             return this;
         }
 
         /// <summary>
-        /// Sets the maximum length of time that the Big Segment state for a user will be cached
+        /// Sets the maximum length of time that the Big Segment state for a context will be cached
         /// by the SDK.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// See <see cref="UserCacheSize(int)"/> for more about this cache. A higher value for
-        /// <see cref="UserCacheTime(TimeSpan)"/> means that database queries for the Big Segment state of any
-        /// given user will be done less often, but that changes to segment membership may not be detected as soon.
+        /// See <see cref="ContextCacheSize(int)"/> for more about this cache. A higher value for
+        /// <see cref="ContextCacheTime(TimeSpan)"/> means that database queries for the Big Segment state of any
+        /// given context will be done less often, but that changes to segment membership may not be detected as soon.
         /// </para>
         /// </remarks>
-        /// <param name="userCacheTime">the cache TTL</param>
+        /// <param name="contextCacheTime">the cache TTL</param>
         /// <returns>the builder</returns>
-        /// <seealso cref="DefaultUserCacheTime"/>
-        public BigSegmentsConfigurationBuilder UserCacheTime(TimeSpan userCacheTime)
+        /// <seealso cref="DefaultContextCacheTime"/>
+        public BigSegmentsConfigurationBuilder ContextCacheTime(TimeSpan contextCacheTime)
         {
-            _userCacheTime = userCacheTime;
+            _contextCacheTime = contextCacheTime;
             return this;
         }
 
@@ -157,8 +157,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var store = _storeFactory is null ? null : _storeFactory.CreateBigSegmentStore(context);
             return new BigSegmentsConfiguration(
                 store,
-                _userCacheSize,
-                _userCacheTime,
+                _contextCacheSize,
+                _contextCacheTime,
                 _statusPollInterval,
                 _staleAfter
                 );

@@ -26,11 +26,6 @@ TEST_HARNESS_PARAMS := $(TEST_HARNESS_PARAMS) \
 	-skip 'evaluation/parameterized/segment recursion' \
 	-skip 'evaluation/parameterized/target match/user targets.*multi-kind' \
 	-skip 'evaluation/parameterized/target match/context targets' \
-	-skip 'events/context properties/multi-kind' \
-	-skip 'events/custom' \
-	-skip 'events/feature events/full feature/with reason/multi-kind' \
-	-skip 'events/feature events/full feature/without reason/multi-kind' \
-	-skip 'events/index events/only one index event per evaluation context' \
 	-skip 'events/requests/method and headers' \
 	-skip 'events/summary events/contextKinds'
 

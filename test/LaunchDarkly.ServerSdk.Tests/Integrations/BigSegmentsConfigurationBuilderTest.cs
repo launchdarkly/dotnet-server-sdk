@@ -31,20 +31,20 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
-        public void UserCacheSize()
+        public void ContextCacheSize()
         {
-            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).UserCacheSize,
-                (b, v) => b.UserCacheSize(v));
-            prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultUserCacheSize);
+            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).ContextCacheSize,
+                (b, v) => b.ContextCacheSize(v));
+            prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultContextCacheSize);
             prop.AssertCanSet(3333);
         }
 
         [Fact]
-        public void UserCacheTime()
+        public void ContextCacheTime()
         {
-            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).UserCacheTime,
-                (b, v) => b.UserCacheTime(v));
-            prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultUserCacheTime);
+            var prop = _tester.Property(b => b.CreateBigSegmentsConfiguration(BasicContext).ContextCacheTime,
+                (b, v) => b.ContextCacheTime(v));
+            prop.AssertDefault(BigSegmentsConfigurationBuilder.DefaultContextCacheTime);
             prop.AssertCanSet(TimeSpan.FromMilliseconds(3333));
         }
 

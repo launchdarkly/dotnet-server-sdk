@@ -104,7 +104,7 @@ namespace LaunchDarkly.Sdk.Server
         ///     // This example uses the Redis integration
         ///     var config = Configuration.Builder(sdkKey)
         ///         .BigSegments(Components.BigSegments(Redis.DataStore().Prefix("app1"))
-        ///             .UserCacheSize(2000))
+        ///             .ContextCacheSize(2000))
         ///         .Build();
         /// </code>
         /// </example>

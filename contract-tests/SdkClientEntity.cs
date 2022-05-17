@@ -320,11 +320,11 @@ namespace TestService
                 }
                 if (bigSegments.UserCacheSize.HasValue)
                 {
-                    bs.UserCacheSize(bigSegments.UserCacheSize.Value);
+                    bs.ContextCacheSize(bigSegments.UserCacheSize.Value);
                 }
                 if (bigSegments.UserCacheTimeMs.HasValue)
                 {
-                    bs.UserCacheTime(TimeSpan.FromMilliseconds(bigSegments.UserCacheTimeMs.Value));
+                    bs.ContextCacheTime(TimeSpan.FromMilliseconds(bigSegments.UserCacheTimeMs.Value));
                 }
                 builder.BigSegments(bs);
             }

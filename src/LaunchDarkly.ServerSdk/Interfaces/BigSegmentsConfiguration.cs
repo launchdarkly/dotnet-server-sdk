@@ -8,7 +8,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// </summary>
     /// <remarks>
     /// <para>
-    /// "Big Segments" are a specific type of user segments. For more information, read the LaunchDarkly
+    /// "Big Segments" are a specific type of segments. For more information, read the LaunchDarkly
     /// documentation about user segments: https://docs.launchdarkly.com/home/users/segments
     /// </para>
     /// <para>
@@ -23,14 +23,14 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         public IBigSegmentStore Store { get; }
 
         /// <summary>
-        /// The value set by <see cref="BigSegmentsConfigurationBuilder.UserCacheSize(int)"/>.
+        /// The value set by <see cref="BigSegmentsConfigurationBuilder.ContextCacheSize(int)"/>.
         /// </summary>
-        public int UserCacheSize { get; }
+        public int ContextCacheSize { get; }
 
         /// <summary>
-        /// The value set by <see cref="BigSegmentsConfigurationBuilder.UserCacheTime(TimeSpan)"/>.
+        /// The value set by <see cref="BigSegmentsConfigurationBuilder.ContextCacheTime(TimeSpan)"/>.
         /// </summary>
-        public TimeSpan UserCacheTime { get; }
+        public TimeSpan ContextCacheTime { get; }
 
         /// <summary>
         /// The value set by <see cref="BigSegmentsConfigurationBuilder.StatusPollInterval(TimeSpan)"/>.
@@ -46,21 +46,21 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Constructs a new instance.
         /// </summary>
         /// <param name="store">value for Store</param>
-        /// <param name="userCacheSize">value for UserCacheSize</param>
-        /// <param name="userCacheTime">value for UserCacheTime</param>
+        /// <param name="contextCacheSize">value for ContextCacheSize</param>
+        /// <param name="contextCacheTime">value for ContextCacheTime</param>
         /// <param name="statusPollInterval">value for StatusPollInterval</param>
         /// <param name="staleAfter">value for StaleAfter</param>
         public BigSegmentsConfiguration(
             IBigSegmentStore store,
-            int userCacheSize,
-            TimeSpan userCacheTime,
+            int contextCacheSize,
+            TimeSpan contextCacheTime,
             TimeSpan statusPollInterval,
             TimeSpan staleAfter
             )
         {
             Store = store;
-            UserCacheSize = userCacheSize;
-            UserCacheTime = userCacheTime;
+            ContextCacheSize = contextCacheSize;
+            ContextCacheTime = contextCacheTime;
             StatusPollInterval = statusPollInterval;
             StaleAfter = staleAfter;
         }

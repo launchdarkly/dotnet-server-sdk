@@ -72,7 +72,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var membership = NewMembershipFromSegmentRefs(
                 new string[] { MakeBigSegmentRef(_bigSegment) }, null);
-            _storeMock.SetupMembershipReturns(BigSegmentUserKeyHash(_user.Key), membership);
+            _storeMock.SetupMembershipReturns(BigSegmentContextKeyHash(_user.Key), membership);
 
             using (var client = MakeClient())
             {
@@ -85,7 +85,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void StoreError()
         {
-            _storeMock.SetupMembershipThrows(BigSegmentUserKeyHash(_user.Key),
+            _storeMock.SetupMembershipThrows(BigSegmentContextKeyHash(_user.Key),
                 new Exception("sorry"));
 
             using (var client = MakeClient())

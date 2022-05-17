@@ -155,7 +155,7 @@ namespace LaunchDarkly.Sdk.Server
                 GetFlag,
                 GetSegment,
                 _bigSegmentStoreWrapper == null ? (Func<string, BigSegmentsInternalTypes.BigSegmentsQueryResult>)null :
-                    _bigSegmentStoreWrapper.GetUserMembership,
+                    _bigSegmentStoreWrapper.GetMembership,
                 _log
                 );
 

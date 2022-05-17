@@ -11,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
     {
         private static readonly SHA256 _hasher = SHA256.Create();
 
-        internal static string BigSegmentUserKeyHash(string userKey) =>
+        internal static string BigSegmentContextKeyHash(string userKey) =>
             Convert.ToBase64String(
                 _hasher.ComputeHash(Encoding.UTF8.GetBytes(userKey))
                 );
