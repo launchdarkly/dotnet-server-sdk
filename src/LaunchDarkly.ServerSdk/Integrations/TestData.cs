@@ -49,7 +49,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </code>
     /// </example>
     /// <seealso cref="FileData"/>
-    public sealed class TestData : IComponentConfiguration<IDataSource>
+    public sealed class TestData : IComponentConfigurer<IDataSource>
     {
         #region Private fields
 

@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </code>
     /// </example>
     /// </remarks>
-    public sealed class HttpConfigurationBuilder : IComponentConfiguration<HttpConfiguration>, IDiagnosticDescription
+    public sealed class HttpConfigurationBuilder : IComponentConfigurer<HttpConfiguration>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="ConnectTimeout(TimeSpan)"/>: two seconds.

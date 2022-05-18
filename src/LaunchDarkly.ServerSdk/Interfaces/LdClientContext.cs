@@ -11,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <remarks>
     /// <para>
     /// The SDK passes this object to component factories/configuration builders that implement the
-    /// <see cref="IComponentConfiguration{T}"/> interface, to provide them with necessary configuration
+    /// <see cref="IComponentConfigurer{T}"/> interface, to provide them with necessary configuration
     /// properties, as well as references to other components that they may need to access.
     /// </para>
     /// <para>

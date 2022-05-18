@@ -7,7 +7,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <remarks>
     /// <para>
     /// The SDK uses a simplified JSON representation of its configuration when recording diagnostics data.
-    /// Any configuration/component builder class that implements <see cref="IComponentConfiguration{T}"/> may
+    /// Any configuration/component builder class that implements <see cref="IComponentConfigurer{T}"/> may
     /// choose to contribute values to this representation, although the SDK may or may not use them.
     /// </para>
     /// <para>

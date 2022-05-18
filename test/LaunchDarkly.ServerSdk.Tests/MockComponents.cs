@@ -22,13 +22,13 @@ namespace LaunchDarkly.Sdk.Server
         // so that the SDK can handle the component lifecycle and dependency injection. However, in tests,
         // we often want to set up a specific component instance; .AsSingletonFactory() wraps it in a
         // factory that always returns that instance.
-        public static IComponentConfiguration<T> AsSingletonFactory<T>(this T instance) =>
+        public static IComponentConfigurer<T> AsSingletonFactory<T>(this T instance) =>
             new SingleComponentFactory<T> { Instance = instance };
 
-        public static IComponentConfiguration<T> AsSingletonFactoryWithDiagnosticDescription<T>(this T instance, LdValue description) =>
+        public static IComponentConfigurer<T> AsSingletonFactoryWithDiagnosticDescription<T>(this T instance, LdValue description) =>
             new SingleComponentFactoryWithDiagnosticDescription<T> { Instance = instance, Description = description };
 
-        private class SingleComponentFactory<T> : IComponentConfiguration<T>
+        private class SingleComponentFactory<T> : IComponentConfigurer<T>
         {
             public T Instance { get; set; }
             public T Build(LdClientContext context) => Instance;
@@ -79,13 +79,13 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    public class CapturingDataStoreFactory : IComponentConfiguration<IDataStore>
+    public class CapturingDataStoreFactory : IComponentConfigurer<IDataStore>
     {
-        private readonly IComponentConfiguration<IDataStore> _factory;
+        private readonly IComponentConfigurer<IDataStore> _factory;
         public volatile LdClientContext Context;
         public volatile IDataStoreUpdates DataStoreUpdates;
 
-        public CapturingDataStoreFactory(IComponentConfiguration<IDataStore> factory)
+        public CapturingDataStoreFactory(IComponentConfigurer<IDataStore> factory)
         {
             _factory = factory;
         }
@@ -116,7 +116,7 @@ namespace LaunchDarkly.Sdk.Server
         internal static MockDataSource MockDataSourceWithStartFn(Func<IDataSourceUpdates, Task<bool>> startFn,
             Func<bool> initedFn) => new MockDataSource(startFn, initedFn);
 
-        internal sealed class MockDataSource : MockDataSourceBase, IDataSource, IComponentConfiguration<IDataSource>
+        internal sealed class MockDataSource : MockDataSourceBase, IDataSource, IComponentConfigurer<IDataSource>
         {
             private readonly Func<IDataSourceUpdates, Task<bool>> _startFn;
             private readonly Func<bool> _initedFn;

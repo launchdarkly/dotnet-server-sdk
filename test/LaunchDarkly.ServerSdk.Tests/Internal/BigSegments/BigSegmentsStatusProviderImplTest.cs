@@ -33,7 +33,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var storeMetadata = new StoreMetadata { LastUpToDate = storeTimestamp };
             var storeMock = new Mock<IBigSegmentStore>();
             var store = storeMock.Object;
-            var storeFactoryMock = new Mock<IComponentConfiguration<IBigSegmentStore>>();
+            var storeFactoryMock = new Mock<IComponentConfigurer<IBigSegmentStore>>();
             var storeFactory = storeFactoryMock.Object;
             storeFactoryMock.Setup(f => f.Build(BasicContext)).Returns(store);
             storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(storeMetadata);

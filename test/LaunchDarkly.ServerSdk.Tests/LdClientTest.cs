@@ -137,8 +137,8 @@ AssertLogMessage(false, LogLevel.Warn,
         [Fact]
         public void DiagnosticStorePassedToFactories()
         {
-            var epf = new Mock<IComponentConfiguration<IEventProcessor>>();
-            var dsf = new Mock<IComponentConfiguration<IDataSource>>();
+            var epf = new Mock<IComponentConfigurer<IEventProcessor>>();
+            var dsf = new Mock<IComponentConfigurer<IDataSource>>();
             var config = BasicConfig()
                 .Events(epf.Object)
                 .DataSource(dsf.Object)
@@ -169,8 +169,8 @@ AssertLogMessage(false, LogLevel.Warn,
         [Fact]
         public void DiagnosticStoreNotPassedToFactoriesWhenOptedOut()
         {
-            var epf = new Mock<IComponentConfiguration<IEventProcessor>>();
-            var dsf = new Mock<IComponentConfiguration<IDataSource>>();
+            var epf = new Mock<IComponentConfigurer<IEventProcessor>>();
+            var dsf = new Mock<IComponentConfigurer<IDataSource>>();
             var config = BasicConfig()
                 .Events(epf.Object)
                 .DataSource(dsf.Object)

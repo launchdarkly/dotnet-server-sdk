@@ -12,11 +12,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <remarks>
     /// <para>
     /// For a persistent data store (e.g. a database integration), the store implementation will
-    /// provide an <see cref="IComponentConfiguration{T}"/> for <see cref="IPersistentDataStore"/> or
+    /// provide an <see cref="IComponentConfigurer{T}"/> for <see cref="IPersistentDataStore"/> or
     /// <see cref="IPersistentDataStoreAsync"/> that implements the specific data store behavior. The
     /// SDK then provides additional options for caching; those are defined by this type, which is returned
-    /// by <see cref="Components.PersistentDataStore(IComponentConfiguration{IPersistentDataStore})"/> or
-    /// <see cref="Components.PersistentDataStore(IComponentConfiguration{IPersistentDataStoreAsync})"/>. Example usage:
+    /// by <see cref="Components.PersistentDataStore(IComponentConfigurer{IPersistentDataStore})"/> or
+    /// <see cref="Components.PersistentDataStore(IComponentConfigurer{IPersistentDataStoreAsync})"/>. Example usage:
     /// </para>
     /// <code>
     ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
@@ -26,10 +26,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </remarks>
-    public class PersistentDataStoreBuilder : IComponentConfiguration<IDataStore>, IDiagnosticDescription
+    public class PersistentDataStoreBuilder : IComponentConfigurer<IDataStore>, IDiagnosticDescription
     {
-        private readonly IComponentConfiguration<IPersistentDataStore> _coreFactory;
-        private readonly IComponentConfiguration<IPersistentDataStoreAsync> _coreAsyncFactory;
+        private readonly IComponentConfigurer<IPersistentDataStore> _coreFactory;
+        private readonly IComponentConfigurer<IPersistentDataStoreAsync> _coreAsyncFactory;
         private DataStoreCacheConfig _cacheConfig = DataStoreCacheConfig.Enabled;
 
         /// <summary>
@@ -37,13 +37,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan DefaultTtl = DataStoreCacheConfig.DefaultTtl;
 
-        internal PersistentDataStoreBuilder(IComponentConfiguration<IPersistentDataStore> coreFactory)
+        internal PersistentDataStoreBuilder(IComponentConfigurer<IPersistentDataStore> coreFactory)
         {
             _coreFactory = coreFactory;
             _coreAsyncFactory = null;
         }
 
-        internal PersistentDataStoreBuilder(IComponentConfiguration<IPersistentDataStoreAsync> coreAsyncFactory)
+        internal PersistentDataStoreBuilder(IComponentConfigurer<IPersistentDataStoreAsync> coreAsyncFactory)
         {
             _coreFactory = null;
             _coreAsyncFactory = coreAsyncFactory;

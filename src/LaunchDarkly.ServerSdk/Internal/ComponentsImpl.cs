@@ -10,7 +10,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
     /// </summary>
     internal static class ComponentsImpl
     {
-        internal sealed class InMemoryDataStoreFactory : IComponentConfiguration<IDataStore>, IDiagnosticDescription
+        internal sealed class InMemoryDataStoreFactory : IComponentConfigurer<IDataStore>, IDiagnosticDescription
         {
             internal static readonly InMemoryDataStoreFactory Instance = new InMemoryDataStoreFactory();
 
@@ -30,9 +30,9 @@ namespace LaunchDarkly.Sdk.Server.Internal
             public Task<bool> Start() => Task.FromResult(true);
         }
 
-        internal sealed class NullDataSourceFactory : IComponentConfiguration<IDataSource>, IDiagnosticDescription
+        internal sealed class NullDataSourceFactory : IComponentConfigurer<IDataSource>, IDiagnosticDescription
         {
-            internal static readonly IComponentConfiguration<IDataSource> Instance = new NullDataSourceFactory();
+            internal static readonly IComponentConfigurer<IDataSource> Instance = new NullDataSourceFactory();
 
             public IDataSource Build(LdClientContext context)
             {
@@ -74,7 +74,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             public void Dispose() { }
         }
 
-        internal sealed class NullEventProcessorFactory : IComponentConfiguration<IEventProcessor>
+        internal sealed class NullEventProcessorFactory : IComponentConfigurer<IEventProcessor>
         {
             internal static readonly NullEventProcessorFactory Instance = new NullEventProcessorFactory();
 

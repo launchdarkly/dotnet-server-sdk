@@ -34,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class PollingDataSourceBuilder : IComponentConfiguration<IDataSource>, IDiagnosticDescription
+    public sealed class PollingDataSourceBuilder : IComponentConfigurer<IDataSource>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="PollInterval(TimeSpan)"/>: 30 seconds.

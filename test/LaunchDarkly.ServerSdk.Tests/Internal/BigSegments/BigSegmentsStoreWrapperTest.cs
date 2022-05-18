@@ -12,7 +12,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
     public class BigSegmentsStoreWrapperTest : BaseTest
     {
         private readonly MockBigSegmentStore _store;
-        private readonly IComponentConfiguration<IBigSegmentStore> _storeFactory;
+        private readonly IComponentConfigurer<IBigSegmentStore> _storeFactory;
 
         public BigSegmentsStoreWrapperTest(ITestOutputHelper testOutput) : base(testOutput)
         {

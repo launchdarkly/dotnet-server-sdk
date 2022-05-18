@@ -44,7 +44,7 @@ namespace LaunchDarkly.Sdk.Server
         /// You must always specify the <paramref name="storeConfig"/> parameter, to tell the SDK what database
         /// you are using. Several database integrations exist for the LaunchDarkly SDK, each with its own
         /// behavior and options specific to that database; this is described via some implementation of
-        /// <c>IComponentConfiguration&lt;IBigSegmentStore&gt;</c>. The <see cref="BigSegmentsConfigurationBuilder"/>
+        /// <c>IComponentConfigurer&lt;IBigSegmentStore&gt;</c>. The <see cref="BigSegmentsConfigurationBuilder"/>
         /// adds configuration options for aspects of SDK behavior that are independent of the database. In the
         /// example above, <code>Prefix</code> is an option specifically for the Redis integration, whereas
         /// <code>ContextCacheSize</code> is an option that can be used for any data store type.
@@ -52,7 +52,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="storeConfig">the factory/configuration builder for the underlying data store</param>
         /// <returns>a configuration builder</returns>
-        public static BigSegmentsConfigurationBuilder BigSegments(IComponentConfiguration<IBigSegmentStore> storeConfig) =>
+        public static BigSegmentsConfigurationBuilder BigSegments(IComponentConfigurer<IBigSegmentStore> storeConfig) =>
             new BigSegmentsConfigurationBuilder(storeConfig);
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Build();
         /// </code>
         /// </example>
-        public static IComponentConfiguration<IDataSource> ExternalUpdatesOnly => ComponentsImpl.NullDataSourceFactory.Instance;
+        public static IComponentConfigurer<IDataSource> ExternalUpdatesOnly => ComponentsImpl.NullDataSourceFactory.Instance;
 
         /// <summary>
         /// Returns a configuration builder for the SDK's networking configuration.
@@ -106,14 +106,14 @@ namespace LaunchDarkly.Sdk.Server
         /// Since it is the default, you do not normally need to call this method, unless you need to create
         /// a data store instance for testing purposes.
         /// </remarks>
-        public static IComponentConfiguration<IDataStore> InMemoryDataStore => ComponentsImpl.InMemoryDataStoreFactory.Instance;
+        public static IComponentConfigurer<IDataStore> InMemoryDataStore => ComponentsImpl.InMemoryDataStoreFactory.Instance;
 
         /// <summary>
         /// Returns a configuration builder for the SDK's logging configuration.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// Passing this to <see cref="ConfigurationBuilder.Logging(IComponentConfiguration{LoggingConfiguration})" />,
+        /// Passing this to <see cref="ConfigurationBuilder.Logging(IComponentConfigurer{LoggingConfiguration})" />,
         /// after setting any desired properties on the builder, applies this configuration to the SDK.
         /// </para>
         /// <para>
@@ -134,7 +134,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </code>
         /// </example>
         /// <returns>a configuration builder</returns>
-        /// <seealso cref="ConfigurationBuilder.Logging(IComponentConfiguration{LoggingConfiguration})" />
+        /// <seealso cref="ConfigurationBuilder.Logging(IComponentConfigurer{LoggingConfiguration})" />
         /// <seealso cref="Components.Logging(ILogAdapter) "/>
         /// <seealso cref="Components.NoLogging" />
         public static LoggingConfigurationBuilder Logging() =>
@@ -172,7 +172,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <param name="adapter">an <c>ILogAdapter</c> for the desired logging implementation</param>
         /// <returns>a configuration builder</returns>
-        /// <seealso cref="ConfigurationBuilder.Logging(IComponentConfiguration{LoggingConfiguration})" />
+        /// <seealso cref="ConfigurationBuilder.Logging(IComponentConfigurer{LoggingConfiguration})" />
         /// <seealso cref="LoggingConfigurationBuilder.Adapter(ILogAdapter)" />
         /// <seealso cref="Components.Logging() "/>
         /// <seealso cref="Components.NoLogging" />
@@ -194,7 +194,7 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Build();
         /// </code>
         /// </example>
-        public static IComponentConfiguration<IEventProcessor> NoEvents =>
+        public static IComponentConfigurer<IEventProcessor> NoEvents =>
             ComponentsImpl.NullEventProcessorFactory.Instance;
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Build();
         /// </code>
         /// </example>
-        public static IComponentConfiguration<LoggingConfiguration> NoLogging =>
+        public static IComponentConfigurer<LoggingConfiguration> NoLogging =>
             new LoggingConfigurationBuilder().Adapter(Logs.None);
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="storeConfig">the configuration builder/factory for the underlying data store</param>
         /// <returns>a configuration builder</returns>
-        public static PersistentDataStoreBuilder PersistentDataStore(IComponentConfiguration<IPersistentDataStore> storeConfig)
+        public static PersistentDataStoreBuilder PersistentDataStore(IComponentConfigurer<IPersistentDataStore> storeConfig)
         {
             return new PersistentDataStoreBuilder(storeConfig);
         }
@@ -272,7 +272,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="storeConfig">the configuration builder/factory for the underlying data store</param>
         /// <returns>a configuration builder</returns>
-        public static PersistentDataStoreBuilder PersistentDataStore(IComponentConfiguration<IPersistentDataStoreAsync> storeConfig)
+        public static PersistentDataStoreBuilder PersistentDataStore(IComponentConfigurer<IPersistentDataStoreAsync> storeConfig)
         {
             return new PersistentDataStoreBuilder(storeConfig);
         }

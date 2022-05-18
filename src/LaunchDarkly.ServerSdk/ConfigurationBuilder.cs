@@ -30,13 +30,13 @@ namespace LaunchDarkly.Sdk.Server
 
         // Let's try to keep these properties and methods alphabetical so they're easy to find. Note that they
         // are internal rather than private so that they can be read by the Configuration constructor.
-        internal IComponentConfiguration<BigSegmentsConfiguration> _bigSegments = null;
-        internal IComponentConfiguration<IDataSource> _dataSource = null;
-        internal IComponentConfiguration<IDataStore> _dataStore = null;
+        internal IComponentConfigurer<BigSegmentsConfiguration> _bigSegments = null;
+        internal IComponentConfigurer<IDataSource> _dataSource = null;
+        internal IComponentConfigurer<IDataStore> _dataStore = null;
         internal bool _diagnosticOptOut = false;
-        internal IComponentConfiguration<IEventProcessor> _events = null;
-        internal IComponentConfiguration<HttpConfiguration> _http = null;
-        internal IComponentConfiguration<LoggingConfiguration> _logging = null;
+        internal IComponentConfigurer<IEventProcessor> _events = null;
+        internal IComponentConfigurer<HttpConfiguration> _http = null;
+        internal IComponentConfigurer<LoggingConfiguration> _logging = null;
         internal bool _offline = false;
         internal string _sdkKey;
         internal ServiceEndpointsBuilder _serviceEndpointsBuilder = null;
@@ -111,7 +111,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="bigSegmentsConfig">a configuration factory object returned by
         /// <see cref="Components.BigSegments"/></param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder BigSegments(IComponentConfiguration<BigSegmentsConfiguration> bigSegmentsConfig)
+        public ConfigurationBuilder BigSegments(IComponentConfigurer<BigSegmentsConfiguration> bigSegmentsConfig)
         {
             _bigSegments = bigSegmentsConfig;
             return this;
@@ -135,7 +135,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="dataSourceConfig">the factory object</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder DataSource(IComponentConfiguration<IDataSource> dataSourceConfig)
+        public ConfigurationBuilder DataSource(IComponentConfigurer<IDataSource> dataSourceConfig)
         {
             _dataSource = dataSourceConfig;
             return this;
@@ -149,7 +149,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// The default is <see cref="Components.InMemoryDataStore"/>, but you may choose to use a custom
         /// implementation such as a database integration. For the latter, you will normally
-        /// use <see cref="Components.PersistentDataStore(IComponentConfiguration{IPersistentDataStore})"/> in
+        /// use <see cref="Components.PersistentDataStore(IComponentConfigurer{IPersistentDataStore})"/> in
         /// conjunction with some specific type for that integration.
         /// </para>
         /// <para>
@@ -160,7 +160,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="dataStoreConfig">the factory object</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder DataStore(IComponentConfiguration<IDataStore> dataStoreConfig)
+        public ConfigurationBuilder DataStore(IComponentConfigurer<IDataStore> dataStoreConfig)
         {
             _dataStore = dataStoreConfig;
             return this;
@@ -197,7 +197,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <param name="eventsConfig">a builder/factory object for event configuration</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder Events(IComponentConfiguration<IEventProcessor> eventsConfig)
+        public ConfigurationBuilder Events(IComponentConfigurer<IEventProcessor> eventsConfig)
         {
             _events = eventsConfig;
             return this;
@@ -210,7 +210,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         /// <param name="httpConfig">a builder object for HTTP configuration</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder Http(IComponentConfiguration<HttpConfiguration> httpConfig)
+        public ConfigurationBuilder Http(IComponentConfigurer<HttpConfiguration> httpConfig)
         {
             _http = httpConfig;
             return this;
@@ -242,7 +242,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="Components.Logging(ILogAdapter) "/>
         /// <seealso cref="Components.NoLogging" />
         /// <seealso cref="Logging(ILogAdapter)"/>
-        public ConfigurationBuilder Logging(IComponentConfiguration<LoggingConfiguration> loggingConfig)
+        public ConfigurationBuilder Logging(IComponentConfigurer<LoggingConfiguration> loggingConfig)
         {
             _logging = loggingConfig;
             return this;

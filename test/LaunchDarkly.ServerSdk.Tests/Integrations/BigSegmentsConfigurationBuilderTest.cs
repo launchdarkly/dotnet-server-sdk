@@ -10,14 +10,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     public class BigSegmentsConfigurationBuilderTest : BaseTest
     {
         private readonly IBigSegmentStore _store;
-        private readonly IComponentConfiguration<IBigSegmentStore> _storeFactory;
+        private readonly IComponentConfigurer<IBigSegmentStore> _storeFactory;
         private readonly BuilderBehavior.InternalStateTester<BigSegmentsConfigurationBuilder> _tester;
 
         public BigSegmentsConfigurationBuilderTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             var storeMock = new Mock<IBigSegmentStore>();
             _store = storeMock.Object;
-            var storeFactoryMock = new Mock<IComponentConfiguration<IBigSegmentStore>>();
+            var storeFactoryMock = new Mock<IComponentConfigurer<IBigSegmentStore>>();
             _storeFactory = storeFactoryMock.Object;
             storeFactoryMock.Setup(f => f.Build(BasicContext)).Returns(_store);
 

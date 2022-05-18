@@ -26,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class BigSegmentsConfigurationBuilder : IComponentConfiguration<BigSegmentsConfiguration>
+    public sealed class BigSegmentsConfigurationBuilder : IComponentConfigurer<BigSegmentsConfiguration>
     {
         /// <summary>
         /// Default value for <see cref="ContextCacheSize(int)"/>.
@@ -48,13 +48,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan DefaultStaleAfter = TimeSpan.FromMinutes(2);
 
-        private readonly IComponentConfiguration<IBigSegmentStore> _storeFactory;
+        private readonly IComponentConfigurer<IBigSegmentStore> _storeFactory;
         private int _contextCacheSize = DefaultContextCacheSize;
         private TimeSpan _contextCacheTime = DefaultContextCacheTime;
         private TimeSpan _statusPollInterval = DefaultStatusPollInterval;
         private TimeSpan _staleAfter = DefaultStaleAfter;
 
-        internal BigSegmentsConfigurationBuilder(IComponentConfiguration<IBigSegmentStore> storeFactory)
+        internal BigSegmentsConfigurationBuilder(IComponentConfigurer<IBigSegmentStore> storeFactory)
         {
             _storeFactory = storeFactory;
         }

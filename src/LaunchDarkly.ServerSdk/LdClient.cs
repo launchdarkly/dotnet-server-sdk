@@ -179,7 +179,7 @@ namespace LaunchDarkly.Sdk.Server
 
             var dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore, _dataStoreStatusProvider,
                 taskExecutor, _log, logConfig.LogDataSourceOutageAsErrorAfter);
-            IComponentConfiguration<IDataSource> dataSourceFactory =
+            IComponentConfigurer<IDataSource> dataSourceFactory =
                 config.Offline ? Components.ExternalUpdatesOnly :
                 (_configuration.DataSource ?? Components.StreamingDataSource());
             _dataSource = dataSourceFactory.Build(clientContext.WithDataSourceUpdates(dataSourceUpdates));

@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server
         private Segment _bigSegment;
         private Context _user;
         private MockBigSegmentStore _storeMock;
-        private IComponentConfiguration<IBigSegmentStore> _storeFactory;
+        private IComponentConfigurer<IBigSegmentStore> _storeFactory;
 
         public LdClientBigSegmentsTest(ITestOutputHelper testOutput) : base(testOutput)
         {

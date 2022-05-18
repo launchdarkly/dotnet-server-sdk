@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class StreamingDataSourceBuilder : IComponentConfiguration<IDataSource>, IDiagnosticDescription
+    public sealed class StreamingDataSourceBuilder : IComponentConfigurer<IDataSource>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="InitialReconnectDelay(TimeSpan)"/>: 1000 milliseconds.

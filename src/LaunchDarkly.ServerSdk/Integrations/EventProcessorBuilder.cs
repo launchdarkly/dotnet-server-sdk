@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class EventProcessorBuilder : IComponentConfiguration<IEventProcessor>, IDiagnosticDescription
+    public sealed class EventProcessorBuilder : IComponentConfigurer<IEventProcessor>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="Capacity(int)"/>.

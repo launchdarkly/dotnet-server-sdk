@@ -6,7 +6,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// need to implement this interface.
     /// </summary>
     /// <typeparam name="T">the type of SDK component or configuration object being constructed</typeparam>
-    public interface IComponentConfiguration<T>
+    public interface IComponentConfigurer<T>
     {
         /// <summary>
         /// Called internally by the SDK to create an implementation instance. Applications should not need
