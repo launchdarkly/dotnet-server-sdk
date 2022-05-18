@@ -13,8 +13,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </para>
     /// <para>
     /// If you want to set non-default values for any of these properties, create a builder with
-    /// <see cref="Components.BigSegments(IBigSegmentStoreFactory)"/>, change its properties with the
-    /// methods of this class, and pass it to <see cref="ConfigurationBuilder.BigSegments(BigSegmentsConfigurationBuilder)"/>:
+    /// <see cref="Components.BigSegments"/>, change its properties with the
+    /// methods of this class, and pass it to <see cref="ConfigurationBuilder.BigSegments"/>:
     /// </para>
     /// </remarks>
     /// <example>
@@ -26,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class BigSegmentsConfigurationBuilder
+    public sealed class BigSegmentsConfigurationBuilder : IComponentConfiguration<BigSegmentsConfiguration>
     {
         /// <summary>
         /// Default value for <see cref="ContextCacheSize(int)"/>.
@@ -48,13 +48,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan DefaultStaleAfter = TimeSpan.FromMinutes(2);
 
-        private readonly IBigSegmentStoreFactory _storeFactory;
+        private readonly IComponentConfiguration<IBigSegmentStore> _storeFactory;
         private int _contextCacheSize = DefaultContextCacheSize;
         private TimeSpan _contextCacheTime = DefaultContextCacheTime;
         private TimeSpan _statusPollInterval = DefaultStatusPollInterval;
         private TimeSpan _staleAfter = DefaultStaleAfter;
 
-        internal BigSegmentsConfigurationBuilder(IBigSegmentStoreFactory storeFactory)
+        internal BigSegmentsConfigurationBuilder(IComponentConfiguration<IBigSegmentStore> storeFactory)
         {
             _storeFactory = storeFactory;
         }
@@ -152,9 +152,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public BigSegmentsConfiguration CreateBigSegmentsConfiguration(LdClientContext context)
+        public BigSegmentsConfiguration Build(LdClientContext context)
         {
-            var store = _storeFactory is null ? null : _storeFactory.CreateBigSegmentStore(context);
+            var store = _storeFactory is null ? null : _storeFactory.Build(context);
             return new BigSegmentsConfiguration(
                 store,
                 _contextCacheSize,

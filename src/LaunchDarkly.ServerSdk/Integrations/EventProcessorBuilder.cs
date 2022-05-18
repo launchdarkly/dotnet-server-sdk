@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <remarks>
     /// The SDK normally buffers analytics events and sends them to LaunchDarkly at intervals. If you want
     /// to customize this behavior, create a builder with <see cref="Components.SendEvents"/>, change its
-    /// properties with the methods of this class, and pass it to <see cref="ConfigurationBuilder.Events(IEventProcessorFactory)"/>.
+    /// properties with the methods of this class, and pass it to <see cref="ConfigurationBuilder.Events"/>.
     /// </remarks>
     /// <example>
     /// <code>
@@ -29,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class EventProcessorBuilder : IEventProcessorFactory, IDiagnosticDescription
+    public sealed class EventProcessorBuilder : IComponentConfiguration<IEventProcessor>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="Capacity(int)"/>.
@@ -227,7 +227,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IEventProcessor CreateEventProcessor(LdClientContext context)
+        public IEventProcessor Build(LdClientContext context)
         {
             var eventsConfig = MakeEventsConfiguration(context, true);
             var logger = context.Logger.SubLogger(LogNames.EventsSubLog);

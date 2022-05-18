@@ -25,9 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         private IDataSource MakeDataSource() =>
-            factory.CreateDataSource(
-                BasicContext,
-                _updateSink);
+            factory.Build(BasicContext.WithDataSourceUpdates(_updateSink));
 
         [Fact]
         public void FlagsAreNotLoadedUntilStart()

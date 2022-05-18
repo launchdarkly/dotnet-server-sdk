@@ -70,20 +70,4 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>true if the underlying data store is reachable</returns>
         Task<bool> IsStoreAvailableAsync();
     }
-
-    /// <summary>
-    /// Interface for a factory that creates some implementation of <see cref="IPersistentDataStoreAsync"/>.
-    /// </summary>
-    /// <seealso cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>
-    /// <seealso cref="Components.PersistentDataStore(IPersistentDataStoreAsyncFactory)"/>
-    public interface IPersistentDataStoreAsyncFactory
-    {
-        /// <summary>
-        /// Called internally by the SDK to create an implementation instance. Applications do not need
-        /// to call this method.
-        /// </summary>
-        /// <param name="context">configuration of the current client instance</param>
-        /// <returns>a <see cref="IPersistentDataStoreAsync"/> instance</returns>
-        IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context);
-    }
 }

@@ -32,7 +32,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .ServiceEndpoints(Components.ServiceEndpoints().Streaming(baseUri));
             modConfig?.Invoke(builder);
             var config = builder.Build();
-            return config.DataSourceFactory.CreateDataSource(ContextFrom(config), _updateSink);
+            return config.DataSource.Build(ContextFrom(config).WithDataSourceUpdates(_updateSink));
         }
 
         private IDataSource MakeDataSourceWithDiagnostics(Uri baseUri, IDiagnosticStore diagnosticStore)

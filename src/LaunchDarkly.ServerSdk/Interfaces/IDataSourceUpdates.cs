@@ -6,9 +6,15 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// Interface that an implementation of <see cref="IDataSource"/> will use to push data into the SDK.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// The data source interacts with this object, rather than manipulating the data store directly, so
     /// that the SDK can perform any other necessary operations that must happen when data is updated. This
     /// object also provides a mechanism to report status changes.
+    /// </para>
+    /// <para>
+    /// Component factories for <see cref="IDataSource"/> implementations will receive an implementation of this
+    /// interface in the <see cref="LdClientContext.DataSourceUpdates"/> property of <see cref="LdClientContext"/>.
+    /// </para>
     /// </remarks>
     public interface IDataSourceUpdates
     {

@@ -31,6 +31,10 @@ namespace LaunchDarkly.Sdk.Server
 
         private MockEventSender testEventSender = new MockEventSender { FilterKind = EventDataKind.DiagnosticEvent };
 
+        private IDataStore IrrelevantDataStore => new InMemoryDataStore();
+        private IPersistentDataStore IrrelevantPersistentDataStore => new MockCoreSync();
+        private IPersistentDataStoreAsync IrrelevantPersistentDataStoreAsync => new MockCoreAsync();
+
         public LdClientDiagnosticEventTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         [Fact]
@@ -300,21 +304,21 @@ namespace LaunchDarkly.Sdk.Server
         public void CustomConfigForCustomDataStore()
         {
             TestDiagnosticConfig(
-                c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") }),
+                c => c.DataStore(IrrelevantDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of("my-test-store"))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "my-test-store")
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(new DataStoreFactoryWithoutDiagnosticDescription()),
+                c => c.DataStore(IrrelevantDataStore.AsSingletonFactory()),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) }),
+                c => c.DataStore(IrrelevantDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of(4))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -326,7 +330,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
+                    IrrelevantPersistentDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of("my-test-store")))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "my-test-store")
@@ -334,15 +338,21 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
+                    IrrelevantPersistentDataStoreAsync.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of("my-test-store")))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "my-test-store")
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreFactoryWithoutDiagnosticDescription())),
+                c => c.DataStore(Components.PersistentDataStore(IrrelevantPersistentDataStore.AsSingletonFactory())),
+                null,
+                ExpectedConfigProps.Base()
+                    .Set("dataStoreType", "custom")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(IrrelevantPersistentDataStoreAsync.AsSingletonFactory())),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -350,7 +360,7 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription())),
+                    IrrelevantPersistentDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of(4)))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -358,15 +368,7 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
-                null,
-                ExpectedConfigProps.Base()
-                    .Set("dataStoreType", "custom")
-                );
-
-            TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
+                    IrrelevantPersistentDataStoreAsync.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of(4)))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -400,54 +402,6 @@ namespace LaunchDarkly.Sdk.Server
 
                 AssertJsonEqual(JsonOf(expected.Build().ToJsonString()), data.Property("configuration"));
             }
-        }
-
-        private class DataStoreFactoryWithDiagnosticDescription : IDataStoreFactory, IDiagnosticDescription
-        {
-            internal LdValue Description { get; set; }
-
-            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
-                Components.InMemoryDataStore.CreateDataStore(context, dataStoreUpdates);
-
-            public LdValue DescribeConfiguration(LdClientContext context) => Description;
-        }
-
-        private class DataStoreFactoryWithoutDiagnosticDescription : IDataStoreFactory
-        {
-            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
-                Components.InMemoryDataStore.CreateDataStore(context, dataStoreUpdates);
-        }
-
-        private class PersistentDataStoreFactoryWithDiagnosticDescription : IPersistentDataStoreFactory, IDiagnosticDescription
-        {
-            internal LdValue Description { get; set; }
-
-            public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreSync();
-
-            public LdValue DescribeConfiguration(LdClientContext context) => Description;
-        }
-
-        private class PersistentDataStoreFactoryWithoutDiagnosticDescription : IPersistentDataStoreFactory
-        {
-            public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreSync();
-        }
-
-        private class PersistentDataStoreAsyncFactoryWithDiagnosticDescription : IPersistentDataStoreAsyncFactory, IDiagnosticDescription
-        {
-            internal LdValue Description { get; set; }
-
-            public IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreAsync();
-
-            public LdValue DescribeConfiguration(LdClientContext context) => Description;
-        }
-
-        private class PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription : IPersistentDataStoreAsyncFactory
-        {
-            public IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreAsync();
         }
     }
 

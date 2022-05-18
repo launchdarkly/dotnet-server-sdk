@@ -267,7 +267,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         private void CreateAndStart()
         {
-            var ds = _td.CreateDataSource(BasicContext, _updates);
+            var ds = _td.Build(BasicContext.WithDataSourceUpdates(_updates));
             var started = ds.Start();
             Assert.True(started.IsCompleted);
             Assert.Equal(DataSourceState.Valid, _updates.StatusUpdates.ExpectValue().State);
@@ -291,7 +291,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 ",\"clientSide\":false,\"deleted\":false,\"prerequisites\":[],\"salt\":\"\"}";
 
             var td = TestData.DataSource();
-            td.CreateDataSource(BasicContext, _updates).Start();
+            td.Build(BasicContext.WithDataSourceUpdates(_updates)).Start();
 
             td.Update(configureFlag(_td.Flag("flagkey")));
 

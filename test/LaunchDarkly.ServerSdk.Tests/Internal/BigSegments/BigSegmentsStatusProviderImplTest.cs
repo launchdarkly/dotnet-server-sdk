@@ -33,16 +33,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var storeMetadata = new StoreMetadata { LastUpToDate = storeTimestamp };
             var storeMock = new Mock<IBigSegmentStore>();
             var store = storeMock.Object;
-            var storeFactoryMock = new Mock<IBigSegmentStoreFactory>();
+            var storeFactoryMock = new Mock<IComponentConfiguration<IBigSegmentStore>>();
             var storeFactory = storeFactoryMock.Object;
-            storeFactoryMock.Setup(f => f.CreateBigSegmentStore(BasicContext)).Returns(store);
+            storeFactoryMock.Setup(f => f.Build(BasicContext)).Returns(store);
             storeMock.Setup(s => s.GetMetadataAsync()).ReturnsAsync(storeMetadata);
 
             var bsConfig = Components.BigSegments(storeFactory)
                 .StatusPollInterval(TimeSpan.FromMilliseconds(1))
                 .StaleAfter(TimeSpan.FromDays(1));
             using (var sw = new BigSegmentStoreWrapper(
-                bsConfig.CreateBigSegmentsConfiguration(BasicContext),
+                bsConfig.Build(BasicContext),
                 BasicTaskExecutor,
                 TestLogger
                 ))

@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </para>
     /// <para>
     /// To use polling mode, create a builder with <see cref="Components.PollingDataSource"/>, change its properties
-    /// with the methods of this class, and pass it to <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+    /// with the methods of this class, and pass it to <see cref="ConfigurationBuilder.DataSource"/>.
     /// </para>
     /// <para>
     /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
@@ -34,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class PollingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
+    public sealed class PollingDataSourceBuilder : IComponentConfiguration<IDataSource>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="PollInterval(TimeSpan)"/>: 30 seconds.
@@ -68,7 +68,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        public IDataSource Build(LdClientContext context)
         {
             var configuredBaseUri = StandardEndpoints.SelectBaseUri(
                 context.ServiceEndpoints, e => e.PollingBaseUri, "Polling",
@@ -79,7 +79,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             return new PollingDataSource(
                 context,
                 requestor,
-                dataSourceUpdates,
+                context.DataSourceUpdates,
                 _pollInterval
                 );
         }

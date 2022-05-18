@@ -49,7 +49,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </code>
     /// </example>
     /// <seealso cref="FileData"/>
-    public sealed class TestData : IDataSourceFactory
+    public sealed class TestData : IComponentConfiguration<IDataSource>
     {
         #region Private fields
 
@@ -258,16 +258,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             return this;
         }
 
-        /// <summary>
-        /// Called internally by the SDK to associate this test data source with an
-        /// <see cref="LdClient"/> instance. You do not need to call this method.
-        /// </summary>
-        /// <param name="context">created internally by <c>LdClient</c></param>
-        /// <param name="dataSourceUpdates">created internally by <c>LdClient</c></param>
-        /// <returns>a data source instance</returns>
-        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        /// <inheritdoc/>/>
+        public IDataSource Build(LdClientContext context)
         {
-            var instance = new DataSourceImpl(this, dataSourceUpdates, context.Logger.SubLogger("DataSource.TestData"));
+            var instance = new DataSourceImpl(this, context.DataSourceUpdates, context.Logger.SubLogger("DataSource.TestData"));
             lock (_lock)
             {
                 _instances.Add(instance);

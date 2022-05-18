@@ -17,7 +17,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <para>
     /// If you want to set non-default values for any of these properties, create a builder with
     /// <see cref="Components.HttpConfiguration"/>, change its properties with the methods of this class, and
-    /// pass it to <see cref="ConfigurationBuilder.Http(HttpConfigurationBuilder)"/>:
+    /// pass it to <see cref="ConfigurationBuilder.Http"/>:
     /// </para>
     /// <example>
     /// <code>
@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </code>
     /// </example>
     /// </remarks>
-    public sealed class HttpConfigurationBuilder : IDiagnosticDescription
+    public sealed class HttpConfigurationBuilder : IComponentConfiguration<HttpConfiguration>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="ConnectTimeout(TimeSpan)"/>: two seconds.
@@ -221,7 +221,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public HttpConfiguration CreateHttpConfiguration(LdClientContext context)
+        public HttpConfiguration Build(LdClientContext context)
         {
             var httpProperties = MakeHttpProperties(context);
             return new HttpConfiguration(

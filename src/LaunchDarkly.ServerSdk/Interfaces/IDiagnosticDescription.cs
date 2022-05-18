@@ -7,9 +7,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// <remarks>
     /// <para>
     /// The SDK uses a simplified JSON representation of its configuration when recording diagnostics data.
-    /// Any class that implements <see cref="IDataStoreFactory"/>, <see cref="IDataSourceFactory"/>,
-    /// <see cref="IEventProcessorFactory"/>, or <see cref="IPersistentDataStoreFactory"/> may choose to
-    /// contribute values to this representation, although the SDK may or may not use them.
+    /// Any configuration/component builder class that implements <see cref="IComponentConfiguration{T}"/> may
+    /// choose to contribute values to this representation, although the SDK may or may not use them.
     /// </para>
     /// <para>
     /// The <see cref="DescribeConfiguration"/> method should return either <see cref="LdValue.Null"/>or a
@@ -24,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Called internally by the SDK to inspect the configuration. Applications do not need to call
         /// this method.
         /// </summary>
-        /// <param name="context">provides configuration information about the SDK</param>
+        /// <param name="context">SDK configuration/component information</param>
         /// <returns>a JSON value</returns>
         LdValue DescribeConfiguration(LdClientContext context);
     }

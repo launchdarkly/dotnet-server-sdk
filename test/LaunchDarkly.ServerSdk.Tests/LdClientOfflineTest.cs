@@ -1,4 +1,5 @@
 ﻿using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -59,7 +60,7 @@ namespace LaunchDarkly.Sdk.Server
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
             var config = BasicConfig()
                 .Offline(true)
-                .DataStore(dataStore.AsSingletonFactory())
+                .DataStore(dataStore.AsSingletonFactory<IDataStore>())
                 .Build();
             using (var client = new LdClient(config))
             {

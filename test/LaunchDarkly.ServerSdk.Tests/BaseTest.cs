@@ -112,9 +112,11 @@ namespace LaunchDarkly.Sdk.Server
         protected LdClientContext ContextFrom(Configuration config) =>
             new LdClientContext(
                 config.SdkKey,
-                (config.HttpConfigurationBuilder ?? Components.HttpConfiguration()).CreateHttpConfiguration(new LdClientContext(config.SdkKey)),
+                null,
+                null,
+                (config.Http ?? Components.HttpConfiguration()).Build(new LdClientContext(config.SdkKey)),
                 TestLogger,
-                false,
+                config.Offline,
                 config.ServiceEndpoints,
                 null,
                 BasicTaskExecutor

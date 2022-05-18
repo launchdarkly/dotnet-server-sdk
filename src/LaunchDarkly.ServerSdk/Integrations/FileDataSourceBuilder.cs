@@ -13,10 +13,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// To use the file data source, obtain a new instance of this class with <see cref="FileData.DataSource"/>;
     /// call the builder method {@link #filePaths(String...)} to specify file path(s), and/or
     /// {@link #classpathResources(String...)} to specify classpath data resources; then pass the resulting
-    /// object to <see cref="ConfigurationBuilder.DataSource(Interfaces.IDataSourceFactory)"/>.
+    /// object to <see cref="ConfigurationBuilder.DataSource"/>.
     /// </remarks>
     /// <seealso cref="FileData"/>
-    public sealed class FileDataSourceBuilder : IDataSourceFactory
+    public sealed class FileDataSourceBuilder : IComponentConfiguration<IDataSource>
     {
         internal readonly List<string> _paths = new List<string>();
         internal bool _autoUpdate = false;
@@ -148,9 +148,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        public IDataSource Build(LdClientContext context)
         {
-            return new FileDataSource(dataSourceUpdates, _fileReader, _paths, _autoUpdate,
+            return new FileDataSource(context.DataSourceUpdates, _fileReader, _paths, _autoUpdate,
                 _parser, _skipMissingPaths, _duplicateKeysHandling,
                 context.Logger.SubLogger(LogNames.DataSourceSubLog));
         }

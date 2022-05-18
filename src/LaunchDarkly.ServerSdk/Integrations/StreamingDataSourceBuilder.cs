@@ -14,8 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <para>
     /// By default, the SDK uses a streaming connection to receive feature flag data from LaunchDarkly. If you want
     /// to customize the behavior of the connection, create a builder with <see cref="Components.StreamingDataSource"/>,
-    /// change its properties with the methods of this class, and pass it to
-    /// <see cref="ConfigurationBuilder.DataSource(IDataSourceFactory)"/>.
+    /// change its properties with the methods of this class, and pass it to <see cref="ConfigurationBuilder.DataSource"/>.
     /// </para>
     /// <para>
     /// Setting <see cref="ConfigurationBuilder.Offline(bool)"/> to <see langword="true"/> will supersede this
@@ -30,7 +29,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class StreamingDataSourceBuilder : IDataSourceFactory, IDiagnosticDescription
+    public sealed class StreamingDataSourceBuilder : IComponentConfiguration<IDataSource>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="InitialReconnectDelay(TimeSpan)"/>: 1000 milliseconds.
@@ -61,14 +60,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        public IDataSource Build(LdClientContext context)
         {
             var configuredBaseUri = StandardEndpoints.SelectBaseUri(
                 context.ServiceEndpoints, e => e.StreamingBaseUri, "Streaming",
                 context.Logger);
             return new StreamingDataSource(
                 context,
-                dataSourceUpdates,
+                context.DataSourceUpdates,
                 configuredBaseUri,
                 _initialReconnectDelay
                 );
