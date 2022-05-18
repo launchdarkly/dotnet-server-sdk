@@ -4,7 +4,7 @@ using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {

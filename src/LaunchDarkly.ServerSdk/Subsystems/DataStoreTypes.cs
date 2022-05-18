@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.JsonStream;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Types that are used by the <see cref="IDataStore"/> interface.

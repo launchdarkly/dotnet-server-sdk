@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface for a data store that holds feature flags and related data received by the SDK.
@@ -37,7 +37,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// <para>
         /// The same value will be returned from
-        /// <see cref="IDataStoreStatusProvider.StatusMonitoringEnabled"/>.
+        /// <see cref="Interfaces.IDataStoreStatusProvider.StatusMonitoringEnabled"/>.
         /// </para>
         /// </remarks>
         bool StatusMonitoringEnabled { get; }

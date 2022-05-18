@@ -4,7 +4,7 @@ using System.Linq;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.DataStores.DataStoreTestTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores

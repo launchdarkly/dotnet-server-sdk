@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using LaunchDarkly.TestHelpers;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {

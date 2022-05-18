@@ -1,4 +1,4 @@
-﻿using LaunchDarkly.Sdk.Server.Interfaces;
+﻿using LaunchDarkly.Sdk.Server.Subsystems;
 using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores

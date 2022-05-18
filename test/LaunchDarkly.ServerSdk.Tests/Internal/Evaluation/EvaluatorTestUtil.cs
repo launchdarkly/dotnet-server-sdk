@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.BigSegmentStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation

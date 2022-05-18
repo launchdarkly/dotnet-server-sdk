@@ -15,8 +15,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// The current status of the store.
         /// </summary>
         /// <remarks>
-        /// This is only meaningful for persistent stores, or any other <see cref="IDataStore"/>
-        /// implementation that makes use of the reporting mechanism provided by <see cref="IDataStoreUpdates"/>.
+        /// This is only meaningful for persistent stores, or any other <see cref="Subsystems.IDataStore"/>
+        /// implementation that makes use of the reporting mechanism provided by <see cref="Subsystems.IDataStoreUpdates"/>.
         /// For the default in-memory store, the status will always be reported as "available".
         /// </remarks>
         DataStoreStatus Status { get; }

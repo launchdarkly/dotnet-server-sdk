@@ -1,5 +1,5 @@
 ﻿
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// The common interface for SDK component factories and configuration builders. Applications should not
