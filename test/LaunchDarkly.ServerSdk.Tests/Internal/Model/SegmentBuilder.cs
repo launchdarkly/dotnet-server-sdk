@@ -90,4 +90,44 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
     }
+
+    internal class SegmentRuleBuilder
+    {
+        private readonly List<Clause> _clauses = new List<Clause>();
+        private int? _weight;
+        private string _rolloutContextKind;
+        private AttributeRef _bucketBy;
+
+        internal SegmentRule Build() =>
+            new SegmentRule(
+                _clauses,
+                _weight,
+                _rolloutContextKind,
+                _bucketBy
+                );
+
+        public SegmentRuleBuilder Clauses(params Clause[] clauses)
+        {
+            _clauses.AddRange(clauses);
+            return this;
+        }
+
+        public SegmentRuleBuilder Weight(int? weight)
+        {
+            _weight = weight;
+            return this;
+        }
+
+        public SegmentRuleBuilder RolloutContextKind(string rolloutContextKind)
+        {
+            _rolloutContextKind = rolloutContextKind;
+            return this;
+        }
+
+        public SegmentRuleBuilder BucketBy(AttributeRef bucketBy)
+        {
+            _bucketBy = bucketBy;
+            return this;
+        }
+    }
 }

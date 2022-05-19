@@ -1,0 +1,143 @@
+﻿using LaunchDarkly.Sdk.Server.Internal.Model;
+
+using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
+using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTypes;
+
+namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
+{
+    internal partial class Evaluator
+    {
+
+        private bool MatchSegment(ref EvalState state, in Segment segment)
+        {
+            if (state.SegmentKeyStack.Contains(segment.Key))
+            {
+                Logger.Error("Segment rule referencing segment \"{0}\" caused a circular reference;" +
+                    " this is probably a temporary condition due to an incomplete update", segment.Key);
+                throw new StopEvaluationException(EvaluationErrorKind.MalformedFlag);
+            }
+            state.SegmentKeyStack.Push(segment.Key);
+            try
+            {
+                if (segment.Unbounded)
+                {
+                    var includedOrExcluded = MatchUnboundedSegment(ref state, segment);
+                    if (includedOrExcluded.HasValue)
+                    {
+                        return includedOrExcluded.Value;
+                    }
+                }
+                else
+                {
+                    if (!segment.Preprocessed.IncludedSet.IsEmpty || !segment.Preprocessed.ExcludedSet.IsEmpty)
+                    {
+                        if (state.Context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
+                        {
+                            if (segment.Preprocessed.IncludedSet.Contains(matchContext.Key))
+                            {
+                                return true;
+                            }
+                            if (segment.Preprocessed.ExcludedSet.Contains(matchContext.Key))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    foreach (var target in segment.IncludedContexts)
+                    {
+                        if (state.Context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
+                            target.PreprocessedValues.Contains(matchContext.Key))
+                        {
+                            return true;
+                        }
+                    }
+                    foreach (var target in segment.ExcludedContexts)
+                    {
+                        if (state.Context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
+                            target.PreprocessedValues.Contains(matchContext.Key))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                if (segment.Rules != null)
+                {
+                    foreach (var rule in segment.Rules)
+                    {
+                        if (MatchSegmentRule(ref state, segment, rule))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            finally
+            {
+                state.SegmentKeyStack.Pop();
+            }
+        }
+
+        private bool? MatchUnboundedSegment(ref EvalState state, in Segment segment)
+        {
+            if (!segment.Generation.HasValue)
+            {
+                // Big segment queries can only be done if the generation is known. If it's unset,
+                // that probably means the data store was populated by an older SDK that doesn't know
+                // about the Generation property and therefore dropped it from the JSON data. We'll treat
+                // that as a "not configured" condition.
+                state.BigSegmentsStatus = BigSegmentsStatus.NotConfigured;
+                return false;
+            }
+            // Even if multiple Big Segments are referenced within a single flag evaluation,
+            // we only need to do this query once, since it returns *all* of the user's segment
+            // memberships.
+            if (!state.BigSegmentsStatus.HasValue)
+            {
+                if (BigSegmentsGetter is null)
+                {
+                    // the SDK hasn't been configured to be able to use Big Segments
+                    state.BigSegmentsStatus = BigSegmentsStatus.NotConfigured;
+                }
+                else
+                {
+                    var result = BigSegmentsGetter(state.Context.Key);
+                    state.BigSegmentsMembership = result.Membership;
+                    state.BigSegmentsStatus = result.Status;
+                }
+            }
+            return state.BigSegmentsMembership is null ? null :
+                state.BigSegmentsMembership.CheckMembership(MakeBigSegmentRef(segment));
+        }
+
+        private bool MatchSegmentRule(ref EvalState state, in Segment segment, in SegmentRule segmentRule)
+        {
+            foreach (var c in segmentRule.Clauses)
+            {
+                if (!MatchClause(ref state, c))
+                {
+                    return false;
+                }
+            }
+
+            // If the Weight is absent, this rule matches
+            if (!segmentRule.Weight.HasValue)
+            {
+                return true;
+            }
+
+            // All of the clauses are met. See if the user buckets in
+            float bucket = Bucketing.ComputeBucketValue(
+                false,
+                null,
+                state.Context,
+                segmentRule.RolloutContextKind ?? Context.DefaultKind,
+                segment.Key,
+                segmentRule.BucketBy,
+                segment.Salt
+                );
+            float weight = (float)segmentRule.Weight / 100000F;
+            return bucket < weight;
+        }
+    }
+}

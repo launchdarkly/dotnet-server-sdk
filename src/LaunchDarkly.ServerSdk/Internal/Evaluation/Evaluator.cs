@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Logging;
@@ -44,6 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             internal readonly Context Context;
             internal LazyStack<string> PrereqFlagKeyStack;
+            internal LazyStack<string> SegmentKeyStack;
             internal ImmutableList<PrerequisiteEvalRecord>.Builder PrereqEvals;
             internal IMembership BigSegmentsMembership;
             internal BigSegmentsStatus? BigSegmentsStatus;
@@ -52,6 +52,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             {
                 Context = context;
                 PrereqFlagKeyStack = new LazyStack<string>();
+                SegmentKeyStack = new LazyStack<string>();
                 PrereqEvals = null;
                 BigSegmentsMembership = null;
                 BigSegmentsStatus = null;
@@ -191,7 +192,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 {
                     if (state.PrereqFlagKeyStack.Contains(prereq.Key))
                     {
-                        Logger.Error("Prerequisite relationship to {0} caused a circular reference;" +
+                        Logger.Error("Prerequisite relationship to \"{0}\" caused a circular reference;" +
                             " this is probably a temporary condition due to an incomplete update", prereq.Key);
                         throw new StopEvaluationException(EvaluationErrorKind.MalformedFlag);
                     }
@@ -298,124 +299,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
             }
             return true;
-        }
-
-        private bool MatchSegment(ref EvalState state, in Segment segment)
-        {
-            if (segment.Unbounded)
-            {
-                var includedOrExcluded = MatchUnboundedSegment(ref state, segment);
-                if (includedOrExcluded.HasValue)
-                {
-                    return includedOrExcluded.Value;
-                }
-            }
-            else
-            {
-                if (!segment.Preprocessed.IncludedSet.IsEmpty || !segment.Preprocessed.ExcludedSet.IsEmpty)
-                {
-                    if (state.Context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
-                    {
-                        if (segment.Preprocessed.IncludedSet.Contains(matchContext.Key))
-                        {
-                            return true;
-                        }
-                        if (segment.Preprocessed.ExcludedSet.Contains(matchContext.Key))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                foreach (var target in segment.IncludedContexts)
-                {
-                    if (state.Context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
-                        target.PreprocessedValues.Contains(matchContext.Key))
-                    {
-                        return true;
-                    }
-                }
-                foreach (var target in segment.ExcludedContexts)
-                {
-                    if (state.Context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
-                        target.PreprocessedValues.Contains(matchContext.Key))
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (segment.Rules != null)
-            {
-                foreach (var rule in segment.Rules)
-                {
-                    if (MatchSegmentRule(ref state, segment, rule))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private bool? MatchUnboundedSegment(ref EvalState state, in Segment segment)
-        {
-            if (!segment.Generation.HasValue)
-            {
-                // Big segment queries can only be done if the generation is known. If it's unset,
-                // that probably means the data store was populated by an older SDK that doesn't know
-                // about the Generation property and therefore dropped it from the JSON data. We'll treat
-                // that as a "not configured" condition.
-                state.BigSegmentsStatus = BigSegmentsStatus.NotConfigured;
-                return false;
-            }
-            // Even if multiple Big Segments are referenced within a single flag evaluation,
-            // we only need to do this query once, since it returns *all* of the user's segment
-            // memberships.
-            if (!state.BigSegmentsStatus.HasValue)
-            {
-                if (BigSegmentsGetter is null)
-                {
-                    // the SDK hasn't been configured to be able to use Big Segments
-                    state.BigSegmentsStatus = BigSegmentsStatus.NotConfigured;
-                }
-                else
-                {
-                    var result = BigSegmentsGetter(state.Context.Key);
-                    state.BigSegmentsMembership = result.Membership;
-                    state.BigSegmentsStatus = result.Status;
-                }
-            }
-            return state.BigSegmentsMembership is null ? null :
-                state.BigSegmentsMembership.CheckMembership(MakeBigSegmentRef(segment));
-        }
-
-        private bool MatchSegmentRule(ref EvalState state, in Segment segment, in SegmentRule segmentRule)
-        {
-            foreach (var c in segmentRule.Clauses)
-            {
-                if (!MatchClauseNoSegments(ref state, c))
-                {
-                    return false;
-                }
-            }
-
-            // If the Weight is absent, this rule matches
-            if (!segmentRule.Weight.HasValue)
-            {
-                return true;
-            }
-
-            // All of the clauses are met. See if the user buckets in
-            float bucket = Bucketing.ComputeBucketValue(
-                false,
-                null,
-                state.Context,
-                segmentRule.RolloutContextKind ?? Context.DefaultKind,
-                segment.Key,
-                segmentRule.BucketBy,
-                segment.Salt
-                );
-            float weight = (float)segmentRule.Weight / 100000F;
-            return bucket < weight;
         }
     }
 }

@@ -17,7 +17,10 @@ TEST_HARNESS_PARAMS := $(TEST_HARNESS_PARAMS) \
 	-skip 'big segments/evaluation/context kind' \
 	-skip 'big segments/membership caching/context kind' \
 	-skip 'evaluation/parameterized/bad attribute reference errors' \
+<<<<<<< HEAD
+=======
 	-skip 'evaluation/parameterized/segment recursion' \
+>>>>>>> 7.0
 	-skip 'events/requests/method and headers' \
 	-skip 'events/summary events/contextKinds'
 
