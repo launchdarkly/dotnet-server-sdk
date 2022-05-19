@@ -2,17 +2,17 @@
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
-    internal partial struct EvalScope
+    internal partial class Evaluator
     {
-        private bool MatchClause(in Clause clause)
+        private bool MatchClause(ref EvalState state, in Clause clause)
         {
             // A clause matches if ANY of its values match, for the given attribute and operator
             if (clause.Op == Operator.SegmentMatch)
             {
                 foreach (var value in clause.Values)
                 {
-                    Segment segment = _parent.SegmentGetter(value.AsString);
-                    if (segment != null && MatchSegment(segment))
+                    Segment segment = SegmentGetter(value.AsString);
+                    if (segment != null && MatchSegment(ref state, segment))
                     {
                         return MaybeNegate(clause, true);
                     }
@@ -21,11 +21,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             }
             else
             {
-                return MatchClauseNoSegments(clause);
+                return MatchClauseNoSegments(ref state, clause);
             }
         }
 
-        private bool MatchClauseNoSegments(in Clause clause)
+        private bool MatchClauseNoSegments(ref EvalState state, in Clause clause)
         {
             if (!clause.Attribute.Defined)
             {
@@ -39,9 +39,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 clause.Attribute.TryGetComponent(0, out var pathComponent) &&
                 pathComponent.Name == "kind")
             {
-                return MaybeNegate(clause, MatchClauseByKind(clause));
+                return MaybeNegate(clause, MatchClauseByKind(ref state, clause));
             }
-            if (!_context.TryGetContextByKind(clause.ContextKind ?? Context.DefaultKind, out var matchContext))
+            if (!state.Context.TryGetContextByKind(clause.ContextKind ?? Context.DefaultKind, out var matchContext))
             {
                 return false;
             }
@@ -81,14 +81,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             }
         }
 
-        private bool MatchClauseByKind(in Clause clause)
+        private bool MatchClauseByKind(ref EvalState state, in Clause clause)
         {
             // If Attribute is "kind", then we treat Operator and Values as a match expression against a list
             // of all individual kinds in the context. That is, for a multi-kind context with kinds of "org"
             // and "user", it is a match if either of those strings is a match with Operator and Values.
-            if (_context.Multiple)
+            if (state.Context.Multiple)
             {
-                foreach (var individualContext in _context.MultiKindContexts)
+                foreach (var individualContext in state.Context.MultiKindContexts)
                 {
                     if (ClauseMatchAny(clause, LdValue.Of(individualContext.Kind)))
                     {
@@ -96,7 +96,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     }
                 }
             }
-            return ClauseMatchAny(clause, LdValue.Of(_context.Kind));
+            return ClauseMatchAny(clause, LdValue.Of(state.Context.Kind));
         }
 
         private static bool MaybeNegate(in Clause clause, bool b) =>
