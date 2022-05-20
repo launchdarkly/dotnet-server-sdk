@@ -115,7 +115,7 @@ namespace LaunchDarkly.Sdk.Server
             var basic = new BasicConfiguration(config.SdkKey, config.Offline, config.ServiceEndpoints, TestLogger);
             return new LdClientContext(
                 basic,
-                (config.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
+                (config.HttpConfigurationBuilder ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
                 null,
                 BasicTaskExecutor
                 );

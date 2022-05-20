@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <para>
     /// If you want to set non-default values for any of these properties, create a builder with
     /// <see cref="Components.BigSegments(IBigSegmentStoreFactory)"/>, change its properties with the
-    /// methods of this class, and pass it to <see cref="ConfigurationBuilder.BigSegments(IBigSegmentsConfigurationFactory)"/>:
+    /// methods of this class, and pass it to <see cref="ConfigurationBuilder.BigSegments(BigSegmentsConfigurationBuilder)"/>:
     /// </para>
     /// </remarks>
     /// <example>
@@ -26,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class BigSegmentsConfigurationBuilder : IBigSegmentsConfigurationFactory
+    public sealed class BigSegmentsConfigurationBuilder
     {
         /// <summary>
         /// Default value for <see cref="ContextCacheSize(int)"/>.

@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server
         /// documentation about segments: https://docs.launchdarkly.com/home/users/segments
         /// </para>
         /// <para>
-        /// After configuring this object, use <see cref="ConfigurationBuilder.BigSegments(IBigSegmentsConfigurationFactory)"/>
+        /// After configuring this object, use <see cref="ConfigurationBuilder.BigSegments(BigSegmentsConfigurationBuilder)"/>
         /// to store it in your SDK configuration. For example, using the Redis integration:
         /// </para>
         /// <code>
@@ -51,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </para>
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
-        /// <returns>a <see cref="BigSegmentsConfigurationBuilder"/></returns>
+        /// <returns>a configuration builder</returns>
         public static BigSegmentsConfigurationBuilder BigSegments(IBigSegmentStoreFactory storeFactory) =>
             new BigSegmentsConfigurationBuilder(storeFactory);
 
@@ -83,7 +83,7 @@ namespace LaunchDarkly.Sdk.Server
         /// Returns a configuration builder for the SDK's networking configuration.
         /// </summary>
         /// <remarks>
-        /// Passing this to <see cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/> applies this
+        /// Passing this to <see cref="ConfigurationBuilder.Http(HttpConfigurationBuilder)"/> applies this
         /// configuration to all HTTP/HTTPS requests made by the SDK.
         /// </remarks>
         /// <example>
@@ -96,7 +96,7 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Build();
         /// </code>
         /// </example>
-        /// <returns>a configurable factory object</returns>
+        /// <returns>a configuration builder</returns>
         public static HttpConfigurationBuilder HttpConfiguration() => new HttpConfigurationBuilder();
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         /// <remarks>
         /// <para>
-        /// Passing this to <see cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />,
+        /// Passing this to <see cref="ConfigurationBuilder.Logging(LoggingConfigurationBuilder)" />,
         /// after setting any desired properties on the builder, applies this configuration to the SDK.
         /// </para>
         /// <para>
@@ -133,8 +133,8 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Build();
         /// </code>
         /// </example>
-        /// <returns>a configurable factory object</returns>
-        /// <seealso cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
+        /// <returns>a configuration builder</returns>
+        /// <seealso cref="ConfigurationBuilder.Logging(LoggingConfigurationBuilder)" />
         /// <seealso cref="Components.Logging(ILogAdapter) "/>
         /// <seealso cref="Components.NoLogging" />
         public static LoggingConfigurationBuilder Logging() =>
@@ -171,8 +171,8 @@ namespace LaunchDarkly.Sdk.Server
         /// </code>
         /// </example>
         /// <param name="adapter">an <c>ILogAdapter</c> for the desired logging implementation</param>
-        /// <returns>a configurable factory object</returns>
-        /// <seealso cref="ConfigurationBuilder.Logging(ILoggingConfigurationFactory)" />
+        /// <returns>a configuration builder</returns>
+        /// <seealso cref="ConfigurationBuilder.Logging(LoggingConfigurationBuilder)" />
         /// <seealso cref="LoggingConfigurationBuilder.Adapter(ILogAdapter)" />
         /// <seealso cref="Components.Logging() "/>
         /// <seealso cref="Components.NoLogging" />
@@ -239,7 +239,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </para>
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
-        /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
+        /// <returns>a configuration builder</returns>
         public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreFactory storeFactory)
         {
             return new PersistentDataStoreBuilder(storeFactory);
@@ -271,7 +271,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </para>
         /// </remarks>
         /// <param name="storeFactory">the factory for the underlying data store</param>
-        /// <returns>a <see cref="PersistentDataStoreBuilder"/></returns>
+        /// <returns>a configuration builder</returns>
         public static PersistentDataStoreBuilder PersistentDataStore(IPersistentDataStoreAsyncFactory storeFactory)
         {
             return new PersistentDataStoreBuilder(storeFactory);

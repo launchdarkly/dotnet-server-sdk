@@ -32,7 +32,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BigSegments()
         {
-            var prop = _tester.Property(c => c.BigSegmentsConfigurationFactory, (b, v) => b.BigSegments(v));
+            var prop = _tester.Property(c => c.BigSegmentsConfigurationBuilder, (b, v) => b.BigSegments(v));
             prop.AssertDefault(null);
             prop.AssertCanSet(Components.BigSegments(null));
         }
@@ -72,7 +72,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void Logging()
         {
-            var prop = _tester.Property(c => c.LoggingConfigurationFactory, (b, v) => b.Logging(v));
+            var prop = _tester.Property(c => c.LoggingConfigurationBuilder, (b, v) => b.Logging(v));
             prop.AssertDefault(null);
             prop.AssertCanSet(Components.Logging(Logs.ToWriter(Console.Out)));
         }
@@ -82,7 +82,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var adapter = Logs.ToWriter(Console.Out);
             var config = Configuration.Builder("").Logging(adapter).Build();
-            var logConfig = config.LoggingConfigurationFactory.CreateLoggingConfiguration();
+            var logConfig = config.LoggingConfigurationBuilder.CreateLoggingConfiguration();
             Assert.Same(adapter, logConfig.LogAdapter);
         }
 

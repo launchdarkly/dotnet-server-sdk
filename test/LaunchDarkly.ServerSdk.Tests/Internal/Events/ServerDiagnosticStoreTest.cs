@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 modConfig(builder);
             }
             var config = builder.Build();
-            var httpConfig = config.HttpConfigurationFactory.CreateHttpConfiguration(BasicContext.Basic);
+            var httpConfig = config.HttpConfigurationBuilder.CreateHttpConfiguration(BasicContext.Basic);
             return new ServerDiagnosticStore(config, BasicContext.Basic, httpConfig);
         }
 

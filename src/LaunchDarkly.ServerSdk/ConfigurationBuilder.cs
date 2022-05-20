@@ -30,13 +30,13 @@ namespace LaunchDarkly.Sdk.Server
 
         // Let's try to keep these properties and methods alphabetical so they're easy to find. Note that they
         // are internal rather than private so that they can be read by the Configuration constructor.
-        internal IBigSegmentsConfigurationFactory _bigSegmentsConfigurationFactory = null;
+        internal BigSegmentsConfigurationBuilder _bigSegmentsConfigurationBuilder = null;
         internal IDataSourceFactory _dataSourceFactory = null;
         internal IDataStoreFactory _dataStoreFactory = null;
         internal bool _diagnosticOptOut = false;
         internal IEventProcessorFactory _eventProcessorFactory = null;
-        internal IHttpConfigurationFactory _httpConfigurationFactory = null;
-        internal ILoggingConfigurationFactory _loggingConfigurationFactory = null;
+        internal HttpConfigurationBuilder _httpConfigurationBuilder = null;
+        internal LoggingConfigurationBuilder _loggingConfigurationBuilder = null;
         internal bool _offline = false;
         internal string _sdkKey;
         internal ServiceEndpointsBuilder _serviceEndpointsBuilder = null;
@@ -53,13 +53,13 @@ namespace LaunchDarkly.Sdk.Server
 
         internal ConfigurationBuilder(Configuration copyFrom)
         {
-            _bigSegmentsConfigurationFactory = copyFrom.BigSegmentsConfigurationFactory;
+            _bigSegmentsConfigurationBuilder = copyFrom.BigSegmentsConfigurationBuilder;
             _dataSourceFactory = copyFrom.DataSourceFactory;
             _dataStoreFactory = copyFrom.DataStoreFactory;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
             _eventProcessorFactory = copyFrom.EventProcessorFactory;
-            _httpConfigurationFactory = copyFrom.HttpConfigurationFactory;
-            _loggingConfigurationFactory = copyFrom.LoggingConfigurationFactory;
+            _httpConfigurationBuilder = copyFrom.HttpConfigurationBuilder;
+            _loggingConfigurationBuilder = copyFrom.LoggingConfigurationBuilder;
             _offline = copyFrom.Offline;
             _sdkKey = copyFrom.SdkKey;
             _serviceEndpointsBuilder = new ServiceEndpointsBuilder(copyFrom.ServiceEndpoints);
@@ -108,12 +108,12 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Build();
         /// </code>
         /// </example>
-        /// <param name="bigSegmentsConfigurationFactory">a configuration factory object returned by
+        /// <param name="bigSegmentsConfigurationBuilder">a configuration factory object returned by
         /// <see cref="Components.BigSegments(IBigSegmentStoreFactory)"/></param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder BigSegments(IBigSegmentsConfigurationFactory bigSegmentsConfigurationFactory)
+        public ConfigurationBuilder BigSegments(BigSegmentsConfigurationBuilder bigSegmentsConfigurationBuilder)
         {
-            _bigSegmentsConfigurationFactory = bigSegmentsConfigurationFactory;
+            _bigSegmentsConfigurationBuilder = bigSegmentsConfigurationBuilder;
             return this;
         }
 
@@ -204,28 +204,27 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <summary>
-        /// Sets the SDK's networking configuration, using a factory object. This object is normally a
-        /// configuration builder obtained from <see cref="Components.HttpConfiguration()"/>, which has
-        /// methods for setting individual HTTP-related properties.
+        /// Sets the SDK's networking configuration, using a builder object that is obtained from
+        /// <see cref="Components.HttpConfiguration()"/>, which has methods for setting individual HTTP-related
+        /// properties.
         /// </summary>
-        /// <param name="httpConfigurationFactory">a builder/factory object for HTTP configuration</param>
+        /// <param name="httpConfigurationBuilder">a builder object for HTTP configuration</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory)
+        public ConfigurationBuilder Http(HttpConfigurationBuilder httpConfigurationBuilder)
         {
-            _httpConfigurationFactory = httpConfigurationFactory;
+            _httpConfigurationBuilder = httpConfigurationBuilder;
             return this;
         }
 
         /// <summary>
-        /// Sets the SDK's logging configuration, using a factory object.
+        /// Sets the SDK's logging configuration, using a builder object that is obtained from
+        /// <see cref="Components.Logging()"/> which has methods for setting individual logging-related properties. 
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This object is normally a configuration builder obtained from <see cref="Components.Logging()"/>
-        /// which has methods for setting individual logging-related properties. As a shortcut for disabling
-        /// logging, you may use <see cref="Components.NoLogging"/> instead. If all you want to do is to set
-        /// the basic logging destination, and you do not need to set other logging properties, you can use
-        /// <see cref="Logging(ILogAdapter)"/> instead.
+        /// As a shortcut for disabling logging, you may use <see cref="Components.NoLogging"/> instead. If all you
+        /// want to do is to set the basic logging destination, and you do not need to set other logging properties,
+        /// you can use <see cref="Logging(ILogAdapter)"/>.
         /// </para>
         /// <para>
         /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
@@ -237,15 +236,15 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Logging(Components.Logging().Level(LogLevel.Warn)))
         ///         .Build();
         /// </example>
-        /// <param name="loggingConfigurationFactory">the factory object</param>
+        /// <param name="loggingConfigurationBuilder">a builder object for logging configuration</param>
         /// <returns>the same builder</returns>
         /// <seealso cref="Components.Logging()" />
         /// <seealso cref="Components.Logging(ILogAdapter) "/>
         /// <seealso cref="Components.NoLogging" />
         /// <seealso cref="Logging(ILogAdapter)"/>
-        public ConfigurationBuilder Logging(ILoggingConfigurationFactory loggingConfigurationFactory)
+        public ConfigurationBuilder Logging(LoggingConfigurationBuilder loggingConfigurationBuilder)
         {
-            _loggingConfigurationFactory = loggingConfigurationFactory;
+            _loggingConfigurationBuilder = loggingConfigurationBuilder;
             return this;
         }
 
