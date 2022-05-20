@@ -78,8 +78,7 @@ namespace LaunchDarkly.Sdk.Server
             TestLogging = Logs.ToMultiple(extraLogging, LogCapture);
             TestLogger = TestLogging.Logger("");
 
-            BasicContext = new LdClientContext(new BasicConfiguration(Configuration.Default(BasicSdkKey), TestLogger),
-                Configuration.Default(""));
+            BasicContext = new LdClientContext(BasicSdkKey).WithLogger(TestLogger);
 
             BasicTaskExecutor = new TaskExecutor("test-sender", TestLogger);
 
@@ -110,16 +109,16 @@ namespace LaunchDarkly.Sdk.Server
                 .Logging(TestLogging)
                 .StartWaitTime(TimeSpan.Zero);
 
-        protected LdClientContext ContextFrom(Configuration config)
-        {
-            var basic = new BasicConfiguration(config.SdkKey, config.Offline, config.ServiceEndpoints, TestLogger);
-            return new LdClientContext(
-                basic,
-                (config.HttpConfigurationBuilder ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
+        protected LdClientContext ContextFrom(Configuration config) =>
+            new LdClientContext(
+                config.SdkKey,
+                (config.HttpConfigurationBuilder ?? Components.HttpConfiguration()).CreateHttpConfiguration(new LdClientContext(config.SdkKey)),
+                TestLogger,
+                false,
+                config.ServiceEndpoints,
                 null,
                 BasicTaskExecutor
                 );
-        }
 
         public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern) =>
             AssertHelpers.LogMessageRegex(LogCapture, shouldHave, level, pattern);

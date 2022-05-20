@@ -11,21 +11,19 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
     internal class ServerDiagnosticStore : DiagnosticStoreBase
     {
         private readonly Configuration _config;
-        private readonly BasicConfiguration _basicConfig;
-        private readonly HttpConfiguration _httpConfig;
+        private readonly LdClientContext _context;
 
         protected override string SdkKeyOrMobileKey => _config.SdkKey;
         protected override string SdkName => "dotnet-server-sdk";
         protected override IEnumerable<LdValue> ConfigProperties => GetConfigProperties();
         protected override string DotNetTargetFramework => GetDotNetTargetFramework();
-        protected override HttpProperties HttpProperties => _httpConfig.HttpProperties;
+        protected override HttpProperties HttpProperties => _context.Http.HttpProperties;
         protected override Type TypeOfLdClient => typeof(LdClient);
 
-        internal ServerDiagnosticStore(Configuration config, BasicConfiguration basicConfig, HttpConfiguration httpConfig)
+        internal ServerDiagnosticStore(Configuration config, LdClientContext context)
         {
             _config = config;
-            _basicConfig = basicConfig;
-            _httpConfig = httpConfig;
+            _context = context;
         }
 
         private IEnumerable<LdValue> GetConfigProperties()
@@ -45,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
         {
             if (component is IDiagnosticDescription dd)
             {
-                var componentDesc = dd.DescribeConfiguration(_basicConfig);
+                var componentDesc = dd.DescribeConfiguration(_context);
                 if (componentName is null)
                 {
                     return componentDesc;

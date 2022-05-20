@@ -152,7 +152,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             return new FileDataSource(dataSourceUpdates, _fileReader, _paths, _autoUpdate,
                 _parser, _skipMissingPaths, _duplicateKeysHandling,
-                context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog));
+                context.Logger.SubLogger(LogNames.DataSourceSubLog));
         }
     }
 }

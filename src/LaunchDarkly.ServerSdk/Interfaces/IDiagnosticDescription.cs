@@ -24,8 +24,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// Called internally by the SDK to inspect the configuration. Applications do not need to call
         /// this method.
         /// </summary>
-        /// <param name="basic">the basic global configuration of the SDK</param>
+        /// <param name="context">provides configuration information about the SDK</param>
         /// <returns>a JSON value</returns>
-        LdValue DescribeConfiguration(BasicConfiguration basic);
+        LdValue DescribeConfiguration(LdClientContext context);
     }
 }

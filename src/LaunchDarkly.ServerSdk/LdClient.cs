@@ -119,22 +119,32 @@ namespace LaunchDarkly.Sdk.Server
         {
             _configuration = config;
 
-            var logConfig = (config.LoggingConfigurationBuilder ?? Components.Logging())
-                .CreateLoggingConfiguration();
+            var logConfig = (config.LoggingConfigurationBuilder ?? Components.Logging()).CreateLoggingConfiguration();
+
             _log = logConfig.LogAdapter.Logger(logConfig.BaseLoggerName ?? LogNames.DefaultBase);
             _log.Info("Starting LaunchDarkly client {0}",
                 AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)));
             _evalLog = _log.SubLogger(LogNames.EvaluationSubLog);
 
-            var basicConfig = new BasicConfiguration(config, _log);
-            var httpConfig = (config.HttpConfigurationBuilder ?? Components.HttpConfiguration())
-                .CreateHttpConfiguration(basicConfig);
-            ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
-                new ServerDiagnosticStore(_configuration, basicConfig, httpConfig);
-
             var taskExecutor = new TaskExecutor(this, _log);
 
-            var clientContext = new LdClientContext(basicConfig, httpConfig, diagnosticStore, taskExecutor);
+            var clientContext = new LdClientContext(
+                config.SdkKey,
+                null,
+                _log,
+                config.Offline,
+                config.ServiceEndpoints,
+                null,
+                taskExecutor
+                );
+
+            var httpConfig = (config.HttpConfigurationBuilder ?? Components.HttpConfiguration())
+                .CreateHttpConfiguration(clientContext);
+            clientContext = clientContext.WithHttp(httpConfig);
+
+            ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
+                new ServerDiagnosticStore(config, clientContext);
+            clientContext = clientContext.WithDiagnosticStore(diagnosticStore);
 
             var dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor, _log.SubLogger(LogNames.DataStoreSubLog));
             _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore)

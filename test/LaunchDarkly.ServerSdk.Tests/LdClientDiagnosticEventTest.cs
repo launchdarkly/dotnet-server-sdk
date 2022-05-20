@@ -409,7 +409,7 @@ namespace LaunchDarkly.Sdk.Server
             public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
                 Components.InMemoryDataStore.CreateDataStore(context, dataStoreUpdates);
 
-            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
+            public LdValue DescribeConfiguration(LdClientContext context) => Description;
         }
 
         private class DataStoreFactoryWithoutDiagnosticDescription : IDataStoreFactory
@@ -425,7 +425,7 @@ namespace LaunchDarkly.Sdk.Server
             public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) =>
                 new MockCoreSync();
 
-            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
+            public LdValue DescribeConfiguration(LdClientContext context) => Description;
         }
 
         private class PersistentDataStoreFactoryWithoutDiagnosticDescription : IPersistentDataStoreFactory
@@ -441,7 +441,7 @@ namespace LaunchDarkly.Sdk.Server
             public IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context) =>
                 new MockCoreAsync();
 
-            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
+            public LdValue DescribeConfiguration(LdClientContext context) => Description;
         }
 
         private class PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription : IPersistentDataStoreAsyncFactory

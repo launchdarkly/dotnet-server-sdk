@@ -64,8 +64,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
             var configuredBaseUri = StandardEndpoints.SelectBaseUri(
-                context.Basic.ServiceEndpoints, e => e.StreamingBaseUri, "Streaming",
-                context.Basic.Logger);
+                context.ServiceEndpoints, e => e.StreamingBaseUri, "Streaming",
+                context.Logger);
             return new StreamingDataSource(
                 context,
                 dataSourceUpdates,
@@ -75,10 +75,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+        public LdValue DescribeConfiguration(LdClientContext context) =>
             LdValue.BuildObject()
             .WithStreamingProperties(
-                StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, e => e.StreamingBaseUri),
+                StandardEndpoints.IsCustomUri(context.ServiceEndpoints, e => e.StreamingBaseUri),
                 false,
                 _initialReconnectDelay
                 )

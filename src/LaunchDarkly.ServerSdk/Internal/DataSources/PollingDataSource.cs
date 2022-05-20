@@ -33,7 +33,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _taskExecutor = context.TaskExecutor;
             _pollInterval = pollInterval;
             _initTask = new TaskCompletionSource<bool>();
-            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         public bool Initialized => _initialized.Get();

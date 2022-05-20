@@ -267,7 +267,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <returns>a data source instance</returns>
         public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
         {
-            var instance = new DataSourceImpl(this, dataSourceUpdates, context.Basic.Logger.SubLogger("DataSource.TestData"));
+            var instance = new DataSourceImpl(this, dataSourceUpdates, context.Logger.SubLogger("DataSource.TestData"));
             lock (_lock)
             {
                 _instances.Add(instance);
