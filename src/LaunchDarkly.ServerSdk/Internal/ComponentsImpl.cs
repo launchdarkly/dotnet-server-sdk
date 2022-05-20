@@ -10,11 +10,11 @@ namespace LaunchDarkly.Sdk.Server.Internal
     /// </summary>
     internal static class ComponentsImpl
     {
-        internal sealed class InMemoryDataStoreFactory : IDataStoreFactory, IDiagnosticDescription
+        internal sealed class InMemoryDataStoreFactory : IComponentConfigurer<IDataStore>, IDiagnosticDescription
         {
             internal static readonly InMemoryDataStoreFactory Instance = new InMemoryDataStoreFactory();
 
-            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates _) => new InMemoryDataStore();
+            public IDataStore Build(LdClientContext context) => new InMemoryDataStore();
 
             public LdValue DescribeConfiguration(LdClientContext _) => LdValue.Of("memory");
         }
@@ -30,11 +30,11 @@ namespace LaunchDarkly.Sdk.Server.Internal
             public Task<bool> Start() => Task.FromResult(true);
         }
 
-        internal sealed class NullDataSourceFactory : IDataSourceFactory, IDiagnosticDescription
+        internal sealed class NullDataSourceFactory : IComponentConfigurer<IDataSource>, IDiagnosticDescription
         {
-            internal static readonly IDataSourceFactory Instance = new NullDataSourceFactory();
+            internal static readonly IComponentConfigurer<IDataSource> Instance = new NullDataSourceFactory();
 
-            public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+            public IDataSource Build(LdClientContext context)
             {
                 if (context.Offline)
                 {
@@ -74,13 +74,13 @@ namespace LaunchDarkly.Sdk.Server.Internal
             public void Dispose() { }
         }
 
-        internal sealed class NullEventProcessorFactory : IEventProcessorFactory
+        internal sealed class NullEventProcessorFactory : IComponentConfigurer<IEventProcessor>
         {
             internal static readonly NullEventProcessorFactory Instance = new NullEventProcessorFactory();
 
             private NullEventProcessorFactory() { }
 
-            public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor CreateEventProcessor(LdClientContext config) =>
+            public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor Build(LdClientContext config) =>
                 new NullEventProcessor();
         }
     }

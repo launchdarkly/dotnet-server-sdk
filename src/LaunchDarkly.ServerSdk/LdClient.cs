@@ -119,7 +119,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             _configuration = config;
 
-            var logConfig = (config.LoggingConfigurationBuilder ?? Components.Logging()).CreateLoggingConfiguration();
+            var logConfig = (config.Logging ?? Components.Logging()).Build(new LdClientContext(config.SdkKey));
 
             _log = logConfig.LogAdapter.Logger(logConfig.BaseLoggerName ?? LogNames.DefaultBase);
             _log.Info("Starting LaunchDarkly client {0}",
@@ -131,6 +131,8 @@ namespace LaunchDarkly.Sdk.Server
             var clientContext = new LdClientContext(
                 config.SdkKey,
                 null,
+                null,
+                null,
                 _log,
                 config.Offline,
                 config.ServiceEndpoints,
@@ -138,8 +140,7 @@ namespace LaunchDarkly.Sdk.Server
                 taskExecutor
                 );
 
-            var httpConfig = (config.HttpConfigurationBuilder ?? Components.HttpConfiguration())
-                .CreateHttpConfiguration(clientContext);
+            var httpConfig = (config.Http ?? Components.HttpConfiguration()).Build(clientContext);
             clientContext = clientContext.WithHttp(httpConfig);
 
             ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
@@ -147,12 +148,14 @@ namespace LaunchDarkly.Sdk.Server
             clientContext = clientContext.WithDiagnosticStore(diagnosticStore);
 
             var dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor, _log.SubLogger(LogNames.DataStoreSubLog));
-            _dataStore = (_configuration.DataStoreFactory ?? Components.InMemoryDataStore)
-                .CreateDataStore(clientContext, dataStoreUpdates);
+
+            var contextForDataStore = clientContext.WithDataStoreUpdates(dataStoreUpdates);
+            _dataStore = (_configuration.DataStore ?? Components.InMemoryDataStore)
+                .Build(clientContext.WithDataStoreUpdates(dataStoreUpdates));
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, dataStoreUpdates);
 
-            var bigSegmentsConfig = (_configuration.BigSegmentsConfigurationBuilder ?? Components.BigSegments(null))
-                .CreateBigSegmentsConfiguration(clientContext);
+            var bigSegmentsConfig = (_configuration.BigSegments ?? Components.BigSegments(null))
+                .Build(clientContext);
             _bigSegmentStoreWrapper = bigSegmentsConfig.Store is null ? null :
                 new BigSegmentStoreWrapper(
                     bigSegmentsConfig,
@@ -171,15 +174,15 @@ namespace LaunchDarkly.Sdk.Server
 
             var eventProcessorFactory =
                 config.Offline ? Components.NoEvents :
-                (_configuration.EventProcessorFactory ?? Components.SendEvents());
-            _eventProcessor = eventProcessorFactory.CreateEventProcessor(clientContext);
+                (_configuration.Events?? Components.SendEvents());
+            _eventProcessor = eventProcessorFactory.Build(clientContext);
 
             var dataSourceUpdates = new DataSourceUpdatesImpl(_dataStore, _dataStoreStatusProvider,
                 taskExecutor, _log, logConfig.LogDataSourceOutageAsErrorAfter);
-            IDataSourceFactory dataSourceFactory =
+            IComponentConfigurer<IDataSource> dataSourceFactory =
                 config.Offline ? Components.ExternalUpdatesOnly :
-                (_configuration.DataSourceFactory ?? Components.StreamingDataSource());
-            _dataSource = dataSourceFactory.CreateDataSource(clientContext, dataSourceUpdates);
+                (_configuration.DataSource ?? Components.StreamingDataSource());
+            _dataSource = dataSourceFactory.Build(clientContext.WithDataSourceUpdates(dataSourceUpdates));
             _dataSourceStatusProvider = new DataSourceStatusProviderImpl(dataSourceUpdates);
             _flagTracker = new FlagTrackerImpl(dataSourceUpdates,
                 (string key, Context context) => JsonVariation(key, context, LdValue.Null));
@@ -561,7 +564,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </para>
         /// <para>
         /// Any components that were added by specifying a factory object
-        /// (<see cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>, etc.)
+        /// (<see cref="ConfigurationBuilder.DataStore"/>, etc.)
         /// will also be disposed of by this method; their lifecycle is the same as the client's.
         /// </para>
         /// </remarks>

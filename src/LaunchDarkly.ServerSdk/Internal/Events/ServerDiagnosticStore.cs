@@ -33,10 +33,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 .Build();
 
             // Allow each pluggable component to describe its own relevant properties.
-            yield return GetComponentDescription(_config.DataStoreFactory ?? Components.InMemoryDataStore, "dataStoreType");
-            yield return GetComponentDescription(_config.DataSourceFactory ?? Components.StreamingDataSource());
-            yield return GetComponentDescription(_config.EventProcessorFactory ?? Components.SendEvents());
-            yield return GetComponentDescription(_config.HttpConfigurationBuilder ?? Components.HttpConfiguration());
+            yield return GetComponentDescription(_config.DataStore ?? Components.InMemoryDataStore, "dataStoreType");
+            yield return GetComponentDescription(_config.DataSource ?? Components.StreamingDataSource());
+            yield return GetComponentDescription(_config.Events ?? Components.SendEvents());
+            yield return GetComponentDescription(_config.Http ?? Components.HttpConfiguration());
         }
 
         private LdValue GetComponentDescription(object component, string componentName = null)

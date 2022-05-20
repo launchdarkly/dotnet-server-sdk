@@ -10,10 +10,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The SDK passes this object to component factories such as <see cref="IDataStoreFactory"/>, to
-    /// provide them with necessary configuration properties, as well as references to other components
-    /// they may need to access. This happens after it has already preprocessed the properties from
-    /// <see cref="Configuration"/>.
+    /// The SDK passes this object to component factories/configuration builders that implement the
+    /// <see cref="IComponentConfigurer{T}"/> interface, to provide them with necessary configuration
+    /// properties, as well as references to other components that they may need to access.
     /// </para>
     /// <para>
     /// This class also has non-public properties that are relevant only to internal SDK implementation
@@ -22,6 +21,26 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// </remarks>
     public sealed class LdClientContext
     {
+        /// <summary>
+        /// A component that <see cref="IDataSource"/> implementations use to deliver data and status
+        /// updates to the SDK.
+        /// </summary>
+        /// <remarks>
+        /// This property is only set when the SDK is calling an <see cref="IDataSource"/> factory.
+        /// Otherwise it is null.
+        /// </remarks>
+        public IDataSourceUpdates DataSourceUpdates { get; }
+
+        /// <summary>
+        /// A component that <see cref="IDataStore"/> implementations use to deliver status updates to
+        /// the SDK.
+        /// </summary>
+        /// <remarks>
+        /// This property is only set when the SDK is calling an <see cref="IDataStore"/> factory.
+        /// Otherwise it is null.
+        /// </remarks>
+        public IDataStoreUpdates DataStoreUpdates { get; }
+
         /// <summary>
         /// The HTTP configuration for the current client instance.
         /// </summary>
@@ -83,19 +102,23 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// are normally computed in the LdClient constructor.
         /// </remarks>
         /// <param name="sdkKey">the SDK key</param>
+        /// <param name="dataSourceUpdates">value for <see cref="DataSourceUpdates"/>, normally null</param>
+        /// <param name="dataStoreUpdates">value for <see cref="DataStoreUpdates"/>, normally null</param>
         /// <param name="http">the HTTP configuration; if null, a default configuration is used</param>
         /// <param name="logger">the base logger; if null, logging is disabled</param>
         /// <param name="offline">true if the SDK should be entirely offline</param>
         /// <param name="serviceEndpoints">custom service endpoints; if null, defaults are used</param>
         public LdClientContext(
             string sdkKey,
+            IDataSourceUpdates dataSourceUpdates,
+            IDataStoreUpdates dataStoreUpdates,
             HttpConfiguration http,
             Logger logger,
             bool offline,
             ServiceEndpoints serviceEndpoints
             ) :
             this(
-                sdkKey, http, logger, offline, serviceEndpoints,
+                sdkKey, dataSourceUpdates, dataStoreUpdates, http, logger, offline, serviceEndpoints,
                 null,
                 new TaskExecutor("test-sender", logger ?? Logs.None.Logger(""))
                 )
@@ -106,11 +129,13 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <param name="sdkKey">the SDK key</param>
         public LdClientContext(string sdkKey) :
-            this(sdkKey, null, null, false, null)
+            this(sdkKey, null, null, null, null, false, null)
         { }
 
         internal LdClientContext(
             string sdkKey,
+            IDataSourceUpdates dataSourceUpdates,
+            IDataStoreUpdates dataStoreUpdates,
             HttpConfiguration http,
             Logger logger,
             bool offline,
@@ -120,6 +145,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             )
         {
             SdkKey = sdkKey;
+            DataSourceUpdates = dataSourceUpdates;
+            DataStoreUpdates = dataStoreUpdates;
             Http = http ?? DefaultHttpConfiguration();
             Logger = logger ?? Logs.None.Logger("");
             Offline = offline;
@@ -128,9 +155,37 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             TaskExecutor = taskExecutor;
         }
 
+        internal LdClientContext WithDataSourceUpdates(IDataSourceUpdates newDataSourceUpdates) =>
+            new LdClientContext(
+                SdkKey,
+                newDataSourceUpdates,
+                DataStoreUpdates,
+                Http,
+                Logger,
+                Offline,
+                ServiceEndpoints,
+                DiagnosticStore,
+                TaskExecutor
+                );
+
+        internal LdClientContext WithDataStoreUpdates(IDataStoreUpdates newDataStoreUpdates) =>
+            new LdClientContext(
+                SdkKey,
+                DataSourceUpdates,
+                newDataStoreUpdates,
+                Http,
+                Logger,
+                Offline,
+                ServiceEndpoints,
+                DiagnosticStore,
+                TaskExecutor
+                );
+
         internal LdClientContext WithDiagnosticStore(IDiagnosticStore newDiagnosticStore) =>
             new LdClientContext(
                 SdkKey,
+                DataSourceUpdates,
+                DataStoreUpdates,
                 Http,
                 Logger,
                 Offline,
@@ -142,6 +197,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         internal LdClientContext WithHttp(HttpConfiguration newHttp) =>
             new LdClientContext(
                 SdkKey,
+                DataSourceUpdates,
+                DataStoreUpdates,
                 newHttp,
                 Logger,
                 Offline,
@@ -153,6 +210,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         internal LdClientContext WithLogger(Logger newLogger) =>
             new LdClientContext(
                 SdkKey,
+                DataSourceUpdates,
+                DataStoreUpdates,
                 Http,
                 newLogger,
                 Offline,
@@ -164,6 +223,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         internal LdClientContext WithTaskExecutor(TaskExecutor newTaskExecutor) =>
             new LdClientContext(
                 SdkKey,
+                DataSourceUpdates,
+                DataStoreUpdates,
                 Http,
                 Logger,
                 Offline,

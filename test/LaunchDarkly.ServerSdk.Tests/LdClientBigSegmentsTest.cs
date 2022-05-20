@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server
         private Segment _bigSegment;
         private Context _user;
         private MockBigSegmentStore _storeMock;
-        private IBigSegmentStoreFactory _storeFactory;
+        private IComponentConfigurer<IBigSegmentStore> _storeFactory;
 
         public LdClientBigSegmentsTest(ITestOutputHelper testOutput) : base(testOutput)
         {
@@ -43,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server
             _testData.UsePreconfiguredSegment(_bigSegment);
 
             _storeMock = new MockBigSegmentStore();
-            _storeFactory = _storeMock.AsSingletonFactory();
+            _storeFactory = _storeMock.AsSingletonFactory<IBigSegmentStore>();
             _storeMock.SetupMetadataReturns(new StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
         }
 

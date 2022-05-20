@@ -167,7 +167,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = BasicConfig()
                 .DataStore(Components.PersistentDataStore(
-                    new LaunchDarkly.Sdk.Server.Internal.DataStores.MockCoreSync().AsSingletonFactory()))
+                    new LaunchDarkly.Sdk.Server.Internal.DataStores.MockCoreSync().AsSingletonFactory<IPersistentDataStore>()))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -233,7 +233,7 @@ namespace LaunchDarkly.Sdk.Server
         public void BigSegmentStoreStatusProviderSendsStatusUpdates()
         {
             var storeMock = new MockBigSegmentStore();
-            var storeFactory = storeMock.AsSingletonFactory();
+            var storeFactory = storeMock.AsSingletonFactory<IBigSegmentStore>();
             storeMock.SetupMetadataReturns(
                 new BigSegmentStoreTypes.StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
 

@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = BasicConfig()
                 .DataSource(testData)
-                .Events(eventSink.AsSingletonFactory())
+                .Events(eventSink.AsSingletonFactory<IEventProcessor>())
                 .Build();
             client = new LdClient(config);
         }

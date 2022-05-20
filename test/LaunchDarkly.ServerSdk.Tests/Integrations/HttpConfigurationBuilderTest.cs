@@ -15,7 +15,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         private readonly BuilderBehavior.BuildTester<HttpConfigurationBuilder, HttpConfiguration> _tester =
             BuilderBehavior.For(() => Components.HttpConfiguration(),
-                b => b.CreateHttpConfiguration(basicConfig));
+                b => b.Build(basicConfig));
 
         [Fact]
         public void ConnectTimeout()
@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var config = Components.HttpConfiguration()
                 .CustomHeader("header1", "value1")
                 .CustomHeader("header2", "value2")
-                .CreateHttpConfiguration(basicConfig);
+                .Build(basicConfig);
             Assert.Equal("value1", HeadersAsMap(config.DefaultHeaders)["header1"]);
             Assert.Equal("value2", HeadersAsMap(config.DefaultHeaders)["header2"]);
         }
@@ -61,7 +61,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             prop.AssertCanSet(value);
 
             var config = Components.HttpConfiguration().ResponseStartTimeout(value)
-                .CreateHttpConfiguration(basicConfig);
+                .Build(basicConfig);
             using (var client = config.NewHttpClient())
             {
                 Assert.Equal(value, client.Timeout);
@@ -71,14 +71,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void SdkKeyHeader()
         {
-            var config = Components.HttpConfiguration().CreateHttpConfiguration(basicConfig);
+            var config = Components.HttpConfiguration().Build(basicConfig);
             Assert.Equal(basicConfig.SdkKey, HeadersAsMap(config.DefaultHeaders)["authorization"]);
         }
 
         [Fact]
         public void UserAgentHeader()
         {
-            var config = Components.HttpConfiguration().CreateHttpConfiguration(basicConfig);
+            var config = Components.HttpConfiguration().Build(basicConfig);
             Assert.Equal("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)),
                 HeadersAsMap(config.DefaultHeaders)["user-agent"]); // not configurable
         }
@@ -86,7 +86,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void WrapperDefaultNone()
         {
-            var config = Components.HttpConfiguration().CreateHttpConfiguration(basicConfig);
+            var config = Components.HttpConfiguration().Build(basicConfig);
             Assert.False(HeadersAsMap(config.DefaultHeaders).ContainsKey("x-launchdarkly-wrapper"));
         }
 
@@ -94,7 +94,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public void WrapperNameOnly()
         {
             var config = Components.HttpConfiguration().Wrapper("w", null)
-                .CreateHttpConfiguration(basicConfig);
+                .Build(basicConfig);
             Assert.Equal("w", HeadersAsMap(config.DefaultHeaders)["x-launchdarkly-wrapper"]);
         }
 
@@ -102,7 +102,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public void WrapperNameAndVersion()
         {
             var config = Components.HttpConfiguration().Wrapper("w", "1.0")
-                .CreateHttpConfiguration(basicConfig);
+                .Build(basicConfig);
             Assert.Equal("w/1.0", HeadersAsMap(config.DefaultHeaders)["x-launchdarkly-wrapper"]);
         }
 

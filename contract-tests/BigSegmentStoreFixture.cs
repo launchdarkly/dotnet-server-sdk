@@ -5,7 +5,7 @@ using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace TestService
 {
-    public class BigSegmentStoreFixture : IBigSegmentStore, IBigSegmentStoreFactory
+    public class BigSegmentStoreFixture : IBigSegmentStore, IComponentConfigurer<IBigSegmentStore>
     {
         private readonly CallbackService _service;
 
@@ -14,7 +14,7 @@ namespace TestService
             _service = service;
         }
 
-        public IBigSegmentStore CreateBigSegmentStore(LdClientContext context) => this;
+        public IBigSegmentStore Build(LdClientContext context) => this;
 
         public void Dispose() =>
             _service.Close();

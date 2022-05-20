@@ -12,12 +12,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
     public class BigSegmentsStoreWrapperTest : BaseTest
     {
         private readonly MockBigSegmentStore _store;
-        private readonly IBigSegmentStoreFactory _storeFactory;
+        private readonly IComponentConfigurer<IBigSegmentStore> _storeFactory;
 
         public BigSegmentsStoreWrapperTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _store = new MockBigSegmentStore();
-            _storeFactory = _store.AsSingletonFactory();
+            _storeFactory = _store.AsSingletonFactory<IBigSegmentStore>();
         }
 
         private void SetStoreHasNoMetadata() => _store.SetupMetadataReturns((StoreMetadata?)null);
@@ -45,7 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var result = sw.GetMembership(userKey);
@@ -65,7 +65,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var result1 = sw.GetMembership(userKey);
@@ -91,7 +91,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromMilliseconds(500))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var result = sw.GetMembership(userKey);
@@ -111,7 +111,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromMilliseconds(500))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var result = sw.GetMembership(userKey);
@@ -136,7 +136,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var bsConfig = Components.BigSegments(_storeFactory)
                 .ContextCacheSize(2)
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var result1 = sw.GetMembership(userKey1);
@@ -185,7 +185,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StatusPollInterval(TimeSpan.FromMilliseconds(10))
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var status1 = sw.GetStatus();
@@ -224,7 +224,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StatusPollInterval(TimeSpan.FromMilliseconds(10))
                 .StaleAfter(TimeSpan.FromMilliseconds(200))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var status1 = sw.GetStatus();
