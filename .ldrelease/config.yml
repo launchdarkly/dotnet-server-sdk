@@ -19,7 +19,7 @@ jobs:
       LD_RELEASE_TEST_TARGET_FRAMEWORK: net5.0
 
 branches:
-  - name: master
+  - name: main
     description: 6.x
   - name: 5.x
 
