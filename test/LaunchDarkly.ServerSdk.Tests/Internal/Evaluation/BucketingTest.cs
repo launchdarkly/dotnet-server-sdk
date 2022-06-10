@@ -183,7 +183,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .GeneratedVariations(3)
                 .Rules(new RuleBuilder().Id("id")
                     .Rollout(rollout)
-                    .Clauses(new ClauseBuilder().Attribute("key").Op(Operator.In).Values(LdValue.Of(context.Key)).Build())
+                    .Clauses(new ClauseBuilder().Attribute("key").Op(Operator.In).Values(context.Key).Build())
                     .Build())
                 .Salt(salt)
                 .Build();

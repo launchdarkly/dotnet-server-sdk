@@ -353,7 +353,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             // Calling ApplyOperator directly wouldn't work in these tests, because we rely on
             // preprocessing that happens in the Clause constructor.
             var clause = new ClauseBuilder().Attribute("anyAttr").Op(op).Values(clauseValue).Build();
-            return EvalScope.ClauseMatchAny(clause, userValue);
+            return Evaluator.ClauseMatchAny(clause, userValue);
         }
 
         private LdValue ArbitraryValue(object v)

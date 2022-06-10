@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Build();
             _flag = new FeatureFlagBuilder("flagkey")
                 .On(true)
-                .Variations(LdValue.Of(false), LdValue.Of(true))
+                .Variations(false, true)
                 .FallthroughVariation(0)
                 .Rules(
                     new RuleBuilder().Variation(1).Clauses(

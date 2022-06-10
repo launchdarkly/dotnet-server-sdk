@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void ClauseCanMatchBuiltInAttribute()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("Bob")).Build();
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values("Bob").Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
             var user = Context.Builder("key").Name("Bob").Build();
 
@@ -24,7 +24,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void ClauseCanMatchCustomAttribute()
         {
-            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(LdValue.Of(4)).Build();
+            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(4).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
             var user = Context.Builder("key").Set("legs", 4).Build();
 
@@ -34,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void ClauseReturnsFalseForMissingAttribute()
         {
-            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(LdValue.Of(4)).Build();
+            var clause = new ClauseBuilder().Attribute("legs").Op("in").Values(4).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
             var user = Context.Builder("key").Name("bob").Build();
 
@@ -44,7 +44,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void ClauseCanBeNegated()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("Bob"))
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values("Bob")
                 .Negate(true).Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
             var user = Context.Builder("key").Name("Bob").Build();
@@ -55,13 +55,27 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void ClauseWithUnknownOperatorDoesNotMatch()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("invalidOp").Values(LdValue.Of("Bob")).Build();
+            var clause = new ClauseBuilder().Attribute("name").Op("invalidOp").Values("Bob").Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
             var user = Context.Builder("key").Name("Bob").Build();
 
             Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, user).Result.Value);
         }
-        
+
+        [Fact]
+        public void ClauseMatchUsesContextKind()
+        {
+            var clause = new ClauseBuilder().ContextKind("company").Attribute("name").Op("in").Values("Catco").Build();
+            var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
+            var context1 = Context.Builder("cc").Kind("company").Name("Catco").Build();
+            var context2 = Context.Builder("l").Name("Lucy").Build();
+            var context3 = Context.NewMulti(context1, context2);
+
+            Assert.Equal(LdValue.Of(true), BasicEvaluator.Evaluate(f, context1).Result.Value);
+            Assert.Equal(LdValue.Of(false), BasicEvaluator.Evaluate(f, context2).Result.Value);
+            Assert.Equal(LdValue.Of(true), BasicEvaluator.Evaluate(f, context3).Result.Value);
+        }
+
         [Fact]
         public void SegmentMatchClauseRetrievesSegmentFromStore()
         {

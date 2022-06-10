@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
@@ -84,38 +85,32 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        internal FeatureFlagBuilder Targets(List<Target> targets)
+        internal FeatureFlagBuilder Targets(IEnumerable<Target> targets)
         {
-            _targets = targets;
+            _targets = new List<Target>(targets);
             return this;
         }
 
-        internal FeatureFlagBuilder Targets(params Target[] targets)
-        {
-            return Targets(new List<Target>(targets));
-        }
+        internal FeatureFlagBuilder Targets(params Target[] targets) =>
+            Targets((IEnumerable<Target>)targets);
 
-        internal FeatureFlagBuilder ContextTargets(List<Target> targets)
+        internal FeatureFlagBuilder ContextTargets(IEnumerable<Target> targets)
         {
-            _contextTargets = targets;
+            _contextTargets = new List<Target>(targets);
             return this;
         }
 
-        internal FeatureFlagBuilder ContextTargets(params Target[] targets)
-        {
-            return ContextTargets(new List<Target>(targets));
-        }
+        internal FeatureFlagBuilder ContextTargets(params Target[] targets) =>
+            ContextTargets((IEnumerable<Target>)(targets));
 
-        internal FeatureFlagBuilder Rules(List<FlagRule> rules)
+        internal FeatureFlagBuilder Rules(IEnumerable<FlagRule> rules)
         {
-            _rules = rules;
+            _rules = new List<FlagRule>(rules);
             return this;
         }
 
-        internal FeatureFlagBuilder Rules(params FlagRule[] rules)
-        {
-            return Rules(new List<FlagRule>(rules));
-        }
+        internal FeatureFlagBuilder Rules(params FlagRule[] rules) =>
+            Rules((IEnumerable<FlagRule>)(rules));
 
         internal FeatureFlagBuilder Fallthrough(VariationOrRollout fallthrough)
         {
@@ -140,16 +135,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        internal FeatureFlagBuilder Variations(List<LdValue> variations)
+        internal FeatureFlagBuilder Variations(IEnumerable<LdValue> variations)
         {
-            _variations = variations;
+            _variations = new List<LdValue>(variations);
             return this;
         }
 
-        internal FeatureFlagBuilder Variations(params LdValue[] variations)
-        {
-            return Variations(new List<LdValue>(variations));
-        }
+        internal FeatureFlagBuilder Variations(params LdValue[] variations) =>
+            Variations((IEnumerable<LdValue>)(variations));
+
+        internal FeatureFlagBuilder Variations(params string[] variations) =>
+            Variations(variations.Select(v => LdValue.Of(v)));
+
+        internal FeatureFlagBuilder Variations(params bool[] variations) =>
+            Variations(variations.Select(v => LdValue.Of(v)));
+
+        internal FeatureFlagBuilder Variations(params int[] variations) =>
+            Variations(variations.Select(v => LdValue.Of(v)));
 
         internal FeatureFlagBuilder GeneratedVariations(int count)
         {
@@ -200,7 +202,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             return On(true).OffVariation(0)
                 .FallthroughVariation(0)
-                .Variations(LdValue.Of(false), LdValue.Of(true))
+                .Variations(false, true)
                 .Rules(new RuleBuilder().Id("id").Variation(1).Clauses(clauses).Build());
         }
 
@@ -261,6 +263,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal class ClauseBuilder
     {
+        private string _contextKind;
         private AttributeRef _attribute;
         private Operator _op;
         private List<LdValue> _values = new List<LdValue>();
@@ -268,7 +271,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         internal Clause Build()
         {
-            return new Clause(null, _attribute, _op, _values, _negate);
+            return new Clause(_contextKind, _attribute, _op, _values, _negate);
+        }
+
+        public ClauseBuilder ContextKind(string contextKind)
+        {
+            _contextKind = contextKind;
+            return this;
         }
 
         public ClauseBuilder Attribute(string attribute) =>
@@ -288,16 +297,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         public ClauseBuilder Op(string opName) => Op(Operator.ForName(opName));
 
-        public ClauseBuilder Values(List<LdValue> values)
+        public ClauseBuilder Values(IEnumerable<LdValue> values)
         {
-            _values = values;
+            _values = new List<LdValue>(values);
             return this;
         }
 
-        public ClauseBuilder Values(params LdValue[] values)
-        {
-            return Values(new List<LdValue>(values));
-        }
+        public ClauseBuilder Values(params LdValue[] values) =>
+            Values(values.ToImmutableList());
+
+        public ClauseBuilder Values(params string[] values) =>
+            Values(values.Select(v => LdValue.Of(v)));
+
+        public ClauseBuilder Values(params bool[] values) =>
+            Values(values.Select(v => LdValue.Of(v)));
+
+        public ClauseBuilder Values(params int[] values) =>
+            Values(values.Select(v => LdValue.Of(v)));
 
         public ClauseBuilder Negate(bool negate)
         {
@@ -305,25 +321,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        public ClauseBuilder KeyIs(string key)
-        {
-            return Attribute("key").Op("in").Values(LdValue.Of(key));
-        }
+        public ClauseBuilder KeyIs(string key) =>
+            Attribute("key").Op("in").Values(key);
 
-        public static Clause ShouldMatchUser(Context user)
-        {
-            return new ClauseBuilder().KeyIs(user.Key).Build();
-        }
+        public static Clause ShouldMatchUser(Context user) =>
+            new ClauseBuilder().KeyIs(user.Key).Build();
 
-        public static Clause ShouldNotMatchUser(Context user)
-        {
-            return new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
-        }
+        public static Clause ShouldMatchAnyUser() =>
+            new ClauseBuilder().Attribute("key").Op("in").Values("").Negate(true).Build();
 
-        public static Clause ShouldMatchSegment(string segmentKey)
-        {
-            return new ClauseBuilder().Attribute("").Op("segmentMatch").Values(LdValue.Of(segmentKey)).Build();
-        }
+        public static Clause ShouldMatchAnyContext() =>
+            new ClauseBuilder().Attribute("kind").Op("in").Values("").Negate(true).Build();
+
+        public static Clause ShouldNotMatchUser(Context user) =>
+            new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
+
+        public static Clause ShouldMatchSegment(string segmentKey) =>
+            new ClauseBuilder().Attribute("").Op("segmentMatch").Values(segmentKey).Build();
     }
 
     internal class TargetBuilder

@@ -207,7 +207,7 @@ namespace LaunchDarkly.Sdk.Server
                 .On(true)
                 .Rules(rule)
                 .OffVariation(0)
-                .Variations(LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("off", "on")
                 .Build();
             testData.UsePreconfiguredFlag(flag);
 
@@ -233,7 +233,7 @@ namespace LaunchDarkly.Sdk.Server
                 .On(true)
                 .Rules(rule0, rule1)
                 .OffVariation(0)
-                .Variations(LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("off", "on")
                 .Build();
             testData.UsePreconfiguredFlag(flag);
 
@@ -254,7 +254,7 @@ namespace LaunchDarkly.Sdk.Server
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .TrackEventsFallthrough(true)
                 .Build();
             testData.UsePreconfiguredFlag(flag);
@@ -277,7 +277,7 @@ namespace LaunchDarkly.Sdk.Server
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Build();
             testData.UsePreconfiguredFlag(flag);
 
@@ -297,13 +297,13 @@ namespace LaunchDarkly.Sdk.Server
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))
                 .OffVariation(1)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Version(1)
                 .Build();
             var f1 = new FeatureFlagBuilder("feature1").Version(1)
                 .On(true)
                 .Fallthrough(new VariationOrRollout(1, null))
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .Version(2)
                 .Build();
             testData.UsePreconfiguredFlag(f0);
@@ -322,7 +322,7 @@ namespace LaunchDarkly.Sdk.Server
             var flag = new FeatureFlagBuilder("feature").Version(1)
                 .On(false)
                 .OffVariation(null)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Version(1)
                 .Build();
             testData.UsePreconfiguredFlag(flag);
@@ -343,7 +343,7 @@ namespace LaunchDarkly.Sdk.Server
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))
                 .OffVariation(1)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Version(1)
                 .Build();
             testData.UsePreconfiguredFlag(f0);

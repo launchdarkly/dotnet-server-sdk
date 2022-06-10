@@ -36,7 +36,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <example>
     /// <code>
     ///     var td = TestData.DataSource();
-    ///     td.Update(td.Flag("flag-key-1").BooleanFlag().VariationForAllUsers(true));
+    ///     td.Update(td.Flag("flag-key-1").BooleanFlag().VariationForAll(true));
     ///
     ///     var config = Configuration.Builder("sdk-key")
     ///         .DataSource(td)
@@ -92,7 +92,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </para>
         /// <para>
         /// Otherwise, it starts with a new default configuration in which the flag has <c>true</c>
-        /// and <c>false</c> variations, is <c>true</c> for all users when targeting is turned on
+        /// and <c>false</c> variations, is <c>true</c> for all contexts when targeting is turned on
         /// and <c>false</c> otherwise, and currently has targeting turned on. You can change any
         /// of those properties, and provide more complex behavior, using the
         /// <see cref="FlagBuilder"/> methods.
@@ -316,7 +316,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             private bool _on;
             private int _fallthroughVariation;
             private List<LdValue> _variations;
-            private IDictionary<int, ISet<string>> _targets = null;
+            private Dictionary<string, Dictionary<int, HashSet<string>>> _targets;
             internal List<FlagRuleBuilder> _rules = null; // accessed by FlagRuleBuilder
 
             #endregion
@@ -328,6 +328,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 _key = key;
                 _on = true;
                 _variations = new List<LdValue>();
+                _targets = new Dictionary<string, Dictionary<int, HashSet<string>>>();
+                _rules = new List<FlagRuleBuilder>();
             }
 
             internal FlagBuilder(FlagBuilder from)
@@ -337,10 +339,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 _on = from._on;
                 _fallthroughVariation = from._fallthroughVariation;
                 _variations = new List<LdValue>(from._variations);
-                _targets = from._targets == null ? null :
-                    new Dictionary<int, ISet<string>>(from._targets);
-                _rules = from._rules == null ? null :
-                    new List<FlagRuleBuilder>(from._rules);
+                _targets = from._targets.ToDictionary( // deep-clone targets
+                    kv => kv.Key,
+                    kv => kv.Value.ToDictionary(kv1 => kv1.Key, kv1 => new HashSet<string>(kv1.Value)));
+                _rules = new List<FlagRuleBuilder>(from._rules);
             }
 
             #endregion
@@ -390,7 +392,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// </summary>
             /// <remarks>
             /// <para>
-            /// The fallthrough is the value that is returned if targeting is on and the user was not
+            /// The fallthrough is the value that is returned if targeting is on and the context was not
             /// matched by a more specific target or rule.
             /// </para>
             /// <para>
@@ -409,7 +411,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// Specifies the index of the fallthrough variation.
             /// </summary>
             /// <remarks>
-            /// The fallthrough is the value that is returned if targeting is on and the user was not
+            /// The fallthrough is the value that is returned if targeting is on and the context was not
             /// matched by a more specific target or rule.
             /// </remarks>
             /// <param name="variationIndex">the desired fallthrough variation: 0 for the first, 1 for the second, etc.</param>
@@ -448,22 +450,22 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             }
 
             /// <summary>
-            /// Sets the flag to always return the specified boolean variation for all users.
+            /// Sets the flag to always return the specified boolean variation for all contexts.
             /// </summary>
             /// <remarks>
             /// Targeting is switched on, any existing targets or rules are removed, and the flag's variations are
             /// set to <c>true</c> and <c>false</c>. The fallthrough variation is set to the specified value. The
             /// off variation is left unchanged.
             /// </remarks>
-            /// <param name="variation">the desired true/false variation to be returned for all users</param>
+            /// <param name="variation">the desired true/false variation to be returned</param>
             /// <returns>the builder</returns>
-            public FlagBuilder VariationForAllUsers(bool variation)
-            {
-                return BooleanFlag().VariationForAllUsers(VariationForBoolean(variation));
-            }
+            /// <seealso cref="VariationForAll(int)"/>
+            /// <seealso cref="ValueForAll(LdValue)"/>
+            public FlagBuilder VariationForAll(bool variation) =>
+                BooleanFlag().VariationForAll(VariationForBoolean(variation));
 
             /// <summary>
-            /// Sets the flag to always return the specified variation for all users.
+            /// Sets the flag to always return the specified variation for all contexts.
             /// </summary>
             /// <remarks>
             /// The variation is specified by number, out of whatever variation values have already been
@@ -472,31 +474,33 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// </remarks>
             /// <param name="variationIndex">the desired variation: 0 for the first, 1 for the second, etc.</param>
             /// <returns>the builder</returns>
-            public FlagBuilder VariationForAllUsers(int variationIndex)
-            {
-                return On(true).ClearRules().ClearUserTargets().FallthroughVariation(variationIndex);
-            }
+            /// <seealso cref="VariationForAll(bool)"/>
+            /// <seealso cref="ValueForAll(LdValue)"/>
+            public FlagBuilder VariationForAll(int variationIndex) =>
+                On(true).ClearRules().ClearTargets().FallthroughVariation(variationIndex);
 
             /// <summary>
-            /// Sets the flag to always return the specified variation value for all users.
+            /// Sets the flag to always return the specified variation value for all contexts.
             /// </summary>
             /// <remarks>
             /// The value may be of any JSON type, as defined by <see cref="LdValue"/>. This method changes the
             /// flag to have only a single variation, which is this value, and to return the same variation
             /// regardless of whether targeting is on or off. Any existing targets or rules are removed.
             /// </remarks>
-            /// <param name="value">the desired value to be returned for all users</param>
+            /// <param name="value">the desired value to be returned</param>
             /// <returns>the builder</returns>
-            public FlagBuilder ValueForAllUsers(LdValue value)
+            /// <seealso cref="VariationForAll(bool)"/>
+            /// <seealso cref="VariationForAll(int)"/>
+            public FlagBuilder ValueForAll(LdValue value)
             {
                 _variations.Clear();
                 _variations.Add(value);
-                return VariationForAllUsers(0);
+                return VariationForAll(0);
             }
 
             /// <summary>
-            /// Sets the flag to return the specified boolean variation for a specific user key when
-            /// targeting is on.
+            /// Sets the flag to return the specified boolean variation for a specific user key (that is,
+            /// for a context with that key whose context kind is "user") when targeting is on.
             /// </summary>
             /// <remarks>
             /// <para>
@@ -510,14 +514,35 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="variation">the desired true/false variation to be returned for this user when
             /// targeting is on</param>
             /// <returns>the builder</returns>
-            public FlagBuilder VariationForUser(string userKey, bool variation)
-            {
-                return BooleanFlag().VariationForUser(userKey, VariationForBoolean(variation));
-            }
+            /// <seealso cref="VariationForUser(string, int)"/>
+            public FlagBuilder VariationForUser(string userKey, bool variation) =>
+                BooleanFlag().VariationForKey(Context.DefaultKind, userKey, VariationForBoolean(variation));
 
             /// <summary>
-            /// Sets the flag to return the specified variation for a specific user key when targeting
-            /// is on.
+            /// Sets the flag to return the specified boolean variation for a specific context, identified
+            /// by context kind and key, when targeting is on.
+            /// </summary>
+            /// <remarks>
+            /// <para>
+            /// This does not affect the flag's off variation that is used when targeting is off.
+            /// </para>
+            /// <para>
+            /// If the flag was not already a boolean flag, this also changes it to a boolean flag.
+            /// </para>
+            /// </remarks>
+            /// <param name="contextKind">the context kind</param>
+            /// <param name="key">the context key</param>
+            /// <param name="variation">the desired true/false variation to be returned for this context when
+            /// targeting is on</param>
+            /// <returns>the builder</returns>
+            /// <seealso cref="VariationForKey(string, string, int)"/>
+            /// <seealso cref="VariationForUser(string, int)"/>
+            public FlagBuilder VariationForKey(string contextKind, string key, bool variation) =>
+                BooleanFlag().VariationForKey(contextKind, key, VariationForBoolean(variation));
+
+            /// <summary>
+            /// Sets the flag to return the specified variation for a specific user key (that is,
+            /// for a context with that key whose context kind is "user") when targeting is on.
             /// </summary>
             /// <remarks>
             /// This has no effect when targeting is turned off for the flag. The variation is specified
@@ -527,31 +552,43 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="variationIndex">the desired variation to be returned for this user when
             /// targeting is on: 0 for the first, 1 for the second, etc.</param>
             /// <returns>the builder</returns>
-            public FlagBuilder VariationForUser(string userKey, int variationIndex)
+            /// <seealso cref="VariationForUser(string, bool)"/>
+            public FlagBuilder VariationForUser(string userKey, int variationIndex) =>
+                VariationForKey(Context.DefaultKind, userKey, variationIndex);
+
+            /// <summary>
+            /// Sets the flag to return the specified variation for a specific context, identified
+            /// by context kind and key, when targeting is on.
+            /// </summary>
+            /// <remarks>
+            /// This has no effect when targeting is turned off for the flag. The variation is specified
+            /// by number, out of whatever variation values have already been defined.
+            /// </remarks>
+            /// <param name="contextKind">the context kind</param>
+            /// <param name="key">the context key</param>
+            /// <param name="variationIndex">the desired variation to be returned for this context when
+            /// targeting is on: 0 for the first, 1 for the second, etc.</param>
+            /// <returns>the builder</returns>
+            /// <seealso cref="VariationForKey(string, string, bool)"/>
+            /// <seealso cref="VariationForUser(string, int)"/>
+            public FlagBuilder VariationForKey(string contextKind, string key, int variationIndex)
             {
-                if (_targets == null)
+                if (!_targets.TryGetValue(contextKind, out var keysByVariation))
                 {
-                    _targets = new SortedDictionary<int, ISet<string>>(); // keep entries ordered for test determinacy
+                    keysByVariation = new Dictionary<int, HashSet<string>>();
+                    _targets[contextKind] = keysByVariation;
                 }
-                for (var i = 0; i < _variations.Count; i++)
+                if (!keysByVariation.TryGetValue(variationIndex, out var keys))
                 {
-                    if (i == variationIndex)
+                    keys = new HashSet<string>();
+                    keysByVariation[variationIndex] = keys;
+                }
+                keys.Add(key);
+                foreach (var varAndKeys in keysByVariation)
+                {
+                    if (varAndKeys.Key != variationIndex)
                     {
-                        if (_targets.TryGetValue(i, out var keys))
-                        {
-                            keys.Add(userKey);
-                        }
-                        else
-                        {
-                            _targets[i] = new SortedSet<string> { userKey };
-                        }
-                    }
-                    else
-                    {
-                        if (_targets.TryGetValue(i, out var keys))
-                        {
-                            keys.Remove(userKey);
-                        }
+                        varAndKeys.Value.Remove(key);
                     }
                 }
                 return this;
@@ -575,7 +612,34 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             }
 
             /// <summary>
-            /// Starts defining a flag rule, using the "is one of" operator.
+            /// Starts defining a flag rule, using the "is one of" operator. This matching expression
+            /// only applies to contexts of a specific kind.
+            /// </summary>
+            /// <remarks>
+            /// <para>
+            /// For example, this creates a rule that returns <c>true</c> if the name attribute for the
+            /// "company" context is "Ella" or "Monsoon":
+            /// </para>
+            /// <example>
+            /// <code>
+            ///     testData.Update(testData.Flag("flag-key")
+            ///         .IfMatchContext("company", "name", LdValue.Of("Ella"), LdValue.Of("Monsoon"))
+            ///         .ThenReturn(true));
+            /// </code>
+            /// </example>
+            /// </remarks>
+            /// <param name="contextKind">the context kind to match</param>
+            /// <param name="attribute">the attribute to match against</param>
+            /// <param name="values">values to compare to</param>
+            /// <returns>a <see cref="FlagRuleBuilder"/>; call <see cref="FlagRuleBuilder.ThenReturn(bool)"/>
+            /// or <see cref="FlagRuleBuilder.ThenReturn(int)"/> to finish the rule, or add more tests with
+            /// another method like <see cref="FlagRuleBuilder.AndMatchContext(string, string, LdValue[])"/></returns>
+            public FlagRuleBuilder IfMatchContext(string contextKind, string attribute, params LdValue[] values) =>
+                new FlagRuleBuilder(this).AndMatchContext(contextKind, attribute, values);
+
+            /// <summary>
+            /// Starts defining a flag rule, using the "is one of" operator. This is a shortcut for calling
+            /// <see cref="IfMatchContext(string, string, LdValue[])"/> with "user" as the context kind.
             /// </summary>
             /// <remarks>
             /// <para>
@@ -594,13 +658,38 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <returns>a <see cref="FlagRuleBuilder"/>; call <see cref="FlagRuleBuilder.ThenReturn(bool)"/>
             /// or <see cref="FlagRuleBuilder.ThenReturn(int)"/> to finish the rule, or add more tests with
             /// another method like <see cref="FlagRuleBuilder.AndMatch(UserAttribute, LdValue[])"/></returns>
-            public FlagRuleBuilder IfMatch(UserAttribute attribute, params LdValue[] values)
-            {
-                return new FlagRuleBuilder(this).AndMatch(attribute, values);
-            }
+            public FlagRuleBuilder IfMatch(UserAttribute attribute, params LdValue[] values) =>
+                new FlagRuleBuilder(this).AndMatch(attribute, values);
 
             /// <summary>
-            /// Starts defining a flag rule, using the "is not one of" operator.
+            /// Starts defining a flag rule, using the "is not one of" operator. This matching expression
+            /// only applies to contexts of a specific kind.
+            /// </summary>
+            /// <remarks>
+            /// <para>
+            /// For example, this creates a rule that returns <c>true</c> if the name attribute for the
+            /// "company" context is neither "Pendant" nor "Sterling Cooper":
+            /// </para>
+            /// <example>
+            /// <code>
+            ///     testData.Update(testData.Flag("flag-key")
+            ///         .IfNotMatchContext("company", "name", LdValue.Of("Pendant"), LdValue.Of("Sterling Cooper"))
+            ///         .ThenReturn(true));
+            /// </code>
+            /// </example>
+            /// </remarks>
+            /// <param name="contextKind">the context kind to match</param>
+            /// <param name="attribute">the attribute to match against</param>
+            /// <param name="values">values to compare to</param>
+            /// <returns>a <see cref="FlagRuleBuilder"/>; call <see cref="FlagRuleBuilder.ThenReturn(bool)"/>
+            /// or <see cref="FlagRuleBuilder.ThenReturn(int)"/> to finish the rule, or add more tests with
+            /// another method like <see cref="FlagRuleBuilder.AndMatchContext(string, string, LdValue[])"/></returns>
+            public FlagRuleBuilder IfNotMatchContext(string contextKind, string attribute, params LdValue[] values) =>
+                new FlagRuleBuilder(this).AndNotMatchContext(contextKind, attribute, values);
+
+            /// <summary>
+            /// Starts defining a flag rule, using the "is not one of" operator. This is a shortcut for calling
+            /// <see cref="IfNotMatchContext(string, string, LdValue[])"/> with "user" as the context kind.
             /// </summary>
             /// <remarks>
             /// <para>
@@ -620,10 +709,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <returns>a <see cref="FlagRuleBuilder"/>; call <see cref="FlagRuleBuilder.ThenReturn(bool)"/>
             /// or <see cref="FlagRuleBuilder.ThenReturn(int)"/> to finish the rule, or add more tests with
             /// another method like <see cref="FlagRuleBuilder.AndMatch(UserAttribute, LdValue[])"/></returns>
-            public FlagRuleBuilder IfNotMatch(UserAttribute attribute, params LdValue[] values)
-            {
-                return new FlagRuleBuilder(this).AndNotMatch(attribute, values);
-            }
+            public FlagRuleBuilder IfNotMatch(UserAttribute attribute, params LdValue[] values) =>
+                new FlagRuleBuilder(this).AndNotMatch(attribute, values);
 
             /// <summary>
             /// Removes any existing rules from the flag.
@@ -634,20 +721,20 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <returns>the builder</returns>
             public FlagBuilder ClearRules()
             {
-                _rules = null;
+                _rules.Clear();
                 return this;
             }
 
             /// <summary>
-            /// Removes any existing user targets from the flag.
+            /// Removes any existing user/context targets from the flag.
             /// </summary>
             /// <remarks>
             /// This undoes the effect of methods like <see cref="VariationForUser(string, bool)"/>.
             /// </remarks>
             /// <returns>the builder</returns>
-            public FlagBuilder ClearUserTargets()
+            public FlagBuilder ClearTargets()
             {
-                _targets = null;
+                _targets.Clear();
                 return this;
             }
 
@@ -657,46 +744,61 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             internal ItemDescriptor CreateFlag(int version)
             {
-                var builder = LdValue.BuildObject()
-                   .Add("key", _key)
-                   .Add("version", version)
-                   .Add("on", _on)
-                   .Add("offVariation", _offVariation)
-                   .Add("fallthrough", LdValue.BuildObject().Add("variation", _fallthroughVariation).Build())
-                   .Add("salt", "")
-                   .Add("variations", LdValue.ArrayFrom(_variations));
-                if (_targets != null)
-                {
-                    builder.Add("targets", LdValue.ArrayFrom(
-                        _targets.Select(kv =>
-                            LdValue.BuildObject()
-                                .Add("variation", kv.Key)
-                                .Add("values", LdValue.Convert.String.ArrayFrom(kv.Value))
-                                .Build())
-                        ));
-                }
-                if (_rules != null)
-                {
-                    builder.Add("rules", LdValue.ArrayFrom(
-                        _rules.Select((r, index) =>
-                            LdValue.BuildObject()
-                                .Add("id", "rule" + index)
-                                .Add("variation", r._variation)
-                                .Add("clauses", LdValue.ArrayFrom(
-                                    r._clauses.Select(c =>
-                                        LdValue.BuildObject()
-                                            .Add("attribute", c._attribute.AttributeName)
-                                            .Add("op", c._operator)
-                                            .Add("values", LdValue.ArrayFrom(c._values))
-                                            .Add("negate", c._negate)
-                                            .Build())
-                                    ))
-                                .Build())
-                        ));
-                }
 
-                var json = builder.Build().ToJsonString();
-                return DataModel.Features.Deserialize(json);
+                var userTargets = _targets.Where(kindAndMap => kindAndMap.Key == Context.DefaultKind)
+                    .SelectMany(kindAndMap => kindAndMap.Value)
+                    .Where(varAndKeys => varAndKeys.Value.Any())
+                    .OrderBy(varAndKeys => varAndKeys.Key) // order by variation for test determinacy
+                    .Select(varAndKeys => new Target(
+                        null,
+                        varAndKeys.Value.OrderBy(key => key), // order by key for test determinacy
+                        varAndKeys.Key))
+                    .ToImmutableList();
+
+                var contextTargets = _targets.OrderBy(kindAndMap => kindAndMap.Key) // order by kind for test determinacy
+                    .SelectMany(kindAndMap => kindAndMap.Value.OrderBy(varAndKeys => varAndKeys.Key) // order by variation for test determinacy
+                        .Where(varAndKeys => varAndKeys.Value.Any())
+                        .Select(varAndKeys => new Target(
+                            kindAndMap.Key,
+                            // per data model rules, we don't include keys here for the "user" kind
+                            kindAndMap.Key == Context.DefaultKind ? Enumerable.Empty<string>() :
+                                varAndKeys.Value.OrderBy(key => key), // order by key for test determinacy
+                            varAndKeys.Key)))
+                    .ToImmutableList();
+
+                var rules = _rules.Select((r, index) => new FlagRule(
+                    r._variation,
+                    null,
+                    $"rule{index}",
+                    r._clauses.Select(c => new Internal.Model.Clause(
+                        null,
+                        c._attribute,
+                        Operator.ForName(c._operator),
+                        c._values.ToArray(),
+                        c._negate
+                        )).ToList(),
+                    false))
+                    .ToImmutableList();
+
+                var flag = new FeatureFlag(
+                    _key,
+                    version,
+                    false,
+                    _on,
+                    ImmutableList.Create<Prerequisite>(),
+                    userTargets,
+                    contextTargets,
+                    rules,
+                    new VariationOrRollout(_fallthroughVariation, null),
+                    _offVariation,
+                    _variations,
+                    "",
+                    false,
+                    false,
+                    null,
+                    false
+                    );
+                return new ItemDescriptor(version, flag);
             }
 
             internal bool IsBooleanFlag =>
@@ -716,14 +818,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <remarks>
         /// <para>
         /// In the LaunchDarkly model, a flag can have any number of rules, and a rule can have any number of
-        /// clauses. A clause is an individual test such as "name is 'X'". A rule matches a user if all of the
-        /// rule's clauses match the user.
+        /// clauses. A clause is an individual test such as "name is 'X'". A rule matches a context if all of the
+        /// rule's clauses match the context.
         /// </para>
         /// <para>
         /// To start defining a rule, use one of the flag builder's matching methods such as
-        /// <see cref="FlagBuilder.IfMatch(UserAttribute, LdValue[])"/>. This defines the first clause for
+        /// <see cref="FlagBuilder.IfMatchContext(string, string, LdValue[])"/>. This defines the first clause for
         /// the rule. Optionally, you may add more clauses with the rule builder's methods such as
-        /// <see cref="AndMatch(UserAttribute, LdValue[])"/>. Finally, call <see cref="ThenReturn(bool)"/> or
+        /// <see cref="AndMatchContext(string, string, LdValue[])"/>. Finally, call <see cref="ThenReturn(bool)"/> or
         /// <see cref="ThenReturn(int)"/> to finish defining the rule.
         /// </para>
         /// </remarks>
@@ -739,7 +841,33 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             }
 
             /// <summary>
-            /// Adds another clause, using the "is one of" operator.
+            /// Adds another clause, using the "is one of" operator. This matching expression
+            /// only applies to contexts of a specific kind.
+            /// </summary>
+            /// <remarks>
+            /// <para>
+            /// For example, this creates a rule that returns <c>true</c> if the name attribute for the
+            /// "company" context is "Ella" and the country is "gb":
+            /// </para>
+            /// <example>
+            /// <code>
+            ///     testData.Update(testData.Flag("flag-key")
+            ///         .IfMatchContext("company", "name", LdValue.Of("Ella"))
+            ///         .AndMatchContext("company", "country", LdValue.Of("gb"))
+            ///         .ThenReturn(true));
+            /// </code>
+            /// </example>
+            /// </remarks>
+            /// <param name="contextKind">the context kind to match</param>
+            /// <param name="attribute">the attribute to match against</param>
+            /// <param name="values">values to compare to</param>
+            /// <returns>the rule builder</returns>
+            public FlagRuleBuilder AndMatchContext(string contextKind, string attribute, params LdValue[] values) =>
+                AddClause(contextKind, AttributeRef.FromPath(attribute), "in", values, true);
+
+            /// <summary>
+            /// Adds another clause, using the "is one of" operator. This is a shortcut for calling
+            /// <see cref="AndMatchContext(string, string, LdValue[])"/> with "user" as the context kind.
             /// </summary>
             /// <remarks>
             /// <para>
@@ -758,14 +886,37 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="attribute">the user attribute to match against</param>
             /// <param name="values">values to compare to</param>
             /// <returns>the rule builder</returns>
-            public FlagRuleBuilder AndMatch(UserAttribute attribute, params LdValue[] values)
-            {
-                _clauses.Add(new Clause(attribute, "in", values, false));
-                return this;
-            }
+            public FlagRuleBuilder AndMatch(UserAttribute attribute, params LdValue[] values) =>
+                AddClause(Context.DefaultKind, AttributeRef.FromLiteral(attribute.AttributeName), "in", values, false);
 
             /// <summary>
-            /// Adds another clause, using the "is not one of" operator.
+            /// Adds another clause, using the "is not one of" operator. This matching expression
+            /// only applies to contexts of a specific kind.
+            /// </summary>
+            /// <remarks>
+            /// <para>
+            /// For example, this creates a rule that returns <c>true</c> if the name attribute for the
+            /// "company" context is "Ella" and the country is not "gb":
+            /// </para>
+            /// <example>
+            /// <code>
+            ///     testData.Update(testData.Flag("flag-key")
+            ///         .IfMatchContext("company", "name", LdValue.Of("Ella"))
+            ///         .AndNotMatchContext("company", "country", LdValue.Of("gb"))
+            ///         .ThenReturn(true));
+            /// </code>
+            /// </example>
+            /// </remarks>
+            /// <param name="contextKind">the context kind to match</param>
+            /// <param name="attribute">the attribute to match against</param>
+            /// <param name="values">values to compare to</param>
+            /// <returns>the rule builder</returns>
+            public FlagRuleBuilder AndNotMatchContext(string contextKind, string attribute, params LdValue[] values) =>
+                AddClause(contextKind, AttributeRef.FromPath(attribute), "in", values, true);
+
+            /// <summary>
+            /// Adds another clause, using the "is not one of" operator. This is a shortcut for calling
+            /// <see cref="AndNotMatchContext(string, string, LdValue[])"/> with "user" as the context kind.
             /// </summary>
             /// <remarks>
             /// <para>
@@ -784,9 +935,12 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="attribute">the user attribute to match against</param>
             /// <param name="values">values to compare to</param>
             /// <returns>the rule builder</returns>
-            public FlagRuleBuilder AndNotMatch(UserAttribute attribute, params LdValue[] values)
+            public FlagRuleBuilder AndNotMatch(UserAttribute attribute, params LdValue[] values) =>
+                AddClause(Context.DefaultKind, AttributeRef.FromLiteral(attribute.AttributeName), "in", values, true);
+
+            private FlagRuleBuilder AddClause(string contextKind, AttributeRef attr, string op, LdValue[] values, bool negate)
             {
-                _clauses.Add(new Clause(attribute, "in", values, true));
+                _clauses.Add(new Clause(attr, op, values, negate));
                 return this;
             }
 
@@ -825,12 +979,12 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         internal class Clause
         {
-            internal readonly UserAttribute _attribute;
+            internal readonly AttributeRef _attribute;
             internal readonly string _operator;
             internal readonly LdValue[] _values;
             internal readonly bool _negate;
 
-            internal Clause(UserAttribute attribute, string op, LdValue[] values, bool negate)
+            internal Clause(AttributeRef attribute, string op, LdValue[] values, bool negate)
             {
                 _attribute = attribute;
                 _operator = op;

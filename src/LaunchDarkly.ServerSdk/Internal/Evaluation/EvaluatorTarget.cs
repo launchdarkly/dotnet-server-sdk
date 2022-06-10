@@ -2,18 +2,18 @@
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
-    internal partial struct EvalScope
+    internal partial class Evaluator
     {
-        private int? MatchTargets()
+        private int? MatchTargets(ref EvalState state, FeatureFlag flag)
         {
-            if (_flag.ContextTargets.IsEmpty)
+            if (flag.ContextTargets.IsEmpty)
             {
                 // old-style data has only targets for users
-                if (!_context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
+                if (!state.Context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
                 {
                     return null;
                 }
-                foreach (var t in _flag.Targets)
+                foreach (var t in flag.Targets)
                 {
                     if (TargetHasKey(t, matchContext.Key))
                     {
@@ -24,16 +24,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             }
 
             // new-style data has ContextTargets, which may include placeholders for user targets that are in Targets
-            foreach (var t in _flag.ContextTargets)
+            foreach (var t in flag.ContextTargets)
             {
                 var contextKind = string.IsNullOrEmpty(t.ContextKind) ? Context.DefaultKind : t.ContextKind;
                 if (contextKind == Context.DefaultKind)
                 {
-                    if (!_context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
+                    if (!state.Context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
                     {
                         continue;
                     }
-                    foreach (var ut in _flag.Targets)
+                    foreach (var ut in flag.Targets)
                     {
                         if (ut.Variation == t.Variation)
                         {
@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
                 else
                 {
-                    if (_context.TryGetContextByKind(t.ContextKind, out var matchContext) &&
+                    if (state.Context.TryGetContextByKind(t.ContextKind, out var matchContext) &&
                         TargetHasKey(t, matchContext.Key))
                     {
                         return t.Variation;
