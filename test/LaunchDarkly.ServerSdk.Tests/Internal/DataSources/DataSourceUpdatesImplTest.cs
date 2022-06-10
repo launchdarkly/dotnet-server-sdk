@@ -235,7 +235,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new FeatureFlagBuilder("flag2").Version(1)
                     .Rules(
                         new RuleBuilder().Clauses(
-                            new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment1.Key)).Build()
+                            new ClauseBuilder().Op("segmentMatch").Values(segment1.Key).Build()
                         ).Build()
                     )
                     .Build(),
@@ -266,7 +266,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new FeatureFlagBuilder("flag2").Version(1)
                     .Rules(
                         new RuleBuilder().Clauses(
-                            new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment1.Key)).Build()
+                            new ClauseBuilder().Op("segmentMatch").Values(segment1.Key).Build()
                         ).Build()
                     )
                     .Build(),

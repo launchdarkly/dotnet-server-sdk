@@ -85,38 +85,32 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        internal FeatureFlagBuilder Targets(List<Target> targets)
+        internal FeatureFlagBuilder Targets(IEnumerable<Target> targets)
         {
-            _targets = targets;
+            _targets = new List<Target>(targets);
             return this;
         }
 
-        internal FeatureFlagBuilder Targets(params Target[] targets)
-        {
-            return Targets(new List<Target>(targets));
-        }
+        internal FeatureFlagBuilder Targets(params Target[] targets) =>
+            Targets((IEnumerable<Target>)targets);
 
-        internal FeatureFlagBuilder ContextTargets(List<Target> targets)
+        internal FeatureFlagBuilder ContextTargets(IEnumerable<Target> targets)
         {
-            _contextTargets = targets;
+            _contextTargets = new List<Target>(targets);
             return this;
         }
 
-        internal FeatureFlagBuilder ContextTargets(params Target[] targets)
-        {
-            return ContextTargets(new List<Target>(targets));
-        }
+        internal FeatureFlagBuilder ContextTargets(params Target[] targets) =>
+            ContextTargets((IEnumerable<Target>)(targets));
 
-        internal FeatureFlagBuilder Rules(List<FlagRule> rules)
+        internal FeatureFlagBuilder Rules(IEnumerable<FlagRule> rules)
         {
-            _rules = rules;
+            _rules = new List<FlagRule>(rules);
             return this;
         }
 
-        internal FeatureFlagBuilder Rules(params FlagRule[] rules)
-        {
-            return Rules(new List<FlagRule>(rules));
-        }
+        internal FeatureFlagBuilder Rules(params FlagRule[] rules) =>
+            Rules((IEnumerable<FlagRule>)(rules));
 
         internal FeatureFlagBuilder Fallthrough(VariationOrRollout fallthrough)
         {
@@ -141,16 +135,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        internal FeatureFlagBuilder Variations(List<LdValue> variations)
+        internal FeatureFlagBuilder Variations(IEnumerable<LdValue> variations)
         {
-            _variations = variations;
+            _variations = new List<LdValue>(variations);
             return this;
         }
 
-        internal FeatureFlagBuilder Variations(params LdValue[] variations)
-        {
-            return Variations(new List<LdValue>(variations));
-        }
+        internal FeatureFlagBuilder Variations(params LdValue[] variations) =>
+            Variations((IEnumerable<LdValue>)(variations));
+
+        internal FeatureFlagBuilder Variations(params string[] variations) =>
+            Variations(variations.Select(v => LdValue.Of(v)));
+
+        internal FeatureFlagBuilder Variations(params bool[] variations) =>
+            Variations(variations.Select(v => LdValue.Of(v)));
+
+        internal FeatureFlagBuilder Variations(params int[] variations) =>
+            Variations(variations.Select(v => LdValue.Of(v)));
 
         internal FeatureFlagBuilder GeneratedVariations(int count)
         {
@@ -201,7 +202,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             return On(true).OffVariation(0)
                 .FallthroughVariation(0)
-                .Variations(LdValue.Of(false), LdValue.Of(true))
+                .Variations(false, true)
                 .Rules(new RuleBuilder().Id("id").Variation(1).Clauses(clauses).Build());
         }
 

@@ -277,9 +277,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             new DataSetBuilder()
                 .Flags(
                     new FeatureFlagBuilder("flag1").Version(version).On(true).FallthroughVariation(2)
-                        .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on")).Build(),
+                        .Variations("fall", "off", "on").Build(),
                     new FeatureFlagBuilder("flag2").Version(version).On(true).FallthroughVariation(0)
-                        .Variations(LdValue.Of("value2")).Build()
+                        .Variations("value2").Build()
                 )
                 .Segments(
                     new SegmentBuilder("seg1").Version(version).Included("user1").Build()
@@ -290,7 +290,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             new DataSetBuilder()
                 .Flags(
                     new FeatureFlagBuilder("flag1").Version(version).On(true).FallthroughVariation(2)
-                        .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on")).Build()
+                        .Variations("fall", "off", "on").Build()
                 )
                 .Segments()
                 .Build();

@@ -137,7 +137,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var membership = MockMembership.New().Include(segment2);
             bigSegments.Membership[baseUser.Key] = membership;
             var flag = new FeatureFlagBuilder("key").On(true)
-                .Variations(LdValue.Of(false), LdValue.Of(true))
+                .Variations(false, true)
                 .FallthroughVariation(0)
                 .Rules(
                     new RuleBuilder().Variation(1).Clauses(ClauseBuilder.ShouldMatchSegment(segment1.Key)).Build(),

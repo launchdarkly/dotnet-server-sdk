@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void ClauseCanMatchBuiltInAttribute()
         {
-            var clause = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("Bob")).Build();
+            var clause = new ClauseBuilder().Attribute("name").Op("in").Values("Bob").Build();
             var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
             var user = Context.Builder("key").Name("Bob").Build();
 

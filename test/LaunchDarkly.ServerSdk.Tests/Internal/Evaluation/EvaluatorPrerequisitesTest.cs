@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .On(false)
                 .OffVariation(1)
                 // note that even though it returns the desired variation, it is still off and therefore not a match
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .Version(2)
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1);
@@ -82,7 +82,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var f1 = new FeatureFlagBuilder("feature1")
                 .On(true)
                 .FallthroughVariation(0)
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .Version(2)
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1);
@@ -117,7 +117,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             var f1 = new FeatureFlagBuilder("feature1")
                 .On(true)
                 .FallthroughVariation(1) // this is what makes the prerequisite pass
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .Version(2)
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1);
@@ -152,13 +152,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .On(true)
                 .Prerequisites(new Prerequisite("feature2", 1))
                 .FallthroughVariation(1)
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .Version(2)
                 .Build();
             var f2 = new FeatureFlagBuilder("feature2")
                 .On(true)
                 .FallthroughVariation(1)
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .Version(3)
                 .Build();
             var evaluator = BasicEvaluator.WithStoredFlags(f1, f2);
@@ -208,7 +208,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
             var cycleTargetKey = cycleGoesToOriginalFlag ? f0.Key : f1.Key;
             var f2 = new FeatureFlagBuilder("feature2")
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .On(true).FallthroughVariation(1)
                 .Prerequisites(new Prerequisite(cycleTargetKey, 1)) // deliberate error
                 .Build();

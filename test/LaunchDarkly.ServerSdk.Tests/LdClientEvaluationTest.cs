@@ -315,10 +315,10 @@ namespace LaunchDarkly.Sdk.Server
         public void AllFlagsStateReturnsState()
         {
             var flag1 = new FeatureFlagBuilder("key1").Version(100)
-                .OffVariation(0).Variations(LdValue.Of("value1"))
+                .OffVariation(0).Variations("value1")
                 .Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
-                .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value2"))
+                .OffVariation(1).Variations("x", "value2")
                 .TrackEvents(true).DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
             testData.UsePreconfiguredFlag(flag1);
@@ -345,10 +345,10 @@ namespace LaunchDarkly.Sdk.Server
         public void AllFlagsStateReturnsStateWithReasons()
         {
             var flag1 = new FeatureFlagBuilder("key1").Version(100)
-                .OffVariation(0).Variations(LdValue.Of("value1"))
+                .OffVariation(0).Variations("value1")
                 .Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
-                .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value2"))
+                .OffVariation(1).Variations("x", "value2")
                 .TrackEvents(true).DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
             testData.UsePreconfiguredFlag(flag1);
@@ -400,14 +400,14 @@ namespace LaunchDarkly.Sdk.Server
         public void AllFlagsStateCanOmitDetailsForUntrackedFlags()
         {
             var flag1 = new FeatureFlagBuilder("key1").Version(100)
-                .OffVariation(0).Variations(LdValue.Of("value1"))
+                .OffVariation(0).Variations("value1")
                 .Build();
             var flag2 = new FeatureFlagBuilder("key2").Version(200)
-                .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value2"))
+                .OffVariation(1).Variations("x", "value2")
                 .TrackEvents(true)
                 .Build();
             var flag3 = new FeatureFlagBuilder("key3").Version(300)
-                .OffVariation(1).Variations(LdValue.Of("x"), LdValue.Of("value3"))
+                .OffVariation(1).Variations("x", "value3")
                 .DebugEventsUntilDate(UnixMillisecondTime.OfMillis(1000))
                 .Build();
             testData.UsePreconfiguredFlag(flag1);
@@ -513,7 +513,7 @@ namespace LaunchDarkly.Sdk.Server
             // that that flag gets an error result but the rest of the FeatureFlagsState is valid.
             var goodFlagKey = "good-flag";
             testData.Update(testData.Flag(Evaluator.FlagKeyToTriggerErrorForTesting));
-            testData.Update(testData.Flag(goodFlagKey).VariationForAllUsers(true));
+            testData.Update(testData.Flag(goodFlagKey).VariationForAll(true));
 
             var state = client.AllFlagsState(user, FlagsStateOption.WithReasons);
             Assert.NotNull(state);
