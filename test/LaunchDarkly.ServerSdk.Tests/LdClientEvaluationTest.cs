@@ -304,7 +304,7 @@ namespace LaunchDarkly.Sdk.Server
             var segment = new SegmentBuilder("segment`").Version(1).Included(user.Key).Build();
             testData.UsePreconfiguredSegment(segment);
 
-            var clause = new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment.Key)).Build();
+            var clause = new ClauseBuilder().Op("segmentMatch").Values(segment.Key).Build();
             var feature = new FeatureFlagBuilder("feature").BooleanWithClauses(clause).Build();
             testData.UsePreconfiguredFlag(feature);
 

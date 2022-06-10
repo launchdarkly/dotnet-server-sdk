@@ -45,16 +45,30 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             Assert.Equal(BigSegmentsStatus.NotConfigured, result.Result.Reason.BigSegmentsStatus);
         }
 
-        [Fact]
-        public void MatchedWithInclude()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void MatchedWithInclude(bool multiKindContext)
         {
-            var segment = new SegmentBuilder("segmentkey").Unbounded(true).Generation(2).Build();
+            var targetKey = "key1";
+            var otherKey = "key2";
+            var targetKind = "kind1";
+            var otherKind = "kind2";
+            var targetContext = Context.NewWithKind(targetKind, targetKey);
+            var evalContext = multiKindContext ?
+                Context.NewMulti(targetContext, Context.NewWithKind(otherKind, otherKey)) :
+                targetContext;
+            
+            var segment = new SegmentBuilder("segmentkey").
+                Unbounded(true).Generation(2).UnboundedContextKind(targetKind).
+                Build();
             var bigSegments = new MockBigSegmentProvider();
-            bigSegments.Membership[baseUser.Key] = MockMembership.New().Include(segment);
+            bigSegments.Membership[targetKey] = MockMembership.New().Include(segment);
+            bigSegments.Membership[otherKey] = MockMembership.New();
             var flag = new FeatureFlagBuilder("key").BooleanMatchingSegment(segment.Key).Build();
             var evaluator = BasicEvaluator.WithStoredSegments(segment).WithBigSegments(bigSegments);
 
-            var result = evaluator.Evaluate(flag, baseUser);
+            var result = evaluator.Evaluate(flag, evalContext);
 
             Assert.Equal(LdValue.Of(true), result.Result.Value);
             Assert.Equal(BigSegmentsStatus.Healthy, result.Result.Reason.BigSegmentsStatus);

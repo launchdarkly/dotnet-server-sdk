@@ -19,11 +19,66 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         }
 
         [Fact]
+        public void ExplicitIncludeByContextKind()
+        {
+            var s = new SegmentBuilder("test").Version(1).
+                IncludedContext("kind1", "key1").IncludedContext("kind2", "key2").Build();
+            
+            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key1")));
+            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind2", "key2")));
+            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key2")));
+            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind2", "key1")));
+            Assert.False(SegmentMatchesUser(s, Context.New("key1")));
+        }
+
+        [Fact]
+        public void BasicRuleMatchUser()
+        {
+            var s = new SegmentBuilder("test").Version(1).
+                Rules(new SegmentRuleBuilder().Clauses(ClauseBuilder.ShouldMatchAnyUser()).Build()).
+                Build();
+
+            Assert.True(SegmentMatchesUser(s, Context.New("key1")));
+            Assert.True(SegmentMatchesUser(s, Context.New("key2")));
+        }
+
+        [Fact]
+        public void BasicRuleMatchByContextKind()
+        {
+            var s = new SegmentBuilder("test").Version(1).
+                Rules(new SegmentRuleBuilder().Clauses(
+                    new ClauseBuilder().ContextKind("kind1").Attribute("key").Op("in").Values("foo").Build()
+                    ).Build()).
+                Build();
+
+            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind1", "foo")));
+            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind2", "foo")));
+        }
+
+        [Fact]
         public void ExplicitExcludeUser()
         {
-            var s = new SegmentBuilder("test").Version(1).Excluded("foo").Build();
-            var u = Context.New("foo");
-            Assert.False(SegmentMatchesUser(s, u));
+            var s = new SegmentBuilder("test").Version(1).
+                Excluded("foo").
+                Rules(new SegmentRuleBuilder().Clauses(ClauseBuilder.ShouldMatchAnyUser()).Build()).
+                Build();
+
+            Assert.False(SegmentMatchesUser(s, Context.New("foo")));
+            Assert.True(SegmentMatchesUser(s, Context.New("bar")));
+        }
+
+        [Fact]
+        public void ExplicitExcludeByContextKind()
+        {
+            var s = new SegmentBuilder("test").Version(1).
+                ExcludedContext("kind1", "key1").
+                Rules(new SegmentRuleBuilder().Clauses(ClauseBuilder.ShouldMatchAnyContext()).Build()).
+                Build();
+
+            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key1")));
+            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key2")));
+            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind2", "key1")));
+            Assert.True(SegmentMatchesUser(s, Context.New("key1")));
         }
 
         [Fact]
@@ -37,7 +92,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void MatchingRuleWithFullRollout()
         {
-            var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
+            var clause = new ClauseBuilder().Attribute("email").Op("in").Values("test@example.com").Build();
             var s = new SegmentBuilder("test").Version(1)
                 .Rules(new SegmentRuleBuilder().Clauses(clause).Weight(100000).Build())
                 .Build();
@@ -48,7 +103,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void MatchingRuleWithZeroRollout()
         {
-            var clause = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
+            var clause = new ClauseBuilder().Attribute("email").Op("in").Values("test@example.com").Build();
             var s = new SegmentBuilder("test").Version(1)
                 .Rules(new SegmentRuleBuilder().Clauses(clause).Weight(0).Build())
                 .Build();
@@ -59,8 +114,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void MatchingRuleWithMultipleClauses()
         {
-            var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
-            var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bob")).Build();
+            var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values("test@example.com").Build();
+            var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values("bob").Build();
             var s = new SegmentBuilder("test").Version(1)
                 .Rules(new SegmentRuleBuilder().Clauses(clause1, clause2).Build())
                 .Build();
@@ -71,8 +126,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void NonMatchingRuleWithMultipleClauses()
         {
-            var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values(LdValue.Of("test@example.com")).Build();
-            var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values(LdValue.Of("bill")).Build();
+            var clause1 = new ClauseBuilder().Attribute("email").Op("in").Values("test@example.com").Build();
+            var clause2 = new ClauseBuilder().Attribute("name").Op("in").Values("bill").Build();
             var s = new SegmentBuilder("test").Version(1)
                 .Rules(new SegmentRuleBuilder().Clauses(clause1, clause2).Build())
                 .Build();

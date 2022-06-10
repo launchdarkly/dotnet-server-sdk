@@ -1,4 +1,6 @@
-﻿using LaunchDarkly.Sdk.Server.Internal.Model;
+﻿using System.Collections.Generic;
+using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTypes;
@@ -89,10 +91,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 state.BigSegmentsStatus = BigSegmentsStatus.NotConfigured;
                 return false;
             }
-            // Even if multiple Big Segments are referenced within a single flag evaluation,
-            // we only need to do this query once, since it returns *all* of the user's segment
-            // memberships.
-            if (!state.BigSegmentsStatus.HasValue)
+            if (!state.Context.TryGetContextByKind(segment.UnboundedContextKind ?? Context.DefaultKind, out var matchContext))
+            {
+                return false;
+            }
+            var key = matchContext.Key;
+            BigSegmentStoreTypes.IMembership membership = null;
+            if (state.BigSegmentsMembership is null || !state.BigSegmentsMembership.TryGetValue(key, out membership))
             {
                 if (BigSegmentsGetter is null)
                 {
@@ -101,13 +106,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
                 else
                 {
-                    var result = BigSegmentsGetter(state.Context.Key);
-                    state.BigSegmentsMembership = result.Membership;
+                    var result = BigSegmentsGetter(key);
+                    if (state.BigSegmentsMembership is null)
+                    {
+                        state.BigSegmentsMembership = new Dictionary<string, BigSegmentStoreTypes.IMembership>();
+                    }
+                    membership = result.Membership;
+                    state.BigSegmentsMembership[key] = membership;
                     state.BigSegmentsStatus = result.Status;
                 }
             }
-            return state.BigSegmentsMembership is null ? null :
-                state.BigSegmentsMembership.CheckMembership(MakeBigSegmentRef(segment));
+            return membership?.CheckMembership(MakeBigSegmentRef(segment));
         }
 
         private bool MatchSegmentRule(ref EvalState state, in Segment segment, in SegmentRule segmentRule)

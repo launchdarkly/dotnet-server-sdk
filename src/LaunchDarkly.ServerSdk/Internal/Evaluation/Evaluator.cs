@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Logging;
@@ -45,7 +46,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             internal LazyStack<string> PrereqFlagKeyStack;
             internal LazyStack<string> SegmentKeyStack;
             internal ImmutableList<PrerequisiteEvalRecord>.Builder PrereqEvals;
-            internal IMembership BigSegmentsMembership;
+            internal Dictionary<string, IMembership> BigSegmentsMembership;
             internal BigSegmentsStatus? BigSegmentsStatus;
 
             internal EvalState(Context context)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
@@ -261,6 +262,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal class ClauseBuilder
     {
+        private string _contextKind;
         private AttributeRef _attribute;
         private Operator _op;
         private List<LdValue> _values = new List<LdValue>();
@@ -268,7 +270,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         internal Clause Build()
         {
-            return new Clause(null, _attribute, _op, _values, _negate);
+            return new Clause(_contextKind, _attribute, _op, _values, _negate);
+        }
+
+        public ClauseBuilder ContextKind(string contextKind)
+        {
+            _contextKind = contextKind;
+            return this;
         }
 
         public ClauseBuilder Attribute(string attribute) =>
@@ -288,16 +296,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         public ClauseBuilder Op(string opName) => Op(Operator.ForName(opName));
 
-        public ClauseBuilder Values(List<LdValue> values)
+        public ClauseBuilder Values(IEnumerable<LdValue> values)
         {
-            _values = values;
+            _values = new List<LdValue>(values);
             return this;
         }
 
-        public ClauseBuilder Values(params LdValue[] values)
-        {
-            return Values(new List<LdValue>(values));
-        }
+        public ClauseBuilder Values(params LdValue[] values) =>
+            Values(values.ToImmutableList());
+
+        public ClauseBuilder Values(params string[] values) =>
+            Values(values.Select(v => LdValue.Of(v)));
+
+        public ClauseBuilder Values(params bool[] values) =>
+            Values(values.Select(v => LdValue.Of(v)));
+
+        public ClauseBuilder Values(params int[] values) =>
+            Values(values.Select(v => LdValue.Of(v)));
 
         public ClauseBuilder Negate(bool negate)
         {
@@ -305,25 +320,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        public ClauseBuilder KeyIs(string key)
-        {
-            return Attribute("key").Op("in").Values(LdValue.Of(key));
-        }
+        public ClauseBuilder KeyIs(string key) =>
+            Attribute("key").Op("in").Values(key);
 
-        public static Clause ShouldMatchUser(Context user)
-        {
-            return new ClauseBuilder().KeyIs(user.Key).Build();
-        }
+        public static Clause ShouldMatchUser(Context user) =>
+            new ClauseBuilder().KeyIs(user.Key).Build();
 
-        public static Clause ShouldNotMatchUser(Context user)
-        {
-            return new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
-        }
+        public static Clause ShouldMatchAnyUser() =>
+            new ClauseBuilder().Attribute("key").Op("in").Values("").Negate(true).Build();
 
-        public static Clause ShouldMatchSegment(string segmentKey)
-        {
-            return new ClauseBuilder().Attribute("").Op("segmentMatch").Values(LdValue.Of(segmentKey)).Build();
-        }
+        public static Clause ShouldMatchAnyContext() =>
+            new ClauseBuilder().Attribute("kind").Op("in").Values("").Negate(true).Build();
+
+        public static Clause ShouldNotMatchUser(Context user) =>
+            new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
+
+        public static Clause ShouldMatchSegment(string segmentKey) =>
+            new ClauseBuilder().Attribute("").Op("segmentMatch").Values(segmentKey).Build();
     }
 
     internal class TargetBuilder
