@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal IEnumerable<SegmentRule> Rules { get; }
         internal string Salt { get; }
         internal bool Unbounded { get; }
-        internal string UnboundedContextKind { get; }
+        internal ContextKind? UnboundedContextKind { get; }
         internal int? Generation { get; }
         internal PreprocessedData Preprocessed { get; }
 
@@ -34,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             IEnumerable<SegmentRule> rules,
             string salt,
             bool unbounded,
-            string unboundedContextKind,
+            ContextKind? unboundedContextKind,
             int? generation
             )
         {
@@ -69,11 +69,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal readonly struct SegmentTarget
     {
-        internal readonly string ContextKind;
+        internal readonly ContextKind? ContextKind;
         internal readonly IEnumerable<string> Values;
         internal readonly ImmutableHashSet<string> PreprocessedValues;
 
-        public SegmentTarget(string contextKind, IEnumerable<string> values)
+        public SegmentTarget(ContextKind? contextKind, IEnumerable<string> values)
         {
             ContextKind = contextKind;
             Values = values ?? Enumerable.Empty<string>();
@@ -85,10 +85,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         internal IEnumerable<Clause> Clauses { get; }
         internal int? Weight { get; }
-        internal string RolloutContextKind { get; }
+        internal ContextKind? RolloutContextKind { get; }
         internal AttributeRef BucketBy { get; }
 
-        internal SegmentRule(IEnumerable<Clause> clauses, int? weight, string rolloutContextKind, AttributeRef bucketBy)
+        internal SegmentRule(IEnumerable<Clause> clauses, int? weight, ContextKind? rolloutContextKind, AttributeRef bucketBy)
         {
             Clauses = clauses ?? Enumerable.Empty<Clause>();
             Weight = weight;

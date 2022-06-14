@@ -13,6 +13,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
     internal static class EvaluatorTestUtil
     {
+        public static ContextKind kind1 = ContextKind.Of("kind1"), kind2 = ContextKind.Of("kind2");
+
         /// <summary>
         /// This Evaluator instance will throw an exception if it tries to query any additional flags or segments.
         /// </summary>

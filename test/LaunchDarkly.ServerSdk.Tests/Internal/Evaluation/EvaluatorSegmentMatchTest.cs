@@ -22,12 +22,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void ExplicitIncludeByContextKind()
         {
             var s = new SegmentBuilder("test").Version(1).
-                IncludedContext("kind1", "key1").IncludedContext("kind2", "key2").Build();
+                IncludedContext(kind1, "key1").IncludedContext(kind2, "key2").Build();
             
-            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key1")));
-            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind2", "key2")));
-            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key2")));
-            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind2", "key1")));
+            Assert.True(SegmentMatchesUser(s, Context.New(kind1, "key1")));
+            Assert.True(SegmentMatchesUser(s, Context.New(kind2, "key2")));
+            Assert.False(SegmentMatchesUser(s, Context.New(kind1, "key2")));
+            Assert.False(SegmentMatchesUser(s, Context.New(kind2, "key1")));
             Assert.False(SegmentMatchesUser(s, Context.New("key1")));
         }
 
@@ -51,8 +51,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     ).Build()).
                 Build();
 
-            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind1", "foo")));
-            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind2", "foo")));
+            Assert.True(SegmentMatchesUser(s, Context.New(kind1, "foo")));
+            Assert.False(SegmentMatchesUser(s, Context.New(kind2, "foo")));
         }
 
         [Fact]
@@ -71,13 +71,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void ExplicitExcludeByContextKind()
         {
             var s = new SegmentBuilder("test").Version(1).
-                ExcludedContext("kind1", "key1").
+                ExcludedContext(kind1, "key1").
                 Rules(new SegmentRuleBuilder().Clauses(ClauseBuilder.ShouldMatchAnyContext()).Build()).
                 Build();
 
-            Assert.False(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key1")));
-            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind1", "key2")));
-            Assert.True(SegmentMatchesUser(s, Context.NewWithKind("kind2", "key1")));
+            Assert.False(SegmentMatchesUser(s, Context.New(kind1, "key1")));
+            Assert.True(SegmentMatchesUser(s, Context.New(kind1, "key2")));
+            Assert.True(SegmentMatchesUser(s, Context.New(kind2, "key1")));
             Assert.True(SegmentMatchesUser(s, Context.New("key1")));
         }
 

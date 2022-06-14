@@ -263,7 +263,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal class ClauseBuilder
     {
-        private string _contextKind;
+        private ContextKind? _contextKind;
         private AttributeRef _attribute;
         private Operator _op;
         private List<LdValue> _values = new List<LdValue>();
@@ -274,11 +274,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new Clause(_contextKind, _attribute, _op, _values, _negate);
         }
 
-        public ClauseBuilder ContextKind(string contextKind)
+        public ClauseBuilder ContextKind(ContextKind contextKind)
         {
             _contextKind = contextKind;
             return this;
         }
+
+        public ClauseBuilder ContextKind(string contextKind) => ContextKind(Sdk.ContextKind.Of(contextKind));
 
         public ClauseBuilder Attribute(string attribute) =>
             Attribute(AttributeRef.FromPath(attribute));
@@ -342,7 +344,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal class TargetBuilder
     {
-        public static Target ContextTarget(string contextKind, int variation, params string[] values) =>
+        public static Target ContextTarget(ContextKind? contextKind, int variation, params string[] values) =>
             new Target(contextKind, ImmutableList.CreateRange(values), variation);
 
         public static Target UserTarget(int variation, params string[] values) =>

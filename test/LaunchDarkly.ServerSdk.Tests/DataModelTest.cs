@@ -268,7 +268,7 @@ namespace LaunchDarkly.Sdk.Server
                         },
                         c =>
                         {
-                            Assert.Equal("org", c.ContextKind);
+                            Assert.Equal(ContextKind.Of("org"), c.ContextKind);
                             Assert.Equal(AttributeRef.FromLiteral("key"), c.Attribute);
                             Assert.Equal(Operator.In, c.Op);
                             Assert.Equal(ImmutableList.Create(LdValue.Of("org-key")), c.Values);
@@ -281,7 +281,7 @@ namespace LaunchDarkly.Sdk.Server
                     Assert.False(r.TrackEvents);
                     Assert.Null(r.Variation);
                     Assert.NotNull(r.Rollout);
-                    Assert.Equal("org", r.Rollout.Value.ContextKind);
+                    Assert.Equal(ContextKind.Of("org"), r.Rollout.Value.ContextKind);
                     Assert.Collection(r.Rollout.Value.Variations,
                         v =>
                         {
@@ -357,20 +357,20 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Collection(segment.IncludedContexts,
                 t =>
                 {
-                    Assert.Equal("org", t.ContextKind);
+                    Assert.Equal(ContextKind.Of("org"), t.ContextKind);
                     Assert.Equal(ImmutableList.Create("key5"), t.Values);
                 });
             Assert.Collection(segment.ExcludedContexts,
                 t =>
                 {
-                    Assert.Equal("org", t.ContextKind);
+                    Assert.Equal(ContextKind.Of("org"), t.ContextKind);
                     Assert.Equal(ImmutableList.Create("key6"), t.Values);
                 });
             Assert.Collection(segment.Rules,
                 r =>
                 {
                     Assert.Equal(50000, r.Weight);
-                    Assert.Equal("org", r.RolloutContextKind);
+                    Assert.Equal(ContextKind.Of("org"), r.RolloutContextKind);
                     Assert.Equal(AttributeRef.FromLiteral("email"), r.BucketBy);
                     Assert.Collection(r.Clauses,
                         c =>
@@ -389,7 +389,7 @@ namespace LaunchDarkly.Sdk.Server
                 });
 
             Assert.True(segment.Unbounded);
-            Assert.Equal("org", segment.UnboundedContextKind);
+            Assert.Equal(ContextKind.Of("org"), segment.UnboundedContextKind);
             Assert.Equal(51, segment.Generation);
         }
     }

@@ -52,11 +52,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             var targetKey = "key1";
             var otherKey = "key2";
-            var targetKind = "kind1";
-            var otherKind = "kind2";
-            var targetContext = Context.NewWithKind(targetKind, targetKey);
+            var targetKind = ContextKind.Of("kind1");
+            var otherKind = ContextKind.Of("kind2");
+            var targetContext = Context.New(targetKind, targetKey);
             var evalContext = multiKindContext ?
-                Context.NewMulti(targetContext, Context.NewWithKind(otherKind, otherKey)) :
+                Context.NewMulti(targetContext, Context.New(otherKind, otherKey)) :
                 targetContext;
             
             var segment = new SegmentBuilder("segmentkey").

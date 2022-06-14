@@ -17,6 +17,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         private static readonly LdValue fallthroughValue = LdValue.Of("fallthrough");
         private static readonly LdValue offValue = LdValue.Of("off");
         private static readonly LdValue Value = LdValue.Of("on");
+        private static readonly ContextKind DogKind = ContextKind.Of("dog"), CatKind = ContextKind.Of("cat");
 
         [Fact]
         public void UserTargetsOnly()
@@ -48,10 +49,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     TargetBuilder.UserTarget(MatchVar2, "b", "a")
                     )
                 .ContextTargets(
-                    TargetBuilder.ContextTarget("dog", MatchVar1, "a", "b"),
-                    TargetBuilder.ContextTarget("dog", MatchVar2, "c"),
-                    TargetBuilder.ContextTarget("user", MatchVar1),
-                    TargetBuilder.ContextTarget("user", MatchVar2)
+                    TargetBuilder.ContextTarget(DogKind, MatchVar1, "a", "b"),
+                    TargetBuilder.ContextTarget(DogKind, MatchVar2, "c"),
+                    TargetBuilder.ContextTarget(ContextKind.Default, MatchVar1),
+                    TargetBuilder.ContextTarget(ContextKind.Default, MatchVar2)
                     )
                 .Build();
 
@@ -71,9 +72,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
         private static Context User(string key) => Context.New(key);
 
-        private static Context Dog(string key) => Context.NewWithKind("dog", key);
+        private static Context Dog(string key) => Context.New(DogKind, key);
 
-        private static Context Cat(string key) => Context.NewWithKind("cat", key);
+        private static Context Cat(string key) => Context.New(CatKind, key);
 
         private static void ExpectMatch(FeatureFlag f, Context c, int variation)
         {

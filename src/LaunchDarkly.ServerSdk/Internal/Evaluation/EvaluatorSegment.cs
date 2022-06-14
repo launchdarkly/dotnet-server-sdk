@@ -33,7 +33,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 {
                     if (!segment.Preprocessed.IncludedSet.IsEmpty || !segment.Preprocessed.ExcludedSet.IsEmpty)
                     {
-                        if (state.Context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
+                        if (state.Context.TryGetContextByKind(ContextKind.Default, out var matchContext))
                         {
                             if (segment.Preprocessed.IncludedSet.Contains(matchContext.Key))
                             {
@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     }
                     foreach (var target in segment.IncludedContexts)
                     {
-                        if (state.Context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
+                        if (state.Context.TryGetContextByKind(target.ContextKind ?? ContextKind.Default, out var matchContext) &&
                             target.PreprocessedValues.Contains(matchContext.Key))
                         {
                             return true;
@@ -55,7 +55,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     }
                     foreach (var target in segment.ExcludedContexts)
                     {
-                        if (state.Context.TryGetContextByKind(target.ContextKind, out var matchContext) &&
+                        if (state.Context.TryGetContextByKind(target.ContextKind ?? ContextKind.Default, out var matchContext) &&
                             target.PreprocessedValues.Contains(matchContext.Key))
                         {
                             return false;
@@ -91,7 +91,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 state.BigSegmentsStatus = BigSegmentsStatus.NotConfigured;
                 return false;
             }
-            if (!state.Context.TryGetContextByKind(segment.UnboundedContextKind ?? Context.DefaultKind, out var matchContext))
+            if (!state.Context.TryGetContextByKind(segment.UnboundedContextKind ?? ContextKind.Default, out var matchContext))
             {
                 return false;
             }
@@ -140,7 +140,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 false,
                 null,
                 state.Context,
-                segmentRule.RolloutContextKind ?? Context.DefaultKind,
+                segmentRule.RolloutContextKind,
                 segment.Key,
                 segmentRule.BucketBy,
                 segment.Salt

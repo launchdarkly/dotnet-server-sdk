@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private string _salt;
         private bool _deleted;
         private bool _unbounded;
-        private string _unboundedContextKind;
+        private ContextKind? _unboundedContextKind;
         private int? _generation;
 
         internal SegmentBuilder(string key)
@@ -64,13 +64,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        internal SegmentBuilder IncludedContext(string contextKind, params string[] keys)
+        internal SegmentBuilder IncludedContext(ContextKind contextKind, params string[] keys)
         {
             _includedContexts.Add(new SegmentTarget(contextKind, new HashSet<string>(keys)));
             return this;
         }
 
-        internal SegmentBuilder ExcludedContext(string contextKind, params string[] keys)
+        internal SegmentBuilder ExcludedContext(ContextKind contextKind, params string[] keys)
         {
             _excludedContexts.Add(new SegmentTarget(contextKind, new HashSet<string>(keys)));
             return this;
@@ -99,7 +99,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        internal SegmentBuilder UnboundedContextKind(string kind)
+        internal SegmentBuilder UnboundedContextKind(ContextKind kind)
         {
             _unboundedContextKind = kind;
             return this;
@@ -116,7 +116,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     {
         private readonly List<Clause> _clauses = new List<Clause>();
         private int? _weight;
-        private string _rolloutContextKind;
+        private ContextKind? _rolloutContextKind;
         private AttributeRef _bucketBy;
 
         internal SegmentRule Build() =>
@@ -139,7 +139,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
-        public SegmentRuleBuilder RolloutContextKind(string rolloutContextKind)
+        public SegmentRuleBuilder RolloutContextKind(ContextKind rolloutContextKind)
         {
             _rolloutContextKind = rolloutContextKind;
             return this;
