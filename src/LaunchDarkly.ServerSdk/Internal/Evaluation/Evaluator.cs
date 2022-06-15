@@ -198,7 +198,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     {
                         throw new StopEvaluationException(
                             EvaluationErrorKind.MalformedFlag,
-                            "Prerequisite relationship to \"{0}\" caused a circular reference;" +
+                            "prerequisite relationship to \"{0}\" caused a circular reference;" +
                                 " this is probably a temporary condition due to an incomplete update",
                             prereq.Key
                             );

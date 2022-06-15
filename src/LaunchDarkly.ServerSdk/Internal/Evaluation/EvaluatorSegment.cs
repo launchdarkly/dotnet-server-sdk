@@ -16,7 +16,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             {
                 throw new StopEvaluationException(
                     EvaluationErrorKind.MalformedFlag,
-                    "Segment rule referencing segment \"{0}\" caused a circular reference;" +
+                    "segment rule referencing segment \"{0}\" caused a circular reference;" +
                         " this is probably a temporary condition due to an incomplete update",
                     segment.Key
                     );
