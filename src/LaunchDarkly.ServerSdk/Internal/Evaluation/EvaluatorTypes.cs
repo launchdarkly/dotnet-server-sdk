@@ -99,8 +99,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         internal class StopEvaluationException : Exception
         {
             internal EvaluationErrorKind ErrorKind { get; }
+            internal string MessageFormat { get; }
+            internal object[] MessageParams { get; }
 
-            internal StopEvaluationException(EvaluationErrorKind errorKind) { ErrorKind = errorKind; }
+            internal StopEvaluationException(EvaluationErrorKind errorKind, string messageFormat, params object[] messageParams)
+            {
+                ErrorKind = errorKind;
+                MessageFormat = messageFormat;
+                MessageParams = messageParams;
+            }
         }
     }
 }

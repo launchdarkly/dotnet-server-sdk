@@ -1,5 +1,7 @@
 ﻿using LaunchDarkly.Sdk.Server.Internal.Model;
 
+using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTypes;
+
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
     internal partial class Evaluator
@@ -29,11 +31,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             if (!clause.Attribute.Defined)
             {
-                return false; // TODO: error
+                throw new StopEvaluationException(
+                    EvaluationErrorKind.MalformedFlag,
+                    "rule clause did not specify an attribute"
+                    );
             }
             if (!clause.Attribute.Valid)
             {
-                return false; // TODO: error
+                throw new StopEvaluationException(
+                    EvaluationErrorKind.MalformedFlag,
+                    @"invalid attribute reference ""{0}""",
+                    clause.Attribute.ToString()
+                    );
             }
             if (clause.Attribute.Depth == 1 &&
                 clause.Attribute.TryGetComponent(0, out var pathComponent) &&

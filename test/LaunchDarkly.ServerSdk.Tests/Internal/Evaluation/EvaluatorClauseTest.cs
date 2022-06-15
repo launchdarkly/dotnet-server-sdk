@@ -42,6 +42,30 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         }
 
         [Fact]
+        public void ClauseReturnsMalformedFlagErrorForAttributeNotSpecified()
+        {
+            var clause = new ClauseBuilder().Op("in").Values(4).Build();
+            var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
+            var user = Context.Builder("key").Name("bob").Build();
+
+            var result = BasicEvaluator.Evaluate(f, user).Result;
+            Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag), result.Reason);
+            Assert.Equal(LdValue.Null, result.Value);
+        }
+
+        [Fact]
+        public void ClauseReturnsMalformedFlagErrorForMalformedAttributeReference()
+        {
+            var clause = new ClauseBuilder().Attribute(AttributeRef.FromPath("///")).Op("in").Values(4).Build();
+            var f = new FeatureFlagBuilder("key").BooleanWithClauses(clause).Build();
+            var user = Context.Builder("key").Name("bob").Build();
+
+            var result = BasicEvaluator.Evaluate(f, user).Result;
+            Assert.Equal(EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag), result.Reason);
+            Assert.Equal(LdValue.Null, result.Value);
+        }
+
+        [Fact]
         public void ClauseCanBeNegated()
         {
             var clause = new ClauseBuilder().Attribute("name").Op("in").Values("Bob")
