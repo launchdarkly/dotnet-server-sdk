@@ -102,13 +102,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             Assert.Equal((double)resultForInt, (double)resultForString, 10);
 
             var multiContext = Context.NewMulti(
-                Context.NewWithKind("kind1", "key1"),
+                Context.New(kind1, "key1"),
                 Context.Builder("key2").Kind("kind2")
                     .Set("stringattr", "33333")
                     .Set("intattr", 33333)
                     .Build());
-            var resultForString1 = Bucketing.ComputeBucketValue(false, null, multiContext, "kind2", "key", AttributeRef.FromLiteral("stringattr"), "salt");
-            var resultForInt1 = Bucketing.ComputeBucketValue(false, null, multiContext, "kind2", "key", AttributeRef.FromLiteral("intattr"), "salt");
+            var resultForString1 = Bucketing.ComputeBucketValue(false, null, multiContext, kind2, "key", AttributeRef.FromLiteral("stringattr"), "salt");
+            var resultForInt1 = Bucketing.ComputeBucketValue(false, null, multiContext, kind2, "key", AttributeRef.FromLiteral("intattr"), "salt");
             Assert.Equal(resultForString, resultForString1);
             Assert.Equal(resultForInt, resultForInt1);
         }

@@ -214,7 +214,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         internal static Target ReadTarget(ref JReader r)
         {
-            string contextKind = null;
+            ContextKind? contextKind = null;
             ImmutableList<string> values = null;
             int variation = 0;
             for (var obj = r.Object(); obj.Next(ref r);)
@@ -222,7 +222,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 switch (obj.Name)
                 {
                     case var n when n == "contextKind":
-                        contextKind = r.StringOrNull();
+                        contextKind = SerializationHelpers.MaybeContextKind(r.StringOrNull());
                         break;
                     case var n when n == "values":
                         values = SerializationHelpers.ReadStrings(ref r);
@@ -241,7 +241,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             foreach (var t in targets)
             {
                 var targetObj = arr.Object();
-                targetObj.MaybeName("contextKind", !string.IsNullOrEmpty(t.ContextKind)).String(t.ContextKind);
+                SerializationHelpers.MaybeWriteContextKind(ref targetObj, t.ContextKind);
                 targetObj.Name("variation").Int(t.Variation);
                 SerializationHelpers.WriteStrings(targetObj.Name("values"), t.Values);
                 targetObj.End();
@@ -302,7 +302,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal static Rollout? ReadRollout(ref JReader r)
         {
             ImmutableList<WeightedVariation> variations = null;
-            string contextKind = null;
+            ContextKind? contextKind = null;
             string bucketBy = null;
             RolloutKind kind = RolloutKind.Rollout;
             int? seed = null;
@@ -341,7 +341,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         variations = listBuilder.ToImmutable();
                         break;
                     case var n when n == "contextKind":
-                        contextKind = r.StringOrNull();
+                        contextKind = SerializationHelpers.MaybeContextKind(r.StringOrNull());
                         break;
                     case var n when n == "bucketBy":
                         bucketBy = r.StringOrNull();
@@ -387,9 +387,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 {
                     ruleObj.Name("weight").Int(r.Weight.Value);
                 }
-                if (!string.IsNullOrEmpty(r.RolloutContextKind))
+                if (r.RolloutContextKind.HasValue)
                 {
-                    ruleObj.Name("rolloutContextKind").String(r.RolloutContextKind);
+                    ruleObj.Name("rolloutContextKind").String(r.RolloutContextKind.Value.Value);
                 }
                 ruleObj.MaybeName("bucketBy", r.BucketBy.Defined).String(r.BucketBy.ToString());
                 ruleObj.End();
@@ -397,7 +397,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             rulesArr.End();
 
             obj.MaybeName("unbounded", segment.Unbounded).Bool(segment.Unbounded);
-            obj.MaybeName("unboundedContextKind", !string.IsNullOrEmpty(segment.UnboundedContextKind)).String(segment.UnboundedContextKind);
+            if (segment.UnboundedContextKind.HasValue)
+            {
+                obj.Name("unboundedContextKind").String(segment.UnboundedContextKind.Value.Value);
+            }
             obj.MaybeName("generation", segment.Generation.HasValue).IntOrNull(segment.Generation);
 
             obj.End();
@@ -413,7 +416,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             ImmutableList<SegmentRule> rules = null;
             string salt = null;
             bool unbounded = false;
-            string unboundedContextKind = null;
+            ContextKind? unboundedContextKind = null;
             int? generation = null;
 
             for (var obj = reader.Object().WithRequiredProperties(_requiredProperties); obj.Next(ref reader);)
@@ -456,7 +459,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         unbounded = reader.Bool();
                         break;
                     case var n when n == "unboundedContextKind":
-                        unboundedContextKind = reader.StringOrNull();
+                        unboundedContextKind = SerializationHelpers.MaybeContextKind(reader.StringOrNull());
                         break;
                     case var n when n == "generation":
                         generation = reader.IntOrNull();
@@ -476,14 +479,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var builder = ImmutableList.CreateBuilder<SegmentTarget>();
             for (var arr = reader.ArrayOrNull(); arr.Next(ref reader);)
             {
-                string contextKind = null;
+                ContextKind? contextKind = null;
                 ImmutableList<string> values = null;
                 for (var obj = reader.Object(); obj.Next(ref reader);)
                 {
                     switch (obj.Name)
                     {
                         case var n when n == "contextKind":
-                            contextKind = reader.StringOrNull();
+                            contextKind = SerializationHelpers.MaybeContextKind(reader.StringOrNull());
                             break;
                         case var n when n == "values":
                             values = SerializationHelpers.ReadStrings(ref reader);
@@ -501,7 +504,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             foreach (var t in targets)
             {
                 var obj = arr.Object();
-                obj.Name("contextKind").String(t.ContextKind);
+                if (t.ContextKind.HasValue)
+                {
+                    obj.Name("contextKind").String(t.ContextKind.Value.Value);
+                }
                 SerializationHelpers.WriteStrings(obj.Name("values"), t.Values);
                 obj.End();
             }
@@ -512,7 +518,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             ImmutableList<Clause> clauses = null;
             int? weight = null;
-            string rolloutContextKind = null;
+            ContextKind? rolloutContextKind = null;
             string bucketBy = null;
             for (var obj = reader.Object(); obj.Next(ref reader);)
             {
@@ -525,7 +531,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         weight = reader.IntOrNull();
                         break;
                     case var n when n == "rolloutContextKind":
-                        rolloutContextKind = reader.StringOrNull();
+                        rolloutContextKind = SerializationHelpers.MaybeContextKind(reader.StringOrNull());
                         break;
                     case var n when n == "bucketBy":
                         bucketBy = reader.StringOrNull();
@@ -557,9 +563,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         rolloutObj.Name("kind").String("experiment");
                         break;
                 }
-                if (!string.IsNullOrEmpty(rollout.Value.ContextKind))
+                if (rollout.Value.ContextKind.HasValue)
                 {
-                    rolloutObj.Name("contextKind").String(rollout.Value.ContextKind);
+                    rolloutObj.Name("contextKind").String(rollout.Value.ContextKind.Value.Value);
                 }
                 if (rollout.Value.Seed.HasValue)
                 {
@@ -587,10 +593,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             foreach (var c in clauses)
             {
                 var clauseObj = arr.Object();
-                if (!string.IsNullOrEmpty(c.ContextKind))
-                {
-                    clauseObj.Name("contextKind").String(c.ContextKind);
-                }
+                MaybeWriteContextKind(ref clauseObj, c.ContextKind);
                 clauseObj.Name("attribute").String(c.Attribute.ToString());
                 clauseObj.Name("op").String(c.Op.Name);
                 WriteValues(clauseObj.Name("values"), c.Values);
@@ -625,7 +628,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             var builder = ImmutableList.CreateBuilder<Clause>();
             for (var arr = r.ArrayOrNull(); arr.Next(ref r);)
             {
-                string contextKind = null;
+                ContextKind? contextKind = null;
                 string attribute = null;
                 Operator op = null;
                 ImmutableList<LdValue> values = null;
@@ -635,7 +638,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                     switch (obj.Name)
                     {
                         case var n when n == "contextKind":
-                            contextKind = r.String();
+                            contextKind = MaybeContextKind(r.StringOrNull());
                             break;
                         case var n when n == "attribute":
                             attribute = r.String();
@@ -655,6 +658,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 builder.Add(new Clause(contextKind, AttrRefOrName(contextKind, attribute), op, values, negate));
             }
             return builder.ToImmutable();
+        }
+
+        internal static ContextKind? MaybeContextKind(string s) => s is null ? (ContextKind?)null : ContextKind.Of(s);
+
+        internal static void MaybeWriteContextKind(ref ObjectWriter obj, ContextKind? kind)
+        {
+            if (kind.HasValue)
+            {
+                obj.Name("contextKind").String(kind.Value.Value);
+            }
         }
 
         internal static ImmutableList<string> ReadStrings(ref JReader r)
@@ -677,7 +690,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return builder.ToImmutable();
         }
 
-        internal static AttributeRef AttrRefOrName(string contextKind, string attrString)
+        internal static AttributeRef AttrRefOrName(ContextKind? contextKind, string attrString)
         {
             // If contextKind is specified, then attrString should be interpreted as an attribute reference
             // which could be a slash-delimited path. If contextKind is not specified, then attrString should
@@ -686,7 +699,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             {
                 return new AttributeRef();
             }
-            if (string.IsNullOrEmpty(contextKind))
+            if (!contextKind.HasValue)
             {
                 return AttributeRef.FromLiteral(attrString);
             }

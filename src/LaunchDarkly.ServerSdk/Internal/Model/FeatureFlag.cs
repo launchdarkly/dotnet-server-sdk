@@ -54,12 +54,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     internal struct Rollout
     {
         internal RolloutKind Kind { get; }
-        internal string ContextKind { get; }
+        internal ContextKind? ContextKind { get; }
         internal int? Seed { get; }
         internal IEnumerable<WeightedVariation> Variations { get; }
         internal AttributeRef BucketBy { get; }
 
-        internal Rollout(RolloutKind kind, string contextKind, int? seed, IEnumerable<WeightedVariation> variations, AttributeRef bucketBy)
+        internal Rollout(RolloutKind kind, ContextKind? contextKind, int? seed, IEnumerable<WeightedVariation> variations, AttributeRef bucketBy)
         {
             Kind = kind;
             ContextKind = contextKind;
@@ -103,12 +103,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
     internal struct Target
     {
-        internal string ContextKind { get; }
+        internal ContextKind? ContextKind { get; }
         internal IEnumerable<string> Values { get; }
         internal int Variation { get; }
         internal PreprocessedData Preprocessed { get; }
 
-        internal Target(string contextKind, IEnumerable<string> values, int variation)
+        internal Target(ContextKind? contextKind, IEnumerable<string> values, int variation)
         {
             ContextKind = contextKind;
             Values = values ?? Enumerable.Empty<string>();

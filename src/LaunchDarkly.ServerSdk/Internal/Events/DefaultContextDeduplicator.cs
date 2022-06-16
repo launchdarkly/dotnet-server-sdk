@@ -16,7 +16,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         public TimeSpan? FlushInterval => _flushInterval;
 
-        public bool ProcessContext(ref Context context)
+        public bool ProcessContext(in Context context)
         {
             if (!context.Valid)
             {

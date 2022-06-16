@@ -9,7 +9,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             if (flag.ContextTargets.IsEmpty)
             {
                 // old-style data has only targets for users
-                if (!state.Context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
+                if (!state.Context.TryGetContextByKind(ContextKind.Default, out var matchContext))
                 {
                     return null;
                 }
@@ -26,10 +26,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             // new-style data has ContextTargets, which may include placeholders for user targets that are in Targets
             foreach (var t in flag.ContextTargets)
             {
-                var contextKind = string.IsNullOrEmpty(t.ContextKind) ? Context.DefaultKind : t.ContextKind;
-                if (contextKind == Context.DefaultKind)
+                var contextKind = t.ContextKind ?? ContextKind.Default;
+                if (contextKind.IsDefault)
                 {
-                    if (!state.Context.TryGetContextByKind(Context.DefaultKind, out var matchContext))
+                    if (!state.Context.TryGetContextByKind(contextKind, out var matchContext))
                     {
                         continue;
                     }
@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
                 else
                 {
-                    if (state.Context.TryGetContextByKind(t.ContextKind, out var matchContext) &&
+                    if (state.Context.TryGetContextByKind(contextKind, out var matchContext) &&
                         TargetHasKey(t, matchContext.Key))
                     {
                         return t.Variation;

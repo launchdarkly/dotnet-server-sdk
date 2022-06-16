@@ -41,7 +41,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             {
                 return MaybeNegate(clause, MatchClauseByKind(ref state, clause));
             }
-            if (!state.Context.TryGetContextByKind(clause.ContextKind ?? Context.DefaultKind, out var matchContext))
+            if (!state.Context.TryGetContextByKind(clause.ContextKind ?? ContextKind.Default, out var matchContext))
             {
                 return false;
             }
@@ -90,13 +90,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             {
                 foreach (var individualContext in state.Context.MultiKindContexts)
                 {
-                    if (ClauseMatchAny(clause, LdValue.Of(individualContext.Kind)))
+                    if (ClauseMatchAny(clause, LdValue.Of(individualContext.Kind.Value)))
                     {
                         return true;
                     }
                 }
             }
-            return ClauseMatchAny(clause, LdValue.Of(state.Context.Kind));
+            return ClauseMatchAny(clause, LdValue.Of(state.Context.Kind.Value));
         }
 
         private static bool MaybeNegate(in Clause clause, bool b) =>

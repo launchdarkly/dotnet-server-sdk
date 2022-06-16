@@ -12,13 +12,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             bool isExperiment,
             int? seed,
             in Context context,
-            string contextKind,
+            in ContextKind? contextKind,
             string key,
             in AttributeRef? attr,
             string salt
             )
         {
-            if (!context.TryGetContextByKind(contextKind ?? Context.DefaultKind, out var matchContext))
+            if (!context.TryGetContextByKind(contextKind ?? ContextKind.Default, out var matchContext))
             {
                 return 0;
             }

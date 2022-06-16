@@ -159,27 +159,27 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("b", true),
                 fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "a", "b")).
-                    ContextTargets(ContextTarget(Context.DefaultKind, 0))
+                    ContextTargets(ContextTarget(ContextKind.Default, 0))
                 );
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("a", true),
                 fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "a")).
-                    ContextTargets(ContextTarget(Context.DefaultKind, 0))
+                    ContextTargets(ContextTarget(ContextKind.Default, 0))
                 );
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("a", false),
                 fb => expectedBooleanFlag(fb).Targets(UserTarget(1, "a")).
-                    ContextTargets(ContextTarget(Context.DefaultKind, 1))
+                    ContextTargets(ContextTarget(ContextKind.Default, 1))
                 );
             VerifyFlag(
                 f => f.VariationForUser("a", false).VariationForUser("b", true).VariationForUser("c", false),
                 fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "b"), UserTarget(1, "a", "c")).
-                    ContextTargets(ContextTarget(Context.DefaultKind, 0), ContextTarget(Context.DefaultKind, 1))
+                    ContextTargets(ContextTarget(ContextKind.Default, 0), ContextTarget(ContextKind.Default, 1))
                 );
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("b", true).VariationForUser("a", false),
                 fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "b"), UserTarget(1, "a")).
-                    ContextTargets(ContextTarget(Context.DefaultKind, 0), ContextTarget(Context.DefaultKind, 1))
+                    ContextTargets(ContextTarget(ContextKind.Default, 0), ContextTarget(ContextKind.Default, 1))
                 );
 
             Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedStringFlag = fb =>
@@ -189,20 +189,20 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2)
                     .VariationForUser("a", 2).VariationForUser("b", 2),
                 fb => expectedStringFlag(fb).Targets(UserTarget(2, "a", "b")).
-                    ContextTargets(ContextTarget(Context.DefaultKind, 2))
+                    ContextTargets(ContextTarget(ContextKind.Default, 2))
                 );
             VerifyFlag(
                 f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2)
                     .VariationForUser("a", 2).VariationForUser("b", 1).VariationForUser("c", 2),
                 fb => expectedStringFlag(fb).Targets(UserTarget(1, "b"), UserTarget(2, "a", "c")).
-                    ContextTargets(ContextTarget(Context.DefaultKind, 1), ContextTarget(Context.DefaultKind, 2))
+                    ContextTargets(ContextTarget(ContextKind.Default, 1), ContextTarget(ContextKind.Default, 2))
                 );
         }
 
         [Fact]
         public void ContextTargets()
         {
-            string kind1 = "org", kind2 = "other";
+            ContextKind kind1 = ContextKind.Of("org"), kind2 = ContextKind.Of("other");
 
             Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedBooleanFlag = fb =>
                 fb.Variations(true, false).On(true).OffVariation(1).FallthroughVariation(0);
