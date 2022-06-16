@@ -1,10 +1,11 @@
 ﻿using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {

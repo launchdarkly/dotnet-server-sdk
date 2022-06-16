@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface for an object that receives updates to feature flags, user segments, and anything

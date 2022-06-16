@@ -1,5 +1,7 @@
 ﻿
-namespace LaunchDarkly.Sdk.Server.Interfaces
+using LaunchDarkly.Sdk.Server.Interfaces;
+
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface that an implementation of <see cref="IDataStore"/> can use to report

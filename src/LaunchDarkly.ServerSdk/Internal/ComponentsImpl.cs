@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 namespace LaunchDarkly.Sdk.Server.Internal
 {
@@ -80,7 +80,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
             private NullEventProcessorFactory() { }
 
-            public LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor Build(LdClientContext config) =>
+            public IEventProcessor Build(LdClientContext config) =>
                 new NullEventProcessor();
         }
     }

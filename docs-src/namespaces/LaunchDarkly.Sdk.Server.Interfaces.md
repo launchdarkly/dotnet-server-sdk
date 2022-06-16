@@ -1,5 +1,7 @@
-Interfaces that provide advanced SDK features or allow customization of LaunchDarkly components.
+Interfaces and types that are part of the public API, but not needed for basic use of the SDK.
 
-Most applications will not need to refer to these types. You will use them if you are creating a plug-in component, such as a database integration, or if you use advanced features such as <xref:LaunchDarkly.Sdk.Server.LdClient.DataStoreStatusProvider> or <xref:LaunchDarkly.Sdk.Server.LdClient.FlagTracker>.
+Types in this namespace include:
 
-The namespace also includes concrete types that are used as parameters within these interfaces.
+* <xref:LaunchDarkly.Sdk.Server.Interfaces.ILdClient>, which allows the SDK client to be referenced via an interface rather than the concrete type <xref:LaunchDarkly.Sdk.Server.LdClient> (if for instance you want to create a mock implementation for testing).
+* Types like <xref:LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker> that provide a facade for some part of the SDK API; these are returned by properties like <xref:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.FlagTracker>.
+* Concrete types that are used as parameters within these interfaces, like <xref:LaunchDarkly.Sdk.Server.Interfaces.FlagChangeEvent>

@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 
 namespace LaunchDarkly.Sdk.Server

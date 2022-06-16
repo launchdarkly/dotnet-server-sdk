@@ -1,7 +1,7 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Integrations;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Encapsulates the SDK's configuration with regard to Big Segments.

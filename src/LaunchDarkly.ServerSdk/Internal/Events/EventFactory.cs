@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
 {

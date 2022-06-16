@@ -1,6 +1,8 @@
-﻿using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+﻿using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
+
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface that an implementation of <see cref="IDataSource"/> will use to push data into the SDK.

@@ -4,7 +4,7 @@ using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.BigSegmentStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTestUtil;
 

@@ -1,5 +1,5 @@
 ﻿using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Integrations

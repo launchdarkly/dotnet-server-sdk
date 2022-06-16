@@ -1,10 +1,11 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.BigSegmentStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 {

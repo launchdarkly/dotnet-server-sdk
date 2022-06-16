@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.JsonStream;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {

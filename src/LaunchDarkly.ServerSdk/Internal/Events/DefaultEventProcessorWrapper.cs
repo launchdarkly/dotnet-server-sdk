@@ -1,4 +1,4 @@
-﻿using LaunchDarkly.Sdk.Server.Interfaces;
+﻿using LaunchDarkly.Sdk.Server.Subsystems;
 
 using InternalEventProcessor = LaunchDarkly.Sdk.Internal.Events.EventProcessor;
 using InternalEventTypes = LaunchDarkly.Sdk.Internal.Events.EventTypes;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface for an object that can send or store analytics events.

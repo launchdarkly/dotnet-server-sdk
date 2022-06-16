@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Internal.BigSegments;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Types that are used by the <see cref="IBigSegmentStore"/> interface.

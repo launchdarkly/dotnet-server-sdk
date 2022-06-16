@@ -1,5 +1,5 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Moq;
 using Xunit;

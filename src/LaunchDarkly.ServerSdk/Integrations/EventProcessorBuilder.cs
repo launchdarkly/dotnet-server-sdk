@@ -7,6 +7,7 @@ using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
 

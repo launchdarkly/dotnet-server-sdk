@@ -164,7 +164,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// </summary>
             /// <remarks>
             /// Data source implementations do not need to report this kind of error; it will be automatically
-            /// reported by the SDK whenever one of the update methods of <see cref="IDataSourceUpdates"/> throws an
+            /// reported by the SDK whenever one of the update methods of <see cref="Subsystems.IDataSourceUpdates"/> throws an
             /// exception.
             /// </remarks>
             StoreError

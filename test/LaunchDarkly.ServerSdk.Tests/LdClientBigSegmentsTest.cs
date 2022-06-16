@@ -1,12 +1,12 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Integrations;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.BigSegmentStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 
 namespace LaunchDarkly.Sdk.Server
