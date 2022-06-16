@@ -60,7 +60,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             }
         }
 
-
         /// <summary>
         /// Constructs a new Evaluator.
         /// </summary>
@@ -117,10 +116,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 return new EvalResult(details, state.PrereqEvals is null ?
                     ImmutableList.Create<PrerequisiteEvalRecord>() : state.PrereqEvals.ToImmutable());
             }
-            catch (Exception e)
+            catch (StopEvaluationException e)
             {
-                var errorKind = e is StopEvaluationException se ? se.ErrorKind : EvaluationErrorKind.Exception;
-                return new EvalResult(ErrorResult(errorKind), ImmutableList.Create<PrerequisiteEvalRecord>());
+                Logger.Error(@"Could not evaluate flag ""{0}"": {1}", flag.Key, string.Format(e.MessageFormat, e.MessageParams));
+                return new EvalResult(ErrorResult(e.ErrorKind), ImmutableList.Create<PrerequisiteEvalRecord>());
+            }
+            catch (Exception)
+            {
+                return new EvalResult(ErrorResult(EvaluationErrorKind.Exception), ImmutableList.Create<PrerequisiteEvalRecord>());
             }
         }
 
@@ -193,9 +196,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 {
                     if (state.PrereqFlagKeyStack.Contains(prereq.Key))
                     {
-                        Logger.Error("Prerequisite relationship to \"{0}\" caused a circular reference;" +
-                            " this is probably a temporary condition due to an incomplete update", prereq.Key);
-                        throw new StopEvaluationException(EvaluationErrorKind.MalformedFlag);
+                        throw new StopEvaluationException(
+                            EvaluationErrorKind.MalformedFlag,
+                            "prerequisite relationship to \"{0}\" caused a circular reference;" +
+                                " this is probably a temporary condition due to an incomplete update",
+                            prereq.Key
+                            );
                     }
                     var prereqOk = true;
                     var prereqFeatureFlag = FeatureFlagGetter(prereq.Key);

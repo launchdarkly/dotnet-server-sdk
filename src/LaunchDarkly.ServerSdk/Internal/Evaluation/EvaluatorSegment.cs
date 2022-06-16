@@ -14,9 +14,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             if (state.SegmentKeyStack.Contains(segment.Key))
             {
-                Logger.Error("Segment rule referencing segment \"{0}\" caused a circular reference;" +
-                    " this is probably a temporary condition due to an incomplete update", segment.Key);
-                throw new StopEvaluationException(EvaluationErrorKind.MalformedFlag);
+                throw new StopEvaluationException(
+                    EvaluationErrorKind.MalformedFlag,
+                    "segment rule referencing segment \"{0}\" caused a circular reference;" +
+                        " this is probably a temporary condition due to an incomplete update",
+                    segment.Key
+                    );
             }
             state.SegmentKeyStack.Push(segment.Key);
             try

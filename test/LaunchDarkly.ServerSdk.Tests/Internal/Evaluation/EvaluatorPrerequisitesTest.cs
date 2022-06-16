@@ -222,7 +222,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             Assert.Equal(expected, result.Result);
 
             AssertHelpers.LogMessageRegex(logCapture, true, LogLevel.Error,
-                ".*Prerequisite relationship.*circular reference.*");
+                ".*prerequisite relationship.*circular reference.*");
         }
     }
 }

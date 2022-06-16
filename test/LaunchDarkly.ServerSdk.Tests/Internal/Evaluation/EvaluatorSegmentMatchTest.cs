@@ -161,7 +161,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
 
-            AssertHelpers.LogMessageRegex(logCapture, true, LogLevel.Error, ".*Segment rule.* circular reference");
+            AssertHelpers.LogMessageRegex(logCapture, true, LogLevel.Error, ".*segment rule.* circular reference");
         }
 
         private bool SegmentMatchesUser(Segment segment, Context context)
