@@ -224,7 +224,7 @@ namespace TestService
                 .Kind(s.Kind)
                 .Name(s.Name)
                 .Secondary(s.Secondary)
-                .Transient(s.Transient);
+                .Anonymous(s.Anonymous);
             if (!(s.Private is null))
             {
                 b.Private(s.Private);
