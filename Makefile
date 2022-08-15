@@ -9,8 +9,8 @@ clean:
 	dotnet clean
 
 TEMP_TEST_OUTPUT=/tmp/sdk-contract-test-service.log
-BUILDFRAMEWORKS ?= netcoreapp2.1
-TESTFRAMEWORK ?= netcoreapp2.1
+BUILDFRAMEWORKS ?= netcoreapp3.1
+TESTFRAMEWORK ?= netcoreapp3.1
 
 build-contract-tests:
 	@cd contract-tests && dotnet build TestService.csproj

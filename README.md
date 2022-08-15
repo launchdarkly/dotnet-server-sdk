@@ -18,9 +18,9 @@ For using LaunchDarkly in *client-side* .NET applications, including mobile (Xam
 
 This version of the SDK is built for the following targets:
 
-* .NET Core 2.1: runs on .NET Core 2.1+ and 3.x.
-* .NET 5.0: runs on .NET 5.0 and above.
-* .NET Framework 4.5.2: runs on .NET Framework 4.5.x and 4.6.x.
+* .NET 5.0: runs on .NET 5.0 and above (including higher major versions).
+* .NET Core 3.1: runs on .NET Core 3.1+.
+* .NET Framework 4.6.2: runs on .NET Framework 4.6.2 only.
 * .NET Framework 4.7.1: runs on .NET Framework 4.7.1 and above.
 * .NET Standard 2.0: runs in any project that is targeted to .NET Standard 2.x rather than to a specific runtime platform.
 
