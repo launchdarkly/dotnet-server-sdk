@@ -15,7 +15,7 @@ workflows:
       - test-netcore-linux:
           name: .NET 6.0 - Linux
           docker-image: mcr.microsoft.com/dotnet/sdk:6.0-focal
-          build-target-framework: net5.0
+          build-target-framework: net6.0
           test-target-framework: net6.0
           requires:
             - build-all
@@ -50,7 +50,7 @@ orbs:
 jobs:
   build-all:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:5.0-focal
+      - image: mcr.microsoft.com/dotnet/sdk:6.0-focal
     environment:
       ASPNETCORE_SUPPRESSSTATUSMESSAGES: true
     steps:

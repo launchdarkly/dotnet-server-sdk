@@ -73,8 +73,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             return "net462";
 #elif NET471
             return "net471";
-#elif NET5_0
-            return "net5.0";
+#elif NET6_0
+            return "net6.0";
 #else
             return "unknown";
 #endif
