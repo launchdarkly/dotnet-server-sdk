@@ -13,13 +13,6 @@ workflows:
           requires:
             - build-all
       - test-netcore-linux:
-          name: .NET 5.0 - Linux
-          docker-image: mcr.microsoft.com/dotnet/sdk:5.0-focal
-          build-target-framework: net5.0
-          test-target-framework: net5.0
-          requires:
-            - build-all
-      - test-netcore-linux:
           name: .NET 6.0 - Linux
           docker-image: mcr.microsoft.com/dotnet/sdk:6.0-focal
           build-target-framework: net5.0
@@ -33,9 +26,9 @@ workflows:
           requires:
             - build-all
       - test-windows:
-          name: .NET 5.0 - Windows
-          build-target-framework: net5.0
-          test-target-framework: net5.0
+          name: .NET 6.0 - Windows
+          build-target-framework: net6.0
+          test-target-framework: net6.0
           requires:
             - build-all
       - test-windows:
