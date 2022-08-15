@@ -126,7 +126,7 @@ namespace TestService
         public string Kind;
         public string Key;
         public string Name;
-        public bool Transient;
+        public bool Anonymous;
         public string Secondary;
         public string[] Private;
         public Dictionary<string, LdValue> Custom;

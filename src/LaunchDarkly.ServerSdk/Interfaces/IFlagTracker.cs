@@ -65,8 +65,8 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// All feature flag evaluations require an instance of <see cref="Context"/>. If the
         /// feature flag you are tracking does not have any targeting rules, you must still
         /// pass a dummy context such as <c>Context.New("for-global-flags")</c>. If you do not
-        /// want the user to appear on your dashboard, use the <c>Transient</c> property:
-        /// <c>Context.Builder("for-global-flags").Transient(true).Build()</c>.
+        /// want the user to appear on your dashboard, use the <c>Anonymous</c> property:
+        /// <c>Context.Builder("for-global-flags").Anonymous(true).Build()</c>.
         /// </para>
         /// </remarks>
         /// <example>
