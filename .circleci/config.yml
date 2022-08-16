@@ -26,12 +26,6 @@ workflows:
           requires:
             - build-all
       - test-windows:
-          name: .NET 6.0 - Windows
-          build-target-framework: net6.0
-          test-target-framework: net6.0
-          requires:
-            - build-all
-      - test-windows:
           name: .NET Framework 4.6.2 - Windows
           build-target-framework: net462
           test-target-framework: net462
