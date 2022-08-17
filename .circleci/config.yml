@@ -6,55 +6,29 @@ workflows:
     jobs:
       - build-all
       - test-netcore-linux:
-          name: .NET Core 2.1 - Linux
-          docker-image: mcr.microsoft.com/dotnet/core/sdk:2.1-focal
-          build-target-framework: netcoreapp2.1
-          test-target-framework: netcoreapp2.1
-          requires:
-            - build-all
-      - test-netcore-linux:
           name: .NET Core 3.1 - Linux
           docker-image: mcr.microsoft.com/dotnet/core/sdk:3.1-focal
-          build-target-framework: netcoreapp2.1
+          build-target-framework: netcoreapp3.1
           test-target-framework: netcoreapp3.1
-          requires:
-            - build-all
-      - test-netcore-linux:
-          name: .NET 5.0 - Linux
-          docker-image: mcr.microsoft.com/dotnet/sdk:5.0-focal
-          build-target-framework: net5.0
-          test-target-framework: net5.0
           requires:
             - build-all
       - test-netcore-linux:
           name: .NET 6.0 - Linux
           docker-image: mcr.microsoft.com/dotnet/sdk:6.0-focal
-          build-target-framework: net5.0
+          build-target-framework: net6.0
           test-target-framework: net6.0
           requires:
             - build-all
       - test-windows:
-          name: .NET Core 2.1 - Windows
-          build-target-framework: netcoreapp2.1
-          test-target-framework: netcoreapp2.1
-          requires:
-            - build-all
-      - test-windows:
           name: .NET Core 3.1 - Windows
-          build-target-framework: netcoreapp2.1
+          build-target-framework: netcoreapp3.1
           test-target-framework: netcoreapp3.1
           requires:
             - build-all
       - test-windows:
-          name: .NET 5.0 - Windows
-          build-target-framework: net5.0
-          test-target-framework: net5.0
-          requires:
-            - build-all
-      - test-windows:
-          name: .NET Framework 4.5.2 - Windows
-          build-target-framework: net452
-          test-target-framework: net452
+          name: .NET Framework 4.6.2 - Windows
+          build-target-framework: net462
+          test-target-framework: net462
           requires:
             - build-all
       - test-windows:
@@ -70,7 +44,7 @@ orbs:
 jobs:
   build-all:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:5.0-focal
+      - image: mcr.microsoft.com/dotnet/sdk:6.0-focal
     environment:
       ASPNETCORE_SUPPRESSSTATUSMESSAGES: true
     steps:
@@ -84,7 +58,7 @@ jobs:
             # file changes.
             # 2. In the test-netcore job, we are loading dependencies for the test project which might
             # vary depending on which framework we're building the test project with. So we cache the
-            # dependencies there with a key like "deps-netcoreapp2.1-xxxx-yyyy" where the "yyyy" part
+            # dependencies there with a key like "deps-netcoreapp3.1-xxxx-yyyy" where the "yyyy" part
             # will change if the project file for the test project changes.
       - run:
           name: restore dependencies

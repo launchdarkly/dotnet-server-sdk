@@ -5,7 +5,7 @@
          single framework that we are testing; this allows us to test with older SDK
          versions that would error out if they saw any newer target frameworks listed
          here, even if we weren't running those. -->
-    <BuildFrameworks Condition="'$(BUILDFRAMEWORKS)' == ''">netstandard2.0;netcoreapp2.1;net452;net471;net50</BuildFrameworks>
+    <BuildFrameworks Condition="'$(BUILDFRAMEWORKS)' == ''">netstandard2.0;netcoreapp3.1;net462;net471;net6.0</BuildFrameworks>
     <TargetFrameworks>$(BUILDFRAMEWORKS)</TargetFrameworks>
     <!-- Note: whenever we add or remove supported target frameworks, we must update ServerDiagnosticStore.GetDotNetTargetFramework() -->
     <DebugType>portable</DebugType>
