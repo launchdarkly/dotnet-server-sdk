@@ -47,7 +47,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 // our existing data model deserialization logic.
                 var o = _alternateParser(content);
                 var options = new JsonSerializerOptions();
-                options.Converters.Add(new UntypedDictionaryJsonSerializer());
+                options.Converters.Add(new UntypedDictionaryJsonSerializer()); // see comments on this class below
                 var asJson = JsonSerializer.Serialize(o, options);
                 return ParseJson(asJson, version);
             }
@@ -138,6 +138,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 segment.Deleted, segment.Included, segment.Excluded, segment.IncludedContexts, segment.ExcludedContexts,
                 segment.Rules, segment.Salt, segment.Unbounded, segment.UnboundedContextKind, segment.Generation);
 
+        // This custom JSON serializer addresses a problem that can happen when using an external YAML parser.
+        // In JSON, the keys must always be strings, and System.Text.Json will refuse to either serialize or
+        // deserialize anything with non-string keys. But in YAML, the keys can be of any type, so a YAML
+        // parser that is told to deserialize some map-like data without a specific target type may decide to
+        // return the type Dictionary<object, object> even if the keys really are strings.
         private class UntypedDictionaryJsonSerializer : JsonConverter<IDictionary<object, object>>
         {
             public override bool CanConvert(Type typeToConvert) =>
