@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using LaunchDarkly.EventSource;
-using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Concurrent;
@@ -156,7 +156,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 // whatever the encoding was), and then calling Message.DataUtf8Bytes converts
                 // that to UTF-8 bytes.
             }
-            catch (JsonReadException ex)
+            catch (JsonException ex)
             {
                 _log.Error("LaunchDarkly service request failed or received invalid data: {0}",
                     LogValues.ExceptionSummary(ex));

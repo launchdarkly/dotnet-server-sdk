@@ -71,8 +71,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             return "netcoreapp3.1";
 #elif NET462
             return "net462";
-#elif NET471
-            return "net471";
 #elif NET6_0
             return "net6.0";
 #else

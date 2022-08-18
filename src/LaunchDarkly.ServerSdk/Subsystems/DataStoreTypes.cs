@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using LaunchDarkly.JsonStream;
+using System.Text;
+using System.Text.Json;
 
 namespace LaunchDarkly.Sdk.Server.Subsystems
 {
@@ -23,14 +25,14 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
         /// </remarks>
         public sealed class DataKind
         {
-            internal delegate void SerializerToJWriter(object item, IValueWriter writer);
-            internal delegate ItemDescriptor DeserializerFromJReader(ref JReader reader);
+            internal delegate void SerializerToJsonWriter(object item, Utf8JsonWriter writer);
+            internal delegate ItemDescriptor DeserializerFromJsonReader(ref Utf8JsonReader reader);
 
             private readonly string _name;
             private readonly Func<ItemDescriptor, string> _serializer;
             private readonly Func<string, ItemDescriptor> _deserializer;
-            private readonly SerializerToJWriter _internalSerializer;
-            private readonly DeserializerFromJReader _internalDeserializer;
+            private readonly SerializerToJsonWriter _internalSerializer;
+            private readonly DeserializerFromJsonReader _internalDeserializer;
 
             /// <summary>
             /// A case-sensitive alphabetic string that uniquely identifies this data kind.
@@ -74,7 +76,7 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
             /// <returns>an <see cref="ItemDescriptor"/> describing the deserialized object</returns>
             public ItemDescriptor Deserialize(string serializedData) => _deserializer(serializedData);
 
-            internal void SerializeToJWriter(ItemDescriptor item, IValueWriter writer)
+            internal void SerializeToJsonWriter(ItemDescriptor item, Utf8JsonWriter writer)
             {
                 if (_internalSerializer is null)
                 {
@@ -83,7 +85,7 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 _internalSerializer(item.Item, writer);
             }
 
-            internal ItemDescriptor DeserializeFromJReader(ref JReader reader)
+            internal ItemDescriptor DeserializeFromJsonReader(ref Utf8JsonReader reader)
             {
                 if (_internalDeserializer is null)
                 {
@@ -116,31 +118,33 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
 
             internal DataKind(
                 string name,
-                SerializerToJWriter internalSerializer,
-                DeserializerFromJReader internalDeserializer)
+                SerializerToJsonWriter internalSerializer,
+                DeserializerFromJsonReader internalDeserializer)
             {
                 _name = name;
                 _internalSerializer = internalSerializer;
                 _internalDeserializer = internalDeserializer;
                 _serializer = item =>
                 {
-                    var w = JWriter.New();
+                    var stream = new MemoryStream();
+                    var w = new Utf8JsonWriter(stream);
                     if (item.Item is null)
                     {
-                        var obj = w.Object();
-                        obj.Name("version").Int(item.Version);
-                        obj.Name("deleted").Bool(true);
-                        obj.End();
+                        w.WriteStartObject();
+                        w.WriteNumber("version", item.Version);
+                        w.WriteBoolean("deleted", true);
+                        w.WriteEndObject();
                     }
                     else
                     {
                         internalSerializer(item.Item, w);
                     }
-                    return w.GetString();
+                    w.Flush();
+                    return Encoding.UTF8.GetString(stream.ToArray());
                 };
                 _deserializer = s =>
                 {
-                    var r = JReader.FromString(s);
+                    var r = new Utf8JsonReader(Encoding.UTF8.GetBytes(s));
                     return _internalDeserializer(ref r);
                 };
             }

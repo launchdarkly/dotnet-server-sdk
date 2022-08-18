@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using LaunchDarkly.JsonStream;
+using System.Text.Json.Serialization;
 using LaunchDarkly.Sdk.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-    [JsonStreamConverter(typeof(SegmentSerialization))]
+    [JsonConverter(typeof(SegmentSerialization))]
     internal sealed class Segment : IJsonSerializable
     {
         public string Key { get; }

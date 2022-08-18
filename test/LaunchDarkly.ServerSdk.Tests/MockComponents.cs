@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -278,11 +279,11 @@ namespace LaunchDarkly.Sdk.Server
             public int EventCount;
         }
 
-        public Task<EventSenderResult> SendEventDataAsync(EventDataKind kind, string data, int eventCount)
+        public Task<EventSenderResult> SendEventDataAsync(EventDataKind kind, byte[] data, int eventCount)
         {
             if (!FilterKind.HasValue || kind == FilterKind.Value)
             {
-                Calls.Add(new Params { Kind = kind, Data = data, EventCount = eventCount });
+                Calls.Add(new Params { Kind = kind, Data = Encoding.UTF8.GetString(data), EventCount = eventCount });
             }
             return Task.FromResult(new EventSenderResult(DeliveryStatus.Succeeded, null));
         }

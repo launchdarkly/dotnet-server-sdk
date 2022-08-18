@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using LaunchDarkly.JsonStream;
+using System.Text.Json.Serialization;
 using LaunchDarkly.Sdk.Json;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
-    [JsonStreamConverter(typeof(FeatureFlagSerialization))]
+    [JsonConverter(typeof(FeatureFlagSerialization))]
     internal sealed class FeatureFlag : IJsonSerializable
     {
         internal string Key { get; }

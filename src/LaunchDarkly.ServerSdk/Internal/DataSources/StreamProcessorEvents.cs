@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using LaunchDarkly.JsonStream;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
+using static LaunchDarkly.Sdk.Internal.JsonConverterHelpers;
 using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
@@ -13,15 +15,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
     //
     // All of the parsing methods have the following behavior:
     //
-    // - They take the input data as a UTF-8 byte array rather than a string. This is because, on
-    // most platforms, LaunchDarkly.JsonStream uses System.Text.Json as its underlying implementation
-    // and that API is designed to operate efficiently on UTF-8 data. And because StreamProcessor sets
-    // the PreferDataAsUtf8Bytes option when creating the EventSource, if the stream's encoding
-    // really is UTF-8 (which it normally is, for the LD streaming service), the message data will
-    // be read as raw bytes and passed to us directly, without the inefficient step of convering it
+    // - They take the input data as a UTF-8 byte array rather than a string. This is because
+    // System.Text.Json is designed to operate efficiently on UTF-8 data, and because StreamProcessor
+    // sets the PreferDataAsUtf8Bytes option when creating the EventSource, the message data will
+    // be read as raw bytes and passed to us directly-- without the inefficient step of convering it
     // to a UTF-16 string.
     //
-    // - A JsonReadException is thrown for any malformed data. That includes 1. totally invalid JSON,
+    // - A JsonException is thrown for any malformed data. That includes 1. totally invalid JSON,
     // 2. well-formed JSON that is missing a necessary property for this message type.
     //
     // - For messages that have a "path" property, which might be for instance "/flags/xyz" to refer
@@ -123,137 +123,114 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         internal static PutData ParsePutData(byte[] json)
         {
-            var r = JReader.FromUtf8Bytes(json);
-            try
-            {
-                string path = null;
-                FullDataSet<ItemDescriptor> data = new FullDataSet<ItemDescriptor>();
+            var r = new Utf8JsonReader(json);
+            string path = null;
+            FullDataSet<ItemDescriptor> data = new FullDataSet<ItemDescriptor>();
 
-                for (var obj = r.Object().WithRequiredProperties(_putRequiredProperties); obj.Next(ref r);)
-                {
-                    if (obj.Name == "path")
-                    {
-                        path = r.String();
-                    }
-                    else if (obj.Name == "data")
-                    {
-                        data = ParseFullDataset(ref r);
-                    }
-                }
-                return new PutData(path, data);
-            }
-            catch (Exception e)
+            for (var obj = RequireObject(ref r).WithRequiredProperties(_putRequiredProperties); obj.Next(ref r);)
             {
-                throw r.TranslateException(e);
+                switch (obj.Name)
+                {
+                    case "path":
+                        path = r.GetString();
+                        break;
+                    case "data":
+                        data = ParseFullDataset(ref r);
+                        break;
+                }
             }
+            return new PutData(path, data);
         }
 
-        internal static FullDataSet<ItemDescriptor> ParseFullDataset(ref JReader r)
+        internal static FullDataSet<ItemDescriptor> ParseFullDataset(ref Utf8JsonReader r)
         {
-            try
+            var dataBuilder = ImmutableList.CreateBuilder<KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>>();
+            for (var topLevelObj = RequireObject(ref r); topLevelObj.Next(ref r);)
             {
-                var dataBuilder = ImmutableList.CreateBuilder<KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>>();
-                for (var topLevelObj = r.Object(); topLevelObj.Next(ref r);)
+                var name = topLevelObj.Name;
+                var kind = DataModel.AllDataKinds.FirstOrDefault(k => name == PathNameForKind(k));
+                if (kind == null)
                 {
-                    var name = topLevelObj.Name.ToString();
-                    var kind = DataModel.AllDataKinds.FirstOrDefault(k => name == PathNameForKind(k));
-                    if (kind == null)
-                    {
-                        continue;
-                    }
-                    var itemsBuilder = ImmutableList.CreateBuilder<KeyValuePair<string, ItemDescriptor>>();
-                    for (var itemsObj = r.Object(); itemsObj.Next(ref r);)
-                    {
-                        var key = itemsObj.Name.ToString();
-                        var item = kind.DeserializeFromJReader(ref r);
-                        itemsBuilder.Add(new KeyValuePair<string, ItemDescriptor>(key, item));
-                    }
-                    dataBuilder.Add(new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(kind,
-                        new KeyedItems<ItemDescriptor>(itemsBuilder.ToImmutable())));
+                    continue;
                 }
-                return new FullDataSet<ItemDescriptor>(dataBuilder.ToImmutable());
+                var itemsBuilder = ImmutableList.CreateBuilder<KeyValuePair<string, ItemDescriptor>>();
+                for (var itemsObj = RequireObject(ref r); itemsObj.Next(ref r);)
+                {
+                    var key = itemsObj.Name;
+                    var item = kind.DeserializeFromJsonReader(ref r);
+                    itemsBuilder.Add(new KeyValuePair<string, ItemDescriptor>(key, item));
+                }
+                dataBuilder.Add(new KeyValuePair<DataKind, KeyedItems<ItemDescriptor>>(kind,
+                    new KeyedItems<ItemDescriptor>(itemsBuilder.ToImmutable())));
             }
-            catch (Exception e)
-            {
-                throw r.TranslateException(e);
-            }
+            return new FullDataSet<ItemDescriptor>(dataBuilder.ToImmutable());
         }
 
         internal static PatchData ParsePatchData(byte[] json)
         {
-            var r = JReader.FromUtf8Bytes(json);
-            try
+            var r = new Utf8JsonReader(json);
+            DataKind kind = null;
+            string key = null;
+            for (var obj = RequireObject(ref r).WithRequiredProperties(_patchRequiredProperties); obj.Next(ref r);)
             {
-                DataKind kind = null;
-                string key = null;
-                for (var obj = r.Object().WithRequiredProperties(_patchRequiredProperties); obj.Next(ref r);)
+                switch (obj.Name)
                 {
-                    if (obj.Name == "path")
-                    {
-                        TryParsePath(r.String(), out kind, out key);
+                    case "path":
+                        TryParsePath(r.GetString(), out kind, out key);
                         if (kind is null)
                         {
                             // An unrecognized path isn't considered an error; we'll just return a null kind,
                             // indicating that we should ignore this event.
                             return new PatchData(null, null, new ItemDescriptor());
                         }
-                    }
-                    else if (obj.Name == "data")
-                    {
+                        break;
+                    case "data":
                         if (kind != null)
                         {
                             // If kind is null here, it means we happened to read the "data" property before
                             // the "path" property, so we don't yet know what kind of data model object this
                             // is, so we can't parse it yet and we'll have to do a second pass.
-                            var item = kind.DeserializeFromJReader(ref r);
+                            var item = kind.DeserializeFromJsonReader(ref r);
                             return new PatchData(kind, key, item);
                         }
-                    }
+                        break;
                 }
-                // If we got here, it means we couldn't parse the data model object yet because we saw the
-                // "data" property first. But we definitely saw both properties (otherwise we would've got
-                // an error due to using WithRequiredProperties) so kind is now non-null.
-                var r1 = JReader.FromUtf8Bytes(json);
-                for (var obj = r1.Object(); obj.Next(ref r1);)
-                {
-                    if (obj.Name == "data")
-                    {
-                        return new PatchData(kind, key, kind.DeserializeFromJReader(ref r1));
-                    }
-                }
-                throw new RequiredPropertyException("data", json.Length);
             }
-            catch (Exception e)
+            // If we got here, it means we couldn't parse the data model object yet because we saw the
+            // "data" property first. But we definitely saw both properties (otherwise we would've got
+            // an error due to using WithRequiredProperties) so kind is now non-null.
+            var r1 = new Utf8JsonReader(json);
+            for (var obj = RequireObject(ref r1); obj.Next(ref r1);)
             {
-                throw r.TranslateException(e);
+                if (obj.Name == "data")
+                {
+                    return new PatchData(kind, key, kind.DeserializeFromJsonReader(ref r1));
+                }
             }
+            // Shouldn't be able to get this far, because the first pass should have failed if there
+            // was no "data" property.
+            throw new JsonException("unexpected error in ParsePatchData");
         }
 
         internal static DeleteData ParseDeleteData(byte[] json)
         {
-            var r = JReader.FromUtf8Bytes(json);
-            try
+            var r = new Utf8JsonReader(json);
+            DataKind kind = null;
+            string key = null;
+            int version = 0;
+            for (var obj = RequireObject(ref r).WithRequiredProperties(_deleteRequiredProperties); obj.Next(ref r);)
             {
-                DataKind kind = null;
-                string key = null;
-                int version = 0;
-                for (var obj = r.Object().WithRequiredProperties(_deleteRequiredProperties); obj.Next(ref r);)
+                switch (obj.Name)
                 {
-                    if (obj.Name == "path")
-                    {
-                        TryParsePath(r.String(), out kind, out key);
-                    }
-                    else if (obj.Name == "version")
-                    {
-                        version = r.Int();
-                    }
+                    case "path":
+                        TryParsePath(r.GetString(), out kind, out key);
+                        break;
+                    case "version":
+                        version = r.GetInt32();
+                        break;
                 }
-                return new DeleteData(kind, key, version);
             }
-            catch (Exception e)
-            {
-                throw r.TranslateException(e);
-            }
+            return new DeleteData(kind, key, version);
         }
 
         internal static string PathNameForKind(DataKind kind) =>
