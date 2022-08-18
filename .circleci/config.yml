@@ -33,7 +33,7 @@ workflows:
             - build-all
       - test-windows:
           name: .NET Framework 4.7.1 - Windows
-          build-target-framework: net471
+          build-target-framework: net462
           test-target-framework: net471
           requires:
             - build-all
