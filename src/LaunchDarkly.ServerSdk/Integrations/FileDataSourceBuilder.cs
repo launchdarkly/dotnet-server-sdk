@@ -65,10 +65,16 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// but if that fails, it will use the custom parser.
         /// </para>
         /// <para>
-        /// Here is an example of how you would do this with the <c>YamlDotNet</c> package:
+        /// Here is an example of how you would do this with the <c>YamlDotNet</c> package. Note the use of a
+        /// <c>DeserializerBuilder</c> configuration method to tell the parser that it should interpret a property like
+        /// <c>on: true</c> or <c>variation: 3</c> as a boolean or integer rather than a string; YAML syntax is very
+        /// flexible, so how you configure the parser will depend on how you are formatting the file, but data types do
+        /// matter in flag configurations so you do not want it to simply read every property as a string.
         /// </para>
         /// <code>
-        ///     var yaml = new DeserializerBuilder().Build();
+        ///     var yaml = new DeserializerBuilder()
+        ///         .WithAttemptingUnquotedStringTypeDeserialization()
+        ///         .Build();
         ///     var source = FileData.DataSource()
         ///         .FilePaths(myYamlFilePath)
         ///         .Parser(s => yaml.Deserialize&lt;object&gt;(s));
