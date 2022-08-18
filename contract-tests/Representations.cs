@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using LaunchDarkly.Sdk;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+
+// Note, in order for System.Text.Json serialization/deserialization to work correctly, the members of
+// this class must be properties with get/set, rather than fields. The property names are automatically
+// camelCased by System.Text.Json.
 
 namespace TestService
 {
@@ -117,29 +119,29 @@ namespace TestService
 
     public class ContextBuildParams
     {
-        public ContextBuildSingleParams Single;
-        public ContextBuildSingleParams[] Multi;
+        public ContextBuildSingleParams Single { get; set; }
+        public ContextBuildSingleParams[] Multi { get; set; }
     }
 
     public class ContextBuildSingleParams
     {
-        public string Kind;
-        public string Key;
-        public string Name;
-        public bool Anonymous;
-        public string Secondary;
-        public string[] Private;
-        public Dictionary<string, LdValue> Custom;
+        public string Kind { get; set; }
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public bool Anonymous { get; set; }
+        public string Secondary { get; set; }
+        public string[] Private { get; set; }
+        public Dictionary<string, LdValue> Custom { get; set; }
     }
 
     public class ContextBuildResponse
     {
-        public string Output;
-        public string Error;
+        public string Output { get; set; }
+        public string Error { get; set; }
     }
 
     public class ContextConvertParams
     {
-        public string Input;
+        public string Input { get; set; }
     }
 }
