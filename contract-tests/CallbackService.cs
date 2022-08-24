@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal.Concurrent;
 using LaunchDarkly.Sdk.Json;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using LaunchDarkly.TestHelpers.HttpTest;
 
 namespace TestService
 {
@@ -18,16 +19,10 @@ namespace TestService
         private static readonly HttpClient _httpClient = new HttpClient();
 
         private readonly Uri _uri;
-        private readonly JsonSerializerSettings _jsonSerializerSettings;
-
+        
         public CallbackService(Uri uri)
         {
             _uri = uri;
-            _jsonSerializerSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new List<JsonConverter> { LdJsonNet.Converter }
-            };
         }
 
         public void Close() =>
@@ -49,7 +44,8 @@ namespace TestService
         {
             var resp = await PostInternalAsync(path, parameters);
             var body = await resp.Content.ReadAsStringAsync();
-            var ret = JsonConvert.DeserializeObject<T>(body, _jsonSerializerSettings);
+            var ret = JsonSerializer.Deserialize<T>(body, SimpleJsonService.SerializerOptions);
+            // SimpleJsonService.SerializerOptions provides the default property name camelcasing behavior
             resp.Dispose();
             return ret;
         }
@@ -58,7 +54,7 @@ namespace TestService
         {
             var resp = await _httpClient.PostAsync(_uri + path,
                 new StringContent(
-                    parameters == null ? "{}" : JsonConvert.SerializeObject(parameters, _jsonSerializerSettings),
+                    parameters == null ? "{}" : JsonSerializer.Serialize(parameters, SimpleJsonService.SerializerOptions),
                     Encoding.UTF8,
                     "application/json"));
             if (!resp.IsSuccessStatusCode)

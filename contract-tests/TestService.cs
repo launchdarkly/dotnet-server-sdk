@@ -46,14 +46,11 @@ namespace TestService
             _quitSignal = quitSignal;
 
             var dummyClientInstanceToGetVersion = new LdClient(Configuration.Builder("")
-                .Offline(true).Build());
+                .Offline(true).Logging(Components.NoLogging).Build());
             _version = dummyClientInstanceToGetVersion.Version.ToString();
 
             var service = new SimpleJsonService();
             Handler = service.Handler;
-
-            // Tell the service about the custom JSON conversions for LaunchDarkly SDK types like User
-            service.SetJsonConverters(LaunchDarkly.Sdk.Json.LdJsonNet.Converter);
 
             service.Route(HttpMethod.Get, "/", GetStatus);
             service.Route(HttpMethod.Delete, "/", ForceQuit);

@@ -20,16 +20,15 @@ This version of the SDK is built for the following targets:
 
 * .NET 6.0: runs on .NET 6.0 and above (including higher major versions).
 * .NET Core 3.1: runs on .NET Core 3.1+.
-* .NET Framework 4.6.2: runs on .NET Framework 4.6.2 only.
-* .NET Framework 4.7.1: runs on .NET Framework 4.7.1 and above.
+* .NET Framework 4.6.2: runs on .NET Framework 4.6.2 and above.
 * .NET Standard 2.0: runs in any project that is targeted to .NET Standard 2.x rather than to a specific runtime platform.
 
 The .NET build tools should automatically load the most appropriate build of the SDK for whatever platform your application or library is targeted to.
 
-The only differences in the capabilities of the SDK between platforms are these:
+The only differences in the SDK between platforms are these:
 
-* Setting a TCP connection timeout is only supported in .NET Core and .NET 5.0. For more details, see `HttpConfigurationBuilder.ConnectTimeout`.
-* The SDK integrates automatically with the `System.Text.Json` API in .NET Core and .NET 5.0. In .NET Framework and .NET Standard, it uses its own implementation of JSON encoding and decoding. For more about how JSON is implemented in the SDK, see https://github.com/launchdarkly/dotnet-jsonstream.
+* Setting a TCP connection timeout is only supported in .NET Core and .NET 6.0+. For more details, see `HttpConfigurationBuilder.ConnectTimeout`.
+* The SDK requires the `System.Text.Json` API to be available; it is built into the standard runtime library in .NET Core and .NET 6.0+, but not on other platforms, so on other platforms the SDK brings in `System.Text.Json` as a NuGet package dependency.
 
 ## Getting started
 

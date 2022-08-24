@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Concurrent;
@@ -103,7 +103,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     ((IDisposable)this).Dispose();
                 }
             }
-            catch (JsonReadException ex)
+            catch (JsonException ex)
             {
                 _log.Error("Polling request received malformed data: {0}", LogValues.ExceptionSummary(ex));
                 _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted,

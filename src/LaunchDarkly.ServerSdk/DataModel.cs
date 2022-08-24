@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.JsonStream;
+using System.Text.Json;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
 using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
@@ -53,22 +53,22 @@ namespace LaunchDarkly.Sdk.Server
             }
         }
 
-        private static void SerializeFlag(object o, IValueWriter w) =>
-            FeatureFlagSerialization.Instance.WriteJson(o as FeatureFlag, w);
+        private static void SerializeFlag(object o, Utf8JsonWriter w) =>
+            FeatureFlagSerialization.Instance.Write(w, o as FeatureFlag, null);
 
-        private static ItemDescriptor DeserializeFlag(ref JReader r)
+        private static ItemDescriptor DeserializeFlag(ref Utf8JsonReader r)
         {
-            var flag = FeatureFlagSerialization.Instance.ReadJson(ref r) as FeatureFlag;
+            var flag = FeatureFlagSerialization.Instance.Read(ref r, null, null) as FeatureFlag;
             return flag.Deleted ? ItemDescriptor.Deleted(flag.Version) :
                 new ItemDescriptor(flag.Version, flag);
         }
 
-        private static void SerializeSegment(object o, IValueWriter w) =>
-            SegmentSerialization.Instance.WriteJson(o as Segment, w);
+        private static void SerializeSegment(object o, Utf8JsonWriter w) =>
+            SegmentSerialization.Instance.Write(w, o as Segment, null);
 
-        private static ItemDescriptor DeserializeSegment(ref JReader r)
+        private static ItemDescriptor DeserializeSegment(ref Utf8JsonReader r)
         {
-            var segment = SegmentSerialization.Instance.ReadJson(ref r) as Segment;
+            var segment = SegmentSerialization.Instance.Read(ref r, null, null) as Segment;
             return segment.Deleted ? ItemDescriptor.Deleted(segment.Version) :
                 new ItemDescriptor(segment.Version, segment);
         }

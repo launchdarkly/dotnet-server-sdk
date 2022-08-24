@@ -53,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void FlagsCanBeLoadedWithExternalYamlParser()
         {
-            var yaml = new DeserializerBuilder().Build();
+            var yaml = new DeserializerBuilder().WithAttemptingUnquotedStringTypeDeserialization().Build();
             factory.FilePaths(ALL_DATA_YAML_FILE)
                 .Parser(s => yaml.Deserialize<object>(s));
             using (var fp = MakeDataSource())
