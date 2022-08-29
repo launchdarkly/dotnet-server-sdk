@@ -73,15 +73,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         public void BucketUserByKeyTest()
         {
             var user1 = Context.New("userKeyA");
-            var point1 = Bucketing.ComputeBucketValue(false, noSeed, user1, null, "hashKey", null, "saltyA");
+            var point1 = Bucketing.ComputeBucketValue(false, noSeed, user1, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.42157587, point1, decimalPlacesOfEquality);
 
             var user2 = Context.New("userKeyB");
-            var point2 = Bucketing.ComputeBucketValue(false, noSeed, user2, null, "hashKey", null, "saltyA");
+            var point2 = Bucketing.ComputeBucketValue(false, noSeed, user2, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.6708485, point2, decimalPlacesOfEquality);
 
             var user3 = Context.New("userKeyC");
-            var point3 = Bucketing.ComputeBucketValue(false, noSeed, user3, null, "hashKey", null, "saltyA");
+            var point3 = Bucketing.ComputeBucketValue(false, noSeed, user3, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.10343106, point3, decimalPlacesOfEquality);
         }
 
@@ -91,15 +91,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             const int seed = 61;
 
             var user1 = Context.New("userKeyA");
-            var point1 = Bucketing.ComputeBucketValue(false, seed, user1, null, "hashKey", null, "saltyA");
+            var point1 = Bucketing.ComputeBucketValue(false, seed, user1, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.09801207, point1, decimalPlacesOfEquality);
 
             var user2 = Context.New("userKeyB");
-            var point2 = Bucketing.ComputeBucketValue(false, seed, user2, null, "hashKey", null, "saltyA");
+            var point2 = Bucketing.ComputeBucketValue(false, seed, user2, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.14483777, point2, decimalPlacesOfEquality);
 
             var user3 = Context.New("userKeyC");
-            var point3 = Bucketing.ComputeBucketValue(false, seed, user3, null, "hashKey", null, "saltyA");
+            var point3 = Bucketing.ComputeBucketValue(false, seed, user3, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.9242641, point3, decimalPlacesOfEquality);
         }
     }

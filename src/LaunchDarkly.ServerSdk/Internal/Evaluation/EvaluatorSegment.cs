@@ -147,7 +147,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 segment.Key,
                 segmentRule.BucketBy,
                 segment.Salt
-                );
+                ) ?? 0;
             float weight = (float)segmentRule.Weight / 100000F;
             return bucket < weight;
         }

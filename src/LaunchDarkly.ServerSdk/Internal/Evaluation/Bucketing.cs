@@ -8,7 +8,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 
-        internal static float ComputeBucketValue(
+        // Compute a bucket value for use in a rollout or experiment. If an error condition
+        // prevents us from computing a valid bucket value, we return zero, which will cause
+        // the evaluation to use the first bucket. A special case is that if we can't get a
+        // context at all (that is, the specified context kind did not exist), we return
+        // *null*, which will be treated the same as zero except that it forces the
+        // inExperiment property in the result to be false.
+        internal static float? ComputeBucketValue(
             bool isExperiment,
             int? seed,
             in Context context,
@@ -20,7 +26,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             if (!context.TryGetContextByKind(contextKind ?? ContextKind.Default, out var matchContext))
             {
-                return 0;
+                return null;
             }
 
             LdValue contextValue;

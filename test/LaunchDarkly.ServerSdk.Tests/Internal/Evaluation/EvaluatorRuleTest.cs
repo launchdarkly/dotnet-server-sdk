@@ -56,6 +56,30 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         }
 
         [Fact]
+        public void InExperimentIsFalseIfContextKindNotFoundForExperiment()
+        {
+            var context = Context.New(ContextKind.Of("other"), "key");
+            var rollout = new Rollout(
+                RolloutKind.Experiment,
+                ContextKind.Of("nonexistent"),
+                null,
+                new List<WeightedVariation>()
+                {
+                    new WeightedVariation(0, 1, false),
+                    new WeightedVariation(1, 99999, false)
+                },
+                AttributeRef.FromLiteral("key")
+                );
+            var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchAnyContext()).Build();
+            var f = FeatureFlagWithRules(rule);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
+
+            Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
+            Assert.Equal(0, result.Result.VariationIndex);
+            Assert.False(result.Result.Reason.InExperiment);
+        }
+
+        [Fact]
         public void RuleWithTooHighVariationReturnsMalformedFlagError()
         {
             var user = Context.New("userkey");
