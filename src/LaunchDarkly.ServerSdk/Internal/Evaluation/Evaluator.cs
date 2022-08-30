@@ -256,7 +256,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             if (rollout.HasValue && rollout.Value.Variations.Any())
             {
                 WeightedVariation? selectedVariation = null;
-                float bucket = Bucketing.ComputeBucketValue(
+                float? maybeBucket = Bucketing.ComputeBucketValue(
                     rollout.Value.Kind == RolloutKind.Experiment,
                     rollout.Value.Seed,
                     state.Context,
@@ -265,6 +265,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     rollout.Value.BucketBy,
                     flag.Salt
                     );
+                float bucket = maybeBucket ?? 0;
+                bool contextWasFound = maybeBucket.HasValue;
                 float sum = 0F;
                 foreach (WeightedVariation wv in rollout.Value.Variations)
                 {
@@ -284,7 +286,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     // will simply put the user in the last bucket.
                     selectedVariation = rollout.Value.Variations.Last();
                 }
-                var inExperiment = (rollout.Value.Kind == RolloutKind.Experiment) && !selectedVariation.Value.Untracked;
+                var inExperiment = (rollout.Value.Kind == RolloutKind.Experiment) && !selectedVariation.Value.Untracked
+                    && contextWasFound;
                 return GetVariation(flag, selectedVariation.Value.Variation,
                     inExperiment ? reason.WithInExperiment(true) : reason);
             }
