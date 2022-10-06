@@ -29,7 +29,8 @@ namespace TestService
             "all-flags-client-side-only",
             "all-flags-details-only-for-tracked-flags",
             "all-flags-with-reasons",
-            "big-segments"
+            "big-segments",
+            "secure-mode-hash"
         };
 
         public readonly Handler Handler;
