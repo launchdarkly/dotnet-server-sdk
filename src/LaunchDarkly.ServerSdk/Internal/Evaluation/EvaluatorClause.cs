@@ -45,8 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                     );
             }
             if (clause.Attribute.Depth == 1 &&
-                clause.Attribute.TryGetComponent(0, out var pathComponent) &&
-                pathComponent.Name == "kind")
+                clause.Attribute.GetComponent(0) == "kind")
             {
                 return MaybeNegate(clause, MatchClauseByKind(ref state, clause));
             }
