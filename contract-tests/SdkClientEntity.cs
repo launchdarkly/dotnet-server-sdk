@@ -89,6 +89,13 @@ namespace TestService
                     response = DoContextConvert(command.ContextConvert);
                     break;
 
+                case "secureModeHash":
+                    response = new SecureModeHashResponse
+                    {
+                        Result = _client.SecureModeHash(command.SecureModeHash.Context)
+                    };
+                    break;
+
                 default:
                     return false;
             }

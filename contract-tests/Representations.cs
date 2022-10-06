@@ -65,6 +65,7 @@ namespace TestService
         public CustomEventParams CustomEvent { get; set; }
         public ContextBuildParams ContextBuild { get; set; }
         public ContextConvertParams ContextConvert { get; set; }
+        public SecureModeHashParams SecureModeHash { get; set; }
     }
 
     public class EvaluateFlagParams
@@ -143,5 +144,15 @@ namespace TestService
     public class ContextConvertParams
     {
         public string Input { get; set; }
+    }
+
+    public class SecureModeHashParams
+    {
+        public Context Context { get; set; }
+    }
+
+    public class SecureModeHashResponse
+    {
+        public string Result { get; set; }
     }
 }

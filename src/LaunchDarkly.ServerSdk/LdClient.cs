@@ -507,7 +507,7 @@ namespace LaunchDarkly.Sdk.Server
             byte[] keyBytes = encoding.GetBytes(_configuration.SdkKey);
 
             HMACSHA256 hmacSha256 = new HMACSHA256(keyBytes);
-            byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(context.Key));
+            byte[] hashedMessage = hmacSha256.ComputeHash(encoding.GetBytes(context.FullyQualifiedKey));
             return BitConverter.ToString(hashedMessage).Replace("-", "").ToLower();
         }
 
