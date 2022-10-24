@@ -116,7 +116,11 @@ jobs:
       ASPNETCORE_SUPPRESSSTATUSMESSAGES: true
       BUILDFRAMEWORKS: <<parameters.build-target-framework>>
       TESTFRAMEWORK: <<parameters.test-target-framework>>
+      TEST_HARNESS_PARAMS: -junit /tmp/circle-reports/contract-tests-junit.xml
     steps:
+      - run:
+          name: install packages
+          command: apt -q update && apt install -y make
       - checkout
       - attach_workspace:
           at: src/LaunchDarkly.ServerSdk
@@ -130,9 +134,19 @@ jobs:
           key: deps--<<parameters.test-target-framework>>-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
           paths:
             - /root/.nuget/packages
+      - run: mkdir -p /tmp/circle-reports
       - run:
           name: run tests
           command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj
+
+      - run: make build-contract-tests
+      - run:
+          command: make start-contract-test-service
+          background: true
+      - run: make run-contract-tests
+
+      - store_test_results:
+          path: /tmp/circle-reports
 
   test-windows:
     parameters:
@@ -146,6 +160,7 @@ jobs:
     environment:
       BUILDFRAMEWORKS: <<parameters.build-target-framework>>
       TESTFRAMEWORK: <<parameters.test-target-framework>>
+
     steps:
       - checkout
       - attach_workspace:
@@ -160,6 +175,32 @@ jobs:
           key: deps-<<parameters.test-target-framework>>-{{ checksum "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj" }}-{{ checksum "test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj" }}
           paths:
             - C:\Users\circleci\.nuget\packages
+      - run: New-Item -Path "circle-reports" -ItemType "directory"
       - run:
           name: run tests
           command: dotnet test test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj
+
+      # sdk-test-harness is not yet running well in Windows, but these would be the steps:
+      # - run:
+      #     name: build contract tests
+      #     command: |
+      #       cd contract-tests
+      #       dotnet build TestService.csproj
+      # - run:
+      #     name: start contract test service
+      #     command: |
+      #       cd contract-tests
+      #       dotnet bin/Debug/$env:TESTFRAMEWORK/ContractTestService.dll
+      #     background: true
+      # - run:
+      #     name: run contract tests
+      #     command: |
+      #       Invoke-WebRequest -Uri `
+      #         https://github.com/launchdarkly/sdk-test-harness/releases/download/v1.1.2/sdk-test-harness_Windows_x86_64.zip `
+      #         -OutFile sdk-test-harness.zip
+      #       Expand-Archive -Path sdk-test-harness.zip 
+      #       .\sdk-test-harness\sdk-test-harness.exe -url http://localhost:8000 `
+      #         -debug -stop-service-at-end -junit ./circle-reports/contract-tests-junit.xml
+
+      - store_test_results:
+          path: circle-reports
