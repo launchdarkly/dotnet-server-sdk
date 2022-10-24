@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [6.3.3] - 2022-10-24
+### Fixed:
+- Fixed a bug in the parsing of string values in feature flags and user attributes when they were referenced with date/time operators in a targeting rule. As described in [LaunchDarkly documentation](https://docs.launchdarkly.com/sdk/concepts/flag-types#representing-datetime-values), such values must use the RFC3339 date/time format; the SDK was also accepting strings in other formats (for instance, ones that did not have a time or a time zone), which would cause undefined behavior inconsistent with evaluations done by other LaunchDarkly services. This fix ensures that all targeting rules that reference an invalid date/time value are a non-match, and does not affect how the SDK treats values that are in the correct format.
+
 ## [6.3.2] - 2022-02-04
 ### Fixed:
 - When using `AllFlagsState` to produce bootstrap data for the JavaScript SDK, the .NET SDK was not returning the correct metadata for evaluations that involved an experiment. As a result, the analytics events produced by the JavaScript SDK did not correctly reflect experimentation results.
