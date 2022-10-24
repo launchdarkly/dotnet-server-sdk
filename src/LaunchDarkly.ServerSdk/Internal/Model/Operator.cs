@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Model
@@ -51,6 +52,23 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 
         public static readonly Operator SegmentMatch =
             new Operator("segmentMatch", ApplySegmentMatch);
+
+        private static readonly string[] Rfc3339FormatsWithOptionalFractionalSeconds = new string[]
+        {
+            // LaunchDarkly only supports RFC3339 date/time strings. RFC3339 allows fractional seconds
+            // of any precision, but LaunchDarkly defines a somewhat arbitrary limit of 9 digits for these
+            // (see: https://docs.launchdarkly.com/sdk/concepts/flag-types#representing-datetime-values)
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ssK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffffK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffffffK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffffffffK",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffffK"
+        };
 
         public static IEnumerable<Operator> All = new Operator[]
         {
@@ -143,14 +161,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         {
             if (value.IsString)
             {
-                try
+                if (DateTime.TryParseExact(value.AsString, Rfc3339FormatsWithOptionalFractionalSeconds,
+                    DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AdjustToUniversal, out var dateTime))
                 {
-                    return DateTime.Parse(value.AsString).ToUniversalTime();
+                    return dateTime.ToUniversalTime();
                 }
-                catch (FormatException)
-                {
-                    return null;
-                }
+                return null;
             }
             if (value.IsNumber)
             {
