@@ -30,6 +30,7 @@ namespace TestService
             "all-flags-details-only-for-tracked-flags",
             "all-flags-with-reasons",
             "big-segments",
+            "context-type",
             "secure-mode-hash"
         };
 

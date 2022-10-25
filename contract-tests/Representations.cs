@@ -130,7 +130,6 @@ namespace TestService
         public string Key { get; set; }
         public string Name { get; set; }
         public bool Anonymous { get; set; }
-        public string Secondary { get; set; }
         public string[] Private { get; set; }
         public Dictionary<string, LdValue> Custom { get; set; }
     }

@@ -230,7 +230,6 @@ namespace TestService
             var b = Context.Builder(s.Key)
                 .Kind(s.Kind)
                 .Name(s.Name)
-                .Secondary(s.Secondary)
                 .Anonymous(s.Anonymous);
             if (!(s.Private is null))
             {

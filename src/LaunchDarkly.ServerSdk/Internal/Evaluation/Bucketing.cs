@@ -69,14 +69,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             {
                 return 0; // bucket-by values other than strings and ints aren't supported
             }
-            if (!isExperiment)  // secondary key is not supported in experiments
-            {
-                var secondary = matchContext.Secondary;
-                if (!(secondary is null))
-                {
-                    hashInputBuilder.Append(".").Append(secondary);
-                }
-            }
             var hash = Hash(hashInputBuilder.ToString()).Substring(0, 15);
             var longValue = long.Parse(hash, NumberStyles.HexNumber);
             return longValue / longScale;

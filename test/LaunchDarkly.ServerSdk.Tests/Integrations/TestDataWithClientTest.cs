@@ -67,8 +67,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public void UsesRules()
         {
             _td.Update(_td.Flag("flag").FallthroughVariation(false)
-                .IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true)
-                .IfMatch(UserAttribute.Name, LdValue.Of("Mina")).ThenReturn(true));
+                .IfMatch("name", LdValue.Of("Lucy")).ThenReturn(true)
+                .IfMatch("name", LdValue.Of("Mina")).ThenReturn(true));
 
             using (var client = new LdClient(_config))
             {
@@ -84,7 +84,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             _td.Update(_td.Flag("flag").Variations(LdValue.Of("red"), LdValue.Of("green"), LdValue.Of("blue"))
                 .OffVariation(0).FallthroughVariation(2)
                 .VariationForUser("user1", 1)
-                .IfMatch(UserAttribute.Name, LdValue.Of("Mina")).ThenReturn(1));
+                .IfMatch("name", LdValue.Of("Mina")).ThenReturn(1));
 
             using (var client = new LdClient(_config))
             {

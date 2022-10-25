@@ -246,11 +246,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build()
                     ).Build());
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(true),
                 matchReturnsVariation0
                 );
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(0),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(0),
                 matchReturnsVariation0
                 );
 
@@ -260,17 +260,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build()
                     ).Build());
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(false),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(false),
                 matchReturnsVariation1
                 );
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(1),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(1),
                 matchReturnsVariation1
                 );
 
             // negated match
             VerifyFlag(
-                f => f.IfNotMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true),
+                f => f.IfNotMatch("name", LdValue.Of("Lucy")).ThenReturn(true),
                 fb => expectedBooleanFlag(fb).Rules(new RuleBuilder().Id("rule0").Variation(0).Clauses(
                     new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Negate(true).Build()
                     ).Build())
@@ -278,8 +278,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             // multiple clauses
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy"))
-                    .AndMatch(UserAttribute.Country, LdValue.Of("gb"))
+                f => f.IfMatch("name", LdValue.Of("Lucy"))
+                    .AndMatch("country", LdValue.Of("gb"))
                     .ThenReturn(true),
                 fb => expectedBooleanFlag(fb).Rules(new RuleBuilder().Id("rule0").Variation(0).Clauses(
                     new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build(),
@@ -289,8 +289,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             // multiple rules
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true)
-                    .IfMatch(UserAttribute.Name, LdValue.Of("Mina")).ThenReturn(false),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(true)
+                    .IfMatch("name", LdValue.Of("Mina")).ThenReturn(false),
                 fb => expectedBooleanFlag(fb).Rules(
                     new RuleBuilder().Id("rule0").Variation(0).Clauses(
                         new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build()

@@ -648,7 +648,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <example>
             /// <code>
             ///     testData.Update(testData.Flag("flag-key")
-            ///         .IfMatch(UserAttribute.Name, LdValue.Of("Patsy"), LdValue.Of("Edina"))
+            ///         .IfMatch("name", LdValue.Of("Patsy"), LdValue.Of("Edina"))
             ///         .ThenReturn(true));
             /// </code>
             /// </example>
@@ -657,8 +657,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="values">values to compare to</param>
             /// <returns>a <see cref="FlagRuleBuilder"/>; call <see cref="FlagRuleBuilder.ThenReturn(bool)"/>
             /// or <see cref="FlagRuleBuilder.ThenReturn(int)"/> to finish the rule, or add more tests with
-            /// another method like <see cref="FlagRuleBuilder.AndMatch(UserAttribute, LdValue[])"/></returns>
-            public FlagRuleBuilder IfMatch(UserAttribute attribute, params LdValue[] values) =>
+            /// another method like <see cref="FlagRuleBuilder.AndMatch(string, LdValue[])"/></returns>
+            public FlagRuleBuilder IfMatch(string attribute, params LdValue[] values) =>
                 new FlagRuleBuilder(this).AndMatch(attribute, values);
 
             /// <summary>
@@ -699,7 +699,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <example>
             /// <code>
             ///     testData.Update(testData.Flag("flag-key")
-            ///         .IfNotMatch(UserAttribute.Name, LdValue.Of("Saffron"), LdValue.Of("Bubble"))
+            ///         .IfNotMatch("name", LdValue.Of("Saffron"), LdValue.Of("Bubble"))
             ///         .ThenReturn(true));
             /// </code>
             /// </example>
@@ -708,15 +708,15 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="values">values to compare to</param>
             /// <returns>a <see cref="FlagRuleBuilder"/>; call <see cref="FlagRuleBuilder.ThenReturn(bool)"/>
             /// or <see cref="FlagRuleBuilder.ThenReturn(int)"/> to finish the rule, or add more tests with
-            /// another method like <see cref="FlagRuleBuilder.AndMatch(UserAttribute, LdValue[])"/></returns>
-            public FlagRuleBuilder IfNotMatch(UserAttribute attribute, params LdValue[] values) =>
+            /// another method like <see cref="FlagRuleBuilder.AndMatch(string, LdValue[])"/></returns>
+            public FlagRuleBuilder IfNotMatch(string attribute, params LdValue[] values) =>
                 new FlagRuleBuilder(this).AndNotMatch(attribute, values);
 
             /// <summary>
             /// Removes any existing rules from the flag.
             /// </summary>
             /// <remarks>
-            /// This undoes the effect of methods like <see cref="IfMatch(UserAttribute, LdValue[])"/>.
+            /// This undoes the effect of methods like <see cref="IfMatch(string, LdValue[])"/>.
             /// </remarks>
             /// <returns>the builder</returns>
             public FlagBuilder ClearRules()
@@ -863,7 +863,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="values">values to compare to</param>
             /// <returns>the rule builder</returns>
             public FlagRuleBuilder AndMatchContext(ContextKind contextKind, string attribute, params LdValue[] values) =>
-                AddClause(contextKind, AttributeRef.FromPath(attribute), "in", values, true);
+                AddClause(contextKind, AttributeRef.FromPath(attribute), "in", values, false);
 
             /// <summary>
             /// Adds another clause, using the "is one of" operator. This is a shortcut for calling
@@ -877,8 +877,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <example>
             /// <code>
             ///     testData.Update(testData.Flag("flag-key")
-            ///         .IfMatch(UserAttribute.Name, LdValue.Of("Patsy"))
-            ///         .AndMatch(UserAttribute.Country, LdValue.Of("gb"))
+            ///         .IfMatch("name", LdValue.Of("Patsy"))
+            ///         .AndMatch("country", LdValue.Of("gb"))
             ///         .ThenReturn(true));
             /// </code>
             /// </example>
@@ -886,8 +886,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="attribute">the user attribute to match against</param>
             /// <param name="values">values to compare to</param>
             /// <returns>the rule builder</returns>
-            public FlagRuleBuilder AndMatch(UserAttribute attribute, params LdValue[] values) =>
-                AddClause(ContextKind.Default, AttributeRef.FromLiteral(attribute.AttributeName), "in", values, false);
+            public FlagRuleBuilder AndMatch(string attribute, params LdValue[] values) =>
+                AndMatchContext(ContextKind.Default, attribute, values);
 
             /// <summary>
             /// Adds another clause, using the "is not one of" operator. This matching expression
@@ -926,8 +926,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <example>
             /// <code>
             ///     testData.Update(testData.Flag("flag-key")
-            ///         .IfMatch(UserAttribute.Name, LdValue.Of("Patsy"))
-            ///         .AndNotMatch(UserAttribute.Country, LdValue.Of("gb"))
+            ///         .IfMatch("name", LdValue.Of("Patsy"))
+            ///         .AndNotMatch("country", LdValue.Of("gb"))
             ///         .ThenReturn(true));
             /// </code>
             /// </example>
@@ -935,8 +935,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             /// <param name="attribute">the user attribute to match against</param>
             /// <param name="values">values to compare to</param>
             /// <returns>the rule builder</returns>
-            public FlagRuleBuilder AndNotMatch(UserAttribute attribute, params LdValue[] values) =>
-                AddClause(ContextKind.Default, AttributeRef.FromLiteral(attribute.AttributeName), "in", values, true);
+            public FlagRuleBuilder AndNotMatch(string attribute, params LdValue[] values) =>
+                AndNotMatchContext(ContextKind.Default, attribute, values);
 
             private FlagRuleBuilder AddClause(ContextKind contextKind, AttributeRef attr, string op, LdValue[] values, bool negate)
             {

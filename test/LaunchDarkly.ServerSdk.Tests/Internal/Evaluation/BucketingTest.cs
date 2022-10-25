@@ -133,32 +133,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             }
         }
 
-        [Fact]
-        public void SecondaryKeyAffectsBucketValueForRollout()
-        {
-            var user1 = Context.New("key");
-            var user2 = Context.Builder("key").Secondary("other").Build();
-            const string flagKey = "flagkey";
-            const string salt = "salt";
-
-            var result1 = Bucketing.ComputeBucketValue(false, null, user1, null, flagKey, null, salt);
-            var result2 = Bucketing.ComputeBucketValue(false, null, user2, null, flagKey, null, salt);
-            Assert.NotEqual(result1, result2);
-        }
-
-        [Fact]
-        public void SecondaryKeyDoesNotAffectBucketValueForExperiment()
-        {
-            var user1 = Context.New("key");
-            var user2 = Context.Builder("key").Secondary("other").Build();
-            const string flagKey = "flagkey";
-            const string salt = "salt";
-
-            var result1 = Bucketing.ComputeBucketValue(true, null, user1, null, flagKey, null, salt);
-            var result2 = Bucketing.ComputeBucketValue(true, null, user2, null, flagKey, null, salt);
-            Assert.Equal(result1, result2);
-        }
-
         private static void AssertVariationIndexFromRollout(
             int expectedVariation,
             Rollout rollout,
