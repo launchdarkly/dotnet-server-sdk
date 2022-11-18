@@ -53,22 +53,48 @@ namespace TestService
                     break;
 
                 case "identifyEvent":
-                    _client.Identify(command.IdentifyEvent.Context);
+                    if (command.IdentifyEvent.User is null)
+                    {
+                        _client.Identify(command.IdentifyEvent.Context.Value);
+                    }
+                    else
+                    {
+                        _client.Identify(command.IdentifyEvent.User);
+                    }
                     break;
 
                 case "customEvent":
                     var custom = command.CustomEvent;
-                    if (custom.MetricValue.HasValue)
+                    if (custom.User is null)
                     {
-                        _client.Track(custom.EventKey, custom.Context, custom.Data, custom.MetricValue.Value);
-                    }
-                    else if (custom.OmitNullData && custom.Data.IsNull)
-                    {
-                        _client.Track(custom.EventKey, custom.Context);
+                        var context = custom.Context.Value;
+                        if (custom.MetricValue.HasValue)
+                        {
+                            _client.Track(custom.EventKey, context, custom.Data, custom.MetricValue.Value);
+                        }
+                        else if (custom.OmitNullData && custom.Data.IsNull)
+                        {
+                            _client.Track(custom.EventKey, context);
+                        }
+                        else
+                        {
+                            _client.Track(custom.EventKey, context, custom.Data);
+                        }
                     }
                     else
                     {
-                        _client.Track(custom.EventKey, custom.Context, custom.Data);
+                        if (custom.MetricValue.HasValue)
+                        {
+                            _client.Track(custom.EventKey, custom.User, custom.Data, custom.MetricValue.Value);
+                        }
+                        else if (custom.OmitNullData && custom.Data.IsNull)
+                        {
+                            _client.Track(custom.EventKey, custom.User);
+                        }
+                        else
+                        {
+                            _client.Track(custom.EventKey, custom.User, custom.Data);
+                        }
                     }
                     break;
 
@@ -92,7 +118,8 @@ namespace TestService
                 case "secureModeHash":
                     response = new SecureModeHashResponse
                     {
-                        Result = _client.SecureModeHash(command.SecureModeHash.Context)
+                        Result = command.SecureModeHash.User is null ? _client.SecureModeHash(command.SecureModeHash.Context.Value) :
+                            _client.SecureModeHash(command.SecureModeHash.User)
                     };
                     break;
 
@@ -105,75 +132,86 @@ namespace TestService
         private object DoEvaluate(EvaluateFlagParams p)
         {
             var resp = new EvaluateFlagResponse();
+            Context context = p.Context.HasValue ? p.Context.Value : new Context();
             switch (p.ValueType)
             {
                 case "bool":
                     if (p.Detail)
                     {
-                        var detail = _client.BoolVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsBool);
+                        var detail = p.User is null ? _client.BoolVariationDetail(p.FlagKey, context, p.DefaultValue.AsBool) :
+                            _client.BoolVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsBool);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.BoolVariation(p.FlagKey, p.Context, p.DefaultValue.AsBool));
+                        resp.Value = LdValue.Of(p.User is null ? _client.BoolVariation(p.FlagKey, context, p.DefaultValue.AsBool) :
+                            _client.BoolVariation(p.FlagKey, p.User, p.DefaultValue.AsBool));
                     }
                     break;
 
                 case "int":
                     if (p.Detail)
                     {
-                        var detail = _client.IntVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsInt);
+                        var detail = p.User is null ? _client.IntVariationDetail(p.FlagKey, context, p.DefaultValue.AsInt) :
+                            _client.IntVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsInt);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.IntVariation(p.FlagKey, p.Context, p.DefaultValue.AsInt));
+                        resp.Value = LdValue.Of(p.User is null ? _client.IntVariation(p.FlagKey, context, p.DefaultValue.AsInt) :
+                            _client.IntVariation(p.FlagKey, p.User, p.DefaultValue.AsInt));
                     }
                     break;
 
                 case "double":
                     if (p.Detail)
                     {
-                        var detail = _client.DoubleVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsDouble);
+                        var detail = p.User is null ? _client.DoubleVariationDetail(p.FlagKey, context, p.DefaultValue.AsDouble) :
+                            _client.DoubleVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsDouble);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.DoubleVariation(p.FlagKey, p.Context, p.DefaultValue.AsDouble));
+                        resp.Value = LdValue.Of(p.User is null ? _client.DoubleVariation(p.FlagKey, context, p.DefaultValue.AsDouble) :
+                            _client.DoubleVariation(p.FlagKey, p.User, p.DefaultValue.AsDouble));
                     }
                     break;
 
                 case "string":
                     if (p.Detail)
                     {
-                        var detail = _client.StringVariationDetail(p.FlagKey, p.Context, p.DefaultValue.AsString);
+                        var detail = p.User is null ? _client.StringVariationDetail(p.FlagKey, context, p.DefaultValue.AsString) :
+                            _client.StringVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsString);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.StringVariation(p.FlagKey, p.Context, p.DefaultValue.AsString));
+                        resp.Value = LdValue.Of(p.User is null ? _client.StringVariation(p.FlagKey, context, p.DefaultValue.AsString) :
+                            _client.StringVariation(p.FlagKey, p.User, p.DefaultValue.AsString));
                     }
                     break;
 
                 default:
                     if (p.Detail)
                     {
-                        var detail = _client.JsonVariationDetail(p.FlagKey, p.Context, p.DefaultValue);
+                        var detail = p.User is null ? _client.JsonVariationDetail(p.FlagKey, context, p.DefaultValue) :
+                            _client.JsonVariationDetail(p.FlagKey, p.User, p.DefaultValue);
                         resp.Value = detail.Value;
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = _client.JsonVariation(p.FlagKey, p.Context, p.DefaultValue);
+                        resp.Value = p.User is null ? _client.JsonVariation(p.FlagKey, context, p.DefaultValue) :
+                            _client.JsonVariation(p.FlagKey, p.User, p.DefaultValue);
                     }
                     break;
             }
@@ -195,7 +233,8 @@ namespace TestService
             {
                 options.Add(FlagsStateOption.WithReasons);
             }
-            var result = _client.AllFlagsState(p.Context, options.ToArray());
+            var result = p.User is null ? _client.AllFlagsState(p.Context.Value, options.ToArray()) :
+                _client.AllFlagsState(p.User, options.ToArray());
             return new EvaluateAllFlagsResponse
             {
                 State = LdValue.Parse(LdJsonSerialization.SerializeObject(result))

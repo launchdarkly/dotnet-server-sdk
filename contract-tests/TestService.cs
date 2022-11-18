@@ -31,7 +31,8 @@ namespace TestService
             "all-flags-with-reasons",
             "big-segments",
             "context-type",
-            "secure-mode-hash"
+            "secure-mode-hash",
+            "user-type"
         };
 
         public readonly Handler Handler;

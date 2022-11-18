@@ -71,7 +71,8 @@ namespace TestService
     public class EvaluateFlagParams
     {
         public string FlagKey { get; set; }
-        public Context Context { get; set; }
+        public Context? Context { get; set; }
+        public User User { get; set; }
         public String ValueType { get; set; }
         public LdValue Value { get; set; }
         public LdValue DefaultValue { get; set; }
@@ -87,7 +88,8 @@ namespace TestService
 
     public class EvaluateAllFlagsParams
     {
-        public Context Context { get; set; }
+        public Context? Context { get; set; }
+        public User User { get; set; }
         public bool ClientSideOnly { get; set; }
         public bool DetailsOnlyForTrackedFlags { get; set; }
         public bool WithReasons { get; set; }
@@ -100,13 +102,15 @@ namespace TestService
 
     public class IdentifyEventParams
     {
-        public Context Context { get; set; }
+        public Context? Context { get; set; }
+        public User User { get; set; }
     }
 
     public class CustomEventParams
     {
         public string EventKey { get; set; }
-        public Context Context { get; set; }
+        public Context? Context { get; set; }
+        public User User { get; set; }
         public LdValue Data { get; set; }
         public bool OmitNullData { get; set; }
         public double? MetricValue { get; set; }
@@ -147,7 +151,8 @@ namespace TestService
 
     public class SecureModeHashParams
     {
-        public Context Context { get; set; }
+        public Context? Context { get; set; }
+        public User User { get; set; }
     }
 
     public class SecureModeHashResponse
