@@ -75,7 +75,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         ///     var contextForFlagEvaluation = Context.New("context-for-evaluation");
         ///     var listenForNewValue = client.FlagTracker.FlagValueChangeHandler(
         ///         flagKey,
-        ///         userForFlagEvaluation,
+        ///         contextForFlagEvaluation,
         ///         (sender, changeArgs) =>
         ///             {
         ///                 System.Console.WriteLine("flag '" + changeArgs.Key
@@ -93,6 +93,35 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>a handler to be added to <see cref="FlagChanged"/></returns>
         EventHandler<FlagChangeEvent> FlagValueChangeHandler(string flagKey, Context context,
             EventHandler<FlagValueChangeEvent> handler);
+    }
+
+    /// <summary>
+    /// Extension methods allowing <see cref="IFlagTracker"/> to be used with the older
+    /// <see cref="User"/> type instead of <see cref="Context"/>.
+    /// </summary>
+    public static class IFlagTrackerExtensionMethods
+    {
+        /// <summary>
+        /// Creates a handler for receiving notifications when a specific feature flag's value
+        /// has changed for a specific user.
+        /// </summary>
+        /// <remarks>
+        /// This is equivalent to <see cref="IFlagTracker.FlagValueChangeHandler(string, Context, EventHandler{FlagValueChangeEvent})"/>,
+        /// but using the <see cref="User"/> type instead of <see cref="Context"/>/.
+        /// </remarks>
+        /// <param name="flagTracker">the <see cref="IFlagTracker"/></param>
+        /// <param name="flagKey">the flag key to be evaluated</param>
+        /// <param name="user">the user attributes</param>
+        /// <param name="handler">a handler that will receive a <see cref="FlagValueChangeEvent"/>
+        /// </param>
+        /// <returns>a handler to be added to <see cref="IFlagTracker.FlagChanged"/></returns>
+        public static EventHandler<FlagChangeEvent> FlagValueChangeHandler(
+            this IFlagTracker flagTracker,
+            string flagKey,
+            User user,
+            EventHandler<FlagValueChangeEvent> handler
+            ) =>
+            flagTracker.FlagValueChangeHandler(flagKey, Context.FromUser(user), handler);
     }
 
     /// <summary>

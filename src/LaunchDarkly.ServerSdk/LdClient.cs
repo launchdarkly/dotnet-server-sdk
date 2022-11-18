@@ -20,6 +20,12 @@ namespace LaunchDarkly.Sdk.Server
     /// A client for the LaunchDarkly API. Client instances are thread-safe. Applications should instantiate
     /// a single <see cref="LdClient"/> for the lifetime of their application.
     /// </summary>
+    /// <remarks>
+    /// See also <see cref="ILdClientExtensions"/>, which provides convenience methods that build upon
+    /// this API. In particular, for every <see cref="LdClient"/> method that takes a
+    /// <see cref="Context"/> parameter, there is an extension method that allows you to pass the
+    /// older <see cref="User"/> type instead.
+    /// </remarks>
     public sealed class LdClient : IDisposable, ILdClient
     {
         #region Private fields
@@ -249,77 +255,53 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         /// <inheritdoc/>
-        public bool BoolVariation(string key, Context context, bool defaultValue = false)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.Default).Value;
-        }
+        public bool BoolVariation(string key, Context context, bool defaultValue = false) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
-        public int IntVariation(string key, Context context, int defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.Default).Value;
-        }
+        public int IntVariation(string key, Context context, int defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
-        public float FloatVariation(string key, Context context, float defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.Default).Value;
-        }
+        public float FloatVariation(string key, Context context, float defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
-        public double DoubleVariation(string key, Context context, double defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.Default).Value;
-        }
+        public double DoubleVariation(string key, Context context, double defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
-        public string StringVariation(string key, Context context, string defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
-        }
-        
-        /// <inheritdoc/>
-        public LdValue JsonVariation(string key, Context context, LdValue defaultValue)
-        {
-            return Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.Default).Value;
-        }
+        public string StringVariation(string key, Context context, string defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
-        public EvaluationDetail<bool> BoolVariationDetail(string key, Context context, bool defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.DefaultWithReasons);
-        }
+        public LdValue JsonVariation(string key, Context context, LdValue defaultValue) =>
+            Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.Default).Value;
 
         /// <inheritdoc/>
-        public EvaluationDetail<int> IntVariationDetail(string key, Context context, int defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.DefaultWithReasons);
-        }
+        public EvaluationDetail<bool> BoolVariationDetail(string key, Context context, bool defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
-        public EvaluationDetail<float> FloatVariationDetail(string key, Context context, float defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
-        }
+        public EvaluationDetail<int> IntVariationDetail(string key, Context context, int defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
-        public EvaluationDetail<double> DoubleVariationDetail(string key, Context context, double defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.DefaultWithReasons);
-        }
+        public EvaluationDetail<float> FloatVariationDetail(string key, Context context, float defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
-        public EvaluationDetail<string> StringVariationDetail(string key, Context context, string defaultValue)
-        {
-            return Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
-        }
-        
+        public EvaluationDetail<double> DoubleVariationDetail(string key, Context context, double defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.DefaultWithReasons);
+
         /// <inheritdoc/>
-        public EvaluationDetail<LdValue> JsonVariationDetail(string key, Context context, LdValue defaultValue)
-        {
-            return Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
-        }
-        
+        public EvaluationDetail<string> StringVariationDetail(string key, Context context, string defaultValue) =>
+            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
+
+        /// <inheritdoc/>
+        public EvaluationDetail<LdValue> JsonVariationDetail(string key, Context context, LdValue defaultValue) =>
+            Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
+
         /// <inheritdoc/>
         public FeatureFlagsState AllFlagsState(Context context, params FlagsStateOption[] options)
         {

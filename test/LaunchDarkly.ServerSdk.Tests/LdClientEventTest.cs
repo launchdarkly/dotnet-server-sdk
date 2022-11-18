@@ -12,6 +12,7 @@ namespace LaunchDarkly.Sdk.Server
     public class LdClientEventTest : BaseTest
     {
         private static readonly Context user = Context.New("userkey");
+        private static readonly User userWithOldUserType = User.WithKey(user.Key);
         private readonly TestData testData = TestData.DataSource();
         private readonly MockEventProcessor eventSink = new MockEventProcessor();
         private readonly ILdClient client;
@@ -36,6 +37,16 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void IdentifyWithUserSendsEvent()
+        {
+            client.Identify(userWithOldUserType);
+
+            Assert.Single(eventSink.Events);
+            var ie = Assert.IsType<IdentifyEvent>(eventSink.Events[0]);
+            Assert.Equal(userWithOldUserType.Key, ie.Context.Key);
+        }
+
+        [Fact]
         public void IdentifyWithEmptyUserKeySendsNoEvent()
         {
             client.Identify(Context.New(""));
@@ -51,6 +62,19 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
             Assert.Equal(user.Key, ce.Context.Key);
+            Assert.Equal("eventkey", ce.EventKey);
+            Assert.Equal(LdValue.Null, ce.Data);
+            Assert.Null(ce.MetricValue);
+        }
+
+        [Fact]
+        public void TrackWithUserSendsEventWithoutData()
+        {
+            client.Track("eventkey", userWithOldUserType);
+
+            Assert.Single(eventSink.Events);
+            var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
+            Assert.Equal(userWithOldUserType.Key, ce.Context.Key);
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(LdValue.Null, ce.Data);
             Assert.Null(ce.MetricValue);

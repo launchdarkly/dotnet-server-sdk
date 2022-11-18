@@ -81,11 +81,14 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void TestSecureModeHash()
         {
+            string expectedHash = "aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597";
+            Context context = Context.New("Message");
+            User contextAsUser = User.WithKey(context.Key);
             var config = BasicConfig().SdkKey("secret").Offline(true).Build();
             using (var client = new LdClient(config))
             {
-                Assert.Equal("aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597",
-                    client.SecureModeHash(Context.New("Message")));
+                Assert.Equal(expectedHash, client.SecureModeHash(context));
+                Assert.Equal(expectedHash, client.SecureModeHash(contextAsUser));
             }
         }
     }
