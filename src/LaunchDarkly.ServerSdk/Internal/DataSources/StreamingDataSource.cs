@@ -1,17 +1,18 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using LaunchDarkly.EventSource;
-using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Concurrent;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.DataSources.StreamProcessorEvents;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
@@ -52,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             TimeSpan initialReconnectDelay
             )
         {
-            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
             _log.Info("Connecting to LaunchDarkly stream");
 
             _dataSourceUpdates = dataSourceUpdates;
@@ -155,7 +156,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 // whatever the encoding was), and then calling Message.DataUtf8Bytes converts
                 // that to UTF-8 bytes.
             }
-            catch (JsonReadException ex)
+            catch (JsonException ex)
             {
                 _log.Error("LaunchDarkly service request failed or received invalid data: {0}",
                     LogValues.ExceptionSummary(ex));

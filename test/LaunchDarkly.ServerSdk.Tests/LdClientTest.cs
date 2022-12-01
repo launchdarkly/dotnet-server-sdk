@@ -4,18 +4,18 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Integrations;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.MockComponents;
 
 namespace LaunchDarkly.Sdk.Server
@@ -137,8 +137,8 @@ AssertLogMessage(false, LogLevel.Warn,
         [Fact]
         public void DiagnosticStorePassedToFactories()
         {
-            var epf = new Mock<IEventProcessorFactory>();
-            var dsf = new Mock<IDataSourceFactory>();
+            var epf = new Mock<IComponentConfigurer<IEventProcessor>>();
+            var dsf = new Mock<IComponentConfigurer<IDataSource>>();
             var config = BasicConfig()
                 .Events(epf.Object)
                 .DataSource(dsf.Object)
@@ -148,18 +148,18 @@ AssertLogMessage(false, LogLevel.Warn,
             IDiagnosticStore dataSourceDiagnosticStore = null;
             var dataSource = MockDataSourceWithStartFn(_ => Task.FromResult(true));
 
-            epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
+            epf.Setup(f => f.Build(It.IsAny<LdClientContext>()))
                 .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
                 .Returns(new ComponentsImpl.NullEventProcessor());
-            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataSourceUpdates>()))
-                .Callback((LdClientContext ctx, IDataSourceUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
-                .Returns((LdClientContext ctx, IDataSourceUpdates dsu) => dataSource);
+            dsf.Setup(f => f.Build(It.IsAny<LdClientContext>()))
+                .Callback((LdClientContext ctx) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx) => dataSource);
 
             using (var client = new LdClient(config))
             {
-                epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
+                epf.Verify(f => f.Build(It.IsNotNull<LdClientContext>()), Times.Once());
                 epf.VerifyNoOtherCalls();
-                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataSourceUpdates>()), Times.Once());
+                dsf.Verify(f => f.Build(It.IsNotNull<LdClientContext>()), Times.Once());
                 dsf.VerifyNoOtherCalls();
                 Assert.NotNull(eventProcessorDiagnosticStore);
                 Assert.Same(eventProcessorDiagnosticStore, dataSourceDiagnosticStore);
@@ -169,8 +169,8 @@ AssertLogMessage(false, LogLevel.Warn,
         [Fact]
         public void DiagnosticStoreNotPassedToFactoriesWhenOptedOut()
         {
-            var epf = new Mock<IEventProcessorFactory>();
-            var dsf = new Mock<IDataSourceFactory>();
+            var epf = new Mock<IComponentConfigurer<IEventProcessor>>();
+            var dsf = new Mock<IComponentConfigurer<IDataSource>>();
             var config = BasicConfig()
                 .Events(epf.Object)
                 .DataSource(dsf.Object)
@@ -181,18 +181,18 @@ AssertLogMessage(false, LogLevel.Warn,
             IDiagnosticStore dataSourceDiagnosticStore = null;
             var dataSource = MockDataSourceWithStartFn(_ => Task.FromResult(true));
 
-            epf.Setup(f => f.CreateEventProcessor(It.IsAny<LdClientContext>()))
+            epf.Setup(f => f.Build(It.IsAny<LdClientContext>()))
                 .Callback((LdClientContext ctx) => eventProcessorDiagnosticStore = ctx.DiagnosticStore)
                 .Returns(new ComponentsImpl.NullEventProcessor());
-            dsf.Setup(f => f.CreateDataSource(It.IsAny<LdClientContext>(), It.IsAny<IDataSourceUpdates>()))
-                .Callback((LdClientContext ctx, IDataSourceUpdates dsu) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
-                .Returns((LdClientContext ctx, IDataSourceUpdates dsu) => dataSource);
+            dsf.Setup(f => f.Build(It.IsAny<LdClientContext>()))
+                .Callback((LdClientContext ctx) => dataSourceDiagnosticStore = ctx.DiagnosticStore)
+                .Returns((LdClientContext ctx) => dataSource);
 
             using (var client = new LdClient(config))
             {
-                epf.Verify(f => f.CreateEventProcessor(It.IsNotNull<LdClientContext>()), Times.Once());
+                epf.Verify(f => f.Build(It.IsNotNull<LdClientContext>()), Times.Once());
                 epf.VerifyNoOtherCalls();
-                dsf.Verify(f => f.CreateDataSource(It.IsNotNull<LdClientContext>(), It.IsNotNull<IDataSourceUpdates>()), Times.Once());
+                dsf.Verify(f => f.Build(It.IsNotNull<LdClientContext>()), Times.Once());
                 dsf.VerifyNoOtherCalls();
                 Assert.Null(eventProcessorDiagnosticStore);
                 Assert.Null(dataSourceDiagnosticStore);
@@ -203,7 +203,7 @@ AssertLogMessage(false, LogLevel.Warn,
         public void DataSourceCanTimeOut()
         {
             var config = BasicConfig()
-                .DataSource(MockDataSourceThatNeverStarts().AsSingletonFactory())
+                .DataSource(MockDataSourceThatNeverStarts())
                 .StartWaitTime(TimeSpan.FromMilliseconds(10))
                 .Build();
 
@@ -220,7 +220,7 @@ AssertLogMessage(false, LogLevel.Warn,
             var dataSource = MockDataSourceWithStartFn(_ => errorTaskSource.Task, () => false);
             errorTaskSource.SetException(new Exception("bad"));
             var config = BasicConfig()
-                .DataSource(dataSource.AsSingletonFactory())
+                .DataSource(dataSource)
                 .Build();
 
             using (var client = new LdClient(config))
@@ -238,13 +238,13 @@ AssertLogMessage(false, LogLevel.Warn,
             // note, the store is still not inited
 
             var config = BasicConfig()
-                .DataStore(dataStore.AsSingletonFactory())
-                .DataSource(MockDataSourceThatNeverStarts().AsSingletonFactory())
+                .DataStore(dataStore.AsSingletonFactory<IDataStore>())
+                .DataSource(MockDataSourceThatNeverStarts())
                 .Build();
 
             using (var client = new LdClient(config))
             {
-                Assert.Equal(0, client.IntVariation("key", User.WithKey("user"), 0));
+                Assert.Equal(0, client.IntVariation("key", Context.New("user"), 0));
             }
         }
 
@@ -257,13 +257,13 @@ AssertLogMessage(false, LogLevel.Warn,
             TestUtils.UpsertFlag(dataStore, flag);
 
             var config = BasicConfig()
-                .DataStore(dataStore.AsSingletonFactory())
-                .DataSource(MockDataSourceThatNeverStarts().AsSingletonFactory())
+                .DataStore(dataStore.AsSingletonFactory<IDataStore>())
+                .DataSource(MockDataSourceThatNeverStarts())
                 .Build();
 
             using (var client = new LdClient(config))
             {
-                Assert.Equal(1, client.IntVariation("key", User.WithKey("user"), 0));
+                Assert.Equal(1, client.IntVariation("key", Context.New("user"), 0));
             }
         }
         
@@ -282,7 +282,7 @@ AssertLogMessage(false, LogLevel.Warn,
 
             var config = BasicConfig()
                 .DataStore(store.AsSingletonFactory())
-                .DataSource(MockDataSourceWithData(DataStoreSorterTest.DependencyOrderingTestData).AsSingletonFactory())
+                .DataSource(MockDataSourceWithData(DataStoreSorterTest.DependencyOrderingTestData))
                 .Build();
 
             using (var client = new LdClient(config))

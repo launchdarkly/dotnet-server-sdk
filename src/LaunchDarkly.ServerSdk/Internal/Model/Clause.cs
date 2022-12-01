@@ -8,14 +8,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
 {
     internal struct Clause
     {
-        internal UserAttribute Attribute { get; }
+        internal ContextKind? ContextKind { get; }
+        internal AttributeRef Attribute { get; }
         internal Operator Op { get; }
         internal IEnumerable<LdValue> Values { get; }
         internal bool Negate { get; }
         internal PreprocessedData Preprocessed { get; }
 
-        internal Clause(UserAttribute attribute, Operator op, IEnumerable<LdValue> values, bool negate)
+        internal Clause(ContextKind? contextKind, AttributeRef attribute, Operator op, IEnumerable<LdValue> values, bool negate)
         {
+            ContextKind = contextKind;
             Attribute = attribute;
             Op = op;
             Values = values ?? Enumerable.Empty<LdValue>();

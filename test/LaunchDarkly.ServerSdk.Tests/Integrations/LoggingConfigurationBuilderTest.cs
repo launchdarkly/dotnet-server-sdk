@@ -1,14 +1,17 @@
 ﻿using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Xunit;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
     public class LoggingConfigurationBuilderTest
     {
+        private static readonly LdClientContext basicContext = new LdClientContext("");
+
         [Fact]
         public void HasNonNullDefaultLogAdapter()
         {
-            var logConfig = Components.Logging().CreateLoggingConfiguration();
+            var logConfig = Components.Logging().Build(basicContext);
             Assert.NotNull(logConfig.LogAdapter);
         }
 
@@ -19,21 +22,21 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             var logConfig1 = Components.Logging()
                 .Adapter(adapter)
-                .CreateLoggingConfiguration();
+                .Build(basicContext);
             Assert.Same(adapter, logConfig1.LogAdapter);
 
             var logConfig2 = Components.Logging(adapter)
-                .CreateLoggingConfiguration();
+                .Build(basicContext);
             Assert.Same(adapter, logConfig2.LogAdapter);
         }
 
         [Fact]
         public void CanSpecifyBaseLoggerName()
         {
-            var logConfig1 = Components.Logging().CreateLoggingConfiguration();
+            var logConfig1 = Components.Logging().Build(basicContext);
             Assert.Null(logConfig1.BaseLoggerName);
 
-            var logConfig2 = Components.Logging().BaseLoggerName("xyz").CreateLoggingConfiguration();
+            var logConfig2 = Components.Logging().BaseLoggerName("xyz").Build(basicContext);
             Assert.Equal("xyz", logConfig2.BaseLoggerName);
         }
 
@@ -42,7 +45,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         {
             var logCapture = Logs.Capture();
             var logConfig = Components.Logging(logCapture)
-                .CreateLoggingConfiguration();
+                .Build(basicContext);
             var logger = logConfig.LogAdapter.Logger("");
             logger.Debug("hi");
             Assert.True(logCapture.HasMessageWithText(LogLevel.Debug, "hi"));
@@ -54,7 +57,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             var logCapture = Logs.Capture();
             var logConfig = Components.Logging(logCapture)
                 .Level(LogLevel.Warn)
-                .CreateLoggingConfiguration();
+                .Build(basicContext);
             var logger = logConfig.LogAdapter.Logger("");
             logger.Debug("d");
             logger.Info("i");
@@ -67,7 +70,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void NoLoggingIsShortcutForLogsNone()
         {
-            var logConfig = Components.NoLogging.CreateLoggingConfiguration();
+            var logConfig = Components.NoLogging.Build(basicContext);
             Assert.Same(Logs.None, logConfig.LogAdapter);
         }
     }

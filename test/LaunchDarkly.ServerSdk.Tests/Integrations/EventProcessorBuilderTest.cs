@@ -19,16 +19,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
-        public void BaseUri()
-        {
-#pragma warning disable CS0618
-            var prop = _tester.Property(b => b._baseUri, (b, v) => b.BaseUri(v));
-#pragma warning restore CS0618
-            prop.AssertDefault(null);
-            prop.AssertCanSet(new Uri("http://x"));
-        }
-
-        [Fact]
         public void Capacity()
         {
             var prop = _tester.Property(b => b._capacity, (b, v) => b.Capacity(v));
@@ -60,53 +50,34 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
-        public void InlineUsersInEvents()
-        {
-            var prop = _tester.Property(b => b._inlineUsersInEvents, (b, v) => b.InlineUsersInEvents(v));
-            prop.AssertDefault(false);
-            prop.AssertCanSet(true);
-        }
-
-        [Fact]
         public void PrivateAttributes()
         {
             var b = _tester.New();
             Assert.Empty(b._privateAttributes);
-            b.PrivateAttributes(UserAttribute.Name);
-            b.PrivateAttributes(UserAttribute.Email, UserAttribute.ForName("other"));
-            Assert.Equal(new HashSet<UserAttribute> {
-                UserAttribute.Name, UserAttribute.Email, UserAttribute.ForName("other") }, b._privateAttributes);
+            b.PrivateAttributes("email", "/address/street");
+            Assert.Equal(new HashSet<AttributeRef> {
+                AttributeRef.FromLiteral("email"), AttributeRef.FromPath("/address/street") },
+                b._privateAttributes);
         }
 
         [Fact]
-        public void PrivateAttributeNames()
+        public void ContextKeysCapacity()
         {
-            var b = _tester.New();
-            Assert.Empty(b._privateAttributes);
-            b.PrivateAttributeNames("name");
-            b.PrivateAttributeNames("email", "other");
-            Assert.Equal(new HashSet<UserAttribute> {
-                UserAttribute.Name, UserAttribute.Email, UserAttribute.ForName("other") }, b._privateAttributes);
-        }
-
-        [Fact]
-        public void UserKeysCapacity()
-        {
-            var prop = _tester.Property(b => b._userKeysCapacity, (b, v) => b.UserKeysCapacity(v));
-            prop.AssertDefault(EventProcessorBuilder.DefaultUserKeysCapacity);
+            var prop = _tester.Property(b => b._contextKeysCapacity, (b, v) => b.ContextKeysCapacity(v));
+            prop.AssertDefault(EventProcessorBuilder.DefaultContextKeysCapacity);
             prop.AssertCanSet(1);
-            prop.AssertSetIsChangedTo(0, EventProcessorBuilder.DefaultUserKeysCapacity);
-            prop.AssertSetIsChangedTo(-1, EventProcessorBuilder.DefaultUserKeysCapacity);
+            prop.AssertSetIsChangedTo(0, EventProcessorBuilder.DefaultContextKeysCapacity);
+            prop.AssertSetIsChangedTo(-1, EventProcessorBuilder.DefaultContextKeysCapacity);
         }
 
         [Fact]
-        public void UserKeysFlushInterval()
+        public void ContextKeysFlushInterval()
         {
-            var prop = _tester.Property(b => b._userKeysFlushInterval, (b, v) => b.UserKeysFlushInterval(v));
-            prop.AssertDefault(EventProcessorBuilder.DefaultUserKeysFlushInterval);
+            var prop = _tester.Property(b => b._contextKeysFlushInterval, (b, v) => b.ContextKeysFlushInterval(v));
+            prop.AssertDefault(EventProcessorBuilder.DefaultContextKeysFlushInterval);
             prop.AssertCanSet(TimeSpan.FromMinutes(7));
-            prop.AssertSetIsChangedTo(TimeSpan.Zero, EventProcessorBuilder.DefaultUserKeysFlushInterval);
-            prop.AssertSetIsChangedTo(TimeSpan.FromMilliseconds(-1), EventProcessorBuilder.DefaultUserKeysFlushInterval);
+            prop.AssertSetIsChangedTo(TimeSpan.Zero, EventProcessorBuilder.DefaultContextKeysFlushInterval);
+            prop.AssertSetIsChangedTo(TimeSpan.FromMilliseconds(-1), EventProcessorBuilder.DefaultContextKeysFlushInterval);
         }
     }
 }

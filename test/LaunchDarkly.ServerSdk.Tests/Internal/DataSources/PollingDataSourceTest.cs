@@ -1,11 +1,11 @@
 ﻿using System;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.MockResponses;
 using static LaunchDarkly.Sdk.Server.TestHttpUtils;
 
@@ -31,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .ServiceEndpoints(Components.ServiceEndpoints().Polling(baseUri));
             modConfig?.Invoke(builder);
             var config = builder.Build();
-            return config.DataSourceFactory.CreateDataSource(ContextFrom(config), _updateSink);
+            return config.DataSource.Build(ContextFrom(config).WithDataSourceUpdates(_updateSink));
         }
 
         [Theory]

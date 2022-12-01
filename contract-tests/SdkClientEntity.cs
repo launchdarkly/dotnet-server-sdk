@@ -53,27 +53,49 @@ namespace TestService
                     break;
 
                 case "identifyEvent":
-                    _client.Identify(command.IdentifyEvent.User);
+                    if (command.IdentifyEvent.User is null)
+                    {
+                        _client.Identify(command.IdentifyEvent.Context.Value);
+                    }
+                    else
+                    {
+                        _client.Identify(command.IdentifyEvent.User);
+                    }
                     break;
 
                 case "customEvent":
                     var custom = command.CustomEvent;
-                    if (custom.MetricValue.HasValue)
+                    if (custom.User is null)
                     {
-                        _client.Track(custom.EventKey, custom.User, custom.Data, custom.MetricValue.Value);
-                    }
-                    else if (custom.OmitNullData && custom.Data.IsNull)
-                    {
-                        _client.Track(custom.EventKey, custom.User);
+                        var context = custom.Context.Value;
+                        if (custom.MetricValue.HasValue)
+                        {
+                            _client.Track(custom.EventKey, context, custom.Data, custom.MetricValue.Value);
+                        }
+                        else if (custom.OmitNullData && custom.Data.IsNull)
+                        {
+                            _client.Track(custom.EventKey, context);
+                        }
+                        else
+                        {
+                            _client.Track(custom.EventKey, context, custom.Data);
+                        }
                     }
                     else
                     {
-                        _client.Track(custom.EventKey, custom.User, custom.Data);
+                        if (custom.MetricValue.HasValue)
+                        {
+                            _client.Track(custom.EventKey, custom.User, custom.Data, custom.MetricValue.Value);
+                        }
+                        else if (custom.OmitNullData && custom.Data.IsNull)
+                        {
+                            _client.Track(custom.EventKey, custom.User);
+                        }
+                        else
+                        {
+                            _client.Track(custom.EventKey, custom.User, custom.Data);
+                        }
                     }
-                    break;
-
-                case "aliasEvent":
-                    _client.Alias(command.AliasEvent.User, command.AliasEvent.PreviousUser);
                     break;
 
                 case "flushEvents":
@@ -85,6 +107,22 @@ namespace TestService
                     response = new GetBigSegmentStoreStatusResponse { Available = status.Available, Stale = status.Stale };
                     break;
 
+                case "contextBuild":
+                    response = DoContextBuild(command.ContextBuild);
+                    break;
+
+                case "contextConvert":
+                    response = DoContextConvert(command.ContextConvert);
+                    break;
+
+                case "secureModeHash":
+                    response = new SecureModeHashResponse
+                    {
+                        Result = command.SecureModeHash.User is null ? _client.SecureModeHash(command.SecureModeHash.Context.Value) :
+                            _client.SecureModeHash(command.SecureModeHash.User)
+                    };
+                    break;
+
                 default:
                     return false;
             }
@@ -94,75 +132,86 @@ namespace TestService
         private object DoEvaluate(EvaluateFlagParams p)
         {
             var resp = new EvaluateFlagResponse();
+            Context context = p.Context.HasValue ? p.Context.Value : new Context();
             switch (p.ValueType)
             {
                 case "bool":
                     if (p.Detail)
                     {
-                        var detail = _client.BoolVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsBool);
+                        var detail = p.User is null ? _client.BoolVariationDetail(p.FlagKey, context, p.DefaultValue.AsBool) :
+                            _client.BoolVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsBool);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.BoolVariation(p.FlagKey, p.User, p.DefaultValue.AsBool));
+                        resp.Value = LdValue.Of(p.User is null ? _client.BoolVariation(p.FlagKey, context, p.DefaultValue.AsBool) :
+                            _client.BoolVariation(p.FlagKey, p.User, p.DefaultValue.AsBool));
                     }
                     break;
 
                 case "int":
                     if (p.Detail)
                     {
-                        var detail = _client.IntVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsInt);
+                        var detail = p.User is null ? _client.IntVariationDetail(p.FlagKey, context, p.DefaultValue.AsInt) :
+                            _client.IntVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsInt);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.IntVariation(p.FlagKey, p.User, p.DefaultValue.AsInt));
+                        resp.Value = LdValue.Of(p.User is null ? _client.IntVariation(p.FlagKey, context, p.DefaultValue.AsInt) :
+                            _client.IntVariation(p.FlagKey, p.User, p.DefaultValue.AsInt));
                     }
                     break;
 
                 case "double":
                     if (p.Detail)
                     {
-                        var detail = _client.DoubleVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsDouble);
+                        var detail = p.User is null ? _client.DoubleVariationDetail(p.FlagKey, context, p.DefaultValue.AsDouble) :
+                            _client.DoubleVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsDouble);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.DoubleVariation(p.FlagKey, p.User, p.DefaultValue.AsDouble));
+                        resp.Value = LdValue.Of(p.User is null ? _client.DoubleVariation(p.FlagKey, context, p.DefaultValue.AsDouble) :
+                            _client.DoubleVariation(p.FlagKey, p.User, p.DefaultValue.AsDouble));
                     }
                     break;
 
                 case "string":
                     if (p.Detail)
                     {
-                        var detail = _client.StringVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsString);
+                        var detail = p.User is null ? _client.StringVariationDetail(p.FlagKey, context, p.DefaultValue.AsString) :
+                            _client.StringVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsString);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(_client.StringVariation(p.FlagKey, p.User, p.DefaultValue.AsString));
+                        resp.Value = LdValue.Of(p.User is null ? _client.StringVariation(p.FlagKey, context, p.DefaultValue.AsString) :
+                            _client.StringVariation(p.FlagKey, p.User, p.DefaultValue.AsString));
                     }
                     break;
 
                 default:
                     if (p.Detail)
                     {
-                        var detail = _client.JsonVariationDetail(p.FlagKey, p.User, p.DefaultValue);
+                        var detail = p.User is null ? _client.JsonVariationDetail(p.FlagKey, context, p.DefaultValue) :
+                            _client.JsonVariationDetail(p.FlagKey, p.User, p.DefaultValue);
                         resp.Value = detail.Value;
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = _client.JsonVariation(p.FlagKey, p.User, p.DefaultValue);
+                        resp.Value = p.User is null ? _client.JsonVariation(p.FlagKey, context, p.DefaultValue) :
+                            _client.JsonVariation(p.FlagKey, p.User, p.DefaultValue);
                     }
                     break;
             }
@@ -184,11 +233,71 @@ namespace TestService
             {
                 options.Add(FlagsStateOption.WithReasons);
             }
-            var result = _client.AllFlagsState(p.User, options.ToArray());
+            var result = p.User is null ? _client.AllFlagsState(p.Context.Value, options.ToArray()) :
+                _client.AllFlagsState(p.User, options.ToArray());
             return new EvaluateAllFlagsResponse
             {
                 State = LdValue.Parse(LdJsonSerialization.SerializeObject(result))
             };
+        }
+
+        private ContextBuildResponse DoContextBuild(ContextBuildParams p)
+        {
+            Context c;
+            if (p.Multi is null)
+            {
+                c = DoContextBuildSingle(p.Single);
+            }
+            else
+            {
+                var b = Context.MultiBuilder();
+                foreach (var s in p.Multi)
+                {
+                    b.Add(DoContextBuildSingle(s));
+                }
+                c = b.Build();
+            }
+            if (c.Valid)
+            {
+                return new ContextBuildResponse { Output = LdJsonSerialization.SerializeObject(c) };
+            }
+            return new ContextBuildResponse { Error = c.Error };
+        }
+
+        private Context DoContextBuildSingle(ContextBuildSingleParams s)
+        {
+            var b = Context.Builder(s.Key)
+                .Kind(s.Kind)
+                .Name(s.Name)
+                .Anonymous(s.Anonymous);
+            if (!(s.Private is null))
+            {
+                b.Private(s.Private);
+            }
+            if (!(s.Custom is null))
+            {
+                foreach (var kv in s.Custom)
+                {
+                    b.Set(kv.Key, kv.Value);
+                }
+            }
+            return b.Build();
+        }
+        private ContextBuildResponse DoContextConvert(ContextConvertParams p)
+        {
+            try
+            {
+                var c = LdJsonSerialization.DeserializeObject<Context>(p.Input);
+                if (c.Valid)
+                {
+                    return new ContextBuildResponse { Output = LdJsonSerialization.SerializeObject(c) };
+                }
+                return new ContextBuildResponse { Error = c.Error };
+            }
+            catch (Exception e)
+            {
+                return new ContextBuildResponse { Error = e.ToString() };
+            }
         }
 
         private static Configuration BuildSdkConfig(SdkConfigParams sdkParams, ILogAdapter logAdapter, string tag)
@@ -225,8 +334,7 @@ namespace TestService
             {
                 endpoints.Events(eventParams.BaseUri);
                 var events = Components.SendEvents()
-                    .AllAttributesPrivate(eventParams.AllAttributesPrivate)
-                    .InlineUsersInEvents(eventParams.InlineUsers);
+                    .AllAttributesPrivate(eventParams.AllAttributesPrivate);
                 if (eventParams.Capacity.HasValue && eventParams.Capacity.Value > 0)
                 {
                     events.Capacity(eventParams.Capacity.Value);
@@ -237,7 +345,7 @@ namespace TestService
                 }
                 if (eventParams.GlobalPrivateAttributes != null)
                 {
-                    events.PrivateAttributeNames(eventParams.GlobalPrivateAttributes);
+                    events.PrivateAttributes(eventParams.GlobalPrivateAttributes);
                 }
                 builder.Events(events);
                 builder.DiagnosticOptOut(!eventParams.EnableDiagnostics);
@@ -257,11 +365,11 @@ namespace TestService
                 }
                 if (bigSegments.UserCacheSize.HasValue)
                 {
-                    bs.UserCacheSize(bigSegments.UserCacheSize.Value);
+                    bs.ContextCacheSize(bigSegments.UserCacheSize.Value);
                 }
                 if (bigSegments.UserCacheTimeMs.HasValue)
                 {
-                    bs.UserCacheTime(TimeSpan.FromMilliseconds(bigSegments.UserCacheTimeMs.Value));
+                    bs.ContextCacheTime(TimeSpan.FromMilliseconds(bigSegments.UserCacheTimeMs.Value));
                 }
                 builder.BigSegments(bs);
             }

@@ -2,7 +2,7 @@
 using System.Threading;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
-using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Xunit.Abstractions;
 
 namespace LaunchDarkly.Sdk.Server
@@ -14,7 +14,7 @@ namespace LaunchDarkly.Sdk.Server
     public class BaseTest
     {
         protected const string BasicSdkKey = "sdk-key";
-        protected static readonly User BasicUser = User.WithKey("user-key");
+        protected static readonly Context BasicUser = Context.New("user-key");
 
         /// <summary>
         /// Using this <see cref="ILogAdapter"/> in an SDK configuration will cause logging to be sent
@@ -78,8 +78,7 @@ namespace LaunchDarkly.Sdk.Server
             TestLogging = Logs.ToMultiple(extraLogging, LogCapture);
             TestLogger = TestLogging.Logger("");
 
-            BasicContext = new LdClientContext(new BasicConfiguration(Configuration.Default(BasicSdkKey), TestLogger),
-                Configuration.Default(""));
+            BasicContext = new LdClientContext(BasicSdkKey).WithLogger(TestLogger);
 
             BasicTaskExecutor = new TaskExecutor("test-sender", TestLogger);
 
@@ -110,16 +109,18 @@ namespace LaunchDarkly.Sdk.Server
                 .Logging(TestLogging)
                 .StartWaitTime(TimeSpan.Zero);
 
-        protected LdClientContext ContextFrom(Configuration config)
-        {
-            var basic = new BasicConfiguration(config.SdkKey, config.Offline, config.ServiceEndpoints, TestLogger);
-            return new LdClientContext(
-                basic,
-                (config.HttpConfigurationFactory ?? Components.HttpConfiguration()).CreateHttpConfiguration(basic),
+        protected LdClientContext ContextFrom(Configuration config) =>
+            new LdClientContext(
+                config.SdkKey,
+                null,
+                null,
+                (config.Http ?? Components.HttpConfiguration()).Build(new LdClientContext(config.SdkKey)),
+                TestLogger,
+                config.Offline,
+                config.ServiceEndpoints,
                 null,
                 BasicTaskExecutor
                 );
-        }
 
         public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern) =>
             AssertHelpers.LogMessageRegex(LogCapture, shouldHave, level, pattern);

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Events
 {
@@ -19,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         internal EvaluationEvent NewEvaluationEvent(
             FeatureFlag flag,
-            User user,
+            Context context,
             EvaluationDetail<LdValue> result,
             LdValue defaultValue
             )
@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             return new EvaluationEvent
             {
                 Timestamp = UnixMillisecondTime.Now,
-                User = user,
+                Context = context,
                 FlagKey = flag.Key,
                 FlagVersion = flag.Version,
                 Variation = result.VariationIndex,
@@ -42,7 +42,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         internal EvaluationEvent NewDefaultValueEvaluationEvent(
             FeatureFlag flag,
-            User user,
+            Context context,
             LdValue defaultValue,
             EvaluationErrorKind errorKind
             )
@@ -50,7 +50,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             return new EvaluationEvent
             {
                 Timestamp = UnixMillisecondTime.Now,
-                User = user,
+                Context = context,
                 FlagKey = flag.Key,
                 FlagVersion = flag.Version,
                 Value = defaultValue,
@@ -63,7 +63,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         internal EvaluationEvent NewUnknownFlagEvaluationEvent(
             string flagKey,
-            User user,
+            Context context,
             LdValue defaultValue,
             EvaluationErrorKind errorKind
             )
@@ -71,7 +71,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             return new EvaluationEvent
             {
                 Timestamp = UnixMillisecondTime.Now,
-                User = user,
+                Context = context,
                 FlagKey = flagKey,
                 Value = defaultValue,
                 Default = defaultValue,
@@ -81,13 +81,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         internal EvaluationEvent NewPrerequisiteEvaluationEvent(
             FeatureFlag prereqFlagBeingEvaluated,
-            User user,
+            Context context,
             EvaluationDetail<LdValue> result,
-            FeatureFlag flagThatReferencesPrerequisite
+            string flagKeyThatReferencesPrerequisite
             )
         {
-            var e = NewEvaluationEvent(prereqFlagBeingEvaluated, user, result, LdValue.Null);
-            e.PrerequisiteOf = flagThatReferencesPrerequisite.Key;
+            var e = NewEvaluationEvent(prereqFlagBeingEvaluated, context, result, LdValue.Null);
+            e.PrerequisiteOf = flagKeyThatReferencesPrerequisite;
             return e;
         }
 

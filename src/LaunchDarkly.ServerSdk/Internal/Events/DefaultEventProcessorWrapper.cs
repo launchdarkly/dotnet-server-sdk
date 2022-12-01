@@ -1,4 +1,4 @@
-﻿using LaunchDarkly.Sdk.Server.Interfaces;
+﻿using LaunchDarkly.Sdk.Server.Subsystems;
 
 using InternalEventProcessor = LaunchDarkly.Sdk.Internal.Events.EventProcessor;
 using InternalEventTypes = LaunchDarkly.Sdk.Internal.Events.EventTypes;
@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             _impl.RecordEvaluationEvent(new InternalEventTypes.EvaluationEvent
             {
                 Timestamp = e.Timestamp,
-                User = e.User,
+                Context = e.Context,
                 FlagKey = e.FlagKey,
                 FlagVersion = e.FlagVersion,
                 Variation = e.Variation,
@@ -34,27 +34,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             _impl.RecordIdentifyEvent(new InternalEventTypes.IdentifyEvent
             {
                 Timestamp = e.Timestamp,
-                User = e.User
+                Context = e.Context
             });
 
         public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) =>
             _impl.RecordCustomEvent(new InternalEventTypes.CustomEvent
             {
                 Timestamp = e.Timestamp,
-                User = e.User,
+                Context = e.Context,
                 EventKey = e.EventKey,
                 Data = e.Data,
                 MetricValue = e.MetricValue
-            });
-
-        public void RecordAliasEvent(EventProcessorTypes.AliasEvent e) =>
-            _impl.RecordAliasEvent(new InternalEventTypes.AliasEvent
-            {
-                Timestamp = e.Timestamp,
-                Key = e.CurrentKey,
-                ContextKind = (InternalEventTypes.ContextKind)e.CurrentKind,
-                PreviousKey = e.PreviousKey,
-                PreviousContextKind = (InternalEventTypes.ContextKind)e.PreviousKind
             });
 
         public void Flush() =>

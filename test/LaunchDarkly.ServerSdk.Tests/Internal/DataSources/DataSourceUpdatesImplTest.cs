@@ -7,11 +7,12 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.TestUtils;
 using static LaunchDarkly.TestHelpers.Assertions;
 
@@ -235,7 +236,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new FeatureFlagBuilder("flag2").Version(1)
                     .Rules(
                         new RuleBuilder().Clauses(
-                            new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment1.Key)).Build()
+                            new ClauseBuilder().Op("segmentMatch").Values(segment1.Key).Build()
                         ).Build()
                     )
                     .Build(),
@@ -266,7 +267,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 new FeatureFlagBuilder("flag2").Version(1)
                     .Rules(
                         new RuleBuilder().Clauses(
-                            new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment1.Key)).Build()
+                            new ClauseBuilder().Op("segmentMatch").Values(segment1.Key).Build()
                         ).Build()
                     )
                     .Build(),

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
-using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.BigSegmentStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
+using static LaunchDarkly.Sdk.Server.Internal.Evaluation.EvaluatorTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 {
@@ -24,33 +23,40 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
     // so we'd like to minimize heap churn from things like that; hence we're avoiding lambdas here, and also using
     // structs rather than classes for intermediate state.
 
-    internal sealed class Evaluator
+    internal sealed partial class Evaluator
     {
         // To allow us to test our error handling with a real client instance instead of mock components,
         // this magic flag key value will cause an exception from Evaluate.
         internal const string FlagKeyToTriggerErrorForTesting = "$ deliberately invalid flag $";
         internal const string ErrorMessageForTesting = "deliberate error for testing";
 
-        private readonly Func<string, FeatureFlag> _featureFlagGetter;
-        private readonly Func<string, Segment> _segmentGetter;
-        private readonly Func<string, BigSegmentsQueryResult> _bigSegmentsGetter;
-        private readonly Logger _logger;
+        internal readonly Func<string, FeatureFlag> FeatureFlagGetter;
+        internal readonly Func<string, Segment> SegmentGetter;
+        internal readonly Func<string, BigSegmentsQueryResult> BigSegmentsGetter;
+        internal readonly Logger Logger;
 
-        // exposed for testing
-        internal Func<string, FeatureFlag> FeatureFlagGetter => _featureFlagGetter;
-        internal Func<string, Segment> SegmentGetter => _segmentGetter;
-        internal Func<string, BigSegmentsQueryResult> BigSegmentsGetter => _bigSegmentsGetter;
-        internal Logger Logger => _logger;
-
-        internal struct EvalResult
+        // EvalState is a container for mutable state information and immutable parameters whose scope is a
+        // single call to Evaluator.Evaluate(). The flag being evaluated is *not* part of the state-- we pass
+        // it around as a parameter-- because  a single Evaluate may cause multiple flags to be evaluated due
+        // to prerequisite relationships. But the Context is part of the state, because it is always the same
+        // no matter how many nested things are being evaluated.
+        internal struct EvalState
         {
-            internal EvaluationDetail<LdValue> Result;
-            internal readonly IList<EvaluationEvent> PrerequisiteEvents;
+            internal readonly Context Context;
+            internal LazyStack<string> PrereqFlagKeyStack;
+            internal LazyStack<string> SegmentKeyStack;
+            internal ImmutableList<PrerequisiteEvalRecord>.Builder PrereqEvals;
+            internal Dictionary<string, IMembership> BigSegmentsMembership;
+            internal BigSegmentsStatus? BigSegmentsStatus;
 
-            internal EvalResult(EvaluationDetail<LdValue> result, IList<EvaluationEvent> events)
+            internal EvalState(Context context)
             {
-                Result = result;
-                PrerequisiteEvents = events;
+                Context = context;
+                PrereqFlagKeyStack = new LazyStack<string>();
+                SegmentKeyStack = new LazyStack<string>();
+                PrereqEvals = null;
+                BigSegmentsMembership = null;
+                BigSegmentsStatus = null;
             }
         }
 
@@ -66,155 +72,148 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             Func<string, BigSegmentsQueryResult> bigSegmentsGetter,
             Logger logger)
         {
-            _featureFlagGetter = featureFlagGetter;
-            _segmentGetter = segmentGetter;
-            _bigSegmentsGetter = bigSegmentsGetter;
-            _logger = logger;
+            FeatureFlagGetter = featureFlagGetter;
+            SegmentGetter = segmentGetter;
+            BigSegmentsGetter = bigSegmentsGetter;
+            Logger = logger;
         }
 
         /// <summary>
         /// Evaluates a feature flag for a given user.
         /// </summary>
         /// <param name="flag">the flag; must not be null</param>
-        /// <param name="user">the user</param>
-        /// <param name="eventFactory">an <see cref="EventFactory"/> instance that will be called to produce any necessary
-        /// prerequisite flag events</param>
+        /// <param name="context">the evaluation context</param>
         /// <returns>an <see cref="EvalResult"/> containing the evaluation result as well as any events that were produced;
         /// the PrerequisiteEvents list will always be non-null</returns>
-        public EvalResult Evaluate(FeatureFlag flag, User user, EventFactory eventFactory)
+        public EvalResult Evaluate(in FeatureFlag flag, in Context context)
         {
             if (flag.Key == FlagKeyToTriggerErrorForTesting)
             {
                 throw new Exception(ErrorMessageForTesting);
             }
-            if (user == null || user.Key == null)
+            if (!context.Valid)
             {
-                _logger.Warn("User or user key is null when evaluating flag: {0} returning null",
+                Logger.Warn("Tried to evaluate flag with invalid context: {0} returning null",
                     flag.Key);
 
                 return new EvalResult(
                     new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
-                    ImmutableList.Create<EvaluationEvent>());
+                    ImmutableList.Create<PrerequisiteEvalRecord>());
             }
 
-            var scope = new EvalScope(this, flag, user, eventFactory);
-            return scope.Evaluate();
-        }
-
-        private struct LazilyCreatedList<T>
-        {
-            private IList<T> _list;
-            
-            internal void Add(T item)
+            try
             {
-                if (_list is null)
-                {
-                    _list = new List<T>();
-                }
-                _list.Add(item);
-            }
-            
-            internal IList<T> GetList()
-            {
-                return _list ?? ImmutableList.Create<T>(); // ImmutableList.Create for an empty list doesn't create a new object
-            }
-        }
-
-        /// <summary>
-        /// Encapsulates the parameters for a single evaluation request, so we don't have to keep passing them around
-        /// as parameters within the evaluation logic. This is a value type to avoid allocation overhead.
-        /// </summary>
-        private struct EvalScope
-        {
-            private readonly Evaluator _parent;
-            private readonly FeatureFlag _flag;
-            private readonly User _user;
-            private readonly EventFactory _eventFactory;
-            private LazilyCreatedList<EvaluationEvent> _prereqEvents;
-            private IMembership _bigSegmentsMembership;
-            private BigSegmentsStatus? _bigSegmentsStatus;
-
-            internal EvalScope(Evaluator parent, FeatureFlag flag, User user, EventFactory eventFactory)
-            {
-                _parent = parent;
-                _flag = flag;
-                _user = user;
-                _eventFactory = eventFactory;
-                _prereqEvents = new LazilyCreatedList<EvaluationEvent>();
-                _bigSegmentsMembership = null;
-                _bigSegmentsStatus = null;
-            }
-
-            internal EvalResult Evaluate()
-            {
-                var details = EvaluateInternal();
-                if (_bigSegmentsStatus.HasValue)
+                var state = new EvalState(context);
+                var details = EvaluateInternal(ref state, flag);
+                if (state.BigSegmentsStatus.HasValue)
                 {
                     details = new EvaluationDetail<LdValue>(
                         details.Value,
                         details.VariationIndex,
-                        details.Reason.WithBigSegmentsStatus(_bigSegmentsStatus.Value)
+                        details.Reason.WithBigSegmentsStatus(state.BigSegmentsStatus.Value)
                         );
                 }
-                return new EvalResult(details, _prereqEvents.GetList());
+                return new EvalResult(details, state.PrereqEvals is null ?
+                    ImmutableList.Create<PrerequisiteEvalRecord>() : state.PrereqEvals.ToImmutable());
+            }
+            catch (StopEvaluationException e)
+            {
+                Logger.Error(@"Could not evaluate flag ""{0}"": {1}", flag.Key, string.Format(e.MessageFormat, e.MessageParams));
+                return new EvalResult(ErrorResult(e.ErrorKind), ImmutableList.Create<PrerequisiteEvalRecord>());
+            }
+            catch (Exception)
+            {
+                return new EvalResult(ErrorResult(EvaluationErrorKind.Exception), ImmutableList.Create<PrerequisiteEvalRecord>());
+            }
+        }
+
+        private EvaluationDetail<LdValue> EvaluateInternal(ref EvalState state, FeatureFlag flag)
+        {
+            if (!flag.On)
+            {
+                return GetOffValue(flag, EvaluationReason.OffReason);
             }
 
-            private EvaluationDetail<LdValue> EvaluateInternal()
+            var prereqFailureReason = CheckPrerequisites(ref state, flag);
+            if (prereqFailureReason.HasValue)
             {
-                if (!_flag.On)
-                {
-                    return GetOffValue(EvaluationReason.OffReason);
-                }
-
-                var prereqFailureReason = CheckPrerequisites();
-                if (prereqFailureReason.HasValue)
-                {
-                    return GetOffValue(prereqFailureReason.Value);
-                }
-
-                // Check to see if targets match
-                foreach (var target in _flag.Targets)
-                {
-                    if (target.Preprocessed.ValuesSet.Contains(_user.Key))
-                    {
-                        return GetVariation(target.Variation, EvaluationReason.TargetMatchReason);
-                    }
-                }
-                // Now walk through the rules and see if any match
-                var ruleIndex = 0;
-                foreach (var rule in _flag.Rules)
-                {
-                    if (MatchRule(rule))
-                    {
-                        return GetValueForVariationOrRollout(rule.Variation, rule.Rollout,
-                            EvaluationReason.RuleMatchReason(ruleIndex, rule.Id));
-                    }
-                    ruleIndex++;
-                }
-                // Walk through the fallthrough and see if it matches
-                return GetValueForVariationOrRollout(_flag.Fallthrough.Variation, _flag.Fallthrough.Rollout,
-                    EvaluationReason.FallthroughReason);
+                return GetOffValue(flag, prereqFailureReason.Value);
             }
 
-            // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
-            // short-circuit due to a prerequisite failure. May add events to _prereqEvents.
-            private EvaluationReason? CheckPrerequisites()
+            // Check to see if targets match
+            var targetMatchVar = MatchTargets(ref state, flag);
+            if (targetMatchVar.HasValue)
             {
-                foreach (var prereq in _flag.Prerequisites)
+                return GetVariation(flag, targetMatchVar.Value, EvaluationReason.TargetMatchReason);
+            }
+
+            // Now walk through the rules and see if any match
+            var ruleIndex = 0;
+            foreach (var rule in flag.Rules)
+            {
+                if (MatchRule(ref state, rule))
                 {
+                    return GetValueForVariationOrRollout(ref state, flag, rule.Variation, rule.Rollout,
+                        EvaluationReason.RuleMatchReason(ruleIndex, rule.Id));
+                }
+                ruleIndex++;
+            }
+            // Walk through the fallthrough and see if it matches
+            return GetValueForVariationOrRollout(ref state, flag, flag.Fallthrough.Variation, flag.Fallthrough.Rollout,
+                EvaluationReason.FallthroughReason);
+        }
+
+        private static EvaluationDetail<LdValue> ErrorResult(EvaluationErrorKind kind) =>
+            new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(kind));
+
+        private EvaluationDetail<LdValue> GetVariation(FeatureFlag flag, int variation, in EvaluationReason reason)
+        {
+            if (variation < 0 || variation >= flag.Variations.Count())
+            {
+                Logger.Error("Data inconsistency in feature flag \"{0}\": invalid variation index", flag.Key);
+                return ErrorResult(EvaluationErrorKind.MalformedFlag);
+            }
+            return new EvaluationDetail<LdValue>(flag.Variations.ElementAt(variation), variation, reason);
+        }
+
+        private EvaluationDetail<LdValue> GetOffValue(FeatureFlag flag, in EvaluationReason reason)
+        {
+            if (flag.OffVariation is null) // off variation unspecified - return default value
+            {
+                return new EvaluationDetail<LdValue>(LdValue.Null, null, reason);
+            }
+            return GetVariation(flag, flag.OffVariation.Value, reason);
+        }
+
+        // Checks prerequisites if any; returns null if successful, or an EvaluationReason if we have to
+        // short-circuit due to a prerequisite failure. May add events to _prereqEvents.
+        private EvaluationReason? CheckPrerequisites(ref EvalState state, FeatureFlag flag)
+        {
+            state.PrereqFlagKeyStack.Push(flag.Key);
+            try
+            {
+                foreach (var prereq in flag.Prerequisites)
+                {
+                    if (state.PrereqFlagKeyStack.Contains(prereq.Key))
+                    {
+                        throw new StopEvaluationException(
+                            EvaluationErrorKind.MalformedFlag,
+                            "prerequisite relationship to \"{0}\" caused a circular reference;" +
+                                " this is probably a temporary condition due to an incomplete update",
+                            prereq.Key
+                            );
+                    }
                     var prereqOk = true;
-                    var prereqFeatureFlag = _parent._featureFlagGetter(prereq.Key);
+                    var prereqFeatureFlag = FeatureFlagGetter(prereq.Key);
                     if (prereqFeatureFlag == null)
                     {
-                        _parent._logger.Error("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
-                            prereq.Key, _flag.Key);
+                        Logger.Error("Could not retrieve prerequisite flag \"{0}\" when evaluating \"{1}\"",
+                            prereq.Key, flag.Key);
                         prereqOk = false;
                     }
                     else
                     {
-                        var prereqScope = new EvalScope(_parent, prereqFeatureFlag, _user, _eventFactory);
-                        var prereqEvalResult = prereqScope.Evaluate();
-                        var prereqDetails = prereqEvalResult.Result;
+                        var prereqDetails = EvaluateInternal(ref state, prereqFeatureFlag);
                         // Note that if the prerequisite flag is off, we don't consider it a match no matter
                         // what its off variation was. But we still need to evaluate it in order to generate
                         // an event.
@@ -222,12 +221,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                         {
                             prereqOk = false;
                         }
-                        foreach (var subPrereqEvent in prereqEvalResult.PrerequisiteEvents)
+                        if (state.PrereqEvals is null)
                         {
-                            _prereqEvents.Add(subPrereqEvent);
+                            state.PrereqEvals = ImmutableList.CreateBuilder<PrerequisiteEvalRecord>();
                         }
-                        _prereqEvents.Add(_eventFactory.NewPrerequisiteEvaluationEvent(prereqFeatureFlag, _user,
-                            prereqDetails, _flag));
+                        state.PrereqEvals.Add(new PrerequisiteEvalRecord(prereqFeatureFlag, flag.Key, prereqDetails));
                     }
                     if (!prereqOk)
                     {
@@ -236,255 +234,81 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 }
                 return null;
             }
-
-            private static EvaluationDetail<LdValue> ErrorResult(EvaluationErrorKind kind) =>
-                new EvaluationDetail<LdValue>(LdValue.Null, null, EvaluationReason.ErrorReason(kind));
-
-            private EvaluationDetail<LdValue> GetVariation(int variation, EvaluationReason reason)
+            finally
             {
-                if (variation < 0 || variation >= _flag.Variations.Count())
-                {
-                    _parent._logger.Error("Data inconsistency in feature flag \"{0}\": invalid variation index", _flag.Key);
-                    return ErrorResult(EvaluationErrorKind.MalformedFlag);
-                }
-                return new EvaluationDetail<LdValue>(_flag.Variations.ElementAt(variation), variation, reason);
-            }
-
-            private EvaluationDetail<LdValue> GetOffValue(EvaluationReason reason)
-            {
-                if (_flag.OffVariation is null) // off variation unspecified - return default value
-                {
-                    return new EvaluationDetail<LdValue>(LdValue.Null, null, reason);
-                }
-                return GetVariation(_flag.OffVariation.Value, reason);
-            }
-
-            private EvaluationDetail<LdValue> GetValueForVariationOrRollout(int? variation, Rollout? rollout, EvaluationReason reason)
-            {
-                if (variation.HasValue)
-                {
-                    return GetVariation(variation.Value, reason);
-                }
-
-                if (rollout.HasValue && rollout.Value.Variations.Count() > 0)
-                {
-                    WeightedVariation? selectedVariation = null;
-                    var bucketBy = rollout.Value.BucketBy.GetValueOrDefault(UserAttribute.Key);
-                    float bucket = Bucketing.BucketUser(rollout.Value.Seed, _user, _flag.Key, bucketBy, _flag.Salt);
-                    float sum = 0F;
-                    foreach (WeightedVariation wv in rollout.Value.Variations)
-                    {
-                        sum += (float)wv.Weight / 100000F;
-                        if (bucket < sum)
-                        {
-                            selectedVariation = wv;
-                            break;
-                        }
-                    }
-                    if (!selectedVariation.HasValue)
-                    {
-                        // The user's bucket value was greater than or equal to the end of the last bucket. This could happen due
-                        // to a rounding error, or due to the fact that we are scaling to 100000 rather than 99999, or the flag
-                        // data could contain buckets that don't actually add up to 100000. Rather than returning an error in
-                        // this case (or changing the scaling, which would potentially change the results for *all* users), we
-                        // will simply put the user in the last bucket.
-                        selectedVariation = rollout.Value.Variations.Last();
-                    }
-                    var inExperiment = (rollout.Value.Kind == RolloutKind.Experiment) && !selectedVariation.Value.Untracked;
-                    return GetVariation(selectedVariation.Value.Variation,
-                        inExperiment ? reason.WithInExperiment(true) : reason);
-                }
-                else
-                {
-                    _parent._logger.Error("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", _flag.Key);
-                    return ErrorResult(EvaluationErrorKind.MalformedFlag);
-                }
-            }
-
-            private bool MatchRule(FlagRule rule)
-            {
-                // A rule matches if ALL of its clauses match
-                foreach (var c in rule.Clauses)
-                {
-                    if (!MatchClause(c))
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            private bool MatchClause(Clause clause)
-            {
-                // A clause matches if ANY of its values match, for the given attribute and operator
-                if (clause.Op == Operator.SegmentMatch)
-                {
-                    foreach (var value in clause.Values)
-                    {
-                        Segment segment = _parent._segmentGetter(value.AsString);
-                        if (segment != null && MatchSegment(segment))
-                        {
-                            return MaybeNegate(clause, true);
-                        }
-                    }
-                    return MaybeNegate(clause, false);
-                }
-                else
-                {
-                    return MatchClauseNoSegments(clause);
-                }
-            }
-
-            private bool MatchClauseNoSegments(Clause clause)
-            {
-                var userValue = _user.GetAttribute(clause.Attribute);
-                if (userValue.IsNull)
-                {
-                    return false;
-                }
-                if (userValue.Type == LdValueType.Array)
-                {
-                    var list = userValue.AsList(LdValue.Convert.Json);
-                    foreach (var element in list)
-                    {
-                        if (element.Type == LdValueType.Array || element.Type == LdValueType.Object)
-                        {
-                            _parent._logger.Error("Invalid custom attribute value in user object: {0}",
-                                element);
-                            return false;
-                        }
-                        if (ClauseMatchAny(clause, element))
-                        {
-                            return MaybeNegate(clause, true);
-                        }
-                    }
-                    return MaybeNegate(clause, false);
-                }
-                else if (userValue.Type == LdValueType.Object)
-                {
-                    _parent._logger.Warn("Got unexpected user attribute type {0} for user attribute \"{1}\"",
-                        userValue.Type,
-                        clause.Attribute);
-                    return false;
-                }
-                else
-                {
-                    return MaybeNegate(clause, ClauseMatchAny(clause, userValue));
-                }
-            }
-
-            private bool MatchSegment(Segment segment)
-            {
-                var userKey = _user.Key;
-                if (userKey is null)
-                {
-                    return false;
-                }
-                if (segment.Unbounded)
-                {
-                    if (!segment.Generation.HasValue)
-                    {
-                        // Big segment queries can only be done if the generation is known. If it's unset,
-                        // that probably means the data store was populated by an older SDK that doesn't know
-                        // about the Generation property and therefore dropped it from the JSON data. We'll treat
-                        // that as a "not configured" condition.
-                        _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
-                        return false;
-                    }
-                    // Even if multiple Big Segments are referenced within a single flag evaluation,
-                    // we only need to do this query once, since it returns *all* of the user's segment
-                    // memberships.
-                    if (!_bigSegmentsStatus.HasValue)
-                    {
-                        if (_parent._bigSegmentsGetter is null)
-                        {
-                            // the SDK hasn't been configured to be able to use Big Segments
-                            _bigSegmentsStatus = BigSegmentsStatus.NotConfigured;
-                        }
-                        else
-                        {
-                            var result = _parent._bigSegmentsGetter(userKey);
-                            _bigSegmentsMembership = result.Membership;
-                            _bigSegmentsStatus = result.Status;
-                        }
-                    }
-                    var included = _bigSegmentsMembership is null ? null :
-                        _bigSegmentsMembership.CheckMembership(MakeBigSegmentRef(segment));
-                    if (included.HasValue)
-                    {
-                        return included.Value;
-                    }
-                }
-                else
-                {
-                    if (segment.Preprocessed.IncludedSet.Contains(userKey))
-                    {
-                        return true;
-                    }
-                    if (segment.Preprocessed.ExcludedSet.Contains(userKey))
-                    {
-                        return false;
-                    }
-                }
-                if (segment.Rules != null)
-                {
-                    foreach (var rule in segment.Rules)
-                    {
-                        if (MatchSegmentRule(segment, rule))
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-
-            private bool MatchSegmentRule(Segment segment, SegmentRule segmentRule)
-            {
-                foreach (var c in segmentRule.Clauses)
-                {
-                    if (!MatchClauseNoSegments(c))
-                    {
-                        return false;
-                    }
-                }
-
-                // If the Weight is absent, this rule matches
-                if (!segmentRule.Weight.HasValue)
-                {
-                    return true;
-                }
-
-                // All of the clauses are met. See if the user buckets in
-                var by = segmentRule.BucketBy.GetValueOrDefault(UserAttribute.Key);
-                double bucket = Bucketing.BucketUser(null, _user, segment.Key, by, segment.Salt);
-                double weight = (double)segmentRule.Weight / 100000F;
-                return bucket < weight;
+                state.PrereqFlagKeyStack.Pop();
             }
         }
 
-        internal static bool ClauseMatchAny(Clause clause, LdValue userValue)
+        private EvaluationDetail<LdValue> GetValueForVariationOrRollout(
+            ref EvalState state,
+            FeatureFlag flag,
+            int? variation,
+            in Rollout? rollout,
+            in EvaluationReason reason
+            )
         {
-            // Special case for the "in" operator - we preprocess the values to a set for fast lookup
-            if (clause.Op == Operator.In && clause.Preprocessed.ValuesAsSet != null)
+            if (variation.HasValue)
             {
-                return clause.Preprocessed.ValuesAsSet.Contains(userValue);
+                return GetVariation(flag, variation.Value, reason);
             }
 
-            int index = 0;
-            foreach (var clauseValue in clause.Values)
+            if (rollout.HasValue && rollout.Value.Variations.Any())
             {
-                var preprocessedValue = clause.Preprocessed.Values is null ? (Clause.PreprocessedValue?)null :
-                    clause.Preprocessed.Values[index++];
-                if (clause.Op.Apply(userValue, clauseValue, preprocessedValue))
+                WeightedVariation? selectedVariation = null;
+                float? maybeBucket = Bucketing.ComputeBucketValue(
+                    rollout.Value.Kind == RolloutKind.Experiment,
+                    rollout.Value.Seed,
+                    state.Context,
+                    rollout.Value.ContextKind,
+                    flag.Key,
+                    rollout.Value.BucketBy,
+                    flag.Salt
+                    );
+                float bucket = maybeBucket ?? 0;
+                bool contextWasFound = maybeBucket.HasValue;
+                float sum = 0F;
+                foreach (WeightedVariation wv in rollout.Value.Variations)
                 {
-                    return true;
+                    sum += (float)wv.Weight / 100000F;
+                    if (bucket < sum)
+                    {
+                        selectedVariation = wv;
+                        break;
+                    }
                 }
+                if (!selectedVariation.HasValue)
+                {
+                    // The user's bucket value was greater than or equal to the end of the last bucket. This could happen due
+                    // to a rounding error, or due to the fact that we are scaling to 100000 rather than 99999, or the flag
+                    // data could contain buckets that don't actually add up to 100000. Rather than returning an error in
+                    // this case (or changing the scaling, which would potentially change the results for *all* users), we
+                    // will simply put the user in the last bucket.
+                    selectedVariation = rollout.Value.Variations.Last();
+                }
+                var inExperiment = (rollout.Value.Kind == RolloutKind.Experiment) && !selectedVariation.Value.Untracked
+                    && contextWasFound;
+                return GetVariation(flag, selectedVariation.Value.Variation,
+                    inExperiment ? reason.WithInExperiment(true) : reason);
             }
-            return false;
+            else
+            {
+                Logger.Error("Data inconsistency in feature flag \"{0}\": variation/rollout object with no variation or rollout", flag.Key);
+                return ErrorResult(EvaluationErrorKind.MalformedFlag);
+            }
         }
 
-        internal static bool MaybeNegate(Clause clause, bool b) =>
-            clause.Negate ? !b : b;
+        private bool MatchRule(ref EvalState state, in FlagRule rule)
+        {
+            // A rule matches if ALL of its clauses match
+            foreach (var c in rule.Clauses)
+            {
+                if (!MatchClause(ref state, c))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

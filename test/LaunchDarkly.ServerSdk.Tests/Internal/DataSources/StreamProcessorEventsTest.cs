@@ -1,10 +1,9 @@
 ﻿using System.Text;
-using LaunchDarkly.JsonStream;
-using LaunchDarkly.Sdk.Json;
+using System.Text.Json;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -41,10 +40,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             AssertHelpers.DataSetsEqual(expectedAllData, resultWithoutPath.Data);
 
             var inputWithoutData = @"{""path"": ""/""}";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParsePutData(Utf8Bytes(inputWithoutData)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParsePutData(Utf8Bytes(inputWithoutData)));
 
             var malformedJsonInput = @"{no";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParsePutData(Utf8Bytes(malformedJsonInput)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParsePutData(Utf8Bytes(malformedJsonInput)));
         }
 
         [Fact]
@@ -52,8 +51,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         {
             var flag = new FeatureFlagBuilder("flagkey").Version(2).On(true).Build();
             var segment = new SegmentBuilder("segmentkey").Version(3).Included("x").Build();
-            var flagJson = LdJsonSerialization.SerializeObject(flag);
-            var segmentJson = LdJsonSerialization.SerializeObject(segment);
+            var flagJson = JsonSerializer.Serialize(flag);
+            var segmentJson = JsonSerializer.Serialize(segment);
 
             var validFlagInput = @"{""path"": ""/flags/flagkey"", ""data"": " + flagJson + "}";
             var validFlagResult = StreamProcessorEvents.ParsePatchData(Utf8Bytes(validFlagInput));
@@ -82,13 +81,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Assert.Null(resultWithUnrecognizedPath.Key);
 
             var inputWithMissingPath = @"{""data"": " + flagJson + "}";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParsePatchData(Utf8Bytes(inputWithMissingPath)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParsePatchData(Utf8Bytes(inputWithMissingPath)));
 
             var inputWithMissingData = @"{""path"": ""/flags/flagkey""}";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParsePatchData(Utf8Bytes(inputWithMissingData)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParsePatchData(Utf8Bytes(inputWithMissingData)));
 
             var malformedJsonInput = @"{no";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParsePatchData(Utf8Bytes(malformedJsonInput)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParsePatchData(Utf8Bytes(malformedJsonInput)));
         }
 
         [Fact]
@@ -112,13 +111,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Assert.Null(resultWithUnrecognizedPath.Key);
 
             var inputWithMissingPath = @"{""version"": 1}";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParseDeleteData(Utf8Bytes(inputWithMissingPath)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParseDeleteData(Utf8Bytes(inputWithMissingPath)));
 
             var inputWithMissingVersion = @"{""path"": ""/flags/flagkey""}";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParseDeleteData(Utf8Bytes(inputWithMissingVersion)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParseDeleteData(Utf8Bytes(inputWithMissingVersion)));
 
             var malformedJsonInput = @"{no";
-            Assert.ThrowsAny<JsonReadException>(() => StreamProcessorEvents.ParseDeleteData(Utf8Bytes(malformedJsonInput)));
+            Assert.ThrowsAny<JsonException>(() => StreamProcessorEvents.ParseDeleteData(Utf8Bytes(malformedJsonInput)));
         }
     }
 }

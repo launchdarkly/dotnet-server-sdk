@@ -11,12 +11,12 @@ publications:
 jobs:
   - docker: {}
     template:
-      name: dotnet-linux
+      name: dotnet6-linux
     env:
       # See Releaser docs - this causes the generated documentation to include all public APIs from CommonSdk
       LD_RELEASE_DOCS_ASSEMBLIES: LaunchDarkly.ServerSdk LaunchDarkly.CommonSdk
       LD_RELEASE_DOCS_TARGET_FRAMEWORK: netstandard2.0
-      LD_RELEASE_TEST_TARGET_FRAMEWORK: net5.0
+      LD_RELEASE_TEST_TARGET_FRAMEWORK: net6.0
 
 branches:
   - name: main

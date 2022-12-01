@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Internal.BigSegments;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Types that are used by the <see cref="IBigSegmentStore"/> interface.
@@ -14,11 +14,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </summary>
         /// <remarks>
         /// <para>
-        /// It is associated with a single user, and provides the ability to check whether that
-        /// user is included in or excluded from any number of Big Segments.
+        /// It is associated with a single context, and provides the ability to check whether that
+        /// context is included in or excluded from any number of Big Segments.
         /// </para>
         /// <para>
-        /// This is an immutable snapshot of the state for this user at the time
+        /// This is an immutable snapshot of the state for this context at the time
         /// <see cref="IBigSegmentStore.GetMembershipAsync(string)"/> was called. Calling
         /// <see cref="CheckMembership(string)"/> should not cause the state to be queried again.
         /// The object should be safe for concurrent access by multiple threads.
@@ -28,7 +28,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         public interface IMembership
         {
             /// <summary>
-            /// Tests whether the user is explicitly included or explicitly excluded in the
+            /// Tests whether the context is explicitly included or explicitly excluded in the
             /// specified segment, or neither.
             /// </summary>
             /// <remarks>
@@ -39,16 +39,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// this.
             /// </para>
             /// <para>
-            /// If the user is explicitly included (regardless of whether the user is also explicitly
+            /// If the context is explicitly included (regardless of whether the context is also explicitly
             /// excluded or not-- that is, inclusion takes priority over exclusion), the method returns
             /// a <see langword="true"/> value.
             /// </para>
             /// <para>
-            /// If the user is explicitly excluded, and is not explicitly included, the method returns
+            /// If the context is explicitly excluded, and is not explicitly included, the method returns
             /// a <see langword="false"/> value.
             /// </para>
             /// <para>
-            /// If the user's status in the segment is undefined, the method returns
+            /// If the context's status in the segment is undefined, the method returns
             /// <see langword="null"/>.
             /// </para>
             /// </remarks>

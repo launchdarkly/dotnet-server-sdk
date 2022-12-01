@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
@@ -26,7 +25,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 new WeightedVariation(1, 20000, untrackedVariations),
                 new WeightedVariation(0, 70000, true)
             };
-            return new Rollout(kind, seed, variations, UserAttribute.Key);
+            return new Rollout(kind, null, seed, variations, new AttributeRef());
         }
 
         [Fact]
@@ -36,15 +35,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             const string key = "hashKey";
             const string salt = "saltyA";
 
-            var user1 = User.WithKey("userKeyA");
+            var user1 = Context.New("userKeyA");
             // bucketVal = 0.09801207
             AssertVariationIndexAndExperimentStateForRollout(0, true, rollout, user1, key, salt);
 
-            var user2 = User.WithKey("userKeyB");
+            var user2 = Context.New("userKeyB");
             // bucketVal = 0.14483777
             AssertVariationIndexAndExperimentStateForRollout(1, true, rollout, user2, key, salt);
 
-            var user3 = User.WithKey("userKeyC");
+            var user3 = Context.New("userKeyC");
             // bucketVal = 0.9242641
             AssertVariationIndexAndExperimentStateForRollout(0, false, rollout, user3, key, salt);
         }
@@ -53,7 +52,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
             int expectedVariation,
             bool expectedInExperiment,
             Rollout rollout,
-            User user,
+            Context context,
             string flagKey,
             string salt
             )
@@ -64,7 +63,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 .FallthroughRollout(rollout)
                 .Salt(salt)
                 .Build();
-            var result = BasicEvaluator.Evaluate(flag, user, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(flag, context);
             Assert.Equal(expectedVariation, result.Result.VariationIndex);
             Assert.Equal(EvaluationReasonKind.Fallthrough, result.Result.Reason.Kind);
             Assert.Equal(expectedInExperiment, result.Result.Reason.InExperiment);
@@ -73,16 +72,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void BucketUserByKeyTest()
         {
-            var user1 = User.WithKey("userKeyA");
-            var point1 = Bucketing.BucketUser(noSeed, user1, "hashKey", UserAttribute.Key, "saltyA");
+            var user1 = Context.New("userKeyA");
+            var point1 = Bucketing.ComputeBucketValue(false, noSeed, user1, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.42157587, point1, decimalPlacesOfEquality);
 
-            var user2 = User.WithKey("userKeyB");
-            var point2 = Bucketing.BucketUser(noSeed, user2, "hashKey", UserAttribute.Key, "saltyA");
+            var user2 = Context.New("userKeyB");
+            var point2 = Bucketing.ComputeBucketValue(false, noSeed, user2, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.6708485, point2, decimalPlacesOfEquality);
 
-            var user3 = User.WithKey("userKeyC");
-            var point3 = Bucketing.BucketUser(noSeed, user3, "hashKey", UserAttribute.Key, "saltyA");
+            var user3 = Context.New("userKeyC");
+            var point3 = Bucketing.ComputeBucketValue(false, noSeed, user3, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.10343106, point3, decimalPlacesOfEquality);
         }
 
@@ -91,16 +90,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         {
             const int seed = 61;
 
-            var user1 = User.WithKey("userKeyA");
-            var point1 = Bucketing.BucketUser(seed, user1, "hashKey", UserAttribute.Key, "saltyA");
+            var user1 = Context.New("userKeyA");
+            var point1 = Bucketing.ComputeBucketValue(false, seed, user1, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.09801207, point1, decimalPlacesOfEquality);
 
-            var user2 = User.WithKey("userKeyB");
-            var point2 = Bucketing.BucketUser(seed, user2, "hashKey", UserAttribute.Key, "saltyA");
+            var user2 = Context.New("userKeyB");
+            var point2 = Bucketing.ComputeBucketValue(false, seed, user2, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.14483777, point2, decimalPlacesOfEquality);
 
-            var user3 = User.WithKey("userKeyC");
-            var point3 = Bucketing.BucketUser(seed, user3, "hashKey", UserAttribute.Key, "saltyA");
+            var user3 = Context.New("userKeyC");
+            var point3 = Bucketing.ComputeBucketValue(false, seed, user3, null, "hashKey", null, "saltyA") ?? 0;
             Assert.Equal(0.9242641, point3, decimalPlacesOfEquality);
         }
     }

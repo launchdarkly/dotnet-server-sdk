@@ -6,7 +6,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// </summary>
     /// <remarks>
     /// See also <see cref="ILdClientExtensions"/>, which provides convenience methods that build upon
-    /// this interface.
+    /// this interface. In particular, for every <see cref="ILdClient"/> method that takes a
+    /// <see cref="Context"/> parameter, there is an extension method that allows you to pass the
+    /// older <see cref="User"/> type instead.
     /// </remarks>
     public interface ILdClient
     {
@@ -58,7 +60,49 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         bool Initialized { get; }
 
         /// <summary>
-        /// Calculates the integer value of a feature flag for a given user.
+        /// Calculates the boolean value of a feature flag for a given context.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If the flag variation does not have a boolean value, <c>defaultValue</c> is returned.
+        /// </para>
+        /// <para>
+        /// If an error makes it impossible to evaluate the flag (for instance, the feature flag key
+        /// does not match any existing flag), <c>defaultValue</c> is returned.
+        /// </para>
+        /// </remarks>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="context">the evaluation context</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
+        /// be evaluated</returns>
+        /// <seealso cref="BoolVariationDetail(string, Context, bool)"/>
+        /// <seealso cref="ILdClientExtensions.BoolVariation(ILdClient, string, User, bool)"/>
+        bool BoolVariation(string key, Context context, bool defaultValue = false);
+
+        /// <summary>
+        /// Calculates the boolean value of a feature flag for a given context, and returns an object that
+        /// describes the way the value was determined.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The <see cref="EvaluationDetail{T}.Reason"/> property in the result will also be included
+        /// in analytics events, if you are capturing detailed event data for this flag.
+        /// </para>
+        /// <para>
+        /// The behavior is otherwise identical to <see cref="BoolVariation(string, Context, bool)"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="context">the evaluation context</param>
+        /// <param name="defaultValue">the default value of the flag</param>
+        /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
+        /// <seealso cref="BoolVariation(string, Context, bool)"/>
+        /// <seealso cref="ILdClientExtensions.BoolVariationDetail(ILdClient, string, User, bool)"/>
+        EvaluationDetail<bool> BoolVariationDetail(string key, Context context, bool defaultValue);
+
+        /// <summary>
+        /// Calculates the integer value of a feature flag for a given context.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -76,14 +120,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
+        /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        int IntVariation(string key, User user, int defaultValue);
+        /// <seealso cref="IntVariationDetail(string, Context, int)"/>
+        /// <seealso cref="ILdClientExtensions.IntVariation(ILdClient, string, User, int)"/>
+        int IntVariation(string key, Context context, int defaultValue);
 
         /// <summary>
-        /// Calculates the integer value of a feature flag for a given user, and returns an object that
+        /// Calculates the integer value of a feature flag for a given context, and returns an object that
         /// describes the way the value was determined.
         /// </summary>
         /// <remarks>
@@ -92,18 +138,20 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// in analytics events, if you are capturing detailed event data for this flag.
         /// </para>
         /// <para>
-        /// The behavior is otherwise identical to <see cref="IntVariation"/>.
+        /// The behavior is otherwise identical to <see cref="IntVariation(string, Context, int)"/>.
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        EvaluationDetail<int> IntVariationDetail(string key, User user, int defaultValue);
+        /// <seealso cref="IntVariation(string, Context, int)"/>
+        /// <seealso cref="ILdClientExtensions.IntVariationDetail(ILdClient, string, User, int)"/>
+        EvaluationDetail<int> IntVariationDetail(string key, Context context, int defaultValue);
 
         /// <summary>
         /// Calculates the single-precision floating-point numeric value of a feature flag for a
-        /// given user.
+        /// given context.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -115,17 +163,18 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
+        /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        /// <seealso cref="FloatVariationDetail(string, User, float)"/>
-        /// <seealso cref="DoubleVariation(string, User, double)"/>
-        float FloatVariation(string key, User user, float defaultValue);
+        /// <seealso cref="FloatVariationDetail(string, Context, float)"/>
+        /// <seealso cref="DoubleVariation(string, Context, double)"/>
+        /// <seealso cref="ILdClientExtensions.FloatVariation(ILdClient, string, User, float)"/>
+        float FloatVariation(string key, Context context, float defaultValue);
 
         /// <summary>
         /// Calculates the single-precision floating-point numeric value of a feature flag for a
-        /// given user, and returns an object that describes the way the value was determined.
+        /// given context, and returns an object that describes the way the value was determined.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -133,20 +182,21 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// in analytics events, if you are capturing detailed event data for this flag.
         /// </para>
         /// <para>
-        /// The behavior is otherwise identical to <see cref="FloatVariation"/>.
+        /// The behavior is otherwise identical to <see cref="FloatVariation(string, Context, float)"/>.
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        /// <seealso cref="FloatVariation(string, User, float)"/>
-        /// <seealso cref="DoubleVariationDetail(string, User, double)"/>
-        EvaluationDetail<float> FloatVariationDetail(string key, User user, float defaultValue);
+        /// <seealso cref="FloatVariation(string, Context, float)"/>
+        /// <seealso cref="DoubleVariationDetail(string, Context, double)"/>
+        /// <seealso cref="ILdClientExtensions.FloatVariationDetail(ILdClient, string, User, float)"/>
+        EvaluationDetail<float> FloatVariationDetail(string key, Context context, float defaultValue);
 
         /// <summary>
         /// Calculates the double-precision floating-point numeric value of a feature flag for a
-        /// given user.
+        /// given context.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -158,17 +208,18 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
+        /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        /// <seealso cref="DoubleVariationDetail(string, User, double)"/>
-        /// <seealso cref="FloatVariation(string, User, float)"/>
-        double DoubleVariation(string key, User user, double defaultValue);
+        /// <seealso cref="DoubleVariationDetail(string, Context, double)"/>
+        /// <seealso cref="FloatVariation(string, Context, float)"/>
+        /// <seealso cref="ILdClientExtensions.DoubleVariation(ILdClient, string, User, double)"/>
+        double DoubleVariation(string key, Context context, double defaultValue);
 
         /// <summary>
         /// Calculates the double-precision floating-point numeric value of a feature flag for a
-        /// given user, and returns an object that describes the way the value was determined.
+        /// given context, and returns an object that describes the way the value was determined.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -176,58 +227,20 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// in analytics events, if you are capturing detailed event data for this flag.
         /// </para>
         /// <para>
-        /// The behavior is otherwise identical to <see cref="FloatVariation"/>.
+        /// The behavior is otherwise identical to <see cref="DoubleVariation(string, Context, double)"/>.
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        /// <seealso cref="DoubleVariation(string, User, double)"/>
-        /// <seealso cref="FloatVariationDetail(string, User, float)"/>
-        EvaluationDetail<double> DoubleVariationDetail(string key, User user, double defaultValue);
+        /// <seealso cref="DoubleVariation(string, Context, double)"/>
+        /// <seealso cref="FloatVariationDetail(string, Context, float)"/>
+        /// <seealso cref="ILdClientExtensions.DoubleVariationDetail(ILdClient, string, User, double)"/>
+        EvaluationDetail<double> DoubleVariationDetail(string key, Context context, double defaultValue);
 
         /// <summary>
-        /// Calculates the value of a feature flag for a given user as any JSON value type.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The type <see cref="LdValue"/> is used to represent any of the value types that can
-        /// exist in JSON. Use <see cref="LdValue"/> methods to examine its type and value.
-        /// </para>
-        /// <para>
-        /// If an error makes it impossible to evaluate the flag (for instance, the feature flag key
-        /// does not match any existing flag), <c>defaultValue</c> is returned.
-        /// </para>
-        /// </remarks>
-        /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
-        /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
-        /// be evaluated</returns>
-        LdValue JsonVariation(string key, User user, LdValue defaultValue);
-
-        /// <summary>
-        /// Calculates the value of a feature flag for a given user as any JSON value type, and
-        /// returns an object that describes the way the value was determined.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The <see cref="EvaluationDetail{T}.Reason"/> property in the result will also be included
-        /// in analytics events, if you are capturing detailed event data for this flag.
-        /// </para>
-        /// <para>
-        /// The behavior is otherwise identical to <see cref="JsonVariationDetail(string, User, LdValue)"/>.
-        /// </para>
-        /// </remarks>
-        /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
-        /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        EvaluationDetail<LdValue> JsonVariationDetail(string key, User user, LdValue defaultValue);
-
-        /// <summary>
-        /// Calculates the string value of a feature flag for a given user.
+        /// Calculates the string value of a feature flag for a given context.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -241,14 +254,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
+        /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        string StringVariation(string key, User user, string defaultValue);
+        /// <seealso cref="StringVariationDetail(string, Context, string)"/>
+        /// <seealso cref="ILdClientExtensions.StringVariation(ILdClient, string, User, string)"/>
+        string StringVariation(string key, Context context, string defaultValue);
 
         /// <summary>
-        /// Calculates the string value of a feature flag for a given user, and returns an object that
+        /// Calculates the string value of a feature flag for a given context, and returns an object that
         /// describes the way the value was determined.
         /// </summary>
         /// <remarks>
@@ -257,21 +272,24 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// in analytics events, if you are capturing detailed event data for this flag.
         /// </para>
         /// <para>
-        /// The behavior is otherwise identical to <see cref="StringVariation"/>.
+        /// The behavior is otherwise identical to <see cref="StringVariation(string, Context, string)"/>.
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        EvaluationDetail<string> StringVariationDetail(string key, User user, string defaultValue);
+        /// <seealso cref="StringVariation(string, Context, string)"/>
+        /// <seealso cref="ILdClientExtensions.StringVariationDetail(ILdClient, string, User, string)"/>
+        EvaluationDetail<string> StringVariationDetail(string key, Context context, string defaultValue);
 
         /// <summary>
-        /// Calculates the boolean value of a feature flag for a given user.
+        /// Calculates the value of a feature flag for a given context as any JSON value type.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// If the flag variation does not have a boolean value, <c>defaultValue</c> is returned.
+        /// The type <see cref="LdValue"/> is used to represent any of the value types that can
+        /// exist in JSON. Use <see cref="LdValue"/> methods to examine its type and value.
         /// </para>
         /// <para>
         /// If an error makes it impossible to evaluate the flag (for instance, the feature flag key
@@ -279,15 +297,17 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
-        /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
+        /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
-        bool BoolVariation(string key, User user, bool defaultValue = false);
+        /// <seealso cref="JsonVariationDetail(string, Context, LdValue)"/>
+        /// <seealso cref="ILdClientExtensions.JsonVariation(ILdClient, string, User, LdValue)"/>
+        LdValue JsonVariation(string key, Context context, LdValue defaultValue);
 
         /// <summary>
-        /// Calculates the boolean value of a feature flag for a given user, and returns an object that
-        /// describes the way the value was determined.
+        /// Calculates the value of a feature flag for a given context as any JSON value type, and
+        /// returns an object that describes the way the value was determined.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -295,45 +315,52 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// in analytics events, if you are capturing detailed event data for this flag.
         /// </para>
         /// <para>
-        /// The behavior is otherwise identical to <see cref="BoolVariation"/>.
+        /// The behavior is otherwise identical to <see cref="JsonVariationDetail(string, Context, LdValue)"/>.
         /// </para>
         /// </remarks>
         /// <param name="key">the unique feature key for the feature flag</param>
-        /// <param name="user">the end user requesting the flag</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
-        EvaluationDetail<bool> BoolVariationDetail(string key, User user, bool defaultValue);
+        /// <seealso cref="JsonVariation(string, Context, LdValue)"/>
+        /// <seealso cref="ILdClientExtensions.JsonVariationDetail(ILdClient, string, User, LdValue)"/>
+        EvaluationDetail<LdValue> JsonVariationDetail(string key, Context context, LdValue defaultValue);
 
         /// <summary>
-        /// Registers the user.
+        /// Reports details about an evaluation context.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This method simply creates an analytics event containing the user properties, to
-        /// that LaunchDarkly will know about that user if it does not already.
+        /// This method simply creates an analytics event containing the context attributes, to
+        /// that LaunchDarkly will know about that context if it does not already.
         /// </para>
         /// <para>
-        /// Calling any evaluation method, such as <see cref="BoolVariation(string, User, bool)"/>,
-        /// also sends the user information to LaunchDarkly (if events are enabled), so you only
-        /// need to use <see cref="Identify(User)"/> if you want to identify the user without
+        /// Calling any evaluation method, such as <see cref="BoolVariation(string, Context, bool)"/>,
+        /// also sends the context information to LaunchDarkly (if events are enabled), so you only
+        /// need to use <see cref="Identify(Context)"/> if you want to identify the context without
         /// evaluating a flag.
         /// </para>
         /// <para>
         /// Note that event delivery is asynchronous, so the event may not actually be sent until
         /// later; see <see cref="LdClient.Flush"/>.
         /// </para>
+        /// <para>
+        /// For more information, see the
+        /// <a href="https://docs.launchdarkly.com/sdk/features/identify#dotnet">Reference Guide</a>.
+        /// </para>
         /// </remarks>
-        /// <param name="user">the user to register</param>
-        void Identify(User user);
+        /// <param name="context">the evaluation context</param>
+        /// <seealso cref="ILdClientExtensions.Identify(ILdClient, User)"/>
+        void Identify(Context context);
 
         /// <summary>
-        /// Tracks that a user performed an event.
+        /// Tracks that an application-defined event occurred.
         /// </summary>
         /// <remarks>
         /// <para>
         /// This method creates a "custom" analytics event containing the specified event name (key)
-        /// and user properties. You may attach arbitrary data to the event by calling
-        /// <see cref="Track(string, User, LdValue)"/> instead.
+        /// and context attributes. You may attach arbitrary data to the event by calling
+        /// <see cref="Track(string, Context, LdValue)"/> instead.
         /// </para>
         /// <para>
         /// Note that event delivery is asynchronous, so the event may not actually be sent until
@@ -341,11 +368,38 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="name">the name of the event</param>
-        /// <param name="user">the user that performed the event</param>
-        void Track(string name, User user);
-        
+        /// <param name="context">the evaluation context associated with the event</param>
+        /// <seealso cref="Track(string, Context, LdValue)"/>
+        /// <seealso cref="Track(string, Context, LdValue, double)"/>
+        /// <seealso cref="ILdClientExtensions.Track(ILdClient, string, User)"/>
+        void Track(string name, Context context);
+
         /// <summary>
-        /// Tracks that a user performed an event, and provides an additional numeric value for custom metrics.
+        /// Tracks that an application-defined event occurred.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method creates a "custom" analytics event containing the specified event name (key),
+        /// context properties, and optional custom data. If you do not need custom data, pass
+        /// <see cref="LdValue.Null"/> for the last parameter or simply omit the parameter.
+        /// </para>
+        /// <para>
+        /// Note that event delivery is asynchronous, so the event may not actually be sent until
+        /// later; see <see cref="LdClient.Flush"/>.
+        /// </para>
+        /// </remarks>
+        /// <param name="name">the name of the event</param>
+        /// <param name="context">the evaluation context associated with the event</param>
+        /// <param name="data">additional data associated with the event, if any</param>
+        /// <seealso cref="Track(string, Context)"/>
+        /// <seealso cref="Track(string, Context, LdValue, double)"/>
+        /// <seealso cref="Track(string, Context, LdValue)"/>
+        /// <seealso cref="ILdClientExtensions.Track(ILdClient, string, User, LdValue)"/>
+        void Track(string name, Context context, LdValue data);
+
+        /// <summary>
+        /// Tracks that an application-defined event occurred, and provides an additional numeric value for
+        /// custom metrics.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -358,47 +412,18 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="name">the name of the event</param>
-        /// <param name="user">the user that performed the event</param>
+        /// <param name="context">the evaluation context associated with the event</param>
         /// <param name="data">additional data associated with the event; use <see cref="LdValue.Null"/> if
         /// not applicable</param>
         /// <param name="metricValue">a numeric value used by the LaunchDarkly experimentation feature in
         /// numeric custom metrics</param>
-        void Track(string name, User user, LdValue data, double metricValue);
+        /// <seealso cref="Track(string, Context)"/>
+        /// <seealso cref="Track(string, Context, LdValue)"/>
+        /// <seealso cref="ILdClientExtensions.Track(ILdClient, string, User, LdValue, double)"/>
+        void Track(string name, Context context, LdValue data, double metricValue);
 
         /// <summary>
-        /// Tracks that a user performed an event.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// This method creates a "custom" analytics event containing the specified event name (key),
-        /// user properties, and optional custom data. If you do not need custom data, pass
-        /// <see cref="LdValue.Null"/> for the last parameter or simply omit the parameter.
-        /// </para>
-        /// <para>
-        /// Note that event delivery is asynchronous, so the event may not actually be sent until
-        /// later; see <see cref="LdClient.Flush"/>.
-        /// </para>
-        /// </remarks>
-        /// <param name="name">the name of the event</param>
-        /// <param name="data">additional data associated with the event, if any</param>
-        /// <param name="user">the user that performed the event</param>
-        void Track(string name, User user, LdValue data);
-
-        /// <summary>
-        /// Associates two users for analytics purposes.
-        /// </summary>
-        /// <remarks>
-        /// This can be helpful in the situation where a person is represented by multiple
-        /// LaunchDarkly users. This may happen, for example, when a person initially logs into
-        /// an application-- the person might be represented by an anonymous user prior to logging
-        /// in and a different user after logging in, as denoted by a different user key.
-        /// </remarks>
-        /// <param name="currentUser">the current version of a user</param>
-        /// <param name="previousUser">the previous version of a user</param>
-        void Alias(User currentUser, User previousUser);
-
-        /// <summary>
-        /// Returns an object that encapsulates the state of all feature flags for a given user, which
+        /// Returns an object that encapsulates the state of all feature flags for a given context, which
         /// can be passed to front-end code.
         /// </summary>
         /// <remarks>
@@ -411,22 +436,24 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// This method will not send analytics events back to LaunchDarkly.
         /// </para>
         /// </remarks>
-        /// <param name="user">the end user requesting the feature flags</param>
+        /// <param name="context">the evaluation context</param>
         /// <param name="options">optional <see cref="FlagsStateOption"/> values affecting how the state is
-        /// computed  -  for instance, to filter the set of flags to only include the client-side-enabled ones</param>
+        /// computed-- for instance, to filter the set of flags to only include the client-side-enabled ones</param>
         /// <returns>a <see cref="FeatureFlagsState"/> object (will never be null; see
-        /// <see cref="FeatureFlagsState.Valid"/></returns>
-        FeatureFlagsState AllFlagsState(User user, params FlagsStateOption[] options);
+        /// <seealso cref="FeatureFlagsState.Valid"/></returns>
+        /// <seealso cref="ILdClientExtensions.AllFlagsState(ILdClient, User, FlagsStateOption[])"/>
+        FeatureFlagsState AllFlagsState(Context context, params FlagsStateOption[] options);
 
         /// <summary>
-        /// Creates a hash string that can be used by the JavaScript SDK to identify a user.
+        /// Creates a hash string that can be used by the JavaScript SDK to identify a context.
         /// </summary>
         /// <remarks>
         /// See <see href="https://docs.launchdarkly.com/sdk/features/secure-mode#configuring-secure-mode-in-the-javascript-client-side-sdk">Secure mode</see> in
         /// the JavaScript SDK Reference.
         /// </remarks>
-        /// <param name="user">the user to be hashed along with the SDK key</param>
+        /// <param name="context">the evaluation context</param>
         /// <returns>the hash, or null if the hash could not be calculated</returns>
-        string SecureModeHash(User user);
+        /// <seealso cref="ILdClientExtensions.SecureModeHash(ILdClient, User)"/>
+        string SecureModeHash(Context context);
     }
 }

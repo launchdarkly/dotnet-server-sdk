@@ -9,7 +9,7 @@ using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.DataStores.DataStoreTestTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataStores

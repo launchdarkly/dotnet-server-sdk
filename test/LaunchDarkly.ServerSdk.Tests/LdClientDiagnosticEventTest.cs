@@ -3,16 +3,15 @@ using System.Net;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Integrations;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using LaunchDarkly.TestHelpers.HttpTest;
 using Xunit;
 using Xunit.Abstractions;
 
 using static LaunchDarkly.Sdk.Server.MockResponses;
-using static LaunchDarkly.Sdk.Server.TestHttpUtils;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 using static LaunchDarkly.TestHelpers.JsonTestValue;
 
@@ -31,6 +30,10 @@ namespace LaunchDarkly.Sdk.Server
         internal static readonly TimeSpan testStartWaitTime = TimeSpan.FromMilliseconds(1);
 
         private MockEventSender testEventSender = new MockEventSender { FilterKind = EventDataKind.DiagnosticEvent };
+
+        private IDataStore IrrelevantDataStore => new InMemoryDataStore();
+        private IPersistentDataStore IrrelevantPersistentDataStore => new MockCoreSync();
+        private IPersistentDataStoreAsync IrrelevantPersistentDataStoreAsync => new MockCoreAsync();
 
         public LdClientDiagnosticEventTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
@@ -198,16 +201,14 @@ namespace LaunchDarkly.Sdk.Server
                     .Capacity(333)
                     .DiagnosticRecordingInterval(TimeSpan.FromMinutes(32))
                     .FlushInterval(TimeSpan.FromMilliseconds(555))
-                    .InlineUsersInEvents(true)
-                    .UserKeysCapacity(444)
-                    .UserKeysFlushInterval(TimeSpan.FromMinutes(23)),
+                    .ContextKeysCapacity(444)
+                    .ContextKeysFlushInterval(TimeSpan.FromMinutes(23)),
                 ExpectedConfigProps.Base()
                     .Set("allAttributesPrivate", true)
                     .Set("customEventsURI", false)
                     .Set("diagnosticRecordingIntervalMillis", TimeSpan.FromMinutes(32).TotalMilliseconds)
                     .Set("eventsCapacity", 333)
                     .Set("eventsFlushIntervalMillis", 555)
-                    .Set("inlineUsersInEvents", true)
                     .Set("userKeysCapacity", 444)
                     .Set("userKeysFlushIntervalMillis", TimeSpan.FromMinutes(23).TotalMilliseconds)
                 );
@@ -297,54 +298,27 @@ namespace LaunchDarkly.Sdk.Server
                     .Set("customStreamURI", true)
                     .Set("customEventsURI", true)
                 );
-
-            TestDiagnosticConfig(
-                c => c.DataSource(
-#pragma warning disable CS0618  // using deprecated symbol
-                    Components.StreamingDataSource()
-                        .BaseUri(new Uri("http://custom"))
-#pragma warning restore CS0618
-                    )
-                    .Http(Components.HttpConfiguration().MessageHandler(StreamWithEmptyData.AsMessageHandler())),
-                null,
-                ExpectedConfigProps.Base()
-                    .Set("customStreamURI", true)
-                );
-
-            TestDiagnosticConfig(
-                c => c.DataSource(
-#pragma warning disable CS0618  // using deprecated symbol
-                    Components.PollingDataSource().BaseUri(new Uri("http://custom"))
-#pragma warning restore CS0618
-                    )
-                   .Http(Components.HttpConfiguration().MessageHandler(EmptyPollingResponse.AsMessageHandler())),
-                null,
-                ExpectedConfigProps.Base()
-                    .WithPollingDefaults()
-                    .Set("customBaseURI", true)
-                );
-
         }
 
         [Fact]
         public void CustomConfigForCustomDataStore()
         {
             TestDiagnosticConfig(
-                c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") }),
+                c => c.DataStore(IrrelevantDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of("my-test-store"))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "my-test-store")
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(new DataStoreFactoryWithoutDiagnosticDescription()),
+                c => c.DataStore(IrrelevantDataStore.AsSingletonFactory()),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(new DataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) }),
+                c => c.DataStore(IrrelevantDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of(4))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -356,7 +330,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
+                    IrrelevantPersistentDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of("my-test-store")))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "my-test-store")
@@ -364,15 +338,21 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of("my-test-store") })),
+                    IrrelevantPersistentDataStoreAsync.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of("my-test-store")))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "my-test-store")
                 );
 
             TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreFactoryWithoutDiagnosticDescription())),
+                c => c.DataStore(Components.PersistentDataStore(IrrelevantPersistentDataStore.AsSingletonFactory())),
+                null,
+                ExpectedConfigProps.Base()
+                    .Set("dataStoreType", "custom")
+                );
+
+            TestDiagnosticConfig(
+                c => c.DataStore(Components.PersistentDataStore(IrrelevantPersistentDataStoreAsync.AsSingletonFactory())),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -380,7 +360,7 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription())),
+                    IrrelevantPersistentDataStore.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of(4)))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -388,15 +368,7 @@ namespace LaunchDarkly.Sdk.Server
 
             TestDiagnosticConfig(
                 c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
-                null,
-                ExpectedConfigProps.Base()
-                    .Set("dataStoreType", "custom")
-                );
-
-            TestDiagnosticConfig(
-                c => c.DataStore(Components.PersistentDataStore(
-                    new PersistentDataStoreAsyncFactoryWithDiagnosticDescription { Description = LdValue.Of(4) })),
+                    IrrelevantPersistentDataStoreAsync.AsSingletonFactoryWithDiagnosticDescription(LdValue.Of(4)))),
                 null,
                 ExpectedConfigProps.Base()
                     .Set("dataStoreType", "custom")
@@ -431,54 +403,6 @@ namespace LaunchDarkly.Sdk.Server
                 AssertJsonEqual(JsonOf(expected.Build().ToJsonString()), data.Property("configuration"));
             }
         }
-
-        private class DataStoreFactoryWithDiagnosticDescription : IDataStoreFactory, IDiagnosticDescription
-        {
-            internal LdValue Description { get; set; }
-
-            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
-                Components.InMemoryDataStore.CreateDataStore(context, dataStoreUpdates);
-
-            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
-        }
-
-        private class DataStoreFactoryWithoutDiagnosticDescription : IDataStoreFactory
-        {
-            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates) =>
-                Components.InMemoryDataStore.CreateDataStore(context, dataStoreUpdates);
-        }
-
-        private class PersistentDataStoreFactoryWithDiagnosticDescription : IPersistentDataStoreFactory, IDiagnosticDescription
-        {
-            internal LdValue Description { get; set; }
-
-            public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreSync();
-
-            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
-        }
-
-        private class PersistentDataStoreFactoryWithoutDiagnosticDescription : IPersistentDataStoreFactory
-        {
-            public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreSync();
-        }
-
-        private class PersistentDataStoreAsyncFactoryWithDiagnosticDescription : IPersistentDataStoreAsyncFactory, IDiagnosticDescription
-        {
-            internal LdValue Description { get; set; }
-
-            public IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreAsync();
-
-            public LdValue DescribeConfiguration(BasicConfiguration basic) => Description;
-        }
-
-        private class PersistentDataStoreAsyncFactoryWithoutDiagnosticDescription : IPersistentDataStoreAsyncFactory
-        {
-            public IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context) =>
-                new MockCoreAsync();
-        }
     }
 
     static class ExpectedConfigProps
@@ -494,13 +418,12 @@ namespace LaunchDarkly.Sdk.Server
                 .Add("diagnosticRecordingIntervalMillis", EventProcessorBuilder.DefaultDiagnosticRecordingInterval.TotalMilliseconds)
                 .Add("eventsCapacity", EventProcessorBuilder.DefaultCapacity)
                 .Add("eventsFlushIntervalMillis", EventProcessorBuilder.DefaultFlushInterval.TotalMilliseconds)
-                .Add("inlineUsersInEvents", false)
                 .Add("reconnectTimeMillis", StreamingDataSourceBuilder.DefaultInitialReconnectDelay.TotalMilliseconds)
                 .Add("socketTimeoutMillis", HttpConfigurationBuilder.DefaultReadTimeout.TotalMilliseconds)
                 .Add("startWaitMillis", LdClientDiagnosticEventTest.testStartWaitTime.TotalMilliseconds)
                 .Add("streamingDisabled", false)
-                .Add("userKeysCapacity", EventProcessorBuilder.DefaultUserKeysCapacity)
-                .Add("userKeysFlushIntervalMillis", EventProcessorBuilder.DefaultUserKeysFlushInterval.TotalMilliseconds)
+                .Add("userKeysCapacity", EventProcessorBuilder.DefaultContextKeysCapacity)
+                .Add("userKeysFlushIntervalMillis", EventProcessorBuilder.DefaultContextKeysFlushInterval.TotalMilliseconds)
                 .Add("usingProxy", false)
                 .Add("usingProxyAuthenticator", false)
                 .Add("usingRelayDaemon", false);

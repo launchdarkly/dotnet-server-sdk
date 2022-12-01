@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Internal.Model.TargetBuilder;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
@@ -99,175 +101,209 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         [Fact]
         public void FlagConfigSimpleBoolean()
         {
-            string basicProps = "\"variations\":[true,false],\"offVariation\":1,\"rules\":[],\"targets\":[]",
-                onProps = basicProps + ",\"on\":true",
-                offProps = basicProps + ",\"on\":false",
-                fallthroughTrue = ",\"fallthrough\":{\"variation\":0}",
-                fallthroughFalse = ",\"fallthrough\":{\"variation\":1}";
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedBooleanFlag = fb =>
+                fb.On(true).Variations(true, false).OffVariation(1).FallthroughVariation(0);
 
-            VerifyFlag(f => f, onProps + fallthroughTrue);
-            VerifyFlag(f => f.BooleanFlag(), onProps + fallthroughTrue);
-            VerifyFlag(f => f.On(true), onProps + fallthroughTrue);
-            VerifyFlag(f => f.On(false), offProps + fallthroughTrue);
-            VerifyFlag(f => f.VariationForAllUsers(false), onProps + fallthroughFalse);
-            VerifyFlag(f => f.VariationForAllUsers(true), onProps + fallthroughTrue);
+            VerifyFlag(f => f, expectedBooleanFlag);
+            VerifyFlag(f => f.BooleanFlag(), expectedBooleanFlag);
+            VerifyFlag(f => f.On(true), expectedBooleanFlag);
+            VerifyFlag(f => f.On(false), fb => expectedBooleanFlag(fb).On(false));
+            VerifyFlag(f => f.VariationForAll(false), fb => expectedBooleanFlag(fb).FallthroughVariation(1));
+            VerifyFlag(f => f.VariationForAll(true), expectedBooleanFlag);
 
-            VerifyFlag(
-                f => f.FallthroughVariation(true).OffVariation(false),
-                onProps + fallthroughTrue
-                );
+            VerifyFlag(f => f.FallthroughVariation(true).OffVariation(false), expectedBooleanFlag);
 
             VerifyFlag(
                 f => f.FallthroughVariation(false).OffVariation(true),
-                "\"variations\":[true,false],\"on\":true,\"offVariation\":0,\"fallthrough\":{\"variation\":1}"
-                    + ",\"rules\":[],\"targets\":[]"
+                fb => expectedBooleanFlag(fb).FallthroughVariation(1).OffVariation(0)
                 );
         }
 
         [Fact]
         public void UsingBooleanConfigMethodsForcesFlagToBeBoolean()
         {
-            string booleanProps = "\"on\":true,\"rules\":[],\"targets\":[]"
-                + ",\"variations\":[true,false],\"offVariation\":1,\"fallthrough\":{\"variation\":0}";
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedBooleanFlag = fb =>
+                fb.On(true).Variations(true, false).OffVariation(1).FallthroughVariation(0);
 
             VerifyFlag(
                 f => f.Variations(LdValue.Of(1), LdValue.Of(2))
                     .BooleanFlag(),
-                booleanProps
+                expectedBooleanFlag
                 );
             VerifyFlag(
                 f => f.Variations(LdValue.Of(true), LdValue.Of(2))
                     .BooleanFlag(),
-                booleanProps
+                expectedBooleanFlag
                 );
             VerifyFlag(
                 f => f.BooleanFlag(),
-                booleanProps
+                expectedBooleanFlag
                 );
         }
 
         [Fact]
         public void FlagConfigStringVariations()
         {
-            string basicProps = "\"variations\":[\"red\",\"green\",\"blue\"],\"on\":true"
-                + ",\"offVariation\":0,\"fallthrough\":{\"variation\":2},\"rules\":[],\"targets\":[]";
-
             VerifyFlag(
                 f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2),
-                basicProps
+                fb => fb.Variations("red", "green", "blue").On(true).OffVariation(0).FallthroughVariation(2)
                 );
         }
 
         [Fact]
         public void UserTargets()
         {
-            string booleanFlagBasicProps = "\"on\":true,\"variations\":[true,false],\"rules\":[]" +
-                ",\"offVariation\":1,\"fallthrough\":{\"variation\":0}";
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedBooleanFlag = fb =>
+                fb.Variations(true, false).On(true).OffVariation(1).FallthroughVariation(0);
+
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("b", true),
-                booleanFlagBasicProps + ",\"targets\":[{\"variation\":0,\"values\":[\"a\",\"b\"]}]"
+                fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "a", "b")).
+                    ContextTargets(ContextTarget(ContextKind.Default, 0))
                 );
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("a", true),
-                booleanFlagBasicProps + ",\"targets\":[{\"variation\":0,\"values\":[\"a\"]}]"
+                fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "a")).
+                    ContextTargets(ContextTarget(ContextKind.Default, 0))
+                );
+            VerifyFlag(
+                f => f.VariationForUser("a", true).VariationForUser("a", false),
+                fb => expectedBooleanFlag(fb).Targets(UserTarget(1, "a")).
+                    ContextTargets(ContextTarget(ContextKind.Default, 1))
                 );
             VerifyFlag(
                 f => f.VariationForUser("a", false).VariationForUser("b", true).VariationForUser("c", false),
-                booleanFlagBasicProps + ",\"targets\":[{\"variation\":0,\"values\":[\"b\"]}" +
-                  ",{\"variation\":1,\"values\":[\"a\",\"c\"]}]"
+                fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "b"), UserTarget(1, "a", "c")).
+                    ContextTargets(ContextTarget(ContextKind.Default, 0), ContextTarget(ContextKind.Default, 1))
                 );
             VerifyFlag(
                 f => f.VariationForUser("a", true).VariationForUser("b", true).VariationForUser("a", false),
-                booleanFlagBasicProps + ",\"targets\":[{\"variation\":0,\"values\":[\"b\"]}" +
-                  ",{\"variation\":1,\"values\":[\"a\"]}]"
+                fb => expectedBooleanFlag(fb).Targets(UserTarget(0, "b"), UserTarget(1, "a")).
+                    ContextTargets(ContextTarget(ContextKind.Default, 0), ContextTarget(ContextKind.Default, 1))
                 );
 
-            string stringFlagBasicProps = "\"variations\":[\"red\",\"green\",\"blue\"],\"on\":true,\"rules\":[]"
-                + ",\"offVariation\":0,\"fallthrough\":{\"variation\":2}";
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedStringFlag = fb =>
+                fb.Variations("red", "green", "blue").On(true).OffVariation(0).FallthroughVariation(2);
+
             VerifyFlag(
                 f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2)
                     .VariationForUser("a", 2).VariationForUser("b", 2),
-                stringFlagBasicProps + ",\"targets\":[{\"variation\":2,\"values\":[\"a\",\"b\"]}]"
+                fb => expectedStringFlag(fb).Targets(UserTarget(2, "a", "b")).
+                    ContextTargets(ContextTarget(ContextKind.Default, 2))
                 );
             VerifyFlag(
                 f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2)
                     .VariationForUser("a", 2).VariationForUser("b", 1).VariationForUser("c", 2),
-                stringFlagBasicProps + ",\"targets\":[{\"variation\":1,\"values\":[\"b\"]}" +
-                    ",{\"variation\":2,\"values\":[\"a\",\"c\"]}]"
+                fb => expectedStringFlag(fb).Targets(UserTarget(1, "b"), UserTarget(2, "a", "c")).
+                    ContextTargets(ContextTarget(ContextKind.Default, 1), ContextTarget(ContextKind.Default, 2))
+                );
+        }
+
+        [Fact]
+        public void ContextTargets()
+        {
+            ContextKind kind1 = ContextKind.Of("org"), kind2 = ContextKind.Of("other");
+
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedBooleanFlag = fb =>
+                fb.Variations(true, false).On(true).OffVariation(1).FallthroughVariation(0);
+
+            VerifyFlag(
+                f => f.VariationForKey(kind1, "a", true).VariationForKey(kind1, "b", true),
+                fb => expectedBooleanFlag(fb).ContextTargets(ContextTarget(kind1, 0, "a", "b"))
+                );
+            VerifyFlag(
+                f => f.VariationForKey(kind1, "a", true).VariationForKey(kind2, "a", true),
+                fb => expectedBooleanFlag(fb).ContextTargets(ContextTarget(kind1, 0, "a"), ContextTarget(kind2, 0, "a"))
+                );
+            VerifyFlag(
+                f => f.VariationForKey(kind1, "a", true).VariationForKey(kind1, "a", true),
+                fb => expectedBooleanFlag(fb).ContextTargets(ContextTarget(kind1, 0, "a"))
+                );
+            VerifyFlag(
+                f => f.VariationForKey(kind1, "a", true).VariationForKey(kind1, "a", false),
+                fb => expectedBooleanFlag(fb).ContextTargets(ContextTarget(kind1, 1, "a"))
+                );
+
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedStringFlag = fb =>
+                fb.Variations("red", "green", "blue").On(true).OffVariation(0).FallthroughVariation(2);
+
+            VerifyFlag(
+                f => f.Variations(ThreeStringValues).OffVariation(0).FallthroughVariation(2)
+                    .VariationForKey(kind1, "a", 2).VariationForKey(kind1, "b", 2),
+                fb => expectedStringFlag(fb).ContextTargets(ContextTarget(kind1, 2, "a", "b"))
                 );
         }
 
         [Fact]
         public void FlagRules()
         {
-            string basicProps = "\"variations\":[true,false],\"targets\":[]" +
-                ",\"on\":true,\"offVariation\":1,\"fallthrough\":{\"variation\":0}";
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> expectedBooleanFlag = fb =>
+                fb.Variations(true, false).On(true).OffVariation(1).FallthroughVariation(0);
 
             // match that returns variation 0/true
-            string matchReturnsVariation0 = basicProps +
-                ",\"rules\":[{\"id\":\"rule0\",\"variation\":0,\"trackEvents\":false,\"clauses\":[" +
-                "{\"attribute\":\"name\",\"op\":\"in\",\"values\":[\"Lucy\"],\"negate\":false}" +
-                "]}]";
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> matchReturnsVariation0 = fb =>
+                expectedBooleanFlag(fb).Rules(new RuleBuilder().Id("rule0").Variation(0).Clauses(
+                    new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build()
+                    ).Build());
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(true),
                 matchReturnsVariation0
                 );
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(0),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(0),
                 matchReturnsVariation0
                 );
 
             // match that returns variation 1/false
-            string matchReturnsVariation1 = basicProps +
-                ",\"rules\":[{\"id\":\"rule0\",\"variation\":1,\"trackEvents\":false,\"clauses\":[" +
-                "{\"attribute\":\"name\",\"op\":\"in\",\"values\":[\"Lucy\"],\"negate\":false}" +
-                "]}]";
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> matchReturnsVariation1 = fb =>
+                expectedBooleanFlag(fb).Rules(new RuleBuilder().Id("rule0").Variation(1).Clauses(
+                    new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build()
+                    ).Build());
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(false),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(false),
                 matchReturnsVariation1
                 );
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(1),
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(1),
                 matchReturnsVariation1
                 );
 
             // negated match
             VerifyFlag(
-                f => f.IfNotMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true),
-                basicProps + ",\"rules\":[{\"id\":\"rule0\",\"variation\":0,\"trackEvents\":false,\"clauses\":[" +
-                    "{\"attribute\":\"name\",\"op\":\"in\",\"values\":[\"Lucy\"],\"negate\":true}" +
-                    "]}]"
+                f => f.IfNotMatch("name", LdValue.Of("Lucy")).ThenReturn(true),
+                fb => expectedBooleanFlag(fb).Rules(new RuleBuilder().Id("rule0").Variation(0).Clauses(
+                    new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Negate(true).Build()
+                    ).Build())
                 );
 
             // multiple clauses
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy"))
-                    .AndMatch(UserAttribute.Country, LdValue.Of("gb"))
+                f => f.IfMatch("name", LdValue.Of("Lucy"))
+                    .AndMatch("country", LdValue.Of("gb"))
                     .ThenReturn(true),
-                basicProps + ",\"rules\":[{\"id\":\"rule0\",\"variation\":0,\"trackEvents\":false,\"clauses\":[" +
-                    "{\"attribute\":\"name\",\"op\":\"in\",\"values\":[\"Lucy\"],\"negate\":false}," +
-                    "{\"attribute\":\"country\",\"op\":\"in\",\"values\":[\"gb\"],\"negate\":false}" +
-                    "]}]"
+                fb => expectedBooleanFlag(fb).Rules(new RuleBuilder().Id("rule0").Variation(0).Clauses(
+                    new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build(),
+                    new ClauseBuilder().Attribute("country").Op("in").Values("gb").Build()
+                    ).Build())
                 );
 
             // multiple rules
             VerifyFlag(
-                f => f.IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true)
-                    .IfMatch(UserAttribute.Name, LdValue.Of("Mina")).ThenReturn(true),
-                basicProps + ",\"rules\":["
-                  + "{\"id\":\"rule0\",\"variation\":0,\"trackEvents\":false,\"clauses\":[" +
-                    "{\"attribute\":\"name\",\"op\":\"in\",\"values\":[\"Lucy\"],\"negate\":false}" +
-                    "]},"
-                  + "{\"id\":\"rule1\",\"variation\":0,\"trackEvents\":false,\"clauses\":[" +
-                    "{\"attribute\":\"name\",\"op\":\"in\",\"values\":[\"Mina\"],\"negate\":false}" +
-                    "]}"
-                  + "]"
+                f => f.IfMatch("name", LdValue.Of("Lucy")).ThenReturn(true)
+                    .IfMatch("name", LdValue.Of("Mina")).ThenReturn(false),
+                fb => expectedBooleanFlag(fb).Rules(
+                    new RuleBuilder().Id("rule0").Variation(0).Clauses(
+                        new ClauseBuilder().Attribute("name").Op("in").Values("Lucy").Build()
+                        ).Build(),
+                    new RuleBuilder().Id("rule1").Variation(1).Clauses(
+                        new ClauseBuilder().Attribute("name").Op("in").Values("Mina").Build()
+                        ).Build())
                 );
         }
 
         private void CreateAndStart()
         {
-            var ds = _td.CreateDataSource(BasicContext, _updates);
+            var ds = _td.Build(BasicContext.WithDataSourceUpdates(_updates));
             var started = ds.Start();
             Assert.True(started.IsCompleted);
             Assert.Equal(DataSourceState.Valid, _updates.StatusUpdates.ExpectValue().State);
@@ -285,13 +321,15 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         private Action<KeyValuePair<string, ItemDescriptor>> FlagItemAssertion(string expectedKey, int version, Action<LdValue> jsonAssertions) =>
             kv => AssertFlag(expectedKey, version, kv.Key, kv.Value, jsonAssertions);
 
-        private void VerifyFlag(Func<TestData.FlagBuilder, TestData.FlagBuilder> configureFlag, string expectedProps)
+        private void VerifyFlag(Func<TestData.FlagBuilder, TestData.FlagBuilder> configureFlag,
+            Func<FeatureFlagBuilder, FeatureFlagBuilder> configureExpectedFlag)
         {
-            var expectedJson = "{\"key\":\"flagkey\",\"version\":1," + expectedProps +
-                ",\"clientSide\":false,\"deleted\":false,\"prerequisites\":[],\"salt\":\"\"}";
+            var expectedFlag = new FeatureFlagBuilder("flagkey").Version(1).Salt("");
+            expectedFlag = configureExpectedFlag(expectedFlag);
+            var expectedJson = DataModel.Features.Serialize(TestUtils.DescriptorOf(expectedFlag.Build()));
 
             var td = TestData.DataSource();
-            td.CreateDataSource(BasicContext, _updates).Start();
+            td.Build(BasicContext.WithDataSourceUpdates(_updates)).Start();
 
             td.Update(configureFlag(_td.Flag("flagkey")));
 

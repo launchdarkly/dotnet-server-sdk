@@ -5,6 +5,7 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using LaunchDarkly.TestHelpers.HttpTest;
 using Moq;
@@ -32,13 +33,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 .ServiceEndpoints(Components.ServiceEndpoints().Streaming(baseUri));
             modConfig?.Invoke(builder);
             var config = builder.Build();
-            return config.DataSourceFactory.CreateDataSource(ContextFrom(config), _updateSink);
+            return config.DataSource.Build(ContextFrom(config).WithDataSourceUpdates(_updateSink));
         }
 
         private IDataSource MakeDataSourceWithDiagnostics(Uri baseUri, IDiagnosticStore diagnosticStore)
         {
-            var context = new LdClientContext(BasicContext.Basic, BasicContext.Http,
-                diagnosticStore, BasicTaskExecutor);
+            var context = BasicContext.WithDiagnosticStore(diagnosticStore);
             return new StreamingDataSource(context, _updateSink, baseUri, BriefReconnectDelay);
         }
 

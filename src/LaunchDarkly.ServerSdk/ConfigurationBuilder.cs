@@ -2,6 +2,7 @@
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -30,13 +31,13 @@ namespace LaunchDarkly.Sdk.Server
 
         // Let's try to keep these properties and methods alphabetical so they're easy to find. Note that they
         // are internal rather than private so that they can be read by the Configuration constructor.
-        internal IBigSegmentsConfigurationFactory _bigSegmentsConfigurationFactory = null;
-        internal IDataSourceFactory _dataSourceFactory = null;
-        internal IDataStoreFactory _dataStoreFactory = null;
+        internal IComponentConfigurer<BigSegmentsConfiguration> _bigSegments = null;
+        internal IComponentConfigurer<IDataSource> _dataSource = null;
+        internal IComponentConfigurer<IDataStore> _dataStore = null;
         internal bool _diagnosticOptOut = false;
-        internal IEventProcessorFactory _eventProcessorFactory = null;
-        internal IHttpConfigurationFactory _httpConfigurationFactory = null;
-        internal ILoggingConfigurationFactory _loggingConfigurationFactory = null;
+        internal IComponentConfigurer<IEventProcessor> _events = null;
+        internal IComponentConfigurer<HttpConfiguration> _http = null;
+        internal IComponentConfigurer<LoggingConfiguration> _logging = null;
         internal bool _offline = false;
         internal string _sdkKey;
         internal ServiceEndpointsBuilder _serviceEndpointsBuilder = null;
@@ -53,13 +54,13 @@ namespace LaunchDarkly.Sdk.Server
 
         internal ConfigurationBuilder(Configuration copyFrom)
         {
-            _bigSegmentsConfigurationFactory = copyFrom.BigSegmentsConfigurationFactory;
-            _dataSourceFactory = copyFrom.DataSourceFactory;
-            _dataStoreFactory = copyFrom.DataStoreFactory;
+            _bigSegments = copyFrom.BigSegments;
+            _dataSource = copyFrom.DataSource;
+            _dataStore = copyFrom.DataStore;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
-            _eventProcessorFactory = copyFrom.EventProcessorFactory;
-            _httpConfigurationFactory = copyFrom.HttpConfigurationFactory;
-            _loggingConfigurationFactory = copyFrom.LoggingConfigurationFactory;
+            _events = copyFrom.Events;
+            _http = copyFrom.Http;
+            _logging = copyFrom.Logging;
             _offline = copyFrom.Offline;
             _sdkKey = copyFrom.SdkKey;
             _serviceEndpointsBuilder = new ServiceEndpointsBuilder(copyFrom.ServiceEndpoints);
@@ -104,16 +105,16 @@ namespace LaunchDarkly.Sdk.Server
         ///     // This example uses the Redis integration
         ///     var config = Configuration.Builder(sdkKey)
         ///         .BigSegments(Components.BigSegments(Redis.DataStore().Prefix("app1"))
-        ///             .UserCacheSize(2000))
+        ///             .ContextCacheSize(2000))
         ///         .Build();
         /// </code>
         /// </example>
-        /// <param name="bigSegmentsConfigurationFactory">a configuration factory object returned by
-        /// <see cref="Components.BigSegments(IBigSegmentStoreFactory)"/></param>
+        /// <param name="bigSegmentsConfig">a configuration factory object returned by
+        /// <see cref="Components.BigSegments"/></param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder BigSegments(IBigSegmentsConfigurationFactory bigSegmentsConfigurationFactory)
+        public ConfigurationBuilder BigSegments(IComponentConfigurer<BigSegmentsConfiguration> bigSegmentsConfig)
         {
-            _bigSegmentsConfigurationFactory = bigSegmentsConfigurationFactory;
+            _bigSegments = bigSegmentsConfig;
             return this;
         }
 
@@ -133,11 +134,11 @@ namespace LaunchDarkly.Sdk.Server
         /// details on how to configure them.
         /// </para>
         /// </remarks>
-        /// <param name="dataSourceFactory">the factory object</param>
+        /// <param name="dataSourceConfig">the factory object</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory)
+        public ConfigurationBuilder DataSource(IComponentConfigurer<IDataSource> dataSourceConfig)
         {
-            _dataSourceFactory = dataSourceFactory;
+            _dataSource = dataSourceConfig;
             return this;
         }
 
@@ -149,7 +150,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// The default is <see cref="Components.InMemoryDataStore"/>, but you may choose to use a custom
         /// implementation such as a database integration. For the latter, you will normally
-        /// use <see cref="Components.PersistentDataStore(IPersistentDataStoreFactory)"/> in
+        /// use <see cref="Components.PersistentDataStore(IComponentConfigurer{IPersistentDataStore})"/> in
         /// conjunction with some specific type for that integration.
         /// </para>
         /// <para>
@@ -158,11 +159,11 @@ namespace LaunchDarkly.Sdk.Server
         /// is created, and dispose of that instance when disposing of the client.
         /// </para>
         /// </remarks>
-        /// <param name="dataStoreFactory">the factory object</param>
+        /// <param name="dataStoreConfig">the factory object</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder DataStore(IDataStoreFactory dataStoreFactory)
+        public ConfigurationBuilder DataStore(IComponentConfigurer<IDataStore> dataStoreConfig)
         {
-            _dataStoreFactory = dataStoreFactory;
+            _dataStore = dataStoreConfig;
             return this;
         }
 
@@ -195,37 +196,36 @@ namespace LaunchDarkly.Sdk.Server
         /// <see cref="EventProcessorBuilder"/>, a custom implementation (for instance, a test fixture), or
         /// disable events with <see cref="Components.NoEvents"/>.
         /// </remarks>
-        /// <param name="eventProcessorFactory">a builder/factory object for event configuration</param>
+        /// <param name="eventsConfig">a builder/factory object for event configuration</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder Events(IEventProcessorFactory eventProcessorFactory)
+        public ConfigurationBuilder Events(IComponentConfigurer<IEventProcessor> eventsConfig)
         {
-            _eventProcessorFactory = eventProcessorFactory;
+            _events = eventsConfig;
             return this;
         }
 
         /// <summary>
-        /// Sets the SDK's networking configuration, using a factory object. This object is normally a
-        /// configuration builder obtained from <see cref="Components.HttpConfiguration()"/>, which has
-        /// methods for setting individual HTTP-related properties.
+        /// Sets the SDK's networking configuration, using a builder object that is obtained from
+        /// <see cref="Components.HttpConfiguration()"/>, which has methods for setting individual HTTP-related
+        /// properties.
         /// </summary>
-        /// <param name="httpConfigurationFactory">a builder/factory object for HTTP configuration</param>
+        /// <param name="httpConfig">a builder object for HTTP configuration</param>
         /// <returns>the same builder</returns>
-        public ConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory)
+        public ConfigurationBuilder Http(IComponentConfigurer<HttpConfiguration> httpConfig)
         {
-            _httpConfigurationFactory = httpConfigurationFactory;
+            _http = httpConfig;
             return this;
         }
 
         /// <summary>
-        /// Sets the SDK's logging configuration, using a factory object.
+        /// Sets the SDK's logging configuration, using a builder object that is obtained from
+        /// <see cref="Components.Logging()"/> which has methods for setting individual logging-related properties. 
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This object is normally a configuration builder obtained from <see cref="Components.Logging()"/>
-        /// which has methods for setting individual logging-related properties. As a shortcut for disabling
-        /// logging, you may use <see cref="Components.NoLogging"/> instead. If all you want to do is to set
-        /// the basic logging destination, and you do not need to set other logging properties, you can use
-        /// <see cref="Logging(ILogAdapter)"/> instead.
+        /// As a shortcut for disabling logging, you may use <see cref="Components.NoLogging"/> instead. If all you
+        /// want to do is to set the basic logging destination, and you do not need to set other logging properties,
+        /// you can use <see cref="Logging(ILogAdapter)"/>.
         /// </para>
         /// <para>
         /// For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
@@ -237,15 +237,15 @@ namespace LaunchDarkly.Sdk.Server
         ///         .Logging(Components.Logging().Level(LogLevel.Warn)))
         ///         .Build();
         /// </example>
-        /// <param name="loggingConfigurationFactory">the factory object</param>
+        /// <param name="loggingConfig">a builder object for logging configuration</param>
         /// <returns>the same builder</returns>
         /// <seealso cref="Components.Logging()" />
         /// <seealso cref="Components.Logging(ILogAdapter) "/>
         /// <seealso cref="Components.NoLogging" />
         /// <seealso cref="Logging(ILogAdapter)"/>
-        public ConfigurationBuilder Logging(ILoggingConfigurationFactory loggingConfigurationFactory)
+        public ConfigurationBuilder Logging(IComponentConfigurer<LoggingConfiguration> loggingConfig)
         {
-            _loggingConfigurationFactory = loggingConfigurationFactory;
+            _logging = loggingConfig;
             return this;
         }
 

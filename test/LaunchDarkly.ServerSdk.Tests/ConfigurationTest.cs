@@ -2,6 +2,7 @@
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void BigSegments()
         {
-            var prop = _tester.Property(c => c.BigSegmentsConfigurationFactory, (b, v) => b.BigSegments(v));
+            var prop = _tester.Property(c => c.BigSegments, (b, v) => b.BigSegments(v));
             prop.AssertDefault(null);
             prop.AssertCanSet(Components.BigSegments(null));
         }
@@ -40,7 +41,7 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void DataSource()
         {
-            var prop = _tester.Property(c => c.DataSourceFactory, (b, v) => b.DataSource(v));
+            var prop = _tester.Property(c => c.DataSource, (b, v) => b.DataSource(v));
             prop.AssertDefault(null);
             prop.AssertCanSet(ComponentsImpl.NullDataSourceFactory.Instance);
         }
@@ -48,9 +49,9 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void DataStore()
         {
-            var prop = _tester.Property(c => c.DataStoreFactory, (b, v) => b.DataStore(v));
+            var prop = _tester.Property(c => c.DataStore, (b, v) => b.DataStore(v));
             prop.AssertDefault(null);
-            prop.AssertCanSet(new InMemoryDataStore().AsSingletonFactory());
+            prop.AssertCanSet(new InMemoryDataStore().AsSingletonFactory<IDataStore>());
         }
 
         [Fact]
@@ -64,15 +65,15 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void Events()
         {
-            var prop = _tester.Property(c => c.EventProcessorFactory, (b, v) => b.Events(v));
+            var prop = _tester.Property(c => c.Events, (b, v) => b.Events(v));
             prop.AssertDefault(null);
-            prop.AssertCanSet(new MockEventProcessor().AsSingletonFactory());
+            prop.AssertCanSet(new MockEventProcessor().AsSingletonFactory<IEventProcessor>());
         }
 
         [Fact]
         public void Logging()
         {
-            var prop = _tester.Property(c => c.LoggingConfigurationFactory, (b, v) => b.Logging(v));
+            var prop = _tester.Property(c => c.Logging, (b, v) => b.Logging(v));
             prop.AssertDefault(null);
             prop.AssertCanSet(Components.Logging(Logs.ToWriter(Console.Out)));
         }
@@ -82,7 +83,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var adapter = Logs.ToWriter(Console.Out);
             var config = Configuration.Builder("").Logging(adapter).Build();
-            var logConfig = config.LoggingConfigurationFactory.CreateLoggingConfiguration();
+            var logConfig = config.Logging.Build(new LdClientContext(""));
             Assert.Same(adapter, logConfig.LogAdapter);
         }
 

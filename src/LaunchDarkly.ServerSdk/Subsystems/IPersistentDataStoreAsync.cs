@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface for a data store that holds feature flags and related data in a
@@ -69,21 +69,5 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         /// <returns>true if the underlying data store is reachable</returns>
         Task<bool> IsStoreAvailableAsync();
-    }
-
-    /// <summary>
-    /// Interface for a factory that creates some implementation of <see cref="IPersistentDataStoreAsync"/>.
-    /// </summary>
-    /// <seealso cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>
-    /// <seealso cref="Components.PersistentDataStore(IPersistentDataStoreAsyncFactory)"/>
-    public interface IPersistentDataStoreAsyncFactory
-    {
-        /// <summary>
-        /// Called internally by the SDK to create an implementation instance. Applications do not need
-        /// to call this method.
-        /// </summary>
-        /// <param name="context">configuration of the current client instance</param>
-        /// <returns>a <see cref="IPersistentDataStoreAsync"/> instance</returns>
-        IPersistentDataStoreAsync CreatePersistentDataStore(LdClientContext context);
     }
 }

@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using LaunchDarkly.JsonStream;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Interfaces;
 
+using static LaunchDarkly.Sdk.Internal.JsonConverterHelpers;
 using static LaunchDarkly.Sdk.Json.LdJsonConverters;
 
 namespace LaunchDarkly.Sdk.Server
 {
     /// <summary>
     /// A snapshot of the state of all feature flags with regard to a specific user. See
-    /// calling <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/>.
+    /// calling <see cref="ILdClient.AllFlagsState(Context, FlagsStateOption[])"/>.
     /// </summary>
     /// <remarks>
     /// Serializing this object to JSON using <c>System.Text.Json</c> or <see cref="LaunchDarkly.Sdk.Json.LdJsonSerialization"/>
@@ -21,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server
     /// Using <c>Newtonsoft.Json</c> will not work correctly without special handling; see
     /// <see cref="LaunchDarkly.Sdk.Json"/> for details.
     /// </remarks>
-    [JsonStreamConverter(typeof(FeatureFlagsStateConverter))]
+    [JsonConverter(typeof(FeatureFlagsStateConverter))]
     public class FeatureFlagsState : IJsonSerializable
     {
         internal readonly bool _valid;
@@ -37,7 +39,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <summary>
         /// Returns a builder for constructing a new instance of this class. May be useful in testing.
         /// </summary>
-        /// <param name="options">the same options that can be passed to <see cref="ILdClient.AllFlagsState(User, FlagsStateOption[])"/></param>
+        /// <param name="options">the same options that can be passed to <see cref="ILdClient.AllFlagsState(Context, FlagsStateOption[])"/></param>
         /// <returns>a new <see cref="FeatureFlagsStateBuilder"/></returns>
         public static FeatureFlagsStateBuilder Builder(params FlagsStateOption[] options)
         {
@@ -67,7 +69,7 @@ namespace LaunchDarkly.Sdk.Server
 
         /// <summary>
         /// Returns the evaluation reason of an individual feature flag (as returned by
-        /// <see cref="ILdClient.BoolVariation(string, User, bool)"/>, etc.) at the time the state
+        /// <see cref="ILdClient.BoolVariation(string, Context, bool)"/>, etc.) at the time the state
         /// was recorded.
         /// </summary>
         /// <param name="key">the feature flag key</param>
@@ -230,86 +232,91 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    internal class FeatureFlagsStateConverter : IJsonStreamConverter
+    internal class FeatureFlagsStateConverter : JsonConverter<FeatureFlagsState>
     {
-        public void WriteJson(object value, IValueWriter writer)
+        public override void Write(Utf8JsonWriter w, FeatureFlagsState state, JsonSerializerOptions options)
         {
-            var state = value as FeatureFlagsState;
             if (state is null)
             {
-                writer.Null();
+                w.WriteNullValue();
                 return;
             }
 
-            var obj = writer.Object();
+            w.WriteStartObject();
 
             foreach (var entry in state._flags)
             {
-                LdValueConverter.WriteJsonValue(entry.Value.Value, obj.Name(entry.Key));
+                w.WritePropertyName(entry.Key);
+                LdValueConverter.WriteJsonValue(entry.Value.Value, w);
             }
 
-            obj.Name("$valid").Bool(state._valid);
+            w.WriteBoolean("$valid", state._valid);
 
-            var allMetadataObj = obj.Name("$flagsState").Object();
+            w.WriteStartObject("$flagsState");
             foreach (var entry in state._flags)
             {
-                var flagMetadataObj = allMetadataObj.Name(entry.Key).Object();
+                w.WriteStartObject(entry.Key);
                 var meta = entry.Value;
-                flagMetadataObj.MaybeName("variation", meta.Variation.HasValue).IntOrNull(meta.Variation);
-                flagMetadataObj.MaybeName("version", meta.Version.HasValue).IntOrNull(meta.Version);
-                flagMetadataObj.MaybeName("trackEvents", meta.TrackEvents).Bool(meta.TrackEvents);
-                flagMetadataObj.MaybeName("trackReason", meta.TrackReason).Bool(meta.TrackReason);
-                flagMetadataObj.MaybeName("debugEventsUntilDate", meta.DebugEventsUntilDate.HasValue)
-                    .Long(meta.DebugEventsUntilDate?.Value ?? 0);
+
+                WriteIntIfNotNull(w, "variation", meta.Variation);
+                WriteIntIfNotNull(w, "version", meta.Version);
+                WriteBooleanIfTrue(w, "trackEvents", meta.TrackEvents);
+                WriteBooleanIfTrue(w, "trackReason", meta.TrackReason);
+                if (meta.DebugEventsUntilDate.HasValue)
+                {
+                    w.WriteNumber("debugEventsUntilDate", meta.DebugEventsUntilDate.Value.Value);
+                }
                 if (meta.Reason.HasValue)
                 {
-                    EvaluationReasonConverter.WriteJsonValue(meta.Reason.Value, flagMetadataObj.Name("reason"));
+                    w.WritePropertyName("reason");
+                    EvaluationReasonConverter.WriteJsonValue(meta.Reason.Value, w);
                 }
-                flagMetadataObj.End();
+                w.WriteEndObject();
             }
-            allMetadataObj.End();
+            w.WriteEndObject();
 
-            obj.End();
+            w.WriteEndObject();
         }
 
-        public object ReadJson(ref JReader reader)
+        public override FeatureFlagsState Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var valid = true;
             var flags = new Dictionary<string, FlagState>();
-            for (var topLevelObj = reader.Object(); topLevelObj.Next(ref reader);)
+            for (var topLevelObj = RequireObject(ref reader); topLevelObj.Next(ref reader);)
             {
-                var key = topLevelObj.Name.ToString();
+                var key = topLevelObj.Name;
                 switch (key)
                 {
                     case "$valid":
-                        valid = reader.Bool();
+                        valid = reader.GetBoolean();
                         break;
 
                     case "$flagsState":
-                        for (var flagsObj = reader.Object(); flagsObj.Next(ref reader);)
+                        for (var flagsObj = RequireObject(ref reader); flagsObj.Next(ref reader);)
                         {
-                            var subKey = flagsObj.Name.ToString();
+                            var subKey = flagsObj.Name;
                             var flag = flags.ContainsKey(subKey) ? flags[subKey] : new FlagState();
-                            for (var metaObj = reader.Object(); metaObj.Next(ref reader);)
+                            for (var metaObj = RequireObject(ref reader); metaObj.Next(ref reader);)
                             {
-                                switch (metaObj.Name.ToString())
+                                switch (metaObj.Name)
                                 {
                                     case "variation":
-                                        flag.Variation = reader.IntOrNull();
+                                        flag.Variation = GetIntOrNull(ref reader);
                                         break;
                                     case "version":
-                                        flag.Version = reader.IntOrNull();
+                                        flag.Version = GetIntOrNull(ref reader);
                                         break;
                                     case "trackEvents":
-                                        flag.TrackEvents = reader.Bool();
+                                        flag.TrackEvents = reader.GetBoolean();
                                         break;
                                     case "debugEventsUntilDate":
-                                        var n = reader.LongOrNull();
+                                        var n = GetLongOrNull(ref reader);
                                         flag.DebugEventsUntilDate = n.HasValue ? UnixMillisecondTime.OfMillis(n.Value) :
                                             (UnixMillisecondTime?)null;
                                         break;
                                     case "reason":
-                                        flag.Reason = EvaluationReasonConverter.ReadJsonNullableValue(ref reader);
+                                        flag.Reason = reader.TokenType == JsonTokenType.Null ? (EvaluationReason?)null :
+                                                EvaluationReasonConverter.ReadJsonValue(ref reader);
                                         break;
                                 }
                             }

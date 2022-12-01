@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Concurrent;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -33,7 +34,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _taskExecutor = context.TaskExecutor;
             _pollInterval = pollInterval;
             _initTask = new TaskCompletionSource<bool>();
-            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         public bool Initialized => _initialized.Get();
@@ -102,7 +103,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     ((IDisposable)this).Dispose();
                 }
             }
-            catch (JsonReadException ex)
+            catch (JsonException ex)
             {
                 _log.Error("Polling request received malformed data: {0}", LogValues.ExceptionSummary(ex));
                 _dataSourceUpdates.UpdateStatus(DataSourceState.Interrupted,

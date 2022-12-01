@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Http;
-using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
 
@@ -17,7 +17,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <para>
     /// If you want to set non-default values for any of these properties, create a builder with
     /// <see cref="Components.HttpConfiguration"/>, change its properties with the methods of this class, and
-    /// pass it to <see cref="ConfigurationBuilder.Http(IHttpConfigurationFactory)"/>:
+    /// pass it to <see cref="ConfigurationBuilder.Http"/>:
     /// </para>
     /// <example>
     /// <code>
@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// </code>
     /// </example>
     /// </remarks>
-    public sealed class HttpConfigurationBuilder : IHttpConfigurationFactory, IDiagnosticDescription
+    public sealed class HttpConfigurationBuilder : IComponentConfigurer<HttpConfiguration>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="ConnectTimeout(TimeSpan)"/>: two seconds.
@@ -221,9 +221,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public HttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)
+        public HttpConfiguration Build(LdClientContext context)
         {
-            var httpProperties = MakeHttpProperties(basicConfiguration);
+            var httpProperties = MakeHttpProperties(context);
             return new HttpConfiguration(
                 httpProperties,
                 _messageHandler,
@@ -231,10 +231,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 );
         }
 
-        private HttpProperties MakeHttpProperties(BasicConfiguration basicConfiguration)
+        private HttpProperties MakeHttpProperties(LdClientContext context)
         {
             var httpProperties = HttpProperties.Default
-                .WithAuthorizationKey(basicConfiguration.SdkKey)
+                .WithAuthorizationKey(context.SdkKey)
                 .WithConnectTimeout(_connectTimeout)
                 .WithHttpMessageHandlerFactory(_messageHandler is null ?
                     (Func<HttpProperties, HttpMessageHandler>)null :
@@ -253,9 +253,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+        public LdValue DescribeConfiguration(LdClientContext context) =>
             LdValue.BuildObject()
-                .WithHttpProperties(MakeHttpProperties(basic))
+                .WithHttpProperties(MakeHttpProperties(context))
                 .Build();
     }
 }

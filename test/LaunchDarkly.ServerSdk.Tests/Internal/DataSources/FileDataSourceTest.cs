@@ -2,12 +2,13 @@
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using YamlDotNet.Serialization;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.TestUtils;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 
@@ -20,14 +21,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
         private readonly CapturingDataSourceUpdates _updateSink = new CapturingDataSourceUpdates();
         private readonly FileDataSourceBuilder factory = FileData.DataSource();
-        private readonly User user = User.WithKey("key");
+        private readonly Context user = Context.New("key");
 
         public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput) { }
 
         private IDataSource MakeDataSource() =>
-            factory.CreateDataSource(
-                BasicContext,
-                _updateSink);
+            factory.Build(BasicContext.WithDataSourceUpdates(_updateSink));
 
         [Fact]
         public void FlagsAreNotLoadedUntilStart()
@@ -54,7 +53,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void FlagsCanBeLoadedWithExternalYamlParser()
         {
-            var yaml = new DeserializerBuilder().Build();
+            var yaml = new DeserializerBuilder().WithAttemptingUnquotedStringTypeDeserialization().Build();
             factory.FilePaths(ALL_DATA_YAML_FILE)
                 .Parser(s => yaml.Deserialize<object>(s));
             using (var fp = MakeDataSource())
@@ -279,9 +278,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             new DataSetBuilder()
                 .Flags(
                     new FeatureFlagBuilder("flag1").Version(version).On(true).FallthroughVariation(2)
-                        .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on")).Build(),
+                        .Variations("fall", "off", "on").Build(),
                     new FeatureFlagBuilder("flag2").Version(version).On(true).FallthroughVariation(0)
-                        .Variations(LdValue.Of("value2")).Build()
+                        .Variations("value2").Build()
                 )
                 .Segments(
                     new SegmentBuilder("seg1").Version(version).Included("user1").Build()
@@ -292,7 +291,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             new DataSetBuilder()
                 .Flags(
                     new FeatureFlagBuilder("flag1").Version(version).On(true).FallthroughVariation(2)
-                        .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on")).Build()
+                        .Variations("fall", "off", "on").Build()
                 )
                 .Segments()
                 .Build();
