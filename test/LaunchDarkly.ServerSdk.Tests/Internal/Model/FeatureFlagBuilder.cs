@@ -338,8 +338,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         public static Clause ShouldNotMatchUser(Context user) =>
             new ClauseBuilder().KeyIs(user.Key).Negate(true).Build();
 
-        public static Clause ShouldMatchSegment(string segmentKey) =>
-            new ClauseBuilder().Attribute("").Op("segmentMatch").Values(segmentKey).Build();
+        public static Clause ShouldMatchSegment(params string[] segmentKeys) =>
+            new ClauseBuilder().Attribute("").Op("segmentMatch").Values(segmentKeys).Build();
     }
 
     internal class TargetBuilder
