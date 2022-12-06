@@ -1,4 +1,5 @@
-﻿using LaunchDarkly.Sdk.Server.Subsystems;
+﻿using System;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 using InternalEventProcessor = LaunchDarkly.Sdk.Internal.Events.EventProcessor;
 using InternalEventTypes = LaunchDarkly.Sdk.Internal.Events.EventTypes;
@@ -49,6 +50,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
 
         public void Flush() =>
             _impl.Flush();
+
+        public bool FlushAndWait(TimeSpan timeout) =>
+            _impl.FlushAndWait(timeout);
 
         public void Dispose() =>
             _impl.Dispose();

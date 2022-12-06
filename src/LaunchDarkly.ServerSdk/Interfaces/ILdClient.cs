@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
@@ -455,5 +456,57 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>the hash, or null if the hash could not be calculated</returns>
         /// <seealso cref="ILdClientExtensions.SecureModeHash(ILdClient, User)"/>
         string SecureModeHash(Context context);
+
+        /// <summary>
+        /// Tells the client that all pending analytics events (if any) should be delivered as soon
+        /// as possible. 
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This flush is asynchronous, so this method will return before it is complete. To wait for
+        /// the flush to complete, use <see cref="FlushAndWait(TimeSpan)"/> instead (or, if you are done
+        /// with the SDK, <see cref="LdClient.Dispose()"/>).
+        /// </para>
+        /// <para>
+        /// For more information, see: <a href="https://docs.launchdarkly.com/sdk/features/flush#net-server-side">
+        /// Flushing Events</a>.
+        /// </para>
+        /// </remarks>
+        /// <seealso cref="FlushAndWait(TimeSpan)"/>
+        void Flush();
+
+        /// <summary>
+        /// Tells the client to deliver any pending analytics events synchronously now.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Unlike <see cref="Flush"/>, this method waits for event delivery to finish. The timeout parameter, if
+        /// greater than zero, specifies the maximum amount of time to wait. If the timeout elapses before
+        /// delivery is finished, the method returns early and returns false; in this case, the SDK may still
+        /// continue trying to deliver the events in the background.
+        /// </para>
+        /// <para>
+        /// If the timeout parameter is zero or negative, the method waits as long as necessary to deliver the
+        /// events. However, the SDK does not retry event delivery indefinitely; currently, any network error
+        /// or server error will cause the SDK to wait one second and retry one time, after which the events
+        /// will be discarded so that the SDK will not keep consuming more memory for events indefinitely.
+        /// </para>
+        /// <para>
+        /// The method returns true if event delivery either succeeded, or definitively failed, before the
+        /// timeout elapsed. It returns false if the timeout elapsed.
+        /// </para>
+        /// <para>
+        /// This method is also implicitly called if you call <see cref="LdClient.Dispose()"/>. The difference is
+        /// that FlushAndWait does not shut down the SDK client.
+        /// </para>
+        /// <para>
+        /// For more information, see: <a href="https://docs.launchdarkly.com/sdk/features/flush#net-server-side">
+        /// Flushing Events</a>.
+        /// </para>
+        /// </remarks>
+        /// <param name="timeout">the maximum time to wait</param>
+        /// <returns>true if completed, false if timed out</returns>
+        /// <seealso cref="Flush"/>
+        bool FlushAndWait(TimeSpan timeout);
     }
 }

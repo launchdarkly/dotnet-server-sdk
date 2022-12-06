@@ -557,14 +557,13 @@ namespace LaunchDarkly.Sdk.Server
             GC.SuppressFinalize(this);
         }
 
-        // Note that Flush, IsOffline, and Version are defined in ILdCommonClient, not in ILdClient. In
-        // the next major version, the base interface will go away and they will move to ILdClient.
+        /// <inheritdoc/>
+        public void Flush() =>
+            _eventProcessor.Flush();
 
         /// <inheritdoc/>
-        public void Flush()
-        {
-            _eventProcessor.Flush();
-        }
+        public bool FlushAndWait(TimeSpan timeout) =>
+            _eventProcessor.FlushAndWait(timeout);
 
         #endregion
 
