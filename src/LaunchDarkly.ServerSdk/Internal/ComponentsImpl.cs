@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Subsystems;
 
@@ -71,6 +72,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
             public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e) { }
             public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) { }
             public void Flush() { }
+            public bool FlushAndWait(TimeSpan timeout) => true;
             public void Dispose() { }
         }
 

@@ -464,7 +464,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <remarks>
         /// This flush is asynchronous, so this method will return before it is complete. To wait for
         /// the flush to complete, use <see cref="FlushAndWait(TimeSpan)"/> instead (or, if you are done
-        /// with the SDK, <see cref="LdClient.Dispose"/>).
+        /// with the SDK, <see cref="LdClient.Dispose()"/>).
         /// </remarks>
         /// <seealso cref="FlushAndWait(TimeSpan)"/>
         void Flush();
@@ -490,7 +490,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// timeout elapsed. It returns false if the timeout elapsed.
         /// </para>
         /// <para>
-        /// This method is also implicitly called if you call <see cref="LdClient.Dispose"/>. The difference is
+        /// This method is also implicitly called if you call <see cref="LdClient.Dispose()"/>. The difference is
         /// that FlushAndWait does not shut down the SDK client.
         /// </para>
         /// </remarks>
