@@ -55,7 +55,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 FlagVersion = flag.Version,
                 Value = defaultValue,
                 Default = defaultValue,
-                Reason = EvaluationReason.ErrorReason(errorKind),
+                Reason = _withReasons ? EvaluationReason.ErrorReason(errorKind) : (EvaluationReason?)null,
                 TrackEvents = flag.TrackEvents,
                 DebugEventsUntilDate = flag.DebugEventsUntilDate
             };
@@ -75,7 +75,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 FlagKey = flagKey,
                 Value = defaultValue,
                 Default = defaultValue,
-                Reason = EvaluationReason.ErrorReason(errorKind)
+                Reason = _withReasons ? EvaluationReason.ErrorReason(errorKind) : (EvaluationReason?)null
             };
         }
 

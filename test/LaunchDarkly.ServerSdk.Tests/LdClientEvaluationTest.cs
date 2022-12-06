@@ -33,149 +33,81 @@ namespace LaunchDarkly.Sdk.Server
             client = new LdClient(config);
         }
 
-        private void DoTypedVariationTests<T>(
-            Func<ILdClient, string, Context, T, T> variationMethod,
-            Func<ILdClient, string, User, T, T> variationForUserMethod,
-            Func<ILdClient, string, Context, T, EvaluationDetail<T>> variationDetailMethod,
-            Func<ILdClient, string, User, T, EvaluationDetail<T>> variationDetailForUserMethod,
-            T expectedValue,
-            LdValue expectedLdValue,
-            T defaultValue,
-            LdValue wrongTypeLdValue
-            )
+        private void DoTypedVariationTests<T>(VariationMethodsDesc<T> v)
         {
             string flagKey = "flagkey",
                 wrongTypeFlagKey = "wrongtypekey",
                 nullValueFlagKey = "nullvaluekey",
                 unknownKey = "unknownkey";
 
-            testData.Update(testData.Flag(flagKey).On(true).Variations(LdValue.Null, expectedLdValue)
+            testData.Update(testData.Flag(flagKey).On(true).Variations(LdValue.Null, v.ExpectedLdValue)
                 .VariationForUser(context.Key, 1));
             testData.Update(testData.Flag(nullValueFlagKey).On(true).Variations(LdValue.Null)
                 .VariationForUser(context.Key, 0));
-            testData.Update(testData.Flag(wrongTypeFlagKey).On(true).Variations(LdValue.Null, wrongTypeLdValue)
+            testData.Update(testData.Flag(wrongTypeFlagKey).On(true).Variations(LdValue.Null, v.WrongTypeLdValue)
                 .VariationForUser(context.Key, 1));
 
-            Assert.Equal(expectedValue, variationMethod(client, flagKey, context, defaultValue));
-            Assert.Equal(expectedValue, variationForUserMethod(client, flagKey, contextAsUser, defaultValue));
+            Assert.Equal(v.ExpectedValue, v.VariationMethod(client, flagKey, context, v.DefaultValue));
+            Assert.Equal(v.ExpectedValue, v.VariationForUserMethod(client, flagKey, contextAsUser, v.DefaultValue));
 
-            Assert.Equal(new EvaluationDetail<T>(expectedValue, 1, EvaluationReason.TargetMatchReason),
-                variationDetailMethod(client, flagKey, context, defaultValue));
-            Assert.Equal(new EvaluationDetail<T>(expectedValue, 1, EvaluationReason.TargetMatchReason),
-                variationDetailForUserMethod(client, flagKey, contextAsUser, defaultValue));
+            Assert.Equal(new EvaluationDetail<T>(v.ExpectedValue, 1, EvaluationReason.TargetMatchReason),
+                v.VariationDetailMethod(client, flagKey, context, v.DefaultValue));
+            Assert.Equal(new EvaluationDetail<T>(v.ExpectedValue, 1, EvaluationReason.TargetMatchReason),
+                v.VariationDetailForUserMethod(client, flagKey, contextAsUser, v.DefaultValue));
 
             // unknown flag
-            Assert.Equal(defaultValue, variationMethod(client, unknownKey, context, defaultValue));
-            Assert.Equal(defaultValue, variationForUserMethod(client, unknownKey, contextAsUser, defaultValue));
-            Assert.Equal(new EvaluationDetail<T>(defaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)),
-                variationDetailMethod(client, unknownKey, context, defaultValue));
-            Assert.Equal(new EvaluationDetail<T>(defaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)),
-                variationDetailForUserMethod(client, unknownKey, contextAsUser, defaultValue));
+            Assert.Equal(v.DefaultValue, v.VariationMethod(client, unknownKey, context, v.DefaultValue));
+            Assert.Equal(v.DefaultValue, v.VariationForUserMethod(client, unknownKey, contextAsUser, v.DefaultValue));
+            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)),
+                v.VariationDetailMethod(client, unknownKey, context, v.DefaultValue));
+            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)),
+                v.VariationDetailForUserMethod(client, unknownKey, contextAsUser, v.DefaultValue));
 
             // invalid context/user
-            Assert.Equal(defaultValue, variationMethod(client, flagKey, invalidContext, defaultValue));
-            Assert.Equal(defaultValue, variationForUserMethod(client, flagKey, invalidUser, defaultValue));
-            Assert.Equal(new EvaluationDetail<T>(defaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
-                variationDetailMethod(client, flagKey, invalidContext, defaultValue));
-            Assert.Equal(new EvaluationDetail<T>(defaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
-                variationDetailForUserMethod(client, flagKey, invalidUser, defaultValue));
+            Assert.Equal(v.DefaultValue, v.VariationMethod(client, flagKey, invalidContext, v.DefaultValue));
+            Assert.Equal(v.DefaultValue, v.VariationForUserMethod(client, flagKey, invalidUser, v.DefaultValue));
+            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
+                v.VariationDetailMethod(client, flagKey, invalidContext, v.DefaultValue));
+            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
+                v.VariationDetailForUserMethod(client, flagKey, invalidUser, v.DefaultValue));
 
             // wrong type
-            if (!wrongTypeLdValue.IsNull)
+            if (!v.WrongTypeLdValue.IsNull)
             {
-                Assert.Equal(defaultValue, variationMethod(client, wrongTypeFlagKey, context, defaultValue));
-                Assert.Equal(new EvaluationDetail<T>(defaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
-                    variationDetailMethod(client, wrongTypeFlagKey, context, defaultValue));
+                Assert.Equal(v.DefaultValue, v.VariationMethod(client, wrongTypeFlagKey, context, v.DefaultValue));
+                Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
+                    v.VariationDetailMethod(client, wrongTypeFlagKey, context, v.DefaultValue));
 
                 // flag value of null is a special case of wrong type, shouldn't happen in real life
-                Assert.Equal(defaultValue, variationMethod(client, nullValueFlagKey, context, defaultValue));
-                Assert.Equal(new EvaluationDetail<T>(defaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
-                    variationDetailMethod(client, nullValueFlagKey, context, defaultValue));
+                Assert.Equal(v.DefaultValue, v.VariationMethod(client, nullValueFlagKey, context, v.DefaultValue));
+                Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
+                    v.VariationDetailMethod(client, nullValueFlagKey, context, v.DefaultValue));
             }
         }
 
         [Fact]
         public void BoolEvaluations() =>
-            DoTypedVariationTests(
-                (c, f, ctx, d) => c.BoolVariation(f, ctx, d),
-                (c, f, u, d) => c.BoolVariation(f, u, d),
-                (c, f, ctx, d) => c.BoolVariationDetail(f, ctx, d),
-                (c, f, u, d) => c.BoolVariationDetail(f, u, d),
-                true,
-                LdValue.Of(true),
-                false,
-                LdValue.Of("wrongtype")
-                );
+            DoTypedVariationTests(VariationMethodsDesc.Bool);
 
         [Fact]
         public void IntEvaluations() =>
-            DoTypedVariationTests(
-                (c, f, ctx, d) => c.IntVariation(f, ctx, d),
-                (c, f, u, d) => c.IntVariation(f, u, d),
-                (c, f, ctx, d) => c.IntVariationDetail(f, ctx, d),
-                (c, f, u, d) => c.IntVariationDetail(f, u, d),
-                2,
-                LdValue.Of(2),
-                1,
-                LdValue.Of("wrongtype")
-                );
+            DoTypedVariationTests(VariationMethodsDesc.Int);
 
         [Fact]
         public void FloatEvaluations() =>
-            DoTypedVariationTests(
-                (c, f, ctx, d) => c.FloatVariation(f, ctx, d),
-                (c, f, u, d) => c.FloatVariation(f, u, d),
-                (c, f, ctx, d) => c.FloatVariationDetail(f, ctx, d),
-                (c, f, u, d) => c.FloatVariationDetail(f, u, d),
-                2.5f,
-                LdValue.Of(2.5f),
-                1.5f,
-                LdValue.Of("wrongtype")
-                );
+            DoTypedVariationTests(VariationMethodsDesc.Float);
 
         [Fact]
         public void DoubleEvaluations() =>
-            DoTypedVariationTests(
-                (c, f, ctx, d) => c.DoubleVariation(f, ctx, d),
-                (c, f, u, d) => c.DoubleVariation(f, u, d),
-                (c, f, ctx, d) => c.DoubleVariationDetail(f, ctx, d),
-                (c, f, u, d) => c.DoubleVariationDetail(f, u, d),
-                2.5d,
-                LdValue.Of(2.5d),
-                1.5d,
-                LdValue.Of("wrongtype")
-                );
+            DoTypedVariationTests(VariationMethodsDesc.Double);
 
         [Fact]
         public void StringEvaluations() =>
-            DoTypedVariationTests(
-                (c, f, ctx, d) => c.StringVariation(f, ctx, d),
-                (c, f, u, d) => c.StringVariation(f, u, d),
-                (c, f, ctx, d) => c.StringVariationDetail(f, ctx, d),
-                (c, f, u, d) => c.StringVariationDetail(f, u, d),
-                "a",
-                LdValue.Of("a"),
-                "d",
-                LdValue.Of(222)
-                );
+            DoTypedVariationTests(VariationMethodsDesc.String);
 
         [Fact]
-        public void JsonEvaluations()
-        {
-            var data = LdValue.Convert.String.ObjectFrom(new Dictionary<string, string> { { "thing", "stuff" } });
-            var defaultValue = LdValue.Of(42);
-
-            DoTypedVariationTests(
-                (c, f, ctx, d) => c.JsonVariation(f, ctx, d),
-                (c, f, u, d) => c.JsonVariation(f, u, d),
-                (c, f, ctx, d) => c.JsonVariationDetail(f, ctx, d),
-                (c, f, u, d) => c.JsonVariationDetail(f, u, d),
-                data,
-                data,
-                defaultValue,
-                LdValue.Null
-                );
-        }
+        public void JsonEvaluations() =>
+            DoTypedVariationTests(VariationMethodsDesc.Json);
 
         [Fact]
         public void IntVariationReturnsFlagValueEvenIfEncodedAsFloat()
