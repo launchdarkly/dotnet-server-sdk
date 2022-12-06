@@ -397,6 +397,14 @@ namespace LaunchDarkly.Sdk.Server
                 }
             }
 
+            if (!context.Valid)
+            {
+                _evalLog.Warn("Invalid evaluation context when evaluating flag \"{0}\" ({1}); returning default value", featureKey,
+                    context.Error);
+                return new EvaluationDetail<T>(defaultValueOfType, null,
+                    EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
+            }
+
             FeatureFlag featureFlag = null;
             try
             {
@@ -409,16 +417,6 @@ namespace LaunchDarkly.Sdk.Server
                         featureKey, context, defaultValue, EvaluationErrorKind.FlagNotFound));
                     return new EvaluationDetail<T>(defaultValueOfType, null,
                         EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound));
-                }
-
-                if (!context.Valid)
-                {
-                    _evalLog.Warn("Invalid evaluation context when evaluating flag \"{0}\" ({1}); returning default value", featureKey,
-                        context.Error);
-                    _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
-                        featureFlag, context, defaultValue, EvaluationErrorKind.UserNotSpecified));
-                    return new EvaluationDetail<T>(defaultValueOfType, null,
-                        EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
                 }
 
                 EvaluatorTypes.EvalResult evalResult = _evaluator.Evaluate(featureFlag, context);
