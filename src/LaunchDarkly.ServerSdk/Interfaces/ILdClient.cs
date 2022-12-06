@@ -462,9 +462,15 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// as possible. 
         /// </summary>
         /// <remarks>
+        /// <para>
         /// This flush is asynchronous, so this method will return before it is complete. To wait for
         /// the flush to complete, use <see cref="FlushAndWait(TimeSpan)"/> instead (or, if you are done
         /// with the SDK, <see cref="LdClient.Dispose()"/>).
+        /// </para>
+        /// <para>
+        /// For more information, see: <a href="https://docs.launchdarkly.com/sdk/features/flush#net-server-side">
+        /// Flushing Events</a>.
+        /// </para>
         /// </remarks>
         /// <seealso cref="FlushAndWait(TimeSpan)"/>
         void Flush();
@@ -492,6 +498,10 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <para>
         /// This method is also implicitly called if you call <see cref="LdClient.Dispose()"/>. The difference is
         /// that FlushAndWait does not shut down the SDK client.
+        /// </para>
+        /// <para>
+        /// For more information, see: <a href="https://docs.launchdarkly.com/sdk/features/flush#net-server-side">
+        /// Flushing Events</a>.
         /// </para>
         /// </remarks>
         /// <param name="timeout">the maximum time to wait</param>
