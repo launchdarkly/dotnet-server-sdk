@@ -1,5 +1,5 @@
 ﻿
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Parameter types for use by <see cref="IEventProcessor"/> implementations.
@@ -31,10 +31,10 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             public UnixMillisecondTime Timestamp { get; set; }
 
             /// <summary>
-            /// Attributes of the user who generated the event. Some attributes may not be sent
+            /// The evaluation context for the event. Some attributes may not be sent
             /// to LaunchDarkly if they are private.
             /// </summary>
-            public User User { get; set; }
+            public Context Context { get; set; }
 
             /// <summary>
             /// The unique key of the feature flag involved in the event.
@@ -93,10 +93,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             public UnixMillisecondTime Timestamp { get; set; }
 
             /// <summary>
-            /// Attributes of the user being identified. Some attributes may not be sent
-            /// to LaunchDarkly if they are private.
+            /// The evaluation context. Some attributes may not be sent to LaunchDarkly if they are private.
             /// </summary>
-            public User User { get; set; }
+            public Context Context { get; set; }
         }
 
         /// <summary>
@@ -110,10 +109,9 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             public UnixMillisecondTime Timestamp { get; set; }
             
             /// <summary>
-            /// Attributes of the user who generated the event. Some attributes may not be sent
-            /// to LaunchDarkly if they are private.
+            /// The evaluation context. Some attributes may not be sent to LaunchDarkly if they are private.
             /// </summary>
-            public User User { get; set; }
+            public Context Context { get; set; }
 
             /// <summary>
             /// The event key.
@@ -130,53 +128,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
             /// An optional numeric value that can be used in analytics.
             /// </summary>
             public double? MetricValue { get; set; }
-        }
-
-        /// <summary>
-        /// Parameters for <see cref="IEventProcessor.RecordAliasEvent(AliasEvent)"/>.
-        /// </summary>
-        public struct AliasEvent
-        {
-            /// <summary>
-            /// Date/timestamp of the event.
-            /// </summary>
-            public UnixMillisecondTime Timestamp { get; set; }
-
-            /// <summary>
-            /// Key of the new user.
-            /// </summary>
-            public string CurrentKey { get; set; }
-
-            /// <summary>
-            /// Type of the new user.
-            /// </summary>
-            public ContextKind CurrentKind { get; set; }
-
-            /// <summary>
-            /// Key of the previous user.
-            /// </summary>
-            public string PreviousKey { get; set; }
-
-            /// <summary>
-            /// Type of the previous user.
-            /// </summary>
-            public ContextKind PreviousKind { get; set; }
-        }
-
-        /// <summary>
-        /// Used with <see cref="AliasEvent"/> to indicate the category of a key.
-        /// </summary>
-        public enum ContextKind
-        {
-            /// <summary>
-            /// The key belongs to a non-anonymous user.
-            /// </summary>
-            User,
-
-            /// <summary>
-            /// The key belongs to an anonymous user.
-            /// </summary>
-            AnonymousUser
         }
     }
 }

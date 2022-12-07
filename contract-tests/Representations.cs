@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using LaunchDarkly.Sdk;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+
+// Note, in order for System.Text.Json serialization/deserialization to work correctly, the members of
+// this class must be properties with get/set, rather than fields. The property names are automatically
+// camelCased by System.Text.Json.
 
 namespace TestService
 {
@@ -42,7 +45,6 @@ namespace TestService
         public bool EnableDiagnostics { get; set; }
         public string[] GlobalPrivateAttributes { get; set; }
         public long? FlushIntervalMs { get; set; }
-        public bool InlineUsers { get; set; }
     }
 
     public class SdkConfigBigSegmentsParams
@@ -61,12 +63,15 @@ namespace TestService
         public EvaluateAllFlagsParams EvaluateAll { get; set; }
         public IdentifyEventParams IdentifyEvent { get; set; }
         public CustomEventParams CustomEvent { get; set; }
-        public AliasEventParams AliasEvent { get; set; }
+        public ContextBuildParams ContextBuild { get; set; }
+        public ContextConvertParams ContextConvert { get; set; }
+        public SecureModeHashParams SecureModeHash { get; set; }
     }
 
     public class EvaluateFlagParams
     {
         public string FlagKey { get; set; }
+        public Context? Context { get; set; }
         public User User { get; set; }
         public String ValueType { get; set; }
         public LdValue Value { get; set; }
@@ -83,6 +88,7 @@ namespace TestService
 
     public class EvaluateAllFlagsParams
     {
+        public Context? Context { get; set; }
         public User User { get; set; }
         public bool ClientSideOnly { get; set; }
         public bool DetailsOnlyForTrackedFlags { get; set; }
@@ -96,27 +102,61 @@ namespace TestService
 
     public class IdentifyEventParams
     {
+        public Context? Context { get; set; }
         public User User { get; set; }
     }
 
     public class CustomEventParams
     {
         public string EventKey { get; set; }
+        public Context? Context { get; set; }
         public User User { get; set; }
         public LdValue Data { get; set; }
         public bool OmitNullData { get; set; }
         public double? MetricValue { get; set; }
     }
 
-    public class AliasEventParams
-    {
-        public User User { get; set; }
-        public User PreviousUser { get; set; }
-    }
-
     public class GetBigSegmentStoreStatusResponse
     {
         public bool Available { get; set; }
         public bool Stale { get; set; }
+    }
+
+    public class ContextBuildParams
+    {
+        public ContextBuildSingleParams Single { get; set; }
+        public ContextBuildSingleParams[] Multi { get; set; }
+    }
+
+    public class ContextBuildSingleParams
+    {
+        public string Kind { get; set; }
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public bool Anonymous { get; set; }
+        public string[] Private { get; set; }
+        public Dictionary<string, LdValue> Custom { get; set; }
+    }
+
+    public class ContextBuildResponse
+    {
+        public string Output { get; set; }
+        public string Error { get; set; }
+    }
+
+    public class ContextConvertParams
+    {
+        public string Input { get; set; }
+    }
+
+    public class SecureModeHashParams
+    {
+        public Context? Context { get; set; }
+        public User User { get; set; }
+    }
+
+    public class SecureModeHashResponse
+    {
+        public string Result { get; set; }
     }
 }

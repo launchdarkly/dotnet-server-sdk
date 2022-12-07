@@ -1,6 +1,7 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -55,8 +56,8 @@ namespace LaunchDarkly.Sdk.Server
         public void ClientSendsFlagValueChangeEvents()
         {
             var flagKey = "flagKey";
-            var user = User.WithKey("important-user");
-            var otherUser = User.WithKey("unimportant-user");
+            var user = Context.New("important-user");
+            var otherUser = Context.New("unimportant-user");
 
             var testData = TestData.DataSource();
             testData.Update(testData.Flag(flagKey).On(false));
@@ -167,7 +168,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = BasicConfig()
                 .DataStore(Components.PersistentDataStore(
-                    new LaunchDarkly.Sdk.Server.Internal.DataStores.MockCoreSync().AsSingletonFactory()))
+                    new LaunchDarkly.Sdk.Server.Internal.DataStores.MockCoreSync().AsSingletonFactory<IPersistentDataStore>()))
                 .Build();
 
             using (var client = new LdClient(config))
@@ -233,7 +234,7 @@ namespace LaunchDarkly.Sdk.Server
         public void BigSegmentStoreStatusProviderSendsStatusUpdates()
         {
             var storeMock = new MockBigSegmentStore();
-            var storeFactory = storeMock.AsSingletonFactory();
+            var storeFactory = storeMock.AsSingletonFactory<IBigSegmentStore>();
             storeMock.SetupMetadataReturns(
                 new BigSegmentStoreTypes.StoreMetadata { LastUpToDate = UnixMillisecondTime.Now });
 

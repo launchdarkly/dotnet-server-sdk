@@ -43,9 +43,8 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
         internal static bool IsCustomUri(
             ServiceEndpoints configuredEndpoints,
-            Uri overrideUri,
             Func<ServiceEndpoints, Uri> uriGetter
             ) =>
-            !uriGetter(BaseUris).Equals(overrideUri ?? uriGetter(configuredEndpoints));
+            !uriGetter(BaseUris).Equals(uriGetter(configuredEndpoints));
     }
 }

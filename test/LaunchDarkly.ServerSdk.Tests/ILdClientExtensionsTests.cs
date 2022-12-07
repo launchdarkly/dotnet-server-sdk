@@ -6,7 +6,7 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class ILdClientExtensionsTests
     {
-        private static readonly User defaultUser = User.WithKey("userkey");
+        private static readonly Context defaultUser = Context.New("userkey");
 
         enum MyEnum
         {

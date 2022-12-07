@@ -7,6 +7,7 @@ using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 using static LaunchDarkly.Sdk.Internal.Events.DiagnosticConfigProperties;
 
@@ -18,7 +19,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <remarks>
     /// The SDK normally buffers analytics events and sends them to LaunchDarkly at intervals. If you want
     /// to customize this behavior, create a builder with <see cref="Components.SendEvents"/>, change its
-    /// properties with the methods of this class, and pass it to <see cref="ConfigurationBuilder.Events(IEventProcessorFactory)"/>.
+    /// properties with the methods of this class, and pass it to <see cref="ConfigurationBuilder.Events"/>.
     /// </remarks>
     /// <example>
     /// <code>
@@ -29,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </example>
-    public sealed class EventProcessorBuilder : IEventProcessorFactory, IDiagnosticDescription
+    public sealed class EventProcessorBuilder : IComponentConfigurer<IEventProcessor>, IDiagnosticDescription
     {
         /// <summary>
         /// The default value for <see cref="Capacity(int)"/>.
@@ -47,14 +48,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public static readonly TimeSpan DefaultFlushInterval = TimeSpan.FromSeconds(5);
 
         /// <summary>
-        /// The default value for <see cref="UserKeysCapacity(int)"/>.
+        /// The default value for <see cref="ContextKeysCapacity(int)"/>.
         /// </summary>
-        public const int DefaultUserKeysCapacity = 1000;
+        public const int DefaultContextKeysCapacity = 1000;
 
         /// <summary>
-        /// The default value for <see cref="UserKeysFlushInterval(TimeSpan)"/>.
+        /// The default value for <see cref="ContextKeysFlushInterval(TimeSpan)"/>.
         /// </summary>
-        public static readonly TimeSpan DefaultUserKeysFlushInterval = TimeSpan.FromMinutes(5);
+        public static readonly TimeSpan DefaultContextKeysFlushInterval = TimeSpan.FromMinutes(5);
 
         /// <summary>
         /// The minimum value for <see cref="DiagnosticRecordingInterval(TimeSpan)"/>.
@@ -62,62 +63,27 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public static readonly TimeSpan MinimumDiagnosticRecordingInterval = TimeSpan.FromMinutes(1);
 
         internal bool _allAttributesPrivate = false;
-        internal Uri _baseUri = null;
         internal int _capacity = DefaultCapacity;
         internal TimeSpan _diagnosticRecordingInterval = DefaultDiagnosticRecordingInterval;
         internal TimeSpan _flushInterval = DefaultFlushInterval;
-        internal bool _inlineUsersInEvents = false;
-        internal HashSet<UserAttribute> _privateAttributes = new HashSet<UserAttribute>();
-        internal int _userKeysCapacity = DefaultUserKeysCapacity;
-        internal TimeSpan _userKeysFlushInterval = DefaultUserKeysFlushInterval;
+        internal HashSet<AttributeRef> _privateAttributes = new HashSet<AttributeRef>();
+        internal int _contextKeysCapacity = DefaultContextKeysCapacity;
+        internal TimeSpan _contextKeysFlushInterval = DefaultContextKeysFlushInterval;
         internal IEventSender _eventSender = null; // used in testing
 
         /// <summary>
-        /// Sets whether or not all optional user attributes should be hidden from LaunchDarkly.
+        /// Sets whether or not all optional context attributes should be hidden from LaunchDarkly.
         /// </summary>
         /// <remarks>
-        /// If this is <see langword="true"/>, all user attribute values (other than the key) will be private, not just
-        /// the attributes specified in <see cref="PrivateAttributes(UserAttribute[])"/> or on a per-user basis with
-        /// <see cref="UserBuilder"/> methods. By default, it is <see langword="false"/>.
+        /// If this is <see langword="true"/>, all contextattribute values (other than the key) will be private, not just
+        /// the attributes specified in <see cref="PrivateAttributes(string[])"/> or on a per-context basis with
+        /// <see cref="ContextBuilder"/> methods. By default, it is <see langword="false"/>.
         /// </remarks>
-        /// <param name="allAttributesPrivate">true if all user attributes should be private</param>
+        /// <param name="allAttributesPrivate">true if all context attributes should be private</param>
         /// <returns>the builder</returns>
         public EventProcessorBuilder AllAttributesPrivate(bool allAttributesPrivate)
         {
             _allAttributesPrivate = allAttributesPrivate;
-            return this;
-        }
-
-        /// <summary>
-        /// Deprecated method for setting a custom base URI for the events service.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The preferred way to set this option is now with
-        /// <see cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>. If you set
-        /// this deprecated option, it overrides any value that was set with
-        /// <see cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>.
-        /// </para>
-        /// <para>
-        /// You will only need to change this value in the following cases:
-        /// </para>
-        /// <list type="bullet">
-        /// <item><description>
-        /// You are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>.
-        /// Set <c>BaseUri</c> to the base URI of the Relay Proxy instance.
-        /// </description></item>
-        /// <item><description>
-        /// You are connecting to a test server or a nonstandard endpoint for the LaunchDarkly service.
-        /// </description></item>
-        /// </list>
-        /// </remarks>
-        /// <param name="baseUri">the base URI of the events service; null to use the default</param>
-        /// <returns>the builder</returns>
-        /// <seealso cref="ConfigurationBuilder.ServiceEndpoints(ServiceEndpointsBuilder)"/>
-        [Obsolete("Use ConfigurationBuilder.ServiceEndpoints instead")]
-        public EventProcessorBuilder BaseUri(Uri baseUri)
-        {
-            _baseUri = baseUri;
             return this;
         }
 
@@ -192,105 +158,80 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <summary>
-        /// Sets whether to include full user details in every analytics event.
+        /// Marks a set of attribute names or subproperties as private.
         /// </summary>
         /// <remarks>
-        /// The default value is <see langword="false"/>: events will only include the user key, except for one
-        /// "index" event that provides the full details for the user.
-        /// </remarks>
-        /// <param name="inlineUsersInEvents">true if you want full user details in each event</param>
-        /// <returns>the builder</returns>
-        public EventProcessorBuilder InlineUsersInEvents(bool inlineUsersInEvents)
-        {
-            _inlineUsersInEvents = inlineUsersInEvents;
-            return this;
-        }
-
-        /// <summary>
-        /// Marks a set of attribute names as private.
-        /// </summary>
-        /// <remarks>
-        /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
+        /// <para>
+        /// Any contexts sent to LaunchDarkly with this configuration active will have attributes with these
         /// names removed. This is in addition to any attributes that were marked as private for an
-        /// individual user with <see cref="UserBuilder"/> methods.
+        /// individual context with <see cref="ContextBuilder"/> methods.
+        /// </para>
+        /// <para>
+        /// If and only if a parameter starts with a slash, it is interpreted as a slash-delimited path that
+        /// can denote a nested property within a JSON object. For instance, "/address/street" means that if
+        /// there is an attribute called "address" that is a JSON object, and one of the object's properties
+        /// is "street", the "street" property will be redacted from the analytics data but other properties
+        /// within "address" will still be sent. This syntax also uses the JSON Pointer convention of escaping
+        /// a literal slash character as "~1" and a tilde as "~0".
+        /// </para>
+        /// <para>
+        /// This method replaces any previous <see cref="PrivateAttributes(string[])"/> that were set on the
+        /// same builder, rather than adding to them.
+        /// </para>
         /// </remarks>
-        /// <param name="attributes">a set of attributes that will be removed from user data set to LaunchDarkly</param>
+        /// <param name="attributes">a set of names or paths that will be removed from context data sent to
+        /// LaunchDarkly</param>
         /// <returns>the builder</returns>
-        /// <seealso cref="PrivateAttributeNames(string[])"/>
-        public EventProcessorBuilder PrivateAttributes(params UserAttribute[] attributes)
+        public EventProcessorBuilder PrivateAttributes(params string[] attributes)
         {
+            _privateAttributes.Clear();
             foreach (var a in attributes)
             {
-                _privateAttributes.Add(a);
+                _privateAttributes.Add(AttributeRef.FromPath(a));
             }
             return this;
         }
 
         /// <summary>
-        /// Marks a set of attribute names as private.
+        /// Sets the number of context keys that the event processor can remember at any one time.
         /// </summary>
         /// <remarks>
-        /// <para>
-        /// Any users sent to LaunchDarkly with this configuration active will have attributes with these
-        /// names removed. This is in addition to any attributes that were marked as private for an
-        /// individual user with <see cref="UserBuilder"/> methods.
-        /// </para>
-        /// <para>
-        /// Using <see cref="PrivateAttributes(UserAttribute[])"/> is preferable to avoid the possibility of
-        /// misspelling a built-in attribute.
-        /// </para>
-        /// </remarks>
-        /// <param name="attributes">a set of names that will be removed from user data set to LaunchDarkly</param>
-        /// <returns>the builder</returns>
-        /// <seealso cref="PrivateAttributes(UserAttribute[])"/>
-        public EventProcessorBuilder PrivateAttributeNames(params string[] attributes)
-        {
-            foreach (var a in attributes)
-            {
-                _privateAttributes.Add(UserAttribute.ForName(a));
-            }
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the number of user keys that the event processor can remember at any one time.
-        /// </summary>
-        /// <remarks>
-        /// To avoid sending duplicate user details in analytics events, the SDK maintains a cache of
-        /// recently seen user keys, expiring at an interval set by <see cref="UserKeysFlushInterval(TimeSpan)"/>.
-        /// The default value for the size of this cache is <see cref="DefaultUserKeysCapacity"/>. A zero or
+        /// To avoid sending duplicate context details in analytics events, the SDK maintains a cache of
+        /// recently seen contexts, expiring at an interval set by <see cref="ContextKeysFlushInterval(TimeSpan)"/>.
+        /// The default value for the size of this cache is <see cref="DefaultContextKeysCapacity"/>. A zero or
         /// negative value will be changed to the default.
         /// </remarks>
-        /// <param name="userKeysCapacity">the maximum number of user keys to remember</param>
+        /// <param name="contextKeysCapacity">the maximum number of context keys to remember</param>
         /// <returns>the builder</returns>
-        public EventProcessorBuilder UserKeysCapacity(int userKeysCapacity)
+        /// <seealso cref="ContextKeysFlushInterval(TimeSpan)"/>
+        public EventProcessorBuilder ContextKeysCapacity(int contextKeysCapacity)
         {
-            _userKeysCapacity = (userKeysCapacity <= 0) ? DefaultUserKeysCapacity : userKeysCapacity;
+            _contextKeysCapacity = (contextKeysCapacity <= 0) ? DefaultContextKeysCapacity : contextKeysCapacity;
             return this;
         }
 
         /// <summary>
-        /// Sets the interval at which the event processor will reset its cache of known user keys.
+        /// Sets the interval at which the event processor will reset its cache of known context keys.
         /// </summary>
         /// <remarks>
-        /// The default value is <see cref="DefaultUserKeysFlushInterval"/>. A zero or negative value will be
+        /// The default value is <see cref="DefaultContextKeysFlushInterval"/>. A zero or negative value will be
         /// changed to the default.
         /// </remarks>
-        /// <param name="userKeysFlushInterval">the flush interval</param>
+        /// <param name="contextKeysFlushInterval">the flush interval</param>
         /// <returns>the builder</returns>
-        /// <see cref="UserKeysCapacity(int)"/>
-        public EventProcessorBuilder UserKeysFlushInterval(TimeSpan userKeysFlushInterval)
+        /// <see cref="ContextKeysCapacity(int)"/>
+        public EventProcessorBuilder ContextKeysFlushInterval(TimeSpan contextKeysFlushInterval)
         {
-            _userKeysFlushInterval = (userKeysFlushInterval.CompareTo(TimeSpan.Zero) <= 0) ?
-                DefaultUserKeysFlushInterval : userKeysFlushInterval;
+            _contextKeysFlushInterval = (contextKeysFlushInterval.CompareTo(TimeSpan.Zero) <= 0) ?
+                DefaultContextKeysFlushInterval : contextKeysFlushInterval;
             return this;
         }
 
         /// <inheritdoc/>
-        public IEventProcessor CreateEventProcessor(LdClientContext context)
+        public IEventProcessor Build(LdClientContext context)
         {
-            var eventsConfig = MakeEventsConfiguration(context.Basic, true);
-            var logger = context.Basic.Logger.SubLogger(LogNames.EventsSubLog);
+            var eventsConfig = MakeEventsConfiguration(context, true);
+            var logger = context.Logger.SubLogger(LogNames.EventsSubLog);
             var eventSender = _eventSender ??
                 new DefaultEventSender(
                     context.Http.HttpProperties,
@@ -301,7 +242,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 new EventProcessor(
                     eventsConfig,
                     eventSender,
-                    new DefaultUserDeduplicator(_userKeysCapacity, _userKeysFlushInterval),
+                    new DefaultContextDeduplicator(_contextKeysCapacity, _contextKeysFlushInterval),
                     context.DiagnosticStore,
                     null,
                     logger,
@@ -309,11 +250,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     ));
         }
 
-        private EventsConfiguration MakeEventsConfiguration(BasicConfiguration basic, bool logConfigErrors)
+        private EventsConfiguration MakeEventsConfiguration(LdClientContext context, bool logConfigErrors)
         {
-            var configuredBaseUri = _baseUri ??
-                StandardEndpoints.SelectBaseUri(basic.ServiceEndpoints, e => e.EventsBaseUri, "Events",
-                    logConfigErrors ? basic.Logger : Logs.None.Logger(""));
+            var configuredBaseUri = StandardEndpoints.SelectBaseUri(
+                context.ServiceEndpoints, e => e.EventsBaseUri, "Events",
+                    logConfigErrors ? context.Logger : Logs.None.Logger(""));
             return new EventsConfiguration
             {
                 AllAttributesPrivate = _allAttributesPrivate,
@@ -322,22 +263,19 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 EventFlushInterval = _flushInterval,
                 EventsUri = configuredBaseUri.AddPath("bulk"),
                 DiagnosticUri = configuredBaseUri.AddPath("diagnostic"),
-                InlineUsersInEvents = _inlineUsersInEvents,
-                PrivateAttributeNames = _privateAttributes.ToImmutableHashSet(),
-                UserKeysCapacity = _userKeysCapacity,
-                UserKeysFlushInterval = _userKeysFlushInterval
+                PrivateAttributes = _privateAttributes.ToImmutableHashSet()
             };
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic) =>
+        public LdValue DescribeConfiguration(LdClientContext context) =>
             LdValue.BuildObject()
                 .WithEventProperties(
-                    MakeEventsConfiguration(basic, false),
-                    StandardEndpoints.IsCustomUri(basic.ServiceEndpoints, _baseUri, e => e.EventsBaseUri)
+                    MakeEventsConfiguration(context, false),
+                    StandardEndpoints.IsCustomUri(context.ServiceEndpoints, e => e.EventsBaseUri)
                 )
-                .Add("userKeysCapacity", _userKeysCapacity) // these two properties are specific to the server-side SDK
-                .Add("userKeysFlushIntervalMillis", _userKeysFlushInterval.TotalMilliseconds)
+                .Add("userKeysCapacity", _contextKeysCapacity) // these two properties are specific to the server-side SDK
+                .Add("userKeysFlushIntervalMillis", _contextKeysFlushInterval.TotalMilliseconds)
                 .Build();
     }
 }

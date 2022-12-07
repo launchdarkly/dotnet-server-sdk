@@ -7,11 +7,12 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.TestUtils;
 using static LaunchDarkly.TestHelpers.Assertions;
 
@@ -20,13 +21,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
     public class DataSourceUpdatesImplTest : BaseTest
     {
         private static readonly FeatureFlag flag1 = new FeatureFlagBuilder("flag1").Version(1).Build();
-        private static readonly FeatureFlag flag1v2 = new FeatureFlagBuilder("flag1").Version(2).Build();
         private static readonly FeatureFlag flag2 = new FeatureFlagBuilder("flag2").Version(1).Build();
-        private static readonly FeatureFlag flag2v2 = new FeatureFlagBuilder("flag2").Version(2).Build();
+        private static readonly FeatureFlag flag3 = new FeatureFlagBuilder("flag3").Version(1).Build();
+        private static readonly FeatureFlag flag4 = new FeatureFlagBuilder("flag4").Version(1).Build();
+        private static readonly FeatureFlag flag5 = new FeatureFlagBuilder("flag5").Version(1).Build();
+        private static readonly FeatureFlag flag6 = new FeatureFlagBuilder("flag6").Version(1).Build();
         private static readonly Segment segment1 = new SegmentBuilder("segment1").Version(1).Build();
-        private static readonly Segment segment1v2 = new SegmentBuilder("segment1").Version(2).Build();
         private static readonly Segment segment2 = new SegmentBuilder("segment2").Version(1).Build();
-        private static readonly Segment segment2v2 = new SegmentBuilder("segment2").Version(2).Build();
+        private static readonly Segment segment3 = new SegmentBuilder("segment3").Version(1).Build();
 
         private IDataStore store;
         private DataStoreUpdatesImpl dataStoreUpdates;
@@ -95,11 +97,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            dataBuilder.Flags(flag2v2) // modified flag
-                .Segments(segment2v2); // modified segment, but it's irrelevant
+            dataBuilder.Flags(NextVersion(flag2)) // modified flag
+                .Segments(NextVersion(segment2)); // modified segment, but it's irrelevant
             updates.Init(dataBuilder.Build());
 
-            ExpectFlagChangeEvents(eventSink, flag2v2.Key);
+            ExpectFlagChangeEvents(eventSink, flag2.Key);
         }
 
         [Fact]
@@ -114,9 +116,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataModel.Features, flag2v2.Key, DescriptorOf(flag2v2));
+            updates.Upsert(DataModel.Features, flag2.Key, DescriptorOf(NextVersion(flag2)));
 
-            ExpectFlagChangeEvents(eventSink, flag2v2.Key);
+            ExpectFlagChangeEvents(eventSink, flag2.Key);
         }
 
         [Fact]
@@ -166,7 +168,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataModel.Features, flag2.Key, ItemDescriptor.Deleted(flag2v2.Version));
+            updates.Upsert(DataModel.Features, flag2.Key, ItemDescriptor.Deleted(flag2.Version + 1));
 
             ExpectFlagChangeEvents(eventSink, flag2.Key);
         }
@@ -175,15 +177,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void SendsEventsOnInitForFlagsWhosePrerequisitesChanged()
         {
             var dataBuilder = new DataSetBuilder().Flags(
-                new FeatureFlagBuilder("flag1").Version(1).Build(),
-                new FeatureFlagBuilder("flag2").Version(1)
-                    .Prerequisites(new Prerequisite("flag1", 0)).Build(),
-                new FeatureFlagBuilder("flag3").Version(1).Build(),
-                new FeatureFlagBuilder("flag4").Version(1)
-                    .Prerequisites(new Prerequisite("flag1", 0)).Build(),
-                new FeatureFlagBuilder("flag5").Version(1)
-                    .Prerequisites(new Prerequisite("flag4", 0)).Build(),
-                new FeatureFlagBuilder("flag6").Version(1).Build()
+                flag1,
+                FlagWithPrerequisiteReference(flag2, flag1),
+                flag3,
+                FlagWithPrerequisiteReference(flag4, flag1),
+                FlagWithPrerequisiteReference(flag5, flag4),
+                flag6
                 );
 
             var updates = MakeInstance();
@@ -193,7 +192,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            dataBuilder.Flags(new FeatureFlagBuilder("flag1").Version(2).Build());
+            dataBuilder.Flags(NextVersion(flag1));
             updates.Init(dataBuilder.Build());
 
             ExpectFlagChangeEvents(eventSink, "flag1", "flag2", "flag4", "flag5");
@@ -203,15 +202,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         public void SendsEventsOnUpdateForFlagsWhosePrerequisitesChanged()
         {
             var dataBuilder = new DataSetBuilder().Flags(
-                new FeatureFlagBuilder("flag1").Version(1).Build(),
-                new FeatureFlagBuilder("flag2").Version(1)
-                    .Prerequisites(new Prerequisite("flag1", 0)).Build(),
-                new FeatureFlagBuilder("flag3").Version(1).Build(),
-                new FeatureFlagBuilder("flag4").Version(1)
-                    .Prerequisites(new Prerequisite("flag1", 0)).Build(),
-                new FeatureFlagBuilder("flag5").Version(1)
-                    .Prerequisites(new Prerequisite("flag4", 0)).Build(),
-                new FeatureFlagBuilder("flag6").Version(1).Build()
+                flag1,
+                FlagWithPrerequisiteReference(flag2, flag1),
+                flag3,
+                FlagWithPrerequisiteReference(flag4, flag1),
+                FlagWithPrerequisiteReference(flag5, flag4),
+                flag6
                 );
 
             var updates = MakeInstance();
@@ -221,8 +217,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataModel.Features, "flag1", DescriptorOf(
-                new FeatureFlagBuilder("flag1").Version(2).Build()));
+            updates.Upsert(DataModel.Features, flag1.Key, DescriptorOf(NextVersion(flag1)));
 
             ExpectFlagChangeEvents(eventSink, "flag1", "flag2", "flag4", "flag5");
         }
@@ -230,20 +225,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         [Fact]
         public void SendsEventsOnInitForFlagsWhoseSegmentsChanged()
         {
+            var segment1WithSegment2Ref = SegmentWithSegmentReference(segment1, segment2);
+
             var dataBuilder = new DataSetBuilder().Flags(
-                new FeatureFlagBuilder("flag1").Version(1).Build(),
-                new FeatureFlagBuilder("flag2").Version(1)
-                    .Rules(
-                        new RuleBuilder().Clauses(
-                            new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment1.Key)).Build()
-                        ).Build()
-                    )
-                    .Build(),
-                new FeatureFlagBuilder("flag3").Version(1).Build(),
-                new FeatureFlagBuilder("flag4").Version(1)
-                    .Prerequisites(new Prerequisite("flag2", 0)).Build()
+                flag1,
+                FlagWithSegmentReference(flag2, segment1),
+                FlagWithSegmentReference(flag3, segment2),
+                FlagWithPrerequisiteReference(flag4, flag2)
                 )
-                .Segments(segment1, segment2);
+                .Segments(segment1WithSegment2Ref, segment2, segment3);
 
             var updates = MakeInstance();
 
@@ -252,29 +242,29 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            dataBuilder.Segments(segment1v2);
+            dataBuilder.Segments(NextVersion(segment1WithSegment2Ref));
             updates.Init(dataBuilder.Build());
 
             ExpectFlagChangeEvents(eventSink, "flag2", "flag4");
+
+            dataBuilder.Segments(NextVersion(segment2));
+            updates.Init(dataBuilder.Build());
+
+            ExpectFlagChangeEvents(eventSink, "flag2", "flag3", "flag4");
         }
 
         [Fact]
         public void SendsEventsOnUpdateForFlagsWhoseSegmentsChanged()
         {
+            var segment1WithSegment2Ref = SegmentWithSegmentReference(segment1, segment2);
+
             var dataBuilder = new DataSetBuilder().Flags(
-                new FeatureFlagBuilder("flag1").Version(1).Build(),
-                new FeatureFlagBuilder("flag2").Version(1)
-                    .Rules(
-                        new RuleBuilder().Clauses(
-                            new ClauseBuilder().Op("segmentMatch").Values(LdValue.Of(segment1.Key)).Build()
-                        ).Build()
-                    )
-                    .Build(),
-                new FeatureFlagBuilder("flag3").Version(1).Build(),
-                new FeatureFlagBuilder("flag4").Version(1)
-                    .Prerequisites(new Prerequisite("flag2", 0)).Build()
+                flag1,
+                FlagWithSegmentReference(flag2, segment1),
+                FlagWithSegmentReference(flag3, segment2),
+                FlagWithPrerequisiteReference(flag4, flag2)
                 )
-                .Segments(segment1, segment2);
+                .Segments(segment1WithSegment2Ref, segment2, segment3);
 
             var updates = MakeInstance();
 
@@ -283,9 +273,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             var eventSink = new EventSink<FlagChangeEvent>();
             updates.FlagChanged += eventSink.Add;
 
-            updates.Upsert(DataModel.Segments, segment1.Key, DescriptorOf(segment1v2));
+            updates.Upsert(DataModel.Segments, segment1WithSegment2Ref.Key, DescriptorOf(NextVersion(segment1WithSegment2Ref)));
 
             ExpectFlagChangeEvents(eventSink, "flag2", "flag4");
+
+            updates.Upsert(DataModel.Segments, segment2.Key, DescriptorOf(NextVersion(segment2)));
+
+            ExpectFlagChangeEvents(eventSink, "flag2", "flag3", "flag4");
         }
 
         [Fact]
@@ -406,5 +400,28 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             Assert.Equal(expectedChangedFlagKeys, actualChangedFlagKeys);
             eventSink.ExpectNoValue();
         }
+
+        private static FeatureFlag FlagWithPrerequisiteReference(FeatureFlag fromFlag, FeatureFlag toFlag)
+        {
+            List<Prerequisite> prereqs = new List<Prerequisite>(fromFlag.Prerequisites);
+            prereqs.Add(new Prerequisite(toFlag.Key, 0));
+            return new FeatureFlagBuilder(fromFlag).Prerequisites(prereqs).Build();
+        }
+
+        private static FeatureFlag FlagWithSegmentReference(FeatureFlag flag, params Segment[] segments) =>
+            new FeatureFlagBuilder(flag).Rules(
+                new RuleBuilder().Clauses(ClauseBuilder.ShouldMatchSegment(segments.Select(s => s.Key).ToArray())).Build()
+                ).Build();
+
+        private static Segment SegmentWithSegmentReference(Segment segment, params Segment[] segments) =>
+            new SegmentBuilder(segment).Rules(
+                new SegmentRuleBuilder().Clauses(ClauseBuilder.ShouldMatchSegment(segments.Select(s => s.Key).ToArray())).Build()
+                ).Build();
+
+        private static FeatureFlag NextVersion(FeatureFlag flag) =>
+            new FeatureFlagBuilder(flag).Version(flag.Version + 1).Build();
+
+        private static Segment NextVersion(Segment segment) =>
+            new SegmentBuilder(segment).Version(segment.Version + 1).Build();
     }
 }

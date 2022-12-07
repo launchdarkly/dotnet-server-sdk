@@ -3,16 +3,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using LaunchDarkly.JsonStream;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Http;
-using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -31,7 +32,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             _httpClient = context.Http.NewHttpClient();
             _connectTimeout = context.Http.ConnectTimeout;
             _allUri = baseUri.AddPath(StandardEndpoints.PollingRequestPath);
-            _log = context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog);
+            _log = context.Logger.SubLogger(LogNames.DataSourceSubLog);
         }
 
         void IDisposable.Dispose()
@@ -65,13 +66,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             return data;
         }
 
-        private FullDataSet<ItemDescriptor> ParseAllData(string json)
+        private FullDataSet<ItemDescriptor> ParseAllData(byte[] json)
         {
-            var r = JReader.FromString(json);
+            var r = new Utf8JsonReader(json);
             return StreamProcessorEvents.ParseFullDataset(ref r);
         }
 
-        private async Task<string> GetAsync(Uri path)
+        private async Task<byte[]> GetAsync(Uri path)
         {
             _log.Debug("Getting flags with uri: {0}", path.AbsoluteUri);
             var request = new HttpRequestMessage(HttpMethod.Get, path);
@@ -111,8 +112,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                                 _etags.Remove(path);
                             }
                         }
-                        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        return string.IsNullOrEmpty(content) ? null : content;
+                        var content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                        return content.Length == 0 ? null : content;
                     }
                 }
                 catch (TaskCanceledException tce)

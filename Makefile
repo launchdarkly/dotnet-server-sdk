@@ -9,8 +9,8 @@ clean:
 	dotnet clean
 
 TEMP_TEST_OUTPUT=/tmp/sdk-contract-test-service.log
-BUILDFRAMEWORKS ?= netcoreapp2.1
-TESTFRAMEWORK ?= netcoreapp2.1
+BUILDFRAMEWORKS ?= netcoreapp3.1
+TESTFRAMEWORK ?= netcoreapp3.1
 
 build-contract-tests:
 	@cd contract-tests && dotnet build TestService.csproj
@@ -23,8 +23,8 @@ start-contract-test-service-bg:
 	@make start-contract-test-service >$(TEMP_TEST_OUTPUT) 2>&1 &
 
 run-contract-tests:
-	@curl -s https://raw.githubusercontent.com/launchdarkly/sdk-test-harness/v1.0.0/downloader/run.sh \
-      | VERSION=v1 PARAMS="-url http://localhost:8000 -debug -stop-service-at-end $(TEST_HARNESS_PARAMS)" sh
+	@curl -s https://raw.githubusercontent.com/launchdarkly/sdk-test-harness/main/downloader/run.sh \
+      | VERSION=v2 PARAMS="-url http://localhost:8000 -debug -stop-service-at-end $(TEST_HARNESS_PARAMS)" sh
 
 contract-tests: build-contract-tests start-contract-test-service-bg run-contract-tests
 

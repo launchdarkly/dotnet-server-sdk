@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,9 +8,45 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
     {
         private static readonly float longScale = 0xFFFFFFFFFFFFFFFL;
 
-        internal static float BucketUser(int? seed, User user, string key, UserAttribute attr, string salt)
+        // Compute a bucket value for use in a rollout or experiment. If an error condition
+        // prevents us from computing a valid bucket value, we return zero, which will cause
+        // the evaluation to use the first bucket. A special case is that if we can't get a
+        // context at all (that is, the specified context kind did not exist), we return
+        // *null*, which will be treated the same as zero except that it forces the
+        // inExperiment property in the result to be false.
+        internal static float? ComputeBucketValue(
+            bool isExperiment,
+            int? seed,
+            in Context context,
+            in ContextKind? contextKind,
+            string key,
+            in AttributeRef? attr,
+            string salt
+            )
         {
-            var userValue = user.GetAttribute(attr);
+            if (!context.TryGetContextByKind(contextKind ?? ContextKind.Default, out var matchContext))
+            {
+                return null;
+            }
+
+            LdValue contextValue;
+            if (isExperiment || !attr.HasValue || !attr.Value.Defined) // always bucket by key in an experiment
+            {
+                contextValue = LdValue.Of(matchContext.Key);
+            }
+            else
+            {
+                if (!attr.Value.Valid)
+                {
+                    return 0;
+                }
+                contextValue = matchContext.GetValue(attr.Value);
+                if (contextValue.IsNull)
+                {
+                    return 0;
+                }
+            }
+
             var hashInputBuilder = new StringBuilder(100);
             if (seed.HasValue)
             {
@@ -22,22 +57,17 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 hashInputBuilder.Append(key).Append(".").Append(salt);
             }
             hashInputBuilder.Append(".");
-            if (userValue.IsString)
+            if (contextValue.IsString)
             {
-                hashInputBuilder.Append(userValue.AsString);
+                hashInputBuilder.Append(contextValue.AsString);
             }
-            else if (userValue.IsInt)
+            else if (contextValue.IsInt)
             {
-                hashInputBuilder.Append(userValue.AsInt);
+                hashInputBuilder.Append(contextValue.AsInt);
             }
             else
             {
                 return 0; // bucket-by values other than strings and ints aren't supported
-            }
-            var secondary = user.Secondary;
-            if (!string.IsNullOrEmpty(secondary))
-            {
-                hashInputBuilder.Append(".").Append(secondary);
             }
             var hash = Hash(hashInputBuilder.ToString()).Substring(0, 15);
             var longValue = long.Parse(hash, NumberStyles.HexNumber);

@@ -1,6 +1,7 @@
 ﻿using System;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface for an object that can send or store analytics events.
@@ -41,19 +42,16 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         void RecordCustomEvent(EventProcessorTypes.CustomEvent e);
 
         /// <summary>
-        /// Records an alias event.
-        /// </summary>
-        void RecordAliasEvent(EventProcessorTypes.AliasEvent e);
-
-        /// <summary>
         /// Specifies that any buffered events should be sent as soon as possible, rather than waiting
         /// for the next flush interval.
         /// </summary>
-        /// <remarks>
-        /// This method triggers an asynchronous task, so events still may not be sent until a later
-        /// until a later time. However, calling <see cref="IDisposable.Dispose"/> will synchronously
-        /// deliver any events that were not yet delivered prior to shutting down.
-        /// </remarks>
+        /// <seealso cref="ILdClient.Flush"/>
         void Flush();
+
+        /// <summary>
+        /// Specifies that any buffered events should be sent synchronously now.
+        /// </summary>
+        /// <seealso cref="ILdClient.FlushAndWait(TimeSpan)"/>
+        bool FlushAndWait(TimeSpan timeout);
     }
 }

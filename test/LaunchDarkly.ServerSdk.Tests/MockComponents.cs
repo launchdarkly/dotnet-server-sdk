@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -22,56 +24,22 @@ namespace LaunchDarkly.Sdk.Server
         // so that the SDK can handle the component lifecycle and dependency injection. However, in tests,
         // we often want to set up a specific component instance; .AsSingletonFactory() wraps it in a
         // factory that always returns that instance.
-        public static IBigSegmentStoreFactory AsSingletonFactory(this IBigSegmentStore instance) =>
-            new SingleBigSegmentStoreFactory { Instance = instance };
+        public static IComponentConfigurer<T> AsSingletonFactory<T>(this T instance) =>
+            new SingleComponentFactory<T> { Instance = instance };
 
-        public static IDataSourceFactory AsSingletonFactory(this IDataSource instance) =>
-            new SingleDataSourceFactory { Instance = instance };
+        public static IComponentConfigurer<T> AsSingletonFactoryWithDiagnosticDescription<T>(this T instance, LdValue description) =>
+            new SingleComponentFactoryWithDiagnosticDescription<T> { Instance = instance, Description = description };
 
-        public static IDataStoreFactory AsSingletonFactory(this IDataStore instance) =>
-            new SingleDataStoreFactory { Instance = instance };
-
-        public static IEventProcessorFactory AsSingletonFactory(this IEventProcessor instance) =>
-            new SingleEventProcessorFactory { Instance = instance };
-
-        public static IPersistentDataStoreFactory AsSingletonFactory(this IPersistentDataStore instance) =>
-            new SinglePersistentDataStoreFactory { Instance = instance };
-
-        private class SingleBigSegmentStoreFactory : IBigSegmentStoreFactory
+        private class SingleComponentFactory<T> : IComponentConfigurer<T>
         {
-            public IBigSegmentStore Instance { get; set; }
-            public IBigSegmentStore CreateBigSegmentStore(LdClientContext context) => Instance;
+            public T Instance { get; set; }
+            public T Build(LdClientContext context) => Instance;
         }
 
-        private class SingleDataSourceFactory : IDataSourceFactory
+        private class SingleComponentFactoryWithDiagnosticDescription<T> : SingleComponentFactory<T>, IDiagnosticDescription
         {
-            public IDataSource Instance { get; set; }
-            public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates updateSink)
-            {
-                if (Instance is MockDataSourceBase m)
-                {
-                    m.UpdateSink = updateSink;
-                }
-                return Instance;
-            }
-        }
-
-        private class SingleDataStoreFactory : IDataStoreFactory
-        {
-            public IDataStore Instance { get; set; }
-            public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates updateSink) => Instance;
-        }
-
-        private class SingleEventProcessorFactory : IEventProcessorFactory
-        {
-            public IEventProcessor Instance { get; set; }
-            public IEventProcessor CreateEventProcessor(LdClientContext context) => Instance;
-        }
-
-        private class SinglePersistentDataStoreFactory : IPersistentDataStoreFactory
-        {
-            public IPersistentDataStore Instance { get; set; }
-            public IPersistentDataStore CreatePersistentDataStore(LdClientContext context) => Instance;
+            public LdValue Description { get; set; }
+            public LdValue DescribeConfiguration(LdClientContext context) => Description;
         }
     }
 
@@ -113,49 +81,49 @@ namespace LaunchDarkly.Sdk.Server
         }
     }
 
-    public class CapturingDataStoreFactory : IDataStoreFactory
+    public class CapturingDataStoreFactory : IComponentConfigurer<IDataStore>
     {
-        private readonly IDataStoreFactory _factory;
+        private readonly IComponentConfigurer<IDataStore> _factory;
         public volatile LdClientContext Context;
         public volatile IDataStoreUpdates DataStoreUpdates;
 
-        public CapturingDataStoreFactory(IDataStoreFactory factory)
+        public CapturingDataStoreFactory(IComponentConfigurer<IDataStore> factory)
         {
             _factory = factory;
         }
 
-        public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
+        public IDataStore Build(LdClientContext context)
         {
             Context = context;
-            DataStoreUpdates = dataStoreUpdates;
-            return _factory.CreateDataStore(context, dataStoreUpdates);
+            DataStoreUpdates = context.DataStoreUpdates;
+            return _factory.Build(context);
         }
     }
 
     public static class MockComponents
     {
-        internal static IDataSource MockDataSourceThatNeverStarts() =>
+        internal static MockDataSource MockDataSourceThatNeverStarts() =>
             MockDataSourceWithStartFn(_ => new TaskCompletionSource<bool>().Task, () => false);
 
-        internal static IDataSource MockDataSourceWithData(FullDataSet<ItemDescriptor> data) =>
+        internal static MockDataSource MockDataSourceWithData(FullDataSet<ItemDescriptor> data) =>
             MockDataSourceWithStartFn(updateSink =>
             {
                 updateSink.Init(data);
                 return Task.FromResult(true);
             });
 
-        internal static IDataSource MockDataSourceWithStartFn(Func<IDataSourceUpdates, Task<bool>> startFn) =>
-            new MockDataSourceWithStartFnImpl(startFn, () => true);
+        internal static MockDataSource MockDataSourceWithStartFn(Func<IDataSourceUpdates, Task<bool>> startFn) =>
+            new MockDataSource(startFn, () => true);
 
-        internal static IDataSource MockDataSourceWithStartFn(Func<IDataSourceUpdates, Task<bool>> startFn,
-            Func<bool> initedFn) => new MockDataSourceWithStartFnImpl(startFn, initedFn);
+        internal static MockDataSource MockDataSourceWithStartFn(Func<IDataSourceUpdates, Task<bool>> startFn,
+            Func<bool> initedFn) => new MockDataSource(startFn, initedFn);
 
-        private sealed class MockDataSourceWithStartFnImpl : MockDataSourceBase, IDataSource
+        internal sealed class MockDataSource : MockDataSourceBase, IDataSource, IComponentConfigurer<IDataSource>
         {
             private readonly Func<IDataSourceUpdates, Task<bool>> _startFn;
             private readonly Func<bool> _initedFn;
 
-            internal MockDataSourceWithStartFnImpl(Func<IDataSourceUpdates, Task<bool>> startFn, Func<bool> initedFn)
+            internal MockDataSource(Func<IDataSourceUpdates, Task<bool>> startFn, Func<bool> initedFn)
             {
                 _startFn = startFn;
                 _initedFn = initedFn;
@@ -166,6 +134,12 @@ namespace LaunchDarkly.Sdk.Server
             public bool Initialized => _initedFn();
 
             public void Dispose() { }
+
+            public IDataSource Build(LdClientContext context)
+            {
+                UpdateSink = context.DataSourceUpdates;
+                return this;
+            }
         }
     }
 
@@ -279,6 +253,8 @@ namespace LaunchDarkly.Sdk.Server
 
         public void Flush() { }
 
+        public bool FlushAndWait(TimeSpan timeout) => true;
+
         public void Dispose() { }
 
         public void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e) =>
@@ -288,9 +264,6 @@ namespace LaunchDarkly.Sdk.Server
             Events.Add(e);
 
         public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) =>
-            Events.Add(e);
-
-        public void RecordAliasEvent(EventProcessorTypes.AliasEvent e) =>
             Events.Add(e);
     }
 
@@ -308,11 +281,11 @@ namespace LaunchDarkly.Sdk.Server
             public int EventCount;
         }
 
-        public Task<EventSenderResult> SendEventDataAsync(EventDataKind kind, string data, int eventCount)
+        public Task<EventSenderResult> SendEventDataAsync(EventDataKind kind, byte[] data, int eventCount)
         {
             if (!FilterKind.HasValue || kind == FilterKind.Value)
             {
-                Calls.Add(new Params { Kind = kind, Data = data, EventCount = eventCount });
+                Calls.Add(new Params { Kind = kind, Data = Encoding.UTF8.GetString(data), EventCount = eventCount });
             }
             return Task.FromResult(new EventSenderResult(DeliveryStatus.Succeeded, null));
         }

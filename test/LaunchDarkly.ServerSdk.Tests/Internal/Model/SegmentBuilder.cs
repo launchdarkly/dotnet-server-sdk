@@ -8,10 +8,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private int _version;
         private ISet<string> _included = new HashSet<string>();
         private ISet<string> _excluded = new HashSet<string>();
+        private List<SegmentTarget> _includedContexts = new List<SegmentTarget>();
+        private List<SegmentTarget> _excludedContexts = new List<SegmentTarget>();
         private List<SegmentRule> _rules = new List<SegmentRule>();
         private string _salt;
         private bool _deleted;
         private bool _unbounded;
+        private ContextKind? _unboundedContextKind;
         private int? _generation;
 
         internal SegmentBuilder(string key)
@@ -29,13 +32,13 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             _rules = new List<SegmentRule>(from.Rules);
             _salt = from.Salt;
             _unbounded = from.Unbounded;
+            _unboundedContextKind = from.UnboundedContextKind;
             _generation = from.Generation;
         }
 
-        internal Segment Build()
-        {
-            return new Segment(_key, _version, _deleted, _included, _excluded, _rules, _salt, _unbounded, _generation);
-        }
+        internal Segment Build() =>
+            new Segment(_key, _version, _deleted, _included, _excluded, _includedContexts, _excludedContexts,
+                _rules, _salt, _unbounded, _unboundedContextKind, _generation);
 
         internal SegmentBuilder Version(int version)
         {
@@ -58,6 +61,18 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal SegmentBuilder Excluded(params string[] keys)
         {
             foreach (var key in keys) { _excluded.Add(key); }
+            return this;
+        }
+
+        internal SegmentBuilder IncludedContext(ContextKind contextKind, params string[] keys)
+        {
+            _includedContexts.Add(new SegmentTarget(contextKind, new HashSet<string>(keys)));
+            return this;
+        }
+
+        internal SegmentBuilder ExcludedContext(ContextKind contextKind, params string[] keys)
+        {
+            _excludedContexts.Add(new SegmentTarget(contextKind, new HashSet<string>(keys)));
             return this;
         }
 
@@ -84,9 +99,55 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return this;
         }
 
+        internal SegmentBuilder UnboundedContextKind(ContextKind kind)
+        {
+            _unboundedContextKind = kind;
+            return this;
+        }
+
         internal SegmentBuilder Generation(int? generation)
         {
             _generation = generation;
+            return this;
+        }
+    }
+
+    internal class SegmentRuleBuilder
+    {
+        private readonly List<Clause> _clauses = new List<Clause>();
+        private int? _weight;
+        private ContextKind? _rolloutContextKind;
+        private AttributeRef _bucketBy;
+
+        internal SegmentRule Build() =>
+            new SegmentRule(
+                _clauses,
+                _weight,
+                _rolloutContextKind,
+                _bucketBy
+                );
+
+        public SegmentRuleBuilder Clauses(params Clause[] clauses)
+        {
+            _clauses.AddRange(clauses);
+            return this;
+        }
+
+        public SegmentRuleBuilder Weight(int? weight)
+        {
+            _weight = weight;
+            return this;
+        }
+
+        public SegmentRuleBuilder RolloutContextKind(ContextKind rolloutContextKind)
+        {
+            _rolloutContextKind = rolloutContextKind;
+            return this;
+        }
+
+        public SegmentRuleBuilder BucketBy(AttributeRef bucketBy)
+        {
+            _bucketBy = bucketBy;
             return this;
         }
     }

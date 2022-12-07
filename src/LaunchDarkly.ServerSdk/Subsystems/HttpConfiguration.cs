@@ -5,7 +5,7 @@ using System.Net.Http;
 using LaunchDarkly.Sdk.Internal.Http;
 using LaunchDarkly.Sdk.Server.Integrations;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Encapsulates top-level HTTP configuration that applies to all SDK components.
@@ -182,9 +182,12 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
                 .WithHttpMessageHandlerFactory(messageHandler is null ?
                     (Func<HttpProperties, HttpMessageHandler>)null :
                     _ => messageHandler);
-            foreach (var kv in defaultHeaders)
+            if (!(defaultHeaders is null))
             {
-                ret = ret.WithHeader(kv.Key, kv.Value);
+                foreach (var kv in defaultHeaders)
+                {
+                    ret = ret.WithHeader(kv.Key, kv.Value);
+                }
             }
             return ret;
         }

@@ -1,16 +1,20 @@
 ﻿using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.EventProcessorTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes;
 
 namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientEventTest : BaseTest
     {
-        private static readonly User user = User.WithKey("userkey");
+        private static readonly Context context = Context.New("userkey");
+        private static readonly User contextAsUser = User.WithKey(context.Key);
+        private static readonly Context invalidContext = Context.New("");
+
         private readonly TestData testData = TestData.DataSource();
         private readonly MockEventProcessor eventSink = new MockEventProcessor();
         private readonly ILdClient client;
@@ -19,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server
         {
             var config = BasicConfig()
                 .DataSource(testData)
-                .Events(eventSink.AsSingletonFactory())
+                .Events(eventSink.AsSingletonFactory<IEventProcessor>())
                 .Build();
             client = new LdClient(config);
         }
@@ -27,33 +31,27 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void IdentifySendsEvent()
         {
-            client.Identify(user);
+            client.Identify(context);
 
             Assert.Single(eventSink.Events);
             var ie = Assert.IsType<IdentifyEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ie.User.Key);
+            Assert.Equal(context, ie.Context);
         }
 
         [Fact]
-        public void IdentifyWithNoUserSendsNoEvent()
+        public void IdentifyWithUserSendsEvent()
         {
-            client.Identify(null);
+            client.Identify(contextAsUser);
 
-            Assert.Empty(eventSink.Events);
-        }
-
-        [Fact]
-        public void IdentifyWithNoUserKeySendsNoEvent()
-        {
-            client.Identify(User.WithKey(null));
-
-            Assert.Empty(eventSink.Events);
+            Assert.Single(eventSink.Events);
+            var ie = Assert.IsType<IdentifyEvent>(eventSink.Events[0]);
+            Assert.Equal(context, ie.Context);
         }
 
         [Fact]
         public void IdentifyWithEmptyUserKeySendsNoEvent()
         {
-            client.Identify(User.WithKey(""));
+            client.Identify(Context.New(""));
 
             Assert.Empty(eventSink.Events);
         }
@@ -61,11 +59,24 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void TrackSendsEventWithoutData()
         {
-            client.Track("eventkey", user);
+            client.Track("eventkey", context);
 
             Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
+            Assert.Equal(context, ce.Context);
+            Assert.Equal("eventkey", ce.EventKey);
+            Assert.Equal(LdValue.Null, ce.Data);
+            Assert.Null(ce.MetricValue);
+        }
+
+        [Fact]
+        public void TrackWithUserSendsEventWithoutData()
+        {
+            client.Track("eventkey", contextAsUser);
+
+            Assert.Single(eventSink.Events);
+            var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
+            Assert.Equal(context, ce.Context);
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(LdValue.Null, ce.Data);
             Assert.Null(ce.MetricValue);
@@ -75,11 +86,11 @@ namespace LaunchDarkly.Sdk.Server
         public void TrackSendsEventWithData()
         {
             var data = LdValue.BuildObject().Add("thing", "stuff").Build();
-            client.Track("eventkey", user, data);
+            client.Track("eventkey", context, data);
 
             Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
+            Assert.Equal(context, ce.Context);
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(data, ce.Data);
         }
@@ -88,28 +99,20 @@ namespace LaunchDarkly.Sdk.Server
         public void TrackSendsEventWithWithMetricValue()
         {
             var data = LdValue.BuildObject().Add("thing", "stuff").Build();
-            client.Track("eventkey", user, data, 1.5);
+            client.Track("eventkey", context, data, 1.5);
 
             Assert.Single(eventSink.Events);
             var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(user.Key, ce.User.Key);
+            Assert.Equal(context, ce.Context);
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(data, ce.Data);
             Assert.Equal(1.5, ce.MetricValue);
         }
 
         [Fact]
-        public void TrackWithNoUserSendsNoEvent()
-        {
-            client.Track("eventkey", null);
-
-            Assert.Empty(eventSink.Events);
-        }
-
-        [Fact]
         public void TrackWithNullUserKeySendsNoEvent()
         {
-            client.Track("eventkey", User.WithKey(null));
+            client.Track("eventkey", Context.New(null));
 
             Assert.Empty(eventSink.Events);
         }
@@ -117,124 +120,126 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void TrackWithEmptyUserKeySendsNoEvent()
         {
-            client.Track("eventkey", User.WithKey(""));
+            client.Track("eventkey", Context.New(""));
 
             Assert.Empty(eventSink.Events);
         }
 
-        [Fact]
-        public void BoolVariationSendsEvent()
+        private void DoTypedEvaluationEventTests<T>(VariationMethodsDesc<T> v)
         {
-            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of(true)).Build();
+            var flag = new FeatureFlagBuilder("flagkey").Version(2).OffWithValue(v.ExpectedLdValue).Build();
             testData.UsePreconfiguredFlag(flag);
 
-            client.BoolVariation("key", user, false);
+            TypedEvaluationSendsEvent(flag, v);
+
+            TypedEvaluationSendsEventForUnknownFlag("unknownflag", v);
+
+            TypedEvaluationSendsNoEventForInvalidContext(flag, v);
+        }
+
+        private void TypedEvaluationSendsEvent<T>(FeatureFlag flag, VariationMethodsDesc<T> v)
+        {
+            v.VariationMethod(client, flag.Key, context, v.DefaultValue);
             Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(true), LdValue.Of(false), null);
+            CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue, null, null);
+            eventSink.Events.Clear();
+
+            v.VariationForUserMethod(client, flag.Key, contextAsUser, v.DefaultValue);
+            Assert.Single(eventSink.Events);
+            CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue, null, null);
+            eventSink.Events.Clear();
+
+            v.VariationDetailMethod(client, flag.Key, context, v.DefaultValue);
+            Assert.Single(eventSink.Events);
+            CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue,
+                EvaluationReason.OffReason, null);
+            eventSink.Events.Clear();
+
+            v.VariationDetailForUserMethod(client, flag.Key, contextAsUser, v.DefaultValue);
+            Assert.Single(eventSink.Events);
+            CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue,
+                EvaluationReason.OffReason, null);
+            eventSink.Events.Clear();
+        }
+
+        private void TypedEvaluationSendsEventForUnknownFlag<T>(string flagKey, VariationMethodsDesc<T> v)
+        {
+            v.VariationMethod(client, flagKey, context, v.DefaultValue);
+            Assert.Single(eventSink.Events);
+            CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue, null, null);
+            eventSink.Events.Clear();
+
+            v.VariationForUserMethod(client, flagKey, contextAsUser, v.DefaultValue);
+            Assert.Single(eventSink.Events);
+            CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue, null, null);
+            eventSink.Events.Clear();
+
+            v.VariationDetailMethod(client, flagKey, context, v.DefaultValue);
+            Assert.Single(eventSink.Events);
+            CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue,
+                EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound), null);
+            eventSink.Events.Clear();
+
+            v.VariationDetailForUserMethod(client, flagKey, contextAsUser, v.DefaultValue);
+            Assert.Single(eventSink.Events);
+            CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue,
+                EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound), null);
+            eventSink.Events.Clear();
+        }
+
+        private void TypedEvaluationSendsNoEventForInvalidContext<T>(FeatureFlag flag, VariationMethodsDesc<T> v)
+        {
+            v.VariationMethod(client, flag.Key, invalidContext, v.DefaultValue);
+            Assert.Empty(eventSink.Events);
+
+            v.VariationForUserMethod(client, flag.Key, (User)null, v.DefaultValue);
+            Assert.Empty(eventSink.Events);
+
+            v.VariationDetailMethod(client, flag.Key, invalidContext, v.DefaultValue);
+            Assert.Empty(eventSink.Events);
+
+            v.VariationDetailForUserMethod(client, flag.Key, (User)null, v.DefaultValue);
+            Assert.Empty(eventSink.Events);
         }
 
         [Fact]
-        public void BoolVariationSendsEventForUnknownFlag()
-        {
-            client.BoolVariation("key", user, false);
-            Assert.Single(eventSink.Events);
-            CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of(false), null);
-        }
+        public void BoolVariationEventTests() =>
+            DoTypedEvaluationEventTests(VariationMethodsDesc.Bool);
 
         [Fact]
-        public void IntVariationSendsEvent()
-        {
-            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of(2)).Build();
-            testData.UsePreconfiguredFlag(flag);
-
-            client.IntVariation("key", user, 1);
-            Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(2), LdValue.Of(1), null);
-        }
+        public void IntVariationEventTests() =>
+            DoTypedEvaluationEventTests(VariationMethodsDesc.Int);
 
         [Fact]
-        public void IntVariationSendsEventForUnknownFlag()
-        {
-            client.IntVariation("key", user, 1);
-            Assert.Single(eventSink.Events);
-            CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of(1), null);
-        }
+        public void FloatVariationEventTests() =>
+            DoTypedEvaluationEventTests(VariationMethodsDesc.Float);
 
         [Fact]
-        public void FloatVariationSendsEvent()
-        {
-            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of(2.5f)).Build();
-            testData.UsePreconfiguredFlag(flag);
-
-            client.FloatVariation("key", user, 1.0f);
-            Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(2.5f), LdValue.Of(1.0f), null);
-        }
+        public void DoubleVariationEventTests() =>
+            DoTypedEvaluationEventTests(VariationMethodsDesc.Double);
 
         [Fact]
-        public void FloatVariationSendsEventForUnknownFlag()
-        {
-            client.FloatVariation("key", user, 1.0f);
-            Assert.Single(eventSink.Events);
-            CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of(1.0f), null);
-        }
+        public void StringVariationEventTests() =>
+            DoTypedEvaluationEventTests(VariationMethodsDesc.String);
 
         [Fact]
-        public void StringVariationSendsEvent()
-        {
-            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(LdValue.Of("b")).Build();
-            testData.UsePreconfiguredFlag(flag);
+        public void JsonVariationEventTests() =>
+            DoTypedEvaluationEventTests(VariationMethodsDesc.Json);
 
-            client.StringVariation("key", user, "a");
-            Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of("b"), LdValue.Of("a"), null);
-        }
-
-        [Fact]
-        public void StringVariationSendsEventForUnknownFlag()
-        {
-            client.StringVariation("key", user, "a");
-            Assert.Single(eventSink.Events);
-            CheckUnknownFeatureEvent(eventSink.Events[0], "key", LdValue.Of("a"), null);
-        }
-
-        [Fact]
-        public void JsonVariationSendsEvent()
-        {
-            var data = LdValue.BuildObject().Add("thing", "stuff").Build();
-            var flag = new FeatureFlagBuilder("key").Version(1).OffWithValue(data).Build();
-            testData.UsePreconfiguredFlag(flag);
-            var defaultVal = LdValue.Of(42);
-
-            client.JsonVariation("key", user, defaultVal);
-            Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, data, defaultVal, null);
-        }
-
-        [Fact]
-        public void JsonVariationSendsEventForUnknownFlag()
-        {
-            var defaultVal = LdValue.Of(42);
-
-            client.JsonVariation("key", user, defaultVal);
-            Assert.Single(eventSink.Events);
-            CheckUnknownFeatureEvent(eventSink.Events[0], "key", defaultVal, null);
-        }
-        
         [Fact]
         public void EventTrackingAndReasonCanBeForcedForRule()
         {
-            var clause = ClauseBuilder.ShouldMatchUser(user);
+            var clause = ClauseBuilder.ShouldMatchUser(context);
             var rule = new RuleBuilder().Id("rule-id").Variation(1).Clauses(clause).TrackEvents(true).Build();
             var flag = new FeatureFlagBuilder("flag").Version(1)
                 .On(true)
                 .Rules(rule)
                 .OffVariation(0)
-                .Variations(LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("off", "on")
                 .Build();
             testData.UsePreconfiguredFlag(flag);
 
-            client.StringVariation("flag", user, "default");
+            client.StringVariation("flag", context, "default");
 
             // Note, we did not call StringVariationDetail and the flag is not tracked, but we should still get
             // tracking and a reason, because the rule-level trackEvents flag is on for the matched rule.
@@ -248,19 +253,19 @@ namespace LaunchDarkly.Sdk.Server
         [Fact]
         public void EventTrackingAndReasonAreNotForcedIfFlagIsNotSetForMatchingRule()
         {
-            var clause0 = ClauseBuilder.ShouldNotMatchUser(user);
-            var clause1 = ClauseBuilder.ShouldMatchUser(user);
+            var clause0 = ClauseBuilder.ShouldNotMatchUser(context);
+            var clause1 = ClauseBuilder.ShouldMatchUser(context);
             var rule0 = new RuleBuilder().Id("id0").Variation(1).Clauses(clause0).TrackEvents(true).Build();
             var rule1 = new RuleBuilder().Id("id1").Variation(1).Clauses(clause1).TrackEvents(false).Build();
             var flag = new FeatureFlagBuilder("flag").Version(1)
                 .On(true)
                 .Rules(rule0, rule1)
                 .OffVariation(0)
-                .Variations(LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("off", "on")
                 .Build();
             testData.UsePreconfiguredFlag(flag);
 
-            client.StringVariation("flag", user, "default");
+            client.StringVariation("flag", context, "default");
 
             // It matched rule1, which has trackEvents: false, so we don't get the override behavior
 
@@ -277,12 +282,12 @@ namespace LaunchDarkly.Sdk.Server
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .TrackEventsFallthrough(true)
                 .Build();
             testData.UsePreconfiguredFlag(flag);
 
-            client.StringVariation("flag", user, "default");
+            client.StringVariation("flag", context, "default");
 
             // Note, we did not call stringVariationDetail and the flag is not tracked, but we should still get
             // tracking and a reason, because trackEventsFallthrough is on and the evaluation fell through.
@@ -300,11 +305,11 @@ namespace LaunchDarkly.Sdk.Server
                 .On(true)
                 .OffVariation(1)
                 .FallthroughVariation(0)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Build();
             testData.UsePreconfiguredFlag(flag);
 
-            client.StringVariation("flag", user, "default");
+            client.StringVariation("flag", context, "default");
 
             Assert.Single(eventSink.Events);
             var e = Assert.IsType<EvaluationEvent>(eventSink.Events[0]);
@@ -320,23 +325,23 @@ namespace LaunchDarkly.Sdk.Server
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))
                 .OffVariation(1)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Version(1)
                 .Build();
             var f1 = new FeatureFlagBuilder("feature1").Version(1)
                 .On(true)
                 .Fallthrough(new VariationOrRollout(1, null))
-                .Variations(LdValue.Of("nogo"), LdValue.Of("go"))
+                .Variations("nogo", "go")
                 .Version(2)
                 .Build();
             testData.UsePreconfiguredFlag(f0);
             testData.UsePreconfiguredFlag(f1);
 
-            client.StringVariation("feature0", user, "default");
+            client.StringVariation("feature0", context, "default");
 
             Assert.Equal(2, eventSink.Events.Count);
-            CheckFeatureEvent(eventSink.Events[0], f1, LdValue.Of("go"), LdValue.Null, "feature0");
-            CheckFeatureEvent(eventSink.Events[1], f0, LdValue.Of("fall"), LdValue.Of("default"), null);
+            CheckFeatureEvent(eventSink.Events[0], f1, context, LdValue.Of("go"), LdValue.Null, null, "feature0");
+            CheckFeatureEvent(eventSink.Events[1], f0, context, LdValue.Of("fall"), LdValue.Of("default"), null, null);
         }
         
         [Fact]
@@ -345,17 +350,17 @@ namespace LaunchDarkly.Sdk.Server
             var flag = new FeatureFlagBuilder("feature").Version(1)
                 .On(false)
                 .OffVariation(null)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Version(1)
                 .Build();
             testData.UsePreconfiguredFlag(flag);
             var defaultVal = "default";
 
-            var result = client.StringVariation(flag.Key, user, defaultVal);
+            var result = client.StringVariation(flag.Key, context, defaultVal);
             Assert.Equal(defaultVal, result);
 
             Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, LdValue.Of(defaultVal), LdValue.Of(defaultVal), null);
+            CheckFeatureEvent(eventSink.Events[0], flag, context, LdValue.Of(defaultVal), LdValue.Of(defaultVal), null, null);
         }
 
         [Fact]
@@ -366,58 +371,39 @@ namespace LaunchDarkly.Sdk.Server
                 .Prerequisites(new Prerequisite("feature1", 1))
                 .Fallthrough(new VariationOrRollout(0, null))
                 .OffVariation(1)
-                .Variations(LdValue.Of("fall"), LdValue.Of("off"), LdValue.Of("on"))
+                .Variations("fall", "off", "on")
                 .Version(1)
                 .Build();
             testData.UsePreconfiguredFlag(f0);
 
-            client.StringVariation("feature0", user, "default");
+            client.StringVariation("feature0", context, "default");
 
             Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], f0, LdValue.Of("off"), LdValue.Of("default"), null);
+            CheckFeatureEvent(eventSink.Events[0], f0, context, LdValue.Of("off"), LdValue.Of("default"), null, null);
         }
 
-        [Fact]
-        public void AliasSendsEvent()
-        {
-            client.Alias(User.WithKey("current"), User.Builder("previous").Anonymous(true).Build());
-
-            Assert.Single(eventSink.Events);
-            var e = Assert.IsType<AliasEvent>(eventSink.Events[0]);
-            Assert.Equal("current", e.CurrentKey);
-            Assert.Equal(ContextKind.User, e.CurrentKind);
-            Assert.Equal("previous", e.PreviousKey);
-            Assert.Equal(ContextKind.AnonymousUser, e.PreviousKind);
-        }
-
-        [Fact]
-        public void AliasWithEmptyUserKeySendsNoEvent()
-        {
-            client.Alias(User.WithKey(""), User.WithKey("previous"));
-            client.Alias(User.WithKey("current"), User.WithKey(""));
-
-            Assert.Empty(eventSink.Events);
-        }
-
-        private void CheckFeatureEvent(object e, FeatureFlag flag, LdValue value, LdValue defaultVal, string prereqOf)
+        private void CheckFeatureEvent(object e, FeatureFlag flag, Context context, LdValue value, LdValue defaultVal,
+            EvaluationReason? reason, string prereqOf)
         {
             var fe = Assert.IsType<EvaluationEvent>(e);
             Assert.Equal(flag.Key, fe.FlagKey);
-            Assert.Equal(user.Key, fe.User.Key);
+            Assert.Equal(context, fe.Context);
             Assert.Equal(flag.Version, fe.FlagVersion);
             Assert.Equal(value, fe.Value);
             Assert.Equal(defaultVal, fe.Default);
+            Assert.Equal(reason, fe.Reason);
             Assert.Equal(prereqOf, fe.PrerequisiteOf);
         }
 
-        private void CheckUnknownFeatureEvent(object e, string key, LdValue defaultVal, string prereqOf)
+        private void CheckUnknownFeatureEvent(object e, string key, Context context, LdValue defaultVal, EvaluationReason? reason, string prereqOf)
         {
             var fe = Assert.IsType<EvaluationEvent>(e);
             Assert.Equal(key, fe.FlagKey);
-            Assert.Equal(user.Key, fe.User.Key);
+            Assert.Equal(context, fe.Context);
             Assert.Null(fe.FlagVersion);
             Assert.Equal(defaultVal, fe.Value);
             Assert.Equal(defaultVal, fe.Default);
+            Assert.Equal(reason, fe.Reason);
             Assert.Equal(prereqOf, fe.PrerequisiteOf);
         }
     }

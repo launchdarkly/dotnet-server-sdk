@@ -166,59 +166,6 @@ namespace LaunchDarkly.Sdk.Server
             }
         }
 
-#pragma warning disable CS0618  // using deprecated symbol
-        [Fact]
-        public void CustomStreamingDataSourceBaseUriWithDeprecatedMethod()
-        {
-            using (var client = new LdClient(
-                BasicConfig()
-                    .DataSource(Components.StreamingDataSource().BaseUri(CustomUri))
-                    .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
-                    .Build()))
-            {
-                var req = _requestRecorder.RequireRequest();
-                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
-
-                AssertLogMessageRegex(false, LogLevel.Error,
-                    "You have set custom ServiceEndpoints without specifying");
-            }
-        }
-
-        [Fact]
-        public void CustomPollingDataSourceBaseUriWithDeprecatedMethod()
-        {
-            using (var client = new LdClient(
-                BasicConfig()
-                    .DataSource(Components.PollingDataSource().BaseUri(CustomUri))
-                    .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
-                    .Build()))
-            {
-                var req = _requestRecorder.RequireRequest();
-                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
-
-                AssertLogMessageRegex(false, LogLevel.Error,
-                    "You have set custom ServiceEndpoints without specifying");
-            }
-        }
-
-        [Fact]
-        public void CustomEventsBaseUriWithDeprecatedMethod()
-        {
-            using (var client = new LdClient(
-                BasicConfig()
-                    .Events(Components.SendEvents().BaseUri(CustomUri))
-                    .Http(Components.HttpConfiguration().MessageHandler(_stubHandler))
-                    .Build()))
-            {
-                var req = _requestRecorder.RequireRequest();
-                Assert.Equal(CustomUri, BaseUriOf(req.Uri));
-
-                AssertLogMessageRegex(false, LogLevel.Error,
-                    "You have set custom ServiceEndpoints without specifying");
-            }
-        }
-#pragma warning restore CS0618
-
         private static Uri BaseUriOf(Uri uri) =>
             new Uri(uri.GetComponents(UriComponents.Scheme | UriComponents.HostAndPort | UriComponents.KeepDelimiter, UriFormat.Unescaped));
     }

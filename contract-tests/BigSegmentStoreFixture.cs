@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LaunchDarkly.Sdk;
-using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 namespace TestService
 {
-    public class BigSegmentStoreFixture : IBigSegmentStore, IBigSegmentStoreFactory
+    public class BigSegmentStoreFixture : IBigSegmentStore, IComponentConfigurer<IBigSegmentStore>
     {
         private readonly CallbackService _service;
 
@@ -14,15 +14,15 @@ namespace TestService
             _service = service;
         }
 
-        public IBigSegmentStore CreateBigSegmentStore(LdClientContext context) => this;
+        public IBigSegmentStore Build(LdClientContext context) => this;
 
         public void Dispose() =>
             _service.Close();
 
-        public async Task<BigSegmentStoreTypes.IMembership> GetMembershipAsync(string userHash)
+        public async Task<BigSegmentStoreTypes.IMembership> GetMembershipAsync(string contextHash)
         {
             var resp = await _service.PostAsync<BigSegmentStoreGetMembershipResponse>("/getMembership",
-                new BigSegmentStoreGetMembershipParams { UserHash = userHash });
+                new BigSegmentStoreGetMembershipParams { ContextHash = contextHash });
             return resp == null ? (BigSegmentStoreTypes.IMembership)null : new MembershipImpl { Values = resp.Values };
         }
 

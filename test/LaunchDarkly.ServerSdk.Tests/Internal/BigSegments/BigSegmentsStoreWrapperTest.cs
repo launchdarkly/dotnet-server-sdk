@@ -1,10 +1,11 @@
 ﻿using System;
 using LaunchDarkly.Sdk.Server.Interfaces;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.BigSegmentStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.BigSegmentStoreTypes;
 using static LaunchDarkly.Sdk.Server.Internal.BigSegments.BigSegmentsInternalTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
@@ -12,12 +13,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
     public class BigSegmentsStoreWrapperTest : BaseTest
     {
         private readonly MockBigSegmentStore _store;
-        private readonly IBigSegmentStoreFactory _storeFactory;
+        private readonly IComponentConfigurer<IBigSegmentStore> _storeFactory;
 
         public BigSegmentsStoreWrapperTest(ITestOutputHelper testOutput) : base(testOutput)
         {
             _store = new MockBigSegmentStore();
-            _storeFactory = _store.AsSingletonFactory();
+            _storeFactory = _store.AsSingletonFactory<IBigSegmentStore>();
         }
 
         private void SetStoreHasNoMetadata() => _store.SetupMetadataReturns((StoreMetadata?)null);
@@ -29,10 +30,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             _store.SetupMetadataThrows(e);
 
         private void SetStoreMembership(string userKey, IMembership membership) =>
-            _store.SetupMembershipReturns(BigSegmentUserKeyHash(userKey), membership);
+            _store.SetupMembershipReturns(BigSegmentContextKeyHash(userKey), membership);
 
         private void ShouldHaveQueriedMembershipTimes(string userKey, int times) =>
-            Assert.Equal(times, _store.InspectMembershipQueriedCount(BigSegmentUserKeyHash(userKey)));
+            Assert.Equal(times, _store.InspectMembershipQueriedCount(BigSegmentContextKeyHash(userKey)));
 
         [Fact]
         public void MembershipQueryWithUncachedResultAndHealthyStatus()
@@ -45,10 +46,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
-                var result = sw.GetUserMembership(userKey);
+                var result = sw.GetMembership(userKey);
                 Assert.Equal(expectedMembership, result.Membership);
                 Assert.Equal(BigSegmentsStatus.Healthy, result.Status);
             }
@@ -65,14 +66,14 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
-                var result1 = sw.GetUserMembership(userKey);
+                var result1 = sw.GetMembership(userKey);
                 Assert.Equal(expectedMembership, result1.Membership);
                 Assert.Equal(BigSegmentsStatus.Healthy, result1.Status);
 
-                var result2 = sw.GetUserMembership(userKey);
+                var result2 = sw.GetMembership(userKey);
                 Assert.Equal(expectedMembership, result2.Membership);
                 Assert.Equal(BigSegmentsStatus.Healthy, result2.Status);
 
@@ -91,10 +92,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromMilliseconds(500))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
-                var result = sw.GetUserMembership(userKey);
+                var result = sw.GetMembership(userKey);
                 Assert.Equal(expectedMembership, result.Membership);
                 Assert.Equal(BigSegmentsStatus.Stale, result.Status);
             }
@@ -111,10 +112,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StaleAfter(TimeSpan.FromMilliseconds(500))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
-                var result = sw.GetUserMembership(userKey);
+                var result = sw.GetMembership(userKey);
                 Assert.Equal(expectedMembership, result.Membership);
                 Assert.Equal(BigSegmentsStatus.Stale, result.Status);
             }
@@ -134,20 +135,20 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             SetStoreMembership(userKey3, expectedMembership3);
 
             var bsConfig = Components.BigSegments(_storeFactory)
-                .UserCacheSize(2)
+                .ContextCacheSize(2)
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
-                var result1 = sw.GetUserMembership(userKey1);
+                var result1 = sw.GetMembership(userKey1);
                 Assert.Equal(expectedMembership1, result1.Membership);
                 Assert.Equal(BigSegmentsStatus.Healthy, result1.Status);
 
-                var result2 = sw.GetUserMembership(userKey2);
+                var result2 = sw.GetMembership(userKey2);
                 Assert.Equal(expectedMembership2, result2.Membership);
                 Assert.Equal(BigSegmentsStatus.Healthy, result2.Status);
 
-                var result3 = sw.GetUserMembership(userKey3);
+                var result3 = sw.GetMembership(userKey3);
                 Assert.Equal(expectedMembership3, result3.Membership);
                 Assert.Equal(BigSegmentsStatus.Healthy, result3.Status);
 
@@ -159,16 +160,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
                 // evicted by the userKey3 query. Now only userKey2 and userKey3 are in the cache, and
                 // querying them again should not cause a new query to the store.
 
-                var result2a = sw.GetUserMembership(userKey2);
+                var result2a = sw.GetMembership(userKey2);
                 Assert.Equal(expectedMembership2, result2a.Membership);
-                var result3a = sw.GetUserMembership(userKey3);
+                var result3a = sw.GetMembership(userKey3);
                 Assert.Equal(expectedMembership3, result3a.Membership);
 
                 ShouldHaveQueriedMembershipTimes(userKey1, 1);
                 ShouldHaveQueriedMembershipTimes(userKey2, 1);
                 ShouldHaveQueriedMembershipTimes(userKey3, 1);
 
-                var result1a = sw.GetUserMembership(userKey1);
+                var result1a = sw.GetMembership(userKey1);
                 Assert.Equal(expectedMembership1, result1a.Membership);
 
                 ShouldHaveQueriedMembershipTimes(userKey1, 2);
@@ -185,7 +186,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StatusPollInterval(TimeSpan.FromMilliseconds(10))
                 .StaleAfter(TimeSpan.FromDays(1))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var status1 = sw.GetStatus();
@@ -224,7 +225,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             var bsConfig = Components.BigSegments(_storeFactory)
                 .StatusPollInterval(TimeSpan.FromMilliseconds(10))
                 .StaleAfter(TimeSpan.FromMilliseconds(200))
-                .CreateBigSegmentsConfiguration(BasicContext);
+                .Build(BasicContext);
             using (var sw = new BigSegmentStoreWrapper(bsConfig, BasicTaskExecutor, TestLogger))
             {
                 var status1 = sw.GetStatus();

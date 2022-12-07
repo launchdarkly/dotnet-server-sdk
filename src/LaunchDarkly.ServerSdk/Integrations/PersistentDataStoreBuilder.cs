@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
@@ -12,10 +12,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// <remarks>
     /// <para>
     /// For a persistent data store (e.g. a database integration), the store implementation will
-    /// provide an <see cref="IPersistentDataStoreFactory"/> or <see cref="IPersistentDataStoreAsyncFactory"/>
-    /// that implements the specific data store behavior. The SDK then provides additional
-    /// options for caching; those are defined by this type, which is returned by
-    /// <see cref="Components.PersistentDataStore(IPersistentDataStoreFactory)"/>. Example usage:
+    /// provide an <see cref="IComponentConfigurer{T}"/> for <see cref="IPersistentDataStore"/> or
+    /// <see cref="IPersistentDataStoreAsync"/> that implements the specific data store behavior. The
+    /// SDK then provides additional options for caching; those are defined by this type, which is returned
+    /// by <see cref="Components.PersistentDataStore(IComponentConfigurer{IPersistentDataStore})"/> or
+    /// <see cref="Components.PersistentDataStore(IComponentConfigurer{IPersistentDataStoreAsync})"/>. Example usage:
     /// </para>
     /// <code>
     ///     var myStore = Components.PersistentDataStore(Redis.FeatureStore())
@@ -25,10 +26,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     ///         .Build();
     /// </code>
     /// </remarks>
-    public class PersistentDataStoreBuilder : IDataStoreFactory, IDiagnosticDescription
+    public class PersistentDataStoreBuilder : IComponentConfigurer<IDataStore>, IDiagnosticDescription
     {
-        private readonly IPersistentDataStoreFactory _coreFactory;
-        private readonly IPersistentDataStoreAsyncFactory _coreAsyncFactory;
+        private readonly IComponentConfigurer<IPersistentDataStore> _coreFactory;
+        private readonly IComponentConfigurer<IPersistentDataStoreAsync> _coreAsyncFactory;
         private DataStoreCacheConfig _cacheConfig = DataStoreCacheConfig.Enabled;
 
         /// <summary>
@@ -36,13 +37,13 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// </summary>
         public static readonly TimeSpan DefaultTtl = DataStoreCacheConfig.DefaultTtl;
 
-        internal PersistentDataStoreBuilder(IPersistentDataStoreFactory coreFactory)
+        internal PersistentDataStoreBuilder(IComponentConfigurer<IPersistentDataStore> coreFactory)
         {
             _coreFactory = coreFactory;
             _coreAsyncFactory = null;
         }
 
-        internal PersistentDataStoreBuilder(IPersistentDataStoreAsyncFactory coreAsyncFactory)
+        internal PersistentDataStoreBuilder(IComponentConfigurer<IPersistentDataStoreAsync> coreAsyncFactory)
         {
             _coreFactory = null;
             _coreAsyncFactory = coreAsyncFactory;
@@ -133,41 +134,41 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public PersistentDataStoreBuilder CacheForever() => CacheTime(Timeout.InfiniteTimeSpan);
 
         /// <inheritdoc/>
-        public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates)
+        public IDataStore Build(LdClientContext context)
         {
             if (_coreFactory != null)
             {
                 return new PersistentStoreWrapper(
-                    _coreFactory.CreatePersistentDataStore(context),
+                    _coreFactory.Build(context),
                     _cacheConfig,
-                    dataStoreUpdates,
+                    context.DataStoreUpdates,
                     context.TaskExecutor,
-                    context.Basic.Logger
+                    context.Logger
                     );
             }
             else if (_coreAsyncFactory != null)
             {
                 return new PersistentStoreWrapper(
-                    _coreAsyncFactory.CreatePersistentDataStore(context),
+                    _coreAsyncFactory.Build(context),
                     _cacheConfig,
-                    dataStoreUpdates,
+                    context.DataStoreUpdates,
                     context.TaskExecutor,
-                    context.Basic.Logger
+                    context.Logger
                     );
             }
             return null;
         }
 
         /// <inheritdoc/>
-        public LdValue DescribeConfiguration(BasicConfiguration basic)
+        public LdValue DescribeConfiguration(LdClientContext context)
         {
             if (_coreFactory != null && _coreFactory is IDiagnosticDescription dd1)
             {
-                return dd1.DescribeConfiguration(basic);
+                return dd1.DescribeConfiguration(context);
             }
             if (_coreAsyncFactory != null && _coreAsyncFactory is IDiagnosticDescription dd2)
             {
-                return dd2.DescribeConfiguration(basic);
+                return dd2.DescribeConfiguration(context);
             }
             return LdValue.Of("custom");
         }

@@ -51,7 +51,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <list type="bullet">
         /// <item><description><c>flags</c>: Feature flag definitions.</description></item>
         /// <item><description><c>flagVersions</c>: Simplified feature flags that contain only a value.</description></item>
-        /// <item><description><c>segments</c>: User segment definitions.</description></item>
+        /// <item><description><c>segments</c>: Segment definitions.</description></item>
         /// </list>
         /// <para>
         /// The format of the data in <c>flags</c> and <c>segments</c> is defined by the LaunchDarkly application

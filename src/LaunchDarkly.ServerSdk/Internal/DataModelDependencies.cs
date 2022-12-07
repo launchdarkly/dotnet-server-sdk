@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
 namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 {
@@ -102,17 +102,27 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
             {
                 var flag = fromItem.Item as FeatureFlag;
                 var prereqFlagKeys = flag.Prerequisites.Select(p => p.Key);
-                var segmentKeys = flag.Rules.SelectMany(rule =>
-                    rule.Clauses.SelectMany(clause =>
-                        clause.Op == Operator.SegmentMatch ?
-                            clause.Values.Select(v => v.AsString) :
-                            Enumerable.Empty<string>()
-                    )
-                );
-                return new HashSet<KindAndKey>(prereqFlagKeys.Select(key => new KindAndKey(DataModel.Features, key))
-                    .Union(segmentKeys.Select(key => new KindAndKey(DataModel.Segments, key))));
+                var segmentKeys = flag.Rules.SelectMany(rule => SegmentKeysFromClauses(rule.Clauses));
+                return new HashSet<KindAndKey>(KindAndKeys(DataModel.Features, prereqFlagKeys)
+                    .Union(KindAndKeys(DataModel.Segments, segmentKeys)));
+            }
+            else if (fromKind == DataModel.Segments)
+            {
+                var segment = fromItem.Item as Segment;
+                var segmentKeys = segment.Rules.SelectMany(rule => SegmentKeysFromClauses(rule.Clauses));
+                return new HashSet<KindAndKey>(KindAndKeys(DataModel.Segments, segmentKeys));
             }
             return new HashSet<KindAndKey>();
         }
+
+        private static IEnumerable<string> SegmentKeysFromClauses(IEnumerable<Clause> clauses) =>
+            clauses.SelectMany(clause =>
+                        clause.Op == Operator.SegmentMatch ?
+                            clause.Values.Select(v => v.AsString) :
+                            Enumerable.Empty<string>()
+                    );
+
+        private static IEnumerable<KindAndKey> KindAndKeys(DataKind kind, IEnumerable<string> keys) =>
+            keys.Select(key => new KindAndKey(kind, key));
     }
 }

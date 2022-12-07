@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using Xunit;
 
@@ -12,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
 
     public class EvaluatorRuleTest
     {
-        private static readonly User baseUser = User.WithKey("userkey");
+        private static readonly Context baseUser = Context.New("userkey");
         private static readonly LdValue fallthroughValue = LdValue.Of("fallthrough");
         private static readonly LdValue offValue = LdValue.Of("off");
         private static readonly LdValue onValue = LdValue.Of("on");
@@ -20,11 +19,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void FlagReturnsInExperimentForRuleMatchWhenInExperimentVariation()
         {
-            var user = User.WithKey("userkey");
+            var user = Context.New("userkey");
             var rollout = BuildRollout(RolloutKind.Experiment, false);
             var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchUser(user)).Build();
             var f = FeatureFlagWithRules(rule);
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
             Assert.True(result.Result.Reason.InExperiment);
@@ -33,11 +32,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void FlagReturnsNotInExperimentForRuleMatchWhenNotInExperimentVariation()
         {
-            var user = User.WithKey("userkey");
+            var user = Context.New("userkey");
             var rollout = BuildRollout(RolloutKind.Experiment, true);
             var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchUser(user)).Build();
             var f = FeatureFlagWithRules(rule);
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
             Assert.False(result.Result.Reason.InExperiment);
@@ -46,79 +45,103 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
         [Fact]
         public void FlagReturnsInExperimentForRuleMatchWhenInExperimentVariationButNonExperimentRollout()
         {
-            var user = User.WithKey("userkey");
+            var user = Context.New("userkey");
             var rollout = BuildRollout(RolloutKind.Rollout, false);
             var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchUser(user)).Build();
             var f = FeatureFlagWithRules(rule);
-            var result = BasicEvaluator.Evaluate(f, baseUser, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
 
             Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
             Assert.False(result.Result.Reason.InExperiment);
         }
 
         [Fact]
+        public void InExperimentIsFalseIfContextKindNotFoundForExperiment()
+        {
+            var context = Context.New(ContextKind.Of("other"), "key");
+            var rollout = new Rollout(
+                RolloutKind.Experiment,
+                ContextKind.Of("nonexistent"),
+                null,
+                new List<WeightedVariation>()
+                {
+                    new WeightedVariation(0, 1, false),
+                    new WeightedVariation(1, 99999, false)
+                },
+                AttributeRef.FromLiteral("key")
+                );
+            var rule = new RuleBuilder().Id("id").Rollout(rollout).Clauses(ClauseBuilder.ShouldMatchAnyContext()).Build();
+            var f = FeatureFlagWithRules(rule);
+            var result = BasicEvaluator.Evaluate(f, baseUser);
+
+            Assert.Equal(EvaluationReasonKind.RuleMatch, result.Result.Reason.Kind);
+            Assert.Equal(0, result.Result.VariationIndex);
+            Assert.False(result.Result.Reason.InExperiment);
+        }
+
+        [Fact]
         public void RuleWithTooHighVariationReturnsMalformedFlagError()
         {
-            var user = User.WithKey("userkey");
+            var user = Context.New("userkey");
             var clause = ClauseBuilder.ShouldMatchUser(user);
             var rule = new RuleBuilder().Id("ruleid").Variation(999).Clauses(clause).Build();
             var f = FeatureFlagWithRules(rule);
 
-            var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, user);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Empty(result.PrerequisiteEvals);
         }
 
         [Fact]
         public void RuleWithNegativeVariationReturnsMalformedFlagError()
         {
-            var user = User.WithKey("userkey");
+            var user = Context.New("userkey");
             var clause = ClauseBuilder.ShouldMatchUser(user);
             var rule = new RuleBuilder().Id("ruleid").Variation(-1).Clauses(clause).Build();
             var f = FeatureFlagWithRules(rule);
 
-            var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, user);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Empty(result.PrerequisiteEvals);
         }
 
         [Fact]
         public void RuleWithNoVariationOrRolloutReturnsMalformedFlagError()
         {
-            var user = User.WithKey("userkey");
+            var user = Context.New("userkey");
             var clause = ClauseBuilder.ShouldMatchUser(user);
             var rule = new RuleBuilder().Id("ruleid").Clauses(clause).Build();
             var f = FeatureFlagWithRules(rule);
 
-            var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, user);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Empty(result.PrerequisiteEvals);
         }
 
         [Fact]
         public void RuleWithRolloutWithEmptyVariationsListReturnsMalformedFlagError()
         {
-            var user = User.WithKey("userkey");
+            var user = Context.New("userkey");
             var clause = ClauseBuilder.ShouldMatchUser(user);
             var rule = new RuleBuilder().Id("ruleid").Clauses(clause)
-                .Rollout(new Rollout(RolloutKind.Rollout, null, new List<WeightedVariation>(), null)).Build();
+                .Rollout(new Rollout(RolloutKind.Rollout, null, null, new List<WeightedVariation>(), new AttributeRef())).Build();
             var f = FeatureFlagWithRules(rule);
 
-            var result = BasicEvaluator.Evaluate(f, user, EventFactory.Default);
+            var result = BasicEvaluator.Evaluate(f, user);
 
             var expected = new EvaluationDetail<LdValue>(LdValue.Null, null,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.MalformedFlag));
             Assert.Equal(expected, result.Result);
-            Assert.Equal(0, result.PrerequisiteEvents.Count);
+            Assert.Empty(result.PrerequisiteEvals);
         }
 
         private FeatureFlag FeatureFlagWithRules(params FlagRule[] rules)
@@ -139,7 +162,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Evaluation
                 new WeightedVariation(2, 20000, untrackedVariations)
             };
             const int seed = 123;
-            return new Rollout(kind, seed, variations, UserAttribute.Key);
+            return new Rollout(kind, null, seed, variations, new AttributeRef());
         }
     }
 }

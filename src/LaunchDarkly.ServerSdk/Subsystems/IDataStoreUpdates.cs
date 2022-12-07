@@ -1,13 +1,15 @@
 ﻿
-namespace LaunchDarkly.Sdk.Server.Interfaces
+using LaunchDarkly.Sdk.Server.Interfaces;
+
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface that an implementation of <see cref="IDataStore"/> can use to report
     /// information back to the SDK.
     /// </summary>
     /// <remarks>
-    /// The <see cref="IDataStoreFactory"/> receives an implementation of this interface
-    /// and can pass it to the data store that it creates, if desired.
+    /// Component factories for <see cref="IDataStore"/> implementations will receive an implementation of this
+    /// interface in the <see cref="LdClientContext.DataStoreUpdates"/> property of <see cref="LdClientContext"/>.
     /// </remarks>
     public interface IDataStoreUpdates
     {

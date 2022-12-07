@@ -8,7 +8,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     {
         private readonly TestData _td = TestData.DataSource();
         private readonly Configuration _config;
-        private readonly User _user = User.WithKey("userkey");
+        private readonly Context _user = Context.New("userkey");
 
         public TestDataWithClientTest(ITestOutputHelper testOutput) : base(testOutput)
         {
@@ -58,8 +58,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
             using (var client = new LdClient(_config))
             {
-                Assert.True(client.BoolVariation("flag", User.WithKey("user1"), false));
-                Assert.False(client.BoolVariation("flag", User.WithKey("user2"), false));
+                Assert.True(client.BoolVariation("flag", Context.New("user1"), false));
+                Assert.False(client.BoolVariation("flag", Context.New("user2"), false));
             }
         }
 
@@ -67,14 +67,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         public void UsesRules()
         {
             _td.Update(_td.Flag("flag").FallthroughVariation(false)
-                .IfMatch(UserAttribute.Name, LdValue.Of("Lucy")).ThenReturn(true)
-                .IfMatch(UserAttribute.Name, LdValue.Of("Mina")).ThenReturn(true));
+                .IfMatch("name", LdValue.Of("Lucy")).ThenReturn(true)
+                .IfMatch("name", LdValue.Of("Mina")).ThenReturn(true));
 
             using (var client = new LdClient(_config))
             {
-                Assert.True(client.BoolVariation("flag", User.Builder("user1").Name("Lucy").Build(), false));
-                Assert.True(client.BoolVariation("flag", User.Builder("user2").Name("Mina").Build(), false));
-                Assert.False(client.BoolVariation("flag", User.Builder("user3").Name("Quincy").Build(), false));
+                Assert.True(client.BoolVariation("flag", Context.Builder("user1").Name("Lucy").Build(), false));
+                Assert.True(client.BoolVariation("flag", Context.Builder("user2").Name("Mina").Build(), false));
+                Assert.False(client.BoolVariation("flag", Context.Builder("user3").Name("Quincy").Build(), false));
             }
         }
 
@@ -84,17 +84,17 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             _td.Update(_td.Flag("flag").Variations(LdValue.Of("red"), LdValue.Of("green"), LdValue.Of("blue"))
                 .OffVariation(0).FallthroughVariation(2)
                 .VariationForUser("user1", 1)
-                .IfMatch(UserAttribute.Name, LdValue.Of("Mina")).ThenReturn(1));
+                .IfMatch("name", LdValue.Of("Mina")).ThenReturn(1));
 
             using (var client = new LdClient(_config))
             {
-                Assert.Equal("green", client.StringVariation("flag", User.Builder("user1").Name("Lucy").Build(), ""));
-                Assert.Equal("green", client.StringVariation("flag", User.Builder("user2").Name("Mina").Build(), ""));
-                Assert.Equal("blue", client.StringVariation("flag", User.Builder("user3").Name("Quincy").Build(), ""));
+                Assert.Equal("green", client.StringVariation("flag", Context.Builder("user1").Name("Lucy").Build(), ""));
+                Assert.Equal("green", client.StringVariation("flag", Context.Builder("user2").Name("Mina").Build(), ""));
+                Assert.Equal("blue", client.StringVariation("flag", Context.Builder("user3").Name("Quincy").Build(), ""));
 
                 _td.Update(_td.Flag("flag").On(false));
 
-                Assert.Equal("red", client.StringVariation("flag", User.Builder("user1").Name("Lucy").Build(), ""));
+                Assert.Equal("red", client.StringVariation("flag", Context.Builder("user1").Name("Lucy").Build(), ""));
             }
         }
 

@@ -1,8 +1,8 @@
 ﻿using System;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 
-namespace LaunchDarkly.Sdk.Server.Interfaces
+namespace LaunchDarkly.Sdk.Server.Subsystems
 {
     /// <summary>
     /// Interface for a data store that holds feature flags and related data in a
@@ -60,7 +60,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
     /// to determine when the store has started working again.
     /// </para>
     /// </remarks>
-    /// <seealso cref="IPersistentDataStoreFactory"/>
     /// <seealso cref="IPersistentDataStoreAsync"/>
     /// <seealso cref="IDataStore"/>
     public interface IPersistentDataStore : IDisposable
@@ -167,21 +166,5 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         /// <returns>true if the underlying data store is reachable</returns>
         bool IsStoreAvailable();
-    }
-
-    /// <summary>
-    /// Interface for a factory that creates some implementation of <see cref="IPersistentDataStore"/>.
-    /// </summary>
-    /// <seealso cref="ConfigurationBuilder.DataStore(IDataStoreFactory)"/>
-    /// <seealso cref="Components.PersistentDataStore(IPersistentDataStoreFactory)"/>
-    public interface IPersistentDataStoreFactory
-    {
-        /// <summary>
-        /// Called internally by the SDK to create an implementation instance. Applications do not need
-        /// to call this method.
-        /// </summary>
-        /// <param name="context">configuration of the current client instance</param>
-        /// <returns>an <see cref="IPersistentDataStore"/> instance</returns>
-        IPersistentDataStore CreatePersistentDataStore(LdClientContext context);
     }
 }

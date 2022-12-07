@@ -7,7 +7,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
     internal sealed class FlagTrackerImpl : IFlagTracker
     {
         private readonly DataSourceUpdatesImpl _dataSourceUpdates;
-        private readonly Func<string, User, LdValue> _evaluateFn;
+        private readonly Func<string, Context, LdValue> _evaluateFn;
 
         public event EventHandler<FlagChangeEvent> FlagChanged
         {
@@ -23,7 +23,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
         internal FlagTrackerImpl(
             DataSourceUpdatesImpl dataSourceUpdates,
-            Func<string, User, LdValue> evaluateFn
+            Func<string, Context, LdValue> evaluateFn
             )
         {
             _dataSourceUpdates = dataSourceUpdates;
@@ -32,38 +32,38 @@ namespace LaunchDarkly.Sdk.Server.Internal
 
         public EventHandler<FlagChangeEvent> FlagValueChangeHandler(
             string flagKey,
-            User user,
+            Context context,
             EventHandler<FlagValueChangeEvent> handler
             )
         {
             var monitor = new FlagValueChangeMonitor(_evaluateFn, flagKey,
-                user, handler);
+                context, handler);
             return monitor.OnFlagChanged;
         }
 
         private sealed class FlagValueChangeMonitor
         {
-            private readonly Func<string, User, LdValue> _evaluateFn;
+            private readonly Func<string, Context, LdValue> _evaluateFn;
             private readonly string _flagKey;
-            private readonly User _user;
+            private readonly Context _context;
             private readonly EventHandler<FlagValueChangeEvent> _handler;
             private readonly object _valueLock = new object();
 
             private LdValue _value;
 
             internal FlagValueChangeMonitor(
-                Func<string, User, LdValue> evaluateFn,
+                Func<string, Context, LdValue> evaluateFn,
                 string flagKey,
-                User user,
+                Context context,
                 EventHandler<FlagValueChangeEvent> handler
                 )
             {
                 _evaluateFn = evaluateFn;
                 _flagKey = flagKey;
-                _user = user;
+                _context = context;
                 _handler = handler;
 
-                _value = evaluateFn(flagKey, user);
+                _value = evaluateFn(flagKey, context);
             }
 
             internal void OnFlagChanged(object sender, FlagChangeEvent eventArgs)
@@ -72,7 +72,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
                 {
                     return;
                 }
-                var newValue = _evaluateFn(_flagKey, _user);
+                var newValue = _evaluateFn(_flagKey, _context);
                 LdValue oldValue = LdValue.Null;
                 bool changed = false;
                 lock (_valueLock)

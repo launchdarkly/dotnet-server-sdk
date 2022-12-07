@@ -1,10 +1,8 @@
 ﻿using LaunchDarkly.Logging;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using Xunit;
 using Xunit.Sdk;
 
-using static LaunchDarkly.Sdk.Server.Interfaces.DataStoreTypes;
-using static LaunchDarkly.Sdk.Server.MockResponses;
+using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
 
 namespace LaunchDarkly.Sdk.Server

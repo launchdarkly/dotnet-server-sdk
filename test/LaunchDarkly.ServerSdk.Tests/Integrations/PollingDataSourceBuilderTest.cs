@@ -10,16 +10,6 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             BuilderBehavior.For(Components.PollingDataSource);
 
         [Fact]
-        public void BaseUri()
-        {
-#pragma warning disable CS0618  // using deprecated symbol
-            var prop = _tester.Property(b => b._baseUri, (b, v) => b.BaseUri(v));
-#pragma warning restore CS0618
-            prop.AssertDefault(null);
-            prop.AssertCanSet(new Uri("http://x"));
-        }
-
-        [Fact]
         public void PollInterval()
         {
             var prop = _tester.Property(b => b._pollInterval, (b, v) => b.PollInterval(v));

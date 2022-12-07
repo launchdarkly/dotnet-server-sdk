@@ -2,6 +2,7 @@
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Subsystems;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -56,11 +57,11 @@ namespace LaunchDarkly.Sdk.Server
                 new FeatureFlagBuilder("key").OffWithValue(LdValue.Of(true)).Build());
             var config = BasicConfig()
                 .DataSource(Components.ExternalUpdatesOnly)
-                .DataStore(dataStore.AsSingletonFactory())
+                .DataStore(dataStore.AsSingletonFactory<IDataStore>())
                 .Build();
             using (var client = new LdClient(config))
             {
-                Assert.True(client.BoolVariation("key", User.WithKey("user"), false));
+                Assert.True(client.BoolVariation("key", Context.New("user"), false));
             }
         }
     }

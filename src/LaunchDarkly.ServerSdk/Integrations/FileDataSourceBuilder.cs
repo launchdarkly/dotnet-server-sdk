@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
+using LaunchDarkly.Sdk.Server.Subsystems;
 
 namespace LaunchDarkly.Sdk.Server.Integrations
 {
@@ -13,10 +13,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
     /// To use the file data source, obtain a new instance of this class with <see cref="FileData.DataSource"/>;
     /// call the builder method {@link #filePaths(String...)} to specify file path(s), and/or
     /// {@link #classpathResources(String...)} to specify classpath data resources; then pass the resulting
-    /// object to <see cref="ConfigurationBuilder.DataSource(Interfaces.IDataSourceFactory)"/>.
+    /// object to <see cref="ConfigurationBuilder.DataSource"/>.
     /// </remarks>
     /// <seealso cref="FileData"/>
-    public sealed class FileDataSourceBuilder : IDataSourceFactory
+    public sealed class FileDataSourceBuilder : IComponentConfigurer<IDataSource>
     {
         internal readonly List<string> _paths = new List<string>();
         internal bool _autoUpdate = false;
@@ -65,10 +65,16 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// but if that fails, it will use the custom parser.
         /// </para>
         /// <para>
-        /// Here is an example of how you would do this with the <c>YamlDotNet</c> package:
+        /// Here is an example of how you would do this with the <c>YamlDotNet</c> package. Note the use of a
+        /// <c>DeserializerBuilder</c> configuration method to tell the parser that it should interpret a property like
+        /// <c>on: true</c> or <c>variation: 3</c> as a boolean or integer rather than a string; YAML syntax is very
+        /// flexible, so how you configure the parser will depend on how you are formatting the file, but data types do
+        /// matter in flag configurations so you do not want it to simply read every property as a string.
         /// </para>
         /// <code>
-        ///     var yaml = new DeserializerBuilder().Build();
+        ///     var yaml = new DeserializerBuilder()
+        ///         .WithAttemptingUnquotedStringTypeDeserialization()
+        ///         .Build();
         ///     var source = FileData.DataSource()
         ///         .FilePaths(myYamlFilePath)
         ///         .Parser(s => yaml.Deserialize&lt;object&gt;(s));
@@ -148,11 +154,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         /// <inheritdoc/>
-        public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)
+        public IDataSource Build(LdClientContext context)
         {
-            return new FileDataSource(dataSourceUpdates, _fileReader, _paths, _autoUpdate,
+            return new FileDataSource(context.DataSourceUpdates, _fileReader, _paths, _autoUpdate,
                 _parser, _skipMissingPaths, _duplicateKeysHandling,
-                context.Basic.Logger.SubLogger(LogNames.DataSourceSubLog));
+                context.Logger.SubLogger(LogNames.DataSourceSubLog));
         }
     }
 }
