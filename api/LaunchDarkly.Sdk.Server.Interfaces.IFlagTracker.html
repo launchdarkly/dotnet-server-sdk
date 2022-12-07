@@ -89,14 +89,14 @@ Application code never needs to implement this interface.</p>
   <h3 id="methods">Methods
   </h3>
   <a id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.FlagValueChangeHandler*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_User_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent__" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.FlagValueChangeHandler(System.String,LaunchDarkly.Sdk.User,System.EventHandler{LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent})">FlagValueChangeHandler(String, User, EventHandler&lt;FlagValueChangeEvent&gt;)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_Context_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent__" data-uid="LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.FlagValueChangeHandler(System.String,LaunchDarkly.Sdk.Context,System.EventHandler{LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent})">FlagValueChangeHandler(String, Context, EventHandler&lt;FlagValueChangeEvent&gt;)</h4>
   <div class="markdown level1 summary"><p>Creates a handler for receiving notifications when a specific feature flag&apos;s value
-has changed for a specific set of user properties.</p>
+has changed for a specific evaluation context.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">EventHandler&lt;FlagChangeEvent&gt; FlagValueChangeHandler(string flagKey, User user, EventHandler&lt;FlagValueChangeEvent&gt; handler)</code></pre>
+    <pre><code class="lang-csharp hljs">EventHandler&lt;FlagChangeEvent&gt; FlagValueChangeHandler(string flagKey, Context context, EventHandler&lt;FlagValueChangeEvent&gt; handler)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -115,9 +115,9 @@ has changed for a specific set of user properties.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
-        <td><span class="parametername">user</span></td>
-        <td><p>the user properties for evaluation</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>the evaluation context</p>
 </td>
       </tr>
       <tr>
@@ -144,7 +144,7 @@ has changed for a specific set of user properties.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_User_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent___remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_Context_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 When you call this method, it first immediately evaluates the feature flag. It then
 returns a new event handler which you can add to the <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.html#LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagChanged">FlagChanged</a> event.
@@ -154,23 +154,23 @@ changed. In other words, this method filters the more general <a class="xref" hr
 events to produce more specific <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent.html">FlagValueChangeEvent</a> events.
 </p>
 <p>
-All feature flag evaluations require an instance of <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>. If the
-feature flag you are tracking does not have any user targeting rules, you must still
-pass a dummy user such as <code>User.WithKey(&quot;for-global-flags&quot;)</code>. If you do not
+All feature flag evaluations require an instance of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>. If the
+feature flag you are tracking does not have any targeting rules, you must still
+pass a dummy context such as <code>Context.New(&quot;for-global-flags&quot;)</code>. If you do not
 want the user to appear on your dashboard, use the <code>Anonymous</code> property:
-<code>User.Builder(&quot;for-global-flags&quot;).Anonymous(true).Build()</code>.
+<code>Context.Builder(&quot;for-global-flags&quot;).Anonymous(true).Build()</code>.
 </p>
 </div>
-  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_User_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent___examples">Examples</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_Context_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent___examples">Examples</h5>
   <pre><code>    var flagKey = &quot;my-important-flag&quot;;
-    var userForFlagEvaluation = User.WithKey(&quot;user-for-evaluation&quot;);
+    var contextForFlagEvaluation = Context.New(&quot;context-for-evaluation&quot;);
     var listenForNewValue = client.FlagTracker.FlagValueChangeHandler(
         flagKey,
-        userForFlagEvaluation,
+        contextForFlagEvaluation,
         (sender, changeArgs) =>
             {
                 System.Console.WriteLine(&quot;flag &apos;&quot; + changeArgs.Key
-                    + &quot;&apos; changed for &quot; + userForFlagEvaluation.Key
+                    + &quot;&apos; changed for &quot; + contextForFlagEvaluation.Key
                     + &quot; from &quot; + changeArgs.OldValue
                     + &quot; to &quot; + changeArgs.NewValue);
             });
@@ -204,16 +204,16 @@ want the user to appear on your dashboard, use the <code>Anonymous</code> proper
   <h5 id="LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagChanged_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 This event is raised whenever the SDK receives any change to any feature flag&apos;s
-configuration, or to a user segment that is referenced by a feature flag. If the
+configuration, or to a segment that is referenced by a feature flag. If the
 updated flag is used as a prerequisite for other flags, the SDK assumes that those
 flags may now behave differently and sends flag change events for them as well.
 </p>
 <p>
 Note that this does not necessarily mean the flag&apos;s value has changed for any
-particular user, only that some part of the flag configuration was changed so that
-it <em>may</em> return a different value than it previously returned for some user.
-If you want to track flag value changes, use
-<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.html#LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_User_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent__">FlagValueChangeHandler(String, User, EventHandler&lt;FlagValueChangeEvent&gt;)</a>.
+particular evaluation context, only that some part of the flag configuration was
+changed so that it <em>may</em> return a different value than it previously returned
+for some context. If you want to track flag value changes, use
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.html#LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_FlagValueChangeHandler_System_String_LaunchDarkly_Sdk_Context_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent__">FlagValueChangeHandler(String, Context, EventHandler&lt;FlagValueChangeEvent&gt;)</a>.
 </p>
 <p>
 Change events only work if the SDK is actually connecting to LaunchDarkly (or
@@ -233,6 +233,10 @@ notifications.
 System.Console.WriteLine(&quot;a flag has changed: &quot; + eventArgs.Key);
 };</p>
 
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.html#LaunchDarkly_Sdk_Server_Interfaces_IFlagTrackerExtensionMethods_FlagValueChangeHandler_LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_System_String_LaunchDarkly_Sdk_User_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent__">IFlagTrackerExtensionMethods.FlagValueChangeHandler(IFlagTracker, String, User, EventHandler&lt;FlagValueChangeEvent&gt;)</a>
+  </div>
 </article>
           </div>
           

@@ -88,15 +88,476 @@
     <pre><code class="lang-csharp hljs">public static class ILdClientExtensions : Object</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_remarks"><strong>Remarks</strong></h5>
-  <div class="markdown level0 remarks"><p>These are implemented outside of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a> and <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a> because they do not
+  <div class="markdown level0 remarks"><p>
+These allow you to do the following:
+</p>
+<ul><li>
+    Treat a string-valued flag as if it referenced values of an <code>enum</code> type.
+</li><li>
+    Call <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a> methods with the <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of
+<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>. The SDK&apos;s preferred type for identifying an evaluation context,
+when evaluating flags or generating analytics events, is <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>; older
+versions of the SDK used only the simpler <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> model. These extension
+methods provide backward compatibility with application code that used the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type. Each of them simply converts the User to a Context with
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_FromUser_LaunchDarkly_Sdk_User_">FromUser(User)</a> and calls the equivalent ILdClient method.
+For instance, <code>client.BoolVariation(flagKey, user, false)</code> is exactly
+equivalent to <code>client.BoolVariation(flagKey, Context.FromUser(user), false)</code>.
+</li></ul>
+<p>
+These are implemented outside of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a> and <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a> because they do not
 rely on any implementation details of <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a>; they are decorators that would work equally
-well with a stub or test implementation of the interface.</p>
+well with a stub or test implementation of the interface.
+</p>
 </div>
   <h3 id="methods">Methods
   </h3>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_AllFlagsState_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_AllFlagsState_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_Server_FlagsStateOption___" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.Server.FlagsStateOption[])">AllFlagsState(ILdClient, User, FlagsStateOption[])</h4>
+  <div class="markdown level1 summary"><p>Returns an object that encapsulates the state of all feature flags for a given user, which
+can be passed to front-end code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FeatureFlagsState AllFlagsState(this ILdClient client, User user, params FlagsStateOption[] options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.FlagsStateOption.html">FlagsStateOption</a>[]</td>
+        <td><span class="parametername">options</span></td>
+        <td><p>optional <a class="xref" href="LaunchDarkly.Sdk.Server.FlagsStateOption.html">FlagsStateOption</a> values affecting how the state is
+computed-- for instance, to filter the set of flags to only include the client-side-enabled ones</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.FeatureFlagsState.html">FeatureFlagsState</a></td>
+        <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.FeatureFlagsState.html">FeatureFlagsState</a> object (will never be null; see
+<a class="xref" href="LaunchDarkly.Sdk.Server.FeatureFlagsState.html#LaunchDarkly_Sdk_Server_FeatureFlagsState_Valid">Valid</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_AllFlagsState_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_Server_FlagsStateOption____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_AllFlagsState_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_FlagsStateOption___">AllFlagsState(Context, FlagsStateOption[])</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_AllFlagsState_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_Server_FlagsStateOption____seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_AllFlagsState_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_FlagsStateOption___">AllFlagsState</a>(<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.Server.FlagsStateOption.html">FlagsStateOption</a>[])</div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Boolean)">BoolVariation(ILdClient, String, User, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Calculates the boolean value of a feature flag for a given user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool BoolVariation(this ILdClient client, string key, User user, bool defaultValue = false)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>the variation for the given context, or <code>defaultValue</code> if the flag cannot
+be evaluated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BoolVariation_System_String_LaunchDarkly_Sdk_Context_System_Boolean_">BoolVariation(String, Context, Boolean)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BoolVariation_System_String_LaunchDarkly_Sdk_Context_System_Boolean_">BoolVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Boolean</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_">BoolVariationDetail(ILdClient, String, User, Boolean)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Boolean)">BoolVariationDetail(ILdClient, String, User, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Calculates the boolean value of a feature flag for a given user, and returns an object that
+describes the way the value was determined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;bool&gt; BoolVariationDetail(this ILdClient client, string key, User user, bool defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail</a>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a> object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BoolVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Boolean_">BoolVariationDetail(String, Context, Boolean)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BoolVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Boolean_">BoolVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Boolean</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_">BoolVariation(ILdClient, String, User, Boolean)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Double)">DoubleVariation(ILdClient, String, User, Double)</h4>
+  <div class="markdown level1 summary"><p>Calculates the double-precision floating-point numeric value of a feature flag for a
+given user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double DoubleVariation(this ILdClient client, string key, User user, double defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><p>the variation for the given context, or <code>defaultValue</code> if the flag cannot
+be evaluated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariation_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariation(String, Context, Double)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariation_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Double</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_">DoubleVariationDetail(ILdClient, String, User, Double)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_">FloatVariation(ILdClient, String, User, Single)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Double)">DoubleVariationDetail(ILdClient, String, User, Double)</h4>
+  <div class="markdown level1 summary"><p>Calculates the double-precision floating-point numeric value of a feature flag for a
+given user, and returns an object that describes the way the value was determined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;double&gt; DoubleVariationDetail(this ILdClient client, string key, User user, double defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail</a>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a> object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariationDetail(String, Context, Double)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Double</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_">DoubleVariation(ILdClient, String, User, Double)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_">FloatVariationDetail(ILdClient, String, User, Single)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_Context___0_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation``1(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.Context,``0)">EnumVariation&lt;T&gt;(ILdClient, String, Context, T)</h4>
+  <div class="markdown level1 summary"><p>Equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariation_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariation(String, Context, String)</a>, but converts the
+flag&apos;s string value to an enum value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T EnumVariation&lt;T&gt;(this ILdClient client, string key, Context context, T defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>the evaluation context</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag (as an enum value)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><p>the variation for the given user, or <code>defaultValue</code> if the flag cannot
+be evaluated or does not have a valid enum value</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>the enum type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_Context___0__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+If the flag has a value that is not one of the allowed enum value names, or is not a string,
+<code>defaultValue</code> is returned.
+</p>
+<p>
+Note that there is no type constraint to guarantee that T really is an enum type, because that is
+a C# 7.3 feature that is unavailable in older versions of .NET Standard. If you try to use a
+non-enum type, you will simply receive the default value back.
+</p>
+</div>
   <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User___0_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation``1(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,``0)">EnumVariation&lt;T&gt;(ILdClient, String, User, T)</h4>
-  <div class="markdown level1 summary"><p>Equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariation_System_String_LaunchDarkly_Sdk_User_System_String_">StringVariation(String, User, String)</a>, but converts the
+  <div class="markdown level1 summary"><p>Equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariation_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariation(String, Context, String)</a>, but converts the
 flag&apos;s string value to an enum value.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -129,7 +590,7 @@ flag&apos;s string value to an enum value.</p>
       <tr>
         <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
         <td><span class="parametername">user</span></td>
-        <td><p>the end user requesting the flag</p>
+        <td><p>the user attributes</p>
 </td>
       </tr>
       <tr>
@@ -174,25 +635,18 @@ be evaluated or does not have a valid enum value</p>
     </tbody>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User___0__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>
-If the flag has a value that is not one of the allowed enum value names, or is not a string,
-<code>defaultValue</code> is returned.
-</p>
-<p>
-Note that there is no type constraint to guarantee that T really is an enum type, because that is
-a C# 7.3 feature that is unavailable in older versions of .NET Standard. If you try to use a
-non-enum type, you will simply receive the default value back.
-</p>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_Context___0_">EnumVariation&lt;T&gt;(ILdClient, String, Context, T)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariationDetail*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariationDetail__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User___0_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariationDetail``1(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,``0)">EnumVariationDetail&lt;T&gt;(ILdClient, String, User, T)</h4>
-  <div class="markdown level1 summary"><p>Equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariationDetail_System_String_LaunchDarkly_Sdk_User_System_String_">StringVariationDetail(String, User, String)</a>, but converts the
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariationDetail__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_Context___0_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariationDetail``1(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.Context,``0)">EnumVariationDetail&lt;T&gt;(ILdClient, String, Context, T)</h4>
+  <div class="markdown level1 summary"><p>Equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariationDetail(String, Context, String)</a>, but converts the
 flag&apos;s string value to an enum value.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;T&gt; EnumVariationDetail&lt;T&gt;(this ILdClient client, string key, User user, T defaultValue)</code></pre>
+    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;T&gt; EnumVariationDetail&lt;T&gt;(this ILdClient client, string key, Context context, T defaultValue)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -217,9 +671,9 @@ flag&apos;s string value to an enum value.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
-        <td><span class="parametername">user</span></td>
-        <td><p>the end user requesting the flag</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>the evaluation context</p>
 </td>
       </tr>
       <tr>
@@ -262,7 +716,7 @@ flag&apos;s string value to an enum value.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariationDetail__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User___0__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariationDetail__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_Context___0__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 If the flag has a value that is not one of the allowed enum value names, or is not a string,
 <code>defaultValue</code> is returned.
@@ -273,6 +727,845 @@ a C# 7.3 feature that is unavailable in older versions of .NET Standard. If you 
 non-enum type, you will simply receive the default value back.
 </p>
 </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Single)">FloatVariation(ILdClient, String, User, Single)</h4>
+  <div class="markdown level1 summary"><p>Calculates the single-precision floating-point numeric value of a feature flag for a
+given user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static float FloatVariation(this ILdClient client, string key, User user, float defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><p>the variation for the given context, or <code>defaultValue</code> if the flag cannot
+be evaluated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariation_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariation(String, Context, Single)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariation_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Single</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_">FloatVariationDetail(ILdClient, String, User, Single)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_">DoubleVariation(ILdClient, String, User, Double)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Single)">FloatVariationDetail(ILdClient, String, User, Single)</h4>
+  <div class="markdown level1 summary"><p>Calculates the single-precision floating-point numeric value of a feature flag for a
+given user, and returns an object that describes the way the value was determined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;float&gt; FloatVariationDetail(this ILdClient client, string key, User user, float defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail</a>&lt;<span class="xref">System.Single</span>&gt;</td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a> object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariationDetail(String, Context, Single)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Single</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_">FloatVariation(ILdClient, String, User, Single)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_">DoubleVariationDetail(ILdClient, String, User, Double)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Identify_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Identify_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User)">Identify(ILdClient, User)</h4>
+  <div class="markdown level1 summary"><p>Reports details about a user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Identify(this ILdClient client, User user)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user; should not be null (a null reference will cause an error
+to be logged and no event will be sent</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Identify_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Identify_LaunchDarkly_Sdk_Context_">Identify(Context)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Identify_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Identify_LaunchDarkly_Sdk_Context_">Identify</a>(<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>)</div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Int32)">IntVariation(ILdClient, String, User, Int32)</h4>
+  <div class="markdown level1 summary"><p>Calculates the integer value of a feature flag for a given user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int IntVariation(this ILdClient client, string key, User user, int defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>the variation for the given context, or <code>defaultValue</code> if the flag cannot
+be evaluated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IntVariation_System_String_LaunchDarkly_Sdk_Context_System_Int32_">IntVariation(String, Context, Int32)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IntVariation_System_String_LaunchDarkly_Sdk_Context_System_Int32_">IntVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Int32</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_">IntVariationDetail(ILdClient, String, User, Int32)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Int32)">IntVariationDetail(ILdClient, String, User, Int32)</h4>
+  <div class="markdown level1 summary"><p>Calculates the integer value of a feature flag for a given user, and returns an object that
+describes the way the value was determined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;int&gt; IntVariationDetail(this ILdClient client, string key, User user, int defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail</a>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a> object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IntVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Int32_">IntVariationDetail(String, Context, Int32)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IntVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Int32_">IntVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Int32</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_">IntVariation(ILdClient, String, User, Int32)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)">JsonVariation(ILdClient, String, User, LdValue)</h4>
+  <div class="markdown level1 summary"><p>Calculates the value of a feature flag for a given user as any JSON value type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue JsonVariation(this ILdClient client, string key, User user, LdValue defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><p>the variation for the given context, or <code>defaultValue</code> if the flag cannot
+be evaluated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_JsonVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">JsonVariation(String, Context, LdValue)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_JsonVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">JsonVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">JsonVariationDetail(ILdClient, String, User, LdValue)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)">JsonVariationDetail(ILdClient, String, User, LdValue)</h4>
+  <div class="markdown level1 summary"><p>Calculates the value of a feature flag for a given user as any JSON value type, and
+returns an object that describes the way the value was determined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;LdValue&gt; JsonVariationDetail(this ILdClient client, string key, User user, LdValue defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes </p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a> object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_JsonVariationDetail_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">JsonVariationDetail(String, Context, LdValue)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_JsonVariationDetail_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">JsonVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">JsonVariation(ILdClient, String, User, LdValue)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_SecureModeHash_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_SecureModeHash_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User)">SecureModeHash(ILdClient, User)</h4>
+  <div class="markdown level1 summary"><p>Creates a hash string that can be used by the JavaScript SDK to identify a user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string SecureModeHash(this ILdClient client, User user)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>the hash, or null if the hash could not be calculated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_SecureModeHash_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_SecureModeHash_LaunchDarkly_Sdk_Context_">SecureModeHash(Context)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_SecureModeHash_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_SecureModeHash_LaunchDarkly_Sdk_Context_">SecureModeHash</a>(<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>)</div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.String)">StringVariation(ILdClient, String, User, String)</h4>
+  <div class="markdown level1 summary"><p>Calculates the string value of a feature flag for a given user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string StringVariation(this ILdClient client, string key, User user, string defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>the variation for the given context, or <code>defaultValue</code> if the flag cannot
+be evaluated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariation_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariation(String, Context, String)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariation_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.String</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_">StringVariationDetail(ILdClient, String, User, String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.String)">StringVariationDetail(ILdClient, String, User, String)</h4>
+  <div class="markdown level1 summary"><p>Calculates the string value of a feature flag for a given user, and returns an object that
+describes the way the value was determined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static EvaluationDetail&lt;string&gt; StringVariationDetail(this ILdClient client, string key, User user, string defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user attributes</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail</a>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.EvaluationDetail-1.html">EvaluationDetail&lt;T&gt;</a> object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariationDetail(String, Context, String)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.String</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_">StringVariation(ILdClient, String, User, String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Track*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User)">Track(ILdClient, String, User)</h4>
+  <div class="markdown level1 summary"><p>Tracks that an application-defined event occurred.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Track(this ILdClient client, string name, User user)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>the name of the event</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user associated with the event; should not be null (a null reference
+will cause an error to be logged and no event will be sent</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_">Track(String, Context)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">Track(ILdClient, String, User, LdValue)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_System_Double_">Track(ILdClient, String, User, LdValue, Double)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Track*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)">Track(ILdClient, String, User, LdValue)</h4>
+  <div class="markdown level1 summary"><p>Tracks that an application-defined event occurred.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Track(this ILdClient client, string name, User user, LdValue data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>the name of the event</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user associated with the event</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>additional data associated with the event, if any</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">Track(String, Context, LdValue)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_">Track(ILdClient, String, User)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_System_Double_">Track(ILdClient, String, User, LdValue, Double)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Track*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_System_Double_" data-uid="LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue,System.Double)">Track(ILdClient, String, User, LdValue, Double)</h4>
+  <div class="markdown level1 summary"><p>Tracks that an application-defined event occurred, and provides an additional numeric value for
+custom metrics.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Track(this ILdClient client, string name, User user, LdValue data, double metricValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a></td>
+        <td><span class="parametername">client</span></td>
+        <td><p>the client instance</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>the name of the event</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>the user associated with the event</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>additional data associated with the event; use <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Null">Null</a> if
+not applicable</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">metricValue</span></td>
+        <td><p>a numeric value used by the LaunchDarkly experimentation feature in
+numeric custom metrics</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_System_Double__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_System_Double_">Track(String, Context, LdValue, Double)</a>, but using the
+<a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead of <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_System_Double__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_System_Double_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>, <span class="xref">System.Double</span>)</div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_">Track(ILdClient, String, User)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">Track(ILdClient, String, User, LdValue)</a></div>
+  </div>
 </article>
           </div>
           

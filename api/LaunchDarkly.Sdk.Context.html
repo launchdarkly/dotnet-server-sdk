@@ -1,0 +1,1402 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Context
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Context
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Context">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_Context" data-uid="LaunchDarkly.Sdk.Context" class="text-break">Class Context
+  </h1>
+  <div class="markdown level0 summary"><p>A collection of attributes that can be referenced in flag evaluations and analytics events.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Context</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Context_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class Context : ValueType, IEquatable&lt;Context&gt;, IJsonSerializable</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Context_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>
+Context is the newer replacement for the previous, less flexible <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type.
+The current SDK still supports User, but Context is now the preferred model and may
+entirely replace User in the future.
+</p>
+<p>
+To create a Context of a single kind, such as a user, you may use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_System_String_">New(String)</a>
+or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String_">New(ContextKind, String)</a> when only the key matters; or, to specify other
+attributes, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a>.
+</p>
+<p>
+To create a Context with multiple kinds, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context___">NewMulti(Context[])</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a>.
+</p>
+<p>
+An uninitialized Context struct is not valid for use in any SDK operations. Also, a Context can
+be in an error state if it was built with invalid attributes. See <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Error">Error</a>.
+</p>
+<p>
+A Context can be converted to or from JSON using a standard schema; see
+<a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonConverters.ContextConverter.html">LdJsonConverters.ContextConverter</a>.
+</p>
+<p>
+To learn more about contexts, read <a href="https://docs.launchdarkly.com/home/contexts">the
+documentation</a>.
+</p>
+</div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="LaunchDarkly_Sdk_Context_Anonymous_" data-uid="LaunchDarkly.Sdk.Context.Anonymous*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Anonymous" data-uid="LaunchDarkly.Sdk.Context.Anonymous">Anonymous</h4>
+  <div class="markdown level1 summary"><p>True if this Context is only intended for flag evaluations and will not be indexed by
+LaunchDarkly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Anonymous { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Anonymous_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+For a single-kind context, this value is set by <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Anonymous_System_Boolean_">Anonymous(Boolean)</a>.
+It is false if no value was set.
+</p>
+<p>
+Setting Anonymous to true excludes this Context from the database that is used by the dashboard. It does
+not exclude it from analytics event data, so it is not the same as making attributes private; all
+non-private attributes will still be included in events and data export. There is no limitation on what
+other attributes may be included (so, for instance, Anonymous does not mean there is no <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Name">Name</a>),
+and the Context will still have whatever <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Key">Key</a> you have given it.
+</p>
+<p>
+For a multi-kind context, there is no single value and <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Anonymous">Anonymous</a> returns
+false. Use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiKindContexts">MultiKindContexts</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a>
+to inspect a Context for a particular kind, then get the <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Anonymous">Anonymous</a> value from it.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_Anonymous_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Anonymous_System_Boolean_">Anonymous(Boolean)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_Defined_" data-uid="LaunchDarkly.Sdk.Context.Defined*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Defined" data-uid="LaunchDarkly.Sdk.Context.Defined">Defined</h4>
+  <div class="markdown level1 summary"><p>True if this is a Context that was created with a constructor or builder (regardless of
+whether its properties are valid), or false if it is an empty uninitialized struct.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Defined { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Defined_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Valid">Valid</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Error">Error</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_Error_" data-uid="LaunchDarkly.Sdk.Context.Error*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Error" data-uid="LaunchDarkly.Sdk.Context.Error">Error</h4>
+  <div class="markdown level1 summary"><p>Null for a valid Context, or an error message for an invalid Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Error { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Error_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If this is null, then <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Valid">Valid</a> is true. If it is non-null, then <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Valid">Valid</a> is false.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_Error_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Valid">Valid</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Defined">Defined</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_FullyQualifiedKey_" data-uid="LaunchDarkly.Sdk.Context.FullyQualifiedKey*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_FullyQualifiedKey" data-uid="LaunchDarkly.Sdk.Context.FullyQualifiedKey">FullyQualifiedKey</h4>
+  <div class="markdown level1 summary"><p>A string that describes the entire Context based on Kind and Key values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string FullyQualifiedKey { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_FullyQualifiedKey_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This value is used whenever LaunchDarkly needs a string identifier based on all of the Kind and
+Key values in the context; the SDK may use this for caching previously seen contexts, for instance.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_Key_" data-uid="LaunchDarkly.Sdk.Context.Key*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Key" data-uid="LaunchDarkly.Sdk.Context.Key">Key</h4>
+  <div class="markdown level1 summary"><p>The Context&apos;s key attribute.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Key { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Key_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+For a single-kind context, this value is set by a Context factory method
+(<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_System_String_">New(String)</a>, <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String_">New(ContextKind, String)</a>), or
+by <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a> or <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Key_System_String_">Key(String)</a>.
+</p>
+<p>
+For a multi-kind context, there is no single value and <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Key">Key</a> return an
+empty string. Use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiKindContexts">MultiKindContexts</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a>
+to inspect a Context for a particular kind, then get the <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Key">Key</a> from it.
+</p>
+<p>
+This value is never null.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_Key_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Key_System_String_">Key(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_Kind_" data-uid="LaunchDarkly.Sdk.Context.Kind*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Kind" data-uid="LaunchDarkly.Sdk.Context.Kind">Kind</h4>
+  <div class="markdown level1 summary"><p>The Context&apos;s kind attribute.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ContextKind Kind { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Kind_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Every valid Context has a non-empty kind. For multi-kind contexts, this value is
+<code>&quot;multi&quot;</code> and the kinds within the Context can be inspected with <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiKindContexts">MultiKindContexts</a>
+or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a>.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_MultiKindContexts_" data-uid="LaunchDarkly.Sdk.Context.MultiKindContexts*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_MultiKindContexts" data-uid="LaunchDarkly.Sdk.Context.MultiKindContexts">MultiKindContexts</h4>
+  <div class="markdown level1 summary"><p>Returns all of the individual contexts Contained in a multi-kind Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableList&lt;Context&gt; MultiKindContexts { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Immutable.ImmutableList</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_MultiKindContexts_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+If this is a multi-kind Context, then it returns the individual contexts that were passed to
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context___">NewMulti(Context[])</a> or <a class="xref" href="LaunchDarkly.Sdk.ContextMultiBuilder.html#LaunchDarkly_Sdk_ContextMultiBuilder_Add_LaunchDarkly_Sdk_Context_">Add(Context)</a>. The
+ordering is not guaranteed to be the same.
+</p>
+<p>
+If this is a single-kind Context, then it returns an empty list.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_MultiKindContexts_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_Multiple_" data-uid="LaunchDarkly.Sdk.Context.Multiple*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Multiple" data-uid="LaunchDarkly.Sdk.Context.Multiple">Multiple</h4>
+  <div class="markdown level1 summary"><p>True for a multi-kind Context, or false for a single-kind Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Multiple { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Multiple_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+If this value is true, then <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a> is guaranteed to be &quot;multi&quot;, and you can inspect the
+individual Contexts for each kind with <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiKindContexts">MultiKindContexts</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a>.
+</p>
+<p>
+If this value is false, then <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a> is guaranteed to have a value that is not &quot;multi&quot;/
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_Name_" data-uid="LaunchDarkly.Sdk.Context.Name*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Name" data-uid="LaunchDarkly.Sdk.Context.Name">Name</h4>
+  <div class="markdown level1 summary"><p>The Context&apos;s optional name attribute.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Name_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+For a single-kind context, this value is set by <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Name_System_String_">Name(String)</a>.
+It is null if no value was set.
+</p>
+<p>
+For a multi-kind context, there is no single value and <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Name">Name</a> returns
+null. Use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiKindContexts">MultiKindContexts</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a>
+to inspect a Context for a particular kind, then get the <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Name">Name</a> from it.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_Name_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Name_System_String_">Name(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_OptionalAttributeNames_" data-uid="LaunchDarkly.Sdk.Context.OptionalAttributeNames*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_OptionalAttributeNames" data-uid="LaunchDarkly.Sdk.Context.OptionalAttributeNames">OptionalAttributeNames</h4>
+  <div class="markdown level1 summary"><p>Enumerates the names of all regular optional attributes defined on this Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;string&gt; OptionalAttributeNames { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_OptionalAttributeNames_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>These do not include attributes that always have a value (<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a>, <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Key">Key</a>,
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Anonymous">Anonymous</a>), or metadata that is not an attribute addressable in targeting rules
+(<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_PrivateAttributes">PrivateAttributes</a>). They include any attributes with application-defined names
+that have a value, and also &quot;name&quot; if <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Name">Name</a> has a value.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_PrivateAttributes_" data-uid="LaunchDarkly.Sdk.Context.PrivateAttributes*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_PrivateAttributes" data-uid="LaunchDarkly.Sdk.Context.PrivateAttributes">PrivateAttributes</h4>
+  <div class="markdown level1 summary"><p>The list of all attribute references marked as private for this specific Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableList&lt;AttributeRef&gt; PrivateAttributes { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Immutable.ImmutableList</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_PrivateAttributes_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This includes all attribute names/paths that were specified with
+<a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Private_System_String___">Private(String[])</a> or <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Private_LaunchDarkly_Sdk_AttributeRef___">Private(AttributeRef[])</a>.
+If there are none, it is an empty list (never null).</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_Valid_" data-uid="LaunchDarkly.Sdk.Context.Valid*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Valid" data-uid="LaunchDarkly.Sdk.Context.Valid">Valid</h4>
+  <div class="markdown level1 summary"><p>True for a valid Context, false for an invalid Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Valid { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Valid_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+A valid Context is one that can be used in SDK operations. An invalid Context is one that is
+missing necessary attributes or has invalid attributes, indicating an incorrect usage of the
+SDK API. The only ways for a Context to be invalid are:
+</p>
+<ul><li>
+    It has a disallowed value for the Kind property. See <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Kind_System_String_">Kind(String)</a>.
+</li><li>
+    It is a single-kind Context whose Key is empty.
+</li><li>
+    It is a multi-kind Context that does not have any kinds. See <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a>.
+</li><li>
+    It is a multi-kind Context where the same kind appears more than once.
+</li><li>
+    It is a multi-kind Context where at least one of the nested Contexts had an error.
+</li><li>
+    It was created with <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_FromUser_LaunchDarkly_Sdk_User_">FromUser(User)</a> from a null User reference, or from a
+    User that had a null key.
+</li><li>
+    It is an uninitialized struct (<code>new Context()</code>).
+</li></ul>
+<p>
+Since in normal usage it is easy for applications to be sure they are using context kinds
+correctly, and because throwing an exception is undesirable in application code that uses
+LaunchDarkly, and because some states such as the empty value are impossible to prevent in
+.NET, the SDK stores the error state in the Context itself and checks for such errors
+at the time the Context is used, such as in a flag evaluation. At that point, if the Context is
+invalid, the operation will fail in some well-defined way as described in the documentation for
+that method, and the SDK will generally log a warning as well. But in any situation where you
+are not sure if you have a valid Context, you can check the <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Error">Error</a> property.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_Valid_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Error">Error</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Defined">Defined</a></div>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_Context_Builder_" data-uid="LaunchDarkly.Sdk.Context.Builder*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Builder_LaunchDarkly_Sdk_ContextKind_System_String_" data-uid="LaunchDarkly.Sdk.Context.Builder(LaunchDarkly.Sdk.ContextKind,System.String)">Builder(ContextKind, String)</h4>
+  <div class="markdown level1 summary"><p>Equivalent to <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a>, but sets the initial value of
+<a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Kind_LaunchDarkly_Sdk_ContextKind_">Kind(ContextKind)</a> as well as the key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ContextBuilder Builder(ContextKind kind, string key)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">kind</span></td>
+        <td><p>the context kind</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the context key</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html">ContextBuilder</a></td>
+        <td><p>a builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Builder_LaunchDarkly_Sdk_ContextKind_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String_">New(ContextKind, String)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_BuilderFromContext_LaunchDarkly_Sdk_Context_">BuilderFromContext(Context)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_Builder_" data-uid="LaunchDarkly.Sdk.Context.Builder*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Builder_System_String_" data-uid="LaunchDarkly.Sdk.Context.Builder(System.String)">Builder(String)</h4>
+  <div class="markdown level1 summary"><p>Creates a ContextBuilder for building a Context, initializing its <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Key_System_String_">Key(String)</a>
+and setting <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Kind_System_String_">Kind(String)</a> to <a class="xref" href="LaunchDarkly.Sdk.ContextKind.html#LaunchDarkly_Sdk_ContextKind_Default">Default</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ContextBuilder Builder(string key)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the context key</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html">ContextBuilder</a></td>
+        <td><p>a builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_Builder_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+You may use <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html">ContextBuilder</a> methods to set additional attributes and/or change the
+<a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Kind_System_String_">Kind(String)</a> before calling <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Build">Build()</a>.
+If you do not change any values, the defaults for the Context are that its <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a> is
+<a class="xref" href="LaunchDarkly.Sdk.ContextKind.html#LaunchDarkly_Sdk_ContextKind_Default">Default</a> (&quot;user&quot;), its <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Key">Key</a> is set to whatever value you passed for
+<code data-dev-comment-type="paramref" class="paramref">key</code>, its <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Anonymous">Anonymous</a> attribute is false, and it has no values for any
+other attributes.
+</p>
+<p>
+This method is for building a Context that has only a single Kind. To define a multi-kind
+Context, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context___">NewMulti(Context[])</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a>.
+</p>
+<p>
+If <code data-dev-comment-type="paramref" class="paramref">key</code> is an empty string, there is no default. A Context must have a
+non-empty key, so if you call <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Build">Build()</a> in this state without using
+<a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Key_System_String_">Key(String)</a> to set the key, you will get an invalid Context.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_Builder_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_System_String_">New(String)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_LaunchDarkly_Sdk_ContextKind_System_String_">Builder(ContextKind, String)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_BuilderFromContext_LaunchDarkly_Sdk_Context_">BuilderFromContext(Context)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_BuilderFromContext_" data-uid="LaunchDarkly.Sdk.Context.BuilderFromContext*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_BuilderFromContext_LaunchDarkly_Sdk_Context_" data-uid="LaunchDarkly.Sdk.Context.BuilderFromContext(LaunchDarkly.Sdk.Context)">BuilderFromContext(Context)</h4>
+  <div class="markdown level1 summary"><p>Creates a ContextBuilder whose properties are the same as an existing single-kind Context.
+You may then change the ContextBuilder&apos;s state in any way and call <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Build">Build()</a>
+to create a new independent Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ContextBuilder BuilderFromContext(Context context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>the context to copy from</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html">ContextBuilder</a></td>
+        <td><p>a builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_BuilderFromContext_LaunchDarkly_Sdk_Context__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_Equals_" data-uid="LaunchDarkly.Sdk.Context.Equals*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Equals_LaunchDarkly_Sdk_Context_" data-uid="LaunchDarkly.Sdk.Context.Equals(LaunchDarkly.Sdk.Context)">Equals(Context)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(Context other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Context_Equals_" data-uid="LaunchDarkly.Sdk.Context.Equals*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_Equals_System_Object_" data-uid="LaunchDarkly.Sdk.Context.Equals(System.Object)">Equals(Object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Context_FromUser_" data-uid="LaunchDarkly.Sdk.Context.FromUser*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_FromUser_LaunchDarkly_Sdk_User_" data-uid="LaunchDarkly.Sdk.Context.FromUser(LaunchDarkly.Sdk.User)">FromUser(User)</h4>
+  <div class="markdown level1 summary"><p>Converts a User to an equivalent <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Context FromUser(User user)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.User.html">User</a></td>
+        <td><span class="parametername">user</span></td>
+        <td><p>a User object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><p>a Context with the same attributes as the User</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_FromUser_LaunchDarkly_Sdk_User__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This method is used by the SDK whenever an application passes a <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> instance
+to methods such as <code>Identify</code>. The SDK operates internally on the <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>
+model, which is more flexible than the older User model: a User can always be converted to a
+Context, but not vice versa. The <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a> of the resulting Context is
+<a class="xref" href="LaunchDarkly.Sdk.ContextKind.html#LaunchDarkly_Sdk_ContextKind_Default">Default</a> (&quot;user&quot;).
+</p>
+<p>
+Because there is some overhead to this conversion, it is more efficient for applications to
+construct a Context and pass that to the SDK, rather than a User. This is also recommended
+because the User type may be removed in a future version of the SDK.
+</p>
+<p>
+If the <code data-dev-comment-type="paramref" class="paramref">user</code> parameter is null, or if the user has a null key, the method
+returns a Context in an invalid state (see <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Valid">Valid</a>).
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_GetHashCode_" data-uid="LaunchDarkly.Sdk.Context.GetHashCode*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_GetHashCode" data-uid="LaunchDarkly.Sdk.Context.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Context_GetValue_" data-uid="LaunchDarkly.Sdk.Context.GetValue*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_GetValue_LaunchDarkly_Sdk_AttributeRef__" data-uid="LaunchDarkly.Sdk.Context.GetValue(LaunchDarkly.Sdk.AttributeRef@)">GetValue(AttributeRef)</h4>
+  <div class="markdown level1 summary"><p>Looks up the value of any attribute of the Context, or a value contained within an
+attribute, based on an <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a>. This includes only attributes that
+are addressable in evaluations-- not metadata such as <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_PrivateAttributes">PrivateAttributes</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdValue GetValue(in AttributeRef attributeRef)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a></td>
+        <td><span class="parametername">attributeRef</span></td>
+        <td><p>an attribute reference</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><p>the value or <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Null">Null</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_GetValue_LaunchDarkly_Sdk_AttributeRef___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This implements the same behavior that the SDK uses to resolve attribute references during a
+flag evaluation. In a single-kind context, the <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a> can represent a
+simple attribute name-- either a built-in one like &quot;name&quot; or &quot;key&quot;, or a custom attribute
+that was set by methods like <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Set_System_String_System_String_">Set(String, String)</a>-- or, it can be a
+a slash-delimited path using a JSON-Pointer-like syntax. See <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a>
+for more details.
+</p>
+<p>
+For a multi-kind context, the only supported attribute name is &quot;kind&quot;. Use
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiKindContexts">MultiKindContexts</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a> to inspect
+a Context for a particular kind and then get its attributes.
+</p>
+<p>
+If the value is found, the return value is the attribute value, using the type
+<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> to represent a value of any JSON type).
+</p>
+<p>
+If there is no such attribute, or if the <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a> is invalid, the return
+value is <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Null">Null</a>. An attribute that actually exists cannot have a null
+value.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_GetValue_LaunchDarkly_Sdk_AttributeRef___seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_GetValue_System_String_">GetValue(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_GetValue_" data-uid="LaunchDarkly.Sdk.Context.GetValue*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_GetValue_System_String_" data-uid="LaunchDarkly.Sdk.Context.GetValue(System.String)">GetValue(String)</h4>
+  <div class="markdown level1 summary"><p>Looks up the value of any attribute of the Context by name. This includes only attributes
+that are addressable in evaluations-- not metadata such as <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_PrivateAttributes">PrivateAttributes</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdValue GetValue(string attributeName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">attributeName</span></td>
+        <td><p>the desired attribute name</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><p>the value or <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Null">Null</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_GetValue_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+For a single-kind context, the attribute name can be any custom attribute that was set by methods
+like <a class="xref" href="LaunchDarkly.Sdk.ContextBuilder.html#LaunchDarkly_Sdk_ContextBuilder_Set_System_String_System_Boolean_">Set(String, Boolean)</a>. It can also be one of the built-in ones like
+&quot;kind&quot;, &quot;key&quot;, or &quot;name&quot;; in such cases, it is equivalent to <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a>,
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Key">Key</a>, or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Name">Name</a>, except that the value is returned using the general-purpose
+<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a> type.
+</p>
+<p>
+For a multi-kind context, the only supported attribute name is &quot;kind&quot;. Use
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiKindContexts">MultiKindContexts</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__">TryGetContextByKind(ContextKind, out Context)</a> to inspect
+a Context for a particular kind and then get its attributes.
+</p>
+<p>
+This method does not support complex expressions for getting individual values out of JSON objects
+or arrays, such as &quot;/address/street&quot;. Use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_GetValue_LaunchDarkly_Sdk_AttributeRef__">GetValue(AttributeRef)</a> with an
+<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a> for that purpose.
+</p>
+<p>
+If the value is found, the return value is the attribute value, using the type <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>
+to represent a value of any JSON type.
+</p>
+<p>
+If there is no such attribute, the return value is <a class="xref" href="LaunchDarkly.Sdk.LdValue.html#LaunchDarkly_Sdk_LdValue_Null">Null</a>. An attribute that
+actually exists cannot have a null value.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_GetValue_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_GetValue_LaunchDarkly_Sdk_AttributeRef__">GetValue(AttributeRef)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_MultiBuilder_" data-uid="LaunchDarkly.Sdk.Context.MultiBuilder*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_MultiBuilder" data-uid="LaunchDarkly.Sdk.Context.MultiBuilder">MultiBuilder()</h4>
+  <div class="markdown level1 summary"><p>Creates a ContextMultiBuilder for building a Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ContextMultiBuilder MultiBuilder()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextMultiBuilder.html">ContextMultiBuilder</a></td>
+        <td><p>a builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_MultiBuilder_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method is for building a Context athat has multiple Kind values, each with its own
+nested Context. To define a single-kind context, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a> instead.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_New_" data-uid="LaunchDarkly.Sdk.Context.New*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String_" data-uid="LaunchDarkly.Sdk.Context.New(LaunchDarkly.Sdk.ContextKind,System.String)">New(ContextKind, String)</h4>
+  <div class="markdown level1 summary"><p>Creates a single-kind Context with only the Kind and Key properties specified.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Context New(ContextKind kind, string key)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">kind</span></td>
+        <td><p>the context kind</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the context key</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><p>a Context</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>To specify additional properties, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a>. To create a
+multi-kind Context, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context___">NewMulti(Context[])</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_System_String_">New(String)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_New_" data-uid="LaunchDarkly.Sdk.Context.New*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_New_System_String_" data-uid="LaunchDarkly.Sdk.Context.New(System.String)">New(String)</h4>
+  <div class="markdown level1 summary"><p>Creates a single-kind Context with a Kind of <a class="xref" href="LaunchDarkly.Sdk.ContextKind.html#LaunchDarkly_Sdk_ContextKind_Default">Default</a> and the specified key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Context New(string key)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the context key</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><p>a Context</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_New_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>To specify additional properties, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a>. To create a
+multi-kind Context, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context___">NewMulti(Context[])</a> or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a>.
+To create a single-kind Context of a different kind than &quot;user&quot;, use
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String_">New(ContextKind, String)</a>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_New_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String_">New(ContextKind, String)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_NewMulti_" data-uid="LaunchDarkly.Sdk.Context.NewMulti*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context___" data-uid="LaunchDarkly.Sdk.Context.NewMulti(LaunchDarkly.Sdk.Context[])">NewMulti(Context[])</h4>
+  <div class="markdown level1 summary"><p>Creates a multi-kind Context out of the specified single-kind Contexts.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Context NewMulti(params Context[] contexts)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>[]</td>
+        <td><span class="parametername">contexts</span></td>
+        <td><p>a list of contexts</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><p>a multi-kind Context</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p><p>
+To create a single-kind Context, use <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_System_String_">New(String)</a>,
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_New_LaunchDarkly_Sdk_ContextKind_System_String_">New(ContextKind, String)</a>, or <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Builder_System_String_">Builder(String)</a>.
+</p>
+<p>
+For the returned Context to be valid, the contexts list must not be empty, and all of its
+elements must be valid Contexts. Otherwise, the returned Context will be invalid as
+reported by <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Error">Error</a>.
+</p>
+<p>
+If only one context parameter is given, <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context___">NewMulti(Context[])</a> returns a single-kind
+context (that is, just that same context) rather than a multi-kind context.
+</p>
+<p>
+If a nested context is multi-kind, this is exactly equivalent to adding each of the
+individual kinds from it separately. For instance, in the following example, &quot;multi1&quot; and
+&quot;multi2&quot; end up being exactly the same:
+</p></p>
+<pre><code>    var c1 = Context.New(ContextKind.Of(&quot;kind1&quot;), &quot;key1&quot;);
+    var c2 = Context.New(ContextKind.Of(&quot;kind2&quot;), &quot;key2&quot;);
+    var c3 = Context.New(ContextKind.Of(&quot;kind3&quot;), &quot;key3&quot;);
+
+    var multi1 = Context.NewMulti(c1, c2, c3);
+
+    var c1plus2 = Context.NewMulti(c1, c2);
+    var multi2 = Context.NewMulti(c1plus2, c3);</code></pre>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Context_NewMulti_LaunchDarkly_Sdk_Context____seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_MultiBuilder">MultiBuilder()</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Context_ToString_" data-uid="LaunchDarkly.Sdk.Context.ToString*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_ToString" data-uid="LaunchDarkly.Sdk.Context.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Returns a string representation of the Context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>a string representation</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_ToString_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For a valid Context, this is currently defined as being the same as the JSON representation,
+since that is the simplest way to represent all of the Context properties. However, application
+code should not rely on <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_ToString">ToString()</a> always being the same as the JSON representation.
+If you specifically want the latter, use <a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonSerialization.html#LaunchDarkly_Sdk_Json_LdJsonSerialization_SerializeObject__1___0_">SerializeObject&lt;T&gt;(T)</a>.
+For an invalid Context, ToString() returns a description of why it is invalid.</p>
+</div>
+  <a id="LaunchDarkly_Sdk_Context_TryGetContextByKind_" data-uid="LaunchDarkly.Sdk.Context.TryGetContextByKind*"></a>
+  <h4 id="LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context__" data-uid="LaunchDarkly.Sdk.Context.TryGetContextByKind(LaunchDarkly.Sdk.ContextKind,LaunchDarkly.Sdk.Context@)">TryGetContextByKind(ContextKind, out Context)</h4>
+  <div class="markdown level1 summary"><p>Gets the single-kind context, if any, whose <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a> matches the specified
+value exactly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetContextByKind(ContextKind kind, out Context context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">kind</span></td>
+        <td><p>the desired context kind</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>receives the context that was found, if successful</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>true if found, false if not found</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Context_TryGetContextByKind_LaunchDarkly_Sdk_ContextKind_LaunchDarkly_Sdk_Context___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+If the method is called on a single-kind context, then the specified kind must match the
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a> of that context. If the method is called on a multi-kind context, then
+the kind can match any of the individual contexts within.
+</p>
+</div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.IEquatable&lt;&gt;</span>
+  </div>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

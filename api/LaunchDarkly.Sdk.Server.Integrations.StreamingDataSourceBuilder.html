@@ -83,21 +83,20 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a></div>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class StreamingDataSourceBuilder : Object, IDataSourceFactory, IDiagnosticDescription</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class StreamingDataSourceBuilder : Object, IComponentConfigurer&lt;IDataSource&gt;, IDiagnosticDescription</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
 By default, the SDK uses a streaming connection to receive feature flag data from LaunchDarkly. If you want
 to customize the behavior of the connection, create a builder with <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_StreamingDataSource">StreamingDataSource()</a>,
-change its properties with the methods of this class, and pass it to
-<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_">DataSource(IDataSourceFactory)</a>.
+change its properties with the methods of this class, and pass it to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IDataSource__">DataSource(IComponentConfigurer&lt;IDataSource&gt;)</a>.
 </p>
 <p>
 Setting <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Offline_System_Boolean_">Offline(Boolean)</a> to <span class="xref">true</span> will supersede this
@@ -147,79 +146,15 @@ setting and completely disable network requests.
   </table>
   <h3 id="methods">Methods
   </h3>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_BaseUri_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.BaseUri*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_BaseUri_System_Uri_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.BaseUri(System.Uri)">BaseUri(Uri)</h4>
-  <div class="markdown level1 summary"><p>Deprecated method for setting a custom base URI for the streaming service.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public StreamingDataSourceBuilder BaseUri(Uri baseUri)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Uri</span></td>
-        <td><span class="parametername">baseUri</span></td>
-        <td><p>the base URI of the streaming service; null to use the default</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.html">StreamingDataSourceBuilder</a></td>
-        <td><p>the builder</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_BaseUri_System_Uri__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p><p>
-The preferred way to set this option is now with
-<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_">ServiceEndpoints(ServiceEndpointsBuilder)</a>. If you set
-this deprecated option, it overrides any value that was set with
-<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_">ServiceEndpoints(ServiceEndpointsBuilder)</a>.
-</p>
-<p>
-You will only need to change this value in the following cases:
-</p>
-<ul><li>
-You are using the <a href="https://docs.launchdarkly.com/home/relay-proxy">Relay Proxy</a>.
-Set <code>BaseUri</code> to the base URI of the Relay Proxy instance.
-</li><li>
-You are connecting to a test server or a nonstandard endpoint for the LaunchDarkly service.
-</li></ul></p>
-</div>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_BaseUri_System_Uri__seealso">See Also</h5>
-  <div class="seealso">
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ServiceEndpoints_LaunchDarkly_Sdk_Server_Integrations_ServiceEndpointsBuilder_">ServiceEndpoints(ServiceEndpointsBuilder)</a></div>
-  </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_CreateDataSource_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.CreateDataSource*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_CreateDataSource_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.CreateDataSource(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext,LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates)">CreateDataSource(LdClientContext, IDataSourceUpdates)</h4>
-  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications do not need
+  <a id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">Build(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications should not need
 to call this method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)</code></pre>
+    <pre><code class="lang-csharp hljs">public IDataSource Build(LdClientContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -232,15 +167,10 @@ to call this method.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td><p>configuration of the current client instance</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.html">IDataSourceUpdates</a></td>
-        <td><span class="parametername">dataSourceUpdates</span></td>
-        <td><p>the destination for pushing data and status updates</p>
+        <td><p>provides configuration properties and other components from the current
+SDK client instance</p>
 </td>
       </tr>
     </tbody>
@@ -255,21 +185,21 @@ to call this method.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a></td>
-        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a> instance</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a></td>
+        <td><p>a instance of the component type</p>
 </td>
       </tr>
     </tbody>
   </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_DescribeConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.DescribeConfiguration*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration)">DescribeConfiguration(BasicConfiguration)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_StreamingDataSourceBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.StreamingDataSourceBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">DescribeConfiguration(LdClientContext)</h4>
   <div class="markdown level1 summary"><p>Called internally by the SDK to inspect the configuration. Applications do not need to call
 this method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(BasicConfiguration basic)</code></pre>
+    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(LdClientContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -282,9 +212,9 @@ this method.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html">BasicConfiguration</a></td>
-        <td><span class="parametername">basic</span></td>
-        <td><p>the basic global configuration of the SDK</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>SDK configuration/component information</p>
 </td>
       </tr>
     </tbody>
@@ -360,10 +290,10 @@ The default value is <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.
 </div>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a>
   </div>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a>
   </div>
 </article>
           </div>

@@ -101,13 +101,13 @@ chained together.</p>
   <h3 id="methods">Methods
   </h3>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory)">BigSegments(IBigSegmentsConfigurationFactory)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_BigSegmentsConfiguration__" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.BigSegmentsConfiguration})">BigSegments(IComponentConfigurer&lt;BigSegmentsConfiguration&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the configuration of the SDK&apos;s Big Segments feature.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConfigurationBuilder BigSegments(IBigSegmentsConfigurationFactory bigSegmentsConfigurationFactory)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder BigSegments(IComponentConfigurer&lt;BigSegmentsConfiguration&gt; bigSegmentsConfig)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -120,10 +120,10 @@ chained together.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html">IBigSegmentsConfigurationFactory</a></td>
-        <td><span class="parametername">bigSegmentsConfigurationFactory</span></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a>&gt;</td>
+        <td><span class="parametername">bigSegmentsConfig</span></td>
         <td><p>a configuration factory object returned by
-<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentStoreFactory_">BigSegments(IBigSegmentStoreFactory)</a></p>
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IBigSegmentStore__">BigSegments(IComponentConfigurer&lt;IBigSegmentStore&gt;)</a></p>
 </td>
       </tr>
     </tbody>
@@ -144,7 +144,7 @@ chained together.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_BigSegmentsConfiguration___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 &quot;Big Segments&quot; are a specific type of user segments. For more information, read the LaunchDarkly
 documentation about user segments: <a href="https://docs.launchdarkly.com/home/users/segments">https://docs.launchdarkly.com/home/users/segments</a>
@@ -160,11 +160,11 @@ Segments, and the <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html">
 a <a class="xref" href="LaunchDarkly.Sdk.EvaluationReason.html#LaunchDarkly_Sdk_EvaluationReason_BigSegmentsStatus">BigSegmentsStatus</a> of <a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html#LaunchDarkly_Sdk_BigSegmentsStatus_NotConfigured">NotConfigured</a>.
 </p>
 </div>
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Interfaces_IBigSegmentsConfigurationFactory__examples">Examples</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_BigSegmentsConfiguration___examples">Examples</h5>
   <pre><code>    // This example uses the Redis integration
     var config = Configuration.Builder(sdkKey)
         .BigSegments(Components.BigSegments(Redis.DataStore().Prefix(&quot;app1&quot;))
-            .UserCacheSize(2000))
+            .ContextCacheSize(2000))
         .Build();</code></pre>
 
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Build*"></a>
@@ -194,14 +194,14 @@ Modifying the builder after this point does not affect the returned <a class="xr
     </tbody>
   </table>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.DataSource*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.DataSource(LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory)">DataSource(IDataSourceFactory)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IDataSource__" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.DataSource(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.IDataSource})">DataSource(IComponentConfigurer&lt;IDataSource&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the implementation of the component that receives feature flag data from LaunchDarkly,
 using a factory object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConfigurationBuilder DataSource(IDataSourceFactory dataSourceFactory)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder DataSource(IComponentConfigurer&lt;IDataSource&gt; dataSourceConfig)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -214,8 +214,8 @@ using a factory object.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a></td>
-        <td><span class="parametername">dataSourceFactory</span></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a>&gt;</td>
+        <td><span class="parametername">dataSourceConfig</span></td>
         <td><p>the factory object</p>
 </td>
       </tr>
@@ -237,7 +237,7 @@ using a factory object.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceFactory__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataSource_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IDataSource___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 Depending on the implementation, the factory may be a builder that allows you to set other
 configuration options as well.
@@ -250,14 +250,14 @@ details on how to configure them.
 </p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataStore_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.DataStore*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataStore_LaunchDarkly_Sdk_Server_Interfaces_IDataStoreFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.DataStore(LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory)">DataStore(IDataStoreFactory)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataStore_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IDataStore__" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.DataStore(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.IDataStore})">DataStore(IComponentConfigurer&lt;IDataStore&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the data store implementation to be used for holding feature flags
 and related data received from LaunchDarkly.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConfigurationBuilder DataStore(IDataStoreFactory dataStoreFactory)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder DataStore(IComponentConfigurer&lt;IDataStore&gt; dataStoreConfig)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -270,8 +270,8 @@ and related data received from LaunchDarkly.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory.html">IDataStoreFactory</a></td>
-        <td><span class="parametername">dataStoreFactory</span></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a>&gt;</td>
+        <td><span class="parametername">dataStoreConfig</span></td>
         <td><p>the factory object</p>
 </td>
       </tr>
@@ -293,11 +293,11 @@ and related data received from LaunchDarkly.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataStore_LaunchDarkly_Sdk_Server_Interfaces_IDataStoreFactory__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_DataStore_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IDataStore___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
 The default is <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_InMemoryDataStore">InMemoryDataStore</a>, but you may choose to use a custom
 implementation such as a database integration. For the latter, you will normally
-use <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStoreFactory_">PersistentDataStore(IPersistentDataStoreFactory)</a> in
+use <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IPersistentDataStore__">PersistentDataStore(IComponentConfigurer&lt;IPersistentDataStore&gt;)</a> in
 conjunction with some specific type for that integration.
 </p>
 <p>
@@ -360,13 +360,13 @@ is created, and dispose of that instance when disposing of the client.
 </p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Events*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_LaunchDarkly_Sdk_Server_Interfaces_IEventProcessorFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Events(LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory)">Events(IEventProcessorFactory)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IEventProcessor__" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Events(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor})">Events(IComponentConfigurer&lt;IEventProcessor&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the implementation of the component that processes analytics events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConfigurationBuilder Events(IEventProcessorFactory eventProcessorFactory)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder Events(IComponentConfigurer&lt;IEventProcessor&gt; eventsConfig)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -379,8 +379,8 @@ is created, and dispose of that instance when disposing of the client.
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.html">IEventProcessorFactory</a></td>
-        <td><span class="parametername">eventProcessorFactory</span></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.html">IEventProcessor</a>&gt;</td>
+        <td><span class="parametername">eventsConfig</span></td>
         <td><p>a builder/factory object for event configuration</p>
 </td>
       </tr>
@@ -402,21 +402,21 @@ is created, and dispose of that instance when disposing of the client.
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_LaunchDarkly_Sdk_Server_Interfaces_IEventProcessorFactory__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Events_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IEventProcessor___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The default is <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_SendEvents">SendEvents()</a>, but you may choose to set it to a customized
 <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a>, a custom implementation (for instance, a test fixture), or
 disable events with <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_NoEvents">NoEvents</a>.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Http*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_LaunchDarkly_Sdk_Server_Interfaces_IHttpConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Http(LaunchDarkly.Sdk.Server.Interfaces.IHttpConfigurationFactory)">Http(IHttpConfigurationFactory)</h4>
-  <div class="markdown level1 summary"><p>Sets the SDK&apos;s networking configuration, using a factory object. This object is normally a
-configuration builder obtained from <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_HttpConfiguration">HttpConfiguration()</a>, which has
-methods for setting individual HTTP-related properties.</p>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_HttpConfiguration__" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Http(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration})">Http(IComponentConfigurer&lt;HttpConfiguration&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the SDK&apos;s networking configuration, using a builder object that is obtained from
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_HttpConfiguration">HttpConfiguration()</a>, which has methods for setting individual HTTP-related
+properties.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConfigurationBuilder Http(IHttpConfigurationFactory httpConfigurationFactory)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder Http(IComponentConfigurer&lt;HttpConfiguration&gt; httpConfig)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -429,9 +429,9 @@ methods for setting individual HTTP-related properties.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IHttpConfigurationFactory.html">IHttpConfigurationFactory</a></td>
-        <td><span class="parametername">httpConfigurationFactory</span></td>
-        <td><p>a builder/factory object for HTTP configuration</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html">HttpConfiguration</a>&gt;</td>
+        <td><span class="parametername">httpConfig</span></td>
+        <td><p>a builder object for HTTP configuration</p>
 </td>
       </tr>
     </tbody>
@@ -511,13 +511,14 @@ SDK reference guide</a>.
 .Build();</p>
 
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Logging*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Logging(LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory)">Logging(ILoggingConfigurationFactory)</h4>
-  <div class="markdown level1 summary"><p>Sets the SDK&apos;s logging configuration, using a factory object.</p>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_LoggingConfiguration__" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Logging(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.LoggingConfiguration})">Logging(IComponentConfigurer&lt;LoggingConfiguration&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the SDK&apos;s logging configuration, using a builder object that is obtained from
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging">Logging()</a> which has methods for setting individual logging-related properties. </p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConfigurationBuilder Logging(ILoggingConfigurationFactory loggingConfigurationFactory)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder Logging(IComponentConfigurer&lt;LoggingConfiguration&gt; loggingConfig)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -530,9 +531,9 @@ SDK reference guide</a>.
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory.html">ILoggingConfigurationFactory</a></td>
-        <td><span class="parametername">loggingConfigurationFactory</span></td>
-        <td><p>the factory object</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LoggingConfiguration.html">LoggingConfiguration</a>&gt;</td>
+        <td><span class="parametername">loggingConfig</span></td>
+        <td><p>a builder object for logging configuration</p>
 </td>
       </tr>
     </tbody>
@@ -553,25 +554,23 @@ SDK reference guide</a>.
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_LoggingConfiguration___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
-This object is normally a configuration builder obtained from <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging">Logging()</a>
-which has methods for setting individual logging-related properties. As a shortcut for disabling
-logging, you may use <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_NoLogging">NoLogging</a> instead. If all you want to do is to set
-the basic logging destination, and you do not need to set other logging properties, you can use
-<a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Logging_ILogAdapter_">Logging(ILogAdapter)</a> instead.
+As a shortcut for disabling logging, you may use <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_NoLogging">NoLogging</a> instead. If all you
+want to do is to set the basic logging destination, and you do not need to set other logging properties,
+you can use <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Logging_ILogAdapter_">Logging(ILogAdapter)</a>.
 </p>
 <p>
 For more about how logging works in the SDK, see the <a href="https://docs.launchdarkly.com/sdk/features/logging#net">SDK
 SDK reference guide</a>.
 </p>
 </div>
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory__examples">Examples</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_LoggingConfiguration___examples">Examples</h5>
   <p>var config = Configuration.Builder(&quot;my-sdk-key&quot;)
 .Logging(Components.Logging().Level(LogLevel.Warn)))
 .Build();</p>
 
-  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory__seealso">See Also</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_LoggingConfiguration___seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging">Logging()</a></div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging_LaunchDarkly_Logging_ILogAdapter_">Logging(ILogAdapter)</a></div>

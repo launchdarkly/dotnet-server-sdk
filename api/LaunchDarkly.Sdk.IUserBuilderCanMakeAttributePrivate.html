@@ -86,12 +86,6 @@ the <a class="xref" href="LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.h
       <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Key_System_String_">IUserBuilder.Key(String)</a>
     </div>
     <div>
-      <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Secondary_System_String_">IUserBuilder.Secondary(String)</a>
-    </div>
-    <div>
-      <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_SecondaryKey_System_String_">IUserBuilder.SecondaryKey(String)</a>
-    </div>
-    <div>
       <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_IPAddress_System_String_">IUserBuilder.IPAddress(String)</a>
     </div>
     <div>
@@ -114,9 +108,6 @@ the <a class="xref" href="LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.h
     </div>
     <div>
       <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Anonymous_System_Boolean_">IUserBuilder.Anonymous(Boolean)</a>
-    </div>
-    <div>
-      <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_AnonymousOptional_System_Nullable_System_Boolean__">IUserBuilder.AnonymousOptional(Nullable&lt;Boolean&gt;)</a>
     </div>
     <div>
       <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Custom_System_String_LaunchDarkly_Sdk_LdValue_">IUserBuilder.Custom(String, LdValue)</a>
@@ -186,11 +177,10 @@ user attributes as private for <em>all</em> users, use the configuration propert
 and <code>AllAttributesPrivate</code>.
 </p>
 <p>
-Not all attributes can be made private: <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Key_System_String_">Key(String)</a>, <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_SecondaryKey_System_String_">SecondaryKey(String)</a>,
-and <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Anonymous_System_Boolean_">Anonymous(Boolean)</a> cannot be private. This is enforced by the compiler, since the builder
-methods for attributes that can be made private are the only ones that return <a class="xref" href="LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.html">IUserBuilderCanMakeAttributePrivate</a>;
-therefore, you cannot write an expression like <code>User.Builder(&quot;user-key&quot;).AsPrivateAttribute()</code> or
-<code>User.Builder(&quot;user-key&quot;).SecondaryKey(&quot;secondary&quot;).AsPrivateAttribute()</code>.
+Not all attributes can be made private: <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Key_System_String_">Key(String)</a> and <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html#LaunchDarkly_Sdk_IUserBuilder_Anonymous_System_Boolean_">Anonymous(Boolean)</a>
+cannot be private. This is enforced by the compiler, since the builder methods for attributes that can be made private are
+the only ones that return <a class="xref" href="LaunchDarkly.Sdk.IUserBuilderCanMakeAttributePrivate.html">IUserBuilderCanMakeAttributePrivate</a>; therefore, you cannot write an expression
+like <code>User.Builder(&quot;user-key&quot;).AsPrivateAttribute()</code>.
 </p>
 </div>
   <h5 id="LaunchDarkly_Sdk_IUserBuilderCanMakeAttributePrivate_AsPrivateAttribute_examples">Examples</h5>

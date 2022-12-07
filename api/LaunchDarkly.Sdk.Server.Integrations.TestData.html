@@ -84,13 +84,13 @@ client in test scenarios.</p>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a></div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a>&gt;</div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class TestData : Object, IDataSourceFactory</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class TestData : Object, IComponentConfigurer&lt;IDataSource&gt;</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
@@ -111,7 +111,7 @@ instances, any changes made to the data will propagate to all of the <a class="x
 </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_examples"><strong>Examples</strong></h5>
   <pre><code>    var td = TestData.DataSource();
-    td.Update(td.Flag(&quot;flag-key-1&quot;).BooleanFlag().VariationForAllUsers(true));
+    td.Update(td.Flag(&quot;flag-key-1&quot;).BooleanFlag().VariationForAll(true));
 
     var config = Configuration.Builder(&quot;sdk-key&quot;)
         .DataSource(td)
@@ -125,15 +125,15 @@ instances, any changes made to the data will propagate to all of the <a class="x
 
   <h3 id="methods">Methods
   </h3>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_CreateDataSource_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.CreateDataSource*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_CreateDataSource_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_LaunchDarkly_Sdk_Server_Interfaces_IDataSourceUpdates_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.CreateDataSource(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext,LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates)">CreateDataSource(LdClientContext, IDataSourceUpdates)</h4>
-  <div class="markdown level1 summary"><p>Called internally by the SDK to associate this test data source with an
-<a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a> instance. You do not need to call this method.</p>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_Build_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">Build(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications should not need
+to call this method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IDataSource CreateDataSource(LdClientContext context, IDataSourceUpdates dataSourceUpdates)</code></pre>
+    <pre><code class="lang-csharp hljs">public IDataSource Build(LdClientContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -146,15 +146,10 @@ instances, any changes made to the data will propagate to all of the <a class="x
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td><p>created internally by <code>LdClient</code></p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceUpdates.html">IDataSourceUpdates</a></td>
-        <td><span class="parametername">dataSourceUpdates</span></td>
-        <td><p>created internally by <code>LdClient</code></p>
+        <td><p>provides configuration properties and other components from the current
+SDK client instance</p>
 </td>
       </tr>
     </tbody>
@@ -169,8 +164,8 @@ instances, any changes made to the data will propagate to all of the <a class="x
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a></td>
-        <td><p>a data source instance</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a></td>
+        <td><p>a instance of the component type</p>
 </td>
       </tr>
     </tbody>
@@ -253,7 +248,7 @@ the builder starts with the same configuration that was last provided for this f
 </p>
 <p>
 Otherwise, it starts with a new default configuration in which the flag has <code>true</code>
-and <code>false</code> variations, is <code>true</code> for all users when targeting is turned on
+and <code>false</code> variations, is <code>true</code> for all contexts when targeting is turned on
 and <code>false</code> otherwise, and currently has targeting turned on. You can change any
 of those properties, and provide more complex behavior, using the
 <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a> methods.
@@ -384,7 +379,7 @@ simulated an outage, calling <a class="xref" href="LaunchDarkly.Sdk.Server.Integ
 </div>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a>
   </div>
   <h3 id="seealso">See Also</h3>
   <div class="seealso">

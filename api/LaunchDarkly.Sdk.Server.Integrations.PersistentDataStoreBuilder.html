@@ -84,22 +84,23 @@ store implementation.</p>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory.html">IDataStoreFactory</a></div>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class PersistentDataStoreBuilder : Object, IDataStoreFactory, IDiagnosticDescription</code></pre>
+    <pre><code class="lang-csharp hljs">public class PersistentDataStoreBuilder : Object, IComponentConfigurer&lt;IDataStore&gt;, IDiagnosticDescription</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p><p>
 For a persistent data store (e.g. a database integration), the store implementation will
-provide an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreFactory.html">IPersistentDataStoreFactory</a> or <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IPersistentDataStoreAsyncFactory.html">IPersistentDataStoreAsyncFactory</a>
-that implements the specific data store behavior. The SDK then provides additional
-options for caching; those are defined by this type, which is returned by
-<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Interfaces_IPersistentDataStoreFactory_">PersistentDataStore(IPersistentDataStoreFactory)</a>. Example usage:
+provide an <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a> for <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStore.html">IPersistentDataStore</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStoreAsync.html">IPersistentDataStoreAsync</a> that implements the specific data store behavior. The
+SDK then provides additional options for caching; those are defined by this type, which is returned
+by <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IPersistentDataStore__">PersistentDataStore(IComponentConfigurer&lt;IPersistentDataStore&gt;)</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IPersistentDataStoreAsync__">PersistentDataStore(IComponentConfigurer&lt;IPersistentDataStoreAsync&gt;)</a>. Example usage:
 </p></p>
 <pre><code>    var myStore = Components.PersistentDataStore(Redis.FeatureStore())
         .CacheTtl(TimeSpan.FromSeconds(45));
@@ -134,6 +135,51 @@ options for caching; those are defined by this type, which is returned by
   </table>
   <h3 id="methods">Methods
   </h3>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">Build(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications should not need
+to call this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDataStore Build(LdClientContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>provides configuration properties and other components from the current
+SDK client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a></td>
+        <td><p>a instance of the component type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheForever*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheForever">CacheForever()</h4>
   <div class="markdown level1 summary"><p>Specifies that the in-memory cache should never expire.</p>
@@ -362,66 +408,15 @@ If the value is <code>System.Threading.Timeout.InfiniteTimeSpan</code> (or any n
 cached forever (equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html#LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever">CacheForever()</a>).
 </p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CreateDataStore_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CreateDataStore*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CreateDataStore_LaunchDarkly_Sdk_Server_Interfaces_LdClientContext_LaunchDarkly_Sdk_Server_Interfaces_IDataStoreUpdates_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CreateDataStore(LaunchDarkly.Sdk.Server.Interfaces.LdClientContext,LaunchDarkly.Sdk.Server.Interfaces.IDataStoreUpdates)">CreateDataStore(LdClientContext, IDataStoreUpdates)</h4>
-  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications do not need
-to call this method.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IDataStore CreateDataStore(LdClientContext context, IDataStoreUpdates dataStoreUpdates)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a></td>
-        <td><span class="parametername">context</span></td>
-        <td><p>configuration of the current client instance</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStoreUpdates.html">IDataStoreUpdates</a></td>
-        <td><span class="parametername">dataStoreUpdates</span></td>
-        <td><p>the data store can use this object to report
-information back to the SDK if desired</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html">IDataStore</a></td>
-        <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html">IDataStore</a> instance</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DescribeConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DescribeConfiguration*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration)">DescribeConfiguration(BasicConfiguration)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">DescribeConfiguration(LdClientContext)</h4>
   <div class="markdown level1 summary"><p>Called internally by the SDK to inspect the configuration. Applications do not need to call
 this method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(BasicConfiguration basic)</code></pre>
+    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(LdClientContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -434,9 +429,9 @@ this method.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html">BasicConfiguration</a></td>
-        <td><span class="parametername">basic</span></td>
-        <td><p>the basic global configuration of the SDK</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>SDK configuration/component information</p>
 </td>
       </tr>
     </tbody>
@@ -487,10 +482,10 @@ this method.</p>
 </div>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory.html">IDataStoreFactory</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a>
   </div>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a>
   </div>
 </article>
           </div>

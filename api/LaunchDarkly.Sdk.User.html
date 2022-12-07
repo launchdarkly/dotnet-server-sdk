@@ -99,21 +99,32 @@ configurations to produce different flag variations for different users. You may
 these properties however you wish.
 </p>
 <p>
-The only mandatory property is the <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Key">Key</a>, which must uniquely identify each user.
-For authenticated users, this may be a username or e-mail address. For anonymous users,
-this could be an IP address or session ID.
+User supports only a subset of the behaviors that are available with the newer
+<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a> type. A User is equivalent to an individual Context that has a
+<a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_Kind">Kind</a> of <a class="xref" href="LaunchDarkly.Sdk.ContextKind.html#LaunchDarkly_Sdk_ContextKind_Default">Default</a> (&quot;user&quot;); it also has
+more constraints on attribute values than a Context does (for instance, built-in attributes
+such as <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Email">Email</a> can only have string values). Older LaunchDarkly SDKs only
+had the User model, and the User type has been retained for backward compatibility, but it
+may be removed in a future SDK version; also, the SDK will always convert a User to a
+Context internally, which has some overhead. Therefore, developers are recommended to
+migrate toward using Context.
+</p>
+<p>
+The only mandatory property of User is the <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Key">Key</a>, which must uniquely identify
+each user. For authenticated users, this may be a username or e-mail address. For anonymous
+users, this could be an IP address or session ID.
 </p>
 <p>
 Besides the mandatory key, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> supports two kinds of optional attributes:
-interpreted attributes (e.g. <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_IPAddress">IPAddress</a> and <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Country">Country</a>) and custom
-attributes. LaunchDarkly can parse interpreted attributes and attach meaning to them. For
-example, from an <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_IPAddress">IPAddress</a>, LaunchDarkly can do a geo IP lookup and determine
-the user&apos;s country.
+built-in attributes (e.g. <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Name">Name</a> and <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Country">Country</a>) and custom
+attributes. The built-in attributes have specific allowed value types; also, two of them
+(<a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Name">Name</a> and <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Anonymous">Anonymous</a>) have special meanings in LaunchDarkly.
+Custom attributes have flexible value types, and can have any names that do not conflict
+with built-in attributes.
 </p>
 <p>
-Custom attributes are not parsed by LaunchDarkly. They can be used in custom rules-- for example, a
-custom attribute such as &quot;customer_ranking&quot; can be used to launch a feature to the top 10% of users
-on a site. Custom attributes can have values of any type supported by JSON.
+Both built-in attributes and custom attributes can be referenced in targeting rules, and
+are included in analytics data.
 </p>
 <p>
 Instances of <code>User</code> are immutable once created. They can be created with the factory method
@@ -233,38 +244,6 @@ For converting this type to or from JSON, see <a class="xref" href="LaunchDarkly
       </tr>
     </tbody>
   </table>
-  <a id="LaunchDarkly_Sdk_User_AnonymousOptional_" data-uid="LaunchDarkly.Sdk.User.AnonymousOptional*"></a>
-  <h4 id="LaunchDarkly_Sdk_User_AnonymousOptional" data-uid="LaunchDarkly.Sdk.User.AnonymousOptional">AnonymousOptional</h4>
-  <div class="markdown level1 summary"><p>Whether or not the user is anonymous, if that has been specified.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Nullable&lt;bool&gt; AnonymousOptional { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="LaunchDarkly_Sdk_User_AnonymousOptional_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Although the <a class="xref" href="LaunchDarkly.Sdk.User.html#LaunchDarkly_Sdk_User_Anonymous">Anonymous</a> property defaults to <span class="xref">false</span> in terms
-of LaunchDarkly&apos;s user indexing behavior, for historical reasons <span class="xref">null</span>
-(the property has not been explicitly set) may behave differently from being explicitly set
-to <span class="xref">false</span>, if this property is referenced in a feature flag rule. This
-property getter, and the corresponding setter in <a class="xref" href="LaunchDarkly.Sdk.IUserBuilder.html">IUserBuilder</a>, allow you to
-treat the property as nullable.</p>
-</div>
   <a id="LaunchDarkly_Sdk_User_Avatar_" data-uid="LaunchDarkly.Sdk.User.Avatar*"></a>
   <h4 id="LaunchDarkly_Sdk_User_Avatar" data-uid="LaunchDarkly.Sdk.User.Avatar">Avatar</h4>
   <div class="markdown level1 summary"><p>The user&apos;s avatar.</p>
@@ -505,36 +484,6 @@ treat the property as nullable.</p>
       </tr>
     </tbody>
   </table>
-  <a id="LaunchDarkly_Sdk_User_Secondary_" data-uid="LaunchDarkly.Sdk.User.Secondary*"></a>
-  <h4 id="LaunchDarkly_Sdk_User_Secondary" data-uid="LaunchDarkly.Sdk.User.Secondary">Secondary</h4>
-  <div class="markdown level1 summary"><p>The secondary key for a user, which can be used in
-<a href="https://docs.launchdarkly.com/home/flags/targeting-users#targeting-rules-based-on-user-attributes">feature flag targeting</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Secondary { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="LaunchDarkly_Sdk_User_Secondary_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>The use of the secondary key in targeting is as follows: if you have chosen to bucket users by a
-specific attribute, the secondary key (if set) is used to further distinguish between users who are
-otherwise identical according to that attribute.</p>
-</div>
   <h3 id="methods">Methods
   </h3>
   <a id="LaunchDarkly_Sdk_User_Builder_" data-uid="LaunchDarkly.Sdk.User.Builder*"></a>

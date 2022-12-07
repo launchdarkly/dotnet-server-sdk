@@ -90,27 +90,28 @@
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
 In the LaunchDarkly model, a flag can have any number of rules, and a rule can have any number of
-clauses. A clause is an individual test such as &quot;name is &apos;X&apos;&quot;. A rule matches a user if all of the
-rule&apos;s clauses match the user.
+clauses. A clause is an individual test such as &quot;name is &apos;X&apos;&quot;. A rule matches a context if all of the
+rule&apos;s clauses match the context.
 </p>
 <p>
 To start defining a rule, use one of the flag builder&apos;s matching methods such as
-<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___">IfMatch(UserAttribute, LdValue[])</a>. This defines the first clause for
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">IfMatchContext(ContextKind, String, LdValue[])</a>. This defines the first clause for
 the rule. Optionally, you may add more clauses with the rule builder&apos;s methods such as
-<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___">AndMatch(UserAttribute, LdValue[])</a>. Finally, call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Boolean_">ThenReturn(Boolean)</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">AndMatchContext(ContextKind, String, LdValue[])</a>. Finally, call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Boolean_">ThenReturn(Boolean)</a> or
 <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Int32_">ThenReturn(Int32)</a> to finish defining the rule.
 </p>
 </div>
   <h3 id="methods">Methods
   </h3>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndMatch*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndMatch(LaunchDarkly.Sdk.UserAttribute,LaunchDarkly.Sdk.LdValue[])">AndMatch(UserAttribute, LdValue[])</h4>
-  <div class="markdown level1 summary"><p>Adds another clause, using the &quot;is one of&quot; operator.</p>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndMatch(System.String,LaunchDarkly.Sdk.LdValue[])">AndMatch(String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Adds another clause, using the &quot;is one of&quot; operator. This is a shortcut for calling
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">AndMatchContext(ContextKind, String, LdValue[])</a> with &quot;user&quot; as the context kind.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder AndMatch(UserAttribute attribute, params LdValue[] values)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder AndMatch(string attribute, params LdValue[] values)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -123,7 +124,7 @@ the rule. Optionally, you may add more clauses with the rule builder&apos;s meth
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a></td>
+        <td><span class="xref">System.String</span></td>
         <td><span class="parametername">attribute</span></td>
         <td><p>the user attribute to match against</p>
 </td>
@@ -152,26 +153,27 @@ the rule. Optionally, you may add more clauses with the rule builder&apos;s meth
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p><p>
 For example, this creates a rule that returns <code>true</code> if the name is &quot;Patsy&quot; and the
 country is &quot;gb&quot;:
 </p>
 <example><p>
 <pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
-        .IfMatch(UserAttribute.Name, LdValue.Of(&quot;Patsy&quot;))
-        .AndMatch(UserAttribute.Country, LdValue.Of(&quot;gb&quot;))
+        .IfMatch(&quot;name&quot;, LdValue.Of(&quot;Patsy&quot;))
+        .AndMatch(&quot;country&quot;, LdValue.Of(&quot;gb&quot;))
         .ThenReturn(true));</code></pre>
 <p></example></p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatch_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndNotMatch*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndNotMatch(LaunchDarkly.Sdk.UserAttribute,LaunchDarkly.Sdk.LdValue[])">AndNotMatch(UserAttribute, LdValue[])</h4>
-  <div class="markdown level1 summary"><p>Adds another clause, using the &quot;is not one of&quot; operator.</p>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatchContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndMatchContext*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndMatchContext(LaunchDarkly.Sdk.ContextKind,System.String,LaunchDarkly.Sdk.LdValue[])">AndMatchContext(ContextKind, String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Adds another clause, using the &quot;is one of&quot; operator. This matching expression
+only applies to contexts of a specific kind.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder AndNotMatch(UserAttribute attribute, params LdValue[] values)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder AndMatchContext(ContextKind contextKind, string attribute, params LdValue[] values)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -184,7 +186,75 @@ country is &quot;gb&quot;:
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">contextKind</span></td>
+        <td><p>the context kind to match</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">attribute</span></td>
+        <td><p>the attribute to match against</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>[]</td>
+        <td><span class="parametername">values</span></td>
+        <td><p>values to compare to</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a></td>
+        <td><p>the rule builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p><p>
+For example, this creates a rule that returns <code>true</code> if the name attribute for the
+&quot;company&quot; context is &quot;Ella&quot; and the country is &quot;gb&quot;:
+</p>
+<example><p>
+<pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
+        .IfMatchContext(&quot;company&quot;, &quot;name&quot;, LdValue.Of(&quot;Ella&quot;))
+        .AndMatchContext(&quot;company&quot;, &quot;country&quot;, LdValue.Of(&quot;gb&quot;))
+        .ThenReturn(true));</code></pre>
+<p></example></p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatch_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndNotMatch*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatch_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndNotMatch(System.String,LaunchDarkly.Sdk.LdValue[])">AndNotMatch(String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Adds another clause, using the &quot;is not one of&quot; operator. This is a shortcut for calling
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">AndNotMatchContext(ContextKind, String, LdValue[])</a> with &quot;user&quot; as the context kind.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder AndNotMatch(string attribute, params LdValue[] values)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
         <td><span class="parametername">attribute</span></td>
         <td><p>the user attribute to match against</p>
 </td>
@@ -213,15 +283,83 @@ country is &quot;gb&quot;:
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatch_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p><p>
 For example, this creates a rule that returns <code>true</code> if the name is &quot;Patsy&quot; and the
 country is not &quot;gb&quot;:
 </p>
 <example><p>
 <pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
-        .IfMatch(UserAttribute.Name, LdValue.Of(&quot;Patsy&quot;))
-        .AndNotMatch(UserAttribute.Country, LdValue.Of(&quot;gb&quot;))
+        .IfMatch(&quot;name&quot;, LdValue.Of(&quot;Patsy&quot;))
+        .AndNotMatch(&quot;country&quot;, LdValue.Of(&quot;gb&quot;))
+        .ThenReturn(true));</code></pre>
+<p></example></p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatchContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndNotMatchContext*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.AndNotMatchContext(LaunchDarkly.Sdk.ContextKind,System.String,LaunchDarkly.Sdk.LdValue[])">AndNotMatchContext(ContextKind, String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Adds another clause, using the &quot;is not one of&quot; operator. This matching expression
+only applies to contexts of a specific kind.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder AndNotMatchContext(ContextKind contextKind, string attribute, params LdValue[] values)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">contextKind</span></td>
+        <td><p>the context kind to match</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">attribute</span></td>
+        <td><p>the attribute to match against</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>[]</td>
+        <td><span class="parametername">values</span></td>
+        <td><p>values to compare to</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a></td>
+        <td><p>the rule builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndNotMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p><p>
+For example, this creates a rule that returns <code>true</code> if the name attribute for the
+&quot;company&quot; context is &quot;Ella&quot; and the country is not &quot;gb&quot;:
+</p>
+<example><p>
+<pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
+        .IfMatchContext(&quot;company&quot;, &quot;name&quot;, LdValue.Of(&quot;Ella&quot;))
+        .AndNotMatchContext(&quot;company&quot;, &quot;country&quot;, LdValue.Of(&quot;gb&quot;))
         .ThenReturn(true));</code></pre>
 <p></example></p>
 </div>

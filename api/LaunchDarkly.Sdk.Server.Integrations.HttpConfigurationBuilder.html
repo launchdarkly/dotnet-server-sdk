@@ -83,20 +83,20 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IHttpConfigurationFactory.html">IHttpConfigurationFactory</a></div>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html">HttpConfiguration</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class HttpConfigurationBuilder : Object, IHttpConfigurationFactory, IDiagnosticDescription</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class HttpConfigurationBuilder : Object, IComponentConfigurer&lt;HttpConfiguration&gt;, IDiagnosticDescription</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p><p>
 If you want to set non-default values for any of these properties, create a builder with
 <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_HttpConfiguration">HttpConfiguration()</a>, change its properties with the methods of this class, and
-pass it to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_LaunchDarkly_Sdk_Server_Interfaces_IHttpConfigurationFactory_">Http(IHttpConfigurationFactory)</a>:
+pass it to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_HttpConfiguration__">Http(IComponentConfigurer&lt;HttpConfiguration&gt;)</a>:
 </p>
 <example><p>
 <pre><code>    var config = Configuration.Builder(sdkKey)
@@ -190,6 +190,51 @@ pass it to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.ht
   </table>
   <h3 id="methods">Methods
   </h3>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">Build(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications should not need
+to call this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HttpConfiguration Build(LdClientContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>provides configuration properties and other components from the current
+SDK client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html">HttpConfiguration</a></td>
+        <td><p>a instance of the component type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_ConnectTimeout_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.ConnectTimeout*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_ConnectTimeout_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.ConnectTimeout(System.TimeSpan)">ConnectTimeout(TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Sets the network connection timeout.</p>
@@ -259,50 +304,6 @@ the <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfiguration
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_ResponseStartTimeout_System_TimeSpan_">ResponseStartTimeout(TimeSpan)</a></div>
   </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_CreateHttpConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.CreateHttpConfiguration*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_CreateHttpConfiguration_LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.CreateHttpConfiguration(LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration)">CreateHttpConfiguration(BasicConfiguration)</h4>
-  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications do not need
-to call this method.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public HttpConfiguration CreateHttpConfiguration(BasicConfiguration basicConfiguration)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html">BasicConfiguration</a></td>
-        <td><span class="parametername">basicConfiguration</span></td>
-        <td><p>provides the basic SDK configuration properties</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html">HttpConfiguration</a></td>
-        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html">HttpConfiguration</a></p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_CustomHeader_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.CustomHeader*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_CustomHeader_System_String_System_String_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.CustomHeader(System.String,System.String)">CustomHeader(String, String)</h4>
   <div class="markdown level1 summary"><p>Specifies a custom HTTP header that should be added to all SDK requests.</p>
@@ -357,14 +358,14 @@ to call this method.</p>
 requests. You may add any number of headers.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_DescribeConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.DescribeConfiguration*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Interfaces_BasicConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration)">DescribeConfiguration(BasicConfiguration)</h4>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_HttpConfigurationBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">DescribeConfiguration(LdClientContext)</h4>
   <div class="markdown level1 summary"><p>Called internally by the SDK to inspect the configuration. Applications do not need to call
 this method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(BasicConfiguration basic)</code></pre>
+    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(LdClientContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -377,9 +378,9 @@ this method.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.BasicConfiguration.html">BasicConfiguration</a></td>
-        <td><span class="parametername">basic</span></td>
-        <td><p>the basic global configuration of the SDK</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>SDK configuration/component information</p>
 </td>
       </tr>
     </tbody>
@@ -681,10 +682,10 @@ metrics on the usage of these wrapper libraries.</p>
 </div>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IHttpConfigurationFactory.html">IHttpConfigurationFactory</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a>
   </div>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDiagnosticDescription.html">IDiagnosticDescription</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a>
   </div>
 </article>
           </div>

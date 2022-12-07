@@ -95,14 +95,14 @@ or <a class="xref" href="LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly
 </div>
   <h3 id="properties">Properties
   </h3>
-  <a id="LaunchDarkly_Sdk_Server_Configuration_BigSegmentsConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Configuration_BigSegmentsConfigurationFactory" data-uid="LaunchDarkly.Sdk.Server.Configuration.BigSegmentsConfigurationFactory">BigSegmentsConfigurationFactory</h4>
-  <div class="markdown level1 summary"><p>A factory object that creates an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html">IBigSegmentsConfigurationFactory</a>.</p>
+  <a id="LaunchDarkly_Sdk_Server_Configuration_BigSegments_" data-uid="LaunchDarkly.Sdk.Server.Configuration.BigSegments*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Configuration_BigSegments" data-uid="LaunchDarkly.Sdk.Server.Configuration.BigSegments">BigSegments</h4>
+  <div class="markdown level1 summary"><p>A builder for <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IBigSegmentsConfigurationFactory BigSegmentsConfigurationFactory { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IComponentConfigurer&lt;BigSegmentsConfiguration&gt; BigSegments { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -114,20 +114,20 @@ or <a class="xref" href="LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IBigSegmentsConfigurationFactory.html">IBigSegmentsConfigurationFactory</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.BigSegmentsConfiguration.html">BigSegmentsConfiguration</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <a id="LaunchDarkly_Sdk_Server_Configuration_DataSourceFactory_" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataSourceFactory*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Configuration_DataSourceFactory" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataSourceFactory">DataSourceFactory</h4>
-  <div class="markdown level1 summary"><p>A factory object that creates an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSource.html">IDataSource</a>, which will
+  <a id="LaunchDarkly_Sdk_Server_Configuration_DataSource_" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataSource*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Configuration_DataSource" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataSource">DataSource</h4>
+  <div class="markdown level1 summary"><p>A factory object that creates an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a>, which will
 receive feature flag data.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IDataSourceFactory DataSourceFactory { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IComponentConfigurer&lt;IDataSource&gt; DataSource { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -139,20 +139,20 @@ receive feature flag data.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataSourceFactory.html">IDataSourceFactory</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <a id="LaunchDarkly_Sdk_Server_Configuration_DataStoreFactory_" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataStoreFactory*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Configuration_DataStoreFactory" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataStoreFactory">DataStoreFactory</h4>
-  <div class="markdown level1 summary"><p>A factory object that creates an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStore.html">IDataStore</a>, to be used
+  <a id="LaunchDarkly_Sdk_Server_Configuration_DataStore_" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataStore*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Configuration_DataStore" data-uid="LaunchDarkly.Sdk.Server.Configuration.DataStore">DataStore</h4>
+  <div class="markdown level1 summary"><p>A factory object that creates an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a>, to be used
 for holding feature flags and related data received from LaunchDarkly.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IDataStoreFactory DataStoreFactory { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IComponentConfigurer&lt;IDataStore&gt; DataStore { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -164,12 +164,12 @@ for holding feature flags and related data received from LaunchDarkly.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IDataStoreFactory.html">IDataStoreFactory</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Configuration_DataStoreFactory_remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Configuration_DataStore_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The default is <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_InMemoryDataStore">InMemoryDataStore</a>, but you may provide a custom
 implementation.</p>
 </div>
@@ -197,15 +197,15 @@ implementation.</p>
       </tr>
     </tbody>
   </table>
-  <a id="LaunchDarkly_Sdk_Server_Configuration_EventProcessorFactory_" data-uid="LaunchDarkly.Sdk.Server.Configuration.EventProcessorFactory*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Configuration_EventProcessorFactory" data-uid="LaunchDarkly.Sdk.Server.Configuration.EventProcessorFactory">EventProcessorFactory</h4>
-  <div class="markdown level1 summary"><p>A factory object that creates an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessor.html">IEventProcessor</a>, which will
+  <a id="LaunchDarkly_Sdk_Server_Configuration_Events_" data-uid="LaunchDarkly.Sdk.Server.Configuration.Events*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Configuration_Events" data-uid="LaunchDarkly.Sdk.Server.Configuration.Events">Events</h4>
+  <div class="markdown level1 summary"><p>A factory object that creates an implementation of <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.html">IEventProcessor</a>, which will
 process all analytics events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IEventProcessorFactory EventProcessorFactory { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IComponentConfigurer&lt;IEventProcessor&gt; Events { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -217,24 +217,24 @@ process all analytics events.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IEventProcessorFactory.html">IEventProcessorFactory</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.html">IEventProcessor</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Configuration_EventProcessorFactory_remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Configuration_Events_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The default is <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_SendEvents">SendEvents()</a>, but you may provide a custom
 implementation.</p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Configuration_HttpConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.Configuration.HttpConfigurationFactory*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Configuration_HttpConfigurationFactory" data-uid="LaunchDarkly.Sdk.Server.Configuration.HttpConfigurationFactory">HttpConfigurationFactory</h4>
-  <div class="markdown level1 summary"><p>A factory object that creates an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.HttpConfiguration.html">HttpConfiguration</a>, defining the SDK&apos;s networking
+  <a id="LaunchDarkly_Sdk_Server_Configuration_Http_" data-uid="LaunchDarkly.Sdk.Server.Configuration.Http*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Configuration_Http" data-uid="LaunchDarkly.Sdk.Server.Configuration.Http">Http</h4>
+  <div class="markdown level1 summary"><p>A builder that creates an <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html">HttpConfiguration</a>, defining the SDK&apos;s networking
 behavior.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IHttpConfigurationFactory HttpConfigurationFactory { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IComponentConfigurer&lt;HttpConfiguration&gt; Http { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -246,20 +246,20 @@ behavior.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.IHttpConfigurationFactory.html">IHttpConfigurationFactory</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html">HttpConfiguration</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <a id="LaunchDarkly_Sdk_Server_Configuration_LoggingConfigurationFactory_" data-uid="LaunchDarkly.Sdk.Server.Configuration.LoggingConfigurationFactory*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Configuration_LoggingConfigurationFactory" data-uid="LaunchDarkly.Sdk.Server.Configuration.LoggingConfigurationFactory">LoggingConfigurationFactory</h4>
-  <div class="markdown level1 summary"><p>A factory object that creates a <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.html">LoggingConfiguration</a>, defining the SDK&apos;s
+  <a id="LaunchDarkly_Sdk_Server_Configuration_Logging_" data-uid="LaunchDarkly.Sdk.Server.Configuration.Logging*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Configuration_Logging" data-uid="LaunchDarkly.Sdk.Server.Configuration.Logging">Logging</h4>
+  <div class="markdown level1 summary"><p>A builder that creates a <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LoggingConfiguration.html">LoggingConfiguration</a>, defining the SDK&apos;s
 logging configuration.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ILoggingConfigurationFactory LoggingConfigurationFactory { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IComponentConfigurer&lt;LoggingConfiguration&gt; Logging { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -271,14 +271,14 @@ logging configuration.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory.html">ILoggingConfigurationFactory</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LoggingConfiguration.html">LoggingConfiguration</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Configuration_LoggingConfigurationFactory_remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Configuration_Logging_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>SDK components should not use this property directly; instead, the SDK client will use it to create a
-logger instance which will be in <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LdClientContext.html">LdClientContext</a>.</p>
+logger instance which will be in <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a>.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Configuration_Offline_" data-uid="LaunchDarkly.Sdk.Server.Configuration.Offline*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Configuration_Offline" data-uid="LaunchDarkly.Sdk.Server.Configuration.Offline">Offline</h4>

@@ -78,22 +78,24 @@
   <div class="markdown level0 remarks"><p>The NuGet package containing these types is <a href="https://www.nuget.org/packages/LaunchDarkly.CommonSdk"><code>LaunchDarkly.CommonSdk</code></a>. Normally you should not need to reference that package directly; it is loaded automatically as a dependency of the main SDK package.</p>
 <p>Any LaunchDarkly SDK type that has the marker interface <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a> has a canonical JSON encoding that is consistent across all LaunchDarkly SDKs. There are three ways to convert any such type to or from JSON:</p>
 <ul>
-<li>On platforms that support the <code>System.Text.Json</code> API, these types already have the necessary attributes to behave correctly with that API.</li>
+<li>When using the <code>System.Text.Json</code> API, these types already have the necessary attributes to behave correctly.</li>
 <li>You may use the <a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonSerialization.html">LdJsonSerialization</a> methods <a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonSerialization.html#LaunchDarkly_Sdk_Json_LdJsonSerialization_SerializeObject__1___0_">SerializeObject&lt;T&gt;(T)</a> and <a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonSerialization.html#LaunchDarkly_Sdk_Json_LdJsonSerialization_DeserializeObject__1_System_String_">DeserializeObject&lt;T&gt;(String)</a> to convert to or from a JSON-encoded string.</li>
-<li>You may use the lower-level <code>LaunchDarkly.JsonStream</code> API (<a href="https://github.com/launchdarkly/dotnet-jsonstream">https://github.com/launchdarkly/dotnet-jsonstream</a>) in conjunction with the converters in <a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonConverters.html">LdJsonConverters</a>.</li>
 </ul>
 <p>Earlier versions of the LaunchDarkly SDKs used <code>Newtonsoft.Json</code> for JSON serialization, but current versions have no such third-party dependency. Therefore, these types will not work correctly with the reflection-based <code>JsonConvert</code> methods in <code>Newtonsoft.Json</code> without some extra logic. There is an add-on package, <a href="https://github.com/launchdarkly/dotnet-sdk-common/tree/main/src/LaunchDarkly.CommonSdk.JsonNet"><code>LaunchDarkly.CommonSdk.JsonNet</code></a>, that provides an adapter to make this work; alternatively, you can call <a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonSerialization.html#LaunchDarkly_Sdk_Json_LdJsonSerialization_SerializeObject__1___0_">SerializeObject&lt;T&gt;(T)</a> and put the resulting JSON output into a <code>Newtonsoft.Json.Linq.JRaw</code> value.</p>
 </div>
     <h3 id="classes">Classes
   </h3>
-      <h4><a class="xref" href="LaunchDarkly.Sdk.Json.JsonException.html">JsonException</a></h4>
-      <section><p>An exception that indicates a problem in processing of JSON data.</p>
-</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonConverters.html">LdJsonConverters</a></h4>
       <section><p>Low-level JSON custom serializations for SDK types.</p>
 </section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonConverters.AttributeRefConverter.html">LdJsonConverters.AttributeRefConverter</a></h4>
+      <section><p>The JSON converter for <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a>.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.html">LdJsonConverters.BigSegmentsStatusConverter</a></h4>
       <section></section>
+      <h4><a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonConverters.ContextConverter.html">LdJsonConverters.ContextConverter</a></h4>
+      <section><p>The JSON converter for <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</section>
       <h4><a class="xref" href="LaunchDarkly.Sdk.Json.LdJsonConverters.EvaluationErrorKindConverter.html">LdJsonConverters.EvaluationErrorKindConverter</a></h4>
       <section><p>The JSON converter for <a class="xref" href="LaunchDarkly.Sdk.EvaluationErrorKind.html">EvaluationErrorKind</a>.</p>
 </section>

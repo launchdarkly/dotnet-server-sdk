@@ -83,19 +83,19 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory.html">ILoggingConfigurationFactory</a></div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LoggingConfiguration.html">LoggingConfiguration</a>&gt;</div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">LaunchDarkly.Sdk.Server.Integrations</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class LoggingConfigurationBuilder : Object, ILoggingConfigurationFactory</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class LoggingConfigurationBuilder : Object, IComponentConfigurer&lt;LoggingConfiguration&gt;</code></pre>
   </div>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p><p>
 If you want to set non-default values for any of these properties, create a builder with
 <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Logging">Logging()</a>, change its properties with the methods of this class, and pass it
-to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Interfaces_ILoggingConfigurationFactory_">Logging(ILoggingConfigurationFactory)</a>.
+to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Logging_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_LoggingConfiguration__">Logging(IComponentConfigurer&lt;LoggingConfiguration&gt;)</a>.
 </p>
 <p>
 By default, the SDK has the following logging behavior:
@@ -291,16 +291,35 @@ adds the same suffixes to the name, so for instance if you set it to <code>&quot
 example message above would show <code>[LD.DataSource]</code>.
 </p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_CreateLoggingConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.CreateLoggingConfiguration*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_CreateLoggingConfiguration" data-uid="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.CreateLoggingConfiguration">CreateLoggingConfiguration()</h4>
-  <div class="markdown level1 summary"><p>Called internally by the SDK to create a configuration instance. Applications do not need
+  <a id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_LoggingConfigurationBuilder_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.LoggingConfigurationBuilder.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">Build(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications should not need
 to call this method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LoggingConfiguration CreateLoggingConfiguration()</code></pre>
+    <pre><code class="lang-csharp hljs">public LoggingConfiguration Build(LdClientContext context)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>provides configuration properties and other components from the current
+SDK client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -311,8 +330,8 @@ to call this method.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.LoggingConfiguration.html">LoggingConfiguration</a></td>
-        <td><p>the logging configuration</p>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LoggingConfiguration.html">LoggingConfiguration</a></td>
+        <td><p>a instance of the component type</p>
 </td>
       </tr>
     </tbody>
@@ -439,7 +458,7 @@ will disable this feature, so you will only get <code>Warn</code> messages.
 </div>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILoggingConfigurationFactory.html">ILoggingConfigurationFactory</a>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a>
   </div>
 </article>
           </div>

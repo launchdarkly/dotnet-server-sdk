@@ -153,6 +153,11 @@ marker interface.</p>
       </tr>
     </tbody>
   </table>
+  <h5 id="LaunchDarkly_Sdk_Json_LdJsonSerialization_DeserializeObject__1_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is exactly equivalent to the <code>System.Text.Json</code> method <code>JsonSerializer.Deserialize</code>,
+except that it only accepts LaunchDarkly types that have the <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
+marker interface. It is retained for backward compatibility.</p>
+</div>
   <h5 class="exceptions">Exceptions</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -163,7 +168,7 @@ marker interface.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.Json.JsonException.html">JsonException</a></td>
+        <td><span class="xref">System.Text.Json.JsonException</span></td>
         <td><p>if the JSON encoding was invalid</p>
 </td>
       </tr>
@@ -229,6 +234,11 @@ marker interface.</p>
       </tr>
     </tbody>
   </table>
+  <h5 id="LaunchDarkly_Sdk_Json_LdJsonSerialization_SerializeObject__1___0__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is exactly equivalent to the <code>System.Text.Json</code> method <code>JsonSerializer.Serialize</code>,
+except that it only accepts LaunchDarkly types that have the <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
+marker interface. It is retained for backward compatibility.</p>
+</div>
   <a id="LaunchDarkly_Sdk_Json_LdJsonSerialization_SerializeObjectToUtf8Bytes_" data-uid="LaunchDarkly.Sdk.Json.LdJsonSerialization.SerializeObjectToUtf8Bytes*"></a>
   <h4 id="LaunchDarkly_Sdk_Json_LdJsonSerialization_SerializeObjectToUtf8Bytes__1___0_" data-uid="LaunchDarkly.Sdk.Json.LdJsonSerialization.SerializeObjectToUtf8Bytes``1(``0)">SerializeObjectToUtf8Bytes&lt;T&gt;(T)</h4>
   <div class="markdown level1 summary"><p>Converts an object to its JSON representation as a UTF-8 byte array.</p>
@@ -289,6 +299,11 @@ marker interface.</p>
       </tr>
     </tbody>
   </table>
+  <h5 id="LaunchDarkly_Sdk_Json_LdJsonSerialization_SerializeObjectToUtf8Bytes__1___0__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is exactly equivalent to the <code>System.Text.Json</code> method <code>JsonSerializer.SerializeToUtf8Bytes</code>,
+except that it only accepts LaunchDarkly types that have the <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
+marker interface. It is retained for backward compatibility.</p>
+</div>
 </article>
           </div>
           

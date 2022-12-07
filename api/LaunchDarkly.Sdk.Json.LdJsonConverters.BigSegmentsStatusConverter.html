@@ -80,15 +80,11 @@
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">LdJsonConverters.BigSegmentsStatusConverter</span></div>
   </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><span class="xref">LaunchDarkly.JsonStream.IJsonStreamConverter</span></div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.Json.html">LaunchDarkly.Sdk.Json</a></h6>
   <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
   <h5 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class BigSegmentsStatusConverter : Object, IJsonStreamConverter</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class BigSegmentsStatusConverter : JsonConverter&lt;BigSegmentsStatus&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -102,13 +98,13 @@
   </div>
   <h3 id="methods">Methods
   </h3>
-  <a id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJson_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson*"></a>
-  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJson_LaunchDarkly_JsonStream_JReader__" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJson(LaunchDarkly.JsonStream.JReader@)">ReadJson(ref JReader)</h4>
+  <a id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_Read_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.Read*"></a>
+  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_Read_System_Text_Json_Utf8JsonReader__System_Type_System_Text_Json_JsonSerializerOptions_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">Read(ref Utf8JsonReader, Type, JsonSerializerOptions)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public object ReadJson(ref JReader reader)</code></pre>
+    <pre><code class="lang-csharp hljs">public override BigSegmentsStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -121,8 +117,18 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LaunchDarkly.JsonStream.JReader</span></td>
+        <td><span class="xref">System.Text.Json.Utf8JsonReader</span></td>
         <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">typeToConvert</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Text.Json.JsonSerializerOptions</span></td>
+        <td><span class="parametername">options</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -137,18 +143,18 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Object</span></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html">BigSegmentsStatus</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <a id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJsonValue_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue*"></a>
-  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJsonValue_LaunchDarkly_JsonStream_JReader__" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(LaunchDarkly.JsonStream.JReader@)">ReadJsonValue(ref JReader)</h4>
+  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_ReadJsonValue_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.ReadJsonValue(System.Text.Json.Utf8JsonReader@)">ReadJsonValue(ref Utf8JsonReader)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static BigSegmentsStatus ReadJsonValue(ref JReader reader)</code></pre>
+    <pre><code class="lang-csharp hljs">public static BigSegmentsStatus ReadJsonValue(ref Utf8JsonReader reader)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -161,7 +167,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">LaunchDarkly.JsonStream.JReader</span></td>
+        <td><span class="xref">System.Text.Json.Utf8JsonReader</span></td>
         <td><span class="parametername">reader</span></td>
         <td></td>
       </tr>
@@ -182,13 +188,13 @@
       </tr>
     </tbody>
   </table>
-  <a id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJson_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson*"></a>
-  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJson_System_Object_LaunchDarkly_JsonStream_IValueWriter_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJson(System.Object,LaunchDarkly.JsonStream.IValueWriter)">WriteJson(Object, IValueWriter)</h4>
+  <a id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_Write_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.Write*"></a>
+  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_Write_System_Text_Json_Utf8JsonWriter_LaunchDarkly_Sdk_BigSegmentsStatus_System_Text_Json_JsonSerializerOptions_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.Write(System.Text.Json.Utf8JsonWriter,LaunchDarkly.Sdk.BigSegmentsStatus,System.Text.Json.JsonSerializerOptions)">Write(Utf8JsonWriter, BigSegmentsStatus, JsonSerializerOptions)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void WriteJson(object instance, IValueWriter writer)</code></pre>
+    <pre><code class="lang-csharp hljs">public override void Write(Utf8JsonWriter writer, BigSegmentsStatus value, JsonSerializerOptions options)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -201,24 +207,29 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Object</span></td>
-        <td><span class="parametername">instance</span></td>
+        <td><span class="xref">System.Text.Json.Utf8JsonWriter</span></td>
+        <td><span class="parametername">writer</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">LaunchDarkly.JsonStream.IValueWriter</span></td>
-        <td><span class="parametername">writer</span></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html">BigSegmentsStatus</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Text.Json.JsonSerializerOptions</span></td>
+        <td><span class="parametername">options</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <a id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJsonValue_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue*"></a>
-  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJsonValue_LaunchDarkly_Sdk_EvaluationErrorKind_LaunchDarkly_JsonStream_IValueWriter_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue(LaunchDarkly.Sdk.EvaluationErrorKind,LaunchDarkly.JsonStream.IValueWriter)">WriteJsonValue(EvaluationErrorKind, IValueWriter)</h4>
+  <h4 id="LaunchDarkly_Sdk_Json_LdJsonConverters_BigSegmentsStatusConverter_WriteJsonValue_LaunchDarkly_Sdk_BigSegmentsStatus_System_Text_Json_Utf8JsonWriter_" data-uid="LaunchDarkly.Sdk.Json.LdJsonConverters.BigSegmentsStatusConverter.WriteJsonValue(LaunchDarkly.Sdk.BigSegmentsStatus,System.Text.Json.Utf8JsonWriter)">WriteJsonValue(BigSegmentsStatus, Utf8JsonWriter)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void WriteJsonValue(EvaluationErrorKind instance, IValueWriter writer)</code></pre>
+    <pre><code class="lang-csharp hljs">public static void WriteJsonValue(BigSegmentsStatus instance, Utf8JsonWriter writer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -231,21 +242,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.EvaluationErrorKind.html">EvaluationErrorKind</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.BigSegmentsStatus.html">BigSegmentsStatus</a></td>
         <td><span class="parametername">instance</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">LaunchDarkly.JsonStream.IValueWriter</span></td>
+        <td><span class="xref">System.Text.Json.Utf8JsonWriter</span></td>
         <td><span class="parametername">writer</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <span class="xref">LaunchDarkly.JsonStream.IJsonStreamConverter</span>
-  </div>
 </article>
           </div>
           

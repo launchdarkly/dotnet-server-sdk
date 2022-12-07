@@ -1,0 +1,645 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class AttributeRef
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class AttributeRef
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.AttributeRef">
+  
+  
+  <h1 id="LaunchDarkly_Sdk_AttributeRef" data-uid="LaunchDarkly.Sdk.AttributeRef" class="text-break">Class AttributeRef
+  </h1>
+  <div class="markdown level0 summary"><p>An attribute name or path expression identifying a value within a <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">AttributeRef</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.html">LaunchDarkly.Sdk</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class AttributeRef : ValueType, IEquatable&lt;AttributeRef&gt;, IJsonSerializable</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p><p>
+This type is mainly intended to be used internally by LaunchDarkly SDK and service code, where
+efficiency is a major concern so it&apos;s desirable to do any parsing or preprocessing just once.
+Applications are unlikely to need to use the AttributeRef type directly.
+</p>
+<p>
+It can be used to retrieve a value with <a class="xref" href="LaunchDarkly.Sdk.Context.html#LaunchDarkly_Sdk_Context_GetValue_LaunchDarkly_Sdk_AttributeRef__">GetValue(AttributeRef)</a>, or to
+identify an attribute or nested value that should be considered private with Builder.Private()
+(the SDK configuration can also have a list of private attribute references).
+</p>
+<p>
+Parsing and validation are done at the time that <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromPath_System_String_">FromPath(String)</a> or
+<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromLiteral_System_String_">FromLiteral(String)</a> is called. If an AttributeRef instance was created from an
+invalid string, or if it is an uninitialized struct (<code>new AttributeRef()</code>), it is
+considered invalid and its <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Error">Error</a> property will return a non-null error.
+</p>
+<p>
+The string representation of an attribute reference in LaunchDarkly JSON data uses the following
+syntax:
+</p>
+<ul><li>
+If the first character is not a slash, the string is interpreted literally as an attribute name.
+An attribute name can contain any characters, but must not be empty.
+</li><li>
+If the first character is a slash, the string is interpreted as a slash-delimited path where the
+first path component is an attribute name, and each subsequent path component is the name of a
+property in a JSON object. Any instances of the characters &quot;/&quot; or &quot;~&quot; in a path component are
+escaped as &quot;~1&quot; or &quot;~0&quot; respectively. This syntax deliberately resembles JSON Pointer, but no
+JSON Pointer behaviors other than those mentioned here are supported.
+</li></ul>
+<p>
+For example, suppose there is a context whose JSON representation looks like this:
+</p></p>
+<pre><code>    {
+      &quot;kind&quot;: &quot;user&quot;,
+      &quot;key&quot;: &quot;value1&quot;,
+      &quot;address&quot;: {
+        &quot;street&quot;: {
+          &quot;line1&quot;: &quot;value2&quot;,
+          &quot;line2&quot;: &quot;value3&quot;
+        },
+        &quot;city&quot;: &quot;value4&quot;
+      },
+      &quot;good/bad&quot;: &quot;value5&quot;
+    }</code></pre>
+<ul><li>
+The attribute references &quot;key&quot; and &quot;/key&quot; would both point to &quot;value1&quot;.
+</li><li>
+The attribute reference &quot;/address/street/line1&quot; would point to &quot;value2&quot;.
+</li><li>
+The attribute references &quot;good/bad&quot; and &quot;/good~1bad&quot; would both point to &quot;value5&quot;.
+</li></ul>
+</div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="LaunchDarkly_Sdk_AttributeRef_Defined_" data-uid="LaunchDarkly.Sdk.AttributeRef.Defined*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_Defined" data-uid="LaunchDarkly.Sdk.AttributeRef.Defined">Defined</h4>
+  <div class="markdown level1 summary"><p>True if the AttributeRef has a value, meaning that it is not an uninitialized struct
+(<code>new AttributeRef()</code>). That does not guarantee that the value is valid; use
+<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Valid">Valid</a> or <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Error">Error</a> to test that.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Defined { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_Defined_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Valid">Valid</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Error">Error</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_AttributeRef_Depth_" data-uid="LaunchDarkly.Sdk.AttributeRef.Depth*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_Depth" data-uid="LaunchDarkly.Sdk.AttributeRef.Depth">Depth</h4>
+  <div class="markdown level1 summary"><p>The number of path components in the AttributeRef.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Depth { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_Depth_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+For a simple attribute reference such as &quot;name&quot; with no leading slash, this returns 1.
+</p>
+<p>
+For an attribute reference with a leading slash, it is the number of slash-delimited path
+components after the initial slash. For instance, <code>AttributeRef.FromPath(&quot;/a/b&quot;).Depth</code>
+returns 2.
+</p>
+<p>
+For an invalid attribute reference, it returns zero.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_Depth_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_GetComponent_System_Int32_">GetComponent(Int32)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_AttributeRef_Error_" data-uid="LaunchDarkly.Sdk.AttributeRef.Error*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_Error" data-uid="LaunchDarkly.Sdk.AttributeRef.Error">Error</h4>
+  <div class="markdown level1 summary"><p>Null for a valid AttributeRef, or a non-null error message for an invalid AttributeRef.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Error { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_Error_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If this is null, then <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Valid">Valid</a> is true. If it is non-null, then <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Valid">Valid</a> is false.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_Error_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Valid">Valid</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Defined">Defined</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_AttributeRef_Valid_" data-uid="LaunchDarkly.Sdk.AttributeRef.Valid*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_Valid" data-uid="LaunchDarkly.Sdk.AttributeRef.Valid">Valid</h4>
+  <div class="markdown level1 summary"><p>True for a valid AttributeRef, false for an invalid AttributeRef.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Valid { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_Valid_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+An AttributeRef can only be invalid for the following reasons:
+</p>
+<ol><li>The input string was empty, or consisted only of &quot;/&quot;.</li><li>A slash-delimited string had a double slash causing one component
+to be empty, such as &quot;/a//b&quot;.</li><li>A slash-delimited string contained a &quot;~&quot; character that was not followed
+by &quot;0&quot; or &quot;1&quot;.</li></ol>
+<p>
+Otherwise, the AttributeRef is valid, but that does not guarantee that such an attribute exists
+in any given <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>. For instance, <code>AttributeRef.FromLiteral(&quot;name&quot;)</code> is a
+valid Ref, but a specific Context might or might not have a name.
+</p>
+<p>
+See comments on the <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a> type for more details of the attribute reference
+syntax.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_Valid_seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Defined">Defined</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Error">Error</a></div>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="LaunchDarkly_Sdk_AttributeRef_Equals_" data-uid="LaunchDarkly.Sdk.AttributeRef.Equals*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_Equals_LaunchDarkly_Sdk_AttributeRef_" data-uid="LaunchDarkly.Sdk.AttributeRef.Equals(LaunchDarkly.Sdk.AttributeRef)">Equals(AttributeRef)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(AttributeRef other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_AttributeRef_Equals_" data-uid="LaunchDarkly.Sdk.AttributeRef.Equals*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_Equals_System_Object_" data-uid="LaunchDarkly.Sdk.AttributeRef.Equals(System.Object)">Equals(Object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_AttributeRef_FromLiteral_" data-uid="LaunchDarkly.Sdk.AttributeRef.FromLiteral*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_FromLiteral_System_String_" data-uid="LaunchDarkly.Sdk.AttributeRef.FromLiteral(System.String)">FromLiteral(String)</h4>
+  <div class="markdown level1 summary"><p>Similar to <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromPath_System_String_">FromPath(String)</a>, except that it always interprets the string as a literal
+attribute name, never as a slash-delimited path expression. There is no escaping or unescaping,
+even if the name contains literal &apos;/&apos; or &apos;~&apos; characters. Since an attribute name can contain
+any characters, this method always returns a valid AttributeRef unless the name is empty.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AttributeRef FromLiteral(string attributeName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">attributeName</span></td>
+        <td><p>an attribute name</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a></td>
+        <td><p>an AttributeRef</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_FromLiteral_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For example: <code>AttributeRef.FromLiteral(&quot;name&quot;)</code> is exactly equivalent to
+<code>AttributeRef.FromPath(&quot;name&quot;)</code>. <code>AttributeRef.FromLiteral(&quot;a/b&quot;)</code> is exactly equivalent
+to <code>AttributeRef.FromPath(&quot;a/b&quot;)</code> (since the syntax used by <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromPath_System_String_">FromPath(String)</a>
+treats the whole string as a literal as long as it does not start with a slash), or to
+<code>AttributeRef.FromPath(&quot;/a~1b&quot;)</code>.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_FromLiteral_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromPath_System_String_">FromPath(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_AttributeRef_FromPath_" data-uid="LaunchDarkly.Sdk.AttributeRef.FromPath*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_FromPath_System_String_" data-uid="LaunchDarkly.Sdk.AttributeRef.FromPath(System.String)">FromPath(String)</h4>
+  <div class="markdown level1 summary"><p>Creates an AttributeRef from a string. For the supported syntax and examples, see comments on the
+<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a> type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AttributeRef FromPath(string refPath)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">refPath</span></td>
+        <td><p>an attribute name or path</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html">AttributeRef</a></td>
+        <td><p>an AttributeRef</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_FromPath_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method always returns an AttributeRef that preserves the original string, even if validation
+fails, so that calling <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_ToString">ToString()</a> (or serializing the AttributeRef to JSON) will
+produce the original string. If validation fails, <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Error">Error</a> will return a non-null
+error and any SDK method that takes this AttributeRef as a parameter will consider it invalid.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_FromPath_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromLiteral_System_String_">FromLiteral(String)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_AttributeRef_GetComponent_" data-uid="LaunchDarkly.Sdk.AttributeRef.GetComponent*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_GetComponent_System_Int32_" data-uid="LaunchDarkly.Sdk.AttributeRef.GetComponent(System.Int32)">GetComponent(Int32)</h4>
+  <div class="markdown level1 summary"><p>Retrieves a single path component from the attribute reference.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetComponent(int index)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">index</span></td>
+        <td><p>the zero-based index of the desired path component</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>the path component or null</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_GetComponent_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+For a simple attribute reference such as &quot;name&quot; with no leading slash, if index is zero,
+TryGetComponent returns the attribute name.
+</p>
+<p>
+For an attribute reference with a leading slash, if index is non-negative and less than
+<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_Depth">Depth</a>, TryGetComponent returns the path component.
+</p>
+<p>
+It returns null if the index is out of range.
+</p>
+</div>
+  <a id="LaunchDarkly_Sdk_AttributeRef_GetHashCode_" data-uid="LaunchDarkly.Sdk.AttributeRef.GetHashCode*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_GetHashCode" data-uid="LaunchDarkly.Sdk.AttributeRef.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_AttributeRef_ToString_" data-uid="LaunchDarkly.Sdk.AttributeRef.ToString*"></a>
+  <h4 id="LaunchDarkly_Sdk_AttributeRef_ToString" data-uid="LaunchDarkly.Sdk.AttributeRef.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Returns the attribute reference as a string, in the same format used by
+<a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromPath_System_String_">FromPath(String)</a></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>the attribute reference string (guaranteed non-null)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_AttributeRef_ToString_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If the AttributeRef was created with <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromPath_System_String_">FromPath(String)</a>, this value is
+identical to the original string. If it was created with <a class="xref" href="LaunchDarkly.Sdk.AttributeRef.html#LaunchDarkly_Sdk_AttributeRef_FromLiteral_System_String_">FromLiteral(String)</a>,
+the value may be different due to unescaping (for instance, an attribute whose name is
+&quot;/a&quot; would be represented as &quot;~1a&quot;). For an uninitialized struct
+(<code>new AttributeRef()</code>), it returns an empty string.</p>
+</div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.IEquatable&lt;&gt;</span>
+  </div>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

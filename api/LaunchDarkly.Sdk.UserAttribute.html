@@ -93,9 +93,11 @@
   </div>
   <h5 id="LaunchDarkly_Sdk_UserAttribute_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>
-This abstraction helps to distinguish attribute names from other string values, and also
-improves efficiency in feature flag data structures and evaluations because built-in
-attributes always reuse the same instances.
+Application code rarely needs to use this type; it is used internally by the SDK for
+efficiency in flag evaluations. It can also be used as a reference for the constant
+names of built-in attributes such as <a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html#LaunchDarkly_Sdk_UserAttribute_Email">Email</a>. However, in the newer
+<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a> model, there are very few reserved attribute names, so the
+equivalent of <a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html#LaunchDarkly_Sdk_UserAttribute_Email">Email</a> would simply be a custom attribute called &quot;email&quot;.
 </p>
 <p>
 For a fuller description of user attributes and how they can be referenced in feature
@@ -297,29 +299,6 @@ and <a href="https://docs.launchdarkly.com/home/flags/targeting-users">Targeting
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static readonly UserAttribute Name</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h4 id="LaunchDarkly_Sdk_UserAttribute_Secondary" data-uid="LaunchDarkly.Sdk.UserAttribute.Secondary">Secondary</h4>
-  <div class="markdown level1 summary"><p>Represents the secondary key attribute.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly UserAttribute Secondary</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">

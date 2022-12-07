@@ -95,14 +95,6 @@ methods, if that API is available). They are included here for use by other Laun
 library code.
 </p>
 <p>
-These conversions use the <code>LaunchDarkly.JsonStream</code> library
-(<a href="https://github.com/launchdarkly/dotnet-jsonstream">https://github.com/launchdarkly/dotnet-jsonstream</a>), which internally uses
-<code>System.Text.Json</code> on platforms where that API is available or a custom implementation
-otherwise. If an error occurs, they may throw a lower-level exception type such as
-<code>LaunchDarkly.JsonStream.JsonReadException</code> or <code>System.Text.Json.JsonException</code>
-rather than <code>LaunchDarkly.Sdk.Json.JsonException</code>.
-</p>
-<p>
 Some of these converters also have <code>ReadJsonValue</code> and <code>WriteJsonValue</code> methods.
 The reason for this is that the <code>object</code> type used by the regular converter methods
 causes boxing/unboxing conversions if the target type is a <code>struct</code>, and if the

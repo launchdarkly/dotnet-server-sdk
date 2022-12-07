@@ -146,16 +146,16 @@ no other settings specify otherwise.</p>
     </tbody>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearRules_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This undoes the effect of methods like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___">IfMatch(UserAttribute, LdValue[])</a>.</p>
+  <div class="markdown level1 remarks"><p>This undoes the effect of methods like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_System_String_LaunchDarkly_Sdk_LdValue___">IfMatch(String, LdValue[])</a>.</p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearUserTargets_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ClearUserTargets*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearUserTargets" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ClearUserTargets">ClearUserTargets()</h4>
-  <div class="markdown level1 summary"><p>Removes any existing user targets from the flag.</p>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearTargets_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ClearTargets*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearTargets" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ClearTargets">ClearTargets()</h4>
+  <div class="markdown level1 summary"><p>Removes any existing user/context targets from the flag.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder ClearUserTargets()</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder ClearTargets()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -173,7 +173,7 @@ no other settings specify otherwise.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearUserTargets_remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearTargets_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This undoes the effect of methods like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Boolean_">VariationForUser(String, Boolean)</a>.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_FallthroughVariation_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.FallthroughVariation*"></a>
@@ -221,7 +221,7 @@ no other settings specify otherwise.</p>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_FallthroughVariation_System_Boolean__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>
-The fallthrough is the value that is returned if targeting is on and the user was not
+The fallthrough is the value that is returned if targeting is on and the context was not
 matched by a more specific target or rule.
 </p>
 <p>
@@ -273,17 +273,18 @@ boolean flag.
     </tbody>
   </table>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_FallthroughVariation_System_Int32__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>The fallthrough is the value that is returned if targeting is on and the user was not
+  <div class="markdown level1 remarks"><p>The fallthrough is the value that is returned if targeting is on and the context was not
 matched by a more specific target or rule.</p>
 </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfMatch*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfMatch(LaunchDarkly.Sdk.UserAttribute,LaunchDarkly.Sdk.LdValue[])">IfMatch(UserAttribute, LdValue[])</h4>
-  <div class="markdown level1 summary"><p>Starts defining a flag rule, using the &quot;is one of&quot; operator.</p>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfMatch(System.String,LaunchDarkly.Sdk.LdValue[])">IfMatch(String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Starts defining a flag rule, using the &quot;is one of&quot; operator. This is a shortcut for calling
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">IfMatchContext(ContextKind, String, LdValue[])</a> with &quot;user&quot; as the context kind.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder IfMatch(UserAttribute attribute, params LdValue[] values)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder IfMatch(string attribute, params LdValue[] values)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -296,7 +297,7 @@ matched by a more specific target or rule.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a></td>
+        <td><span class="xref">System.String</span></td>
         <td><span class="parametername">attribute</span></td>
         <td><p>the user attribute to match against</p>
 </td>
@@ -322,29 +323,30 @@ matched by a more specific target or rule.</p>
         <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a></td>
         <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a>; call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Boolean_">ThenReturn(Boolean)</a>
 or <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Int32_">ThenReturn(Int32)</a> to finish the rule, or add more tests with
-another method like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___">AndMatch(UserAttribute, LdValue[])</a></p>
+another method like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_System_String_LaunchDarkly_Sdk_LdValue___">AndMatch(String, LdValue[])</a></p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatch_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p><p>
 For example, this creates a rule that returns <code>true</code> if the name is &quot;Patsy&quot; or &quot;Edina&quot;:
 </p>
 <example><p>
 <pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
-        .IfMatch(UserAttribute.Name, LdValue.Of(&quot;Patsy&quot;), LdValue.Of(&quot;Edina&quot;))
+        .IfMatch(&quot;name&quot;, LdValue.Of(&quot;Patsy&quot;), LdValue.Of(&quot;Edina&quot;))
         .ThenReturn(true));</code></pre>
 <p></example></p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatch_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatch*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatch(LaunchDarkly.Sdk.UserAttribute,LaunchDarkly.Sdk.LdValue[])">IfNotMatch(UserAttribute, LdValue[])</h4>
-  <div class="markdown level1 summary"><p>Starts defining a flag rule, using the &quot;is not one of&quot; operator.</p>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatchContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfMatchContext*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfMatchContext(LaunchDarkly.Sdk.ContextKind,System.String,LaunchDarkly.Sdk.LdValue[])">IfMatchContext(ContextKind, String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Starts defining a flag rule, using the &quot;is one of&quot; operator. This matching expression
+only applies to contexts of a specific kind.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder IfNotMatch(UserAttribute attribute, params LdValue[] values)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder IfMatchContext(ContextKind contextKind, string attribute, params LdValue[] values)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -357,7 +359,76 @@ For example, this creates a rule that returns <code>true</code> if the name is &
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.UserAttribute.html">UserAttribute</a></td>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">contextKind</span></td>
+        <td><p>the context kind to match</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">attribute</span></td>
+        <td><p>the attribute to match against</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>[]</td>
+        <td><span class="parametername">values</span></td>
+        <td><p>values to compare to</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a></td>
+        <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a>; call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Boolean_">ThenReturn(Boolean)</a>
+or <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Int32_">ThenReturn(Int32)</a> to finish the rule, or add more tests with
+another method like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">AndMatchContext(ContextKind, String, LdValue[])</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p><p>
+For example, this creates a rule that returns <code>true</code> if the name attribute for the
+&quot;company&quot; context is &quot;Ella&quot; or &quot;Monsoon&quot;:
+</p>
+<example><p>
+<pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
+        .IfMatchContext(&quot;company&quot;, &quot;name&quot;, LdValue.Of(&quot;Ella&quot;), LdValue.Of(&quot;Monsoon&quot;))
+        .ThenReturn(true));</code></pre>
+<p></example></p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatch_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatch*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatch_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatch(System.String,LaunchDarkly.Sdk.LdValue[])">IfNotMatch(String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Starts defining a flag rule, using the &quot;is not one of&quot; operator. This is a shortcut for calling
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">IfNotMatchContext(ContextKind, String, LdValue[])</a> with &quot;user&quot; as the context kind.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder IfNotMatch(string attribute, params LdValue[] values)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
         <td><span class="parametername">attribute</span></td>
         <td><p>the user attribute to match against</p>
 </td>
@@ -383,19 +454,88 @@ For example, this creates a rule that returns <code>true</code> if the name is &
         <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a></td>
         <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a>; call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Boolean_">ThenReturn(Boolean)</a>
 or <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Int32_">ThenReturn(Int32)</a> to finish the rule, or add more tests with
-another method like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue___">AndMatch(UserAttribute, LdValue[])</a></p>
+another method like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatch_System_String_LaunchDarkly_Sdk_LdValue___">AndMatch(String, LdValue[])</a></p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatch_LaunchDarkly_Sdk_UserAttribute_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatch_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p><p>
 For example, this creates a rule that returns <code>true</code> if the name is neither
 &quot;Saffron&quot; nor &quot;Bubble&quot;:
 </p>
 <example><p>
 <pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
-        .IfNotMatch(UserAttribute.Name, LdValue.Of(&quot;Saffron&quot;), LdValue.Of(&quot;Bubble&quot;))
+        .IfNotMatch(&quot;name&quot;, LdValue.Of(&quot;Saffron&quot;), LdValue.Of(&quot;Bubble&quot;))
+        .ThenReturn(true));</code></pre>
+<p></example></p>
+</div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatchContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatchContext*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatchContext(LaunchDarkly.Sdk.ContextKind,System.String,LaunchDarkly.Sdk.LdValue[])">IfNotMatchContext(ContextKind, String, LdValue[])</h4>
+  <div class="markdown level1 summary"><p>Starts defining a flag rule, using the &quot;is not one of&quot; operator. This matching expression
+only applies to contexts of a specific kind.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagRuleBuilder IfNotMatchContext(ContextKind contextKind, string attribute, params LdValue[] values)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">contextKind</span></td>
+        <td><p>the context kind to match</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">attribute</span></td>
+        <td><p>the attribute to match against</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>[]</td>
+        <td><span class="parametername">values</span></td>
+        <td><p>values to compare to</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a></td>
+        <td><p>a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html">TestData.FlagRuleBuilder</a>; call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Boolean_">ThenReturn(Boolean)</a>
+or <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_ThenReturn_System_Int32_">ThenReturn(Int32)</a> to finish the rule, or add more tests with
+another method like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagRuleBuilder_AndMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue___">AndMatchContext(ContextKind, String, LdValue[])</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_IfNotMatchContext_LaunchDarkly_Sdk_ContextKind_System_String_LaunchDarkly_Sdk_LdValue____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p><p>
+For example, this creates a rule that returns <code>true</code> if the name attribute for the
+&quot;company&quot; context is neither &quot;Pendant&quot; nor &quot;Sterling Cooper&quot;:
+</p>
+<example><p>
+<pre><code>    testData.Update(testData.Flag(&quot;flag-key&quot;)
+        .IfNotMatchContext(&quot;company&quot;, &quot;name&quot;, LdValue.Of(&quot;Pendant&quot;), LdValue.Of(&quot;Sterling Cooper&quot;))
         .ThenReturn(true));</code></pre>
 <p></example></p>
 </div>
@@ -540,14 +680,14 @@ real LaunchDarkly dashboard. In the default configuration that you get from call
 <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String_">Flag(String)</a> with a new flag key, the flag will return <code>false</code>
 whenever targeting is off, and <code>true</code> when targeting is on.</p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAllUsers_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ValueForAllUsers*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAllUsers_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ValueForAllUsers(LaunchDarkly.Sdk.LdValue)">ValueForAllUsers(LdValue)</h4>
-  <div class="markdown level1 summary"><p>Sets the flag to always return the specified variation value for all users.</p>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ValueForAll*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ValueForAll(LaunchDarkly.Sdk.LdValue)">ValueForAll(LdValue)</h4>
+  <div class="markdown level1 summary"><p>Sets the flag to always return the specified variation value for all contexts.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder ValueForAllUsers(LdValue value)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder ValueForAll(LdValue value)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -562,7 +702,7 @@ whenever targeting is off, and <code>true</code> when targeting is on.</p>
       <tr>
         <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
         <td><span class="parametername">value</span></td>
-        <td><p>the desired value to be returned for all users</p>
+        <td><p>the desired value to be returned</p>
 </td>
       </tr>
     </tbody>
@@ -583,19 +723,24 @@ whenever targeting is off, and <code>true</code> when targeting is on.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAllUsers_LaunchDarkly_Sdk_LdValue__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_LaunchDarkly_Sdk_LdValue__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The value may be of any JSON type, as defined by <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>. This method changes the
 flag to have only a single variation, which is this value, and to return the same variation
 regardless of whether targeting is on or off. Any existing targets or rules are removed.</p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAllUsers_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAllUsers*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAllUsers_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAllUsers(System.Boolean)">VariationForAllUsers(Boolean)</h4>
-  <div class="markdown level1 summary"><p>Sets the flag to always return the specified boolean variation for all users.</p>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_LaunchDarkly_Sdk_LdValue__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Boolean_">VariationForAll(Boolean)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Int32_">VariationForAll(Int32)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAll*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAll(System.Boolean)">VariationForAll(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Sets the flag to always return the specified boolean variation for all contexts.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder VariationForAllUsers(bool variation)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder VariationForAll(bool variation)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -610,7 +755,7 @@ regardless of whether targeting is on or off. Any existing targets or rules are 
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">variation</span></td>
-        <td><p>the desired true/false variation to be returned for all users</p>
+        <td><p>the desired true/false variation to be returned</p>
 </td>
       </tr>
     </tbody>
@@ -631,19 +776,24 @@ regardless of whether targeting is on or off. Any existing targets or rules are 
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAllUsers_System_Boolean__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Boolean__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Targeting is switched on, any existing targets or rules are removed, and the flag&apos;s variations are
 set to <code>true</code> and <code>false</code>. The fallthrough variation is set to the specified value. The
 off variation is left unchanged.</p>
 </div>
-  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAllUsers_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAllUsers*"></a>
-  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAllUsers_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAllUsers(System.Int32)">VariationForAllUsers(Int32)</h4>
-  <div class="markdown level1 summary"><p>Sets the flag to always return the specified variation for all users.</p>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Boolean__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Int32_">VariationForAll(Int32)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_LaunchDarkly_Sdk_LdValue_">ValueForAll(LdValue)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAll*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForAll(System.Int32)">VariationForAll(Int32)</h4>
+  <div class="markdown level1 summary"><p>Sets the flag to always return the specified variation for all contexts.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder VariationForAllUsers(int variationIndex)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder VariationForAll(int variationIndex)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -679,15 +829,156 @@ off variation is left unchanged.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAllUsers_System_Int32__remarks">Remarks</h5>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Int32__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The variation is specified by number, out of whatever variation values have already been
 defined. Targeting is switched on, and any existing targets or rules are removed. The fallthrough
 variation is set to the specified value. The off variation is left unchanged.</p>
 </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Int32__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForAll_System_Boolean_">VariationForAll(Boolean)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_LaunchDarkly_Sdk_LdValue_">ValueForAll(LdValue)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForKey*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForKey(LaunchDarkly.Sdk.ContextKind,System.String,System.Boolean)">VariationForKey(ContextKind, String, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Sets the flag to return the specified boolean variation for a specific context, identified
+by context kind and key, when targeting is on.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder VariationForKey(ContextKind contextKind, string key, bool variation)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">contextKind</span></td>
+        <td><p>the context kind</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the context key</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">variation</span></td>
+        <td><p>the desired true/false variation to be returned for this context when
+targeting is on</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Boolean__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This does not affect the flag&apos;s off variation that is used when targeting is off.
+</p>
+<p>
+If the flag was not already a boolean flag, this also changes it to a boolean flag.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Boolean__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Int32_">VariationForKey(ContextKind, String, Int32)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Int32_">VariationForUser(String, Int32)</a></div>
+  </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForKey*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForKey(LaunchDarkly.Sdk.ContextKind,System.String,System.Int32)">VariationForKey(ContextKind, String, Int32)</h4>
+  <div class="markdown level1 summary"><p>Sets the flag to return the specified variation for a specific context, identified
+by context kind and key, when targeting is on.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder VariationForKey(ContextKind contextKind, string key, int variationIndex)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ContextKind.html">ContextKind</a></td>
+        <td><span class="parametername">contextKind</span></td>
+        <td><p>the context kind</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the context key</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">variationIndex</span></td>
+        <td><p>the desired variation to be returned for this context when
+targeting is on: 0 for the first, 1 for the second, etc.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This has no effect when targeting is turned off for the flag. The variation is specified
+by number, out of whatever variation values have already been defined.</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Int32__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForKey_LaunchDarkly_Sdk_ContextKind_System_String_System_Boolean_">VariationForKey(ContextKind, String, Boolean)</a></div>
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Int32_">VariationForUser(String, Int32)</a></div>
+  </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForUser*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForUser(System.String,System.Boolean)">VariationForUser(String, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Sets the flag to return the specified boolean variation for a specific user key when
-targeting is on.</p>
+  <div class="markdown level1 summary"><p>Sets the flag to return the specified boolean variation for a specific user key (that is,
+for a context with that key whose context kind is &quot;user&quot;) when targeting is on.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -743,10 +1034,14 @@ This does not affect the flag&apos;s off variation that is used when targeting i
 If the flag was not already a boolean flag, this also changes it to a boolean flag.
 </p>
 </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Boolean__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Int32_">VariationForUser(String, Int32)</a></div>
+  </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForUser*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.VariationForUser(System.String,System.Int32)">VariationForUser(String, Int32)</h4>
-  <div class="markdown level1 summary"><p>Sets the flag to return the specified variation for a specific user key when targeting
-is on.</p>
+  <div class="markdown level1 summary"><p>Sets the flag to return the specified variation for a specific user key (that is,
+for a context with that key whose context kind is &quot;user&quot;) when targeting is on.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -798,6 +1093,10 @@ targeting is on: 0 for the first, 1 for the second, etc.</p>
   <div class="markdown level1 remarks"><p>This has no effect when targeting is turned off for the flag. The variation is specified
 by number, out of whatever variation values have already been defined.</p>
 </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Int32__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Boolean_">VariationForUser(String, Boolean)</a></div>
+  </div>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_Variations_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Variations*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_Variations_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Variations(LaunchDarkly.Sdk.LdValue[])">Variations(LdValue[])</h4>
   <div class="markdown level1 summary"><p>Changes the allowable variation values for the flag.</p>
