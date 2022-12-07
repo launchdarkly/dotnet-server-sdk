@@ -2,6 +2,44 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [7.0.0] - 2022-12-07
+The latest version of this SDK supports LaunchDarkly's new custom contexts feature. Contexts are an evolution of a previously-existing concept, "users." Contexts let you create targeting rules for feature flags based on a variety of different information, including attributes pertaining to users, organizations, devices, and more. You can even combine contexts to create "multi-contexts." 
+
+This feature is only available to members of LaunchDarkly's Early Access Program (EAP). If you're in the EAP, you can use contexts by updating your SDK to the latest version and, if applicable, updating your Relay Proxy. Outdated SDK versions do not support contexts, and will cause unpredictable flag evaluation behavior.
+
+If you are not in the EAP, only use single contexts of kind "user", or continue to use the user type if available. If you try to create contexts, the context will be sent to LaunchDarkly, but any data not related to the user object will be ignored.
+
+For detailed information about this version, please refer to the list below. For information on how to upgrade from the previous version, please read the [migration guide](https://docs.launchdarkly.com/sdk/server-side/dotnet/migration-6-to-7).
+
+### Added:
+- In `LaunchDarkly.Sdk`, the types `Context` and `ContextKind` define the new context model.
+- For all SDK methods that took a `User` parameter, there is now a corresponding method that takes a `Context`. These are defined as extension methods. The SDK still supports `User` for now, but `Context` is the preferred model and `User` may be removed in a future version.
+- The `TestData` flag builder methods have been extended to support now context-related options, such as matching a key for a specific context type other than "user".
+- `LdClient.FlushAndWait()` is a synchronous version of `Flush()`.
+
+### Changed _(breaking changes from 6.x)_:
+- It was previously allowable to set a user key to an empty string. In the new context model, the key is not allowed to be empty. Trying to use an empty key will cause evaluations to fail and return the default value.
+- There is no longer such a thing as a `Secondary` meta-attribute that affects percentage rollouts. If you set an attribute with that name in a `Context`, it will simply be a custom attribute like any other.
+- The `Anonymous` attribute in `LDUser` is now a simple boolean, with no distinction between a false state and a null state.
+- Types such as `IDataStore`, which define the low-level interfaces of LaunchDarkly SDK components and allow implementation of custom components, have been moved out of the `Interfaces` namespace into a new `Subsystems` namespace. Some types have been removed by using generics: for instance, the interface type `IDataSourceFactory` has been replaced by `IComponentConfigurer<IDataSource>`. Application code normally does not refer to these types except possibly to hold a value for a configuration property such as `ConfigurationBuilder.DataStore`, so this change is likely to only affect configuration-related logic.
+
+### Changed (requirements/dependencies/build):
+- .NET Core 2.1, .NET Framework 4.5.2, .NET Framework 4.6.1, and .NET 5.0 are now unsupported. The minimum platform versions are now .NET Core 3.1, .NET Framework 4.6.2, .NET 6.0, and .NET Standard 2.0.
+- Applications that use the database integrations for Redis, DynamoDB, or Consul must update to the latest major versions of the corresponding packages (`LaunchDarkly.ServerSdk.Redis`, etc.).
+- There is no longer a dependency on `LaunchDarkly.JsonStream`. This package existed because some platforms did not support the `System.Text.Json` API, but that is no longer the case and the SDK now uses `System.Text.Json` directly for all of its JSON operations.
+- If you are using the package `LaunchDarkly.CommonSdk.JsonNet` for interoperability with the Json.NET library, you must update this to the latest major version.
+
+### Changed (behavioral changes):
+- The SDK can now evaluate segments that have rules referencing other segments.
+- Analytics event data now uses a new JSON schema due to differences between the context model and the old user model.
+
+### Removed:
+- Removed all types, fields, and methods that were deprecated as of the most recent 6.x release.
+- Removed the `Secondary` meta-attribute in `User` and `UserBuilder`.
+- The `Alias` method no longer exists because alias events are not needed in the new context model.
+- The `InlineUsersInEvents` option no longer exists because it is not relevant in the new context model.
+- `LaunchDarkly.Sdk.Json.JsonException`: this type is no longer necessary because the SDK now always uses `System.Text.Json`, so any error when deserializing an object from JSON will throw a `System.Text.Json.JsonException`.
+
 ## [6.3.3] - 2022-10-24
 ### Fixed:
 - Fixed a bug in the parsing of string values in feature flags and user attributes when they were referenced with date/time operators in a targeting rule. As described in [LaunchDarkly documentation](https://docs.launchdarkly.com/sdk/concepts/flag-types#representing-datetime-values), such values must use the RFC3339 date/time format; the SDK was also accepting strings in other formats (for instance, ones that did not have a time or a time zone), which would cause undefined behavior inconsistent with evaluations done by other LaunchDarkly services. This fix ensures that all targeting rules that reference an invalid date/time value are a non-match, and does not affect how the SDK treats values that are in the correct format.
