@@ -10,7 +10,9 @@ namespace LaunchDarkly.Sdk.Server
 {
     public class LdClientOfflineTest : BaseTest
     {
-        public LdClientOfflineTest(ITestOutputHelper testOutput) : base(testOutput) { }
+        public LdClientOfflineTest(ITestOutputHelper testOutput) : base(testOutput)
+        {
+        }
 
         [Fact]
         public void OfflineClientHasNullDataSource()
@@ -89,6 +91,20 @@ namespace LaunchDarkly.Sdk.Server
             {
                 Assert.Equal(expectedHash, client.SecureModeHash(context));
                 Assert.Equal(expectedHash, client.SecureModeHash(contextAsUser));
+            }
+        }
+
+        [Fact]
+        public void SecureModeHashSameRegardlessContextOrder()
+        {
+            Context a = Context.NewMulti(Context.New(ContextKind.Of("user"), "user-key"),
+                Context.New(ContextKind.Of("org"), "org-key"));
+            Context b = Context.NewMulti(Context.New(ContextKind.Of("org"), "org-key"),
+                Context.New(ContextKind.Of("user"), "user-key"));
+            var config = BasicConfig().SdkKey("secret").Offline(true).Build();
+            using (var client = new LdClient(config))
+            {
+                Assert.Equal(client.SecureModeHash(a), client.SecureModeHash(b));
             }
         }
     }
