@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [7.0.3] - 2023-04-21
+### Changed:
+- Updated `LaunchDarkly.InternalSdk` to `3.1.2`.
+
 ## [7.0.2] - 2023-04-04
 ### Fixed:
 - Fixed an issue with generating the `FullyQualifiedKey`. The key generation was not sorted by the kind, so the key was not stable depending on the order of the context construction. This also affected the generation of the secure mode hash for mulit-contexts.
