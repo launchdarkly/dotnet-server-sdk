@@ -73,6 +73,29 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void ClientIncludesApplicationInformation()
+        {
+            using (var streamServer = HttpServer.Start(ValidStreamingResponse))
+            {
+                var config = BasicConfig()
+                    .DataSource(Components.StreamingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Streaming(streamServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
+                    .ApplicationInfo(Components.ApplicationInfo()
+                        .ApplicationId("the-app")
+                        .ApplicationVersion("the-version"))
+                    .Build();
+
+                using (new LdClient(config))
+                {
+                    var request = streamServer.Recorder.RequireRequest();
+                    Assert.Equal("application-id/the-app application-version/the-version",
+                        request.Headers.Get("x-launchdarkly-tags"));
+                }
+            }
+        }
+
+        [Fact]
         public void ClientRetriesConnectionInStreamingModeWithNonFatalError()
         {
             var failThenSucceedHandler = Handlers.Sequential(Error503Response, ValidStreamingResponse);

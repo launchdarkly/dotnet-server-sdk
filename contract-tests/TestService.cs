@@ -32,7 +32,9 @@ namespace TestService
             "big-segments",
             "context-type",
             "secure-mode-hash",
-            "user-type"
+            "migrations",
+            "event-sampling",
+            "tags"
         };
 
         public readonly Handler Handler;

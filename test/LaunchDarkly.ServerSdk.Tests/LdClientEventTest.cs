@@ -39,16 +39,6 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void IdentifyWithUserSendsEvent()
-        {
-            client.Identify(contextAsUser);
-
-            Assert.Single(eventSink.Events);
-            var ie = Assert.IsType<IdentifyEvent>(eventSink.Events[0]);
-            Assert.Equal(context, ie.Context);
-        }
-
-        [Fact]
         public void IdentifyWithEmptyUserKeySendsNoEvent()
         {
             client.Identify(Context.New(""));
@@ -70,19 +60,6 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
-        public void TrackWithUserSendsEventWithoutData()
-        {
-            client.Track("eventkey", contextAsUser);
-
-            Assert.Single(eventSink.Events);
-            var ce = Assert.IsType<CustomEvent>(eventSink.Events[0]);
-            Assert.Equal(context, ce.Context);
-            Assert.Equal("eventkey", ce.EventKey);
-            Assert.Equal(LdValue.Null, ce.Data);
-            Assert.Null(ce.MetricValue);
-        }
-
-        [Fact]
         public void TrackSendsEventWithData()
         {
             var data = LdValue.BuildObject().Add("thing", "stuff").Build();
@@ -94,7 +71,7 @@ namespace LaunchDarkly.Sdk.Server
             Assert.Equal("eventkey", ce.EventKey);
             Assert.Equal(data, ce.Data);
         }
-        
+
         [Fact]
         public void TrackSendsEventWithWithMetricValue()
         {
@@ -144,18 +121,7 @@ namespace LaunchDarkly.Sdk.Server
             CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue, null, null);
             eventSink.Events.Clear();
 
-            v.VariationForUserMethod(client, flag.Key, contextAsUser, v.DefaultValue);
-            Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue, null, null);
-            eventSink.Events.Clear();
-
             v.VariationDetailMethod(client, flag.Key, context, v.DefaultValue);
-            Assert.Single(eventSink.Events);
-            CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue,
-                EvaluationReason.OffReason, null);
-            eventSink.Events.Clear();
-
-            v.VariationDetailForUserMethod(client, flag.Key, contextAsUser, v.DefaultValue);
             Assert.Single(eventSink.Events);
             CheckFeatureEvent(eventSink.Events[0], flag, context, v.ExpectedLdValue, v.DefaultLdValue,
                 EvaluationReason.OffReason, null);
@@ -169,18 +135,7 @@ namespace LaunchDarkly.Sdk.Server
             CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue, null, null);
             eventSink.Events.Clear();
 
-            v.VariationForUserMethod(client, flagKey, contextAsUser, v.DefaultValue);
-            Assert.Single(eventSink.Events);
-            CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue, null, null);
-            eventSink.Events.Clear();
-
             v.VariationDetailMethod(client, flagKey, context, v.DefaultValue);
-            Assert.Single(eventSink.Events);
-            CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue,
-                EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound), null);
-            eventSink.Events.Clear();
-
-            v.VariationDetailForUserMethod(client, flagKey, contextAsUser, v.DefaultValue);
             Assert.Single(eventSink.Events);
             CheckUnknownFeatureEvent(eventSink.Events[0], flagKey, context, v.DefaultLdValue,
                 EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound), null);
@@ -192,13 +147,7 @@ namespace LaunchDarkly.Sdk.Server
             v.VariationMethod(client, flag.Key, invalidContext, v.DefaultValue);
             Assert.Empty(eventSink.Events);
 
-            v.VariationForUserMethod(client, flag.Key, (User)null, v.DefaultValue);
-            Assert.Empty(eventSink.Events);
-
             v.VariationDetailMethod(client, flag.Key, invalidContext, v.DefaultValue);
-            Assert.Empty(eventSink.Events);
-
-            v.VariationDetailForUserMethod(client, flag.Key, (User)null, v.DefaultValue);
             Assert.Empty(eventSink.Events);
         }
 
@@ -343,7 +292,7 @@ namespace LaunchDarkly.Sdk.Server
             CheckFeatureEvent(eventSink.Events[0], f1, context, LdValue.Of("go"), LdValue.Null, null, "feature0");
             CheckFeatureEvent(eventSink.Events[1], f0, context, LdValue.Of("fall"), LdValue.Of("default"), null, null);
         }
-        
+
         [Fact]
         public void EventIsSentWithDefaultValueForFlagThatEvaluatesToNull()
         {

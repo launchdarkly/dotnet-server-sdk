@@ -95,6 +95,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
 
         internal TaskExecutor TaskExecutor { get; }
 
+        internal ApplicationInfo ApplicationInfo { get; }
+
         /// <summary>
         /// Constructs a new instance with only the public properties.
         /// </summary>
@@ -121,7 +123,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
             this(
                 sdkKey, dataSourceUpdates, dataStoreUpdates, http, logger, offline, serviceEndpoints,
                 null,
-                new TaskExecutor("test-sender", logger ?? Logs.None.Logger(""))
+                new TaskExecutor("test-sender", logger ?? Logs.None.Logger("")),
+                new ApplicationInfo()
                 )
         { }
 
@@ -142,7 +145,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
             bool offline,
             ServiceEndpoints serviceEndpoints,
             IDiagnosticStore diagnosticStore,
-            TaskExecutor taskExecutor
+            TaskExecutor taskExecutor,
+            ApplicationInfo applicationInfo
             )
         {
             SdkKey = sdkKey;
@@ -154,6 +158,7 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
             ServiceEndpoints = serviceEndpoints ?? Components.ServiceEndpoints().Build();
             DiagnosticStore = diagnosticStore;
             TaskExecutor = taskExecutor;
+            ApplicationInfo = applicationInfo;
         }
 
         internal LdClientContext WithDataSourceUpdates(IDataSourceUpdates newDataSourceUpdates) =>
@@ -166,7 +171,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 Offline,
                 ServiceEndpoints,
                 DiagnosticStore,
-                TaskExecutor
+                TaskExecutor,
+                ApplicationInfo
                 );
 
         internal LdClientContext WithDataStoreUpdates(IDataStoreUpdates newDataStoreUpdates) =>
@@ -179,7 +185,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 Offline,
                 ServiceEndpoints,
                 DiagnosticStore,
-                TaskExecutor
+                TaskExecutor,
+                ApplicationInfo
                 );
 
         internal LdClientContext WithDiagnosticStore(IDiagnosticStore newDiagnosticStore) =>
@@ -192,7 +199,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 Offline,
                 ServiceEndpoints,
                 newDiagnosticStore,
-                TaskExecutor
+                TaskExecutor,
+                ApplicationInfo
                 );
 
         internal LdClientContext WithHttp(HttpConfiguration newHttp) =>
@@ -205,7 +213,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 Offline,
                 ServiceEndpoints,
                 DiagnosticStore,
-                TaskExecutor
+                TaskExecutor,
+                ApplicationInfo
                 );
 
         internal LdClientContext WithLogger(Logger newLogger) =>
@@ -218,7 +227,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 Offline,
                 ServiceEndpoints,
                 DiagnosticStore,
-                TaskExecutor
+                TaskExecutor,
+                ApplicationInfo
                 );
 
         internal LdClientContext WithTaskExecutor(TaskExecutor newTaskExecutor) =>
@@ -231,8 +241,23 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 Offline,
                 ServiceEndpoints,
                 DiagnosticStore,
-                newTaskExecutor
+                newTaskExecutor,
+                ApplicationInfo
                 );
+
+        internal LdClientContext WithApplicationInfo(ApplicationInfo applicationInfo) =>
+            new LdClientContext(
+                SdkKey,
+                DataSourceUpdates,
+                DataStoreUpdates,
+                Http,
+                Logger,
+                Offline,
+                ServiceEndpoints,
+                DiagnosticStore,
+                TaskExecutor,
+                applicationInfo
+            );
 
         private static HttpConfiguration DefaultHttpConfiguration() =>
             new HttpConfiguration(

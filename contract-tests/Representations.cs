@@ -29,6 +29,13 @@ namespace TestService
         public SdkConfigStreamParams Streaming { get; set; }
         public SdkConfigEventParams Events { get; set; }
         public SdkConfigBigSegmentsParams BigSegments { get; set; }
+        public SdkTagParams Tags { get; set; }
+    }
+
+    public class SdkTagParams
+    {
+        public string ApplicationId { get; set; }
+        public string ApplicationVersion { get; set; }
     }
 
     public class SdkConfigStreamParams
@@ -66,6 +73,8 @@ namespace TestService
         public ContextBuildParams ContextBuild { get; set; }
         public ContextConvertParams ContextConvert { get; set; }
         public SecureModeHashParams SecureModeHash { get; set; }
+        public MigrationVariationParams MigrationVariation { get; set; }
+        public MigrationOperationParams MigrationOperation { get; set; }
     }
 
     public class EvaluateFlagParams
@@ -158,5 +167,34 @@ namespace TestService
     public class SecureModeHashResponse
     {
         public string Result { get; set; }
+    }
+
+    public class MigrationVariationParams {
+        public string Key { get; set; }
+        public Context Context { get; set; }
+        public string DefaultStage { get; set; }
+    }
+
+    public class MigrationVariationResponse {
+        public string Result { get; set; }
+    }
+
+    public class MigrationOperationParams {
+        public string Operation { get; set; }
+        public Context Context { get; set; }
+        public string Key { get; set; }
+        public string DefaultStage { get; set; }
+        public string Payload { get; set; }
+        public string ReadExecutionOrder { get; set; }
+        public bool TrackConsistency { get; set; }
+        public bool TrackLatency { get; set; }
+        public bool TrackErrors { get; set; }
+        public Uri OldEndpoint { get; set; }
+        public Uri NewEndpoint { get; set; }
+    }
+
+    public class MigrationOperationResponse {
+        public string Result { get; set; }
+        public string Error { get; set; }
     }
 }

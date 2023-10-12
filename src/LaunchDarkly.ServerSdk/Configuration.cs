@@ -94,6 +94,11 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         public TimeSpan StartWaitTime { get; }
 
+        /// <summary>
+        /// ApplicationInfo configuration which contains info about the application the SDK is running in.
+        /// </summary>
+        public ApplicationInfoBuilder ApplicationInfo { get; }
+
         #endregion
 
         #region Public methods
@@ -168,6 +173,7 @@ namespace LaunchDarkly.Sdk.Server
             SdkKey = builder._sdkKey;
             ServiceEndpoints = (builder._serviceEndpointsBuilder ?? Components.ServiceEndpoints()).Build();
             StartWaitTime = builder._startWaitTime;
+            ApplicationInfo = builder._applicationInfo;
         }
 
         #endregion

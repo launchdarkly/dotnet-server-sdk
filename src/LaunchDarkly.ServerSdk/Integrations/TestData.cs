@@ -194,7 +194,8 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                             version,
                             flag.Deleted, flag.On, flag.Prerequisites, flag.Targets, null, flag.Rules,
                             flag.Fallthrough, flag.OffVariation, flag.Variations, flag.Salt,
-                            flag.TrackEvents, flag.TrackEventsFallthrough, flag.DebugEventsUntilDate, flag.ClientSide);
+                            flag.TrackEvents, flag.TrackEventsFallthrough, flag.DebugEventsUntilDate, flag.ClientSide,
+                            flag.SamplingRatio, flag.ExcludeFromSummaries, flag.Migration);
                     }
                     return new ItemDescriptor(flag.Version, flag);
                 },
@@ -318,6 +319,9 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             private List<LdValue> _variations;
             private Dictionary<string, Dictionary<int, HashSet<string>>> _targets;
             internal List<FlagRuleBuilder> _rules = null; // accessed by FlagRuleBuilder
+            private long? _samplingRatio;
+            private bool _excludeFromSummaries = false;
+            private FlagMigrationBuilder _migrationBuilder = null;
 
             #endregion
 
@@ -738,6 +742,38 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 return this;
             }
 
+            /// <summary>
+            /// Sets the sampling ratio for the flag.
+            /// </summary>
+            /// <param name="samplingRatio">the new sampling ratio</param>
+            /// <returns>the builder</returns>
+            public FlagBuilder SamplingRatio(long samplingRatio)
+            {
+                _samplingRatio = samplingRatio;
+                return this;
+            }
+
+            /// <summary>
+            /// Sets if the flag should be excluded from summary events.
+            /// </summary>
+            /// <param name="excludeFromSummaries">true to exclude the flag from summaries</param>
+            /// <returns>the builder</returns>
+            public FlagBuilder ExcludeFromSummaries(bool excludeFromSummaries)
+            {
+                _excludeFromSummaries = excludeFromSummaries;
+                return this;
+            }
+
+            /// <summary>
+            /// Used to configure migration settings for the flag.
+            /// </summary>
+            /// <returns>the builder</returns>
+            public FlagBuilder Migration(FlagMigrationBuilder migrationBuilder)
+            {
+                _migrationBuilder = migrationBuilder;
+                return this;
+            }
+
             #endregion
 
             #region Internal methods
@@ -780,6 +816,12 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     false))
                     .ToImmutableList();
 
+                Migration? migration = null;
+                if (_migrationBuilder != null)
+                {
+                    migration = new Migration(_migrationBuilder._checkRatio);
+                }
+
                 var flag = new FeatureFlag(
                     _key,
                     version,
@@ -796,7 +838,10 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                     false,
                     false,
                     null,
-                    false
+                    false,
+                    _samplingRatio,
+                    _excludeFromSummaries,
+                    migration
                     );
                 return new ItemDescriptor(version, flag);
             }
@@ -970,6 +1015,28 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 }
                 _parent._rules.Add(this);
                 return _parent;
+            }
+        }
+
+        /// <summary>
+        /// Used to build the migration settings for a feature flag.
+        /// </summary>
+        public sealed class FlagMigrationBuilder
+        {
+            internal long? _checkRatio;
+
+            /// <summary>
+            /// Set the check ratio for the migration.
+            /// </summary>
+            /// <remarks>
+            /// The check ratio is used in determining when to check the consistency of a migration.
+            /// </remarks>
+            /// <param name="checkRatio">the desired check ratio</param>
+            /// <returns>the builder</returns>
+            public FlagMigrationBuilder CheckRatio(long? checkRatio)
+            {
+                _checkRatio = checkRatio;
+                return this;
             }
         }
 

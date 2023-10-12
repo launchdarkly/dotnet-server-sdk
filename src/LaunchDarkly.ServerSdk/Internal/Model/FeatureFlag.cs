@@ -26,11 +26,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         public bool TrackEventsFallthrough { get; }
         public UnixMillisecondTime? DebugEventsUntilDate { get; private set; }
         public bool ClientSide { get; set; }
+        public long? SamplingRatio { get; }
+        public bool ExcludeFromSummaries { get; }
+
+        public Migration? Migration { get; }
 
         internal FeatureFlag(string key, int version, bool deleted, bool on, IEnumerable<Prerequisite> prerequisites,
             ImmutableList<Target> targets, ImmutableList<Target> contextTargets, IEnumerable<FlagRule> rules, VariationOrRollout fallthrough, int? offVariation,
             IEnumerable<LdValue> variations, string salt, bool trackEvents, bool trackEventsFallthrough, UnixMillisecondTime? debugEventsUntilDate,
-            bool clientSide)
+            bool clientSide, long? samplingRatio, bool excludeFromSummaries, Migration? migration)
         {
             Key = key;
             Version = version;
@@ -48,6 +52,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             TrackEventsFallthrough = trackEventsFallthrough;
             DebugEventsUntilDate = debugEventsUntilDate;
             ClientSide = clientSide;
+            SamplingRatio = samplingRatio;
+            ExcludeFromSummaries = excludeFromSummaries;
+            Migration = migration;
         }
     }
 
@@ -155,6 +162,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             Id = id;
             Clauses = clauses ?? Enumerable.Empty<Clause>();
             TrackEvents = trackEvents;
+        }
+    }
+
+    internal struct Migration
+    {
+        public long? CheckRatio { get; }
+
+        public Migration(long? checkRatio)
+        {
+            CheckRatio = checkRatio;
         }
     }
 

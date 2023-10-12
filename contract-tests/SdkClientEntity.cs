@@ -5,6 +5,7 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server;
+using LaunchDarkly.Sdk.Server.Migrations;
 
 namespace TestService
 {
@@ -31,7 +32,7 @@ namespace TestService
                 throw new Exception("Client initialization failed");
             }
         }
-        
+
         public void Close()
         {
             _client.Dispose();
@@ -53,48 +54,23 @@ namespace TestService
                     break;
 
                 case "identifyEvent":
-                    if (command.IdentifyEvent.User is null)
-                    {
                         _client.Identify(command.IdentifyEvent.Context.Value);
-                    }
-                    else
-                    {
-                        _client.Identify(command.IdentifyEvent.User);
-                    }
                     break;
 
                 case "customEvent":
                     var custom = command.CustomEvent;
-                    if (custom.User is null)
+                    var context = custom.Context.Value;
+                    if (custom.MetricValue.HasValue)
                     {
-                        var context = custom.Context.Value;
-                        if (custom.MetricValue.HasValue)
-                        {
-                            _client.Track(custom.EventKey, context, custom.Data, custom.MetricValue.Value);
-                        }
-                        else if (custom.OmitNullData && custom.Data.IsNull)
-                        {
-                            _client.Track(custom.EventKey, context);
-                        }
-                        else
-                        {
-                            _client.Track(custom.EventKey, context, custom.Data);
-                        }
+                        _client.Track(custom.EventKey, context, custom.Data, custom.MetricValue.Value);
+                    }
+                    else if (custom.OmitNullData && custom.Data.IsNull)
+                    {
+                        _client.Track(custom.EventKey, context);
                     }
                     else
                     {
-                        if (custom.MetricValue.HasValue)
-                        {
-                            _client.Track(custom.EventKey, custom.User, custom.Data, custom.MetricValue.Value);
-                        }
-                        else if (custom.OmitNullData && custom.Data.IsNull)
-                        {
-                            _client.Track(custom.EventKey, custom.User);
-                        }
-                        else
-                        {
-                            _client.Track(custom.EventKey, custom.User, custom.Data);
-                        }
+                        _client.Track(custom.EventKey, context, custom.Data);
                     }
                     break;
 
@@ -118,9 +94,16 @@ namespace TestService
                 case "secureModeHash":
                     response = new SecureModeHashResponse
                     {
-                        Result = command.SecureModeHash.User is null ? _client.SecureModeHash(command.SecureModeHash.Context.Value) :
-                            _client.SecureModeHash(command.SecureModeHash.User)
+                        Result =  _client.SecureModeHash(command.SecureModeHash.Context.Value)
                     };
+                    break;
+
+                case "migrationVariation":
+                    response = DoMigrationVariation(command.MigrationVariation);
+                    break;
+
+                case "migrationOperation":
+                    response = DoMigrationOperation(command.MigrationOperation);
                     break;
 
                 default:
@@ -138,80 +121,70 @@ namespace TestService
                 case "bool":
                     if (p.Detail)
                     {
-                        var detail = p.User is null ? _client.BoolVariationDetail(p.FlagKey, context, p.DefaultValue.AsBool) :
-                            _client.BoolVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsBool);
+                        var detail = _client.BoolVariationDetail(p.FlagKey, context, p.DefaultValue.AsBool);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(p.User is null ? _client.BoolVariation(p.FlagKey, context, p.DefaultValue.AsBool) :
-                            _client.BoolVariation(p.FlagKey, p.User, p.DefaultValue.AsBool));
+                        resp.Value = LdValue.Of(_client.BoolVariation(p.FlagKey, context, p.DefaultValue.AsBool));
                     }
                     break;
 
                 case "int":
                     if (p.Detail)
                     {
-                        var detail = p.User is null ? _client.IntVariationDetail(p.FlagKey, context, p.DefaultValue.AsInt) :
-                            _client.IntVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsInt);
+                        var detail = _client.IntVariationDetail(p.FlagKey, context, p.DefaultValue.AsInt);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(p.User is null ? _client.IntVariation(p.FlagKey, context, p.DefaultValue.AsInt) :
-                            _client.IntVariation(p.FlagKey, p.User, p.DefaultValue.AsInt));
+                        resp.Value = LdValue.Of(_client.IntVariation(p.FlagKey, context, p.DefaultValue.AsInt));
                     }
                     break;
 
                 case "double":
                     if (p.Detail)
                     {
-                        var detail = p.User is null ? _client.DoubleVariationDetail(p.FlagKey, context, p.DefaultValue.AsDouble) :
-                            _client.DoubleVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsDouble);
+                        var detail = _client.DoubleVariationDetail(p.FlagKey, context, p.DefaultValue.AsDouble);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(p.User is null ? _client.DoubleVariation(p.FlagKey, context, p.DefaultValue.AsDouble) :
-                            _client.DoubleVariation(p.FlagKey, p.User, p.DefaultValue.AsDouble));
+                        resp.Value = LdValue.Of(_client.DoubleVariation(p.FlagKey, context, p.DefaultValue.AsDouble));
                     }
                     break;
 
                 case "string":
                     if (p.Detail)
                     {
-                        var detail = p.User is null ? _client.StringVariationDetail(p.FlagKey, context, p.DefaultValue.AsString) :
-                            _client.StringVariationDetail(p.FlagKey, p.User, p.DefaultValue.AsString);
+                        var detail = _client.StringVariationDetail(p.FlagKey, context, p.DefaultValue.AsString);
                         resp.Value = LdValue.Of(detail.Value);
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = LdValue.Of(p.User is null ? _client.StringVariation(p.FlagKey, context, p.DefaultValue.AsString) :
-                            _client.StringVariation(p.FlagKey, p.User, p.DefaultValue.AsString));
+                        resp.Value = LdValue.Of(_client.StringVariation(p.FlagKey, context, p.DefaultValue.AsString));
                     }
                     break;
 
                 default:
                     if (p.Detail)
                     {
-                        var detail = p.User is null ? _client.JsonVariationDetail(p.FlagKey, context, p.DefaultValue) :
-                            _client.JsonVariationDetail(p.FlagKey, p.User, p.DefaultValue);
+                        var detail =  _client.JsonVariationDetail(p.FlagKey, context, p.DefaultValue);
                         resp.Value = detail.Value;
                         resp.VariationIndex = detail.VariationIndex;
                         resp.Reason = detail.Reason;
                     }
                     else
                     {
-                        resp.Value = p.User is null ? _client.JsonVariation(p.FlagKey, context, p.DefaultValue) :
-                            _client.JsonVariation(p.FlagKey, p.User, p.DefaultValue);
+                        resp.Value = _client.JsonVariation(p.FlagKey, context, p.DefaultValue);
                     }
                     break;
             }
@@ -233,8 +206,7 @@ namespace TestService
             {
                 options.Add(FlagsStateOption.WithReasons);
             }
-            var result = p.User is null ? _client.AllFlagsState(p.Context.Value, options.ToArray()) :
-                _client.AllFlagsState(p.User, options.ToArray());
+            var result = _client.AllFlagsState(p.Context.Value, options.ToArray());
             return new EvaluateAllFlagsResponse
             {
                 State = LdValue.Parse(LdJsonSerialization.SerializeObject(result))
@@ -374,7 +346,116 @@ namespace TestService
                 builder.BigSegments(bs);
             }
 
+            if (sdkParams.Tags != null)
+            {
+                var infoBuilder = Components.ApplicationInfo();
+                if (sdkParams.Tags?.ApplicationId != null)
+                {
+                    infoBuilder.ApplicationId(sdkParams.Tags.ApplicationId);
+                }
+                if (sdkParams.Tags?.ApplicationVersion != null)
+                {
+                    infoBuilder.ApplicationVersion(sdkParams.Tags.ApplicationVersion);
+                }
+
+                builder.ApplicationInfo(infoBuilder);
+            }
+
             return builder.Build();
+        }
+
+        private MigrationVariationResponse DoMigrationVariation(MigrationVariationParams migrationVariation)
+        {
+            var defaultStage = MigrationStageExtensions.FromDataModelString(migrationVariation.DefaultStage);
+            if (!defaultStage.HasValue) throw new ArgumentException("Could not convert default migration stage");
+
+            var (stage, _) = _client.MigrationVariation(migrationVariation.Key, migrationVariation.Context, defaultStage.Value);
+            return new MigrationVariationResponse
+            {
+                Result = stage.ToDataModelString()
+            };
+
+        }
+
+        private MigrationExecution GetExecution(string execution)
+        {
+            return execution switch
+            {
+                "serial" => MigrationExecution.Serial(MigrationSerialOrder.Fixed),
+                "random" => MigrationExecution.Serial(MigrationSerialOrder.Random),
+                "concurrent" => MigrationExecution.Parallel(),
+                _ => throw new ArgumentException("Invalid execution mode")
+            };
+        }
+
+        private MigrationOperationResponse DoMigrationOperation(MigrationOperationParams migrationOperation)
+        {
+            var defaultStage = MigrationStageExtensions.FromDataModelString(migrationOperation.DefaultStage);
+            if (!defaultStage.HasValue) throw new ArgumentException("Could not convert default migration stage");
+
+            var oldService = new CallbackService(migrationOperation.OldEndpoint);
+            var newService = new CallbackService(migrationOperation.NewEndpoint);
+
+            Func<string, string, bool> checker = null;
+            if (migrationOperation.TrackConsistency)
+            {
+                checker = (a, b) => a.Equals(b);
+            }
+            var migration = new MigrationBuilder<string, string, string, string>(_client)
+                .ReadExecution(GetExecution(migrationOperation.ReadExecutionOrder))
+                .TrackErrors(migrationOperation.TrackErrors)
+                .TrackLatency(migrationOperation.TrackLatency)
+                .Read(
+                    (payload) => GetMigrationResponse(oldService, payload),
+                    (payload) => GetMigrationResponse(newService, payload),
+                    checker)
+                .Write(
+                    (payload) => GetMigrationResponse(oldService, payload),
+                    (payload) => GetMigrationResponse(newService, payload))
+                .Build();
+
+            switch (migrationOperation.Operation)
+            {
+                case "read": {
+                    var res = migration.Read(
+                        migrationOperation.Key,
+                        migrationOperation.Context,
+                        defaultStage.Value,
+                        migrationOperation.Payload);
+                    var response = new MigrationOperationResponse();
+                    if(res.IsSuccessful) {
+                        response.Result = res.Value;
+                    } else {
+                        response.Error = res.Exception.Message;
+                    }
+                    return response;
+                }
+                case "write": {
+                    var res = migration.Write(
+                        migrationOperation.Key,
+                        migrationOperation.Context,
+                        defaultStage.Value,
+                        migrationOperation.Payload);
+                    var response = new MigrationOperationResponse();
+                    if (res.Authoritative.IsSuccessful)
+                    {
+                        response.Result = res.Authoritative.Value;
+                    } else
+                    {
+                        response.Error = res.Authoritative.Exception.Message;
+                    }
+                    return response;
+                }
+                default:
+                    throw new ArgumentException("Unrecognized migration operation");
+            }
+        }
+
+        private static MigrationMethod.Result<string> GetMigrationResponse(CallbackService oldService, string payload)
+        {
+            var task = oldService.PostStringAsync("", payload ?? "");
+            var body = task.GetAwaiter().GetResult();
+            return MigrationMethod.Success(body);
         }
     }
 }

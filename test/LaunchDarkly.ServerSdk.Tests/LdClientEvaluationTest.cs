@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Evaluation;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Migrations;
 using LaunchDarkly.Sdk.Server.Subsystems;
 using LaunchDarkly.TestHelpers;
 using Moq;
@@ -48,39 +51,38 @@ namespace LaunchDarkly.Sdk.Server
                 .VariationForUser(context.Key, 1));
 
             Assert.Equal(v.ExpectedValue, v.VariationMethod(client, flagKey, context, v.DefaultValue));
-            Assert.Equal(v.ExpectedValue, v.VariationForUserMethod(client, flagKey, contextAsUser, v.DefaultValue));
 
             Assert.Equal(new EvaluationDetail<T>(v.ExpectedValue, 1, EvaluationReason.TargetMatchReason),
                 v.VariationDetailMethod(client, flagKey, context, v.DefaultValue));
-            Assert.Equal(new EvaluationDetail<T>(v.ExpectedValue, 1, EvaluationReason.TargetMatchReason),
-                v.VariationDetailForUserMethod(client, flagKey, contextAsUser, v.DefaultValue));
 
             // unknown flag
             Assert.Equal(v.DefaultValue, v.VariationMethod(client, unknownKey, context, v.DefaultValue));
-            Assert.Equal(v.DefaultValue, v.VariationForUserMethod(client, unknownKey, contextAsUser, v.DefaultValue));
-            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)),
+            Assert.Equal(
+                new EvaluationDetail<T>(v.DefaultValue, null,
+                    EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)),
                 v.VariationDetailMethod(client, unknownKey, context, v.DefaultValue));
-            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)),
-                v.VariationDetailForUserMethod(client, unknownKey, contextAsUser, v.DefaultValue));
 
             // invalid context/user
             Assert.Equal(v.DefaultValue, v.VariationMethod(client, flagKey, invalidContext, v.DefaultValue));
-            Assert.Equal(v.DefaultValue, v.VariationForUserMethod(client, flagKey, invalidUser, v.DefaultValue));
-            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
+            Assert.Equal(
+                new EvaluationDetail<T>(v.DefaultValue, null,
+                    EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
                 v.VariationDetailMethod(client, flagKey, invalidContext, v.DefaultValue));
-            Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)),
-                v.VariationDetailForUserMethod(client, flagKey, invalidUser, v.DefaultValue));
 
             // wrong type
             if (!v.WrongTypeLdValue.IsNull)
             {
                 Assert.Equal(v.DefaultValue, v.VariationMethod(client, wrongTypeFlagKey, context, v.DefaultValue));
-                Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
+                Assert.Equal(
+                    new EvaluationDetail<T>(v.DefaultValue, null,
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
                     v.VariationDetailMethod(client, wrongTypeFlagKey, context, v.DefaultValue));
 
                 // flag value of null is a special case of wrong type, shouldn't happen in real life
                 Assert.Equal(v.DefaultValue, v.VariationMethod(client, nullValueFlagKey, context, v.DefaultValue));
-                Assert.Equal(new EvaluationDetail<T>(v.DefaultValue, null, EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
+                Assert.Equal(
+                    new EvaluationDetail<T>(v.DefaultValue, null,
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)),
                     v.VariationDetailMethod(client, nullValueFlagKey, context, v.DefaultValue));
             }
         }
@@ -172,7 +174,7 @@ namespace LaunchDarkly.Sdk.Server
 
             Assert.True(client.BoolVariation("feature", context, false));
         }
-        
+
         [Fact]
         public void AllFlagsStateReturnsState()
         {
@@ -252,8 +254,8 @@ namespace LaunchDarkly.Sdk.Server
 
             var expectedValues = new Dictionary<string, LdValue>
             {
-                { "client-side-1", LdValue.Of("value1") },
-                { "client-side-2", LdValue.Of("value2") }
+                {"client-side-1", LdValue.Of("value1")},
+                {"client-side-2", LdValue.Of("value2")}
             };
             Assert.Equal(expectedValues, state.ToValuesJsonMap());
         }
@@ -385,6 +387,62 @@ namespace LaunchDarkly.Sdk.Server
                 state.GetFlagReason(Evaluator.FlagKeyToTriggerErrorForTesting));
             Assert.Equal(LdValue.Of(true), state.GetFlagValueJson(goodFlagKey));
             AssertLogMessageRegex(true, Logging.LogLevel.Error, Evaluator.ErrorMessageForTesting);
+        }
+
+        [Theory]
+        [InlineData(MigrationStage.Off)]
+        [InlineData(MigrationStage.DualWrite)]
+        [InlineData(MigrationStage.Shadow)]
+        [InlineData(MigrationStage.Live)]
+        [InlineData(MigrationStage.RampDown)]
+        [InlineData(MigrationStage.Complete)]
+        public void ItCanHandleValidMigrationStageEvaluations(MigrationStage expectedStage)
+        {
+            var migrationFlag = "migration-flag";
+            testData.Update(testData.Flag(migrationFlag).ValueForAll(LdValue.Of(expectedStage.ToDataModelString())));
+            var defaultStage = BasicMigrationExecutor.GetDefaultStage(expectedStage);
+            var migrationVariation = client.MigrationVariation(migrationFlag, context, defaultStage);
+            Assert.Equal(expectedStage, migrationVariation.Stage);
+            Assert.NotEqual(defaultStage, expectedStage);
+            Assert.Empty(LogCapture.GetMessages().FindAll(message => message.Level == LogLevel.Error));
+        }
+
+        [Theory]
+        [InlineData(MigrationStage.Off)]
+        [InlineData(MigrationStage.DualWrite)]
+        [InlineData(MigrationStage.Shadow)]
+        [InlineData(MigrationStage.Live)]
+        [InlineData(MigrationStage.RampDown)]
+        [InlineData(MigrationStage.Complete)]
+        public void ItUsesTheDefaultValueForFlagsThatDoNotExist(MigrationStage expectedStage)
+        {
+            var migrationFlag = "migration-flag";
+            var migrationVariation = client.MigrationVariation(migrationFlag, context, expectedStage);
+            Assert.Equal(expectedStage, migrationVariation.Stage);
+        }
+
+        [Fact]
+        public void ItUsesTheDefaultValueWhenTheFlagHasAnInvalidState()
+        {
+            var migrationFlag = "migration-flag";
+            testData.Update(testData.Flag(migrationFlag).ValueForAll(LdValue.Of("potato")));
+            var migrationVariation = client.MigrationVariation(migrationFlag, context, MigrationStage.Shadow);
+            Assert.Equal(MigrationStage.Shadow, migrationVariation.Stage);
+        }
+
+        [Fact]
+        public void ItIncludesTheWrongTypeReasonInTheEvaluationDetailForInvalidStages()
+        {
+            var migrationFlag = "migration-flag";
+            testData.Update(testData.Flag(migrationFlag).ValueForAll(LdValue.Of("potato")));
+            var migrationVariation = client.MigrationVariation(migrationFlag, context, MigrationStage.Shadow);
+            migrationVariation.Tracker.Op(MigrationOperation.Read);
+            migrationVariation.Tracker.Invoked(MigrationOrigin.New);
+            var migrationOpEvent = migrationVariation.Tracker.CreateEvent();
+            Assert.Equal(EvaluationReasonKind.Error, migrationOpEvent?.Reason?.Kind);
+            Assert.Equal(EvaluationErrorKind.WrongType, migrationOpEvent?.Reason?.ErrorKind);
+            Assert.True(LogCapture.HasMessageWithText(LogLevel.Error, "Unrecognized MigrationStage for " +
+                                                                      "migration-flag; using default stage."));
         }
     }
 }

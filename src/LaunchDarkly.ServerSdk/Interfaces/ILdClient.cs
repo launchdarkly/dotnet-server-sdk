@@ -1,16 +1,12 @@
 ﻿using System;
+using LaunchDarkly.Sdk.Server.Migrations;
+using LaunchDarkly.Logging;
 
 namespace LaunchDarkly.Sdk.Server.Interfaces
 {
     /// <summary>
     /// Interface defining the public methods of <see cref="LdClient"/>.
     /// </summary>
-    /// <remarks>
-    /// See also <see cref="ILdClientExtensions"/>, which provides convenience methods that build upon
-    /// this interface. In particular, for every <see cref="ILdClient"/> method that takes a
-    /// <see cref="Context"/> parameter, there is an extension method that allows you to pass the
-    /// older <see cref="User"/> type instead.
-    /// </remarks>
     public interface ILdClient
     {
         /// <summary>
@@ -78,7 +74,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
         /// <seealso cref="BoolVariationDetail(string, Context, bool)"/>
-        /// <seealso cref="ILdClientExtensions.BoolVariation(ILdClient, string, User, bool)"/>
         bool BoolVariation(string key, Context context, bool defaultValue = false);
 
         /// <summary>
@@ -99,7 +94,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="BoolVariation(string, Context, bool)"/>
-        /// <seealso cref="ILdClientExtensions.BoolVariationDetail(ILdClient, string, User, bool)"/>
         EvaluationDetail<bool> BoolVariationDetail(string key, Context context, bool defaultValue);
 
         /// <summary>
@@ -126,7 +120,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
         /// <seealso cref="IntVariationDetail(string, Context, int)"/>
-        /// <seealso cref="ILdClientExtensions.IntVariation(ILdClient, string, User, int)"/>
         int IntVariation(string key, Context context, int defaultValue);
 
         /// <summary>
@@ -147,7 +140,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="IntVariation(string, Context, int)"/>
-        /// <seealso cref="ILdClientExtensions.IntVariationDetail(ILdClient, string, User, int)"/>
         EvaluationDetail<int> IntVariationDetail(string key, Context context, int defaultValue);
 
         /// <summary>
@@ -170,7 +162,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// be evaluated</returns>
         /// <seealso cref="FloatVariationDetail(string, Context, float)"/>
         /// <seealso cref="DoubleVariation(string, Context, double)"/>
-        /// <seealso cref="ILdClientExtensions.FloatVariation(ILdClient, string, User, float)"/>
         float FloatVariation(string key, Context context, float defaultValue);
 
         /// <summary>
@@ -192,7 +183,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="FloatVariation(string, Context, float)"/>
         /// <seealso cref="DoubleVariationDetail(string, Context, double)"/>
-        /// <seealso cref="ILdClientExtensions.FloatVariationDetail(ILdClient, string, User, float)"/>
         EvaluationDetail<float> FloatVariationDetail(string key, Context context, float defaultValue);
 
         /// <summary>
@@ -215,7 +205,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// be evaluated</returns>
         /// <seealso cref="DoubleVariationDetail(string, Context, double)"/>
         /// <seealso cref="FloatVariation(string, Context, float)"/>
-        /// <seealso cref="ILdClientExtensions.DoubleVariation(ILdClient, string, User, double)"/>
         double DoubleVariation(string key, Context context, double defaultValue);
 
         /// <summary>
@@ -237,7 +226,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="DoubleVariation(string, Context, double)"/>
         /// <seealso cref="FloatVariationDetail(string, Context, float)"/>
-        /// <seealso cref="ILdClientExtensions.DoubleVariationDetail(ILdClient, string, User, double)"/>
         EvaluationDetail<double> DoubleVariationDetail(string key, Context context, double defaultValue);
 
         /// <summary>
@@ -260,7 +248,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
         /// <seealso cref="StringVariationDetail(string, Context, string)"/>
-        /// <seealso cref="ILdClientExtensions.StringVariation(ILdClient, string, User, string)"/>
         string StringVariation(string key, Context context, string defaultValue);
 
         /// <summary>
@@ -281,7 +268,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="StringVariation(string, Context, string)"/>
-        /// <seealso cref="ILdClientExtensions.StringVariationDetail(ILdClient, string, User, string)"/>
         EvaluationDetail<string> StringVariationDetail(string key, Context context, string defaultValue);
 
         /// <summary>
@@ -303,7 +289,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>the variation for the given context, or <c>defaultValue</c> if the flag cannot
         /// be evaluated</returns>
         /// <seealso cref="JsonVariationDetail(string, Context, LdValue)"/>
-        /// <seealso cref="ILdClientExtensions.JsonVariation(ILdClient, string, User, LdValue)"/>
         LdValue JsonVariation(string key, Context context, LdValue defaultValue);
 
         /// <summary>
@@ -324,8 +309,17 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="defaultValue">the default value of the flag</param>
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="JsonVariation(string, Context, LdValue)"/>
-        /// <seealso cref="ILdClientExtensions.JsonVariationDetail(ILdClient, string, User, LdValue)"/>
         EvaluationDetail<LdValue> JsonVariationDetail(string key, Context context, LdValue defaultValue);
+
+        /// <summary>
+        /// Returns the migration stage of the migration feature flag for the given
+        /// evaluation context.
+        /// </summary>
+        /// <param name="key">the unique feature key for the feature flag</param>
+        /// <param name="context">the evaluation context</param>
+        /// <param name="defaultStage">the default value of the flag</param>
+        /// <returns>an <see cref="MigrationVariation"/> object</returns>
+        MigrationVariation MigrationVariation(string key, Context context, MigrationStage defaultStage);
 
         /// <summary>
         /// Reports details about an evaluation context.
@@ -351,7 +345,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </para>
         /// </remarks>
         /// <param name="context">the evaluation context</param>
-        /// <seealso cref="ILdClientExtensions.Identify(ILdClient, User)"/>
         void Identify(Context context);
 
         /// <summary>
@@ -372,7 +365,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="context">the evaluation context associated with the event</param>
         /// <seealso cref="Track(string, Context, LdValue)"/>
         /// <seealso cref="Track(string, Context, LdValue, double)"/>
-        /// <seealso cref="ILdClientExtensions.Track(ILdClient, string, User)"/>
         void Track(string name, Context context);
 
         /// <summary>
@@ -395,7 +387,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <seealso cref="Track(string, Context)"/>
         /// <seealso cref="Track(string, Context, LdValue, double)"/>
         /// <seealso cref="Track(string, Context, LdValue)"/>
-        /// <seealso cref="ILdClientExtensions.Track(ILdClient, string, User, LdValue)"/>
         void Track(string name, Context context, LdValue data);
 
         /// <summary>
@@ -420,8 +411,13 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// numeric custom metrics</param>
         /// <seealso cref="Track(string, Context)"/>
         /// <seealso cref="Track(string, Context, LdValue)"/>
-        /// <seealso cref="ILdClientExtensions.Track(ILdClient, string, User, LdValue, double)"/>
         void Track(string name, Context context, LdValue data, double metricValue);
+
+        /// <summary>
+        /// Track the details of a migration.
+        /// </summary>
+        /// <param name="tracker">migration tracker which was used to track the details of a migration</param>
+        void TrackMigration(MigrationOpTracker tracker);
 
         /// <summary>
         /// Returns an object that encapsulates the state of all feature flags for a given context, which
@@ -442,7 +438,6 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// computed-- for instance, to filter the set of flags to only include the client-side-enabled ones</param>
         /// <returns>a <see cref="FeatureFlagsState"/> object (will never be null; see
         /// <seealso cref="FeatureFlagsState.Valid"/></returns>
-        /// <seealso cref="ILdClientExtensions.AllFlagsState(ILdClient, User, FlagsStateOption[])"/>
         FeatureFlagsState AllFlagsState(Context context, params FlagsStateOption[] options);
 
         /// <summary>
@@ -454,12 +449,11 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// </remarks>
         /// <param name="context">the evaluation context</param>
         /// <returns>the hash, or null if the hash could not be calculated</returns>
-        /// <seealso cref="ILdClientExtensions.SecureModeHash(ILdClient, User)"/>
         string SecureModeHash(Context context);
 
         /// <summary>
         /// Tells the client that all pending analytics events (if any) should be delivered as soon
-        /// as possible. 
+        /// as possible.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -508,5 +502,33 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <returns>true if completed, false if timed out</returns>
         /// <seealso cref="Flush"/>
         bool FlushAndWait(TimeSpan timeout);
+
+        /// <summary>
+        /// Returns the logger instance used by this SDK instance.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This allows for access to the logger by other LaunchDarkly components, such as the Migration
+        /// class.
+        /// </para>
+        /// <para>
+        /// It also allows for usage of the logger in wrapper implementations.
+        /// </para>
+        /// <para>
+        /// It is not intended for general purpose application logging.
+        /// </para>
+        /// </remarks>
+        /// <returns>the logger instance used by the SDK</returns>
+        Logger GetLogger();
+
+        /// <summary>
+        /// Returns true if the client has been configured to be offline.
+        /// </summary>
+        /// <remarks>
+        /// This value will be static for the execution of a client. If you want active data source status for
+        /// an online client, then use <see cref="DataSourceStatusProvider"/>.
+        /// </remarks>
+        /// <returns>true if the client is configured to be offline</returns>
+        bool IsOffline();
     }
 }

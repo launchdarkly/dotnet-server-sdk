@@ -328,7 +328,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </remarks>
         /// <example>
         /// <code>
-        ///     var config = Configuration.Builder(mobileKey)
+        ///     var config = Configuration.Builder(sdkKey)
         ///         .ServiceEndpoints(Components.ServiceEndpoints().RelayProxy("http://my-relay-hostname:80"))
         ///         .Build();
         /// </code>
@@ -392,5 +392,26 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <returns>a builder for setting event properties</returns>
         public static EventProcessorBuilder SendEvents() => new EventProcessorBuilder();
+
+        /// <summary>
+        /// Returns a configurable builder for the SDK's application metadata.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Passing this to <see cref="ConfigurationBuilder.ApplicationInfo"/> after setting any desired properties on the builder,
+        /// applies this configuration to the SDK.
+        /// </para>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        ///     var config = Configuration.Builder(sdkKey)
+        ///         .ApplicationInfo(
+        ///             Components.ApplicationInfo().ApplicationID("MyApplication").ApplicationVersion("version123abc")
+        ///         )
+        ///         .Build();
+        /// </code>
+        /// </example>
+        /// <returns>a configuration builder</returns>
+        public static ApplicationInfoBuilder ApplicationInfo() => new ApplicationInfoBuilder();
     }
 }

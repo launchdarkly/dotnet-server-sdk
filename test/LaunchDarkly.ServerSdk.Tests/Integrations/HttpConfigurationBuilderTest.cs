@@ -38,6 +38,30 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         }
 
         [Fact]
+        public void ApplicationInfo()
+        {
+            var config = Components.HttpConfiguration().Build(basicConfig
+                .WithApplicationInfo(Components.ApplicationInfo()
+                    .ApplicationId("my-app")
+                    .ApplicationVersion("my-version").Build()));
+
+            Assert.Equal("application-id/my-app application-version/my-version",
+                HeadersAsMap(config.DefaultHeaders)["x-launchdarkly-tags"]);
+
+            var config2 = Components.HttpConfiguration().Build(basicConfig
+                .WithApplicationInfo(Components.ApplicationInfo()
+                    .ApplicationVersion("my-version")
+                    .ApplicationName("MY_NAME")
+                    .ApplicationVersionName("my-friendly-version")
+                    .ApplicationId("my-app").Build()));
+
+            Assert.Equal(
+                "application-id/my-app application-name/MY_NAME application-version/my-version" +
+                " application-version-name/my-friendly-version",
+                HeadersAsMap(config2.DefaultHeaders)["x-launchdarkly-tags"]);
+        }
+
+        [Fact]
         public void MessageHandler()
         {
             var prop = _tester.Property(c => c.MessageHandler, (b, v) => b.MessageHandler(v));

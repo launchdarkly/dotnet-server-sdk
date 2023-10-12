@@ -30,7 +30,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
     internal class FeatureFlagSerialization : JsonConverter<FeatureFlag>
     {
         internal static readonly FeatureFlagSerialization Instance = new FeatureFlagSerialization();
-        internal static readonly string[] _requiredProperties = new string[] { "version" };
+        internal static readonly string[] _requiredProperties = new string[] {"version"};
 
         public override void Write(Utf8JsonWriter w, FeatureFlag flag, JsonSerializerOptions options)
         {
@@ -40,6 +40,15 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             w.WriteNumber("version", flag.Version);
             w.WriteBoolean("deleted", flag.Deleted);
             w.WriteBoolean("on", flag.On);
+            if (flag.SamplingRatio.HasValue)
+            {
+                w.WriteNumber("samplingRatio", flag.SamplingRatio.Value);
+            }
+
+            if (flag.ExcludeFromSummaries)
+            {
+                w.WriteBoolean("excludeFromSummaries", true);
+            }
 
             w.WriteStartArray("prerequisites");
             foreach (var p in flag.Prerequisites)
@@ -49,6 +58,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 w.WriteNumber("variation", p.Variation);
                 w.WriteEndObject();
             }
+
             w.WriteEndArray();
 
             WriteTargets(w, "targets", flag.Targets);
@@ -64,6 +74,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 w.WriteBoolean("trackEvents", r.TrackEvents);
                 w.WriteEndObject();
             }
+
             w.WriteEndArray();
 
             w.WriteStartObject("fallthrough");
@@ -79,7 +90,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             {
                 w.WriteNumber("debugEventsUntilDate", flag.DebugEventsUntilDate.Value.Value);
             }
+
             w.WriteBoolean("clientSide", flag.ClientSide);
+
+            WriteMigration(ref w, flag.Migration);
 
             w.WriteEndObject();
         }
@@ -101,9 +115,12 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             bool trackEvents = false, trackEventsFallthrough = false;
             UnixMillisecondTime? debugEventsUntilDate = null;
             bool clientSide = false;
+            bool excludeFromSummaries = false;
+            long? samplingRatio = null;
+            Migration? migration = null;
 
             for (var obj = RequireObject(ref reader).WithRequiredProperties(_requiredProperties);
-                obj.Next(ref reader);)
+                 obj.Next(ref reader);)
             {
                 switch (obj.Name)
                 {
@@ -125,6 +142,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         {
                             prereqsBuilder.Add(ReadPrerequisite(ref reader));
                         }
+
                         prerequisites = prereqsBuilder.ToImmutable();
                         break;
                     case "targets":
@@ -133,6 +151,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         {
                             targetsBuilder.Add(ReadTarget(ref reader));
                         }
+
                         targets = targetsBuilder.ToImmutable();
                         break;
                     case "contextTargets":
@@ -141,6 +160,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         {
                             contextTargetsBuilder.Add(ReadTarget(ref reader));
                         }
+
                         contextTargets = contextTargetsBuilder.ToImmutable();
                         break;
                     case "rules":
@@ -149,6 +169,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         {
                             rulesBuilder.Add(ReadFlagRule(ref reader));
                         }
+
                         rules = rulesBuilder.ToImmutable();
                         break;
                     case "fallthrough":
@@ -171,19 +192,33 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                     case "debugEventsUntilDate":
                         var dt = GetLongOrNull(ref reader);
-                        debugEventsUntilDate = dt.HasValue ? UnixMillisecondTime.OfMillis(dt.Value) : (UnixMillisecondTime?)null;
+                        debugEventsUntilDate =
+                            dt.HasValue ? UnixMillisecondTime.OfMillis(dt.Value) : (UnixMillisecondTime?) null;
                         break;
                     case "clientSide":
                         clientSide = reader.GetBoolean();
                         break;
+                    case "samplingRatio":
+                        samplingRatio = reader.GetInt64();
+                        break;
+                    case "excludeFromSummaries":
+                        excludeFromSummaries = reader.GetBoolean();
+                        break;
+                    case "migration":
+                        migration = ReadMigration(ref reader);
+                        break;
                 }
             }
+
             if (key is null && !deleted)
             {
                 throw new JsonException("missing flag key");
             }
-            return new FeatureFlag(key, version, deleted, on, prerequisites, targets, contextTargets, rules, fallthrough,
-                offVariation, variations, salt, trackEvents, trackEventsFallthrough, debugEventsUntilDate, clientSide);
+
+            return new FeatureFlag(key, version, deleted, on, prerequisites, targets, contextTargets, rules,
+                fallthrough,
+                offVariation, variations, salt, trackEvents, trackEventsFallthrough, debugEventsUntilDate, clientSide,
+                samplingRatio, excludeFromSummaries, migration);
         }
 
         internal static Prerequisite ReadPrerequisite(ref Utf8JsonReader r)
@@ -202,6 +237,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                 }
             }
+
             return new Prerequisite(key, variation);
         }
 
@@ -228,6 +264,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                 }
             }
+
             return new Target(contextKind, values, variation);
         }
 
@@ -242,6 +279,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 SerializationHelpers.WriteStrings(w, "values", t.Values);
                 w.WriteEndObject();
             }
+
             w.WriteEndArray();
         }
 
@@ -273,6 +311,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                 }
             }
+
             return new FlagRule(variation, rollout, id, clauses, trackEvents);
         }
 
@@ -292,6 +331,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                 }
             }
+
             return new VariationOrRollout(variation, rollout);
         }
 
@@ -307,6 +347,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                 r.Skip();
                 return null;
             }
+
             for (var obj = RequireObject(ref r); obj.Next(ref r);)
             {
                 switch (obj.Name)
@@ -332,8 +373,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                                         break;
                                 }
                             }
+
                             listBuilder.Add(new WeightedVariation(variation, weight, untracked));
                         }
+
                         variations = listBuilder.ToImmutable();
                         break;
                     case "contextKind":
@@ -351,7 +394,39 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
                         break;
                 }
             }
-            return new Rollout(kind, contextKind, seed, variations, SerializationHelpers.AttrRefOrName(contextKind, bucketBy));
+
+            return new Rollout(kind, contextKind, seed, variations,
+                SerializationHelpers.AttrRefOrName(contextKind, bucketBy));
+        }
+
+        private Migration ReadMigration(ref Utf8JsonReader r)
+        {
+            long? checkRatio = null;
+            for (var obj = RequireObject(ref r); obj.Next(ref r);)
+            {
+                switch (obj.Name)
+                {
+                    case "checkRatio":
+                        checkRatio = r.GetInt64();
+                        break;
+                }
+            }
+
+            return new Migration(checkRatio);
+        }
+
+        private void WriteMigration(ref Utf8JsonWriter w, Migration? migration)
+        {
+            if (!migration.HasValue) return;
+
+            w.WritePropertyName("migration");
+            w.WriteStartObject();
+            if (migration.Value.CheckRatio.HasValue)
+            {
+                w.WriteNumber("checkRatio", migration.Value.CheckRatio.Value);
+            }
+
+            w.WriteEndObject();
         }
     }
 

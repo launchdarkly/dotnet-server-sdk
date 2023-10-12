@@ -28,7 +28,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 Reason = e.Reason,
                 PrereqOf = e.PrerequisiteOf,
                 TrackEvents = e.TrackEvents,
-                DebugEventsUntilDate = e.DebugEventsUntilDate
+                DebugEventsUntilDate = e.DebugEventsUntilDate,
+                SamplingRatio = e.SamplingRatio,
+                ExcludeFromSummaries = e.ExcludeFromSummaries
             });
 
         public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e) =>
@@ -47,6 +49,58 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 Data = e.Data,
                 MetricValue = e.MetricValue
             });
+
+        private static InternalEventTypes.MigrationOpEvent ConvertMigrationOpEvent(EventProcessorTypes.MigrationOpEvent inEvent)
+        {
+            var outEvent = new InternalEventTypes.MigrationOpEvent
+            {
+                Timestamp = inEvent.Timestamp,
+                Context = inEvent.Context,
+                Operation = inEvent.Operation,
+                SamplingRatio = inEvent.SamplingRatio,
+                FlagKey = inEvent.FlagKey,
+                FlagVersion = inEvent.FlagVersion,
+                Variation = inEvent.Variation,
+                Value = inEvent.Value,
+                Default = inEvent.Default,
+                Reason = inEvent.Reason,
+                Invoked = new InternalEventTypes.MigrationOpEvent.InvokedMeasurement
+                {
+                    Old = inEvent.Invoked.Old,
+                    New = inEvent.Invoked.New
+                }
+            };
+            if (inEvent.Latency.HasValue)
+            {
+                outEvent.Latency = new InternalEventTypes.MigrationOpEvent.LatencyMeasurement
+                {
+                    Old = inEvent.Latency?.Old,
+                    New = inEvent.Latency?.New
+                };
+            }
+
+            if (inEvent.Error.HasValue)
+            {
+                outEvent.Error = new InternalEventTypes.MigrationOpEvent.ErrorMeasurement
+                {
+                    Old = inEvent.Error?.Old ?? false,
+                    New = inEvent.Error?.New ?? false
+                };
+            }
+
+            if (inEvent.Consistent.HasValue)
+            {
+                outEvent.Consistent = new InternalEventTypes.MigrationOpEvent.ConsistentMeasurement
+                {
+                    IsConsistent = inEvent.Consistent?.IsConsistent ?? false,
+                    SamplingRatio = inEvent.Consistent?.SamplingRatio ?? 1
+                };
+            }
+            return outEvent;
+        }
+
+        public void RecordMigrationEvent(EventProcessorTypes.MigrationOpEvent e) =>
+            _impl.RecordMigrationOpEvent(ConvertMigrationOpEvent(e));
 
         public void Flush() =>
             _impl.Flush();

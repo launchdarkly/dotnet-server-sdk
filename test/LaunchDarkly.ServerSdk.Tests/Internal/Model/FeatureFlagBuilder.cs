@@ -22,6 +22,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         private UnixMillisecondTime? _debugEventsUntilDate;
         private bool _deleted;
         private bool _clientSide;
+        private long? _samplingRatio;
+        private bool _excludeFromSummaries;
+        private Migration? _migration;
 
         internal FeatureFlagBuilder(string key)
         {
@@ -53,7 +56,8 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
             return new FeatureFlag(_key, _version, _deleted, _on, _prerequisites,
                 _targets.ToImmutableList(), _contextTargets.ToImmutableList(), _rules,
                 _fallthrough, _offVariation, _variations, _salt,
-                _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _clientSide);
+                _trackEvents, _trackEventsFallthrough, _debugEventsUntilDate, _clientSide,
+                _samplingRatio, _excludeFromSummaries, _migration);
         }
 
         internal FeatureFlagBuilder Version(int version)
@@ -209,6 +213,24 @@ namespace LaunchDarkly.Sdk.Server.Internal.Model
         internal FeatureFlagBuilder BooleanMatchingSegment(string segmentKey)
         {
             return BooleanWithClauses(ClauseBuilder.ShouldMatchSegment(segmentKey));
+        }
+
+        internal FeatureFlagBuilder SamplingRatio(long? samplingRatio)
+        {
+            _samplingRatio = samplingRatio;
+            return this;
+        }
+
+        internal FeatureFlagBuilder ExcludeFromSummaries(bool excludeFromSummaries)
+        {
+            _excludeFromSummaries = excludeFromSummaries;
+            return this;
+        }
+
+        internal FeatureFlagBuilder Migration(Migration migration)
+        {
+            _migration = migration;
+            return this;
         }
     }
 

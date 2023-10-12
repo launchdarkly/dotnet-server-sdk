@@ -119,7 +119,8 @@ namespace LaunchDarkly.Sdk.Server
                 config.Offline,
                 config.ServiceEndpoints,
                 null,
-                BasicTaskExecutor
+                BasicTaskExecutor,
+                config.ApplicationInfo?.Build() ?? new ApplicationInfo()
                 );
 
         public void AssertLogMessageRegex(bool shouldHave, LogLevel level, string pattern) =>

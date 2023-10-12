@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using LaunchDarkly.Sdk.Internal;
@@ -138,14 +139,14 @@ namespace LaunchDarkly.Sdk.Server.Integrations
         /// <example>
         /// <code>
         ///     // Example of using an HTTP proxy with basic authentication
-        ///     
+        ///
         ///     var proxyUri = new Uri("http://my-proxy-host:8080");
         ///     var proxy = new System.Net.WebProxy(proxyUri);
         ///     var credentials = new System.Net.CredentialCache();
         ///     credentials.Add(proxyUri, "Basic",
         ///         new System.Net.NetworkCredential("username", "password"));
         ///     proxy.Credentials = credentials;
-        ///     
+        ///
         ///     var config = Configuration.Builder("my-sdk-key")
         ///         .Http(
         ///             Components.HttpConfiguration().Proxy(proxy)
@@ -242,14 +243,11 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 .WithProxy(_proxy)
                 .WithReadTimeout(_readTimeout)
                 .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
+                .WithApplicationTags(context.ApplicationInfo)
                 .WithWrapper(_wrapperName, _wrapperVersion);
 
-            foreach (var kv in _customHeaders)
-            {
-                httpProperties = httpProperties.WithHeader(kv.Key, kv.Value);
-            }
-
-            return httpProperties;
+            return _customHeaders.Aggregate(httpProperties, (current, kv)
+                => current.WithHeader(kv.Key, kv.Value));
         }
 
         /// <inheritdoc/>

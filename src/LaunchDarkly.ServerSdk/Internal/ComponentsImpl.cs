@@ -71,6 +71,8 @@ namespace LaunchDarkly.Sdk.Server.Internal
             public void RecordEvaluationEvent(EventProcessorTypes.EvaluationEvent e) { }
             public void RecordIdentifyEvent(EventProcessorTypes.IdentifyEvent e) { }
             public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) { }
+            public void RecordMigrationEvent(EventProcessorTypes.MigrationOpEvent e) { }
+
             public void Flush() { }
             public bool FlushAndWait(TimeSpan timeout) => true;
             public void Dispose() { }
