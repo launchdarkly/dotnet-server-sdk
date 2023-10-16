@@ -176,6 +176,49 @@ no other settings specify otherwise.</p>
   <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ClearTargets_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This undoes the effect of methods like <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_VariationForUser_System_String_System_Boolean_">VariationForUser(String, Boolean)</a>.</p>
 </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ExcludeFromSummaries_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ExcludeFromSummaries_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries(System.Boolean)">ExcludeFromSummaries(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Sets if the flag should be excluded from summary events.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder ExcludeFromSummaries(bool excludeFromSummaries)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">excludeFromSummaries</span></td>
+        <td><p>true to exclude the flag from summaries</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_FallthroughVariation_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.FallthroughVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_FallthroughVariation_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.FallthroughVariation(System.Boolean)">FallthroughVariation(Boolean)</h4>
   <div class="markdown level1 summary"><p>Specifies the fallthrough variation for a boolean flag.</p>
@@ -539,6 +582,48 @@ For example, this creates a rule that returns <code>true</code> if the name attr
         .ThenReturn(true));</code></pre>
 <p></example></p>
 </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_Migration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_Migration_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagMigrationBuilder_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration(LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder)">Migration(TestData.FlagMigrationBuilder)</h4>
+  <div class="markdown level1 summary"><p>Used to configure migration settings for the flag.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder Migration(TestData.FlagMigrationBuilder migrationBuilder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.html">TestData.FlagMigrationBuilder</a></td>
+        <td><span class="parametername">migrationBuilder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_OffVariation_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.OffVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_OffVariation_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.OffVariation(System.Boolean)">OffVariation(Boolean)</h4>
   <div class="markdown level1 summary"><p>Specifies the off variation for a boolean flag.</p>
@@ -680,6 +765,49 @@ real LaunchDarkly dashboard. In the default configuration that you get from call
 <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String_">Flag(String)</a> with a new flag key, the flag will return <code>false</code>
 whenever targeting is off, and <code>true</code> when targeting is on.</p>
 </div>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_SamplingRatio_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_SamplingRatio_System_Int64_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio(System.Int64)">SamplingRatio(Int64)</h4>
+  <div class="markdown level1 summary"><p>Sets the sampling ratio for the flag.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder SamplingRatio(long samplingRatio)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">samplingRatio</span></td>
+        <td><p>the new sampling ratio</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ValueForAll*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ValueForAll(LaunchDarkly.Sdk.LdValue)">ValueForAll(LdValue)</h4>
   <div class="markdown level1 summary"><p>Sets the flag to always return the specified variation value for all contexts.</p>

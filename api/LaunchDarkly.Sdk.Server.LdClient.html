@@ -93,12 +93,6 @@ a single <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class LdClient : Object, IDisposable, ILdClient</code></pre>
   </div>
-  <h5 id="LaunchDarkly_Sdk_Server_LdClient_remarks"><strong>Remarks</strong></h5>
-  <div class="markdown level0 remarks"><p>See also <a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html">ILdClientExtensions</a>, which provides convenience methods that build upon
-this API. In particular, for every <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a> method that takes a
-<a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a> parameter, there is an extension method that allows you to pass the
-older <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a> type instead.</p>
-</div>
   <h3 id="constructors">Constructors
   </h3>
   <a id="LaunchDarkly_Sdk_Server_LdClient__ctor_" data-uid="LaunchDarkly.Sdk.Server.LdClient.#ctor*"></a>
@@ -453,10 +447,6 @@ is used by the LaunchDarkly JavaScript client, so it can be used for
 This method will not send analytics events back to LaunchDarkly.
 </p>
 </div>
-  <h5 id="LaunchDarkly_Sdk_Server_LdClient_AllFlagsState_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_FlagsStateOption____seealso">See Also</h5>
-  <div class="seealso">
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_AllFlagsState_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_Server_FlagsStateOption___">AllFlagsState</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <a class="xref" href="LaunchDarkly.Sdk.Server.FlagsStateOption.html">FlagsStateOption</a>[])</div>
-  </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_BoolVariation_" data-uid="LaunchDarkly.Sdk.Server.LdClient.BoolVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_BoolVariation_System_String_LaunchDarkly_Sdk_Context_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.LdClient.BoolVariation(System.String,LaunchDarkly.Sdk.Context,System.Boolean)">BoolVariation(String, Context, Boolean)</h4>
   <div class="markdown level1 summary"><p>Calculates the boolean value of a feature flag for a given context.</p>
@@ -525,7 +515,6 @@ does not match any existing flag), <code>defaultValue</code> is returned.
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_BoolVariation_System_String_LaunchDarkly_Sdk_Context_System_Boolean__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BoolVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Boolean_">BoolVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Boolean</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_">BoolVariation</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Boolean</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_BoolVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.LdClient.BoolVariationDetail*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_BoolVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Boolean_" data-uid="LaunchDarkly.Sdk.Server.LdClient.BoolVariationDetail(System.String,LaunchDarkly.Sdk.Context,System.Boolean)">BoolVariationDetail(String, Context, Boolean)</h4>
@@ -595,7 +584,6 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_BoolVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Boolean__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_BoolVariation_System_String_LaunchDarkly_Sdk_Context_System_Boolean_">BoolVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Boolean</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_">BoolVariationDetail</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Boolean</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_Dispose_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Dispose*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_Dispose" data-uid="LaunchDarkly.Sdk.Server.LdClient.Dispose">Dispose()</h4>
@@ -687,7 +675,6 @@ does not match any existing flag), <code>defaultValue</code> is returned.
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Double</span>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariation_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Single</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_">DoubleVariation</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Double</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_DoubleVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.LdClient.DoubleVariationDetail*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_DoubleVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Double_" data-uid="LaunchDarkly.Sdk.Server.LdClient.DoubleVariationDetail(System.String,LaunchDarkly.Sdk.Context,System.Double)">DoubleVariationDetail(String, Context, Double)</h4>
@@ -758,7 +745,6 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariation_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Double</span>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Single</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_">DoubleVariationDetail</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Double</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_FloatVariation_" data-uid="LaunchDarkly.Sdk.Server.LdClient.FloatVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_FloatVariation_System_String_LaunchDarkly_Sdk_Context_System_Single_" data-uid="LaunchDarkly.Sdk.Server.LdClient.FloatVariation(System.String,LaunchDarkly.Sdk.Context,System.Single)">FloatVariation(String, Context, Single)</h4>
@@ -830,7 +816,6 @@ does not match any existing flag), <code>defaultValue</code> is returned.
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Single</span>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariation_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Double</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_">FloatVariation</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Single</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_FloatVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.LdClient.FloatVariationDetail*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_FloatVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Single_" data-uid="LaunchDarkly.Sdk.Server.LdClient.FloatVariationDetail(System.String,LaunchDarkly.Sdk.Context,System.Single)">FloatVariationDetail(String, Context, Single)</h4>
@@ -901,12 +886,11 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_FloatVariation_System_String_LaunchDarkly_Sdk_Context_System_Single_">FloatVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Single</span>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DoubleVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Double_">DoubleVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Double</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_">FloatVariationDetail</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Single</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_Flush_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Flush*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_Flush" data-uid="LaunchDarkly.Sdk.Server.LdClient.Flush">Flush()</h4>
   <div class="markdown level1 summary"><p>Tells the client that all pending analytics events (if any) should be delivered as soon
-as possible. </p>
+as possible.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1001,6 +985,43 @@ Flushing Events</a>.
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Flush">Flush</a>()</div>
   </div>
+  <a id="LaunchDarkly_Sdk_Server_LdClient_GetLogger_" data-uid="LaunchDarkly.Sdk.Server.LdClient.GetLogger*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_LdClient_GetLogger" data-uid="LaunchDarkly.Sdk.Server.LdClient.GetLogger">GetLogger()</h4>
+  <div class="markdown level1 summary"><p>Returns the logger instance used by this SDK instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Logger GetLogger()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">LaunchDarkly.Logging.Logger</span></td>
+        <td><p>the logger instance used by the SDK</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_LdClient_GetLogger_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This allows for access to the logger by other LaunchDarkly components, such as the Migration
+class.
+</p>
+<p>
+It also allows for usage of the logger in wrapper implementations.
+</p>
+<p>
+It is not intended for general purpose application logging.
+</p>
+</div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_Identify_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Identify*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_Identify_LaunchDarkly_Sdk_Context_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Identify(LaunchDarkly.Sdk.Context)">Identify(Context)</h4>
   <div class="markdown level1 summary"><p>Reports details about an evaluation context.</p>
@@ -1048,10 +1069,6 @@ For more information, see the
 <a href="https://docs.launchdarkly.com/sdk/features/identify#dotnet">Reference Guide</a>.
 </p>
 </div>
-  <h5 id="LaunchDarkly_Sdk_Server_LdClient_Identify_LaunchDarkly_Sdk_Context__seealso">See Also</h5>
-  <div class="seealso">
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Identify_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_">Identify</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>)</div>
-  </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_IntVariation_" data-uid="LaunchDarkly.Sdk.Server.LdClient.IntVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_IntVariation_System_String_LaunchDarkly_Sdk_Context_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.LdClient.IntVariation(System.String,LaunchDarkly.Sdk.Context,System.Int32)">IntVariation(String, Context, Int32)</h4>
   <div class="markdown level1 summary"><p>Calculates the integer value of a feature flag for a given context.</p>
@@ -1126,7 +1143,6 @@ does not match any existing flag), <code>defaultValue</code> is returned.
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_IntVariation_System_String_LaunchDarkly_Sdk_Context_System_Int32__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IntVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Int32_">IntVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Int32</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_">IntVariation</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Int32</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_IntVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.LdClient.IntVariationDetail*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_IntVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.LdClient.IntVariationDetail(System.String,LaunchDarkly.Sdk.Context,System.Int32)">IntVariationDetail(String, Context, Int32)</h4>
@@ -1196,11 +1212,11 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_IntVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_Int32__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IntVariation_System_String_LaunchDarkly_Sdk_Context_System_Int32_">IntVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.Int32</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_">IntVariationDetail</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.Int32</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_IsOffline_" data-uid="LaunchDarkly.Sdk.Server.LdClient.IsOffline*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_IsOffline" data-uid="LaunchDarkly.Sdk.Server.LdClient.IsOffline">IsOffline()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns true if the client has been configured to be offline.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1217,10 +1233,15 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p>true if the client is configured to be offline</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="LaunchDarkly_Sdk_Server_LdClient_IsOffline_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This value will be static for the execution of a client. If you want active data source status for
+an online client, then use <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DataSourceStatusProvider">DataSourceStatusProvider</a>.</p>
+</div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_JsonVariation_" data-uid="LaunchDarkly.Sdk.Server.LdClient.JsonVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_JsonVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.LdClient.JsonVariation(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.LdValue)">JsonVariation(String, Context, LdValue)</h4>
   <div class="markdown level1 summary"><p>Calculates the value of a feature flag for a given context as any JSON value type.</p>
@@ -1290,7 +1311,6 @@ does not match any existing flag), <code>defaultValue</code> is returned.
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_JsonVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_JsonVariationDetail_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">JsonVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">JsonVariation</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_JsonVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.LdClient.JsonVariationDetail*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_JsonVariationDetail_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.LdClient.JsonVariationDetail(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.LdValue)">JsonVariationDetail(String, Context, LdValue)</h4>
@@ -1360,8 +1380,63 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_JsonVariationDetail_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_JsonVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">JsonVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">JsonVariationDetail</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
   </div>
+  <a id="LaunchDarkly_Sdk_Server_LdClient_MigrationVariation_" data-uid="LaunchDarkly.Sdk.Server.LdClient.MigrationVariation*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_LdClient_MigrationVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage_" data-uid="LaunchDarkly.Sdk.Server.LdClient.MigrationVariation(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)">MigrationVariation(String, Context, MigrationStage)</h4>
+  <div class="markdown level1 summary"><p>Returns the migration stage of the migration feature flag for the given
+evaluation context.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MigrationVariation MigrationVariation(string key, Context context, MigrationStage defaultStage)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the unique feature key for the feature flag</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>the evaluation context</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html">MigrationStage</a></td>
+        <td><span class="parametername">defaultStage</span></td>
+        <td><p>the default value of the flag</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html">MigrationVariation</a></td>
+        <td><p>an <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_MigrationVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage_">MigrationVariation(String, Context, MigrationStage)</a> object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_LdClient_SecureModeHash_" data-uid="LaunchDarkly.Sdk.Server.LdClient.SecureModeHash*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_SecureModeHash_LaunchDarkly_Sdk_Context_" data-uid="LaunchDarkly.Sdk.Server.LdClient.SecureModeHash(LaunchDarkly.Sdk.Context)">SecureModeHash(Context)</h4>
   <div class="markdown level1 summary"><p>Creates a hash string that can be used by the JavaScript SDK to identify a context.</p>
@@ -1409,10 +1484,6 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
   <div class="markdown level1 remarks"><p>See <a href="https://docs.launchdarkly.com/sdk/features/secure-mode#configuring-secure-mode-in-the-javascript-client-side-sdk">Secure mode</a> in
 the JavaScript SDK Reference.</p>
 </div>
-  <h5 id="LaunchDarkly_Sdk_Server_LdClient_SecureModeHash_LaunchDarkly_Sdk_Context__seealso">See Also</h5>
-  <div class="seealso">
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_SecureModeHash_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_">SecureModeHash</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>)</div>
-  </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_StringVariation_" data-uid="LaunchDarkly.Sdk.Server.LdClient.StringVariation*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_StringVariation_System_String_LaunchDarkly_Sdk_Context_System_String_" data-uid="LaunchDarkly.Sdk.Server.LdClient.StringVariation(System.String,LaunchDarkly.Sdk.Context,System.String)">StringVariation(String, Context, String)</h4>
   <div class="markdown level1 summary"><p>Calculates the string value of a feature flag for a given context.</p>
@@ -1483,7 +1554,6 @@ possible to create a feature flag with a null variation by other means, and also
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_StringVariation_System_String_LaunchDarkly_Sdk_Context_System_String__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariationDetail</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.String</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_">StringVariation</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.String</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_StringVariationDetail_" data-uid="LaunchDarkly.Sdk.Server.LdClient.StringVariationDetail*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_StringVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_String_" data-uid="LaunchDarkly.Sdk.Server.LdClient.StringVariationDetail(System.String,LaunchDarkly.Sdk.Context,System.String)">StringVariationDetail(String, Context, String)</h4>
@@ -1553,7 +1623,6 @@ The behavior is otherwise identical to <a class="xref" href="LaunchDarkly.Sdk.Se
   <h5 id="LaunchDarkly_Sdk_Server_LdClient_StringVariationDetail_System_String_LaunchDarkly_Sdk_Context_System_String__seealso">See Also</h5>
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_StringVariation_System_String_LaunchDarkly_Sdk_Context_System_String_">StringVariation</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <span class="xref">System.String</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_">StringVariationDetail</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <span class="xref">System.String</span>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_Track_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Track*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_Track_System_String_LaunchDarkly_Sdk_Context_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Track(System.String,LaunchDarkly.Sdk.Context)">Track(String, Context)</h4>
@@ -1603,7 +1672,6 @@ later; see <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDar
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_System_Double_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>, <span class="xref">System.Double</span>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_">Track</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_Track_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Track*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Track(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.LdValue)">Track(String, Context, LdValue)</h4>
@@ -1660,7 +1728,6 @@ later; see <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDar
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_System_Double_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>, <span class="xref">System.Double</span>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_">Track</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
   </div>
   <a id="LaunchDarkly_Sdk_Server_LdClient_Track_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Track*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_LdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_System_Double_" data-uid="LaunchDarkly.Sdk.Server.LdClient.Track(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.LdValue,System.Double)">Track(String, Context, LdValue, Double)</h4>
@@ -1724,8 +1791,34 @@ later; see <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html#LaunchDar
   <div class="seealso">
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>)</div>
       <div><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Track_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_">Track</a>(<span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.Context.html">Context</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>)</div>
-      <div><a class="xref" href="LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_System_Double_">Track</a>(<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html">ILdClient</a>, <span class="xref">System.String</span>, <a class="xref" href="LaunchDarkly.Sdk.User.html">User</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>, <span class="xref">System.Double</span>)</div>
   </div>
+  <a id="LaunchDarkly_Sdk_Server_LdClient_TrackMigration_" data-uid="LaunchDarkly.Sdk.Server.LdClient.TrackMigration*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_LdClient_TrackMigration_LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_" data-uid="LaunchDarkly.Sdk.Server.LdClient.TrackMigration(LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)">TrackMigration(MigrationOpTracker)</h4>
+  <div class="markdown level1 summary"><p>Track the details of a migration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void TrackMigration(MigrationOpTracker tracker)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html">MigrationOpTracker</a></td>
+        <td><span class="parametername">tracker</span></td>
+        <td><p>migration tracker which was used to track the details of a migration</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.IDisposable</span>

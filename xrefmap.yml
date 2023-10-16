@@ -7,6 +7,150 @@ references:
   commentId: N:LaunchDarkly.Sdk
   fullName: LaunchDarkly.Sdk
   nameWithType: LaunchDarkly.Sdk
+- uid: LaunchDarkly.Sdk.ApplicationInfo
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html
+  commentId: T:LaunchDarkly.Sdk.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.ApplicationInfo
+  nameWithType: ApplicationInfo
+- uid: LaunchDarkly.Sdk.ApplicationInfo.#ctor(System.String,System.String,System.String,System.String)
+  name: ApplicationInfo(String, String, String, String)
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo__ctor_System_String_System_String_System_String_System_String_
+  commentId: M:LaunchDarkly.Sdk.ApplicationInfo.#ctor(System.String,System.String,System.String,System.String)
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationInfo(System.String, System.String, System.String, System.String)
+  nameWithType: ApplicationInfo.ApplicationInfo(String, String, String, String)
+- uid: LaunchDarkly.Sdk.ApplicationInfo.#ctor*
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfo.#ctor
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationInfo
+  nameWithType: ApplicationInfo.ApplicationInfo
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationId
+  name: ApplicationId
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationId
+  commentId: P:LaunchDarkly.Sdk.ApplicationInfo.ApplicationId
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationId
+  nameWithType: ApplicationInfo.ApplicationId
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationId*
+  name: ApplicationId
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationId_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfo.ApplicationId
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationId
+  nameWithType: ApplicationInfo.ApplicationId
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationName
+  name: ApplicationName
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationName
+  commentId: P:LaunchDarkly.Sdk.ApplicationInfo.ApplicationName
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationName
+  nameWithType: ApplicationInfo.ApplicationName
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationName*
+  name: ApplicationName
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationName_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfo.ApplicationName
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationName
+  nameWithType: ApplicationInfo.ApplicationName
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersion
+  name: ApplicationVersion
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationVersion
+  commentId: P:LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersion
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersion
+  nameWithType: ApplicationInfo.ApplicationVersion
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersion*
+  name: ApplicationVersion
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationVersion_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersion
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersion
+  nameWithType: ApplicationInfo.ApplicationVersion
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersionName
+  name: ApplicationVersionName
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationVersionName
+  commentId: P:LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersionName
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersionName
+  nameWithType: ApplicationInfo.ApplicationVersionName
+- uid: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersionName*
+  name: ApplicationVersionName
+  href: api/LaunchDarkly.Sdk.ApplicationInfo.html#LaunchDarkly_Sdk_ApplicationInfo_ApplicationVersionName_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersionName
+  fullName: LaunchDarkly.Sdk.ApplicationInfo.ApplicationVersionName
+  nameWithType: ApplicationInfo.ApplicationVersionName
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder
+  name: ApplicationInfoBuilder
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html
+  commentId: T:LaunchDarkly.Sdk.ApplicationInfoBuilder
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder
+  nameWithType: ApplicationInfoBuilder
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.#ctor
+  name: ApplicationInfoBuilder()
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder__ctor
+  commentId: M:LaunchDarkly.Sdk.ApplicationInfoBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationInfoBuilder()
+  nameWithType: ApplicationInfoBuilder.ApplicationInfoBuilder()
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.#ctor*
+  name: ApplicationInfoBuilder
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfoBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationInfoBuilder
+  nameWithType: ApplicationInfoBuilder.ApplicationInfoBuilder
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationId(System.String)
+  name: ApplicationId(String)
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationId_System_String_
+  commentId: M:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationId(System.String)
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationId(System.String)
+  nameWithType: ApplicationInfoBuilder.ApplicationId(String)
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationId*
+  name: ApplicationId
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationId_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationId
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationId
+  nameWithType: ApplicationInfoBuilder.ApplicationId
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationName(System.String)
+  name: ApplicationName(String)
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationName_System_String_
+  commentId: M:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationName(System.String)
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationName(System.String)
+  nameWithType: ApplicationInfoBuilder.ApplicationName(String)
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationName*
+  name: ApplicationName
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationName_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationName
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationName
+  nameWithType: ApplicationInfoBuilder.ApplicationName
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersion(System.String)
+  name: ApplicationVersion(String)
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationVersion_System_String_
+  commentId: M:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersion(System.String)
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersion(System.String)
+  nameWithType: ApplicationInfoBuilder.ApplicationVersion(String)
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersion*
+  name: ApplicationVersion
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationVersion_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersion
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersion
+  nameWithType: ApplicationInfoBuilder.ApplicationVersion
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersionName(System.String)
+  name: ApplicationVersionName(String)
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationVersionName_System_String_
+  commentId: M:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersionName(System.String)
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersionName(System.String)
+  nameWithType: ApplicationInfoBuilder.ApplicationVersionName(String)
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersionName*
+  name: ApplicationVersionName
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_ApplicationVersionName_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersionName
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.ApplicationVersionName
+  nameWithType: ApplicationInfoBuilder.ApplicationVersionName
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_Build
+  commentId: M:LaunchDarkly.Sdk.ApplicationInfoBuilder.Build
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.Build()
+  nameWithType: ApplicationInfoBuilder.Build()
+- uid: LaunchDarkly.Sdk.ApplicationInfoBuilder.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.ApplicationInfoBuilder.html#LaunchDarkly_Sdk_ApplicationInfoBuilder_Build_
+  commentId: Overload:LaunchDarkly.Sdk.ApplicationInfoBuilder.Build
+  fullName: LaunchDarkly.Sdk.ApplicationInfoBuilder.Build
+  nameWithType: ApplicationInfoBuilder.Build
 - uid: LaunchDarkly.Sdk.AttributeRef
   name: AttributeRef
   href: api/LaunchDarkly.Sdk.AttributeRef.html
@@ -826,6 +970,345 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.ContextMultiBuilder.Build
   fullName: LaunchDarkly.Sdk.ContextMultiBuilder.Build
   nameWithType: ContextMultiBuilder.Build
+- uid: LaunchDarkly.Sdk.EnvReporting
+  name: LaunchDarkly.Sdk.EnvReporting
+  href: api/LaunchDarkly.Sdk.EnvReporting.html
+  commentId: N:LaunchDarkly.Sdk.EnvReporting
+  fullName: LaunchDarkly.Sdk.EnvReporting
+  nameWithType: LaunchDarkly.Sdk.EnvReporting
+- uid: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder
+  name: ConfigLayerBuilder
+  href: api/LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.html
+  commentId: T:LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder
+  fullName: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder
+  nameWithType: ConfigLayerBuilder
+- uid: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.#ctor
+  name: ConfigLayerBuilder()
+  href: api/LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.html#LaunchDarkly_Sdk_EnvReporting_ConfigLayerBuilder__ctor
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.ConfigLayerBuilder()
+  nameWithType: ConfigLayerBuilder.ConfigLayerBuilder()
+- uid: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.#ctor*
+  name: ConfigLayerBuilder
+  href: api/LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.html#LaunchDarkly_Sdk_EnvReporting_ConfigLayerBuilder__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.ConfigLayerBuilder
+  nameWithType: ConfigLayerBuilder.ConfigLayerBuilder
+- uid: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.html#LaunchDarkly_Sdk_EnvReporting_ConfigLayerBuilder_Build
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.Build
+  fullName: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.Build()
+  nameWithType: ConfigLayerBuilder.Build()
+- uid: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.html#LaunchDarkly_Sdk_EnvReporting_ConfigLayerBuilder_Build_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.Build
+  fullName: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.Build
+  nameWithType: ConfigLayerBuilder.Build
+- uid: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.SetAppInfo(LaunchDarkly.Sdk.ApplicationInfo)
+  name: SetAppInfo(ApplicationInfo)
+  href: api/LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.html#LaunchDarkly_Sdk_EnvReporting_ConfigLayerBuilder_SetAppInfo_LaunchDarkly_Sdk_ApplicationInfo_
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.SetAppInfo(LaunchDarkly.Sdk.ApplicationInfo)
+  fullName: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.SetAppInfo(LaunchDarkly.Sdk.ApplicationInfo)
+  nameWithType: ConfigLayerBuilder.SetAppInfo(ApplicationInfo)
+- uid: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.SetAppInfo*
+  name: SetAppInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.html#LaunchDarkly_Sdk_EnvReporting_ConfigLayerBuilder_SetAppInfo_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.SetAppInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.ConfigLayerBuilder.SetAppInfo
+  nameWithType: ConfigLayerBuilder.SetAppInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder
+  name: EnvironmentReporterBuilder
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html
+  commentId: T:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder
+  nameWithType: EnvironmentReporterBuilder
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.#ctor
+  name: EnvironmentReporterBuilder()
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder__ctor
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.EnvironmentReporterBuilder()
+  nameWithType: EnvironmentReporterBuilder.EnvironmentReporterBuilder()
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.#ctor*
+  name: EnvironmentReporterBuilder
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.EnvironmentReporterBuilder
+  nameWithType: EnvironmentReporterBuilder.EnvironmentReporterBuilder
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_Build
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.Build
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.Build()
+  nameWithType: EnvironmentReporterBuilder.Build()
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_Build_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.Build
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.Build
+  nameWithType: EnvironmentReporterBuilder.Build
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetConfigLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  name: SetConfigLayer(Layer)
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_SetConfigLayer_LaunchDarkly_Sdk_EnvReporting_Layer_
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetConfigLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetConfigLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  nameWithType: EnvironmentReporterBuilder.SetConfigLayer(Layer)
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetConfigLayer*
+  name: SetConfigLayer
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_SetConfigLayer_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetConfigLayer
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetConfigLayer
+  nameWithType: EnvironmentReporterBuilder.SetConfigLayer
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetPlatformLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  name: SetPlatformLayer(Layer)
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_SetPlatformLayer_LaunchDarkly_Sdk_EnvReporting_Layer_
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetPlatformLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetPlatformLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  nameWithType: EnvironmentReporterBuilder.SetPlatformLayer(Layer)
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetPlatformLayer*
+  name: SetPlatformLayer
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_SetPlatformLayer_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetPlatformLayer
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetPlatformLayer
+  nameWithType: EnvironmentReporterBuilder.SetPlatformLayer
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetSdkLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  name: SetSdkLayer(Layer)
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_SetSdkLayer_LaunchDarkly_Sdk_EnvReporting_Layer_
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetSdkLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetSdkLayer(LaunchDarkly.Sdk.EnvReporting.Layer)
+  nameWithType: EnvironmentReporterBuilder.SetSdkLayer(Layer)
+- uid: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetSdkLayer*
+  name: SetSdkLayer
+  href: api/LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.html#LaunchDarkly_Sdk_EnvReporting_EnvironmentReporterBuilder_SetSdkLayer_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetSdkLayer
+  fullName: LaunchDarkly.Sdk.EnvReporting.EnvironmentReporterBuilder.SetSdkLayer
+  nameWithType: EnvironmentReporterBuilder.SetSdkLayer
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter
+  name: IEnvironmentReporter
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html
+  commentId: T:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter
+  nameWithType: IEnvironmentReporter
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.ApplicationInfo
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_ApplicationInfo
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.ApplicationInfo
+  nameWithType: IEnvironmentReporter.ApplicationInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.ApplicationInfo*
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_ApplicationInfo_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.ApplicationInfo
+  nameWithType: IEnvironmentReporter.ApplicationInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.DeviceInfo
+  name: DeviceInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_DeviceInfo
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.DeviceInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.DeviceInfo
+  nameWithType: IEnvironmentReporter.DeviceInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.DeviceInfo*
+  name: DeviceInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_DeviceInfo_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.DeviceInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.DeviceInfo
+  nameWithType: IEnvironmentReporter.DeviceInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.Locale
+  name: Locale
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_Locale
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.Locale
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.Locale
+  nameWithType: IEnvironmentReporter.Locale
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.Locale*
+  name: Locale
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_Locale_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.Locale
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.Locale
+  nameWithType: IEnvironmentReporter.Locale
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.OsInfo
+  name: OsInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_OsInfo
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.OsInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.OsInfo
+  nameWithType: IEnvironmentReporter.OsInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.OsInfo*
+  name: OsInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_OsInfo_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.OsInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.OsInfo
+  nameWithType: IEnvironmentReporter.OsInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer
+  name: Layer
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html
+  commentId: T:LaunchDarkly.Sdk.EnvReporting.Layer
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer
+  nameWithType: Layer
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.#ctor(System.Nullable{LaunchDarkly.Sdk.ApplicationInfo},System.Nullable{LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo},System.Nullable{LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo},System.String)
+  name: Layer(Nullable<ApplicationInfo>, Nullable<OsInfo>, Nullable<DeviceInfo>, String)
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer__ctor_System_Nullable_LaunchDarkly_Sdk_ApplicationInfo__System_Nullable_LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo__System_Nullable_LaunchDarkly_Sdk_EnvReporting_LayerModels_DeviceInfo__System_String_
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.Layer.#ctor(System.Nullable{LaunchDarkly.Sdk.ApplicationInfo},System.Nullable{LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo},System.Nullable{LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo},System.String)
+  name.vb: Layer(Nullable(Of ApplicationInfo), Nullable(Of OsInfo), Nullable(Of DeviceInfo), String)
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.Layer(System.Nullable<LaunchDarkly.Sdk.ApplicationInfo>, System.Nullable<LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo>, System.Nullable<LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo>, System.String)
+  fullName.vb: LaunchDarkly.Sdk.EnvReporting.Layer.Layer(System.Nullable(Of LaunchDarkly.Sdk.ApplicationInfo), System.Nullable(Of LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo), System.Nullable(Of LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo), System.String)
+  nameWithType: Layer.Layer(Nullable<ApplicationInfo>, Nullable<OsInfo>, Nullable<DeviceInfo>, String)
+  nameWithType.vb: Layer.Layer(Nullable(Of ApplicationInfo), Nullable(Of OsInfo), Nullable(Of DeviceInfo), String)
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.#ctor*
+  name: Layer
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.Layer.#ctor
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.Layer
+  nameWithType: Layer.Layer
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.ApplicationInfo
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_ApplicationInfo
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.Layer.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.ApplicationInfo
+  nameWithType: Layer.ApplicationInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.ApplicationInfo*
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_ApplicationInfo_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.Layer.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.ApplicationInfo
+  nameWithType: Layer.ApplicationInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.DeviceInfo
+  name: DeviceInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_DeviceInfo
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.Layer.DeviceInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.DeviceInfo
+  nameWithType: Layer.DeviceInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.DeviceInfo*
+  name: DeviceInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_DeviceInfo_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.Layer.DeviceInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.DeviceInfo
+  nameWithType: Layer.DeviceInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.Locale
+  name: Locale
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_Locale
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.Layer.Locale
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.Locale
+  nameWithType: Layer.Locale
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.Locale*
+  name: Locale
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_Locale_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.Layer.Locale
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.Locale
+  nameWithType: Layer.Locale
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.OsInfo
+  name: OsInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_OsInfo
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.Layer.OsInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.OsInfo
+  nameWithType: Layer.OsInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.Layer.OsInfo*
+  name: OsInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.Layer.html#LaunchDarkly_Sdk_EnvReporting_Layer_OsInfo_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.Layer.OsInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.Layer.OsInfo
+  nameWithType: Layer.OsInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels
+  name: LaunchDarkly.Sdk.EnvReporting.LayerModels
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.html
+  commentId: N:LaunchDarkly.Sdk.EnvReporting.LayerModels
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels
+  nameWithType: LaunchDarkly.Sdk.EnvReporting.LayerModels
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo
+  name: DeviceInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html
+  commentId: T:LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo
+  nameWithType: DeviceInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.#ctor(System.String,System.String)
+  name: DeviceInfo(String, String)
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_DeviceInfo__ctor_System_String_System_String_
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.#ctor(System.String,System.String)
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.DeviceInfo(System.String, System.String)
+  nameWithType: DeviceInfo.DeviceInfo(String, String)
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.#ctor*
+  name: DeviceInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_DeviceInfo__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.#ctor
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.DeviceInfo
+  nameWithType: DeviceInfo.DeviceInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Manufacturer
+  name: Manufacturer
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_DeviceInfo_Manufacturer
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Manufacturer
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Manufacturer
+  nameWithType: DeviceInfo.Manufacturer
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Manufacturer*
+  name: Manufacturer
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_DeviceInfo_Manufacturer_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Manufacturer
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Manufacturer
+  nameWithType: DeviceInfo.Manufacturer
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Model
+  name: Model
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_DeviceInfo_Model
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Model
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Model
+  nameWithType: DeviceInfo.Model
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Model*
+  name: Model
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_DeviceInfo_Model_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Model
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.Model
+  nameWithType: DeviceInfo.Model
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo
+  name: OsInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html
+  commentId: T:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo
+  nameWithType: OsInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.#ctor(System.String,System.String,System.String)
+  name: OsInfo(String, String, String)
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo__ctor_System_String_System_String_System_String_
+  commentId: M:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.#ctor(System.String,System.String,System.String)
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.OsInfo(System.String, System.String, System.String)
+  nameWithType: OsInfo.OsInfo(String, String, String)
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.#ctor*
+  name: OsInfo
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.#ctor
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.OsInfo
+  nameWithType: OsInfo.OsInfo
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Family
+  name: Family
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo_Family
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Family
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Family
+  nameWithType: OsInfo.Family
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Family*
+  name: Family
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo_Family_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Family
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Family
+  nameWithType: OsInfo.Family
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Name
+  name: Name
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo_Name
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Name
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Name
+  nameWithType: OsInfo.Name
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Name*
+  name: Name
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo_Name_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Name
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Name
+  nameWithType: OsInfo.Name
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Version
+  name: Version
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo_Version
+  commentId: P:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Version
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Version
+  nameWithType: OsInfo.Version
+- uid: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Version*
+  name: Version
+  href: api/LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html#LaunchDarkly_Sdk_EnvReporting_LayerModels_OsInfo_Version_
+  commentId: Overload:LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Version
+  fullName: LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.Version
+  nameWithType: OsInfo.Version
 - uid: LaunchDarkly.Sdk.EvaluationDetail`1
   name: EvaluationDetail<T>
   href: api/LaunchDarkly.Sdk.EvaluationDetail-1.html
@@ -1269,6 +1752,42 @@ references:
   commentId: F:LaunchDarkly.Sdk.EvaluationReasonKind.value__
   fullName: LaunchDarkly.Sdk.EvaluationReasonKind.value__
   nameWithType: EvaluationReasonKind.value__
+- uid: LaunchDarkly.Sdk.Helpers
+  name: LaunchDarkly.Sdk.Helpers
+  href: api/LaunchDarkly.Sdk.Helpers.html
+  commentId: N:LaunchDarkly.Sdk.Helpers
+  fullName: LaunchDarkly.Sdk.Helpers
+  nameWithType: LaunchDarkly.Sdk.Helpers
+- uid: LaunchDarkly.Sdk.Helpers.ValidationUtils
+  name: ValidationUtils
+  href: api/LaunchDarkly.Sdk.Helpers.ValidationUtils.html
+  commentId: T:LaunchDarkly.Sdk.Helpers.ValidationUtils
+  fullName: LaunchDarkly.Sdk.Helpers.ValidationUtils
+  nameWithType: ValidationUtils
+- uid: LaunchDarkly.Sdk.Helpers.ValidationUtils.SanitizeSpaces(System.String)
+  name: SanitizeSpaces(String)
+  href: api/LaunchDarkly.Sdk.Helpers.ValidationUtils.html#LaunchDarkly_Sdk_Helpers_ValidationUtils_SanitizeSpaces_System_String_
+  commentId: M:LaunchDarkly.Sdk.Helpers.ValidationUtils.SanitizeSpaces(System.String)
+  fullName: LaunchDarkly.Sdk.Helpers.ValidationUtils.SanitizeSpaces(System.String)
+  nameWithType: ValidationUtils.SanitizeSpaces(String)
+- uid: LaunchDarkly.Sdk.Helpers.ValidationUtils.SanitizeSpaces*
+  name: SanitizeSpaces
+  href: api/LaunchDarkly.Sdk.Helpers.ValidationUtils.html#LaunchDarkly_Sdk_Helpers_ValidationUtils_SanitizeSpaces_
+  commentId: Overload:LaunchDarkly.Sdk.Helpers.ValidationUtils.SanitizeSpaces
+  fullName: LaunchDarkly.Sdk.Helpers.ValidationUtils.SanitizeSpaces
+  nameWithType: ValidationUtils.SanitizeSpaces
+- uid: LaunchDarkly.Sdk.Helpers.ValidationUtils.ValidateStringValue(System.String)
+  name: ValidateStringValue(String)
+  href: api/LaunchDarkly.Sdk.Helpers.ValidationUtils.html#LaunchDarkly_Sdk_Helpers_ValidationUtils_ValidateStringValue_System_String_
+  commentId: M:LaunchDarkly.Sdk.Helpers.ValidationUtils.ValidateStringValue(System.String)
+  fullName: LaunchDarkly.Sdk.Helpers.ValidationUtils.ValidateStringValue(System.String)
+  nameWithType: ValidationUtils.ValidateStringValue(String)
+- uid: LaunchDarkly.Sdk.Helpers.ValidationUtils.ValidateStringValue*
+  name: ValidateStringValue
+  href: api/LaunchDarkly.Sdk.Helpers.ValidationUtils.html#LaunchDarkly_Sdk_Helpers_ValidationUtils_ValidateStringValue_
+  commentId: Overload:LaunchDarkly.Sdk.Helpers.ValidationUtils.ValidateStringValue
+  fullName: LaunchDarkly.Sdk.Helpers.ValidationUtils.ValidateStringValue
+  nameWithType: ValidationUtils.ValidateStringValue
 - uid: LaunchDarkly.Sdk.IUserBuilder
   name: IUserBuilder
   href: api/LaunchDarkly.Sdk.IUserBuilder.html
@@ -2889,6 +3408,18 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.Components
   fullName: LaunchDarkly.Sdk.Server.Components
   nameWithType: Components
+- uid: LaunchDarkly.Sdk.Server.Components.ApplicationInfo
+  name: ApplicationInfo()
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ApplicationInfo
+  commentId: M:LaunchDarkly.Sdk.Server.Components.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.Server.Components.ApplicationInfo()
+  nameWithType: Components.ApplicationInfo()
+- uid: LaunchDarkly.Sdk.Server.Components.ApplicationInfo*
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_ApplicationInfo_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Components.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.Server.Components.ApplicationInfo
+  nameWithType: Components.ApplicationInfo
 - uid: LaunchDarkly.Sdk.Server.Components.BigSegments(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.IBigSegmentStore})
   name: BigSegments(IComponentConfigurer<IBigSegmentStore>)
   href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IBigSegmentStore__
@@ -3060,6 +3591,18 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.Configuration
   fullName: LaunchDarkly.Sdk.Server.Configuration
   nameWithType: Configuration
+- uid: LaunchDarkly.Sdk.Server.Configuration.ApplicationInfo
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_ApplicationInfo
+  commentId: P:LaunchDarkly.Sdk.Server.Configuration.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.Server.Configuration.ApplicationInfo
+  nameWithType: Configuration.ApplicationInfo
+- uid: LaunchDarkly.Sdk.Server.Configuration.ApplicationInfo*
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_ApplicationInfo_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.Server.Configuration.ApplicationInfo
+  nameWithType: Configuration.ApplicationInfo
 - uid: LaunchDarkly.Sdk.Server.Configuration.BigSegments
   name: BigSegments
   href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_BigSegments
@@ -3228,6 +3771,18 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.ConfigurationBuilder
   fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder
   nameWithType: ConfigurationBuilder
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ApplicationInfo(LaunchDarkly.Sdk.ApplicationInfoBuilder)
+  name: ApplicationInfo(ApplicationInfoBuilder)
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ApplicationInfo_LaunchDarkly_Sdk_ApplicationInfoBuilder_
+  commentId: M:LaunchDarkly.Sdk.Server.ConfigurationBuilder.ApplicationInfo(LaunchDarkly.Sdk.ApplicationInfoBuilder)
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ApplicationInfo(LaunchDarkly.Sdk.ApplicationInfoBuilder)
+  nameWithType: ConfigurationBuilder.ApplicationInfo(ApplicationInfoBuilder)
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ApplicationInfo*
+  name: ApplicationInfo
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ApplicationInfo_
+  commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.ApplicationInfo
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.ApplicationInfo
+  nameWithType: ConfigurationBuilder.ApplicationInfo
 - uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.BigSegments(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.BigSegmentsConfiguration})
   name: BigSegments(IComponentConfigurer<BigSegmentsConfiguration>)
   href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_BigSegments_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_BigSegmentsConfiguration__
@@ -3606,69 +4161,6 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.ILdClientExtensions
   fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions
   nameWithType: ILdClientExtensions
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.Server.FlagsStateOption[])
-  name: AllFlagsState(ILdClient, User, FlagsStateOption[])
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_AllFlagsState_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_Server_FlagsStateOption___
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.Server.FlagsStateOption[])
-  name.vb: AllFlagsState(ILdClient, User, FlagsStateOption())
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, LaunchDarkly.Sdk.User, LaunchDarkly.Sdk.Server.FlagsStateOption[])
-  fullName.vb: LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, LaunchDarkly.Sdk.User, LaunchDarkly.Sdk.Server.FlagsStateOption())
-  nameWithType: ILdClientExtensions.AllFlagsState(ILdClient, User, FlagsStateOption[])
-  nameWithType.vb: ILdClientExtensions.AllFlagsState(ILdClient, User, FlagsStateOption())
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState*
-  name: AllFlagsState
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_AllFlagsState_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.AllFlagsState
-  nameWithType: ILdClientExtensions.AllFlagsState
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Boolean)
-  name: BoolVariation(ILdClient, String, User, Boolean)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Boolean)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Boolean)
-  nameWithType: ILdClientExtensions.BoolVariation(ILdClient, String, User, Boolean)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation*
-  name: BoolVariation
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariation_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariation
-  nameWithType: ILdClientExtensions.BoolVariation
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Boolean)
-  name: BoolVariationDetail(ILdClient, String, User, Boolean)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Boolean_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Boolean)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Boolean)
-  nameWithType: ILdClientExtensions.BoolVariationDetail(ILdClient, String, User, Boolean)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail*
-  name: BoolVariationDetail
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_BoolVariationDetail_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.BoolVariationDetail
-  nameWithType: ILdClientExtensions.BoolVariationDetail
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Double)
-  name: DoubleVariation(ILdClient, String, User, Double)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Double)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Double)
-  nameWithType: ILdClientExtensions.DoubleVariation(ILdClient, String, User, Double)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation*
-  name: DoubleVariation
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariation_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariation
-  nameWithType: ILdClientExtensions.DoubleVariation
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Double)
-  name: DoubleVariationDetail(ILdClient, String, User, Double)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Double_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Double)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Double)
-  nameWithType: ILdClientExtensions.DoubleVariationDetail(ILdClient, String, User, Double)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail*
-  name: DoubleVariationDetail
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_DoubleVariationDetail_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.DoubleVariationDetail
-  nameWithType: ILdClientExtensions.DoubleVariationDetail
 - uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation*
   name: EnumVariation
   href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation_
@@ -3684,15 +4176,6 @@ references:
   fullName.vb: LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation(Of T)(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.Context, T)
   nameWithType: ILdClientExtensions.EnumVariation<T>(ILdClient, String, Context, T)
   nameWithType.vb: ILdClientExtensions.EnumVariation(Of T)(ILdClient, String, Context, T)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation``1(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,``0)
-  name: EnumVariation<T>(ILdClient, String, User, T)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariation__1_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User___0_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation``1(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,``0)
-  name.vb: EnumVariation(Of T)(ILdClient, String, User, T)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation<T>(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, T)
-  fullName.vb: LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariation(Of T)(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, T)
-  nameWithType: ILdClientExtensions.EnumVariation<T>(ILdClient, String, User, T)
-  nameWithType.vb: ILdClientExtensions.EnumVariation(Of T)(ILdClient, String, User, T)
 - uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariationDetail*
   name: EnumVariationDetail
   href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_EnumVariationDetail_
@@ -3708,150 +4191,6 @@ references:
   fullName.vb: LaunchDarkly.Sdk.Server.ILdClientExtensions.EnumVariationDetail(Of T)(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.Context, T)
   nameWithType: ILdClientExtensions.EnumVariationDetail<T>(ILdClient, String, Context, T)
   nameWithType.vb: ILdClientExtensions.EnumVariationDetail(Of T)(ILdClient, String, Context, T)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Single)
-  name: FloatVariation(ILdClient, String, User, Single)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Single)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Single)
-  nameWithType: ILdClientExtensions.FloatVariation(ILdClient, String, User, Single)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation*
-  name: FloatVariation
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariation_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariation
-  nameWithType: ILdClientExtensions.FloatVariation
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Single)
-  name: FloatVariationDetail(ILdClient, String, User, Single)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Single_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Single)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Single)
-  nameWithType: ILdClientExtensions.FloatVariationDetail(ILdClient, String, User, Single)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail*
-  name: FloatVariationDetail
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_FloatVariationDetail_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.FloatVariationDetail
-  nameWithType: ILdClientExtensions.FloatVariationDetail
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User)
-  name: Identify(ILdClient, User)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Identify_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, LaunchDarkly.Sdk.User)
-  nameWithType: ILdClientExtensions.Identify(ILdClient, User)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify*
-  name: Identify
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Identify_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.Identify
-  nameWithType: ILdClientExtensions.Identify
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Int32)
-  name: IntVariation(ILdClient, String, User, Int32)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Int32)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Int32)
-  nameWithType: ILdClientExtensions.IntVariation(ILdClient, String, User, Int32)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation*
-  name: IntVariation
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariation_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariation
-  nameWithType: ILdClientExtensions.IntVariation
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Int32)
-  name: IntVariationDetail(ILdClient, String, User, Int32)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_Int32_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.Int32)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.Int32)
-  nameWithType: ILdClientExtensions.IntVariationDetail(ILdClient, String, User, Int32)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail*
-  name: IntVariationDetail
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_IntVariationDetail_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.IntVariationDetail
-  nameWithType: ILdClientExtensions.IntVariationDetail
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)
-  name: JsonVariation(ILdClient, String, User, LdValue)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, LaunchDarkly.Sdk.LdValue)
-  nameWithType: ILdClientExtensions.JsonVariation(ILdClient, String, User, LdValue)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation*
-  name: JsonVariation
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariation_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariation
-  nameWithType: ILdClientExtensions.JsonVariation
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)
-  name: JsonVariationDetail(ILdClient, String, User, LdValue)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, LaunchDarkly.Sdk.LdValue)
-  nameWithType: ILdClientExtensions.JsonVariationDetail(ILdClient, String, User, LdValue)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail*
-  name: JsonVariationDetail
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_JsonVariationDetail_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.JsonVariationDetail
-  nameWithType: ILdClientExtensions.JsonVariationDetail
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User)
-  name: SecureModeHash(ILdClient, User)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_SecureModeHash_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_LaunchDarkly_Sdk_User_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,LaunchDarkly.Sdk.User)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, LaunchDarkly.Sdk.User)
-  nameWithType: ILdClientExtensions.SecureModeHash(ILdClient, User)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash*
-  name: SecureModeHash
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_SecureModeHash_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.SecureModeHash
-  nameWithType: ILdClientExtensions.SecureModeHash
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.String)
-  name: StringVariation(ILdClient, String, User, String)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.String)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.String)
-  nameWithType: ILdClientExtensions.StringVariation(ILdClient, String, User, String)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation*
-  name: StringVariation
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariation_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariation
-  nameWithType: ILdClientExtensions.StringVariation
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.String)
-  name: StringVariationDetail(ILdClient, String, User, String)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_System_String_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,System.String)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, System.String)
-  nameWithType: ILdClientExtensions.StringVariationDetail(ILdClient, String, User, String)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail*
-  name: StringVariationDetail
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_StringVariationDetail_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.StringVariationDetail
-  nameWithType: ILdClientExtensions.StringVariationDetail
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User)
-  name: Track(ILdClient, String, User)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User)
-  nameWithType: ILdClientExtensions.Track(ILdClient, String, User)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)
-  name: Track(ILdClient, String, User, LdValue)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, LaunchDarkly.Sdk.LdValue)
-  nameWithType: ILdClientExtensions.Track(ILdClient, String, User, LdValue)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue,System.Double)
-  name: Track(ILdClient, String, User, LdValue, Double)
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_System_String_LaunchDarkly_Sdk_User_LaunchDarkly_Sdk_LdValue_System_Double_
-  commentId: M:LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient,System.String,LaunchDarkly.Sdk.User,LaunchDarkly.Sdk.LdValue,System.Double)
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track(LaunchDarkly.Sdk.Server.Interfaces.ILdClient, System.String, LaunchDarkly.Sdk.User, LaunchDarkly.Sdk.LdValue, System.Double)
-  nameWithType: ILdClientExtensions.Track(ILdClient, String, User, LdValue, Double)
-- uid: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track*
-  name: Track
-  href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html#LaunchDarkly_Sdk_Server_ILdClientExtensions_Track_
-  commentId: Overload:LaunchDarkly.Sdk.Server.ILdClientExtensions.Track
-  fullName: LaunchDarkly.Sdk.Server.ILdClientExtensions.Track
-  nameWithType: ILdClientExtensions.Track
 - uid: LaunchDarkly.Sdk.Server.Integrations
   name: LaunchDarkly.Sdk.Server.Integrations
   href: api/LaunchDarkly.Sdk.Server.Integrations.html
@@ -4923,6 +5262,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ClearTargets
   fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ClearTargets
   nameWithType: TestData.FlagBuilder.ClearTargets
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries(System.Boolean)
+  name: ExcludeFromSummaries(Boolean)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ExcludeFromSummaries_System_Boolean_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries(System.Boolean)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries(System.Boolean)
+  nameWithType: TestData.FlagBuilder.ExcludeFromSummaries(Boolean)
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries*
+  name: ExcludeFromSummaries
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ExcludeFromSummaries_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ExcludeFromSummaries
+  nameWithType: TestData.FlagBuilder.ExcludeFromSummaries
 - uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.FallthroughVariation(System.Boolean)
   name: FallthroughVariation(Boolean)
   href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_FallthroughVariation_System_Boolean_
@@ -5001,6 +5352,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatchContext
   fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.IfNotMatchContext
   nameWithType: TestData.FlagBuilder.IfNotMatchContext
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration(LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder)
+  name: Migration(TestData.FlagMigrationBuilder)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_Migration_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagMigrationBuilder_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration(LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration(LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder)
+  nameWithType: TestData.FlagBuilder.Migration(TestData.FlagMigrationBuilder)
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration*
+  name: Migration
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_Migration_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Migration
+  nameWithType: TestData.FlagBuilder.Migration
 - uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.OffVariation(System.Boolean)
   name: OffVariation(Boolean)
   href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_OffVariation_System_Boolean_
@@ -5031,6 +5394,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.On
   fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.On
   nameWithType: TestData.FlagBuilder.On
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio(System.Int64)
+  name: SamplingRatio(Int64)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_SamplingRatio_System_Int64_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio(System.Int64)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio(System.Int64)
+  nameWithType: TestData.FlagBuilder.SamplingRatio(Int64)
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio*
+  name: SamplingRatio
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_SamplingRatio_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.SamplingRatio
+  nameWithType: TestData.FlagBuilder.SamplingRatio
 - uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.ValueForAll(LaunchDarkly.Sdk.LdValue)
   name: ValueForAll(LdValue)
   href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_ValueForAll_LaunchDarkly_Sdk_LdValue_
@@ -5112,6 +5487,39 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Variations
   fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.Variations
   nameWithType: TestData.FlagBuilder.Variations
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder
+  name: TestData.FlagMigrationBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.html
+  commentId: T:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder
+  nameWithType: TestData.FlagMigrationBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.#ctor
+  name: FlagMigrationBuilder()
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagMigrationBuilder__ctor
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.FlagMigrationBuilder()
+  nameWithType: TestData.FlagMigrationBuilder.FlagMigrationBuilder()
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.#ctor*
+  name: FlagMigrationBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagMigrationBuilder__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.FlagMigrationBuilder
+  nameWithType: TestData.FlagMigrationBuilder.FlagMigrationBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.CheckRatio(System.Nullable{System.Int64})
+  name: CheckRatio(Nullable<Int64>)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagMigrationBuilder_CheckRatio_System_Nullable_System_Int64__
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.CheckRatio(System.Nullable{System.Int64})
+  name.vb: CheckRatio(Nullable(Of Int64))
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.CheckRatio(System.Nullable<System.Int64>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.CheckRatio(System.Nullable(Of System.Int64))
+  nameWithType: TestData.FlagMigrationBuilder.CheckRatio(Nullable<Int64>)
+  nameWithType.vb: TestData.FlagMigrationBuilder.CheckRatio(Nullable(Of Int64))
+- uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.CheckRatio*
+  name: CheckRatio
+  href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_TestData_FlagMigrationBuilder_CheckRatio_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.CheckRatio
+  fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagMigrationBuilder.CheckRatio
+  nameWithType: TestData.FlagMigrationBuilder.CheckRatio
 - uid: LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder
   name: TestData.FlagRuleBuilder
   href: api/LaunchDarkly.Sdk.Server.Integrations.TestData.FlagRuleBuilder.html
@@ -5778,27 +6186,6 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.FlagValueChangeHandler
   fullName: LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker.FlagValueChangeHandler
   nameWithType: IFlagTracker.FlagValueChangeHandler
-- uid: LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods
-  name: IFlagTrackerExtensionMethods
-  href: api/LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.html
-  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods
-  fullName: LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods
-  nameWithType: IFlagTrackerExtensionMethods
-- uid: LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.FlagValueChangeHandler(LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker,System.String,LaunchDarkly.Sdk.User,System.EventHandler{LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent})
-  name: FlagValueChangeHandler(IFlagTracker, String, User, EventHandler<FlagValueChangeEvent>)
-  href: api/LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.html#LaunchDarkly_Sdk_Server_Interfaces_IFlagTrackerExtensionMethods_FlagValueChangeHandler_LaunchDarkly_Sdk_Server_Interfaces_IFlagTracker_System_String_LaunchDarkly_Sdk_User_System_EventHandler_LaunchDarkly_Sdk_Server_Interfaces_FlagValueChangeEvent__
-  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.FlagValueChangeHandler(LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker,System.String,LaunchDarkly.Sdk.User,System.EventHandler{LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent})
-  name.vb: FlagValueChangeHandler(IFlagTracker, String, User, EventHandler(Of FlagValueChangeEvent))
-  fullName: LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.FlagValueChangeHandler(LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker, System.String, LaunchDarkly.Sdk.User, System.EventHandler<LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent>)
-  fullName.vb: LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.FlagValueChangeHandler(LaunchDarkly.Sdk.Server.Interfaces.IFlagTracker, System.String, LaunchDarkly.Sdk.User, System.EventHandler(Of LaunchDarkly.Sdk.Server.Interfaces.FlagValueChangeEvent))
-  nameWithType: IFlagTrackerExtensionMethods.FlagValueChangeHandler(IFlagTracker, String, User, EventHandler<FlagValueChangeEvent>)
-  nameWithType.vb: IFlagTrackerExtensionMethods.FlagValueChangeHandler(IFlagTracker, String, User, EventHandler(Of FlagValueChangeEvent))
-- uid: LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.FlagValueChangeHandler*
-  name: FlagValueChangeHandler
-  href: api/LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.html#LaunchDarkly_Sdk_Server_Interfaces_IFlagTrackerExtensionMethods_FlagValueChangeHandler_
-  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.FlagValueChangeHandler
-  fullName: LaunchDarkly.Sdk.Server.Interfaces.IFlagTrackerExtensionMethods.FlagValueChangeHandler
-  nameWithType: IFlagTrackerExtensionMethods.FlagValueChangeHandler
 - uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient
   name: ILdClient
   href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html
@@ -5964,6 +6351,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.FlushAndWait
   fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.FlushAndWait
   nameWithType: ILdClient.FlushAndWait
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.GetLogger
+  name: GetLogger()
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_GetLogger
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.GetLogger
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.GetLogger()
+  nameWithType: ILdClient.GetLogger()
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.GetLogger*
+  name: GetLogger
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_GetLogger_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.GetLogger
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.GetLogger
+  nameWithType: ILdClient.GetLogger
 - uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.Identify(LaunchDarkly.Sdk.Context)
   name: Identify(Context)
   href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_Identify_LaunchDarkly_Sdk_Context_
@@ -6012,6 +6411,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IntVariationDetail
   fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IntVariationDetail
   nameWithType: ILdClient.IntVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IsOffline
+  name: IsOffline()
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IsOffline
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IsOffline
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IsOffline()
+  nameWithType: ILdClient.IsOffline()
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IsOffline*
+  name: IsOffline
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_IsOffline_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IsOffline
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.IsOffline
+  nameWithType: ILdClient.IsOffline
 - uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.JsonVariation(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.LdValue)
   name: JsonVariation(String, Context, LdValue)
   href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_JsonVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_
@@ -6036,6 +6447,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.JsonVariationDetail
   fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.JsonVariationDetail
   nameWithType: ILdClient.JsonVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.MigrationVariation(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  name: MigrationVariation(String, Context, MigrationStage)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_MigrationVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.MigrationVariation(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.MigrationVariation(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  nameWithType: ILdClient.MigrationVariation(String, Context, MigrationStage)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.MigrationVariation*
+  name: MigrationVariation
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_MigrationVariation_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.MigrationVariation
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.MigrationVariation
+  nameWithType: ILdClient.MigrationVariation
 - uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.SecureModeHash(LaunchDarkly.Sdk.Context)
   name: SecureModeHash(Context)
   href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_SecureModeHash_LaunchDarkly_Sdk_Context_
@@ -6096,6 +6519,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.Track
   fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.Track
   nameWithType: ILdClient.Track
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.TrackMigration(LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  name: TrackMigration(MigrationOpTracker)
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_TrackMigration_LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_
+  commentId: M:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.TrackMigration(LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.TrackMigration(LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  nameWithType: ILdClient.TrackMigration(MigrationOpTracker)
+- uid: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.TrackMigration*
+  name: TrackMigration
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_TrackMigration_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Interfaces.ILdClient.TrackMigration
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.ILdClient.TrackMigration
+  nameWithType: ILdClient.TrackMigration
 - uid: LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints
   name: ServiceEndpoints
   href: api/LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints.html
@@ -6297,6 +6732,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.FlushAndWait
   fullName: LaunchDarkly.Sdk.Server.LdClient.FlushAndWait
   nameWithType: LdClient.FlushAndWait
+- uid: LaunchDarkly.Sdk.Server.LdClient.GetLogger
+  name: GetLogger()
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_GetLogger
+  commentId: M:LaunchDarkly.Sdk.Server.LdClient.GetLogger
+  fullName: LaunchDarkly.Sdk.Server.LdClient.GetLogger()
+  nameWithType: LdClient.GetLogger()
+- uid: LaunchDarkly.Sdk.Server.LdClient.GetLogger*
+  name: GetLogger
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_GetLogger_
+  commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.GetLogger
+  fullName: LaunchDarkly.Sdk.Server.LdClient.GetLogger
+  nameWithType: LdClient.GetLogger
 - uid: LaunchDarkly.Sdk.Server.LdClient.Identify(LaunchDarkly.Sdk.Context)
   name: Identify(Context)
   href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_Identify_LaunchDarkly_Sdk_Context_
@@ -6381,6 +6828,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.JsonVariationDetail
   fullName: LaunchDarkly.Sdk.Server.LdClient.JsonVariationDetail
   nameWithType: LdClient.JsonVariationDetail
+- uid: LaunchDarkly.Sdk.Server.LdClient.MigrationVariation(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  name: MigrationVariation(String, Context, MigrationStage)
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_MigrationVariation_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage_
+  commentId: M:LaunchDarkly.Sdk.Server.LdClient.MigrationVariation(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  fullName: LaunchDarkly.Sdk.Server.LdClient.MigrationVariation(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  nameWithType: LdClient.MigrationVariation(String, Context, MigrationStage)
+- uid: LaunchDarkly.Sdk.Server.LdClient.MigrationVariation*
+  name: MigrationVariation
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_MigrationVariation_
+  commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.MigrationVariation
+  fullName: LaunchDarkly.Sdk.Server.LdClient.MigrationVariation
+  nameWithType: LdClient.MigrationVariation
 - uid: LaunchDarkly.Sdk.Server.LdClient.SecureModeHash(LaunchDarkly.Sdk.Context)
   name: SecureModeHash(Context)
   href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_SecureModeHash_LaunchDarkly_Sdk_Context_
@@ -6441,6 +6900,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.Track
   fullName: LaunchDarkly.Sdk.Server.LdClient.Track
   nameWithType: LdClient.Track
+- uid: LaunchDarkly.Sdk.Server.LdClient.TrackMigration(LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  name: TrackMigration(MigrationOpTracker)
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_TrackMigration_LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_
+  commentId: M:LaunchDarkly.Sdk.Server.LdClient.TrackMigration(LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  fullName: LaunchDarkly.Sdk.Server.LdClient.TrackMigration(LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  nameWithType: LdClient.TrackMigration(MigrationOpTracker)
+- uid: LaunchDarkly.Sdk.Server.LdClient.TrackMigration*
+  name: TrackMigration
+  href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_TrackMigration_
+  commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.TrackMigration
+  fullName: LaunchDarkly.Sdk.Server.LdClient.TrackMigration
+  nameWithType: LdClient.TrackMigration
 - uid: LaunchDarkly.Sdk.Server.LdClient.Version
   name: Version
   href: api/LaunchDarkly.Sdk.Server.LdClient.html#LaunchDarkly_Sdk_Server_LdClient_Version
@@ -6453,6 +6924,831 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.LdClient.Version
   fullName: LaunchDarkly.Sdk.Server.LdClient.Version
   nameWithType: LdClient.Version
+- uid: LaunchDarkly.Sdk.Server.Migrations
+  name: LaunchDarkly.Sdk.Server.Migrations
+  href: api/LaunchDarkly.Sdk.Server.Migrations.html
+  commentId: N:LaunchDarkly.Sdk.Server.Migrations
+  fullName: LaunchDarkly.Sdk.Server.Migrations
+  nameWithType: LaunchDarkly.Sdk.Server.Migrations
+- uid: LaunchDarkly.Sdk.Server.Migrations.IMigration`4
+  name: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>
+  href: api/LaunchDarkly.Sdk.Server.Migrations.IMigration-4.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.IMigration`4
+  name.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput)
+  nameWithType: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>
+  nameWithType.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput)
+- uid: LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Read(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  name: Read(String, Context, MigrationStage)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.IMigration-4.html#LaunchDarkly_Sdk_Server_Migrations_IMigration_4_Read_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Read(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  nameWithType: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(String, Context, MigrationStage)
+  nameWithType.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(String, Context, MigrationStage)
+- uid: LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Read(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage,`2)
+  name: Read(String, Context, MigrationStage, TReadInput)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.IMigration-4.html#LaunchDarkly_Sdk_Server_Migrations_IMigration_4_Read_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage__2_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Read(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage,`2)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage, TReadInput)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage, TReadInput)
+  nameWithType: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(String, Context, MigrationStage, TReadInput)
+  nameWithType.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(String, Context, MigrationStage, TReadInput)
+- uid: LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Read*
+  name: Read
+  href: api/LaunchDarkly.Sdk.Server.Migrations.IMigration-4.html#LaunchDarkly_Sdk_Server_Migrations_IMigration_4_Read_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Read
+  fullName: LaunchDarkly.Sdk.Server.Migrations.IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read
+  nameWithType: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read
+  nameWithType.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read
+- uid: LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Write(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  name: Write(String, Context, MigrationStage)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.IMigration-4.html#LaunchDarkly_Sdk_Server_Migrations_IMigration_4_Write_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Write(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  nameWithType: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write(String, Context, MigrationStage)
+  nameWithType.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write(String, Context, MigrationStage)
+- uid: LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Write(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage,`3)
+  name: Write(String, Context, MigrationStage, TWriteInput)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.IMigration-4.html#LaunchDarkly_Sdk_Server_Migrations_IMigration_4_Write_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_Server_Migrations_MigrationStage__3_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Write(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.Server.Migrations.MigrationStage,`3)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage, TWriteInput)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.Server.Migrations.MigrationStage, TWriteInput)
+  nameWithType: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write(String, Context, MigrationStage, TWriteInput)
+  nameWithType.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write(String, Context, MigrationStage, TWriteInput)
+- uid: LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Write*
+  name: Write
+  href: api/LaunchDarkly.Sdk.Server.Migrations.IMigration-4.html#LaunchDarkly_Sdk_Server_Migrations_IMigration_4_Write_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.IMigration`4.Write
+  fullName: LaunchDarkly.Sdk.Server.Migrations.IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write
+  nameWithType: IMigration<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write
+  nameWithType.vb: IMigration(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4
+  name: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4
+  name.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput)
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.#ctor(LaunchDarkly.Sdk.Server.Interfaces.ILdClient)
+  name: MigrationBuilder(ILdClient)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4__ctor_LaunchDarkly_Sdk_Server_Interfaces_ILdClient_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.#ctor(LaunchDarkly.Sdk.Server.Interfaces.ILdClient)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.MigrationBuilder(LaunchDarkly.Sdk.Server.Interfaces.ILdClient)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).MigrationBuilder(LaunchDarkly.Sdk.Server.Interfaces.ILdClient)
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.MigrationBuilder(ILdClient)
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).MigrationBuilder(ILdClient)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.#ctor*
+  name: MigrationBuilder
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.MigrationBuilder
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).MigrationBuilder
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.MigrationBuilder
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).MigrationBuilder
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_Build
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Build
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Build()
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Build()
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Build()
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Build()
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_Build_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Build
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Build
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Build
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Build
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Build
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Read(System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}},System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}})
+  name: Read(Func<TReadInput, MigrationMethod.Result<TReadResult>>, Func<TReadInput, MigrationMethod.Result<TReadResult>>)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_Read_System_Func__2_LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result__0___System_Func__2_LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result__0___
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Read(System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}},System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}})
+  name.vb: Read(Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)), Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)))
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(System.Func<TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TReadResult>>, System.Func<TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TReadResult>>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(System.Func(Of TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TReadResult)), System.Func(Of TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TReadResult)))
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(Func<TReadInput, MigrationMethod.Result<TReadResult>>, Func<TReadInput, MigrationMethod.Result<TReadResult>>)
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)), Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)))
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Read(System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}},System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}},System.Func{`0,`0,System.Boolean})
+  name: Read(Func<TReadInput, MigrationMethod.Result<TReadResult>>, Func<TReadInput, MigrationMethod.Result<TReadResult>>, Func<TReadResult, TReadResult, Boolean>)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_Read_System_Func__2_LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result__0___System_Func__2_LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result__0___System_Func__0__0_System_Boolean__
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Read(System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}},System.Func{`2,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`0}},System.Func{`0,`0,System.Boolean})
+  name.vb: Read(Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)), Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)), Func(Of TReadResult, TReadResult, Boolean))
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(System.Func<TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TReadResult>>, System.Func<TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TReadResult>>, System.Func<TReadResult, TReadResult, System.Boolean>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(System.Func(Of TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TReadResult)), System.Func(Of TReadInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TReadResult)), System.Func(Of TReadResult, TReadResult, System.Boolean))
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read(Func<TReadInput, MigrationMethod.Result<TReadResult>>, Func<TReadInput, MigrationMethod.Result<TReadResult>>, Func<TReadResult, TReadResult, Boolean>)
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read(Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)), Func(Of TReadInput, MigrationMethod.Result(Of TReadResult)), Func(Of TReadResult, TReadResult, Boolean))
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Read*
+  name: Read
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_Read_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Read
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Read
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Read
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.ReadExecution(LaunchDarkly.Sdk.Server.Migrations.MigrationExecution)
+  name: ReadExecution(MigrationExecution)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_ReadExecution_LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.ReadExecution(LaunchDarkly.Sdk.Server.Migrations.MigrationExecution)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.ReadExecution(LaunchDarkly.Sdk.Server.Migrations.MigrationExecution)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).ReadExecution(LaunchDarkly.Sdk.Server.Migrations.MigrationExecution)
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.ReadExecution(MigrationExecution)
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).ReadExecution(MigrationExecution)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.ReadExecution*
+  name: ReadExecution
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_ReadExecution_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.ReadExecution
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.ReadExecution
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).ReadExecution
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.ReadExecution
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).ReadExecution
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackErrors(System.Boolean)
+  name: TrackErrors(Boolean)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_TrackErrors_System_Boolean_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackErrors(System.Boolean)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackErrors(System.Boolean)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackErrors(System.Boolean)
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackErrors(Boolean)
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackErrors(Boolean)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackErrors*
+  name: TrackErrors
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_TrackErrors_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackErrors
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackErrors
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackErrors
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackErrors
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackErrors
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackLatency(System.Boolean)
+  name: TrackLatency(Boolean)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_TrackLatency_System_Boolean_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackLatency(System.Boolean)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackLatency(System.Boolean)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackLatency(System.Boolean)
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackLatency(Boolean)
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackLatency(Boolean)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackLatency*
+  name: TrackLatency
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_TrackLatency_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.TrackLatency
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackLatency
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackLatency
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.TrackLatency
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).TrackLatency
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Write(System.Func{`3,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`1}},System.Func{`3,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`1}})
+  name: Write(Func<TWriteInput, MigrationMethod.Result<TWriteResult>>, Func<TWriteInput, MigrationMethod.Result<TWriteResult>>)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_Write_System_Func__3_LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result__1___System_Func__3_LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result__1___
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Write(System.Func{`3,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`1}},System.Func{`3,LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result{`1}})
+  name.vb: Write(Func(Of TWriteInput, MigrationMethod.Result(Of TWriteResult)), Func(Of TWriteInput, MigrationMethod.Result(Of TWriteResult)))
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write(System.Func<TWriteInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TWriteResult>>, System.Func<TWriteInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TWriteResult>>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write(System.Func(Of TWriteInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TWriteResult)), System.Func(Of TWriteInput, LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TWriteResult)))
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write(Func<TWriteInput, MigrationMethod.Result<TWriteResult>>, Func<TWriteInput, MigrationMethod.Result<TWriteResult>>)
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write(Func(Of TWriteInput, MigrationMethod.Result(Of TWriteResult)), Func(Of TWriteInput, MigrationMethod.Result(Of TWriteResult)))
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Write*
+  name: Write
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder-4.html#LaunchDarkly_Sdk_Server_Migrations_MigrationBuilder_4_Write_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder`4.Write
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write
+  nameWithType: MigrationBuilder<TReadResult, TWriteResult, TReadInput, TWriteInput>.Write
+  nameWithType.vb: MigrationBuilder(Of TReadResult, TWriteResult, TReadInput, TWriteInput).Write
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution
+  name: MigrationExecution
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution
+  nameWithType: MigrationExecution
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Mode
+  name: Mode
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Mode
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Mode
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Mode
+  nameWithType: MigrationExecution.Mode
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Mode*
+  name: Mode
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Mode_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Mode
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Mode
+  nameWithType: MigrationExecution.Mode
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Order
+  name: Order
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Order
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Order
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Order
+  nameWithType: MigrationExecution.Order
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Order*
+  name: Order
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Order_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Order
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Order
+  nameWithType: MigrationExecution.Order
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Parallel
+  name: Parallel()
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Parallel
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Parallel
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Parallel()
+  nameWithType: MigrationExecution.Parallel()
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Parallel*
+  name: Parallel
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Parallel_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Parallel
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Parallel
+  nameWithType: MigrationExecution.Parallel
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Serial(LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder)
+  name: Serial(MigrationSerialOrder)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Serial_LaunchDarkly_Sdk_Server_Migrations_MigrationSerialOrder_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Serial(LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Serial(LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder)
+  nameWithType: MigrationExecution.Serial(MigrationSerialOrder)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Serial*
+  name: Serial
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_Serial_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Serial
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.Serial
+  nameWithType: MigrationExecution.Serial
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.ToString
+  name: ToString()
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_ToString
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.ToString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.ToString()
+  nameWithType: MigrationExecution.ToString()
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.ToString*
+  name: ToString
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecution_ToString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.ToString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecution.ToString
+  nameWithType: MigrationExecution.ToString
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode
+  name: MigrationExecutionMode
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode
+  nameWithType: MigrationExecutionMode
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.Parallel
+  name: Parallel
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecutionMode_Parallel
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.Parallel
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.Parallel
+  nameWithType: MigrationExecutionMode.Parallel
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.Serial
+  name: Serial
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecutionMode_Serial
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.Serial
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.Serial
+  nameWithType: MigrationExecutionMode.Serial
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.html#LaunchDarkly_Sdk_Server_Migrations_MigrationExecutionMode_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.value__
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationExecutionMode.value__
+  nameWithType: MigrationExecutionMode.value__
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod
+  name: MigrationMethod
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod
+  nameWithType: MigrationMethod
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure*
+  name: Failure
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Failure_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure
+  nameWithType: MigrationMethod.Failure
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure``1
+  name: Failure<TResult>()
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Failure__1
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure``1
+  name.vb: Failure(Of TResult)()
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure<TResult>()
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure(Of TResult)()
+  nameWithType: MigrationMethod.Failure<TResult>()
+  nameWithType.vb: MigrationMethod.Failure(Of TResult)()
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure``1(System.Exception)
+  name: Failure<TResult>(Exception)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Failure__1_System_Exception_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure``1(System.Exception)
+  name.vb: Failure(Of TResult)(Exception)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure<TResult>(System.Exception)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Failure(Of TResult)(System.Exception)
+  nameWithType: MigrationMethod.Failure<TResult>(Exception)
+  nameWithType.vb: MigrationMethod.Failure(Of TResult)(Exception)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1
+  name: MigrationMethod.Result<TResult>
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result-1.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1
+  name.vb: MigrationMethod.Result(Of TResult)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TResult>
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TResult)
+  nameWithType: MigrationMethod.Result<TResult>
+  nameWithType.vb: MigrationMethod.Result(Of TResult)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Exception
+  name: Exception
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result_1_Exception
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Exception
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TResult>.Exception
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TResult).Exception
+  nameWithType: MigrationMethod.Result<TResult>.Exception
+  nameWithType.vb: MigrationMethod.Result(Of TResult).Exception
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Exception*
+  name: Exception
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result_1_Exception_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Exception
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TResult>.Exception
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TResult).Exception
+  nameWithType: MigrationMethod.Result<TResult>.Exception
+  nameWithType.vb: MigrationMethod.Result(Of TResult).Exception
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.IsSuccessful
+  name: IsSuccessful
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result_1_IsSuccessful
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.IsSuccessful
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TResult>.IsSuccessful
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TResult).IsSuccessful
+  nameWithType: MigrationMethod.Result<TResult>.IsSuccessful
+  nameWithType.vb: MigrationMethod.Result(Of TResult).IsSuccessful
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.IsSuccessful*
+  name: IsSuccessful
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result_1_IsSuccessful_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.IsSuccessful
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TResult>.IsSuccessful
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TResult).IsSuccessful
+  nameWithType: MigrationMethod.Result<TResult>.IsSuccessful
+  nameWithType.vb: MigrationMethod.Result(Of TResult).IsSuccessful
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Value
+  name: Value
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result_1_Value
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Value
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TResult>.Value
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TResult).Value
+  nameWithType: MigrationMethod.Result<TResult>.Value
+  nameWithType.vb: MigrationMethod.Result(Of TResult).Value
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Value*
+  name: Value
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Result_1_Value_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result`1.Value
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result<TResult>.Value
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Result(Of TResult).Value
+  nameWithType: MigrationMethod.Result<TResult>.Value
+  nameWithType.vb: MigrationMethod.Result(Of TResult).Value
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Success*
+  name: Success
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Success_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Success
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Success
+  nameWithType: MigrationMethod.Success
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Success``1(``0)
+  name: Success<TResult>(TResult)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.html#LaunchDarkly_Sdk_Server_Migrations_MigrationMethod_Success__1___0_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Success``1(``0)
+  name.vb: Success(Of TResult)(TResult)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Success<TResult>(TResult)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationMethod.Success(Of TResult)(TResult)
+  nameWithType: MigrationMethod.Success<TResult>(TResult)
+  nameWithType.vb: MigrationMethod.Success(Of TResult)(TResult)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation
+  name: MigrationOperation
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationOperation
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation
+  nameWithType: MigrationOperation
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.Read
+  name: Read
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOperation_Read
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.Read
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.Read
+  nameWithType: MigrationOperation.Read
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOperation_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.value__
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.value__
+  nameWithType: MigrationOperation.value__
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.Write
+  name: Write
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOperation_Write
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.Write
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperation.Write
+  nameWithType: MigrationOperation.Write
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions
+  name: MigrationOperationExtensions
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions
+  nameWithType: MigrationOperationExtensions
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.FromDataModelString(System.String)
+  name: FromDataModelString(String)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOperationExtensions_FromDataModelString_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.FromDataModelString(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.FromDataModelString(System.String)
+  nameWithType: MigrationOperationExtensions.FromDataModelString(String)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.FromDataModelString*
+  name: FromDataModelString
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOperationExtensions_FromDataModelString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.FromDataModelString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.FromDataModelString
+  nameWithType: MigrationOperationExtensions.FromDataModelString
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationOperation)
+  name: ToDataModelString(MigrationOperation)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOperationExtensions_ToDataModelString_LaunchDarkly_Sdk_Server_Migrations_MigrationOperation_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationOperation)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationOperation)
+  nameWithType: MigrationOperationExtensions.ToDataModelString(MigrationOperation)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.ToDataModelString*
+  name: ToDataModelString
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOperationExtensions_ToDataModelString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.ToDataModelString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOperationExtensions.ToDataModelString
+  nameWithType: MigrationOperationExtensions.ToDataModelString
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker
+  name: MigrationOpTracker
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker
+  nameWithType: MigrationOpTracker
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Consistency(System.Func{System.Boolean})
+  name: Consistency(Func<Boolean>)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Consistency_System_Func_System_Boolean__
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Consistency(System.Func{System.Boolean})
+  name.vb: Consistency(Func(Of Boolean))
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Consistency(System.Func<System.Boolean>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Consistency(System.Func(Of System.Boolean))
+  nameWithType: MigrationOpTracker.Consistency(Func<Boolean>)
+  nameWithType.vb: MigrationOpTracker.Consistency(Func(Of Boolean))
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Consistency*
+  name: Consistency
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Consistency_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Consistency
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Consistency
+  nameWithType: MigrationOpTracker.Consistency
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Error(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  name: Error(MigrationOrigin)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Error_LaunchDarkly_Sdk_Server_Migrations_MigrationOrigin_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Error(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Error(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  nameWithType: MigrationOpTracker.Error(MigrationOrigin)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Error*
+  name: Error
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Error_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Error
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Error
+  nameWithType: MigrationOpTracker.Error
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Invoked(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  name: Invoked(MigrationOrigin)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Invoked_LaunchDarkly_Sdk_Server_Migrations_MigrationOrigin_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Invoked(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Invoked(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  nameWithType: MigrationOpTracker.Invoked(MigrationOrigin)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Invoked*
+  name: Invoked
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Invoked_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Invoked
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Invoked
+  nameWithType: MigrationOpTracker.Invoked
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Latency(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin,System.TimeSpan)
+  name: Latency(MigrationOrigin, TimeSpan)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Latency_LaunchDarkly_Sdk_Server_Migrations_MigrationOrigin_System_TimeSpan_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Latency(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin,System.TimeSpan)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Latency(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin, System.TimeSpan)
+  nameWithType: MigrationOpTracker.Latency(MigrationOrigin, TimeSpan)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Latency*
+  name: Latency
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Latency_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Latency
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Latency
+  nameWithType: MigrationOpTracker.Latency
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Op(LaunchDarkly.Sdk.Server.Migrations.MigrationOperation)
+  name: Op(MigrationOperation)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Op_LaunchDarkly_Sdk_Server_Migrations_MigrationOperation_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Op(LaunchDarkly.Sdk.Server.Migrations.MigrationOperation)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Op(LaunchDarkly.Sdk.Server.Migrations.MigrationOperation)
+  nameWithType: MigrationOpTracker.Op(MigrationOperation)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Op*
+  name: Op
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker_Op_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Op
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker.Op
+  nameWithType: MigrationOpTracker.Op
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin
+  name: MigrationOrigin
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin
+  nameWithType: MigrationOrigin
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.New
+  name: New
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOrigin_New
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.New
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.New
+  nameWithType: MigrationOrigin.New
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.Old
+  name: Old
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOrigin_Old
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.Old
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.Old
+  nameWithType: MigrationOrigin.Old
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOrigin_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.value__
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin.value__
+  nameWithType: MigrationOrigin.value__
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions
+  name: MigrationOriginExtensions
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions
+  nameWithType: MigrationOriginExtensions
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.FromDataModelString(System.String)
+  name: FromDataModelString(String)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOriginExtensions_FromDataModelString_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.FromDataModelString(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.FromDataModelString(System.String)
+  nameWithType: MigrationOriginExtensions.FromDataModelString(String)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.FromDataModelString*
+  name: FromDataModelString
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOriginExtensions_FromDataModelString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.FromDataModelString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.FromDataModelString
+  nameWithType: MigrationOriginExtensions.FromDataModelString
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  name: ToDataModelString(MigrationOrigin)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOriginExtensions_ToDataModelString_LaunchDarkly_Sdk_Server_Migrations_MigrationOrigin_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationOrigin)
+  nameWithType: MigrationOriginExtensions.ToDataModelString(MigrationOrigin)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.ToDataModelString*
+  name: ToDataModelString
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationOriginExtensions_ToDataModelString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.ToDataModelString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationOriginExtensions.ToDataModelString
+  nameWithType: MigrationOriginExtensions.ToDataModelString
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1
+  name: MigrationResult<TResult>
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1
+  name.vb: MigrationResult(Of TResult)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult)
+  nameWithType: MigrationResult<TResult>
+  nameWithType.vb: MigrationResult(Of TResult)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Exception
+  name: Exception
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_Exception
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Exception
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.Exception
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).Exception
+  nameWithType: MigrationResult<TResult>.Exception
+  nameWithType.vb: MigrationResult(Of TResult).Exception
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Exception*
+  name: Exception
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_Exception_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Exception
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.Exception
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).Exception
+  nameWithType: MigrationResult<TResult>.Exception
+  nameWithType.vb: MigrationResult(Of TResult).Exception
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.IsSuccessful
+  name: IsSuccessful
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_IsSuccessful
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.IsSuccessful
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.IsSuccessful
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).IsSuccessful
+  nameWithType: MigrationResult<TResult>.IsSuccessful
+  nameWithType.vb: MigrationResult(Of TResult).IsSuccessful
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.IsSuccessful*
+  name: IsSuccessful
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_IsSuccessful_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.IsSuccessful
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.IsSuccessful
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).IsSuccessful
+  nameWithType: MigrationResult<TResult>.IsSuccessful
+  nameWithType.vb: MigrationResult(Of TResult).IsSuccessful
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Origin
+  name: Origin
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_Origin
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Origin
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.Origin
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).Origin
+  nameWithType: MigrationResult<TResult>.Origin
+  nameWithType.vb: MigrationResult(Of TResult).Origin
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Origin*
+  name: Origin
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_Origin_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Origin
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.Origin
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).Origin
+  nameWithType: MigrationResult<TResult>.Origin
+  nameWithType.vb: MigrationResult(Of TResult).Origin
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Value
+  name: Value
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_Value
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Value
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.Value
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).Value
+  nameWithType: MigrationResult<TResult>.Value
+  nameWithType.vb: MigrationResult(Of TResult).Value
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Value*
+  name: Value
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationResult_1_Value_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationResult`1.Value
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationResult<TResult>.Value
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationResult(Of TResult).Value
+  nameWithType: MigrationResult<TResult>.Value
+  nameWithType.vb: MigrationResult(Of TResult).Value
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder
+  name: MigrationSerialOrder
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder
+  nameWithType: MigrationSerialOrder
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.Fixed
+  name: Fixed
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.html#LaunchDarkly_Sdk_Server_Migrations_MigrationSerialOrder_Fixed
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.Fixed
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.Fixed
+  nameWithType: MigrationSerialOrder.Fixed
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.Random
+  name: Random
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.html#LaunchDarkly_Sdk_Server_Migrations_MigrationSerialOrder_Random
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.Random
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.Random
+  nameWithType: MigrationSerialOrder.Random
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.html#LaunchDarkly_Sdk_Server_Migrations_MigrationSerialOrder_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.value__
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationSerialOrder.value__
+  nameWithType: MigrationSerialOrder.value__
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage
+  name: MigrationStage
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationStage
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage
+  nameWithType: MigrationStage
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Complete
+  name: Complete
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStage_Complete
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Complete
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Complete
+  nameWithType: MigrationStage.Complete
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.DualWrite
+  name: DualWrite
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStage_DualWrite
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationStage.DualWrite
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.DualWrite
+  nameWithType: MigrationStage.DualWrite
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Live
+  name: Live
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStage_Live
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Live
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Live
+  nameWithType: MigrationStage.Live
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Off
+  name: Off
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStage_Off
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Off
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Off
+  nameWithType: MigrationStage.Off
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.RampDown
+  name: RampDown
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStage_RampDown
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationStage.RampDown
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.RampDown
+  nameWithType: MigrationStage.RampDown
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Shadow
+  name: Shadow
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStage_Shadow
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Shadow
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.Shadow
+  nameWithType: MigrationStage.Shadow
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.value__
+  name: value__
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStage.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStage_value__
+  commentId: F:LaunchDarkly.Sdk.Server.Migrations.MigrationStage.value__
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStage.value__
+  nameWithType: MigrationStage.value__
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions
+  name: MigrationStageExtensions
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions
+  nameWithType: MigrationStageExtensions
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.FromDataModelString(System.String)
+  name: FromDataModelString(String)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStageExtensions_FromDataModelString_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.FromDataModelString(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.FromDataModelString(System.String)
+  nameWithType: MigrationStageExtensions.FromDataModelString(String)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.FromDataModelString*
+  name: FromDataModelString
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStageExtensions_FromDataModelString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.FromDataModelString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.FromDataModelString
+  nameWithType: MigrationStageExtensions.FromDataModelString
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  name: ToDataModelString(MigrationStage)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStageExtensions_ToDataModelString_LaunchDarkly_Sdk_Server_Migrations_MigrationStage_
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.ToDataModelString(LaunchDarkly.Sdk.Server.Migrations.MigrationStage)
+  nameWithType: MigrationStageExtensions.ToDataModelString(MigrationStage)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.ToDataModelString*
+  name: ToDataModelString
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.html#LaunchDarkly_Sdk_Server_Migrations_MigrationStageExtensions_ToDataModelString_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.ToDataModelString
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationStageExtensions.ToDataModelString
+  nameWithType: MigrationStageExtensions.ToDataModelString
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation
+  name: MigrationVariation
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationVariation
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation
+  nameWithType: MigrationVariation
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Deconstruct(LaunchDarkly.Sdk.Server.Migrations.MigrationStage@,LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker@)
+  name: Deconstruct(out MigrationStage, out MigrationOpTracker)
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationVariation_Deconstruct_LaunchDarkly_Sdk_Server_Migrations_MigrationStage__LaunchDarkly_Sdk_Server_Migrations_MigrationOpTracker__
+  commentId: M:LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Deconstruct(LaunchDarkly.Sdk.Server.Migrations.MigrationStage@,LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker@)
+  name.vb: Deconstruct(ByRef MigrationStage, ByRef MigrationOpTracker)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Deconstruct(out LaunchDarkly.Sdk.Server.Migrations.MigrationStage, out LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Deconstruct(ByRef LaunchDarkly.Sdk.Server.Migrations.MigrationStage, ByRef LaunchDarkly.Sdk.Server.Migrations.MigrationOpTracker)
+  nameWithType: MigrationVariation.Deconstruct(out MigrationStage, out MigrationOpTracker)
+  nameWithType.vb: MigrationVariation.Deconstruct(ByRef MigrationStage, ByRef MigrationOpTracker)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Deconstruct*
+  name: Deconstruct
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationVariation_Deconstruct_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Deconstruct
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Deconstruct
+  nameWithType: MigrationVariation.Deconstruct
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Stage
+  name: Stage
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationVariation_Stage
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Stage
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Stage
+  nameWithType: MigrationVariation.Stage
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Stage*
+  name: Stage
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationVariation_Stage_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Stage
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Stage
+  nameWithType: MigrationVariation.Stage
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Tracker
+  name: Tracker
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationVariation_Tracker
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Tracker
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Tracker
+  nameWithType: MigrationVariation.Tracker
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Tracker*
+  name: Tracker
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.html#LaunchDarkly_Sdk_Server_Migrations_MigrationVariation_Tracker_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Tracker
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationVariation.Tracker
+  nameWithType: MigrationVariation.Tracker
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1
+  name: MigrationWriteResult<TResult>
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult-1.html
+  commentId: T:LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1
+  name.vb: MigrationWriteResult(Of TResult)
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult<TResult>
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult(Of TResult)
+  nameWithType: MigrationWriteResult<TResult>
+  nameWithType.vb: MigrationWriteResult(Of TResult)
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.Authoritative
+  name: Authoritative
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationWriteResult_1_Authoritative
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.Authoritative
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult<TResult>.Authoritative
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult(Of TResult).Authoritative
+  nameWithType: MigrationWriteResult<TResult>.Authoritative
+  nameWithType.vb: MigrationWriteResult(Of TResult).Authoritative
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.Authoritative*
+  name: Authoritative
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationWriteResult_1_Authoritative_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.Authoritative
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult<TResult>.Authoritative
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult(Of TResult).Authoritative
+  nameWithType: MigrationWriteResult<TResult>.Authoritative
+  nameWithType.vb: MigrationWriteResult(Of TResult).Authoritative
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.NonAuthoritative
+  name: NonAuthoritative
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationWriteResult_1_NonAuthoritative
+  commentId: P:LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.NonAuthoritative
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult<TResult>.NonAuthoritative
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult(Of TResult).NonAuthoritative
+  nameWithType: MigrationWriteResult<TResult>.NonAuthoritative
+  nameWithType.vb: MigrationWriteResult(Of TResult).NonAuthoritative
+- uid: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.NonAuthoritative*
+  name: NonAuthoritative
+  href: api/LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult-1.html#LaunchDarkly_Sdk_Server_Migrations_MigrationWriteResult_1_NonAuthoritative_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult`1.NonAuthoritative
+  fullName: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult<TResult>.NonAuthoritative
+  fullName.vb: LaunchDarkly.Sdk.Server.Migrations.MigrationWriteResult(Of TResult).NonAuthoritative
+  nameWithType: MigrationWriteResult<TResult>.NonAuthoritative
+  nameWithType.vb: MigrationWriteResult(Of TResult).NonAuthoritative
 - uid: LaunchDarkly.Sdk.Server.Subsystems
   name: LaunchDarkly.Sdk.Server.Subsystems
   href: api/LaunchDarkly.Sdk.Server.Subsystems.html
@@ -7031,6 +8327,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.Default
   fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.Default
   nameWithType: EventProcessorTypes.EvaluationEvent.Default
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries
+  name: ExcludeFromSummaries
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_EvaluationEvent_ExcludeFromSummaries
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries
+  nameWithType: EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries*
+  name: ExcludeFromSummaries
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_EvaluationEvent_ExcludeFromSummaries_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries
+  nameWithType: EventProcessorTypes.EvaluationEvent.ExcludeFromSummaries
 - uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.FlagKey
   name: FlagKey
   href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_EvaluationEvent_FlagKey
@@ -7079,6 +8387,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.Reason
   fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.Reason
   nameWithType: EventProcessorTypes.EvaluationEvent.Reason
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.SamplingRatio
+  name: SamplingRatio
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_EvaluationEvent_SamplingRatio
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.SamplingRatio
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.SamplingRatio
+  nameWithType: EventProcessorTypes.EvaluationEvent.SamplingRatio
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.SamplingRatio*
+  name: SamplingRatio
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_EvaluationEvent_SamplingRatio_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.SamplingRatio
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.SamplingRatio
+  nameWithType: EventProcessorTypes.EvaluationEvent.SamplingRatio
 - uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.Timestamp
   name: Timestamp
   href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.EvaluationEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_EvaluationEvent_Timestamp
@@ -7157,6 +8477,300 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.IdentifyEvent.Timestamp
   fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.IdentifyEvent.Timestamp
   nameWithType: EventProcessorTypes.IdentifyEvent.Timestamp
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent
+  name: EventProcessorTypes.MigrationOpEvent
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html
+  commentId: T:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent
+  nameWithType: EventProcessorTypes.MigrationOpEvent
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Consistent
+  name: Consistent
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Consistent
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Consistent
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Consistent
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Consistent
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Consistent*
+  name: Consistent
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Consistent_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Consistent
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Consistent
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Consistent
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement
+  name: EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.html
+  commentId: T:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent
+  name: IsConsistent
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ConsistentMeasurement_IsConsistent
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent*
+  name: IsConsistent
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ConsistentMeasurement_IsConsistent_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.IsConsistent
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio
+  name: SamplingRatio
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ConsistentMeasurement_SamplingRatio
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio*
+  name: SamplingRatio
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ConsistentMeasurement_SamplingRatio_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ConsistentMeasurement.SamplingRatio
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Context
+  name: Context
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Context
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Context
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Context
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Context
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Context*
+  name: Context
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Context_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Context
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Context
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Context
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Default
+  name: Default
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Default
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Default
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Default
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Default
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Default*
+  name: Default
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Default_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Default
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Default
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Default
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Error
+  name: Error
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Error
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Error
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Error
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Error
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Error*
+  name: Error
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Error_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Error
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Error
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Error
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement
+  name: EventProcessorTypes.MigrationOpEvent.ErrorMeasurement
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.html
+  commentId: T:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ErrorMeasurement
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New
+  name: New
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ErrorMeasurement_New
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New*
+  name: New
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ErrorMeasurement_New_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.New
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old
+  name: Old
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ErrorMeasurement_Old
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old*
+  name: Old
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_ErrorMeasurement_Old_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old
+  nameWithType: EventProcessorTypes.MigrationOpEvent.ErrorMeasurement.Old
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagKey
+  name: FlagKey
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_FlagKey
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagKey
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagKey
+  nameWithType: EventProcessorTypes.MigrationOpEvent.FlagKey
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagKey*
+  name: FlagKey
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_FlagKey_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagKey
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagKey
+  nameWithType: EventProcessorTypes.MigrationOpEvent.FlagKey
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagVersion
+  name: FlagVersion
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_FlagVersion
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagVersion
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagVersion
+  nameWithType: EventProcessorTypes.MigrationOpEvent.FlagVersion
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagVersion*
+  name: FlagVersion
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_FlagVersion_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagVersion
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.FlagVersion
+  nameWithType: EventProcessorTypes.MigrationOpEvent.FlagVersion
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Invoked
+  name: Invoked
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Invoked
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Invoked
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Invoked
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Invoked
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Invoked*
+  name: Invoked
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Invoked_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Invoked
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Invoked
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Invoked
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement
+  name: EventProcessorTypes.MigrationOpEvent.InvokedMeasurement
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.html
+  commentId: T:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement
+  nameWithType: EventProcessorTypes.MigrationOpEvent.InvokedMeasurement
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New
+  name: New
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_InvokedMeasurement_New
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New
+  nameWithType: EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New*
+  name: New
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_InvokedMeasurement_New_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New
+  nameWithType: EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.New
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old
+  name: Old
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_InvokedMeasurement_Old
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old
+  nameWithType: EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old*
+  name: Old
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_InvokedMeasurement_Old_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old
+  nameWithType: EventProcessorTypes.MigrationOpEvent.InvokedMeasurement.Old
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Latency
+  name: Latency
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Latency
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Latency
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Latency
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Latency
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Latency*
+  name: Latency
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Latency_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Latency
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Latency
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Latency
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement
+  name: EventProcessorTypes.MigrationOpEvent.LatencyMeasurement
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.html
+  commentId: T:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement
+  nameWithType: EventProcessorTypes.MigrationOpEvent.LatencyMeasurement
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New
+  name: New
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_LatencyMeasurement_New
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New
+  nameWithType: EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New*
+  name: New
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_LatencyMeasurement_New_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New
+  nameWithType: EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.New
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old
+  name: Old
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_LatencyMeasurement_Old
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old
+  nameWithType: EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old*
+  name: Old
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_LatencyMeasurement_Old_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old
+  nameWithType: EventProcessorTypes.MigrationOpEvent.LatencyMeasurement.Old
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Operation
+  name: Operation
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Operation
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Operation
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Operation
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Operation
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Operation*
+  name: Operation
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Operation_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Operation
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Operation
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Operation
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Reason
+  name: Reason
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Reason
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Reason
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Reason
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Reason
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Reason*
+  name: Reason
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Reason_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Reason
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Reason
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Reason
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.SamplingRatio
+  name: SamplingRatio
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_SamplingRatio
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.SamplingRatio
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.SamplingRatio
+  nameWithType: EventProcessorTypes.MigrationOpEvent.SamplingRatio
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.SamplingRatio*
+  name: SamplingRatio
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_SamplingRatio_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.SamplingRatio
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.SamplingRatio
+  nameWithType: EventProcessorTypes.MigrationOpEvent.SamplingRatio
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Timestamp
+  name: Timestamp
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Timestamp
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Timestamp
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Timestamp
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Timestamp
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Timestamp*
+  name: Timestamp
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Timestamp_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Timestamp
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Timestamp
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Timestamp
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Value
+  name: Value
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Value
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Value
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Value
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Value
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Value*
+  name: Value
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Value_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Value
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Value
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Value
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation
+  name: Variation
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Variation
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Variation
+- uid: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation*
+  name: Variation
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.html#LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_Variation_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation
+  nameWithType: EventProcessorTypes.MigrationOpEvent.Variation
 - uid: LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration
   name: HttpConfiguration
   href: api/LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html
@@ -7599,6 +9213,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordIdentifyEvent
   fullName: LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordIdentifyEvent
   nameWithType: IEventProcessor.RecordIdentifyEvent
+- uid: LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordMigrationEvent(LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent)
+  name: RecordMigrationEvent(EventProcessorTypes.MigrationOpEvent)
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.html#LaunchDarkly_Sdk_Server_Subsystems_IEventProcessor_RecordMigrationEvent_LaunchDarkly_Sdk_Server_Subsystems_EventProcessorTypes_MigrationOpEvent_
+  commentId: M:LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordMigrationEvent(LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent)
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordMigrationEvent(LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent)
+  nameWithType: IEventProcessor.RecordMigrationEvent(EventProcessorTypes.MigrationOpEvent)
+- uid: LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordMigrationEvent*
+  name: RecordMigrationEvent
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.html#LaunchDarkly_Sdk_Server_Subsystems_IEventProcessor_RecordMigrationEvent_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordMigrationEvent
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.IEventProcessor.RecordMigrationEvent
+  nameWithType: IEventProcessor.RecordMigrationEvent
 - uid: LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStore
   name: IPersistentDataStore
   href: api/LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStore.html

@@ -237,6 +237,44 @@ any other configuration.</p>
 
   <h3 id="methods">Methods
   </h3>
+  <a id="LaunchDarkly_Sdk_Server_Components_ApplicationInfo_" data-uid="LaunchDarkly.Sdk.Server.Components.ApplicationInfo*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_ApplicationInfo" data-uid="LaunchDarkly.Sdk.Server.Components.ApplicationInfo">ApplicationInfo()</h4>
+  <div class="markdown level1 summary"><p>Returns a configurable builder for the SDK&apos;s application metadata.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ApplicationInfoBuilder ApplicationInfo()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.ApplicationInfoBuilder.html">ApplicationInfoBuilder</a></td>
+        <td><p>a configuration builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_ApplicationInfo_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Passing this to <a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_ApplicationInfo_LaunchDarkly_Sdk_ApplicationInfoBuilder_">ApplicationInfo(ApplicationInfoBuilder)</a> after setting any desired properties on the builder,
+applies this configuration to the SDK.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Components_ApplicationInfo_examples">Examples</h5>
+  <pre><code>    var config = Configuration.Builder(sdkKey)
+        .ApplicationInfo(
+            Components.ApplicationInfo().ApplicationID(&quot;MyApplication&quot;).ApplicationVersion(&quot;version123abc&quot;)
+        )
+        .Build();</code></pre>
+
   <a id="LaunchDarkly_Sdk_Server_Components_BigSegments_" data-uid="LaunchDarkly.Sdk.Server.Components.BigSegments*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Components_BigSegments_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IBigSegmentStore__" data-uid="LaunchDarkly.Sdk.Server.Components.BigSegments(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.IBigSegmentStore})">BigSegments(IComponentConfigurer&lt;IBigSegmentStore&gt;)</h4>
   <div class="markdown level1 summary"><p>Returns a configuration builder for the SDK&apos;s Big Segments feature.</p>
@@ -720,7 +758,7 @@ Relay Proxy</a> instance. For more information, see <a class="xref" href="Launch
 </p>
 </div>
   <h5 id="LaunchDarkly_Sdk_Server_Components_ServiceEndpoints_examples">Examples</h5>
-  <pre><code>    var config = Configuration.Builder(mobileKey)
+  <pre><code>    var config = Configuration.Builder(sdkKey)
         .ServiceEndpoints(Components.ServiceEndpoints().RelayProxy(&quot;http://my-relay-hostname:80&quot;))
         .Build();</code></pre>
 
