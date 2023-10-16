@@ -2,6 +2,10 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [7.1.0] - 2023-10-16
+### Deprecated:
+- Deprecated methods which take the `User` type. These methods are removed in 8.0.0. Currently a `User` can be converted to a `Context` using `Context.FromUser`. The ability to do this conversion may be removed in a future version.
+
 ## [7.0.3] - 2023-04-21
 ### Changed:
 - Updated `LaunchDarkly.InternalSdk` to `3.1.2`.
