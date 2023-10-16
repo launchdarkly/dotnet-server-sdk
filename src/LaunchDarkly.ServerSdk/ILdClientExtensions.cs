@@ -1,4 +1,5 @@
-﻿using LaunchDarkly.Sdk.Server.Interfaces;
+﻿using System;
+using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -85,6 +86,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="defaultValue">the default value of the flag (as an enum value)</param>
         /// <returns>the variation for the given user, or <c>defaultValue</c> if the flag cannot
         /// be evaluated or does not have a valid enum value</returns>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static T EnumVariation<T>(this ILdClient client, string key, User user, T defaultValue) =>
             EnumVariation<T>(client, key, Context.FromUser(user), defaultValue);
 
@@ -142,6 +144,7 @@ namespace LaunchDarkly.Sdk.Server
         /// be evaluated</returns>
         /// <seealso cref="ILdClient.BoolVariation(string, Context, bool)"/>
         /// <seealso cref="BoolVariationDetail(ILdClient, string, User, bool)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static bool BoolVariation(this ILdClient client,
             string key, User user, bool defaultValue = false) =>
             client.BoolVariation(key, Context.FromUser(user), defaultValue);
@@ -161,6 +164,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="ILdClient.BoolVariationDetail(string, Context, bool)"/>
         /// <seealso cref="BoolVariation(ILdClient, string, User, bool)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static EvaluationDetail<bool> BoolVariationDetail(this ILdClient client,
             string key, User user, bool defaultValue) =>
             client.BoolVariationDetail(key, Context.FromUser(user), defaultValue);
@@ -180,6 +184,7 @@ namespace LaunchDarkly.Sdk.Server
         /// be evaluated</returns>
         /// <seealso cref="ILdClient.IntVariation(string, Context, int)"/>
         /// <seealso cref="IntVariationDetail(ILdClient, string, User, int)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static int IntVariation(this ILdClient client,
             string key, User user, int defaultValue) =>
             client.IntVariation(key, Context.FromUser(user), defaultValue);
@@ -199,6 +204,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="ILdClient.IntVariationDetail(string, Context, int)"/>
         /// <seealso cref="IntVariation(ILdClient, string, User, int)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static EvaluationDetail<int> IntVariationDetail(this ILdClient client,
             string key, User user, int defaultValue) =>
             client.IntVariationDetail(key, Context.FromUser(user), defaultValue);
@@ -220,6 +226,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="ILdClient.FloatVariation(string, Context, float)"/>
         /// <seealso cref="FloatVariationDetail(ILdClient, string, User, float)"/>
         /// <seealso cref="DoubleVariation(ILdClient, string, User, double)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static float FloatVariation(this ILdClient client,
             string key, User user, float defaultValue) =>
             client.FloatVariation(key, Context.FromUser(user), defaultValue);
@@ -240,6 +247,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="ILdClient.FloatVariationDetail(string, Context, float)"/>
         /// <seealso cref="FloatVariation(ILdClient, string, User, float)"/>
         /// <seealso cref="DoubleVariationDetail(ILdClient, string, User, double)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static EvaluationDetail<float> FloatVariationDetail(this ILdClient client,
             string key, User user, float defaultValue) =>
             client.FloatVariationDetail(key, Context.FromUser(user), defaultValue);
@@ -261,6 +269,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="ILdClient.DoubleVariation(string, Context, double)"/>
         /// <seealso cref="DoubleVariationDetail(ILdClient, string, User, double)"/>
         /// <seealso cref="FloatVariation(ILdClient, string, User, float)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static double DoubleVariation(this ILdClient client,
             string key, User user, double defaultValue) =>
             client.DoubleVariation(key, Context.FromUser(user), defaultValue);
@@ -281,6 +290,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="ILdClient.DoubleVariationDetail(string, Context, double)"/>
         /// <seealso cref="DoubleVariation(ILdClient, string, User, double)"/>
         /// <seealso cref="FloatVariationDetail(ILdClient, string, User, float)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static EvaluationDetail<double> DoubleVariationDetail(this ILdClient client,
             string key, User user, double defaultValue) =>
             client.DoubleVariationDetail(key, Context.FromUser(user), defaultValue);
@@ -300,6 +310,7 @@ namespace LaunchDarkly.Sdk.Server
         /// be evaluated</returns>
         /// <seealso cref="ILdClient.StringVariation(string, Context, string)"/>
         /// <seealso cref="StringVariationDetail(ILdClient, string, User, string)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static string StringVariation(this ILdClient client,
             string key, User user, string defaultValue) =>
             client.StringVariation(key, Context.FromUser(user), defaultValue);
@@ -319,6 +330,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="ILdClient.StringVariationDetail(string, Context, string)"/>
         /// <seealso cref="StringVariation(ILdClient, string, User, string)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static EvaluationDetail<string> StringVariationDetail(this ILdClient client,
             string key, User user, string defaultValue) =>
             client.StringVariationDetail(key, Context.FromUser(user), defaultValue);
@@ -338,6 +350,7 @@ namespace LaunchDarkly.Sdk.Server
         /// be evaluated</returns>
         /// <seealso cref="ILdClient.JsonVariation(string, Context, LdValue)"/>
         /// <seealso cref="JsonVariationDetail(ILdClient, string, User, LdValue)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static LdValue JsonVariation(this ILdClient client,
             string key, User user, LdValue defaultValue) =>
             client.JsonVariation(key, Context.FromUser(user), defaultValue);
@@ -357,6 +370,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <returns>an <see cref="EvaluationDetail{T}"/> object</returns>
         /// <seealso cref="ILdClient.JsonVariationDetail(string, Context, LdValue)"/>
         /// <seealso cref="JsonVariation(ILdClient, string, User, LdValue)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static EvaluationDetail<LdValue> JsonVariationDetail(this ILdClient client,
             string key, User user, LdValue defaultValue) =>
             client.JsonVariationDetail(key, Context.FromUser(user), defaultValue);
@@ -372,6 +386,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="user">the user; should not be null (a null reference will cause an error
         /// to be logged and no event will be sent</param>
         /// <seealso cref="ILdClient.Identify(Context)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static void Identify(this ILdClient client, User user) =>
             client.Identify(Context.FromUser(user));
 
@@ -389,6 +404,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="ILdClient.Track(string, Context)"/>
         /// <seealso cref="Track(ILdClient, string, User, LdValue)"/>
         /// <seealso cref="Track(ILdClient, string, User, LdValue, double)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static void Track(this ILdClient client, string name, User user) =>
             client.Track(name, Context.FromUser(user));
 
@@ -406,6 +422,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="ILdClient.Track(string, Context, LdValue)"/>
         /// <seealso cref="Track(ILdClient, string, User)"/>
         /// <seealso cref="Track(ILdClient, string, User, LdValue, double)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static void Track(this ILdClient client,
             string name, User user, LdValue data) =>
             client.Track(name, Context.FromUser(user), data);
@@ -428,6 +445,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="ILdClient.Track(string, Context, LdValue, double)"/>
         /// <seealso cref="Track(ILdClient, string, User)"/>
         /// <seealso cref="Track(ILdClient, string, User, LdValue)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static void Track(this ILdClient client,
             string name, User user, LdValue data, double metricValue) =>
             client.Track(name, Context.FromUser(user), data, metricValue);
@@ -447,6 +465,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <returns>a <see cref="FeatureFlagsState"/> object (will never be null; see
         /// <see cref="FeatureFlagsState.Valid"/></returns>
         /// <seealso cref="ILdClient.AllFlagsState(Context, FlagsStateOption[])"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static FeatureFlagsState AllFlagsState(this ILdClient client,
             User user, params FlagsStateOption[] options) =>
             client.AllFlagsState(Context.FromUser(user), options);
@@ -462,6 +481,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <param name="user">the user attributes</param>
         /// <returns>the hash, or null if the hash could not be calculated</returns>
         /// <seealso cref="ILdClient.SecureModeHash(Context)"/>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts a Context.", false)]
         public static string SecureModeHash(this ILdClient client, User user) =>
             client.SecureModeHash(Context.FromUser(user));
     }
