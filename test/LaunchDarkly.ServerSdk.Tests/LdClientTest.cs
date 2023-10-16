@@ -4,6 +4,7 @@ using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Internal.Events;
 using LaunchDarkly.Sdk.Server.Integrations;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
@@ -63,6 +64,22 @@ namespace LaunchDarkly.Sdk.Server
             using (var client = new LdClient(config))
             {
                 Assert.IsType<DefaultEventProcessorWrapper>(client._eventProcessor);
+            }
+        }
+
+        [Fact]
+        public void IsOfflineReportsFalse()
+        {
+            var config = BasicConfig()
+                .DiagnosticOptOut(true)
+                .Events(null) // BasicConfig sets this to NoEvents - restore the default
+                .Build();
+            using (var client = new LdClient(config))
+            {
+                // Just to make sure it is exposed in the interface.
+                // It was not originally.
+                ILdClient iClient = client;
+                Assert.False(iClient.IsOffline());
             }
         }
 
@@ -266,7 +283,7 @@ AssertLogMessage(false, LogLevel.Warn,
                 Assert.Equal(1, client.IntVariation("key", Context.New("user"), 0));
             }
         }
-        
+
         [Fact]
         public void DataSetIsPassedToDataStoreInCorrectOrder()
         {

@@ -36,7 +36,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
                 Default = defaultValue,
                 Reason = (_withReasons || isExperiment) ? result.Reason : (EvaluationReason?)null,
                 TrackEvents = flag.TrackEvents || isExperiment,
-                DebugEventsUntilDate = flag.DebugEventsUntilDate
+                DebugEventsUntilDate = flag.DebugEventsUntilDate,
+                SamplingRatio = flag.SamplingRatio,
+                ExcludeFromSummaries = flag.ExcludeFromSummaries
             };
         }
 

@@ -10,6 +10,7 @@ using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Evaluation;
 using LaunchDarkly.Sdk.Server.Internal.Events;
 using LaunchDarkly.Sdk.Server.Internal.Model;
+using LaunchDarkly.Sdk.Server.Migrations;
 using LaunchDarkly.Sdk.Server.Subsystems;
 
 using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
@@ -20,12 +21,6 @@ namespace LaunchDarkly.Sdk.Server
     /// A client for the LaunchDarkly API. Client instances are thread-safe. Applications should instantiate
     /// a single <see cref="LdClient"/> for the lifetime of their application.
     /// </summary>
-    /// <remarks>
-    /// See also <see cref="ILdClientExtensions"/>, which provides convenience methods that build upon
-    /// this API. In particular, for every <see cref="LdClient"/> method that takes a
-    /// <see cref="Context"/> parameter, there is an extension method that allows you to pass the
-    /// older <see cref="User"/> type instead.
-    /// </remarks>
     public sealed class LdClient : IDisposable, ILdClient
     {
         #region Private fields
@@ -144,7 +139,8 @@ namespace LaunchDarkly.Sdk.Server
                 config.Offline,
                 config.ServiceEndpoints,
                 null,
-                taskExecutor
+                taskExecutor,
+                config.ApplicationInfo?.Build() ?? new ApplicationInfo()
                 );
 
             var httpConfig = (config.Http ?? Components.HttpConfiguration()).Build(clientContext);
@@ -303,6 +299,32 @@ namespace LaunchDarkly.Sdk.Server
             Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
+        public MigrationVariation MigrationVariation(string key, Context context, MigrationStage defaultStage)
+        {
+            var (detail, flag) = EvaluationAndFlag(key, context, LdValue.Of(defaultStage.ToDataModelString()),
+                LdValue.Convert.String, true, EventFactory.Default);
+            var nullableStage  = MigrationStageExtensions.FromDataModelString(detail.Value);
+            var stage = nullableStage ?? defaultStage;
+            if (nullableStage == null)
+            {
+                _log.Error($"Unrecognized MigrationStage for {key}; using default stage.");
+                detail = new EvaluationDetail<string>(defaultStage.ToDataModelString(), null,
+                    EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType));
+            }
+
+            return new MigrationVariation(stage, new MigrationOpTracker(
+                stage,
+                defaultStage,
+                key,
+                flag,
+                context,
+                flag?.Migration?.CheckRatio ?? 1,
+                _log,
+                detail
+                ));
+        }
+
+        /// <inheritdoc/>
         public FeatureFlagsState AllFlagsState(Context context, params FlagsStateOption[] options)
         {
             if (IsOffline())
@@ -379,7 +401,8 @@ namespace LaunchDarkly.Sdk.Server
             return builder.Build();
         }
 
-        private EvaluationDetail<T> Evaluate<T>(string featureKey, Context context, LdValue defaultValue, LdValue.Converter<T> converter,
+        private (EvaluationDetail<T>, FeatureFlag) EvaluationAndFlag<T>(string featureKey, Context context,
+            LdValue defaultValue, LdValue.Converter<T> converter,
             bool checkType, EventFactory eventFactory)
         {
             T defaultValueOfType = converter.ToType(defaultValue);
@@ -392,8 +415,8 @@ namespace LaunchDarkly.Sdk.Server
                 else
                 {
                     _evalLog.Warn("Flag evaluation before client initialized; data store unavailable, returning default value");
-                    return new EvaluationDetail<T>(defaultValueOfType, null,
-                        EvaluationReason.ErrorReason(EvaluationErrorKind.ClientNotReady));
+                    return (new EvaluationDetail<T>(defaultValueOfType, null,
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.ClientNotReady)), null);
                 }
             }
 
@@ -401,8 +424,8 @@ namespace LaunchDarkly.Sdk.Server
             {
                 _evalLog.Warn("Invalid evaluation context when evaluating flag \"{0}\" ({1}); returning default value", featureKey,
                     context.Error);
-                return new EvaluationDetail<T>(defaultValueOfType, null,
-                    EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified));
+                return (new EvaluationDetail<T>(defaultValueOfType, null,
+                    EvaluationReason.ErrorReason(EvaluationErrorKind.UserNotSpecified)), null);
             }
 
             FeatureFlag featureFlag = null;
@@ -415,8 +438,8 @@ namespace LaunchDarkly.Sdk.Server
                         featureKey);
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewUnknownFlagEvaluationEvent(
                         featureKey, context, defaultValue, EvaluationErrorKind.FlagNotFound));
-                    return new EvaluationDetail<T>(defaultValueOfType, null,
-                        EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound));
+                    return (new EvaluationDetail<T>(defaultValueOfType, null,
+                        EvaluationReason.ErrorReason(EvaluationErrorKind.FlagNotFound)), null);
                 }
 
                 EvaluatorTypes.EvalResult evalResult = _evaluator.Evaluate(featureFlag, context);
@@ -446,15 +469,15 @@ namespace LaunchDarkly.Sdk.Server
 
                         _eventProcessor.RecordEvaluationEvent(eventFactory.NewDefaultValueEvaluationEvent(
                             featureFlag, context, defaultValue, EvaluationErrorKind.WrongType));
-                        return new EvaluationDetail<T>(defaultValueOfType, null,
-                            EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType));
+                        return (new EvaluationDetail<T>(defaultValueOfType, null,
+                            EvaluationReason.ErrorReason(EvaluationErrorKind.WrongType)), featureFlag);
                     }
                     returnDetail = new EvaluationDetail<T>(converter.ToType(evalDetail.Value),
                         evalDetail.VariationIndex, evalDetail.Reason);
                 }
                 _eventProcessor.RecordEvaluationEvent(eventFactory.NewEvaluationEvent(
                     featureFlag, context, evalDetail, defaultValue));
-                return returnDetail;
+                return (returnDetail, featureFlag);
             }
             catch (Exception e)
             {
@@ -472,10 +495,16 @@ namespace LaunchDarkly.Sdk.Server
                     _eventProcessor.RecordEvaluationEvent(eventFactory.NewEvaluationEvent(
                         featureFlag, context, new EvaluationDetail<LdValue>(defaultValue, null, reason), defaultValue));
                 }
-                return new EvaluationDetail<T>(defaultValueOfType, null, reason);
+                return (new EvaluationDetail<T>(defaultValueOfType, null, reason), null);
             }
         }
-        
+
+        private EvaluationDetail<T> Evaluate<T>(string featureKey, Context context, LdValue defaultValue, LdValue.Converter<T> converter,
+            bool checkType, EventFactory eventFactory)
+        {
+            return EvaluationAndFlag(featureKey, context, defaultValue, converter, checkType, eventFactory).Item1;
+        }
+
         /// <inheritdoc/>
         public string SecureModeHash(Context context)
         {
@@ -502,6 +531,16 @@ namespace LaunchDarkly.Sdk.Server
         /// <inheritdoc/>
         public void Track(string name, Context context, LdValue data, double metricValue) =>
             TrackInternal(name, context, data, metricValue);
+
+        /// <inheritdoc/>
+        public void TrackMigration(MigrationOpTracker tracker)
+        {
+            var optEvent = tracker.CreateEvent();
+            // An event could not be created. The tracker will log the relevant error details.
+            if (!optEvent.HasValue) return;
+
+            _eventProcessor.RecordMigrationEvent(optEvent.Value);
+        }
 
         private void TrackInternal(string key, Context context, LdValue data, double? metricValue)
         {
@@ -564,6 +603,12 @@ namespace LaunchDarkly.Sdk.Server
         /// <inheritdoc/>
         public bool FlushAndWait(TimeSpan timeout) =>
             _eventProcessor.FlushAndWait(timeout);
+
+        /// <inheritdoc/>
+        public Logger GetLogger()
+        {
+            return _log;
+        }
 
         #endregion
 

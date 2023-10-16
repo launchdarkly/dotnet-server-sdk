@@ -19,7 +19,7 @@ namespace TestService
         private static readonly HttpClient _httpClient = new HttpClient();
 
         private readonly Uri _uri;
-        
+
         public CallbackService(Uri uri)
         {
             _uri = uri;
@@ -48,6 +48,23 @@ namespace TestService
             // SimpleJsonService.SerializerOptions provides the default property name camelcasing behavior
             resp.Dispose();
             return ret;
+        }
+
+        public async Task<string> PostStringAsync(string path, string parameter)
+        {
+            var resp = await _httpClient.PostAsync(_uri + path,
+                new StringContent(
+                    parameter,
+                    Encoding.UTF8,
+                    "test/plain"));
+            var body = resp.Content == null ? "" : await resp.Content.ReadAsStringAsync();
+            if (!resp.IsSuccessStatusCode)
+            {
+                throw new Exception(string.Format("Callback to {0} returned HTTP error {1} {2}",
+                    _uri + path, (int)resp.StatusCode, body));
+            }
+
+            return body;
         }
 
         private async Task<HttpResponseMessage> PostInternalAsync(string path, object parameters)

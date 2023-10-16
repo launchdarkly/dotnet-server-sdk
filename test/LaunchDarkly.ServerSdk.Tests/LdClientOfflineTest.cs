@@ -1,4 +1,5 @@
 ﻿using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -81,6 +82,19 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void IsOfflineReportsTrue()
+        {
+            var config = BasicConfig().Offline(true).Build();
+            using (var client = new LdClient(config))
+            {
+                // Just to make sure it is exposed in the interface.
+                // It was not originally.
+                ILdClient iClient = client;
+                Assert.True(iClient.IsOffline());
+            }
+        }
+
+        [Fact]
         public void TestSecureModeHash()
         {
             string expectedHash = "aa747c502a898200f9e4fa21bac68136f886a0e27aec70ba06daf2e2a5cb5597";
@@ -90,7 +104,6 @@ namespace LaunchDarkly.Sdk.Server
             using (var client = new LdClient(config))
             {
                 Assert.Equal(expectedHash, client.SecureModeHash(context));
-                Assert.Equal(expectedHash, client.SecureModeHash(contextAsUser));
             }
         }
 

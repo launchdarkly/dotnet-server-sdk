@@ -301,6 +301,45 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 );
         }
 
+        [Fact]
+        public void ItCanSetTheSamplingRatio()
+        {
+            UpsertTestFlag(new TestData.FlagBuilder("my-flag").BooleanFlag().On(true).SamplingRatio(3));
+
+            var received = _updates.Upserts.ExpectValue();
+            var actualFlag = received.Item.Item as FeatureFlag;
+            Assert.Equal(3, actualFlag?.SamplingRatio);
+        }
+
+        [Fact]
+        public void ItCanExcludeFromSummaries()
+        {
+            UpsertTestFlag(new TestData.FlagBuilder("my-flag").BooleanFlag().On(true).ExcludeFromSummaries(true));
+
+            var received = _updates.Upserts.ExpectValue();
+            var actualFlag = received.Item.Item as FeatureFlag;
+            Assert.True(actualFlag?.ExcludeFromSummaries);
+        }
+
+        [Fact]
+        public void ItCanSetTheMigrationCheckRatio()
+        {
+            UpsertTestFlag(new TestData.FlagBuilder("my-flag").BooleanFlag().On(true).Migration(new TestData.FlagMigrationBuilder().CheckRatio(5)));
+            var received = _updates.Upserts.ExpectValue();
+            var actualFlag = received.Item.Item as FeatureFlag;
+            var ratio = actualFlag?.Migration?.CheckRatio;
+            Assert.True(ratio.HasValue);
+            Assert.Equal(5, ratio.Value);
+        }
+
+        private void UpsertTestFlag(TestData.FlagBuilder testBuilder)
+        {
+            var td = TestData.DataSource();
+            td.Build(BasicContext.WithDataSourceUpdates(_updates)).Start();
+
+            td.Update(testBuilder);
+        }
+
         private void CreateAndStart()
         {
             var ds = _td.Build(BasicContext.WithDataSourceUpdates(_updates));

@@ -42,6 +42,12 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
         void RecordCustomEvent(EventProcessorTypes.CustomEvent e);
 
         /// <summary>
+        /// Records a migration operation evnet.
+        /// </summary>
+        /// <param name="e">parameters for a migration op event</param>
+        void RecordMigrationEvent(EventProcessorTypes.MigrationOpEvent e);
+
+        /// <summary>
         /// Specifies that any buffered events should be sent as soon as possible, rather than waiting
         /// for the next flush interval.
         /// </summary>

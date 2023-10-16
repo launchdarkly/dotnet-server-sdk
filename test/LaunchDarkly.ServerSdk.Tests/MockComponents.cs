@@ -265,6 +265,9 @@ namespace LaunchDarkly.Sdk.Server
 
         public void RecordCustomEvent(EventProcessorTypes.CustomEvent e) =>
             Events.Add(e);
+
+        public void RecordMigrationEvent(EventProcessorTypes.MigrationOpEvent e) =>
+            Events.Add(e);
     }
 
     public class MockEventSender : IEventSender

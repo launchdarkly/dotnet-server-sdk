@@ -11,7 +11,7 @@ namespace LaunchDarkly.Sdk.Server
     /// </summary>
     /// <remarks>
     /// Obtain an instance of this class by calling <see cref="Configuration.Builder(string)"/>.
-    /// 
+    ///
     /// All of the builder methods for setting a configuration property return a reference to the same builder, so they can be
     /// chained together.
     /// </remarks>
@@ -42,6 +42,7 @@ namespace LaunchDarkly.Sdk.Server
         internal string _sdkKey;
         internal ServiceEndpointsBuilder _serviceEndpointsBuilder = null;
         internal TimeSpan _startWaitTime = DefaultStartWaitTime;
+        internal ApplicationInfoBuilder _applicationInfo;
 
         #endregion
 
@@ -65,6 +66,7 @@ namespace LaunchDarkly.Sdk.Server
             _sdkKey = copyFrom.SdkKey;
             _serviceEndpointsBuilder = new ServiceEndpointsBuilder(copyFrom.ServiceEndpoints);
             _startWaitTime = copyFrom.StartWaitTime;
+            _applicationInfo = copyFrom.ApplicationInfo;
         }
 
         #endregion
@@ -219,7 +221,7 @@ namespace LaunchDarkly.Sdk.Server
 
         /// <summary>
         /// Sets the SDK's logging configuration, using a builder object that is obtained from
-        /// <see cref="Components.Logging()"/> which has methods for setting individual logging-related properties. 
+        /// <see cref="Components.Logging()"/> which has methods for setting individual logging-related properties.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -325,6 +327,19 @@ namespace LaunchDarkly.Sdk.Server
         public ConfigurationBuilder StartWaitTime(TimeSpan startWaitTime)
         {
             _startWaitTime = startWaitTime;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the SDK's application metadata, which may be used in the LaunchDarkly analytics or other product
+        /// features.  This object is normally a configuration builder obtained from <see cref="Components.ApplicationInfo"/>,
+        /// which has methods for setting individual metadata properties.
+        /// </summary>
+        /// <param name="applicationInfo">builder for <see cref="ApplicationInfo"/></param>
+        /// <returns>the same builder</returns>
+        public ConfigurationBuilder ApplicationInfo(ApplicationInfoBuilder applicationInfo)
+        {
+            _applicationInfo = applicationInfo;
             return this;
         }
 
