@@ -115,6 +115,7 @@ namespace LaunchDarkly.Sdk.Server.Interfaces
         /// <param name="handler">a handler that will receive a <see cref="FlagValueChangeEvent"/>
         /// </param>
         /// <returns>a handler to be added to <see cref="IFlagTracker.FlagChanged"/></returns>
+        [Obsolete("This overload is obsolete. Please use the overload which accepts an LdContext.", false)]
         public static EventHandler<FlagChangeEvent> FlagValueChangeHandler(
             this IFlagTracker flagTracker,
             string flagKey,
