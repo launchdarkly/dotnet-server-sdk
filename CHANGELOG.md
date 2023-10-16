@@ -2,6 +2,23 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [8.0.0] - 2023-10-16
+The latest version of this SDK supports the ability to manage migrations or modernizations, using migration flags. You might use this functionality if you are optimizing queries, upgrading to new tech stacks, migrating from one database to another, or other similar technology changes. Migration flags are part of LaunchDarkly's Early Access Program. This feature is available to all LaunchDarkly customers but may undergo additional changes before it is finalized.
+
+For detailed information about this version, refer to the list below. For information on how to upgrade from the previous version, read the [migration guide](https://docs.launchdarkly.com/sdk/server-side/dotnet/migration-7-to-8).
+
+### Added:
+- A new `Migration` type which provides an out-of-the-box configurable migration framework.
+- For more advanced use cases, added new `MigrationVariation` and `TrackMigration` methods on LdClient.
+- `ApplicationInfo`, for configuration of application metadata that may be used in LaunchDarkly analytics or other product features. This does not affect feature flag evaluations.
+- Added `IsOffline` method to `ILdClient`. This was previously only available on the concrete `LdClient` implementation.
+
+### Removed:
+- Remove support for `User` in `LdClient` methods. The `Context.FromUser` method can be used to convert a `User` to a `Context`. In a future version it may be removed.
+
+### Changed:
+- Upgraded `LaunchDarkly.EventSource` to `5.1.0`. This will change the minimum `LaunchDarkly.Logging` version to `2.0.0` for all dependencies.
+
 ## [7.0.3] - 2023-04-21
 ### Changed:
 - Updated `LaunchDarkly.InternalSdk` to `3.1.2`.
