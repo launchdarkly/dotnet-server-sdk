@@ -43,6 +43,7 @@ namespace LaunchDarkly.Sdk.Server
         internal ServiceEndpointsBuilder _serviceEndpointsBuilder = null;
         internal TimeSpan _startWaitTime = DefaultStartWaitTime;
         internal ApplicationInfoBuilder _applicationInfo;
+        internal WrapperInfoBuilder _wrapperInfo;
 
         #endregion
 
@@ -340,6 +341,21 @@ namespace LaunchDarkly.Sdk.Server
         public ConfigurationBuilder ApplicationInfo(ApplicationInfoBuilder applicationInfo)
         {
             _applicationInfo = applicationInfo;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the wrapper information.
+        /// </summary>
+        /// <remarks>
+        /// This is intended for use with wrapper SDKs from LaunchDarkly. Additionally, any wrapper SDK may overwrite
+        /// any application developer provided wrapper information.
+        /// </remarks>
+        /// <param name="wrapperInfo">the wrapper builder</param>
+        /// <returns>the same builder</returns>
+        public ConfigurationBuilder WrapperInfo(WrapperInfoBuilder wrapperInfo)
+        {
+            _wrapperInfo = wrapperInfo;
             return this;
         }
 

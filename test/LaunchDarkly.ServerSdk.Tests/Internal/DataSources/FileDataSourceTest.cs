@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -112,7 +113,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                 Assert.False(fp.Initialized);
             }
         }
-        
+
         [Fact]
         public void ModifiedFileIsNotReloadedIfAutoUpdateIsOff()
         {
@@ -143,6 +144,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     fp.Start();
                     var initData = _updateSink.Inits.ExpectValue();
                     AssertJsonEqual(DataSetAsJson(ExpectedDataSetForFlagOnlyFile(1)), DataSetAsJson(initData));
+                    Thread.Sleep(100);
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 

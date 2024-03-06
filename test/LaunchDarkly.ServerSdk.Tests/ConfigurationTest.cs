@@ -109,5 +109,22 @@ namespace LaunchDarkly.Sdk.Server
             prop.AssertDefault(ConfigurationBuilder.DefaultStartWaitTime);
             prop.AssertCanSet(TimeSpan.FromSeconds(7));
         }
+
+        [Fact]
+        public void WrapperInfoDefaultsToNull()
+        {
+            var config = Configuration.Builder("").Build();
+            Assert.Null(config.WrapperInfo);
+        }
+
+        [Fact]
+        public void WrapperInfoCanBeSet()
+        {
+            var config = Configuration.Builder("")
+                .WrapperInfo(Components.WrapperInfo().Name("name").Version("version")).Build();
+            var wrapperInfo = config.WrapperInfo.Build();
+            Assert.Equal("name", wrapperInfo.Name);
+            Assert.Equal("version", wrapperInfo.Version);
+        }
     }
 }

@@ -97,6 +97,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
 
         internal ApplicationInfo ApplicationInfo { get; }
 
+        internal WrapperInfo WrapperInfo { get; }
+
         /// <summary>
         /// Constructs a new instance with only the public properties.
         /// </summary>
@@ -119,14 +121,15 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
             Logger logger,
             bool offline,
             ServiceEndpoints serviceEndpoints
-            ) :
+        ) :
             this(
                 sdkKey, dataSourceUpdates, dataStoreUpdates, http, logger, offline, serviceEndpoints,
                 null,
                 new TaskExecutor("test-sender", logger ?? Logs.None.Logger("")),
-                new ApplicationInfo()
-                )
-        { }
+                new ApplicationInfo(), null
+            )
+        {
+        }
 
         /// <summary>
         /// Basic constructor that sets only the SDK key and uses defaults for all other properties.
@@ -134,7 +137,8 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
         /// <param name="sdkKey">the SDK key</param>
         public LdClientContext(string sdkKey) :
             this(sdkKey, null, null, null, null, false, null)
-        { }
+        {
+        }
 
         internal LdClientContext(
             string sdkKey,
@@ -146,8 +150,9 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
             ServiceEndpoints serviceEndpoints,
             IDiagnosticStore diagnosticStore,
             TaskExecutor taskExecutor,
-            ApplicationInfo applicationInfo
-            )
+            ApplicationInfo applicationInfo,
+            WrapperInfo wrapperInfo
+        )
         {
             SdkKey = sdkKey;
             DataSourceUpdates = dataSourceUpdates;
@@ -159,6 +164,7 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
             DiagnosticStore = diagnosticStore;
             TaskExecutor = taskExecutor;
             ApplicationInfo = applicationInfo;
+            WrapperInfo = wrapperInfo;
         }
 
         internal LdClientContext WithDataSourceUpdates(IDataSourceUpdates newDataSourceUpdates) =>
@@ -172,8 +178,9 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 ServiceEndpoints,
                 DiagnosticStore,
                 TaskExecutor,
-                ApplicationInfo
-                );
+                ApplicationInfo,
+                WrapperInfo
+            );
 
         internal LdClientContext WithDataStoreUpdates(IDataStoreUpdates newDataStoreUpdates) =>
             new LdClientContext(
@@ -186,8 +193,9 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 ServiceEndpoints,
                 DiagnosticStore,
                 TaskExecutor,
-                ApplicationInfo
-                );
+                ApplicationInfo,
+                WrapperInfo
+            );
 
         internal LdClientContext WithDiagnosticStore(IDiagnosticStore newDiagnosticStore) =>
             new LdClientContext(
@@ -200,8 +208,9 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 ServiceEndpoints,
                 newDiagnosticStore,
                 TaskExecutor,
-                ApplicationInfo
-                );
+                ApplicationInfo,
+                WrapperInfo
+            );
 
         internal LdClientContext WithHttp(HttpConfiguration newHttp) =>
             new LdClientContext(
@@ -214,8 +223,9 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 ServiceEndpoints,
                 DiagnosticStore,
                 TaskExecutor,
-                ApplicationInfo
-                );
+                ApplicationInfo,
+                WrapperInfo
+            );
 
         internal LdClientContext WithLogger(Logger newLogger) =>
             new LdClientContext(
@@ -228,8 +238,9 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 ServiceEndpoints,
                 DiagnosticStore,
                 TaskExecutor,
-                ApplicationInfo
-                );
+                ApplicationInfo,
+                WrapperInfo
+            );
 
         internal LdClientContext WithTaskExecutor(TaskExecutor newTaskExecutor) =>
             new LdClientContext(
@@ -242,8 +253,9 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 ServiceEndpoints,
                 DiagnosticStore,
                 newTaskExecutor,
-                ApplicationInfo
-                );
+                ApplicationInfo,
+                WrapperInfo
+            );
 
         internal LdClientContext WithApplicationInfo(ApplicationInfo applicationInfo) =>
             new LdClientContext(
@@ -256,7 +268,23 @@ namespace LaunchDarkly.Sdk.Server.Subsystems
                 ServiceEndpoints,
                 DiagnosticStore,
                 TaskExecutor,
-                applicationInfo
+                applicationInfo,
+                WrapperInfo
+            );
+
+        internal LdClientContext WithWrapperInfo(WrapperInfo wrapperInfo) =>
+            new LdClientContext(
+                SdkKey,
+                DataSourceUpdates,
+                DataStoreUpdates,
+                Http,
+                Logger,
+                Offline,
+                ServiceEndpoints,
+                DiagnosticStore,
+                TaskExecutor,
+                ApplicationInfo,
+                wrapperInfo
             );
 
         private static HttpConfiguration DefaultHttpConfiguration() =>

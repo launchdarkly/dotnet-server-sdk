@@ -413,5 +413,15 @@ namespace LaunchDarkly.Sdk.Server
         /// </example>
         /// <returns>a configuration builder</returns>
         public static ApplicationInfoBuilder ApplicationInfo() => new ApplicationInfoBuilder();
+
+        /// <summary>
+        /// Returns a configuration builder for setting wrapper information. Applications do not need to call this
+        /// method.
+        /// </summary>
+        /// <remarks>
+        /// This is intended for use by LaunchDarkly in the development of wrapper SDKs.
+        /// </remarks>
+        /// <returns>a configuration builder</returns>
+        public static WrapperInfoBuilder WrapperInfo() => new WrapperInfoBuilder();
     }
 }
