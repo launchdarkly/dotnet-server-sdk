@@ -525,7 +525,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Components.html",
-          "hash": "WXlkbR3sHds/G/77FclVJAR8KKKMPDPg5nx0L3ErbQQ="
+          "hash": "p3xhw9HqZgDa+LezzQRApd3LnnZMYUAlRUvmlxVgKWI="
         }
       },
       "is_incremental": false,
@@ -537,7 +537,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Configuration.html",
-          "hash": "ZjQHKv/A5Dan44SB7Jh8nlDoJv6ivUEaDQY89Wfzb0Y="
+          "hash": "gFM1eQT8grHF00g3QpkXf6vd+s+mR2pRakxo5t0qbq8="
         }
       },
       "is_incremental": false,
@@ -549,7 +549,7 @@
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html",
-          "hash": "kREzN8+SqXuYz5cpTx2zJW0DFlpQwMxOjHzBmtjnmsU="
+          "hash": "RoQO/wWYGgALd4xYOieJJ/uVc5ijHm9CiVRKquAqOeQ="
         }
       },
       "is_incremental": false,
@@ -821,11 +821,23 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html",
+          "hash": "3JsZqvUVM60dBk7FfOhOWDygoU2l11HfiThSgY7OTrU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Integrations.yml",
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Integrations.html",
-          "hash": "3iwgzXrueBMn9nrblOa30FS9h5UoriEeEYv6nMrszuw="
+          "hash": "0/mTPMnb1dYSsPKGmdQduiwjfLAeN9O1YUowGcwrDtY="
         }
       },
       "is_incremental": false,
@@ -1013,11 +1025,23 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.WrapperInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.WrapperInfo.html",
+          "hash": "iUwKC1lytQDT2DNawGUcgXAEm/I7Os56OljQHLvK0zg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "build/api/LaunchDarkly.Sdk.Server.Interfaces.yml",
       "output": {
         ".html": {
           "relative_path": "api/LaunchDarkly.Sdk.Server.Interfaces.html",
-          "hash": "9xdwhcq1RdrQ1DHxPZ/fy+69RRg0ZZ13UB5bK7dXqXY="
+          "hash": "f03DggWlsGkW+OKjHlZmrpBWnJwDQCbzAcqdiyrivM0="
         }
       },
       "is_incremental": false,
@@ -1713,7 +1737,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "0kSmeis1Ckk6ARLSs7WaP9j7AO+veBpJd7kRkU5baTI="
+          "hash": "PpovXRbVofe9IkZeHmCGewdK07wXlC7+v+qfm9RmFuQ="
         }
       },
       "is_incremental": false,
@@ -1725,7 +1749,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "kd/tyXFBRl89M9FoG41/i1LYXpCO3hbD9E38AQqXkKc="
+          "hash": "kIedtQhwCeIlB+QXM4WEPTfWfWEziw5Ly7Dj3B9bXTs="
         }
       },
       "is_incremental": false,
@@ -1764,7 +1788,7 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 143,
+          "total_file_count": 145,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {

@@ -3585,6 +3585,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Components.StreamingDataSource
   fullName: LaunchDarkly.Sdk.Server.Components.StreamingDataSource
   nameWithType: Components.StreamingDataSource
+- uid: LaunchDarkly.Sdk.Server.Components.WrapperInfo
+  name: WrapperInfo()
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_WrapperInfo
+  commentId: M:LaunchDarkly.Sdk.Server.Components.WrapperInfo
+  fullName: LaunchDarkly.Sdk.Server.Components.WrapperInfo()
+  nameWithType: Components.WrapperInfo()
+- uid: LaunchDarkly.Sdk.Server.Components.WrapperInfo*
+  name: WrapperInfo
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_WrapperInfo_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Components.WrapperInfo
+  fullName: LaunchDarkly.Sdk.Server.Components.WrapperInfo
+  nameWithType: Components.WrapperInfo
 - uid: LaunchDarkly.Sdk.Server.Configuration
   name: Configuration
   href: api/LaunchDarkly.Sdk.Server.Configuration.html
@@ -3765,6 +3777,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.StartWaitTime
   fullName: LaunchDarkly.Sdk.Server.Configuration.StartWaitTime
   nameWithType: Configuration.StartWaitTime
+- uid: LaunchDarkly.Sdk.Server.Configuration.WrapperInfo
+  name: WrapperInfo
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_WrapperInfo
+  commentId: P:LaunchDarkly.Sdk.Server.Configuration.WrapperInfo
+  fullName: LaunchDarkly.Sdk.Server.Configuration.WrapperInfo
+  nameWithType: Configuration.WrapperInfo
+- uid: LaunchDarkly.Sdk.Server.Configuration.WrapperInfo*
+  name: WrapperInfo
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_WrapperInfo_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.WrapperInfo
+  fullName: LaunchDarkly.Sdk.Server.Configuration.WrapperInfo
+  nameWithType: Configuration.WrapperInfo
 - uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder
   name: ConfigurationBuilder
   href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html
@@ -3951,6 +3975,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.StartWaitTime
   fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.StartWaitTime
   nameWithType: ConfigurationBuilder.StartWaitTime
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.WrapperInfo(LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder)
+  name: WrapperInfo(WrapperInfoBuilder)
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_WrapperInfo_LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder_
+  commentId: M:LaunchDarkly.Sdk.Server.ConfigurationBuilder.WrapperInfo(LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder)
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.WrapperInfo(LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder)
+  nameWithType: ConfigurationBuilder.WrapperInfo(WrapperInfoBuilder)
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.WrapperInfo*
+  name: WrapperInfo
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_WrapperInfo_
+  commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.WrapperInfo
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.WrapperInfo
+  nameWithType: ConfigurationBuilder.WrapperInfo
 - uid: LaunchDarkly.Sdk.Server.DataModel
   name: DataModel
   href: api/LaunchDarkly.Sdk.Server.DataModel.html
@@ -5631,6 +5667,60 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.TestData.UpdateStatus
   fullName: LaunchDarkly.Sdk.Server.Integrations.TestData.UpdateStatus
   nameWithType: TestData.UpdateStatus
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder
+  name: WrapperInfoBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html
+  commentId: T:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder
+  nameWithType: WrapperInfoBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.#ctor
+  name: WrapperInfoBuilder()
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder__ctor
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.WrapperInfoBuilder()
+  nameWithType: WrapperInfoBuilder.WrapperInfoBuilder()
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.#ctor*
+  name: WrapperInfoBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.WrapperInfoBuilder
+  nameWithType: WrapperInfoBuilder.WrapperInfoBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder_Build
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Build()
+  nameWithType: WrapperInfoBuilder.Build()
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder_Build_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Build
+  nameWithType: WrapperInfoBuilder.Build
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Name(System.String)
+  name: Name(String)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder_Name_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Name(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Name(System.String)
+  nameWithType: WrapperInfoBuilder.Name(String)
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Name*
+  name: Name
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder_Name_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Name
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Name
+  nameWithType: WrapperInfoBuilder.Name
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Version(System.String)
+  name: Version(String)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder_Version_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Version(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Version(System.String)
+  nameWithType: WrapperInfoBuilder.Version(String)
+- uid: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Version*
+  name: Version
+  href: api/LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.html#LaunchDarkly_Sdk_Server_Integrations_WrapperInfoBuilder_Version_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Version
+  fullName: LaunchDarkly.Sdk.Server.Integrations.WrapperInfoBuilder.Version
+  nameWithType: WrapperInfoBuilder.Version
 - uid: LaunchDarkly.Sdk.Server.Interfaces
   name: LaunchDarkly.Sdk.Server.Interfaces
   href: api/LaunchDarkly.Sdk.Server.Interfaces.html
@@ -6537,6 +6627,12 @@ references:
   commentId: T:LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints
   fullName: LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints
   nameWithType: ServiceEndpoints
+- uid: LaunchDarkly.Sdk.Server.Interfaces.WrapperInfo
+  name: WrapperInfo
+  href: api/LaunchDarkly.Sdk.Server.Interfaces.WrapperInfo.html
+  commentId: T:LaunchDarkly.Sdk.Server.Interfaces.WrapperInfo
+  fullName: LaunchDarkly.Sdk.Server.Interfaces.WrapperInfo
+  nameWithType: WrapperInfo
 - uid: LaunchDarkly.Sdk.Server.LdClient
   name: LdClient
   href: api/LaunchDarkly.Sdk.Server.LdClient.html
