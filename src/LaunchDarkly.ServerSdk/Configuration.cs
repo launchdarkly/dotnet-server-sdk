@@ -1,4 +1,5 @@
 ﻿using System;
+using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Subsystems;
 
@@ -99,6 +100,12 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         public ApplicationInfoBuilder ApplicationInfo { get; }
 
+        /// <summary>
+        /// WrapperInfo configuration which contains wrapper configuration. This is primarily intended for use by
+        /// LaunchDarkly when developing wrapper SDKs.
+        /// </summary>
+        public WrapperInfoBuilder WrapperInfo { get; }
+
         #endregion
 
         #region Public methods
@@ -174,6 +181,7 @@ namespace LaunchDarkly.Sdk.Server
             ServiceEndpoints = (builder._serviceEndpointsBuilder ?? Components.ServiceEndpoints()).Build();
             StartWaitTime = builder._startWaitTime;
             ApplicationInfo = builder._applicationInfo;
+            WrapperInfo = builder._wrapperInfo;
         }
 
         #endregion

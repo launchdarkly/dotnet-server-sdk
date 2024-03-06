@@ -131,6 +131,33 @@ namespace LaunchDarkly.Sdk.Server.Integrations
             Assert.Equal("w/1.0", HeadersAsMap(config.DefaultHeaders)["x-launchdarkly-wrapper"]);
         }
 
+        [Fact]
+        public void WrapperInfoNameOnly()
+        {
+            var wrapperInfo = Components.WrapperInfo().Name("my-wrapper").Build();
+            var config = Components.HttpConfiguration()
+                .Build(basicConfig.WithWrapperInfo(wrapperInfo));
+            Assert.Equal("my-wrapper", HeadersAsMap(config.DefaultHeaders)["x-launchdarkly-wrapper"]);
+        }
+
+        [Fact]
+        public void WrapperInfoNameAndVersion()
+        {
+            var wrapperInfo = Components.WrapperInfo().Name("my-wrapper").Version("3.14").Build();
+            var config = Components.HttpConfiguration()
+                .Build(basicConfig.WithWrapperInfo(wrapperInfo));
+            Assert.Equal("my-wrapper/3.14", HeadersAsMap(config.DefaultHeaders)["x-launchdarkly-wrapper"]);
+        }
+
+        [Fact]
+        public void WrapperInfoOverwritesHttpConfiguration()
+        {
+            var wrapperInfo = Components.WrapperInfo().Name("my-wrapper").Version("3.14").Build();
+            var config = Components.HttpConfiguration().Wrapper("w", "1.0")
+                .Build(basicConfig.WithWrapperInfo(wrapperInfo));
+            Assert.Equal("my-wrapper/3.14", HeadersAsMap(config.DefaultHeaders)["x-launchdarkly-wrapper"]);
+        }
+
         private Dictionary<string, string> HeadersAsMap(IEnumerable<KeyValuePair<string, string>> headers)
         {
             return headers.ToDictionary(kv => kv.Key.ToLower(), kv => kv.Value);

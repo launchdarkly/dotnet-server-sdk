@@ -234,6 +234,18 @@ namespace LaunchDarkly.Sdk.Server.Integrations
 
         private HttpProperties MakeHttpProperties(LdClientContext context)
         {
+            string wrapperName;
+            string wrapperVersion;
+            if (context.WrapperInfo != null)
+            {
+                wrapperName = context.WrapperInfo.Name;
+                wrapperVersion = context.WrapperInfo.Version;
+            }
+            else
+            {
+                wrapperName = _wrapperName;
+                wrapperVersion = _wrapperVersion;
+            }
             var httpProperties = HttpProperties.Default
                 .WithAuthorizationKey(context.SdkKey)
                 .WithConnectTimeout(_connectTimeout)
@@ -244,7 +256,7 @@ namespace LaunchDarkly.Sdk.Server.Integrations
                 .WithReadTimeout(_readTimeout)
                 .WithUserAgent("DotNetClient/" + AssemblyVersions.GetAssemblyVersionStringForType(typeof(LdClient)))
                 .WithApplicationTags(context.ApplicationInfo)
-                .WithWrapper(_wrapperName, _wrapperVersion);
+                .WithWrapper(wrapperName, wrapperVersion);
 
             return _customHeaders.Aggregate(httpProperties, (current, kv)
                 => current.WithHeader(kv.Key, kv.Value));

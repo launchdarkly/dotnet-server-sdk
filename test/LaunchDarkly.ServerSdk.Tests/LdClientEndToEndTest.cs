@@ -96,6 +96,27 @@ namespace LaunchDarkly.Sdk.Server
         }
 
         [Fact]
+        public void ClientIncludesWrapperInformation()
+        {
+            using (var streamServer = HttpServer.Start(ValidStreamingResponse))
+            {
+                var config = BasicConfig()
+                    .DataSource(Components.StreamingDataSource())
+                    .ServiceEndpoints(Components.ServiceEndpoints().Streaming(streamServer.Uri))
+                    .StartWaitTime(TimeSpan.FromSeconds(5))
+                    .WrapperInfo(Components.WrapperInfo().Name("wrapper-name").Version("wrapper-version"))
+                    .Build();
+
+                using (new LdClient(config))
+                {
+                    var request = streamServer.Recorder.RequireRequest();
+                    Assert.Equal("wrapper-name/wrapper-version",
+                        request.Headers.Get("x-launchdarkly-wrapper"));
+                }
+            }
+        }
+
+        [Fact]
         public void ClientRetriesConnectionInStreamingModeWithNonFatalError()
         {
             var failThenSucceedHandler = Handlers.Sequential(Error503Response, ValidStreamingResponse);

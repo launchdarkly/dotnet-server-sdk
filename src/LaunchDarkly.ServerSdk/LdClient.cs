@@ -116,7 +116,7 @@ namespace LaunchDarkly.Sdk.Server
         ///     var client = new LDClient(config);
         /// </code>
         /// </example>
-        /// <seealso cref="LdClient.LdClient(string)"/>
+        /// <seealso cref="LdClient(string)"/>
         public LdClient(Configuration config)
         {
             _configuration = config;
@@ -140,19 +140,19 @@ namespace LaunchDarkly.Sdk.Server
                 config.ServiceEndpoints,
                 null,
                 taskExecutor,
-                config.ApplicationInfo?.Build() ?? new ApplicationInfo()
+                config.ApplicationInfo?.Build() ?? new ApplicationInfo(),
+                config.WrapperInfo?.Build()
                 );
 
             var httpConfig = (config.Http ?? Components.HttpConfiguration()).Build(clientContext);
             clientContext = clientContext.WithHttp(httpConfig);
 
-            ServerDiagnosticStore diagnosticStore = _configuration.DiagnosticOptOut ? null :
+            var diagnosticStore = _configuration.DiagnosticOptOut ? null :
                 new ServerDiagnosticStore(config, clientContext);
             clientContext = clientContext.WithDiagnosticStore(diagnosticStore);
 
             var dataStoreUpdates = new DataStoreUpdatesImpl(taskExecutor, _log.SubLogger(LogNames.DataStoreSubLog));
 
-            var contextForDataStore = clientContext.WithDataStoreUpdates(dataStoreUpdates);
             _dataStore = (_configuration.DataStore ?? Components.InMemoryDataStore)
                 .Build(clientContext.WithDataStoreUpdates(dataStoreUpdates));
             _dataStoreStatusProvider = new DataStoreStatusProviderImpl(_dataStore, dataStoreUpdates);
@@ -219,7 +219,7 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         /// <remarks>
         /// <para>
-        /// If you need to specify any custom SDK options, use <see cref="LdClient.LdClient(Configuration)"/>
+        /// If you need to specify any custom SDK options, use <see cref="LdClient(Configuration)"/>
         /// instead.
         /// </para>
         /// <para>
@@ -231,11 +231,11 @@ namespace LaunchDarkly.Sdk.Server
         /// <para>
         /// The constructor will never throw an exception, even if initialization fails. For more details
         /// about initialization behavior and how to detect error conditions, see
-        /// <see cref="LdClient.LdClient(Configuration)"/>.
+        /// <see cref="LdClient(Configuration)"/>.
         /// </para>
         /// </remarks>
         /// <param name="sdkKey">the SDK key for your LaunchDarkly environment</param>
-        /// <seealso cref="LdClient.LdClient(Configuration)"/>
+        /// <seealso cref="LdClient(Configuration)"/>
         public LdClient(string sdkKey) : this(Configuration.Default(sdkKey))
         {
         }
