@@ -74,7 +74,8 @@
   <h1 id="LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter" data-uid="LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter" class="text-break">Interface IEnvironmentReporter
   </h1>
   <div class="markdown level0 summary"><p>An <a class="xref" href="LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html">IEnvironmentReporter</a> is able to report various attributes
-of the environment in which the application is running.</p>
+of the environment in which the application is running. If a property is null,
+it means the reporter was unable to determine the value.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.Sdk.EnvReporting.html">LaunchDarkly.Sdk.EnvReporting</a></h6>
@@ -91,7 +92,7 @@ of the environment in which the application is running.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ApplicationInfo ApplicationInfo { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">Nullable&lt;ApplicationInfo&gt; ApplicationInfo { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -103,7 +104,7 @@ of the environment in which the application is running.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.ApplicationInfo.html">ApplicationInfo</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.ApplicationInfo.html">ApplicationInfo</a>&gt;</td>
         <td><p>the <a class="xref" href="LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_ApplicationInfo">ApplicationInfo</a> for the application environment</p>
 </td>
       </tr>
@@ -115,7 +116,7 @@ of the environment in which the application is running.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">DeviceInfo DeviceInfo { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">Nullable&lt;DeviceInfo&gt; DeviceInfo { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -127,7 +128,7 @@ of the environment in which the application is running.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html">DeviceInfo</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.EnvReporting.LayerModels.DeviceInfo.html">DeviceInfo</a>&gt;</td>
         <td><p>the <a class="xref" href="LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_DeviceInfo">DeviceInfo</a> for the application environment</p>
 </td>
       </tr>
@@ -163,7 +164,7 @@ of the environment in which the application is running.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">OsInfo OsInfo { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">Nullable&lt;OsInfo&gt; OsInfo { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -175,7 +176,7 @@ of the environment in which the application is running.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html">OsInfo</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.EnvReporting.LayerModels.OsInfo.html">OsInfo</a>&gt;</td>
         <td><p>the <a class="xref" href="LaunchDarkly.Sdk.EnvReporting.IEnvironmentReporter.html#LaunchDarkly_Sdk_EnvReporting_IEnvironmentReporter_OsInfo">OsInfo</a> for the application environment</p>
 </td>
       </tr>
