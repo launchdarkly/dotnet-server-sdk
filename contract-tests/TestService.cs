@@ -34,7 +34,9 @@ namespace TestService
             "secure-mode-hash",
             "migrations",
             "event-sampling",
-            "tags"
+            "tags",
+            "inline-context",
+            "anonymous-redaction"
         };
 
         public readonly Handler Handler;
