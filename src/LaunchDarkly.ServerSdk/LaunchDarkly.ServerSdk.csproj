@@ -49,7 +49,7 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'
                      or '$(TargetFramework)' == 'net462'">
     <PackageReference Include="System.Text.Json" Version="6.0.0" />
-    <!-- it's a built-in package in netcoreapp3.1 and net6.0 -->
+    <!-- it's a built-in package in net6.0 -->
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
