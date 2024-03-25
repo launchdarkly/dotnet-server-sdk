@@ -67,8 +67,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.Events
             // update this whenever we add or remove supported target frameworks in the .csproj file.
 #if NETSTANDARD2_0
             return "netstandard2.0";
-#elif NETCOREAPP3_1
-            return "netcoreapp3.1";
 #elif NET462
             return "net462";
 #elif NET6_0
