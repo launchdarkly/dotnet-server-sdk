@@ -6,23 +6,10 @@ workflows:
     jobs:
       - build-all
       - test-netcore-linux:
-          name: .NET Core 3.1 - Linux
-          docker-image: mcr.microsoft.com/dotnet/core/sdk:3.1-focal
-          build-target-framework: netcoreapp3.1
-          test-target-framework: netcoreapp3.1
-          requires:
-            - build-all
-      - test-netcore-linux:
           name: .NET 6.0 - Linux
           docker-image: mcr.microsoft.com/dotnet/sdk:6.0-focal
           build-target-framework: net6.0
           test-target-framework: net6.0
-          requires:
-            - build-all
-      - test-windows:
-          name: .NET Core 3.1 - Windows
-          build-target-framework: netcoreapp3.1
-          test-target-framework: netcoreapp3.1
           requires:
             - build-all
       - test-windows:
