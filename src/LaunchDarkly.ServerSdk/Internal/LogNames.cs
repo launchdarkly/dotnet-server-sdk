@@ -14,5 +14,7 @@ namespace LaunchDarkly.Sdk.Server.Internal
         internal const string EvaluationSubLog = "Evaluation";
 
         internal const string EventsSubLog = "Events";
+
+        internal const string HooksSubLog = "Hooks";
     }
 }

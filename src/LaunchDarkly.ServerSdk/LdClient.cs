@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
+using LaunchDarkly.Sdk.Server.Hooks;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.BigSegments;
@@ -9,6 +11,8 @@ using LaunchDarkly.Sdk.Server.Internal.DataSources;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Internal.Evaluation;
 using LaunchDarkly.Sdk.Server.Internal.Events;
+using LaunchDarkly.Sdk.Server.Internal.Hooks.Executor;
+using LaunchDarkly.Sdk.Server.Internal.Hooks.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
 using LaunchDarkly.Sdk.Server.Migrations;
 using LaunchDarkly.Sdk.Server.Subsystems;
@@ -37,6 +41,7 @@ namespace LaunchDarkly.Sdk.Server
         internal readonly Evaluator _evaluator;
         private readonly Logger _log;
         private readonly Logger _evalLog;
+        private readonly IHookExecutor _hookExecutor;
 
         #endregion
 
@@ -190,6 +195,12 @@ namespace LaunchDarkly.Sdk.Server
             _flagTracker = new FlagTrackerImpl(dataSourceUpdates,
                 (string key, Context context) => JsonVariation(key, context, LdValue.Null));
 
+            var hookConfig = (config.Hooks ?? Components.Hooks()).Build();
+            _hookExecutor =  hookConfig.Hooks.Any() ?
+                (IHookExecutor) new Executor(_log.SubLogger(LogNames.HooksSubLog), hookConfig.Hooks)
+                : new NoopExecutor();
+
+
             var initTask = _dataSource.Start();
 
             if (!(_dataSource is ComponentsImpl.NullDataSource))
@@ -252,57 +263,59 @@ namespace LaunchDarkly.Sdk.Server
 
         /// <inheritdoc/>
         public bool BoolVariation(string key, Context context, bool defaultValue = false) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.Default).Value;
+            Evaluate(Method.BoolVariation, key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
         public int IntVariation(string key, Context context, int defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.Default).Value;
+            Evaluate(Method.IntVariation, key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
         public float FloatVariation(string key, Context context, float defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.Default).Value;
+            Evaluate(Method.FloatVariation, key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
         public double DoubleVariation(string key, Context context, double defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.Default).Value;
+            Evaluate(Method.DoubleVariation, key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
         public string StringVariation(string key, Context context, string defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
+            Evaluate(Method.StringVariation, key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.Default).Value;
 
         /// <inheritdoc/>
         public LdValue JsonVariation(string key, Context context, LdValue defaultValue) =>
-            Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.Default).Value;
+            Evaluate(Method.JsonVariation, key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.Default).Value;
 
         /// <inheritdoc/>
         public EvaluationDetail<bool> BoolVariationDetail(string key, Context context, bool defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.DefaultWithReasons);
+            Evaluate(Method.BoolVariationDetail, key, context, LdValue.Of(defaultValue), LdValue.Convert.Bool, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
         public EvaluationDetail<int> IntVariationDetail(string key, Context context, int defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.DefaultWithReasons);
+            Evaluate(Method.IntVariationDetail, key, context, LdValue.Of(defaultValue), LdValue.Convert.Int, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
         public EvaluationDetail<float> FloatVariationDetail(string key, Context context, float defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
+            Evaluate(Method.FloatVariationDetail, key, context, LdValue.Of(defaultValue), LdValue.Convert.Float, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
         public EvaluationDetail<double> DoubleVariationDetail(string key, Context context, double defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.DefaultWithReasons);
+            Evaluate(Method.DoubleVariationDetail, key, context, LdValue.Of(defaultValue), LdValue.Convert.Double, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
         public EvaluationDetail<string> StringVariationDetail(string key, Context context, string defaultValue) =>
-            Evaluate(key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
+            Evaluate(Method.StringVariationDetail, key, context, LdValue.Of(defaultValue), LdValue.Convert.String, true, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
         public EvaluationDetail<LdValue> JsonVariationDetail(string key, Context context, LdValue defaultValue) =>
-            Evaluate(key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
+            Evaluate(Method.JsonVariationDetail, key, context, defaultValue, LdValue.Convert.Json, false, EventFactory.DefaultWithReasons);
 
         /// <inheritdoc/>
         public MigrationVariation MigrationVariation(string key, Context context, MigrationStage defaultStage)
         {
-            var (detail, flag) = EvaluationAndFlag(key, context, LdValue.Of(defaultStage.ToDataModelString()),
-                LdValue.Convert.String, true, EventFactory.Default);
+
+            var (detail, flag) = EvaluateWithHooks(Method.MigrationVariation, key, context, LdValue.Of(defaultStage.ToDataModelString()),
+                              LdValue.Convert.String, true, EventFactory.Default);
+
             var nullableStage  = MigrationStageExtensions.FromDataModelString(detail.Value);
             var stage = nullableStage ?? defaultStage;
             if (nullableStage == null)
@@ -399,6 +412,16 @@ namespace LaunchDarkly.Sdk.Server
                 }
             }
             return builder.Build();
+        }
+
+        private (EvaluationDetail<T>, FeatureFlag) EvaluateWithHooks<T>(string method, string key, Context context, LdValue defaultValue, LdValue.Converter<T> converter,
+            bool checkType, EventFactory eventFactory)
+        {
+            var evalSeriesContext = new EvaluationSeriesContext(key, context, defaultValue, method);
+            return _hookExecutor.EvaluationSeries(
+                evalSeriesContext,
+                converter,
+                () => EvaluationAndFlag(key, context, defaultValue, converter, checkType, eventFactory));
         }
 
         private (EvaluationDetail<T>, FeatureFlag) EvaluationAndFlag<T>(string featureKey, Context context,
@@ -499,10 +522,10 @@ namespace LaunchDarkly.Sdk.Server
             }
         }
 
-        private EvaluationDetail<T> Evaluate<T>(string featureKey, Context context, LdValue defaultValue, LdValue.Converter<T> converter,
+        private EvaluationDetail<T> Evaluate<T>(string method, string featureKey, Context context, LdValue defaultValue, LdValue.Converter<T> converter,
             bool checkType, EventFactory eventFactory)
         {
-            return EvaluationAndFlag(featureKey, context, defaultValue, converter, checkType, eventFactory).Item1;
+            return EvaluateWithHooks(method, featureKey, context, defaultValue, converter, checkType, eventFactory).Item1;
         }
 
         /// <inheritdoc/>
@@ -639,6 +662,7 @@ namespace LaunchDarkly.Sdk.Server
             if (disposing) // follow standard IDisposable pattern
             {
                 _log.Info("Closing LaunchDarkly client");
+                _hookExecutor.Dispose();
                 _eventProcessor.Dispose();
                 _dataStore.Dispose();
                 _dataSource.Dispose();

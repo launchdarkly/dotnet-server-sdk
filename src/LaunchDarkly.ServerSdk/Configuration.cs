@@ -106,6 +106,12 @@ namespace LaunchDarkly.Sdk.Server
         /// </summary>
         public WrapperInfoBuilder WrapperInfo { get; }
 
+
+        /// <summary>
+        /// Hooks configuration which contains a list of zero or more hooks to be executed by the SDK at points of interest.
+        /// </summary>
+        public HookConfigurationBuilder Hooks { get; }
+
         #endregion
 
         #region Public methods
@@ -182,6 +188,7 @@ namespace LaunchDarkly.Sdk.Server
             StartWaitTime = builder._startWaitTime;
             ApplicationInfo = builder._applicationInfo;
             WrapperInfo = builder._wrapperInfo;
+            Hooks = builder._hooks;
         }
 
         #endregion

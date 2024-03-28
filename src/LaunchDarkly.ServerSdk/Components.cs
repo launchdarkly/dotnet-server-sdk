@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Hooks;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal;
@@ -179,6 +182,41 @@ namespace LaunchDarkly.Sdk.Server
         /// <seealso cref="Components.NoLogging" />
         public static LoggingConfigurationBuilder Logging(ILogAdapter adapter) =>
             new LoggingConfigurationBuilder().Adapter(adapter);
+
+        /// <summary>
+        /// Returns a configuration builder for the SDK's hook configuration.
+        ///
+        /// <example>
+        /// <code>
+        /// var config = Configuration.Builder(sdkKey)
+        ///     .Hooks(Components.Hooks()
+        ///         .Add(new MyHook(...))
+        ///         .Add(new MyOtherHook(...))
+        ///     ).Build();
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <returns>a configuration builder</returns>
+        public static HookConfigurationBuilder Hooks() => new HookConfigurationBuilder();
+
+        /// <summary>
+        /// Returns a configuration builder for the SDK's hook configuration, with an initial set of hooks given
+        /// as a parameter.
+        ///
+        /// Use this instead of <see cref="Hooks()"/> if you already have an existing collection of hooks satisfying the
+        /// IEnumerable interface.
+        ///
+        /// <example>
+        /// <code>
+        /// var listOfHooks = ...;
+        /// var config = Configuration.Builder(sdkKey)
+        ///     .Hooks(Components.Hooks(listOfHooks)).Build();
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="hooks">a collection of hooks</param>
+        /// <returns>a configuration builder</returns>
+        public static HookConfigurationBuilder Hooks(IEnumerable<Hook> hooks) => new HookConfigurationBuilder(hooks);
 
         /// <summary>
         /// Returns a configuration object that disables analytics events.

@@ -36,7 +36,8 @@ namespace TestService
             "event-sampling",
             "tags",
             "inline-context",
-            "anonymous-redaction"
+            "anonymous-redaction",
+            "evaluation-hooks"
         };
 
         public readonly Handler Handler;

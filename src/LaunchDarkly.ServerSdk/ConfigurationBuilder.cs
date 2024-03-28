@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Hooks;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Subsystems;
@@ -36,6 +38,7 @@ namespace LaunchDarkly.Sdk.Server
         internal IComponentConfigurer<IDataStore> _dataStore = null;
         internal bool _diagnosticOptOut = false;
         internal IComponentConfigurer<IEventProcessor> _events = null;
+        internal HookConfigurationBuilder _hooks = null;
         internal IComponentConfigurer<HttpConfiguration> _http = null;
         internal IComponentConfigurer<LoggingConfiguration> _logging = null;
         internal bool _offline = false;
@@ -61,6 +64,7 @@ namespace LaunchDarkly.Sdk.Server
             _dataStore = copyFrom.DataStore;
             _diagnosticOptOut = copyFrom.DiagnosticOptOut;
             _events = copyFrom.Events;
+            _hooks = copyFrom.Hooks;
             _http = copyFrom.Http;
             _logging = copyFrom.Logging;
             _offline = copyFrom.Offline;
@@ -274,6 +278,18 @@ namespace LaunchDarkly.Sdk.Server
         /// <returns>the same builder</returns>
         public ConfigurationBuilder Logging(ILogAdapter logAdapter) =>
             Logging(Components.Logging(logAdapter));
+
+
+        /// <summary>
+        /// Configures the SDK's user-defined hooks.
+        /// </summary>
+        /// <param name="hooksConfig">the hook configuration</param>
+        /// <returns>the same builder</returns>
+        public ConfigurationBuilder Hooks(HookConfigurationBuilder hooksConfig)
+        {
+            _hooks = hooksConfig;
+            return this;
+        }
 
         /// <summary>
         /// Sets whether or not this client is offline. If true, no calls to Launchdarkly will be made.

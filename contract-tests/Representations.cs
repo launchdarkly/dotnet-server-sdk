@@ -30,6 +30,7 @@ namespace TestService
         public SdkConfigEventParams Events { get; set; }
         public SdkConfigBigSegmentsParams BigSegments { get; set; }
         public SdkTagParams Tags { get; set; }
+        public SdkHookParams Hooks { get; set; }
     }
 
     public class SdkTagParams
@@ -38,6 +39,22 @@ namespace TestService
         public string ApplicationVersion { get; set; }
     }
 
+    public class HookData
+    {
+        public Dictionary<string, LdValue> BeforeEvaluation { get; set; }
+        public Dictionary<string, LdValue> AfterEvaluation { get; set; }
+    }
+    public class HookConfig
+    {
+        public string Name { get; set; }
+        public Uri CallbackUri { get; set; }
+        public HookData Data { get; set; }
+    }
+
+    public class SdkHookParams
+    {
+        public List<HookConfig> Hooks { get; set; }
+    }
     public class SdkConfigStreamParams
     {
         public Uri BaseUri { get; set; }
