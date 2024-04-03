@@ -183,3 +183,6 @@ project.lock.json
 
 *.snk
 *.p12
+
+# Jetbrains
+.idea

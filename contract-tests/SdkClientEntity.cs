@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Json;
 using LaunchDarkly.Sdk.Server;
+using LaunchDarkly.Sdk.Server.Hooks;
 using LaunchDarkly.Sdk.Server.Migrations;
 
 namespace TestService
@@ -359,6 +361,15 @@ namespace TestService
                 }
 
                 builder.ApplicationInfo(infoBuilder);
+            }
+
+            if (sdkParams.Hooks != null)
+            {
+                var hooks = sdkParams.Hooks.Hooks.Select(hook =>
+                    new TestHook(hook.Name, new CallbackService(hook.CallbackUri), hook.Data?.BeforeEvaluation, hook.Data?.AfterEvaluation)
+                );
+
+                builder.Hooks(Components.Hooks(hooks));
             }
 
             return builder.Build();

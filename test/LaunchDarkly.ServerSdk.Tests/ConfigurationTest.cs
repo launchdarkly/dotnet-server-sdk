@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using LaunchDarkly.Logging;
+using LaunchDarkly.Sdk.Server.Hooks;
 using LaunchDarkly.Sdk.Server.Internal;
 using LaunchDarkly.Sdk.Server.Internal.DataStores;
 using LaunchDarkly.Sdk.Server.Subsystems;
@@ -125,6 +127,38 @@ namespace LaunchDarkly.Sdk.Server
             var wrapperInfo = config.WrapperInfo.Build();
             Assert.Equal("name", wrapperInfo.Name);
             Assert.Equal("version", wrapperInfo.Version);
+        }
+
+        [Fact]
+        public void NoHooksByDefault()
+        {
+            var config = Configuration.Builder("").Hooks(Components.Hooks()).Build();
+            var hooks = config.Hooks.Build();
+            Assert.Empty(hooks.Hooks);
+        }
+
+        [Fact]
+        public void CanAddArbitraryHooks()
+        {
+            var config = Configuration.Builder("").Hooks(
+                Components.Hooks()
+                    .Add(new Hook("foo"))
+                    .Add(new Hook("bar")))
+                    .Build();
+
+            var hooks = config.Hooks.Build();
+            Assert.Equal(2, hooks.Hooks.Count());
+        }
+
+        [Fact]
+        public void CanAddArbitraryHooksFromEnumerable()
+        {
+            var config = Configuration.Builder("").Hooks(
+                    Components.Hooks(new []{new Hook("foo"), new Hook("bar")}))
+                .Build();
+
+            var hooks = config.Hooks.Build();
+            Assert.Equal(2, hooks.Hooks.Count());
         }
     }
 }
