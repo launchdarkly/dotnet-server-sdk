@@ -341,6 +341,89 @@ example above, <pre><code>Prefix</code></pre> is an option specifically for the 
 <pre><code>ContextCacheSize</code></pre> is an option that can be used for any data store type.
 </p>
 </div>
+  <a id="LaunchDarkly_Sdk_Server_Components_Hooks_" data-uid="LaunchDarkly.Sdk.Server.Components.Hooks*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_Hooks" data-uid="LaunchDarkly.Sdk.Server.Components.Hooks">Hooks()</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration builder for the SDK&apos;s hook configuration.</p>
+<example>
+<pre><code>var config = Configuration.Builder(sdkKey)
+    .Hooks(Components.Hooks()
+        .Add(new MyHook(...))
+        .Add(new MyOtherHook(...))
+    ).Build();</code></pre>
+</example>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static HookConfigurationBuilder Hooks()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html">HookConfigurationBuilder</a></td>
+        <td><p>a configuration builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="LaunchDarkly_Sdk_Server_Components_Hooks_" data-uid="LaunchDarkly.Sdk.Server.Components.Hooks*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Components_Hooks_System_Collections_Generic_IEnumerable_LaunchDarkly_Sdk_Server_Hooks_Hook__" data-uid="LaunchDarkly.Sdk.Server.Components.Hooks(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.Server.Hooks.Hook})">Hooks(IEnumerable&lt;Hook&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a configuration builder for the SDK&apos;s hook configuration, with an initial set of hooks given
+as a parameter.</p>
+<p>Use this instead of <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Hooks">Hooks()</a> if you already have an existing collection of hooks satisfying the
+IEnumerable interface.</p>
+<example>
+<pre><code>var listOfHooks = ...;
+var config = Configuration.Builder(sdkKey)
+    .Hooks(Components.Hooks(listOfHooks)).Build();</code></pre>
+</example>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static HookConfigurationBuilder Hooks(IEnumerable&lt;Hook&gt; hooks)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Hooks.Hook.html">Hook</a>&gt;</td>
+        <td><span class="parametername">hooks</span></td>
+        <td><p>a collection of hooks</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html">HookConfigurationBuilder</a></td>
+        <td><p>a configuration builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_Components_HttpConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Components.HttpConfiguration*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_Components_HttpConfiguration" data-uid="LaunchDarkly.Sdk.Server.Components.HttpConfiguration">HttpConfiguration()</h4>
   <div class="markdown level1 summary"><p>Returns a configuration builder for the SDK&apos;s networking configuration.</p>

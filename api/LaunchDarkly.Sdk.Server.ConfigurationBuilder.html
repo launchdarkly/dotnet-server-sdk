@@ -452,6 +452,49 @@ is created, and dispose of that instance when disposing of the client.
 <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.EventProcessorBuilder.html">EventProcessorBuilder</a>, a custom implementation (for instance, a test fixture), or
 disable events with <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_NoEvents">NoEvents</a>.</p>
 </div>
+  <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Hooks_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Hooks_LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks(LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder)">Hooks(HookConfigurationBuilder)</h4>
+  <div class="markdown level1 summary"><p>Configures the SDK&apos;s user-defined hooks.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigurationBuilder Hooks(HookConfigurationBuilder hooksConfig)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html">HookConfigurationBuilder</a></td>
+        <td><span class="parametername">hooksConfig</span></td>
+        <td><p>the hook configuration</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.ConfigurationBuilder.html">ConfigurationBuilder</a></td>
+        <td><p>the same builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Http*"></a>
   <h4 id="LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_HttpConfiguration__" data-uid="LaunchDarkly.Sdk.Server.ConfigurationBuilder.Http(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration})">Http(IComponentConfigurer&lt;HttpConfiguration&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the SDK&apos;s networking configuration, using a builder object that is obtained from

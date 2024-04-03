@@ -3447,6 +3447,27 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Components.ExternalUpdatesOnly
   fullName: LaunchDarkly.Sdk.Server.Components.ExternalUpdatesOnly
   nameWithType: Components.ExternalUpdatesOnly
+- uid: LaunchDarkly.Sdk.Server.Components.Hooks
+  name: Hooks()
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Hooks
+  commentId: M:LaunchDarkly.Sdk.Server.Components.Hooks
+  fullName: LaunchDarkly.Sdk.Server.Components.Hooks()
+  nameWithType: Components.Hooks()
+- uid: LaunchDarkly.Sdk.Server.Components.Hooks(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.Server.Hooks.Hook})
+  name: Hooks(IEnumerable<Hook>)
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Hooks_System_Collections_Generic_IEnumerable_LaunchDarkly_Sdk_Server_Hooks_Hook__
+  commentId: M:LaunchDarkly.Sdk.Server.Components.Hooks(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.Server.Hooks.Hook})
+  name.vb: Hooks(IEnumerable(Of Hook))
+  fullName: LaunchDarkly.Sdk.Server.Components.Hooks(System.Collections.Generic.IEnumerable<LaunchDarkly.Sdk.Server.Hooks.Hook>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Components.Hooks(System.Collections.Generic.IEnumerable(Of LaunchDarkly.Sdk.Server.Hooks.Hook))
+  nameWithType: Components.Hooks(IEnumerable<Hook>)
+  nameWithType.vb: Components.Hooks(IEnumerable(Of Hook))
+- uid: LaunchDarkly.Sdk.Server.Components.Hooks*
+  name: Hooks
+  href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_Hooks_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Components.Hooks
+  fullName: LaunchDarkly.Sdk.Server.Components.Hooks
+  nameWithType: Components.Hooks
 - uid: LaunchDarkly.Sdk.Server.Components.HttpConfiguration
   name: HttpConfiguration()
   href: api/LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_HttpConfiguration
@@ -3705,6 +3726,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.Events
   fullName: LaunchDarkly.Sdk.Server.Configuration.Events
   nameWithType: Configuration.Events
+- uid: LaunchDarkly.Sdk.Server.Configuration.Hooks
+  name: Hooks
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_Hooks
+  commentId: P:LaunchDarkly.Sdk.Server.Configuration.Hooks
+  fullName: LaunchDarkly.Sdk.Server.Configuration.Hooks
+  nameWithType: Configuration.Hooks
+- uid: LaunchDarkly.Sdk.Server.Configuration.Hooks*
+  name: Hooks
+  href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_Hooks_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Configuration.Hooks
+  fullName: LaunchDarkly.Sdk.Server.Configuration.Hooks
+  nameWithType: Configuration.Hooks
 - uid: LaunchDarkly.Sdk.Server.Configuration.Http
   name: Http
   href: api/LaunchDarkly.Sdk.Server.Configuration.html#LaunchDarkly_Sdk_Server_Configuration_Http
@@ -3891,6 +3924,18 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.Events
   fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.Events
   nameWithType: ConfigurationBuilder.Events
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks(LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder)
+  name: Hooks(HookConfigurationBuilder)
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Hooks_LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder_
+  commentId: M:LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks(LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder)
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks(LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder)
+  nameWithType: ConfigurationBuilder.Hooks(HookConfigurationBuilder)
+- uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks*
+  name: Hooks
+  href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Hooks_
+  commentId: Overload:LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks
+  fullName: LaunchDarkly.Sdk.Server.ConfigurationBuilder.Hooks
+  nameWithType: ConfigurationBuilder.Hooks
 - uid: LaunchDarkly.Sdk.Server.ConfigurationBuilder.Http(LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer{LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration})
   name: Http(IComponentConfigurer<HttpConfiguration>)
   href: api/LaunchDarkly.Sdk.Server.ConfigurationBuilder.html#LaunchDarkly_Sdk_Server_ConfigurationBuilder_Http_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_HttpConfiguration__
@@ -4191,6 +4236,321 @@ references:
   commentId: F:LaunchDarkly.Sdk.Server.FlagsStateOption.WithReasons
   fullName: LaunchDarkly.Sdk.Server.FlagsStateOption.WithReasons
   nameWithType: FlagsStateOption.WithReasons
+- uid: LaunchDarkly.Sdk.Server.Hooks
+  name: LaunchDarkly.Sdk.Server.Hooks
+  href: api/LaunchDarkly.Sdk.Server.Hooks.html
+  commentId: N:LaunchDarkly.Sdk.Server.Hooks
+  fullName: LaunchDarkly.Sdk.Server.Hooks
+  nameWithType: LaunchDarkly.Sdk.Server.Hooks
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext
+  name: EvaluationSeriesContext
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html
+  commentId: T:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext
+  nameWithType: EvaluationSeriesContext
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.#ctor(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.LdValue,System.String)
+  name: EvaluationSeriesContext(String, Context, LdValue, String)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext__ctor_System_String_LaunchDarkly_Sdk_Context_LaunchDarkly_Sdk_LdValue_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.#ctor(System.String,LaunchDarkly.Sdk.Context,LaunchDarkly.Sdk.LdValue,System.String)
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.EvaluationSeriesContext(System.String, LaunchDarkly.Sdk.Context, LaunchDarkly.Sdk.LdValue, System.String)
+  nameWithType: EvaluationSeriesContext.EvaluationSeriesContext(String, Context, LdValue, String)
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.#ctor*
+  name: EvaluationSeriesContext
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.EvaluationSeriesContext
+  nameWithType: EvaluationSeriesContext.EvaluationSeriesContext
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Context
+  name: Context
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_Context
+  commentId: P:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Context
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Context
+  nameWithType: EvaluationSeriesContext.Context
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Context*
+  name: Context
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_Context_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Context
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Context
+  nameWithType: EvaluationSeriesContext.Context
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.DefaultValue
+  name: DefaultValue
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_DefaultValue
+  commentId: P:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.DefaultValue
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.DefaultValue
+  nameWithType: EvaluationSeriesContext.DefaultValue
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.DefaultValue*
+  name: DefaultValue
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_DefaultValue_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.DefaultValue
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.DefaultValue
+  nameWithType: EvaluationSeriesContext.DefaultValue
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.FlagKey
+  name: FlagKey
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_FlagKey
+  commentId: P:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.FlagKey
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.FlagKey
+  nameWithType: EvaluationSeriesContext.FlagKey
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.FlagKey*
+  name: FlagKey
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_FlagKey_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.FlagKey
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.FlagKey
+  nameWithType: EvaluationSeriesContext.FlagKey
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Method
+  name: Method
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_Method
+  commentId: P:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Method
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Method
+  nameWithType: EvaluationSeriesContext.Method
+- uid: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Method*
+  name: Method
+  href: api/LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.html#LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_Method_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Method
+  fullName: LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext.Method
+  nameWithType: EvaluationSeriesContext.Method
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook
+  name: Hook
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html
+  commentId: T:LaunchDarkly.Sdk.Server.Hooks.Hook
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook
+  nameWithType: Hook
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.#ctor(System.String)
+  name: Hook(String)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook__ctor_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.Hook.#ctor(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.Hook(System.String)
+  nameWithType: Hook.Hook(String)
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.#ctor*
+  name: Hook
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.Hook.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.Hook
+  nameWithType: Hook.Hook
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.AfterEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext,System.Collections.Immutable.ImmutableDictionary{System.String,System.Object},LaunchDarkly.Sdk.EvaluationDetail{LaunchDarkly.Sdk.LdValue})
+  name: AfterEvaluation(EvaluationSeriesContext, ImmutableDictionary<String, Object>, EvaluationDetail<LdValue>)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_AfterEvaluation_LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_System_Collections_Immutable_ImmutableDictionary_System_String_System_Object__LaunchDarkly_Sdk_EvaluationDetail_LaunchDarkly_Sdk_LdValue__
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.Hook.AfterEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext,System.Collections.Immutable.ImmutableDictionary{System.String,System.Object},LaunchDarkly.Sdk.EvaluationDetail{LaunchDarkly.Sdk.LdValue})
+  name.vb: AfterEvaluation(EvaluationSeriesContext, ImmutableDictionary(Of String, Object), EvaluationDetail(Of LdValue))
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.AfterEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext, System.Collections.Immutable.ImmutableDictionary<System.String, System.Object>, LaunchDarkly.Sdk.EvaluationDetail<LaunchDarkly.Sdk.LdValue>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Hooks.Hook.AfterEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext, System.Collections.Immutable.ImmutableDictionary(Of System.String, System.Object), LaunchDarkly.Sdk.EvaluationDetail(Of LaunchDarkly.Sdk.LdValue))
+  nameWithType: Hook.AfterEvaluation(EvaluationSeriesContext, ImmutableDictionary<String, Object>, EvaluationDetail<LdValue>)
+  nameWithType.vb: Hook.AfterEvaluation(EvaluationSeriesContext, ImmutableDictionary(Of String, Object), EvaluationDetail(Of LdValue))
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.AfterEvaluation*
+  name: AfterEvaluation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_AfterEvaluation_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.Hook.AfterEvaluation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.AfterEvaluation
+  nameWithType: Hook.AfterEvaluation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.BeforeEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext,System.Collections.Immutable.ImmutableDictionary{System.String,System.Object})
+  name: BeforeEvaluation(EvaluationSeriesContext, ImmutableDictionary<String, Object>)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_BeforeEvaluation_LaunchDarkly_Sdk_Server_Hooks_EvaluationSeriesContext_System_Collections_Immutable_ImmutableDictionary_System_String_System_Object__
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.Hook.BeforeEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext,System.Collections.Immutable.ImmutableDictionary{System.String,System.Object})
+  name.vb: BeforeEvaluation(EvaluationSeriesContext, ImmutableDictionary(Of String, Object))
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.BeforeEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext, System.Collections.Immutable.ImmutableDictionary<System.String, System.Object>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Hooks.Hook.BeforeEvaluation(LaunchDarkly.Sdk.Server.Hooks.EvaluationSeriesContext, System.Collections.Immutable.ImmutableDictionary(Of System.String, System.Object))
+  nameWithType: Hook.BeforeEvaluation(EvaluationSeriesContext, ImmutableDictionary<String, Object>)
+  nameWithType.vb: Hook.BeforeEvaluation(EvaluationSeriesContext, ImmutableDictionary(Of String, Object))
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.BeforeEvaluation*
+  name: BeforeEvaluation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_BeforeEvaluation_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.Hook.BeforeEvaluation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.BeforeEvaluation
+  nameWithType: Hook.BeforeEvaluation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose
+  name: Dispose()
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_Dispose
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose()
+  nameWithType: Hook.Dispose()
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose(System.Boolean)
+  name: Dispose(Boolean)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_Dispose_System_Boolean_
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose(System.Boolean)
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose(System.Boolean)
+  nameWithType: Hook.Dispose(Boolean)
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose*
+  name: Dispose
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_Dispose_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.Dispose
+  nameWithType: Hook.Dispose
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.Metadata
+  name: Metadata
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_Metadata
+  commentId: P:LaunchDarkly.Sdk.Server.Hooks.Hook.Metadata
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.Metadata
+  nameWithType: Hook.Metadata
+- uid: LaunchDarkly.Sdk.Server.Hooks.Hook.Metadata*
+  name: Metadata
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Hook.html#LaunchDarkly_Sdk_Server_Hooks_Hook_Metadata_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.Hook.Metadata
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Hook.Metadata
+  nameWithType: Hook.Metadata
+- uid: LaunchDarkly.Sdk.Server.Hooks.HookMetadata
+  name: HookMetadata
+  href: api/LaunchDarkly.Sdk.Server.Hooks.HookMetadata.html
+  commentId: T:LaunchDarkly.Sdk.Server.Hooks.HookMetadata
+  fullName: LaunchDarkly.Sdk.Server.Hooks.HookMetadata
+  nameWithType: HookMetadata
+- uid: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.#ctor(System.String)
+  name: HookMetadata(String)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.HookMetadata.html#LaunchDarkly_Sdk_Server_Hooks_HookMetadata__ctor_System_String_
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.HookMetadata.#ctor(System.String)
+  fullName: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.HookMetadata(System.String)
+  nameWithType: HookMetadata.HookMetadata(String)
+- uid: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.#ctor*
+  name: HookMetadata
+  href: api/LaunchDarkly.Sdk.Server.Hooks.HookMetadata.html#LaunchDarkly_Sdk_Server_Hooks_HookMetadata__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.HookMetadata.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.HookMetadata
+  nameWithType: HookMetadata.HookMetadata
+- uid: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.Name
+  name: Name
+  href: api/LaunchDarkly.Sdk.Server.Hooks.HookMetadata.html#LaunchDarkly_Sdk_Server_Hooks_HookMetadata_Name
+  commentId: P:LaunchDarkly.Sdk.Server.Hooks.HookMetadata.Name
+  fullName: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.Name
+  nameWithType: HookMetadata.Name
+- uid: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.Name*
+  name: Name
+  href: api/LaunchDarkly.Sdk.Server.Hooks.HookMetadata.html#LaunchDarkly_Sdk_Server_Hooks_HookMetadata_Name_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.HookMetadata.Name
+  fullName: LaunchDarkly.Sdk.Server.Hooks.HookMetadata.Name
+  nameWithType: HookMetadata.Name
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method
+  name: Method
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html
+  commentId: T:LaunchDarkly.Sdk.Server.Hooks.Method
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method
+  nameWithType: Method
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.BoolVariation
+  name: BoolVariation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_BoolVariation
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.BoolVariation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.BoolVariation
+  nameWithType: Method.BoolVariation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.BoolVariationDetail
+  name: BoolVariationDetail
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_BoolVariationDetail
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.BoolVariationDetail
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.BoolVariationDetail
+  nameWithType: Method.BoolVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.DoubleVariation
+  name: DoubleVariation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_DoubleVariation
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.DoubleVariation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.DoubleVariation
+  nameWithType: Method.DoubleVariation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.DoubleVariationDetail
+  name: DoubleVariationDetail
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_DoubleVariationDetail
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.DoubleVariationDetail
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.DoubleVariationDetail
+  nameWithType: Method.DoubleVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.FloatVariation
+  name: FloatVariation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_FloatVariation
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.FloatVariation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.FloatVariation
+  nameWithType: Method.FloatVariation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.FloatVariationDetail
+  name: FloatVariationDetail
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_FloatVariationDetail
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.FloatVariationDetail
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.FloatVariationDetail
+  nameWithType: Method.FloatVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.IntVariation
+  name: IntVariation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_IntVariation
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.IntVariation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.IntVariation
+  nameWithType: Method.IntVariation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.IntVariationDetail
+  name: IntVariationDetail
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_IntVariationDetail
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.IntVariationDetail
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.IntVariationDetail
+  nameWithType: Method.IntVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.JsonVariation
+  name: JsonVariation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_JsonVariation
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.JsonVariation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.JsonVariation
+  nameWithType: Method.JsonVariation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.JsonVariationDetail
+  name: JsonVariationDetail
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_JsonVariationDetail
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.JsonVariationDetail
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.JsonVariationDetail
+  nameWithType: Method.JsonVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.MigrationVariation
+  name: MigrationVariation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_MigrationVariation
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.MigrationVariation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.MigrationVariation
+  nameWithType: Method.MigrationVariation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.StringVariation
+  name: StringVariation
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_StringVariation
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.StringVariation
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.StringVariation
+  nameWithType: Method.StringVariation
+- uid: LaunchDarkly.Sdk.Server.Hooks.Method.StringVariationDetail
+  name: StringVariationDetail
+  href: api/LaunchDarkly.Sdk.Server.Hooks.Method.html#LaunchDarkly_Sdk_Server_Hooks_Method_StringVariationDetail
+  commentId: F:LaunchDarkly.Sdk.Server.Hooks.Method.StringVariationDetail
+  fullName: LaunchDarkly.Sdk.Server.Hooks.Method.StringVariationDetail
+  nameWithType: Method.StringVariationDetail
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder
+  name: SeriesDataBuilder
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html
+  commentId: T:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder
+  nameWithType: SeriesDataBuilder
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor
+  name: SeriesDataBuilder()
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html#LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.SeriesDataBuilder()
+  nameWithType: SeriesDataBuilder.SeriesDataBuilder()
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor(System.Collections.Immutable.ImmutableDictionary{System.String,System.Object})
+  name: SeriesDataBuilder(ImmutableDictionary<String, Object>)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html#LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor_System_Collections_Immutable_ImmutableDictionary_System_String_System_Object__
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor(System.Collections.Immutable.ImmutableDictionary{System.String,System.Object})
+  name.vb: SeriesDataBuilder(ImmutableDictionary(Of String, Object))
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.SeriesDataBuilder(System.Collections.Immutable.ImmutableDictionary<System.String, System.Object>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.SeriesDataBuilder(System.Collections.Immutable.ImmutableDictionary(Of System.String, System.Object))
+  nameWithType: SeriesDataBuilder.SeriesDataBuilder(ImmutableDictionary<String, Object>)
+  nameWithType.vb: SeriesDataBuilder.SeriesDataBuilder(ImmutableDictionary(Of String, Object))
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor*
+  name: SeriesDataBuilder
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html#LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.SeriesDataBuilder
+  nameWithType: SeriesDataBuilder.SeriesDataBuilder
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html#LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Build
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build()
+  nameWithType: SeriesDataBuilder.Build()
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html#LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Build_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build
+  nameWithType: SeriesDataBuilder.Build
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set(System.String,System.Object)
+  name: Set(String, Object)
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html#LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Set_System_String_System_Object_
+  commentId: M:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set(System.String,System.Object)
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set(System.String, System.Object)
+  nameWithType: SeriesDataBuilder.Set(String, Object)
+- uid: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set*
+  name: Set
+  href: api/LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html#LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Set_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set
+  fullName: LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set
+  nameWithType: SeriesDataBuilder.Set
 - uid: LaunchDarkly.Sdk.Server.ILdClientExtensions
   name: ILdClientExtensions
   href: api/LaunchDarkly.Sdk.Server.ILdClientExtensions.html
@@ -4662,6 +5022,57 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader.ReadAllText
   fullName: LaunchDarkly.Sdk.Server.Integrations.FileDataTypes.IFileReader.ReadAllText
   nameWithType: FileDataTypes.IFileReader.ReadAllText
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder
+  name: HookConfigurationBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html
+  commentId: T:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder
+  nameWithType: HookConfigurationBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.#ctor
+  name: HookConfigurationBuilder()
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder__ctor
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.HookConfigurationBuilder()
+  nameWithType: HookConfigurationBuilder.HookConfigurationBuilder()
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.#ctor(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.Server.Hooks.Hook})
+  name: HookConfigurationBuilder(IEnumerable<Hook>)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder__ctor_System_Collections_Generic_IEnumerable_LaunchDarkly_Sdk_Server_Hooks_Hook__
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.#ctor(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.Server.Hooks.Hook})
+  name.vb: HookConfigurationBuilder(IEnumerable(Of Hook))
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.HookConfigurationBuilder(System.Collections.Generic.IEnumerable<LaunchDarkly.Sdk.Server.Hooks.Hook>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.HookConfigurationBuilder(System.Collections.Generic.IEnumerable(Of LaunchDarkly.Sdk.Server.Hooks.Hook))
+  nameWithType: HookConfigurationBuilder.HookConfigurationBuilder(IEnumerable<Hook>)
+  nameWithType.vb: HookConfigurationBuilder.HookConfigurationBuilder(IEnumerable(Of Hook))
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.#ctor*
+  name: HookConfigurationBuilder
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.HookConfigurationBuilder
+  nameWithType: HookConfigurationBuilder.HookConfigurationBuilder
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Add(LaunchDarkly.Sdk.Server.Hooks.Hook)
+  name: Add(Hook)
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder_Add_LaunchDarkly_Sdk_Server_Hooks_Hook_
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Add(LaunchDarkly.Sdk.Server.Hooks.Hook)
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Add(LaunchDarkly.Sdk.Server.Hooks.Hook)
+  nameWithType: HookConfigurationBuilder.Add(Hook)
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Add*
+  name: Add
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder_Add_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Add
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Add
+  nameWithType: HookConfigurationBuilder.Add
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Build
+  name: Build()
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder_Build
+  commentId: M:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Build()
+  nameWithType: HookConfigurationBuilder.Build()
+- uid: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Build*
+  name: Build
+  href: api/LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.html#LaunchDarkly_Sdk_Server_Integrations_HookConfigurationBuilder_Build_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Build
+  fullName: LaunchDarkly.Sdk.Server.Integrations.HookConfigurationBuilder.Build
+  nameWithType: HookConfigurationBuilder.Build
 - uid: LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder
   name: HttpConfigurationBuilder
   href: api/LaunchDarkly.Sdk.Server.Integrations.HttpConfigurationBuilder.html
@@ -8867,6 +9278,39 @@ references:
   commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation
   fullName: LaunchDarkly.Sdk.Server.Subsystems.EventProcessorTypes.MigrationOpEvent.Variation
   nameWithType: EventProcessorTypes.MigrationOpEvent.Variation
+- uid: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration
+  name: HookConfiguration
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.html
+  commentId: T:LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration
+  nameWithType: HookConfiguration
+- uid: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.#ctor(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.Server.Hooks.Hook})
+  name: HookConfiguration(IEnumerable<Hook>)
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.html#LaunchDarkly_Sdk_Server_Subsystems_HookConfiguration__ctor_System_Collections_Generic_IEnumerable_LaunchDarkly_Sdk_Server_Hooks_Hook__
+  commentId: M:LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.#ctor(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.Server.Hooks.Hook})
+  name.vb: HookConfiguration(IEnumerable(Of Hook))
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.HookConfiguration(System.Collections.Generic.IEnumerable<LaunchDarkly.Sdk.Server.Hooks.Hook>)
+  fullName.vb: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.HookConfiguration(System.Collections.Generic.IEnumerable(Of LaunchDarkly.Sdk.Server.Hooks.Hook))
+  nameWithType: HookConfiguration.HookConfiguration(IEnumerable<Hook>)
+  nameWithType.vb: HookConfiguration.HookConfiguration(IEnumerable(Of Hook))
+- uid: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.#ctor*
+  name: HookConfiguration
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.html#LaunchDarkly_Sdk_Server_Subsystems_HookConfiguration__ctor_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.#ctor
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.HookConfiguration
+  nameWithType: HookConfiguration.HookConfiguration
+- uid: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.Hooks
+  name: Hooks
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.html#LaunchDarkly_Sdk_Server_Subsystems_HookConfiguration_Hooks
+  commentId: P:LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.Hooks
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.Hooks
+  nameWithType: HookConfiguration.Hooks
+- uid: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.Hooks*
+  name: Hooks
+  href: api/LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.html#LaunchDarkly_Sdk_Server_Subsystems_HookConfiguration_Hooks_
+  commentId: Overload:LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.Hooks
+  fullName: LaunchDarkly.Sdk.Server.Subsystems.HookConfiguration.Hooks
+  nameWithType: HookConfiguration.Hooks
 - uid: LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration
   name: HttpConfiguration
   href: api/LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html
