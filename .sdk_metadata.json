@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "sdks": {
+    "dotnet-server-sdk": {
+      "name": ".NET Server SDK",
+      "type": "server-side",
+      "path": "src/LaunchDarkly.ServerSdk",
+      "languages": [
+        "C#"
+      ],
+      "features": {
+        "hooks": {
+          "introduced": "8.3"
+        }
+      }
+    }
+  }
+}
+
