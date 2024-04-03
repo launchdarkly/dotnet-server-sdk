@@ -2,6 +2,13 @@
 
 All notable changes to the LaunchDarkly .NET Server-Side SDK will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [8.3.0] - 2024-04-03
+### Added:
+- This release introduces a Hooks API. Hooks are collections of user-defined callbacks that are executed by the SDK at various points of interest. You can use them to augment the SDK with metrics or tracing.
+
+### Changed:
+- Dropped explicit support for .NET Core 3.1.
+
 ## [8.2.0] - 2024-03-14
 ### Changed:
 - Redact anonymous attributes within feature events
