@@ -44,11 +44,19 @@ namespace TestService
         public Dictionary<string, LdValue> BeforeEvaluation { get; set; }
         public Dictionary<string, LdValue> AfterEvaluation { get; set; }
     }
+
+    public class HookErrors
+    {
+        public string BeforeEvaluation { get; set; }
+        public string AfterEvaluation { get; set; }
+    }
+
     public class HookConfig
     {
         public string Name { get; set; }
         public Uri CallbackUri { get; set; }
         public HookData Data { get; set; }
+        public HookErrors Errors { get; set; }
     }
 
     public class SdkHookParams

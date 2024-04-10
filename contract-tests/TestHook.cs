@@ -14,15 +14,25 @@ namespace TestService
         private readonly Dictionary<string, LdValue> _before;
         private readonly Dictionary<string, LdValue> _after;
 
-        public TestHook(string name, CallbackService service, Dictionary<string, LdValue> before, Dictionary<string, LdValue> after) : base(name)
+        private readonly string _beforeError;
+        private readonly string _afterError;
+
+        public TestHook(string name, CallbackService service, Dictionary<string, LdValue> before, Dictionary<string, LdValue> after, string beforeError, string afterError) : base(name)
         {
             _service = service;
             _before = before;
             _after = after;
+            _beforeError = beforeError;
+            _afterError = afterError;
         }
 
         public override SeriesData BeforeEvaluation(EvaluationSeriesContext context, SeriesData data)
         {
+            if (_beforeError != null)
+            {
+                throw new Exception(_beforeError);
+            }
+
             _service.Post("", new EvaluationHookParams()
             {
                 EvaluationSeriesContext = context,
@@ -43,6 +53,11 @@ namespace TestService
 
         public override SeriesData AfterEvaluation(EvaluationSeriesContext context, SeriesData data, EvaluationDetail<LdValue> detail)
         {
+            if (_afterError != null)
+            {
+                throw new Exception(_afterError);
+            }
+
             _service.Post("", new EvaluationHookParams()
             {
                 EvaluationSeriesContext = context,
