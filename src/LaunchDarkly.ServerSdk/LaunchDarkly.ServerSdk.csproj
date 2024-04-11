@@ -18,8 +18,6 @@
     <Authors>LaunchDarkly</Authors>
     <Owners>LaunchDarkly</Owners>
     <Company>LaunchDarkly</Company>
-    <Authors>LaunchDarkly</Authors>
-    <Owners>LaunchDarkly</Owners>
     <Copyright>Copyright 2020 LaunchDarkly</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/launchdarkly/dotnet-server-sdk</PackageProjectUrl>
