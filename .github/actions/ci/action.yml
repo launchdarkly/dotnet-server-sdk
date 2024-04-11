@@ -9,10 +9,6 @@ inputs:
     description: 'If true, run contract tests, otherwise skip them.'
     required: false
     default: 'true'
-  build_docs:
-    description: 'If true, build the documentation, otherwise do not.'
-    required: false
-    default: 'false'
   aws_role_arn:
     description: 'The ARN of the role to assume for downloading secrets, used for building docs.'
     required: false
