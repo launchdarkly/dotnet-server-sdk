@@ -1,0 +1,34 @@
+name: Publish Package
+description: 'Packs DLLs into unsigned Nuget package and publishes to Nuget.'
+inputs:
+  dry_run:
+    description: 'Is this a dry run. If so no package will be published.'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Create Nuget Package
+      shell: bash
+      run: |
+        dotnet restore
+        dotnet pack --no-build --output nupkgs --configuration Release src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+
+    - name: Publish Package
+      if: ${{ inputs.dry_run == 'false' }}
+      shell: bash
+      run: |
+        for pkg in $(find ./nupkgs -name '*.nupkg' -o -name '*.snupkg'); do
+          echo "publishing ${pkg}"
+          dotnet nuget push "${pkg}" --api-key ${{ env.NUGET_API_KEY }} --source https://www.nuget.org
+          echo "published ${pkg}"
+        done
+
+    - name: Dry Run Publish
+      if: ${{ inputs.dry_run == 'true' }}
+      shell: bash
+      run: |
+        echo "This is a dry run and packages are not being published."
+        for pkg in $(find ./nupkgs -name '*.nupkg' -o -name '*.snupkg'); do
+          echo "detected package ${pkg}"
+        done
