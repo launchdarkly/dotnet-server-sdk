@@ -21,6 +21,8 @@ jobs:
       - uses: ./.github/actions/ci
         with:
           run_tests: true
+          # Running contract tests on windows is currently cumbersome.
+          # Once that has been addressed, then running contract tests on windows should be considered.
           run_contract_tests: ${{ matrix.os != 'windows-latest' }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
