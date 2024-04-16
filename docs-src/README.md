@@ -8,7 +8,6 @@ The HTML documentation also includes documentation comments from `LaunchDarkly.C
 
 The `docs-src` subdirectory contains additional Markdown content that is included in the documentation build, as follows:
 
-* `index.md`: This text appears on the landing page of the documentation.
 * `namespaces/<Fully.Qualified.Name.Of.Namespace>.md`: A file that is used as the description of a specific namespace. The first line is the summary, which will appear on both the landing page and the API page for the namespace; the rest of the file is the full description, which will appear on the API page for the namespace.
 
 Markdown text can include hyperlinks to namespaces, types, etc. using the syntax `<xref:Fully.Qualified.Name.Of.Thing>`.

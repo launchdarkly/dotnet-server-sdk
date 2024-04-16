@@ -1,0 +1,17 @@
+name: Build Documentation
+description: 'Build Documentation.'
+
+runs:
+  using: composite
+  steps:
+    - name: Install docfx
+      shell: bash
+      run:  dotnet tool update -g docfx
+    - name: Run docfx metadata
+      shell: bash
+      run: docfx metadata
+    - name: Run docfx build
+      shell: bash
+      # Note: in the docfx.json file, the 'Configuration' property is set to Debug so that we don't require
+      # signing to happen just to build docs.
+      run: docfx build

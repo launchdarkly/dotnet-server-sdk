@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <!--x-release-please-start-version-->
     <Version>8.3.0</Version>
+    <!--x-release-please-end-->
     <!-- The BUILDFRAMEWORKS variable allows us to override the target frameworks with a
          single framework that we are testing; this allows us to test with older SDK
          versions that would error out if they saw any newer target frameworks listed
@@ -18,8 +20,6 @@
     <Authors>LaunchDarkly</Authors>
     <Owners>LaunchDarkly</Owners>
     <Company>LaunchDarkly</Company>
-    <Authors>LaunchDarkly</Authors>
-    <Owners>LaunchDarkly</Owners>
     <Copyright>Copyright 2020 LaunchDarkly</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/launchdarkly/dotnet-server-sdk</PackageProjectUrl>

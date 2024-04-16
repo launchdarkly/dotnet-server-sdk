@@ -1,0 +1,38 @@
+name: Release Please
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # Needed if using OIDC to get release secrets.
+      contents: write # Contents and pull-requests are for release-please to make releases.
+      pull-requests: write
+
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target-branch: ${{ github.ref_name }}
+
+  publish-sdk:
+    needs: release-please
+    uses: ./.github/workflows/publish.yml
+    if: ${{ needs.release-please.outputs.releases_created == 'true' }}
+    with:
+      run_tests: true
+      dry_run: false
+
+  publish-docs:
+    needs: release-please
+    uses: ./.github/workflows/publish-docs.yml
+    if: ${{ needs.release-please.outputs.releases_created == 'true' }}

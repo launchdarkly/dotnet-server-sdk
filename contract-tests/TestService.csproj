@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">netcoreapp3.1</TestFramework>
+    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">net6.0</TestFramework>
     <TargetFrameworks>$(TESTFRAMEWORK)</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>ContractTestService</AssemblyName>

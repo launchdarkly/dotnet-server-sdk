@@ -366,7 +366,7 @@ namespace TestService
             if (sdkParams.Hooks != null)
             {
                 var hooks = sdkParams.Hooks.Hooks.Select(hook =>
-                    new TestHook(hook.Name, new CallbackService(hook.CallbackUri), hook.Data?.BeforeEvaluation, hook.Data?.AfterEvaluation)
+                    new TestHook(hook.Name, new CallbackService(hook.CallbackUri), hook.Data?.BeforeEvaluation, hook.Data?.AfterEvaluation, hook.Errors?.BeforeEvaluation, hook.Errors?.AfterEvaluation)
                 );
 
                 builder.Hooks(Components.Hooks(hooks));
