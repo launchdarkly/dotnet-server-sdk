@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using LaunchDarkly.Sdk.Server.Hooks;
 using LaunchDarkly.Sdk.Server.Integrations;
+using LaunchDarkly.Sdk.Server.Integrations.OpenTelemetry;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Subsystems;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
 using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -264,7 +268,158 @@ namespace LaunchDarkly.Sdk.Server
                     }
                 }
             }
+        }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TracingHookCreatesRootSpans(bool createSpans)
+        {
+
+            ICollection<Activity> exportedItems = new Collection<Activity>();
+
+            var tracerProvider = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
+                .AddSource(TracingHook.ActivitySourceName)
+                .AddInMemoryExporter(exportedItems)
+                .Build();
+
+            var config = BasicConfig()
+                .Hooks(Components.Hooks(new[] { TracingHook.Builder().CreateActivities(createSpans).Build() }))
+                .Build();
+
+
+            using (var client = new LdClient(config))
+            {
+                client.BoolVariation("feature-key", Context.New("foo"), true);
+                client.StringVariation("feature-key", Context.New("foo"), "default");
+            }
+
+            var items = exportedItems.ToList();
+
+            if (createSpans)
+            {
+                // If we're creating spans, then we should have two Activities, with the correct operation names.
+                // To check that they are root spans, check that the parent is null.
+                Assert.Equal(2, items.Count);
+                Assert.Equal("LdClient.BoolVariation", items[0].OperationName);
+                Assert.Equal("LdClient.StringVariation", items[1].OperationName);
+                Assert.True(items.All(i => i.Parent == null));
+            }
+            else
+            {
+                // Otherwise, there should be no Activities.
+                Assert.Empty(exportedItems);
+            }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TracingHookCreatesChildSpans(bool createSpans)
+        {
+
+            ICollection<Activity> exportedItems = new Collection<Activity>();
+
+            var testSource = new ActivitySource("test-source", "1.0.0");
+
+            var tracerProvider = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
+                .AddSource("test-source")
+                .AddSource(TracingHook.ActivitySourceName)
+                .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault()
+                        .AddService(serviceName: "test-source", serviceVersion: "1.0.0"))
+
+                .AddInMemoryExporter(exportedItems)
+                .Build();
+
+            var config = BasicConfig()
+                .Hooks(Components.Hooks(new[] { TracingHook.Builder().CreateActivities(createSpans).Build() }))
+                .Build();
+
+
+            var rootActivity = testSource.StartActivity("root-activity");
+            using (var client = new LdClient(config))
+            {
+                client.BoolVariation("feature-key", Context.New("foo"), true);
+                client.StringVariation("feature-key", Context.New("foo"), "default");
+            }
+
+            rootActivity.Stop();
+
+            var items = exportedItems.ToList();
+
+            if (createSpans)
+            {
+                // If we're creating spans, since there is an existing root span, we should see the children parented
+                // to it.
+                Assert.Equal(3, items.Count);
+                Assert.Equal("LdClient.BoolVariation", items[0].OperationName);
+                Assert.Equal("LdClient.StringVariation", items[1].OperationName);
+                Assert.Equal("root-activity", items[2].OperationName);
+                Assert.Equal(items[2].SpanId, items[0].ParentSpanId);
+            }
+            else
+            {
+                // Otherwise, there should only be the root span that was already created.
+                Assert.Single(items);
+                Assert.Equal("root-activity", items[0].OperationName);
+                Assert.Null(items[0].Parent);
+            }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TracingHookIncludesVariant(bool includeVariant)
+        {
+            ICollection<Activity> exportedItems = new Collection<Activity>();
+
+            var testSource = new ActivitySource("test-source", "1.0.0");
+
+            var tracerProvider = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
+                .AddSource("test-source")
+                .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault()
+                        .AddService(serviceName: "test-source", serviceVersion: "1.0.0"))
+
+                .AddInMemoryExporter(exportedItems)
+                .Build();
+
+            var config = BasicConfig()
+                .Hooks(Components.Hooks(new[] { TracingHook.Builder().IncludeVariant(includeVariant).Build() }))
+                .Build();
+
+
+            var rootActivity = testSource.StartActivity("root-activity");
+            using (var client = new LdClient(config))
+            {
+                client.BoolVariation("feature-key", Context.New("foo"), true);
+                client.StringVariation("feature-key", Context.New("foo"), "default");
+            }
+
+            rootActivity.Stop();
+
+            var items = exportedItems.ToList();
+
+            Assert.Single(items);
+            Assert.Equal("root-activity", items[0].OperationName);
+
+            if (includeVariant)
+            {
+                // The idea is to check that the span has two events attached to it, and those events contain the feature
+                // flag variants. It's awkward to check because we don't know the exact order of the events or those
+                // events' tags.
+                var events = items[0].Events;
+                Assert.Single(events.Where(e =>
+                    e.Tags.Contains(new KeyValuePair<string, object>("feature_flag.variant", "true"))));
+                Assert.Single(events.Where(e =>
+                    e.Tags.Contains(new KeyValuePair<string, object>("feature_flag.variant", "\"default\""))));
+            }
+            else
+            {
+                // If not including the variant, then we shouldn't see any variant tag on any events.
+                Assert.All(items, i => i.Events.All(e => e.Tags.All(kvp => kvp.Key != "feature_flag.variant")));
+            }
         }
     }
 }
