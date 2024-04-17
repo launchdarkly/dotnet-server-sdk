@@ -6,15 +6,15 @@
          here, even if we weren't running those. -->
     <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">net462;net6.0</TestFramework>
     <TargetFrameworks>$(TESTFRAMEWORK)</TargetFrameworks>
-    <AssemblyName>LaunchDarkly.ServerSdk.Tests</AssemblyName>
-    <PackageId>LaunchDarkly.ServerSdk.Tests</PackageId>
+    <AssemblyName>LaunchDarkly.ServerSdk.Telemetry.Tests</AssemblyName>
+    <PackageId>LaunchDarkly.ServerSdk.Telemetry.Tests</PackageId>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <RootNamespace>LaunchDarkly.Sdk.Server</RootNamespace>
+    <RootNamespace>LaunchDarkly.Sdk.Server.Telemetry</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj" />
+    <ProjectReference Include="..\..\src\LaunchDarkly.ServerSdk.Telemetry\LaunchDarkly.ServerSdk.Telemetry.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +24,8 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="YamlDotNet" Version="12.0.0" />
+    <PackageReference Include="OpenTelemetry" Version="1.7.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.InMemory" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>

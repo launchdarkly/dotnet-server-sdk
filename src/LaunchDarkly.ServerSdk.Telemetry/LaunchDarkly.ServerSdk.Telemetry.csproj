@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!--x-release-please-start-version-->
-    <Version>8.3.0</Version>
+    <Version>1.0.0</Version>
     <!--x-release-please-end-->
     <!-- The BUILDFRAMEWORKS variable allows us to override the target frameworks with a
          single framework that we are testing; this allows us to test with older SDK
@@ -9,18 +9,17 @@
          here, even if we weren't running those. -->
     <BuildFrameworks Condition="'$(BUILDFRAMEWORKS)' == ''">netstandard2.0;net462;net6.0</BuildFrameworks>
     <TargetFrameworks>$(BUILDFRAMEWORKS)</TargetFrameworks>
-    <!-- Note: whenever we add or remove supported target frameworks, we must update ServerDiagnosticStore.GetDotNetTargetFramework() -->
     <DebugType>portable</DebugType>
-    <AssemblyName>LaunchDarkly.ServerSdk</AssemblyName>
+    <AssemblyName>LaunchDarkly.ServerSdk.Telemetry</AssemblyName>
     <OutputType>Library</OutputType>
-    <PackageId>LaunchDarkly.ServerSdk</PackageId>
-    <RootNamespace>LaunchDarkly.Sdk.Server</RootNamespace>
+    <PackageId>LaunchDarkly.ServerSdk.Telemetry</PackageId>
+    <RootNamespace>LaunchDarkly.Sdk.Server.Telemetry</RootNamespace>
     <LangVersion>7.3</LangVersion>
-    <Description>LaunchDarkly Server-Side .NET SDK</Description>
+    <Description>LaunchDarkly Server-Side .NET SDK Telemetry Integrations</Description>
     <Authors>LaunchDarkly</Authors>
     <Owners>LaunchDarkly</Owners>
     <Company>LaunchDarkly</Company>
-    <Copyright>Copyright 2020 LaunchDarkly</Copyright>
+    <Copyright>Copyright 2024 LaunchDarkly</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/launchdarkly/dotnet-server-sdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/launchdarkly/dotnet-server-sdk</RepositoryUrl>
@@ -38,16 +37,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LaunchDarkly.Cache" Version="1.0.2" />
-    <PackageReference Include="LaunchDarkly.CommonSdk" Version="7.0.0" />
-    <PackageReference Include="LaunchDarkly.EventSource" Version="5.1.0" />
-    <PackageReference Include="LaunchDarkly.InternalSdk" Version="3.4.0" />
-    <PackageReference Include="LaunchDarkly.Logging" Version="2.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+    <PackageReference Include="LaunchDarkly.ServerSdk" Version="8.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net462'">
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
     <!-- it's a built-in package in net6.0 -->
   </ItemGroup>
 
@@ -57,6 +51,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\LaunchDarkly.ServerSdk.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\LaunchDarkly.ServerSdk.Telemetry.xml</DocumentationFile>
   </PropertyGroup>
 </Project>
