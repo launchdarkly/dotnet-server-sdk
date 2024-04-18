@@ -66,7 +66,6 @@ jobs:
         with:
           project_file: ${{ inputs.project_file }}
           test_project_file: ${{ inputs.test_project_file }}
-          run_contract_tests: false
 
       - uses: launchdarkly/gh-actions/actions/release-secrets@release-secrets-v1.1.0
         name: Get secrets
@@ -93,4 +92,5 @@ jobs:
       - name: Publish Nupkg
         uses: ./.github/actions/publish-package
         with:
+          project_file: packagess/sdk/server/src/LaunchDarkly.ServerSdk.csproj
           dry_run: ${{ inputs.dry_run }}
