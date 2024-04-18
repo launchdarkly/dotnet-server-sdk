@@ -1,4 +1,4 @@
-name: CI
+name: Server SDK CI
 on:
   push:
     branches: [main, 'feat/**']
@@ -24,19 +24,15 @@ jobs:
           test_project_file: packagess/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Running contract tests on windows is currently cumbersome.
+      # Once that has been addressed, then running contract tests on windows should be considered.
       - uses: ./.github/actions/contract-tests
         if: ${{ matrix.os != 'windows-latest' }}
         with:
-          service_project_file: contract-tests/TestService.csproj
-          service_dll_file: contract-tests/bin/debug/net6.0/ContractTestService.dll
+          service_project_file: packagess/sdk/server/contract-tests/TestService.csproj
+          service_dll_file: packagess/sdk/server/contract-tests/bin/debug/net6.0/ContractTestService.dll
           token: ${{ secrets.GITHUB_TOKEN }}
 
-# TODO: uncomment
-#  build-docs:
-#      runs-on: ubuntu-latest
-#      permissions:
-#          id-token: write
-#          contents: read
-#      steps:
-#        - uses: actions/checkout@v4
-#        - uses: ./.github/actions/build-docs
+      - uses: ./.github/actions/build-docs
+        with:
+          workspace_path: packagess/sdk/server

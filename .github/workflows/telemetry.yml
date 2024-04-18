@@ -24,12 +24,6 @@ jobs:
           test_project_file: packages/telemetry/test/LaunchDarkly.ServerSdk.Telemetry.Tests.csproj
           token: ${{ secrets.GITHUB_TOKEN }}
 
-# TODO: figure out docs for this package
-#  build-docs:
-#      runs-on: ubuntu-latest
-#      permissions:
-#          id-token: write
-#          contents: read
-#      steps:
-#        - uses: actions/checkout@v4
-#        - uses: ./.github/actions/build-docs
+      - uses: ./.github/actions/build-docs
+        with:
+          workspace_path: packagess/telemetry

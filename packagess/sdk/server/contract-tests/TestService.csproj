@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\packagess\sdk\server\src\LaunchDarkly.ServerSdk.csproj" />
+    <ProjectReference Include="..\src\LaunchDarkly.ServerSdk.csproj" />
   </ItemGroup>
 
 </Project>
