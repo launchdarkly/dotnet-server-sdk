@@ -1,6 +1,9 @@
 name: Publish Documentation
 description: 'Publish the documentation to Github pages'
 inputs:
+  workspace_path:
+    description: 'Path to the workspace being released.'
+    required: true
   token:
     description: 'Token to use for publishing.'
     required: true
@@ -11,5 +14,5 @@ runs:
     - uses: launchdarkly/gh-actions/actions/publish-pages@publish-pages-v1.0.1
       name: 'Publish to Github pages'
       with:
-        docs_path: docs
+        docs_path: ${{ inputs.workspace_path }}/docs
         github_token: ${{ inputs.token }}

@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaunchDarkly.ServerSdk", "src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj", "{38F73E78-9CEB-4285-B569-034FBD9273D4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "packagess", "packagess", "{E562CB1C-C0F4-475D-A741-C677F31DDE32}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaunchDarkly.ServerSdk.Tests", "test\LaunchDarkly.ServerSdk.Tests\LaunchDarkly.ServerSdk.Tests.csproj", "{A8D5ACCF-AADD-4D7C-A768-B98EF014A951}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sdk", "sdk", "{69C82937-8CA8-4FF8-944B-79F5BE0BB765}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{68F8E8ED-6A60-48C3-A0C5-74F34C6CDF5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaunchDarkly.ServerSdk", "packagess\sdk\server\src\LaunchDarkly.ServerSdk.csproj", "{3B9D9789-6F89-4842-9DD5-61AF8C046E5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaunchDarkly.ServerSdk.Tests", "packagess\sdk\server\test\LaunchDarkly.ServerSdk.Tests.csproj", "{0DD72959-DB80-4C30-B397-806F94969DB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +19,25 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{38F73E78-9CEB-4285-B569-034FBD9273D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38F73E78-9CEB-4285-B569-034FBD9273D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38F73E78-9CEB-4285-B569-034FBD9273D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38F73E78-9CEB-4285-B569-034FBD9273D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8D5ACCF-AADD-4D7C-A768-B98EF014A951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8D5ACCF-AADD-4D7C-A768-B98EF014A951}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8D5ACCF-AADD-4D7C-A768-B98EF014A951}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8D5ACCF-AADD-4D7C-A768-B98EF014A951}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B9D9789-6F89-4842-9DD5-61AF8C046E5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B9D9789-6F89-4842-9DD5-61AF8C046E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B9D9789-6F89-4842-9DD5-61AF8C046E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B9D9789-6F89-4842-9DD5-61AF8C046E5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DD72959-DB80-4C30-B397-806F94969DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DD72959-DB80-4C30-B397-806F94969DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DD72959-DB80-4C30-B397-806F94969DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DD72959-DB80-4C30-B397-806F94969DB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7F58FE1-D8E9-46EB-AE7F-4B5A388418AC}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{69C82937-8CA8-4FF8-944B-79F5BE0BB765} = {E562CB1C-C0F4-475D-A741-C677F31DDE32}
+		{68F8E8ED-6A60-48C3-A0C5-74F34C6CDF5C} = {69C82937-8CA8-4FF8-944B-79F5BE0BB765}
+		{3B9D9789-6F89-4842-9DD5-61AF8C046E5D} = {68F8E8ED-6A60-48C3-A0C5-74F34C6CDF5C}
+		{0DD72959-DB80-4C30-B397-806F94969DB7} = {68F8E8ED-6A60-48C3-A0C5-74F34C6CDF5C}
 	EndGlobalSection
 EndGlobal

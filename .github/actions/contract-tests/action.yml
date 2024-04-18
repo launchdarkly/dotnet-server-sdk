@@ -1,0 +1,36 @@
+name: Contract Tests
+description: Runs CI for the .NET Server SDK
+inputs:
+  service_project_file:
+    description: 'Path to the contract test service project file.'
+    required: true
+  service_dll_file:
+    description: 'Path where compiled dll will be found.'
+    required: true
+  token:
+    description: 'Github token, used for contract tests'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Setup dotnet build tools
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0
+
+    - name: Build Contract Tests
+      shell: bash
+      run: dotnet build /p:Configuration=debug ${{ inputs.service_project_file }}
+
+    - name: Launch Contract Tests
+      id: launch-contract-tests
+      shell: bash
+      run: dotnet ${{ inputs.service_dll_file }} > test-service.log 2>&1 & disown
+
+    - name: Run Contract Tests
+      uses: launchdarkly/gh-actions/actions/contract-tests@contract-tests-v1.0.0
+      with:
+        test_service_port: 8000
+        token: ${{ inputs.token }}

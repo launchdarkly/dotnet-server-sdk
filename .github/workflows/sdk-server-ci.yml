@@ -1,0 +1,38 @@
+name: Server SDK CI
+on:
+  push:
+    branches: [main, 'feat/**']
+    paths-ignore:
+      - '**.md' # Do not need to run CI for markdown changes.
+  pull_request:
+    branches: [main, 'feat/**']
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/ci
+        with:
+          project_file: packagess/sdk/server/src/LaunchDarkly.ServerSdk.csproj
+          test_project_file: packagess/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Running contract tests on windows is currently cumbersome.
+      # Once that has been addressed, then running contract tests on windows should be considered.
+      - uses: ./.github/actions/contract-tests
+        if: ${{ matrix.os != 'windows-latest' }}
+        with:
+          service_project_file: packagess/sdk/server/contract-tests/TestService.csproj
+          service_dll_file: packagess/sdk/server/contract-tests/bin/debug/net6.0/ContractTestService.dll
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./.github/actions/build-docs
+        with:
+          workspace_path: packagess/sdk/server
