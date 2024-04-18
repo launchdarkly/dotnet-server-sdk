@@ -17,11 +17,14 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      - name: XDTesting Print Directory Structure
+        uses: FiorelaCiroku/XDTesting-Print-Directory-Structure@v1.0.2
+
       - uses: actions/checkout@v4
       - uses: ./.github/actions/ci
         with:
-          project_file: ./packages/sdk/server/src/LaunchDarkly.ServerSdk.csproj
-          test_project_file: packages/sdk/server/test/LaunchDarkly.ServerSdk.Tests
+          project_file: packages/sdk/server/src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+          test_project_file: packages/sdk/server/test/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/contract-tests

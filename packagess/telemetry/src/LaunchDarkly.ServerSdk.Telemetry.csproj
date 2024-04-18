@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!--x-release-please-start-version-->
+    <Version>0.1.0</Version>
+    <!--x-release-please-end-->
+    <!-- The BUILDFRAMEWORKS variable allows us to override the target frameworks with a
+         single framework that we are testing; this allows us to test with older SDK
+         versions that would error out if they saw any newer target frameworks listed
+         here, even if we weren't running those. -->
+    <BuildFrameworks Condition="'$(BUILDFRAMEWORKS)' == ''">netstandard2.0;net462;net6.0</BuildFrameworks>
+    <TargetFrameworks>$(BUILDFRAMEWORKS)</TargetFrameworks>
+    <DebugType>portable</DebugType>
+    <AssemblyName>LaunchDarkly.ServerSdk.Telemetry</AssemblyName>
+    <OutputType>Library</OutputType>
+    <PackageId>LaunchDarkly.ServerSdk.Telemetry</PackageId>
+    <RootNamespace>LaunchDarkly.Sdk.Server.Telemetry</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <Description>LaunchDarkly Server-Side .NET SDK Telemetry Integrations</Description>
+    <Authors>LaunchDarkly</Authors>
+    <Owners>LaunchDarkly</Owners>
+    <Company>LaunchDarkly</Company>
+    <Copyright>Copyright 2024 LaunchDarkly</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/launchdarkly/dotnet-server-sdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/launchdarkly/dotnet-server-sdk</RepositoryUrl>
+    <RepositoryBranch>main</RepositoryBranch>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- CopyLocalLockFileAssemblies causes dependency DLLs to be copied into the
+         build products, which is necessary for our documentation generation logic;
+         this doesn't affect what goes into the NuGet package. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+    <!-- fail if XML comments are missing or invalid -->
+    <WarningsAsErrors>1570,1571,1572,1573,1574,1580,1581,1584,1591,1710,1711,1712</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LaunchDarkly.ServerSdk" Version="8.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net462'">
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
+    <!-- it's a built-in package in net6.0 -->
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <AssemblyOriginatorKeyFile>../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\LaunchDarkly.ServerSdk.Telemetry.xml</DocumentationFile>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,9 @@
+﻿{
+    "segments": {
+        "seg1": {
+            "key": "seg1",
+            "version": 1,
+            "included": [ "user1" ]
+        }
+    }
+}
