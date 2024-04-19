@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Hooks
         public const string StringVariationDetail = "LdClient.StringVariationDetail";
         public const string JsonVariation = "LdClient.JsonVariation";
         public const string JsonVariationDetail = "LdClient.JsonVariationDetail";
-        public const string MigrationVariation = "LdClient.MigrationVariation";
+        public const string MigrationVariation = "LdClient.MigrationVariationMigrationVariationMigrationVariation";
     }
     #pragma warning restore 1591
 }
