@@ -1,7 +1,7 @@
 # LaunchDarkly Server-Side SDK for .NET
 
 [![NuGet](https://img.shields.io/nuget/v/LaunchDarkly.ServerSdk.svg?style=flat-square)](https://www.nuget.org/packages/LaunchDarkly.ServerSdk/)
-[![CircleCI](https://circleci.com/gh/launchdarkly/dotnet-server-sdk.svg?style=shield)](https://circleci.com/gh/launchdarkly/dotnet-server-sdk)
+[![CI](https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/static/v1?label=GitHub+Pages&message=API+reference&color=00add8)](https://launchdarkly.github.io/dotnet-server-sdk)
 
 The LaunchDarkly Server-Side SDK for .NET is designed primarily for use in multi-user systems such as web servers and applications. It follows the server-side LaunchDarkly model for multi-user contexts. It is not intended for use in desktop and embedded systems applications.
