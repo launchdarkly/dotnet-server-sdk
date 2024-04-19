@@ -1,13 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
 using LaunchDarkly.Sdk.Server.Hooks;
-using LaunchDarkly.Sdk.Server.Integrations;
-using LaunchDarkly.Sdk.Server.Interfaces;
-using LaunchDarkly.Sdk.Server.Subsystems;
-using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -188,7 +183,6 @@ namespace LaunchDarkly.Sdk.Server
             };
         }
 
-
         [Fact]
         public void ClientExecutesConfiguredHooks()
         {
@@ -264,7 +258,6 @@ namespace LaunchDarkly.Sdk.Server
                     }
                 }
             }
-
         }
     }
 }

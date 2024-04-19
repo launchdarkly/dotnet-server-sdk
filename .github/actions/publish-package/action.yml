@@ -1,6 +1,9 @@
 name: Publish Package
 description: 'Packs DLLs into unsigned Nuget package and publishes to Nuget.'
 inputs:
+  project_file:
+    description: 'Path to the project file.'
+    required: true
   dry_run:
     description: 'Is this a dry run. If so no package will be published.'
     required: true
@@ -12,7 +15,7 @@ runs:
       shell: bash
       run: |
         dotnet restore
-        dotnet pack --no-build --output nupkgs --configuration Release src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+        dotnet pack --no-build --output nupkgs --configuration Release ${{ inputs.project_file }}
 
     - name: Publish Package
       if: ${{ inputs.dry_run == 'false' }}
