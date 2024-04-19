@@ -1,7 +1,7 @@
 namespace LaunchDarkly.Sdk.Server.Hooks
 {
     /// <summary>
-    /// Method represents the SDK client method that triggered a hook invocation.
+    /// Method represents the SDK client method that triggered a hook invocation. Fixing some commenting.
     /// </summary>
    #pragma warning disable 1591
     public static class Method
@@ -18,7 +18,7 @@ namespace LaunchDarkly.Sdk.Server.Hooks
         public const string StringVariationDetail = "LdClient.StringVariationDetail";
         public const string JsonVariation = "LdClient.JsonVariation";
         public const string JsonVariationDetail = "LdClient.JsonVariationDetail";
-        public const string MigrationVariation = "LdClient.MigrationVariationMigrationVariationMigrationVariation";
+        public const string MigrationVariation = "LdClient.MigrationVariation";
     }
     #pragma warning restore 1591
 }
