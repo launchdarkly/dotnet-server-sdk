@@ -1,7 +1,7 @@
 namespace LaunchDarkly.Sdk.Server.Hooks
 {
     /// <summary>
-    /// Method represents the SDK client method that triggered a hook invocation.
+    /// Method represents the SDK client method that triggered a hook invocation. Fixing some commenting.
     /// </summary>
    #pragma warning disable 1591
     public static class Method
