@@ -48,8 +48,8 @@ jobs:
         name: Build and Test
         uses: ./.github/actions/ci
         with:
-          project_file: packagess/sdk/server/src/LaunchDarkly.ServerSdk.csproj
-          test_project_file: packagess/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
+          project_file: pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj
+          test_project_file: pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - id: build-docs

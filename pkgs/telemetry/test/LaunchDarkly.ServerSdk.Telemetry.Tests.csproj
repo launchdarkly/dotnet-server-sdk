@@ -4,7 +4,7 @@
          single framework that we are testing; this allows us to test with older SDK
          versions that would error out if they saw any newer target frameworks listed
          here, even if we weren't running those. -->
-    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">net462;net6.0</TestFramework>
+    <TestFramework Condition="'$(TESTFRAMEWORK)' == ''">netstandard2.0;net462;net6.0</TestFramework>
     <TargetFrameworks>$(TESTFRAMEWORK)</TargetFrameworks>
     <AssemblyName>LaunchDarkly.ServerSdk.Telemetry.Tests</AssemblyName>
     <PackageId>LaunchDarkly.ServerSdk.Telemetry.Tests</PackageId>
@@ -12,6 +12,10 @@
     <IsTestProject>true</IsTestProject>
     <RootNamespace>LaunchDarkly.Sdk.Server.Telemetry</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\LaunchDarkly.ServerSdk.Telemetry.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />

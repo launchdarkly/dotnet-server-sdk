@@ -20,8 +20,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/ci
         with:
-          project_file: packagess/sdk/server/src/LaunchDarkly.ServerSdk.csproj
-          test_project_file: packagess/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
+          project_file: pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj
+          test_project_file: pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # Running contract tests on windows is currently cumbersome.
@@ -29,10 +29,10 @@ jobs:
       - uses: ./.github/actions/contract-tests
         if: ${{ matrix.os != 'windows-latest' }}
         with:
-          service_project_file: packagess/sdk/server/contract-tests/TestService.csproj
-          service_dll_file: packagess/sdk/server/contract-tests/bin/debug/net6.0/ContractTestService.dll
+          service_project_file: pkgs/sdk/server/contract-tests/TestService.csproj
+          service_dll_file: pkgs/sdk/server/contract-tests/bin/debug/net6.0/ContractTestService.dll
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/build-docs
         with:
-          workspace_path: packagess/sdk/server
+          workspace_path: pkgs/sdk/server

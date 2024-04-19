@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      package-sdk-server-released: ${{ steps.release.outputs['packagess/sdk/server--release_created'] }}
-      package-sdk-server-telemetry-released: ${{ steps.release.outputs['packagess/telemetry--release_created'] }}
+      package-sdk-server-released: ${{ steps.release.outputs['pkgs/sdk/server--release_created'] }}
+      package-sdk-server-telemetry-released: ${{ steps.release.outputs['pkgs/telemetry--release_created'] }}
 
     steps:
       - uses: google-github-actions/release-please-action@v4
@@ -31,12 +31,11 @@ jobs:
     steps:
       - uses: ./.github/workflows/full-release.yml
         with:
-          workspace_path: 'packagess/sdk/server'
-          project_file: 'packagess/sdk/server/src/LaunchDarkly.ServerSdk.csproj'
-          test_project_file: 'packagess/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj'
-          build_output_path: 'packagess/sdk/server/src/bin/Release/'
+          workspace_path: 'pkgs/sdk/server'
+          project_file: 'pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj'
+          test_project_file: 'pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj'
+          build_output_path: 'pkgs/sdk/server/src/bin/Release/'
           dll_name: 'LaunchDarkly.ServerSdk.dll'
-          run_tests: true
           dry_run: false
 
   release-telemetry:
@@ -50,10 +49,10 @@ jobs:
     steps:
       - uses: ./.github/workflows/full-release.yml
         with:
-          workspace_path: 'packagess/telemetry'
-          project_file: 'packagess/telemetry/src/LaunchDarkly.ServerSdk.Telemetry.csproj'
-          test_project_file: 'packagess/telemetry/test/LaunchDarkly.ServerSdk.Telemetry.Tests.csproj'
-          build_output_path: 'packagess/telemetry/src/bin/Release/'
+          workspace_path: 'pkgs/telemetry'
+          name: 'LaunchDarkly.ServerSdk.Telemetry'
+          project_file: 'pkgs/telemetry/src/LaunchDarkly.ServerSdk.Telemetry.csproj'
+          test_project_file: 'pkgs/telemetry/test/LaunchDarkly.ServerSdk.Telemetry.Tests.csproj'
+          build_output_path: 'pkgs/telemetry/src/bin/Release/'
           dll_name: 'LaunchDarkly.ServerSdk.Telemetry.dll'
-          run_tests: true
           dry_run: false
