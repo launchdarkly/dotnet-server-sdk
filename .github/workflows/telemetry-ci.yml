@@ -1,4 +1,4 @@
-name: CI
+name: LaunchDarkly.ServerSdk.Telemetry CI
 on:
   push:
     branches: [main, 'feat/**']

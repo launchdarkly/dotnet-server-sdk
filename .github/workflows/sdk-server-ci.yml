@@ -1,4 +1,4 @@
-name: Server SDK CI
+name: LaunchDarkly.ServerSdk CI
 on:
   push:
     branches: [main, 'feat/**']
