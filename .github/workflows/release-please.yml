@@ -29,7 +29,7 @@ jobs:
       pull-requests: write
     if: ${{ needs.release-please.outputs.package-sdk-server-released == 'true'}}
     steps:
-      - uses: ./.github/workflows/full-release.yml
+      - uses: ./.github/actions/full-release
         with:
           workspace_path: 'pkgs/sdk/server'
           project_file: 'pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj'
@@ -47,7 +47,7 @@ jobs:
       pull-requests: write
     if: ${{ needs.release-please.outputs.package-sdk-server-telemetry-released == 'true'}}
     steps:
-      - uses: ./.github/workflows/full-release.yml
+      - uses: ./.github/actions/full-release
         with:
           workspace_path: 'pkgs/telemetry'
           name: 'LaunchDarkly.ServerSdk.Telemetry'
