@@ -1,0 +1,36 @@
+name: CI
+on:
+  push:
+    branches: [main, 'feat/**']
+    paths-ignore:
+      - '**.md' # Do not need to run CI for markdown changes.
+  pull_request:
+    branches: [main, 'feat/**']
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/ci
+        with:
+          run_tests: true
+          # Running contract tests on windows is currently cumbersome.
+          # Once that has been addressed, then running contract tests on windows should be considered.
+          run_contract_tests: ${{ matrix.os != 'windows-latest' }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-docs:
+      runs-on: ubuntu-latest
+      permissions:
+          id-token: write
+          contents: read
+      steps:
+        - uses: actions/checkout@v4
+        - uses: ./.github/actions/build-docs
