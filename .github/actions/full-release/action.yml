@@ -29,7 +29,6 @@ runs:
       with:
         project_file: ${{ inputs.project_file }}
         test_project_file: ${{ inputs.test_project_file }}
-        run_contract_tests: false
 
     - uses: launchdarkly/gh-actions/actions/release-secrets@release-secrets-v1.1.0
       name: Get secrets

@@ -7,10 +7,6 @@ inputs:
   test_project_file:
     description: 'Path to the test project file.  If provided, run unit tests, otherwise skip them.'
     required: false
-  aws_role_arn:
-    description: 'The ARN of the role to assume for downloading secrets, used for building docs.'
-    required: false
-    default: ''
 
 runs:
   using: composite

@@ -22,7 +22,6 @@ jobs:
         with:
           project_file: pkgs/telemetry/src/LaunchDarkly.ServerSdk.Telemetry.csproj
           test_project_file: pkgs/telemetry/test/LaunchDarkly.ServerSdk.Telemetry.Tests.csproj
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/build-docs
         with:

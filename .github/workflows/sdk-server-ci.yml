@@ -22,7 +22,6 @@ jobs:
         with:
           project_file: pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj
           test_project_file: pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Running contract tests on windows is currently cumbersome.
       # Once that has been addressed, then running contract tests on windows should be considered.

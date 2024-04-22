@@ -50,7 +50,6 @@ jobs:
         with:
           project_file: pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj
           test_project_file: pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - id: build-docs
         name: Build Documentation
