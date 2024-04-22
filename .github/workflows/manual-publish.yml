@@ -30,7 +30,9 @@ jobs:
           test_project_file: 'pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj'
           build_output_path: 'pkgs/sdk/server/src/bin/Release/'
           dll_name: 'LaunchDarkly.ServerSdk.dll'
-          dry_run: false
+          dry_run: ${{ inputs.dry_run }}
+          aws_role: ${{ vars.AWS_ROLE_ARN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/full-release
         if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry' }}
@@ -40,4 +42,6 @@ jobs:
           test_project_file: 'pkgs/telemetry/test/LaunchDarkly.ServerSdk.Telemetry.Tests.csproj'
           build_output_path: 'pkgs/telemetry/src/bin/Release/'
           dll_name: 'LaunchDarkly.ServerSdk.Telemetry.dll'
-          dry_run: false
+          dry_run: ${{ inputs.dry_run }}
+          aws_role: ${{ vars.AWS_ROLE_ARN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
