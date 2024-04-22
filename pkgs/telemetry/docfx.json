@@ -1,0 +1,48 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "./src",
+          "files": [
+            "**/*.csproj",
+            "**/bin/**/**LaunchDarkly**.dll"
+          ]
+        }
+      ],
+      "dest": "./api",
+      "properties" : {
+        "Configuration": "Debug"
+      },
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "docs/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "docs",
+    "template": [
+      "default"
+    ],
+    "globalMetadata": {
+      "_appName": "LaunchDarkly Dotnet Server SDK Telemetry Integration",
+      "_appTitle": "LaunchDarkly Dotnet Server SDK Telemetry Integration",
+      "_enableSearch": true,
+      "pdf": false
+    }
+  }
+}

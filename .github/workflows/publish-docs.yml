@@ -1,6 +1,32 @@
 on:
   workflow_dispatch:
+    inputs:
+      workspace_path:
+        description: 'Path to the workspace being released.'
+        required: true
+        type: string
+      project_file:
+        description: 'Path to the project file.'
+        required: true
+        type: string
+      test_project_file:
+        description: 'Path to the test project file.  If provided, run unit tests, otherwise skip them.'
+        required: false
+        type: string
   workflow_call:
+    inputs:
+      workspace_path:
+        description: 'Path to the workspace being released.'
+        required: true
+        type: string
+      project_file:
+        description: 'Path to the project file.'
+        required: true
+        type: string
+      test_project_file:
+        description: 'Path to the test project file.  If provided, run unit tests, otherwise skip them.'
+        required: false
+        type: string
 
 name: Publish Docs
 jobs:
@@ -11,18 +37,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: build
-        name: Build and Test
+        name: Build and Test SDK
         uses: ./.github/actions/ci
         with:
-          run_tests: true
-          run_contract_tests: false
+          project_file: ${{ inputs.project_file }}
+          test_project_file: ${{ inputs.test_project_file }}
 
       - id: build-docs
         name: Build Documentation
         uses: ./.github/actions/build-docs
+        with:
+          workspace_path: ${{ inputs.workspace_path }}
 
-      - id: publish
+      - id: publish-docs
         name: Publish Documentation
         uses: ./.github/actions/publish-docs
         with:
+          workspace_path: ${{ inputs.workspace_path }}
           token: ${{secrets.GITHUB_TOKEN}}

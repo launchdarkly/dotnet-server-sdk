@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\LaunchDarkly.ServerSdk\LaunchDarkly.ServerSdk.csproj" />
+    <ProjectReference Include="..\src\LaunchDarkly.ServerSdk.csproj" />
   </ItemGroup>
 
   <ItemGroup>

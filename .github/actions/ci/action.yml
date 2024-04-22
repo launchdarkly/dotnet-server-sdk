@@ -1,22 +1,12 @@
 name: CI
 description: Runs CI for the .NET Server SDK
 inputs:
-  run_tests:
-    description: 'If true, run unit tests, otherwise skip them.'
+  project_file:
+    description: 'Path to the project file.'
+    required: true
+  test_project_file:
+    description: 'Path to the test project file.  If provided, run unit tests, otherwise skip them.'
     required: false
-    default: 'true'
-  run_contract_tests:
-    description: 'If true, run contract tests, otherwise skip them.'
-    required: false
-    default: 'true'
-  aws_role_arn:
-    description: 'The ARN of the role to assume for downloading secrets, used for building docs.'
-    required: false
-    default: ''
-  token:
-    description: 'Github token, used for contract tests'
-    required: false
-    default: ''
 
 runs:
   using: composite
@@ -28,41 +18,23 @@ runs:
 
     - name: Restore Dependencies
       shell: bash
-      run: dotnet restore src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+      run: dotnet restore ${{ inputs.project_file }}
 
     - name: Build for NetStandard2.0
       shell: bash
-      run: dotnet build -p:Configuration=debug -p:TargetFramework=netstandard2.0 src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+      run: dotnet build -p:Configuration=debug -p:TargetFramework=netstandard2.0 ${{ inputs.project_file }}
 
     - name: Build for Net6
       shell: bash
-      run: dotnet build -p:Configuration=debug -p:TargetFramework=net6.0 src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+      run: dotnet build -p:Configuration=debug -p:TargetFramework=net6.0 ${{ inputs.project_file }}
 
     - name: Build for Net462
       shell: bash
-      run: dotnet build -p:Configuration=debug -p:TargetFramework=net462 src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+      run: dotnet build -p:Configuration=debug -p:TargetFramework=net462 ${{ inputs.project_file }}
 
     - name: Run Unit Tests for Net6
-      if: ${{ inputs.run_tests == 'true' }}
+      if: ${{ inputs.test_project_file != '' }}
       shell: bash
       run: |
-        dotnet restore test/LaunchDarkly.ServerSdk.Tests
-        dotnet test --framework=net6.0 test/LaunchDarkly.ServerSdk.Tests/LaunchDarkly.ServerSdk.Tests.csproj
-
-    - name: Build Contract Tests
-      if: ${{ inputs.run_contract_tests == 'true' }}
-      shell: bash
-      run: dotnet build /p:Configuration=debug contract-tests/TestService.csproj
-
-    - name: Launch Contract Tests
-      if: ${{ inputs.run_contract_tests == 'true' }}
-      id: launch-contract-tests
-      shell: bash
-      run: dotnet contract-tests/bin/debug/net6.0/ContractTestService.dll > test-service.log 2>&1 & disown
-
-    - name: Run Contract Tests
-      if: ${{ inputs.run_contract_tests == 'true' }}
-      uses: launchdarkly/gh-actions/actions/contract-tests@contract-tests-v1.0.0
-      with:
-        test_service_port: 8000
-        token: ${{ inputs.token }}
+        dotnet restore ${{ inputs.test_project_file }}
+        dotnet test --framework=net6.0  ${{ inputs.test_project_file }}

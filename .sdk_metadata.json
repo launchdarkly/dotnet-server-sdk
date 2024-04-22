@@ -4,7 +4,7 @@
     "dotnet-server-sdk": {
       "name": ".NET Server SDK",
       "type": "server-side",
-      "path": "src/LaunchDarkly.ServerSdk",
+      "path": "pkgs/sdk/server",
       "languages": [
         "C#"
       ],
@@ -16,4 +16,3 @@
     }
   }
 }
-
