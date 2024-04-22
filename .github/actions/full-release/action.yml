@@ -18,7 +18,6 @@ inputs:
     required: true
   dry_run:
     description: 'Is this a dry run. If so no package will be published.'
-    type: boolean
     required: true
 
 runs:

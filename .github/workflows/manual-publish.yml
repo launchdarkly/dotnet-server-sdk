@@ -21,7 +21,7 @@ jobs:
       id-token: write
       contents: write
     steps:
-      - uses: ./.github/workflows/full-release.yml
+      - uses: ./.github/actions/full-release
         if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk' }}
         with:
           workspace_path: 'pkgs/sdk/server'
@@ -31,7 +31,7 @@ jobs:
           dll_name: 'LaunchDarkly.ServerSdk.dll'
           dry_run: false
 
-      - uses: ./.github/workflows/full-release.yml
+      - uses: ./.github/actions/full-release
         if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry' }}
         with:
           workspace_path: 'pkgs/telemetry'
