@@ -9,7 +9,8 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
     using SeriesData = ImmutableDictionary<string, object>;
 
     /// <summary>
-    /// TracingHookBuilder creates a <see cref="TracingHook"/>s.
+    /// TracingHookBuilder creates a <see cref="TracingHook"/>. The hook can be passed into the SDK's Hook configuration
+    /// builder <see cref="ConfigurationBuilder.Hooks"/>. To create a TracingHook from a builder, call <see cref="Build"/>.
     /// </summary>
     public class TracingHookBuilder
     {
@@ -53,7 +54,7 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
         /// <summary>
         /// Builds the <see cref="TracingHook"/> with the configured options.
         ///
-        /// The hook may be passed into the SDK's Hook configuration as-is.
+        /// The hook may be passed into <see cref="ConfigurationBuilder.Hooks"/>.
         /// </summary>
         /// <returns>the new hook</returns>
         public TracingHook Build()
@@ -65,6 +66,8 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
     /// <summary>
     /// TracingHook is a <see cref="Hook"/> that adds tracing capabilities to the LaunchDarkly SDK for feature flag
     /// evaluations.
+    ///
+    /// To create a TracingHook, see <see cref="TracingHookBuilder"/>.
     /// </summary>
     public class TracingHook : Hook
     {
