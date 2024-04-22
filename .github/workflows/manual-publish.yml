@@ -21,6 +21,7 @@ jobs:
       id-token: write
       contents: write
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/full-release
         if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk' }}
         with:
