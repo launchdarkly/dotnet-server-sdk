@@ -1,6 +1,7 @@
 {
   "bootstrap-sha": "7870a6ed7450d211ae822a281de45b6fc3df39c3",
   "separate-pull-requests": true,
+  "include-component-in-tag": true,
   "packages": {
     "pkgs/sdk/server": {
       "release-type": "simple",
@@ -16,7 +17,6 @@
       "package-name": "telemetry",
       "bump-minor-pre-major": true,
       "include-v-in-tag": false,
-      "include-component-in-tag": true,
       "extra-files": [
         "src/LaunchDarkly.ServerSdk.Telemetry.csproj"
       ]
