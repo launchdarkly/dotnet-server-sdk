@@ -1,5 +1,9 @@
 name: Build Action
 description: 'Dotnet Server SDK Build action.'
+inputs:
+  project_file:
+    description: 'Path to the project file.'
+    required: true
 
 runs:
   using: composite
@@ -15,4 +19,4 @@ runs:
 
     - name: Build
       shell: bash
-      run: dotnet build /p:Configuration=Release src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj
+      run: dotnet build /p:Configuration=Release ${{ inputs.project_file }}

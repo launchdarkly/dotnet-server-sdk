@@ -3,7 +3,7 @@ using System.Diagnostics;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Hooks;
 
-namespace LaunchDarkly.Sdk.Server.Integrations.OpenTelemetry
+namespace LaunchDarkly.Sdk.Server.Telemetry
 {
 
     using SeriesData = ImmutableDictionary<string, object>;

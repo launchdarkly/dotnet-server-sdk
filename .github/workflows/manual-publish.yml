@@ -1,0 +1,42 @@
+name: Manual Publish Package
+on:
+  workflow_dispatch:
+    inputs:
+      pkg_name:
+        description: 'The package to publish'
+        required: true
+        type: choice
+        options:
+          - LaunchDarkly.ServerSdk
+          - LaunchDarkly.ServerSdk.Telemetry
+      dry_run:
+        description: 'Is this a dry run. If so no package will be published.'
+        type: boolean
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: ./.github/workflows/full-release.yml
+        if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk' }}
+        with:
+          workspace_path: 'pkgs/sdk/server'
+          project_file: 'pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj'
+          test_project_file: 'pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj'
+          build_output_path: 'pkgs/sdk/server/src/bin/Release/'
+          dll_name: 'LaunchDarkly.ServerSdk.dll'
+          dry_run: false
+
+      - uses: ./.github/workflows/full-release.yml
+        if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry' }}
+        with:
+          workspace_path: 'pkgs/telemetry'
+          project_file: 'pkgs/telemetry/src/LaunchDarkly.ServerSdk.Telemetry.csproj'
+          test_project_file: 'pkgs/telemetry/test/LaunchDarkly.ServerSdk.Telemetry.Tests.csproj'
+          build_output_path: 'pkgs/telemetry/src/bin/Release/'
+          dll_name: 'LaunchDarkly.ServerSdk.Telemetry.dll'
+          dry_run: false

@@ -1,14 +1,22 @@
 {
   "bootstrap-sha": "e3bc4e0889e63e488476cacf726b3b541d174b94",
+  "include-component-in-tag": true,
   "packages": {
-    ".": {
+    "pkgs/sdk/server": {
       "release-type": "simple",
       "bump-minor-pre-major": true,
-      "versioning": "default",
       "include-v-in-tag": false,
       "include-component-in-tag": false,
       "extra-files": [
-        "src/LaunchDarkly.ServerSdk/LaunchDarkly.ServerSdk.csproj"
+        "pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj"
+      ]
+    },
+    "pkgs/telemetry": {
+      "release-type": "simple",
+      "bump-minor-pre-major": true,
+      "include-v-in-tag": false,
+      "extra-files": [
+        "pkgs/sdk/server/src/LaunchDarkly.ServerSdk.Telemetry.csproj"
       ]
     }
   }
