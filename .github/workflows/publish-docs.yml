@@ -13,10 +13,6 @@ on:
         description: 'Path to the test project file.  If provided, run unit tests, otherwise skip them.'
         required: false
         type: string
-      dry_run:
-        description: 'Is this a dry run. If so no package will be published.'
-        type: boolean
-        required: true
   workflow_call:
     inputs:
       workspace_path:
@@ -31,10 +27,6 @@ on:
         description: 'Path to the test project file.  If provided, run unit tests, otherwise skip them.'
         required: false
         type: string
-      dry_run:
-        description: 'Is this a dry run. If so no package will be published.'
-        type: boolean
-        required: true
 
 name: Publish Docs
 jobs:
@@ -45,11 +37,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: build
-        name: Build and Test
+        name: Build and Test SDK
         uses: ./.github/actions/ci
         with:
-          project_file: pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj
-          test_project_file: pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
+          project_file: ${{ inputs.project_file }}
+          test_project_file: ${{ inputs.test_project_file }}
 
       - id: build-docs
         name: Build Documentation
@@ -57,7 +49,7 @@ jobs:
         with:
           workspace_path: ${{ inputs.workspace_path }}
 
-      - id: publish
+      - id: publish-docs
         name: Publish Documentation
         uses: ./.github/actions/publish-docs
         with:
