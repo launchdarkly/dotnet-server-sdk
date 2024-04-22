@@ -1,5 +1,5 @@
 {
-  "bootstrap-sha": "e3bc4e0889e63e488476cacf726b3b541d174b94",
+  "bootstrap-sha": "7870a6ed7450d211ae822a281de45b6fc3df39c3",
   "include-component-in-tag": true,
   "packages": {
     "pkgs/sdk/server": {
