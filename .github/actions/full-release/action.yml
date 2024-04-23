@@ -43,7 +43,8 @@ runs:
         /production/common/releasing/digicert/api_key = DIGICERT_API_KEY,
         /production/common/releasing/digicert/client_cert_file_b64 = DIGICERT_CLIENT_CERT_FILE_B64,
         /production/common/releasing/digicert/client_cert_password = DIGICERT_CLIENT_CERT_PASSWORD,
-        /production/common/releasing/digicert/code_signing_cert_sha1_hash = DIGICERT_CODE_SIGNING_CERT_SHA1_HASH'
+        /production/common/releasing/digicert/code_signing_cert_sha1_hash = DIGICERT_CODE_SIGNING_CERT_SHA1_HASH,
+        /production/common/releasing/nuget/api_key = NUGET_API_KEY'
         s3_path_pairs: 'launchdarkly-releaser/dotnet/LaunchDarkly.snk = LaunchDarkly.snk'
 
     - name: Release build
