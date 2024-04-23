@@ -49,7 +49,7 @@ runs:
     - name: Release build
       uses: ./.github/actions/build-release
       with:
-        project_file: pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj
+        project_file: ${{ inputs.project_file }}
 
     - name: Sign DLLs
       uses: launchdarkly/gh-actions/actions/sign-dlls@sign-dlls-v1.0.0
