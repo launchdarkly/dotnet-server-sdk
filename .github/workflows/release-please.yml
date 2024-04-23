@@ -54,7 +54,6 @@ jobs:
       - uses: ./.github/actions/full-release
         with:
           workspace_path: 'pkgs/telemetry'
-          name: 'LaunchDarkly.ServerSdk.Telemetry'
           project_file: 'pkgs/telemetry/src/LaunchDarkly.ServerSdk.Telemetry.csproj'
           test_project_file: 'pkgs/telemetry/test/LaunchDarkly.ServerSdk.Telemetry.Tests.csproj'
           build_output_path: 'pkgs/telemetry/src/bin/Release/'
