@@ -1,12 +1,26 @@
 # LaunchDarkly Server-Side SDK for .NET
 
-[![NuGet](https://img.shields.io/nuget/v/LaunchDarkly.ServerSdk.svg?style=flat-square)](https://www.nuget.org/packages/LaunchDarkly.ServerSdk/)
-[![CI](https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/ci.yml)
-[![Documentation](https://img.shields.io/static/v1?label=GitHub+Pages&message=API+reference&color=00add8)](https://launchdarkly.github.io/dotnet-server-sdk)
-
 The LaunchDarkly Server-Side SDK for .NET is designed primarily for use in multi-user systems such as web servers and applications. It follows the server-side LaunchDarkly model for multi-user contexts. It is not intended for use in desktop and embedded systems applications.
 
 For using LaunchDarkly in *client-side* .NET applications, including mobile (Xamarin) applications and desktop applications, refer to our [Xamarin SDK](https://github.com/launchdarkly/xamarin-client-sdk).
+
+## Packages
+
+| SDK Packages                     | NuGet                                                   | API Docs                                                    | Issues                        | Tests                                                      |
+|----------------------------------|---------------------------------------------------------|-------------------------------------------------------------|-------------------------------|------------------------------------------------------------|
+| LaunchDarkly.ServerSdk           | [![NuGet][server-nuget-badge]][server-nuget-link]       | [![Documentation][api-docs-badge]][server-api-docs-link]    | [Server SDK][server-issues]   | [![Actions Status][server-ci-badge]][server-ci-link]       |
+
+| Telemetry Packages               | NuGet                                                   | API Docs                                                    | Issues                        | Tests                                                      |
+|----------------------------------|---------------------------------------------------------|-------------------------------------------------------------|-------------------------------|------------------------------------------------------------|
+| LaunchDarkly.ServerSdk.Telemetry | [![NuGet][telemetry-nuget-badge]][telemetry-nuget-link] | [![Documentation][api-docs-badge]][telemetry-api-docs-link] | [Telemetry][telemetry-issues] | [![Actions Status][telemetry-ci-badge]][telemetry-ci-link] |
+
+## Organization
+
+| Directory        | Purpose                                                                                                    |
+|------------------|------------------------------------------------------------------------------------------------------------|
+| `pkgs`           | Top level directory containing package implementations.                                                    |
+| `pkgs/sdk`       | SDK packages intended for use by application developers. Currently contains only the .NET Server-Side SDK. |
+| `pkgs/telemetry` | Packages for adding telemetry support to SDKs.                                                             |
 
 ## LaunchDarkly overview
 
@@ -75,3 +89,20 @@ We encourage pull requests and other contributions from the community. Check out
     * [docs.launchdarkly.com](https://docs.launchdarkly.com/  "LaunchDarkly Documentation") for our documentation and SDK reference guides
     * [apidocs.launchdarkly.com](https://apidocs.launchdarkly.com/  "LaunchDarkly API Documentation") for our API documentation
     * [blog.launchdarkly.com](https://blog.launchdarkly.com/  "LaunchDarkly Blog Documentation") for the latest product updates
+
+
+[server-nuget-badge]: https://img.shields.io/nuget/v/LaunchDarkly.ServerSdk.svg?style=flat-square
+[server-nuget-link]: https://www.nuget.org/packages/LaunchDarkly.ServerSdk/
+[server-ci-badge]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/sdk-server-ci.yml/badge.svg
+[server-ci-link]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/sdk-server-ci.yml
+[server-issues]: TODO
+[server-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/
+
+[telemetry-nuget-badge]: https://img.shields.io/nuget/v/LaunchDarkly.ServerSdk.Telemetry.svg?style=flat-square
+[telemetry-nuget-link]: https://www.nuget.org/packages/LaunchDarkly.ServerSdk.Telemetry/
+[telemetry-ci-badge]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/telemetry-ci.yml/badge.svg
+[telemetry-ci-link]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/telemetry-ci.yml
+[telemetry-issues]: TODO
+[telemetry-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/
+
+[api-docs-badge]: https://img.shields.io/static/v1?label=GitHub+Pages&message=API+reference&color=00add8
