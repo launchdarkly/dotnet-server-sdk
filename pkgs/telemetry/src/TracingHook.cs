@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
-using LaunchDarkly.Sdk.Internal;
+using System.Reflection;
 using LaunchDarkly.Sdk.Server.Hooks;
 
 namespace LaunchDarkly.Sdk.Server.Telemetry
@@ -72,11 +72,13 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
     public class TracingHook : Hook
     {
 
+        private static readonly AssemblyName AssemblyName = typeof(TracingHook).GetTypeInfo().Assembly.GetName();
+
         /// <summary>
-        /// Used to create new activities if the TracingHook is configured to create them.
+        /// Used as the source of activities if the TracingHook is configured to create them.
         /// </summary>
-        private static readonly ActivitySource Source = new ActivitySource("LaunchDarkly.ServerSdk",
-            AssemblyVersions.GetAssemblyVersionForType(typeof(LdClient)).ToString());
+        private static readonly ActivitySource Source = new ActivitySource(AssemblyName.Name,
+            AssemblyName.Version.ToString());
 
         /// <summary>
         /// Returns the name of the ActivitySource that the TracingHook uses to generate Activities.
