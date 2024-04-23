@@ -19,4 +19,4 @@ runs:
 
     - name: Build
       shell: bash
-      run: dotnet build /p:Configuration=Release ${{ inputs.project_file }}
+      run: dotnet build -p:Configuration=Release ${{ inputs.project_file }}
