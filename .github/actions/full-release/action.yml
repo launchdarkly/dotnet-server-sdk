@@ -54,7 +54,7 @@ runs:
     - name: Sign DLLs
       uses: launchdarkly/gh-actions/actions/sign-dlls@sign-dlls-v1.0.0
       with:
-        build_output_path: ${{ inputs.build_output_path }}
+        build_configuration_path: ${{ inputs.build_output_path }}
         dll_name: ${{ inputs.dll_name }}
 
     - name: Publish Nupkg
