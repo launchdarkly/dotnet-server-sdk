@@ -95,14 +95,14 @@ We encourage pull requests and other contributions from the community. Check out
 [server-nuget-link]: https://www.nuget.org/packages/LaunchDarkly.ServerSdk/
 [server-ci-badge]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/sdk-server-ci.yml/badge.svg
 [server-ci-link]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/sdk-server-ci.yml
-[server-issues]: TODO
+[server-issues]: https://github.com/launchdarkly/dotnet-server-sdk/issues?q=is%3Aissue+is%3Aopen+label%3A%22package%3A+sdk%2Fserver%22+
 [server-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/
 
 [telemetry-nuget-badge]: https://img.shields.io/nuget/v/LaunchDarkly.ServerSdk.Telemetry.svg?style=flat-square
 [telemetry-nuget-link]: https://www.nuget.org/packages/LaunchDarkly.ServerSdk.Telemetry/
 [telemetry-ci-badge]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/telemetry-ci.yml/badge.svg
 [telemetry-ci-link]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/telemetry-ci.yml
-[telemetry-issues]: TODO
+[telemetry-issues]: https://github.com/launchdarkly/dotnet-server-sdk/issues?q=is%3Aissue+is%3Aopen+label%3A%22package%3A+telemetry%22+
 [telemetry-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/
 
 [api-docs-badge]: https://img.shields.io/static/v1?label=GitHub+Pages&message=API+reference&color=00add8

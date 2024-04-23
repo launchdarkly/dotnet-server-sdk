@@ -1,8 +1,8 @@
 ---
-name: Feature request
+name: LaunchDarkly.ServerSdk Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: 'package: sdk/server, feature'
 assignees: ''
 
 ---
