@@ -1,8 +1,8 @@
 ---
-name: Bug report
+name: LaunchDarkly.ServerSdk.Telemetry Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: 'package: telemetry, bug'
 assignees: ''
 
 ---
@@ -28,10 +28,10 @@ If applicable, add any log output related to your problem.
 The version of this SDK that you are using.
 
 **Language version, developer tools**
-For instance, Go 1.11 or Ruby 2.5.3. If you are using a language that requires a separate compiler, such as C, please include the name and version of the compiler too.
+For instance, .NET 6.0. 
 
 **OS/platform**
-For instance, Ubuntu 16.04, Windows 10, or Android 4.0.3. If your code is running in a browser, please also include the browser type and version.
+For instance, Ubuntu 16.04, Windows 10, or Android 4.0.3. 
 
 **Additional context**
 Add any other context about the problem here.

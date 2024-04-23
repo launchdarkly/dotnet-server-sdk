@@ -1,8 +1,8 @@
 ---
-name: Feature request
+name: LaunchDarkly.ServerSdk.Telemetry Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: 'package: telemetry, feature'
 assignees: ''
 
 ---
