@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class SeriesDataBuilder | LaunchDarkly Dotnet Server SDK </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class SeriesDataBuilder | LaunchDarkly Dotnet Server SDK ">
+    
+    <meta name="description" content="Builder for constructing series data, which is passed to between  methods. Use of this builder is optional; it is provided for convenience.           // ImmutableDictionary passed into Hook method:          var data = ...          // Add a new key and return an updated dictionary:          return new SeriesDataBuilder(data).Set(&quot;key&quot;, &quot;value&quot;).Build();">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="LaunchDarkly Dotnet Server SDK">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder">
+
+
+
+  <h1 id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder" class="text-break">Class SeriesDataBuilder</h1>
+  <div class="markdown level0 summary"><p>Builder for constructing series data, which is passed to between <a class="xref" href="LaunchDarkly.Sdk.Server.Hooks.Hook.html">Hook</a> methods.</p>
+<p>Use of this builder is optional; it is provided for convenience.</p>
+<example>
+         <pre><code class="lang-csharp">// ImmutableDictionary passed into Hook method:
+         var data = ...
+         // Add a new key and return an updated dictionary:
+         return new SeriesDataBuilder(data).Set("key", "value").Build();</code></pre></example>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">SeriesDataBuilder</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.html">LaunchDarkly</a>.<a class="xref" href="LaunchDarkly.Sdk.html">Sdk</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.html">Server</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.Hooks.html">Hooks</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class SeriesDataBuilder</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/main/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.%23ctor%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/main/pkgs/sdk/server/src/Hooks/SeriesDataBuilder.cs/#L35">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor_" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor">SeriesDataBuilder()</h4>
+  <div class="markdown level1 summary"><p>Constructs a new builder with empty series data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SeriesDataBuilder()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/main/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor_System_Collections_Immutable_ImmutableDictionary_System_String_System_Object__.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.%23ctor(System.Collections.Immutable.ImmutableDictionary%7BSystem.String%2CSystem.Object%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/main/pkgs/sdk/server/src/Hooks/SeriesDataBuilder.cs/#L27">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor_" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder__ctor_System_Collections_Immutable_ImmutableDictionary_System_String_System_Object__" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.#ctor(System.Collections.Immutable.ImmutableDictionary{System.String,System.Object})">SeriesDataBuilder(ImmutableDictionary&lt;string, object&gt;)</h4>
+  <div class="markdown level1 summary"><p>Constructs a new builder from pre-existing series data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SeriesDataBuilder(ImmutableDictionary&lt;string, object&gt; dictionary)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutabledictionary-2">ImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;</td>
+        <td><span class="parametername">dictionary</span></td>
+        <td><p>pre-existing series data</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/main/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Build.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/main/pkgs/sdk/server/src/Hooks/SeriesDataBuilder.cs/#L54">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Build" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Build">Build()</h4>
+  <div class="markdown level1 summary"><p>Returns a SeriesData based on the current state of the builder.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableDictionary&lt;string, object&gt; Build()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutabledictionary-2">ImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;</td>
+        <td><p>new series data</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/main/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Set_System_String_System_Object_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set(System.String%2CSystem.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/main/pkgs/sdk/server/src/Hooks/SeriesDataBuilder.cs/#L44">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Set_" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder_Set_System_String_System_Object_" data-uid="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.Set(System.String,System.Object)">Set(string, object)</h4>
+  <div class="markdown level1 summary"><p>Sets a key-value pair.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SeriesDataBuilder Set(string key, object value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>key of value</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>the value to set</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder.html">SeriesDataBuilder</a></td>
+        <td><p>this builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/main/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Hooks_SeriesDataBuilder.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Hooks.SeriesDataBuilder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/main/pkgs/sdk/server/src/Hooks/SeriesDataBuilder.cs/#L19" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
