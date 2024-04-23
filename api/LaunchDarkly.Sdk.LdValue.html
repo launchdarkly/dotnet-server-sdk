@@ -1,0 +1,1462 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Struct LdValue | LaunchDarkly Dotnet Server SDK Telemetry Integration </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Struct LdValue | LaunchDarkly Dotnet Server SDK Telemetry Integration ">
+    
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="LaunchDarkly Dotnet Server SDK Telemetry Integration">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.LdValue">
+
+
+
+  <h1 id="LaunchDarkly_Sdk_LdValue" data-uid="LaunchDarkly.Sdk.LdValue" class="text-break">Struct LdValue</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.html">LaunchDarkly</a>.<a class="xref" href="LaunchDarkly.Sdk.html">Sdk</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.CommonSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_LdValue_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonConverter(typeof(LdJsonConverters.LdValueConverter))]
+public struct LdValue : IEquatable&lt;LdValue&gt;, IJsonSerializable</code></pre>
+  </div>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsBool_" data-uid="LaunchDarkly.Sdk.LdValue.AsBool*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsBool" data-uid="LaunchDarkly.Sdk.LdValue.AsBool">AsBool</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool AsBool { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsDouble_" data-uid="LaunchDarkly.Sdk.LdValue.AsDouble*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsDouble" data-uid="LaunchDarkly.Sdk.LdValue.AsDouble">AsDouble</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double AsDouble { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsFloat_" data-uid="LaunchDarkly.Sdk.LdValue.AsFloat*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsFloat" data-uid="LaunchDarkly.Sdk.LdValue.AsFloat">AsFloat</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float AsFloat { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsInt_" data-uid="LaunchDarkly.Sdk.LdValue.AsInt*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsInt" data-uid="LaunchDarkly.Sdk.LdValue.AsInt">AsInt</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int AsInt { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsLong_" data-uid="LaunchDarkly.Sdk.LdValue.AsLong*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsLong" data-uid="LaunchDarkly.Sdk.LdValue.AsLong">AsLong</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AsLong { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsString_" data-uid="LaunchDarkly.Sdk.LdValue.AsString*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsString" data-uid="LaunchDarkly.Sdk.LdValue.AsString">AsString</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string AsString { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Count_" data-uid="LaunchDarkly.Sdk.LdValue.Count*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Count" data-uid="LaunchDarkly.Sdk.LdValue.Count">Count</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Count { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Dictionary_" data-uid="LaunchDarkly.Sdk.LdValue.Dictionary*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Dictionary" data-uid="LaunchDarkly.Sdk.LdValue.Dictionary">Dictionary</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableDictionary&lt;string, LdValue&gt; Dictionary { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutabledictionary-2">ImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_IsInt_" data-uid="LaunchDarkly.Sdk.LdValue.IsInt*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_IsInt" data-uid="LaunchDarkly.Sdk.LdValue.IsInt">IsInt</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsInt { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_IsNull_" data-uid="LaunchDarkly.Sdk.LdValue.IsNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_IsNull" data-uid="LaunchDarkly.Sdk.LdValue.IsNull">IsNull</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsNull { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_IsNumber_" data-uid="LaunchDarkly.Sdk.LdValue.IsNumber*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_IsNumber" data-uid="LaunchDarkly.Sdk.LdValue.IsNumber">IsNumber</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsNumber { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_IsString_" data-uid="LaunchDarkly.Sdk.LdValue.IsString*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_IsString" data-uid="LaunchDarkly.Sdk.LdValue.IsString">IsString</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsString { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_List_" data-uid="LaunchDarkly.Sdk.LdValue.List*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_List" data-uid="LaunchDarkly.Sdk.LdValue.List">List</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableList&lt;LdValue&gt; List { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablelist-1">ImmutableList</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Null_" data-uid="LaunchDarkly.Sdk.LdValue.Null*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Null" data-uid="LaunchDarkly.Sdk.LdValue.Null">Null</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Null { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Type_" data-uid="LaunchDarkly.Sdk.LdValue.Type*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Type" data-uid="LaunchDarkly.Sdk.LdValue.Type">Type</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdValueType Type { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValueType.html">LdValueType</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_ArrayFrom_" data-uid="LaunchDarkly.Sdk.LdValue.ArrayFrom*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_ArrayFrom_System_Collections_Generic_IEnumerable_LaunchDarkly_Sdk_LdValue__" data-uid="LaunchDarkly.Sdk.LdValue.ArrayFrom(System.Collections.Generic.IEnumerable{LaunchDarkly.Sdk.LdValue})">ArrayFrom(IEnumerable&lt;LdValue&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue ArrayFrom(IEnumerable&lt;LdValue&gt; values)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</td>
+        <td><span class="parametername">values</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_ArrayOf_" data-uid="LaunchDarkly.Sdk.LdValue.ArrayOf*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_ArrayOf_LaunchDarkly_Sdk_LdValue___" data-uid="LaunchDarkly.Sdk.LdValue.ArrayOf(LaunchDarkly.Sdk.LdValue[])">ArrayOf(params LdValue[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue ArrayOf(params LdValue[] values)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>[]</td>
+        <td><span class="parametername">values</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsDictionary_" data-uid="LaunchDarkly.Sdk.LdValue.AsDictionary*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsDictionary__1_LaunchDarkly_Sdk_LdValue_Converter___0__" data-uid="LaunchDarkly.Sdk.LdValue.AsDictionary``1(LaunchDarkly.Sdk.LdValue.Converter{``0})">AsDictionary&lt;T&gt;(Converter&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyDictionary&lt;string, T&gt; AsDictionary&lt;T&gt;(LdValue.Converter&lt;T&gt; desiredType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>.<a class="xref" href="LaunchDarkly.Sdk.LdValue.Converter-1.html">Converter</a>&lt;T&gt;</td>
+        <td><span class="parametername">desiredType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlydictionary-2">IReadOnlyDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_AsList_" data-uid="LaunchDarkly.Sdk.LdValue.AsList*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_AsList__1_LaunchDarkly_Sdk_LdValue_Converter___0__" data-uid="LaunchDarkly.Sdk.LdValue.AsList``1(LaunchDarkly.Sdk.LdValue.Converter{``0})">AsList&lt;T&gt;(Converter&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;T&gt; AsList&lt;T&gt;(LdValue.Converter&lt;T&gt; desiredType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>.<a class="xref" href="LaunchDarkly.Sdk.LdValue.Converter-1.html">Converter</a>&lt;T&gt;</td>
+        <td><span class="parametername">desiredType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_BuildArray_" data-uid="LaunchDarkly.Sdk.LdValue.BuildArray*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_BuildArray" data-uid="LaunchDarkly.Sdk.LdValue.BuildArray">BuildArray()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue.ArrayBuilder BuildArray()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>.<a class="xref" href="LaunchDarkly.Sdk.LdValue.ArrayBuilder.html">ArrayBuilder</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_BuildObject_" data-uid="LaunchDarkly.Sdk.LdValue.BuildObject*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_BuildObject" data-uid="LaunchDarkly.Sdk.LdValue.BuildObject">BuildObject()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue.ObjectBuilder BuildObject()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>.<a class="xref" href="LaunchDarkly.Sdk.LdValue.ObjectBuilder.html">ObjectBuilder</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Equals_" data-uid="LaunchDarkly.Sdk.LdValue.Equals*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Equals_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.LdValue.Equals(LaunchDarkly.Sdk.LdValue)">Equals(LdValue)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(LdValue o)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">o</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Equals_" data-uid="LaunchDarkly.Sdk.LdValue.Equals*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Equals_System_Object_" data-uid="LaunchDarkly.Sdk.LdValue.Equals(System.Object)">Equals(object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object o)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">o</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.equals">ValueType.Equals(object)</a></div>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Get_" data-uid="LaunchDarkly.Sdk.LdValue.Get*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Get_System_Int32_" data-uid="LaunchDarkly.Sdk.LdValue.Get(System.Int32)">Get(int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdValue Get(int index)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">index</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Get_" data-uid="LaunchDarkly.Sdk.LdValue.Get*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Get_System_String_" data-uid="LaunchDarkly.Sdk.LdValue.Get(System.String)">Get(string)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdValue Get(string key)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">key</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_GetHashCode_" data-uid="LaunchDarkly.Sdk.LdValue.GetHashCode*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_GetHashCode" data-uid="LaunchDarkly.Sdk.LdValue.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode">ValueType.GetHashCode()</a></div>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_ObjectFrom_" data-uid="LaunchDarkly.Sdk.LdValue.ObjectFrom*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_ObjectFrom_System_Collections_Generic_IReadOnlyDictionary_System_String_LaunchDarkly_Sdk_LdValue__" data-uid="LaunchDarkly.Sdk.LdValue.ObjectFrom(System.Collections.Generic.IReadOnlyDictionary{System.String,LaunchDarkly.Sdk.LdValue})">ObjectFrom(IReadOnlyDictionary&lt;string, LdValue&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue ObjectFrom(IReadOnlyDictionary&lt;string, LdValue&gt; dictionary)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlydictionary-2">IReadOnlyDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a>&gt;</td>
+        <td><span class="parametername">dictionary</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Boolean_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Boolean)">Of(bool)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Of(bool value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Double_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Double)">Of(double)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Of(double value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Int32_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Int32)">Of(int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Of(int value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Int64_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Int64)">Of(long)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Of(long value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_Single_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.Single)">Of(float)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Of(float value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Of_" data-uid="LaunchDarkly.Sdk.LdValue.Of*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Of_System_String_" data-uid="LaunchDarkly.Sdk.LdValue.Of(System.String)">Of(string)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Of(string value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_Parse_" data-uid="LaunchDarkly.Sdk.LdValue.Parse*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_Parse_System_String_" data-uid="LaunchDarkly.Sdk.LdValue.Parse(System.String)">Parse(string)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LdValue Parse(string jsonString)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">jsonString</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_ToJsonString_" data-uid="LaunchDarkly.Sdk.LdValue.ToJsonString*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_ToJsonString" data-uid="LaunchDarkly.Sdk.LdValue.ToJsonString">ToJsonString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ToJsonString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_ToString_" data-uid="LaunchDarkly.Sdk.LdValue.ToString*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_ToString" data-uid="LaunchDarkly.Sdk.LdValue.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.tostring">ValueType.ToString()</a></div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_op_Equality_" data-uid="LaunchDarkly.Sdk.LdValue.op_Equality*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_op_Equality_LaunchDarkly_Sdk_LdValue_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.LdValue.op_Equality(LaunchDarkly.Sdk.LdValue,LaunchDarkly.Sdk.LdValue)">operator ==(LdValue, LdValue)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(LdValue a, LdValue b)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">a</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">b</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_LdValue_op_Inequality_" data-uid="LaunchDarkly.Sdk.LdValue.op_Inequality*"></a>
+  <h4 id="LaunchDarkly_Sdk_LdValue_op_Inequality_LaunchDarkly_Sdk_LdValue_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.LdValue.op_Inequality(LaunchDarkly.Sdk.LdValue,LaunchDarkly.Sdk.LdValue)">operator !=(LdValue, LdValue)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(LdValue a, LdValue b)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">a</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">b</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
+  </div>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Json.IJsonSerializable.html">IJsonSerializable</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
