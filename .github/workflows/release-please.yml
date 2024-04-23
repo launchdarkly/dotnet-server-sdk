@@ -38,6 +38,8 @@ jobs:
           build_output_path: 'pkgs/sdk/server/src/bin/Release/'
           dll_name: 'LaunchDarkly.ServerSdk.dll'
           dry_run: false
+          aws_role: ${{ vars.AWS_ROLE_ARN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   release-telemetry:
     runs-on: ubuntu-latest
@@ -58,3 +60,5 @@ jobs:
           build_output_path: 'pkgs/telemetry/src/bin/Release/'
           dll_name: 'LaunchDarkly.ServerSdk.Telemetry.dll'
           dry_run: false
+          aws_role: ${{ vars.AWS_ROLE_ARN }}
+          token: ${{ secrets.GITHUB_TOKEN }}

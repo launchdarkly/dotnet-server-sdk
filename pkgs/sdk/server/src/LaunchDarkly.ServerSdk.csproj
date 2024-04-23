@@ -53,7 +53,7 @@
 
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <AssemblyOriginatorKeyFile>../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../../../../LaunchDarkly.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
