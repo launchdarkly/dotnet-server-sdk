@@ -60,6 +60,7 @@ runs:
     - name: Publish Nupkg
       uses: ./.github/actions/publish-package
       with:
+        project_file: ${{ inputs.project_file }}
         dry_run: ${{ inputs.dry_run }}
 
     - name: Build Documentation
@@ -68,6 +69,7 @@ runs:
         workspace_path: ${{ inputs.workspace_path }}
 
     - name: Publish Documentation
+      if: ${{ inputs.dry_run == 'false' }}
       uses: ./.github/actions/publish-docs
       with:
         workspace_path: ${{ inputs.workspace_path }}
