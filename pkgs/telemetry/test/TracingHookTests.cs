@@ -55,7 +55,7 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
         {
             ICollection<Activity> exportedItems = new Collection<Activity>();
 
-            var tracerProvider = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
+            _ = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
                 .AddSource(TracingHook.ActivitySourceName)
                 .AddInMemoryExporter(exportedItems)
                 .Build();
@@ -102,7 +102,7 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
 
             var testSource = new ActivitySource("test-source", "1.0.0");
 
-            var tracerProvider = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
+            _ = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
                 .AddSource("test-source")
                 .AddSource(TracingHook.ActivitySourceName)
                 .SetResourceBuilder(
@@ -157,15 +157,15 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
         {
             ICollection<Activity> exportedItems = new Collection<Activity>();
 
-            var testSource = new ActivitySource("test-source", "1.0.0");
-
-            var tracerProvider = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
+            _ = OpenTelemetry.Sdk.CreateTracerProviderBuilder()
                 .AddSource("test-source")
                 .SetResourceBuilder(
                     ResourceBuilder.CreateDefault()
                         .AddService(serviceName: "test-source", serviceVersion: "1.0.0"))
                 .AddInMemoryExporter(exportedItems)
                 .Build();
+
+            var testSource = new ActivitySource("test-source", "1.0.0");
 
             var hookUnderTest = TracingHook.Builder().IncludeVariant(includeVariant).Build();
             var featureKey = "feature-key";
