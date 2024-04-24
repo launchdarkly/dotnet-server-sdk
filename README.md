@@ -66,7 +66,7 @@ Public Key Token: f86add69004e6885
 
 Read our [documentation](https://docs.launchdarkly.com) for in-depth instructions on configuring and using LaunchDarkly. You can also head straight to the [complete reference guide for this SDK](https://docs.launchdarkly.com/sdk/server-side/dotnet).
 
-The authoritative description of all types, properties, and methods is in the [generated API documentation](https://launchdarkly.github.io/dotnet-server-sdk/).
+The authoritative description of all types, properties, and methods is in the [generated API documentation](https://launchdarkly.github.io/dotnet-server-sdk/pkgs/sdk/server/).
 
 ## Testing
  
@@ -96,13 +96,13 @@ We encourage pull requests and other contributions from the community. Check out
 [server-ci-badge]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/sdk-server-ci.yml/badge.svg
 [server-ci-link]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/sdk-server-ci.yml
 [server-issues]: https://github.com/launchdarkly/dotnet-server-sdk/issues?q=is%3Aissue+is%3Aopen+label%3A%22package%3A+sdk%2Fserver%22+
-[server-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/
+[server-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/pkgs/sdk/server/
 
 [telemetry-nuget-badge]: https://img.shields.io/nuget/v/LaunchDarkly.ServerSdk.Telemetry.svg?style=flat-square
 [telemetry-nuget-link]: https://www.nuget.org/packages/LaunchDarkly.ServerSdk.Telemetry/
 [telemetry-ci-badge]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/telemetry-ci.yml/badge.svg
 [telemetry-ci-link]: https://github.com/launchdarkly/dotnet-server-sdk/actions/workflows/telemetry-ci.yml
 [telemetry-issues]: https://github.com/launchdarkly/dotnet-server-sdk/issues?q=is%3Aissue+is%3Aopen+label%3A%22package%3A+telemetry%22+
-[telemetry-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/
+[telemetry-api-docs-link]: https://launchdarkly.github.io/dotnet-server-sdk/pkgs/telemetry/
 
 [api-docs-badge]: https://img.shields.io/static/v1?label=GitHub+Pages&message=API+reference&color=00add8
