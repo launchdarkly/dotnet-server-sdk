@@ -2,7 +2,7 @@
 
 The LaunchDarkly Server-Side SDK for .NET is designed primarily for use in multi-user systems such as web servers and applications. It follows the server-side LaunchDarkly model for multi-user contexts. It is not intended for use in desktop and embedded systems applications.
 
-For using LaunchDarkly in *client-side* .NET applications, including mobile (Xamarin) applications and desktop applications, refer to our [Xamarin SDK](https://github.com/launchdarkly/xamarin-client-sdk).
+For using LaunchDarkly in *client-side* .NET applications, including mobile applications and desktop applications, refer to our [.NET Client SDK](https://github.com/launchdarkly/dotnet-client-sdk).
 
 ## Packages
 
