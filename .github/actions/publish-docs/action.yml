@@ -15,4 +15,5 @@ runs:
       name: 'Publish to Github pages'
       with:
         docs_path: ${{ inputs.workspace_path }}/docs
+        output_path: ${{ inputs.workspace_path }}
         github_token: ${{ inputs.token }}
