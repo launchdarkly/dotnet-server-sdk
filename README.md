@@ -6,13 +6,13 @@ For using LaunchDarkly in *client-side* .NET applications, including mobile appl
 
 ## Packages
 
-| SDK Packages                     | NuGet                                                   | API Docs                                                    | Issues                        | Tests                                                      |
-|----------------------------------|---------------------------------------------------------|-------------------------------------------------------------|-------------------------------|------------------------------------------------------------|
-| LaunchDarkly.ServerSdk           | [![NuGet][server-nuget-badge]][server-nuget-link]       | [![Documentation][api-docs-badge]][server-api-docs-link]    | [Server SDK][server-issues]   | [![Actions Status][server-ci-badge]][server-ci-link]       |
+| SDK Packages                              | NuGet                                                   | API Docs                                                    | Issues                        | Tests                                                      |
+|-------------------------------------------|---------------------------------------------------------|-------------------------------------------------------------|-------------------------------|------------------------------------------------------------|
+| [LaunchDarkly.ServerSdk](pkgs/sdk/server) | [![NuGet][server-nuget-badge]][server-nuget-link]       | [![Documentation][api-docs-badge]][server-api-docs-link]    | [Server SDK][server-issues]   | [![Actions Status][server-ci-badge]][server-ci-link]       |
 
-| Telemetry Packages               | NuGet                                                   | API Docs                                                    | Issues                        | Tests                                                      |
-|----------------------------------|---------------------------------------------------------|-------------------------------------------------------------|-------------------------------|------------------------------------------------------------|
-| LaunchDarkly.ServerSdk.Telemetry | [![NuGet][telemetry-nuget-badge]][telemetry-nuget-link] | [![Documentation][api-docs-badge]][telemetry-api-docs-link] | [Telemetry][telemetry-issues] | [![Actions Status][telemetry-ci-badge]][telemetry-ci-link] |
+| Telemetry Packages                                 | NuGet                                                   | API Docs                                                    | Issues                        | Tests                                                      |
+|----------------------------------------------------|---------------------------------------------------------|-------------------------------------------------------------|-------------------------------|------------------------------------------------------------|
+| [LaunchDarkly.ServerSdk.Telemetry](pkgs/telemetry) | [![NuGet][telemetry-nuget-badge]][telemetry-nuget-link] | [![Documentation][api-docs-badge]][telemetry-api-docs-link] | [Telemetry][telemetry-issues] | [![Actions Status][telemetry-ci-badge]][telemetry-ci-link] |
 
 ## Organization
 
