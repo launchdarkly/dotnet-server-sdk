@@ -151,7 +151,7 @@ namespace LaunchDarkly.Sdk.Server.Telemetry
             var parentContext = Activity.Current?.Context ?? new ActivityContext();
 
             // This is an internal activity because LaunchDarkly SDK usage is an internal operation of an application.
-            var activity = Source.StartActivity( context.Method, ActivityKind.Internal, parentContext, attrs);
+            var activity = Source.StartActivity(context.Method, ActivityKind.Internal, parentContext, attrs);
             return new SeriesDataBuilder(data).Set(ActivityFieldKey, activity).Build();
         }
 
