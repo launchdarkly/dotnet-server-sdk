@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!--x-release-please-start-version-->
-    <Version>0.2.1</Version>
+    <Version>1.0.0</Version>
     <!--x-release-please-end-->
     <!-- The BUILDFRAMEWORKS variable allows us to override the target frameworks with a
          single framework that we are testing; this allows us to test with older SDK

@@ -1,4 +1,4 @@
 {
   "pkgs/sdk/server": "8.4.0",
-  "pkgs/telemetry": "0.2.1"
+  "pkgs/telemetry": "1.0.0"
 }
