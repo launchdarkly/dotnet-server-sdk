@@ -1,0 +1,536 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class LdClientContext | LaunchDarkly Dotnet Server SDK </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class LdClientContext | LaunchDarkly Dotnet Server SDK ">
+    
+    <meta name="description" content="Encapsulates SDK client context when creating components.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="LaunchDarkly Dotnet Server SDK">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext">
+
+
+
+  <h1 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext" class="text-break">Class LdClientContext</h1>
+  <div class="markdown level0 summary"><p>Encapsulates SDK client context when creating components.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">LdClientContext</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.html">LaunchDarkly</a>.<a class="xref" href="LaunchDarkly.Sdk.html">Sdk</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.html">Server</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.html">Subsystems</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class LdClientContext</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>
+The SDK passes this object to component factories/configuration builders that implement the
+<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a> interface, to provide them with necessary configuration
+properties, as well as references to other components that they may need to access.
+</p>
+<p>
+This class also has non-public properties that are relevant only to internal SDK implementation
+code and are not accessible to custom components.
+</p>
+</div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext__ctor_System_String_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.%23ctor(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L138">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext__ctor_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext__ctor_System_String_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.#ctor(System.String)">LdClientContext(string)</h4>
+  <div class="markdown level1 summary"><p>Basic constructor that sets only the SDK key and uses defaults for all other properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdClientContext(string sdkKey)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">sdkKey</span></td>
+        <td><p>the SDK key</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext__ctor_System_String_LaunchDarkly_Sdk_Server_Subsystems_IDataSourceUpdates_LaunchDarkly_Sdk_Server_Subsystems_IDataStoreUpdates_LaunchDarkly_Sdk_Server_Subsystems_HttpConfiguration_LaunchDarkly_Logging_Logger_System_Boolean_LaunchDarkly_Sdk_Server_Interfaces_ServiceEndpoints_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.%23ctor(System.String%2CLaunchDarkly.Sdk.Server.Subsystems.IDataSourceUpdates%2CLaunchDarkly.Sdk.Server.Subsystems.IDataStoreUpdates%2CLaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration%2CLaunchDarkly.Logging.Logger%2CSystem.Boolean%2CLaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L116">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext__ctor_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.#ctor*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext__ctor_System_String_LaunchDarkly_Sdk_Server_Subsystems_IDataSourceUpdates_LaunchDarkly_Sdk_Server_Subsystems_IDataStoreUpdates_LaunchDarkly_Sdk_Server_Subsystems_HttpConfiguration_LaunchDarkly_Logging_Logger_System_Boolean_LaunchDarkly_Sdk_Server_Interfaces_ServiceEndpoints_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.#ctor(System.String,LaunchDarkly.Sdk.Server.Subsystems.IDataSourceUpdates,LaunchDarkly.Sdk.Server.Subsystems.IDataStoreUpdates,LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration,LaunchDarkly.Logging.Logger,System.Boolean,LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints)">LdClientContext(string, IDataSourceUpdates, IDataStoreUpdates, HttpConfiguration, Logger, bool, ServiceEndpoints)</h4>
+  <div class="markdown level1 summary"><p>Constructs a new instance with only the public properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdClientContext(string sdkKey, IDataSourceUpdates dataSourceUpdates, IDataStoreUpdates dataStoreUpdates, HttpConfiguration http, Logger logger, bool offline, ServiceEndpoints serviceEndpoints)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">sdkKey</span></td>
+        <td><p>the SDK key</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSourceUpdates.html">IDataSourceUpdates</a></td>
+        <td><span class="parametername">dataSourceUpdates</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html#LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataSourceUpdates">DataSourceUpdates</a>, normally null</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStoreUpdates.html">IDataStoreUpdates</a></td>
+        <td><span class="parametername">dataStoreUpdates</span></td>
+        <td><p>value for <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html#LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataStoreUpdates">DataStoreUpdates</a>, normally null</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html">HttpConfiguration</a></td>
+        <td><span class="parametername">http</span></td>
+        <td><p>the HTTP configuration; if null, a default configuration is used</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Logging.Logger.html">Logger</a></td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>the base logger; if null, logging is disabled</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">offline</span></td>
+        <td><p>true if the SDK should be entirely offline</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints.html">ServiceEndpoints</a></td>
+        <td><span class="parametername">serviceEndpoints</span></td>
+        <td><p>custom service endpoints; if null, defaults are used</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext__ctor_System_String_LaunchDarkly_Sdk_Server_Subsystems_IDataSourceUpdates_LaunchDarkly_Sdk_Server_Subsystems_IDataStoreUpdates_LaunchDarkly_Sdk_Server_Subsystems_HttpConfiguration_LaunchDarkly_Logging_Logger_System_Boolean_LaunchDarkly_Sdk_Server_Interfaces_ServiceEndpoints__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This constructor is only for convenience in testing. It does not set internal properties that
+are normally computed in the LdClient constructor.</p>
+</div>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataSourceUpdates.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.DataSourceUpdates%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L33">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataSourceUpdates_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.DataSourceUpdates*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataSourceUpdates" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.DataSourceUpdates">DataSourceUpdates</h4>
+  <div class="markdown level1 summary"><p>A component that <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a> implementations use to deliver data and status
+updates to the SDK.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDataSourceUpdates DataSourceUpdates { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSourceUpdates.html">IDataSourceUpdates</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataSourceUpdates_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This property is only set when the SDK is calling an <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a> factory.
+Otherwise it is null.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataStoreUpdates.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.DataStoreUpdates%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L43">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataStoreUpdates_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.DataStoreUpdates*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataStoreUpdates" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.DataStoreUpdates">DataStoreUpdates</h4>
+  <div class="markdown level1 summary"><p>A component that <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a> implementations use to deliver status updates to
+the SDK.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDataStoreUpdates DataStoreUpdates { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStoreUpdates.html">IDataStoreUpdates</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_DataStoreUpdates_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This property is only set when the SDK is calling an <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a> factory.
+Otherwise it is null.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Http.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Http%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L58">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Http_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Http*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Http" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Http">Http</h4>
+  <div class="markdown level1 summary"><p>The HTTP configuration for the current client instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HttpConfiguration Http { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.HttpConfiguration.html">HttpConfiguration</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Http_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+All SDK components that make HTTP requests must use this configuration unless there is a specific
+reason they cannot (for instance, streaming connections cannot use the ConnectTimeout property).
+</p>
+<p>
+This property is null during early stages of SDK initialization where the HTTP configuration has
+not yet been created.
+</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Logger.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Logger%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L77">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Logger_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Logger*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Logger" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Logger">Logger</h4>
+  <div class="markdown level1 summary"><p>The base logger for all SDK components to use.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Logger Logger { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Logging.Logger.html">Logger</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Logger_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+Components should use the methods of the <a href="https://github.com/launchdarkly/dotnet-logging">LaunchDarkly.Logging</a>
+API to write log messages which will be output or discarded as appropriate by the logging
+framework. This is the main logger for the SDK; components that want to tag their log messages
+with a more specific logger name can use the <code>SubLogger</code> method: for instance, if the
+base logger's name is "LaunchDarkly.Sdk", an event-processing component could use
+<code>SubLogger("Events")</code> to get a logger whose name is "LaunchDarkly.Sdk.Events".
+</p>
+<p>
+This property will never be null; if logging is disabled, it will be set to a stub logger
+that produces no output.
+</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Offline.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Offline%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L82">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Offline_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Offline*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_Offline" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.Offline">Offline</h4>
+  <div class="markdown level1 summary"><p>True if the SDK was configured to be completely offline.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Offline { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_SdkKey.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.SdkKey%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L87">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_SdkKey_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.SdkKey*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_SdkKey" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.SdkKey">SdkKey</h4>
+  <div class="markdown level1 summary"><p>The configured SDK key.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string SdkKey { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_ServiceEndpoints.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.ServiceEndpoints%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L92">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_ServiceEndpoints_" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.ServiceEndpoints*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_ServiceEndpoints" data-uid="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.ServiceEndpoints">ServiceEndpoints</h4>
+  <div class="markdown level1 summary"><p>Defines the base service URIs used by SDK components.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ServiceEndpoints ServiceEndpoints { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ServiceEndpoints.html">ServiceEndpoints</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Subsystems_LdClientContext.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Subsystems.LdClientContext%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Subsystems/LdClientContext.cs/#L23" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

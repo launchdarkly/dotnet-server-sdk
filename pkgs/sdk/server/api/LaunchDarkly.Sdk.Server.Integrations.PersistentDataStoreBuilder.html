@@ -1,0 +1,628 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class PersistentDataStoreBuilder | LaunchDarkly Dotnet Server SDK </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class PersistentDataStoreBuilder | LaunchDarkly Dotnet Server SDK ">
+    
+    <meta name="description" content="A configurable data store factory that adds caching behavior to a persistent data store implementation.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="LaunchDarkly Dotnet Server SDK">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder">
+
+
+
+  <h1 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder" class="text-break">Class PersistentDataStoreBuilder</h1>
+  <div class="markdown level0 summary"><p>A configurable data store factory that adds caching behavior to a persistent data
+store implementation.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">PersistentDataStoreBuilder</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a>&gt;</div>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.html">LaunchDarkly</a>.<a class="xref" href="LaunchDarkly.Sdk.html">Sdk</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.html">Server</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">Integrations</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class PersistentDataStoreBuilder : IComponentConfigurer&lt;IDataStore&gt;, IDiagnosticDescription</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>
+For a persistent data store (e.g. a database integration), the store implementation will
+provide an <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a> for <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStore.html">IPersistentDataStore</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IPersistentDataStoreAsync.html">IPersistentDataStoreAsync</a> that implements the specific data store behavior. The
+SDK then provides additional options for caching; those are defined by this type, which is returned
+by <a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IPersistentDataStore__">PersistentDataStore(IComponentConfigurer&lt;IPersistentDataStore&gt;)</a> or
+<a class="xref" href="LaunchDarkly.Sdk.Server.Components.html#LaunchDarkly_Sdk_Server_Components_PersistentDataStore_LaunchDarkly_Sdk_Server_Subsystems_IComponentConfigurer_LaunchDarkly_Sdk_Server_Subsystems_IPersistentDataStoreAsync__">PersistentDataStore(IComponentConfigurer&lt;IPersistentDataStoreAsync&gt;)</a>. Example usage:
+</p>
+<pre><code class="lang-csharp">var myStore = Components.PersistentDataStore(Redis.FeatureStore())
+    .CacheTtl(TimeSpan.FromSeconds(45));
+var config = Configuration.Builder(sdkKey)
+    .DataStore(myStore)
+    .Build();</code></pre>
+</div>
+  <h3 id="fields">Fields
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DefaultTtl.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DefaultTtl%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L38">View Source</a>
+  </span>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DefaultTtl" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DefaultTtl">DefaultTtl</h4>
+  <div class="markdown level1 summary"><p>The default cache expiration time.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly TimeSpan DefaultTtl</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L137">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_Build_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">Build(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications should not need
+to call this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDataStore Build(LdClientContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>provides configuration properties and other components from the current
+SDK client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataStore.html">IDataStore</a></td>
+        <td><p>a instance of the component type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheForever%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L134">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheForever*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheForever">CacheForever()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the in-memory cache should never expire.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PersistentDataStoreBuilder CacheForever()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+In this mode, data will be written to both the underlying persistent store and the cache,
+but will only ever be read <i>from</i> the persistent store if the SDK is restarted.
+</p>
+<p>
+Use this mode with caution: it means that in a scenario where multiple processes are sharing
+the database, and the current process loses connectivity to LaunchDarkly while other processes
+are still receiving updates and writing them to the database, the current process will have
+stale data.
+</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheMaximumEntries_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheMaximumEntries(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L112">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheMaximumEntries_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheMaximumEntries*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheMaximumEntries_System_Nullable_System_Int32__" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheMaximumEntries(System.Nullable{System.Int32})">CacheMaximumEntries(int?)</h4>
+  <div class="markdown level1 summary"><p>Specifies the maximum number of entries that can be held in the cache at a time.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PersistentDataStoreBuilder CacheMaximumEntries(int? maximumEntries)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">maximumEntries</span></td>
+        <td><p>the maximum number of entries, or null for no limit</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>an updated factory object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheMaximumEntries_System_Nullable_System_Int32___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+If this limit is exceeded, older entries will be evicted from the cache to make room
+for new ones.
+</p>
+<p>
+If this is null, there is no limit on the number of entries.
+</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheMillis_System_Int32_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheMillis(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L87">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheMillis_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheMillis*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheMillis_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheMillis(System.Int32)">CacheMillis(int)</h4>
+  <div class="markdown level1 summary"><p>Shortcut for calling <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html#LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheTime_System_TimeSpan_">CacheTime(TimeSpan)</a> with a time span in milliseconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PersistentDataStoreBuilder CacheMillis(int millis)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">millis</span></td>
+        <td><p>the cache TTL in milliseconds</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheSeconds_System_Int32_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheSeconds(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L95">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheSeconds_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheSeconds*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheSeconds_System_Int32_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheSeconds(System.Int32)">CacheSeconds(int)</h4>
+  <div class="markdown level1 summary"><p>Shortcut for calling <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html#LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheTime_System_TimeSpan_">CacheTime(TimeSpan)</a> with a time span in seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PersistentDataStoreBuilder CacheSeconds(int seconds)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">seconds</span></td>
+        <td><p>the cache TTL in seconds</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheTime_System_TimeSpan_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheTime(System.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L76">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheTime_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheTime*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheTime_System_TimeSpan_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.CacheTime(System.TimeSpan)">CacheTime(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Specifies the cache TTL. Items will expire from the cache after this amount of time from the
+time when they were originally cached.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PersistentDataStoreBuilder CacheTime(TimeSpan cacheTime)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">cacheTime</span></td>
+        <td><p>the cache TTL</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheTime_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+If the value is <code>TimeSpan.Zero</code>, caching is disabled (equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html#LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_NoCaching">NoCaching()</a>).
+</p>
+<p>
+If the value is <code>System.Threading.Timeout.InfiniteTimeSpan</code> (or any negative number), data is
+cached forever (equivalent to <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html#LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_CacheForever">CacheForever()</a>).
+</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L163">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DescribeConfiguration_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DescribeConfiguration*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_DescribeConfiguration_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.DescribeConfiguration(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">DescribeConfiguration(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to inspect the configuration. Applications do not need to call
+this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LdValue DescribeConfiguration(LdClientContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>SDK configuration/component information</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><p>a JSON value</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_NoCaching.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.NoCaching%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L59">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_NoCaching_" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.NoCaching*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_NoCaching" data-uid="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.NoCaching">NoCaching()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the SDK should <i>not</i> use an in-memory cache for the persistent data store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PersistentDataStoreBuilder NoCaching()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder.html">PersistentDataStoreBuilder</a></td>
+        <td><p>the builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder_NoCaching_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This means that every feature flag evaluation will trigger a data store query.</p>
+</div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a>
+  </div>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDiagnosticDescription.html">IDiagnosticDescription</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_PersistentDataStoreBuilder.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.PersistentDataStoreBuilder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/PersistentDataStoreBuilder.cs/#L29" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

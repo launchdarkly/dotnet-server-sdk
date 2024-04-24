@@ -1,0 +1,495 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class TestData | LaunchDarkly Dotnet Server SDK </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class TestData | LaunchDarkly Dotnet Server SDK ">
+    
+    <meta name="description" content="A mechanism for providing dynamically updatable feature flag state in a simplified form to an SDK client in test scenarios.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="LaunchDarkly Dotnet Server SDK">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData">
+
+
+
+  <h1 id="LaunchDarkly_Sdk_Server_Integrations_TestData" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData" class="text-break">Class TestData</h1>
+  <div class="markdown level0 summary"><p>A mechanism for providing dynamically updatable feature flag state in a simplified form to an SDK
+client in test scenarios.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">TestData</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer</a>&lt;<a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a>&gt;</div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.html">LaunchDarkly</a>.<a class="xref" href="LaunchDarkly.Sdk.html">Sdk</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.html">Server</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.html">Integrations</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.ServerSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class TestData : IComponentConfigurer&lt;IDataSource&gt;</code></pre>
+  </div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>
+ Unlike <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileData.html">FileData</a>, this mechanism does not use any external resources. It provides only
+ the data that the application has put into it using the <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_">Update(FlagBuilder)</a> method.
+ </p>
+<p>
+ The example code below uses a simple boolean flag, but more complex configurations are possible using
+ the methods of the <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a> that is returned by <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String_">Flag(string)</a>.
+ <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a> supports many of the ways a flag can be configured on the LaunchDarkly
+ dashboard, but does not currently support 1. rule operators other than "in" and "not in", or 2.
+ percentage rollouts.
+ </p>
+<p>
+ If the same <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a> instance is used to configure multiple <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a>
+ instances, any changes made to the data will propagate to all of the <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a>s.
+ </p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_examples"><strong>Examples</strong></h5>
+  <pre><code class="lang-csharp">var td = TestData.DataSource();
+td.Update(td.Flag("flag-key-1").BooleanFlag().VariationForAll(true));
+
+var config = Configuration.Builder("sdk-key")
+    .DataSource(td)
+    .Build();
+var client = new LdClient(config);
+
+// flags can be updated at any time:
+td.update(testData.flag("flag-key-2")
+    .VariationForUser("some-user-key", true)
+    .FallthroughVariation(false));</code></pre>
+
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_TestData_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.TestData.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/TestData.cs/#L264">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_Build_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Build*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Build_LaunchDarkly_Sdk_Server_Subsystems_LdClientContext_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Build(LaunchDarkly.Sdk.Server.Subsystems.LdClientContext)">Build(LdClientContext)</h4>
+  <div class="markdown level1 summary"><p>Called internally by the SDK to create an implementation instance. Applications should not need
+to call this method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDataSource Build(LdClientContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.LdClientContext.html">LdClientContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>provides configuration properties and other components from the current
+SDK client instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IDataSource.html">IDataSource</a></td>
+        <td><p>a instance of the component type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_TestData_DataSource.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.TestData.DataSource%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/TestData.cs/#L83">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_DataSource_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.DataSource*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_DataSource" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.DataSource">DataSource()</h4>
+  <div class="markdown level1 summary"><p>Creates a new instance of the test data source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static TestData DataSource()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a></td>
+        <td><p>a new configurable test data source</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_DataSource_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>See <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a> for details.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.TestData.Flag(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/TestData.cs/#L108">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Flag*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Flag(System.String)">Flag(string)</h4>
+  <div class="markdown level1 summary"><p>Creates or copies a <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a> for building a test flag configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData.FlagBuilder Flag(string key)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">key</span></td>
+        <td><p>the flag key</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">FlagBuilder</a></td>
+        <td><p>a flag configuration builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+If this flag key has already been defined in this <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a> instance, then
+the builder starts with the same configuration that was last provided for this flag.
+</p>
+<p>
+Otherwise, it starts with a new default configuration in which the flag has <code>true</code>
+and <code>false</code> variations, is <code>true</code> for all contexts when targeting is turned on
+and <code>false</code> otherwise, and currently has targeting turned on. You can change any
+of those properties, and provide more complex behavior, using the
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a> methods.
+</p>
+<p>
+Once you have set the desired configuration, pass the builder to
+<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_">Update(FlagBuilder)</a>.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_">Update(FlagBuilder)</a></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.TestData.Update(LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/TestData.cs/#L141">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_Update_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Update*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.Update(LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder)">Update(FlagBuilder)</h4>
+  <div class="markdown level1 summary"><p>Updates the test data with the specified flag configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData Update(TestData.FlagBuilder flagBuilder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">FlagBuilder</a></td>
+        <td><span class="parametername">flagBuilder</span></td>
+        <td><p>a flag configuration builder</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a></td>
+        <td><p>the same <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a> instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>
+This has the same effect as if a flag were added or modified on the LaunchDarkly dashboard.
+It immediately propagates the flag change to any <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a> instance(s) that
+you have already configured to use this <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a>. If no <a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a>
+has been started yet, it simply adds this flag to the test data which will be provided to any
+<a class="xref" href="LaunchDarkly.Sdk.Server.LdClient.html">LdClient</a> that you subsequently configure.
+</p>
+<p>
+Any subsequent changes to this <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.FlagBuilder.html">TestData.FlagBuilder</a> instance do not affect the test data,
+unless you call <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_">Update(FlagBuilder)</a> again.
+</p>
+</div>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder__seealso">See Also</h5>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Flag_System_String_">Flag(string)</a></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_TestData_UpdateStatus_LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_System_Nullable_LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ErrorInfo__.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.TestData.UpdateStatus(LaunchDarkly.Sdk.Server.Interfaces.DataSourceState%2CSystem.Nullable%7BLaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/TestData.cs/#L249">View Source</a>
+  </span>
+  <a id="LaunchDarkly_Sdk_Server_Integrations_TestData_UpdateStatus_" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.UpdateStatus*"></a>
+  <h4 id="LaunchDarkly_Sdk_Server_Integrations_TestData_UpdateStatus_LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_System_Nullable_LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ErrorInfo__" data-uid="LaunchDarkly.Sdk.Server.Integrations.TestData.UpdateStatus(LaunchDarkly.Sdk.Server.Interfaces.DataSourceState,System.Nullable{LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo})">UpdateStatus(DataSourceState, ErrorInfo?)</h4>
+  <div class="markdown level1 summary"><p>Simulates a change in the data source status.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TestData UpdateStatus(DataSourceState newState, DataSourceStatus.ErrorInfo? newError)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html">DataSourceState</a></td>
+        <td><span class="parametername">newState</span></td>
+        <td><p>one of the constants defined by <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceState.html">DataSourceState</a></p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.html">DataSourceStatus</a>.<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.html">ErrorInfo</a>?</td>
+        <td><span class="parametername">newError</span></td>
+        <td><p>an optional <a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.DataSourceStatus.ErrorInfo.html">DataSourceStatus.ErrorInfo</a> instance</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="LaunchDarkly_Sdk_Server_Integrations_TestData_UpdateStatus_LaunchDarkly_Sdk_Server_Interfaces_DataSourceState_System_Nullable_LaunchDarkly_Sdk_Server_Interfaces_DataSourceStatus_ErrorInfo___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Use this if you want to test the behavior of application code that uses
+<a class="xref" href="LaunchDarkly.Sdk.Server.Interfaces.ILdClient.html#LaunchDarkly_Sdk_Server_Interfaces_ILdClient_DataSourceStatusProvider">DataSourceStatusProvider</a> to track whether the data source is having
+problems (for example, a network failure interrupting the streaming connection). It does
+not actually stop the <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html">TestData</a> data source from working, so even if you have
+simulated an outage, calling <a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.TestData.html#LaunchDarkly_Sdk_Server_Integrations_TestData_Update_LaunchDarkly_Sdk_Server_Integrations_TestData_FlagBuilder_">Update(FlagBuilder)</a> will still send updates.</p>
+</div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="LaunchDarkly.Sdk.Server.Subsystems.IComponentConfigurer-1.html">IComponentConfigurer&lt;T&gt;</a>
+  </div>
+  <h3 id="seealso">See Also</h3>
+  <div class="seealso">
+      <div><a class="xref" href="LaunchDarkly.Sdk.Server.Integrations.FileData.html">FileData</a></div>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/new/cw/sc-241549/separate-api-docs/apiSpec/new?filename=LaunchDarkly_Sdk_Server_Integrations_TestData.md&amp;value=---%0Auid%3A%20LaunchDarkly.Sdk.Server.Integrations.TestData%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/launchdarkly/dotnet-server-sdk/blob/cw/sc-241549/separate-api-docs/pkgs/sdk/server/src/Integrations/TestData.cs/#L53" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
