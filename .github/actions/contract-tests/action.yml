@@ -30,7 +30,7 @@ runs:
       run: dotnet ${{ inputs.service_dll_file }} > test-service.log 2>&1 & disown
 
     - name: Run Contract Tests
-      uses: launchdarkly/gh-actions/actions/contract-tests@2084654c8540515d88e2dc6af2f089f44d4604e7
+      uses: launchdarkly/gh-actions/actions/contract-tests@contract-tests-v1.0.2
       with:
         test_service_port: 8000
         token: ${{ inputs.token }}
