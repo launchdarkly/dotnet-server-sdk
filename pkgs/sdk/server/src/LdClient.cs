@@ -43,6 +43,12 @@ namespace LaunchDarkly.Sdk.Server
         private readonly Logger _evalLog;
         private readonly IHookExecutor _hookExecutor;
 
+        private readonly TimeSpan ExcessiveInitWaitTime = TimeSpan.FromSeconds(60);
+        private const String InitWaitTimeInfo = "Waiting up to {0} milliseconds for LaunchDarkly client to start.";
+        private const String ExcessiveInitWaitTimeWarning =
+            "LaunchDarkly client created with StartWaitTime of {0} milliseconds.  We recommend a timeout of less than {1} milliseconds.";
+        private const String DidNotInitializeTimelyWarning = "Client did not initialize within {0} milliseconds.";
+
         #endregion
 
         #region Public properties
@@ -205,8 +211,11 @@ namespace LaunchDarkly.Sdk.Server
 
             if (!(_dataSource is ComponentsImpl.NullDataSource))
             {
-                _log.Info("Waiting up to {0} milliseconds for LaunchDarkly client to start...",
-                    _configuration.StartWaitTime.TotalMilliseconds);
+                _log.Info(InitWaitTimeInfo, _configuration.StartWaitTime.TotalMilliseconds);
+                if (_configuration.StartWaitTime >= ExcessiveInitWaitTime)
+                {
+                    _log.Warn(ExcessiveInitWaitTimeWarning, _configuration.StartWaitTime.TotalMilliseconds, ExcessiveInitWaitTime.TotalMilliseconds);
+                }
             }
 
             try
