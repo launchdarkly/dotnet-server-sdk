@@ -1,0 +1,750 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class JsonConverterHelpers | LaunchDarkly Dotnet Server SDK </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class JsonConverterHelpers | LaunchDarkly Dotnet Server SDK ">
+    
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="LaunchDarkly Dotnet Server SDK">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers">
+
+
+
+  <h1 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers" class="text-break">Class JsonConverterHelpers</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">JsonConverterHelpers</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LaunchDarkly.html">LaunchDarkly</a>.<a class="xref" href="LaunchDarkly.Sdk.html">Sdk</a>.<a class="xref" href="LaunchDarkly.Sdk.Internal.html">Internal</a></h6>
+  <h6><strong>Assembly</strong>: LaunchDarkly.InternalSdk.dll</h6>
+  <h5 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class JsonConverterHelpers</code></pre>
+  </div>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_GetIntOrNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.GetIntOrNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_GetIntOrNull_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.GetIntOrNull(System.Text.Json.Utf8JsonReader@)">GetIntOrNull(ref Utf8JsonReader)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int? GetIntOrNull(ref Utf8JsonReader reader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_GetLongOrNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.GetLongOrNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_GetLongOrNull_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.GetLongOrNull(System.Text.Json.Utf8JsonReader@)">GetLongOrNull(ref Utf8JsonReader)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long? GetLongOrNull(ref Utf8JsonReader reader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_GetTimeOrNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.GetTimeOrNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_GetTimeOrNull_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.GetTimeOrNull(System.Text.Json.Utf8JsonReader@)">GetTimeOrNull(ref Utf8JsonReader)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static UnixMillisecondTime? GetTimeOrNull(ref Utf8JsonReader reader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.UnixMillisecondTime.html">UnixMillisecondTime</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireArray_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireArray*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireArray_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireArray(System.Text.Json.Utf8JsonReader@)">RequireArray(ref Utf8JsonReader)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static JsonConverterHelpers.ArrayHelper RequireArray(ref Utf8JsonReader reader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.html">JsonConverterHelpers</a>.<a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.ArrayHelper.html">ArrayHelper</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireArrayOrNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireArrayOrNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireArrayOrNull_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireArrayOrNull(System.Text.Json.Utf8JsonReader@)">RequireArrayOrNull(ref Utf8JsonReader)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static JsonConverterHelpers.ArrayHelper RequireArrayOrNull(ref Utf8JsonReader reader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.html">JsonConverterHelpers</a>.<a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.ArrayHelper.html">ArrayHelper</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireObject_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireObject*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireObject_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireObject(System.Text.Json.Utf8JsonReader@)">RequireObject(ref Utf8JsonReader)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static JsonConverterHelpers.ObjectHelper RequireObject(ref Utf8JsonReader reader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.html">JsonConverterHelpers</a>.<a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.ObjectHelper.html">ObjectHelper</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireObjectOrNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireObjectOrNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireObjectOrNull_System_Text_Json_Utf8JsonReader__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireObjectOrNull(System.Text.Json.Utf8JsonReader@)">RequireObjectOrNull(ref Utf8JsonReader)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static JsonConverterHelpers.ObjectHelper RequireObjectOrNull(ref Utf8JsonReader reader)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.html">JsonConverterHelpers</a>.<a class="xref" href="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.ObjectHelper.html">ObjectHelper</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireTokenType_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireTokenType*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_RequireTokenType_System_Text_Json_Utf8JsonReader__System_Text_Json_JsonTokenType_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.RequireTokenType(System.Text.Json.Utf8JsonReader@,System.Text.Json.JsonTokenType)">RequireTokenType(ref Utf8JsonReader, JsonTokenType)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void RequireTokenType(ref Utf8JsonReader reader, JsonTokenType expectedType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader">Utf8JsonReader</a></td>
+        <td><span class="parametername">reader</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsontokentype">JsonTokenType</a></td>
+        <td><span class="parametername">expectedType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteBooleanIfTrue_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteBooleanIfTrue*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteBooleanIfTrue_System_Text_Json_Utf8JsonWriter_System_String_System_Boolean_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteBooleanIfTrue(System.Text.Json.Utf8JsonWriter,System.String,System.Boolean)">WriteBooleanIfTrue(Utf8JsonWriter, string, bool)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteBooleanIfTrue(Utf8JsonWriter w, string name, bool value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonwriter">Utf8JsonWriter</a></td>
+        <td><span class="parametername">w</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteIntIfNotNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteIntIfNotNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteIntIfNotNull_System_Text_Json_Utf8JsonWriter_System_String_System_Nullable_System_Int32__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteIntIfNotNull(System.Text.Json.Utf8JsonWriter,System.String,System.Nullable{System.Int32})">WriteIntIfNotNull(Utf8JsonWriter, string, int?)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteIntIfNotNull(Utf8JsonWriter w, string name, int? value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonwriter">Utf8JsonWriter</a></td>
+        <td><span class="parametername">w</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteJsonAsString_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteJsonAsString*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteJsonAsString_System_Action_System_Text_Json_Utf8JsonWriter__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteJsonAsString(System.Action{System.Text.Json.Utf8JsonWriter})">WriteJsonAsString(Action&lt;Utf8JsonWriter&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string WriteJsonAsString(Action&lt;Utf8JsonWriter&gt; action)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonwriter">Utf8JsonWriter</a>&gt;</td>
+        <td><span class="parametername">action</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteLdValue_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteLdValue*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteLdValue_System_Text_Json_Utf8JsonWriter_System_String_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteLdValue(System.Text.Json.Utf8JsonWriter,System.String,LaunchDarkly.Sdk.LdValue)">WriteLdValue(Utf8JsonWriter, string, LdValue)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteLdValue(Utf8JsonWriter w, string name, LdValue value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonwriter">Utf8JsonWriter</a></td>
+        <td><span class="parametername">w</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteLdValueIfNotNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteLdValueIfNotNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteLdValueIfNotNull_System_Text_Json_Utf8JsonWriter_System_String_LaunchDarkly_Sdk_LdValue_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteLdValueIfNotNull(System.Text.Json.Utf8JsonWriter,System.String,LaunchDarkly.Sdk.LdValue)">WriteLdValueIfNotNull(Utf8JsonWriter, string, LdValue)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteLdValueIfNotNull(Utf8JsonWriter w, string name, LdValue value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonwriter">Utf8JsonWriter</a></td>
+        <td><span class="parametername">w</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.LdValue.html">LdValue</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteStringIfNotNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteStringIfNotNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteStringIfNotNull_System_Text_Json_Utf8JsonWriter_System_String_System_String_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteStringIfNotNull(System.Text.Json.Utf8JsonWriter,System.String,System.String)">WriteStringIfNotNull(Utf8JsonWriter, string, string)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteStringIfNotNull(Utf8JsonWriter w, string name, string value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonwriter">Utf8JsonWriter</a></td>
+        <td><span class="parametername">w</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteTimeIfNotNull_" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteTimeIfNotNull*"></a>
+  <h4 id="LaunchDarkly_Sdk_Internal_JsonConverterHelpers_WriteTimeIfNotNull_System_Text_Json_Utf8JsonWriter_System_String_System_Nullable_LaunchDarkly_Sdk_UnixMillisecondTime__" data-uid="LaunchDarkly.Sdk.Internal.JsonConverterHelpers.WriteTimeIfNotNull(System.Text.Json.Utf8JsonWriter,System.String,System.Nullable{LaunchDarkly.Sdk.UnixMillisecondTime})">WriteTimeIfNotNull(Utf8JsonWriter, string, UnixMillisecondTime?)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteTimeIfNotNull(Utf8JsonWriter w, string name, UnixMillisecondTime? value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonwriter">Utf8JsonWriter</a></td>
+        <td><span class="parametername">w</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LaunchDarkly.Sdk.UnixMillisecondTime.html">UnixMillisecondTime</a>?</td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
