@@ -43,7 +43,7 @@ namespace LaunchDarkly.Sdk.Server
         private readonly Logger _evalLog;
         private readonly IHookExecutor _hookExecutor;
 
-        private readonly TimeSpan ExcessiveInitWaitTime = TimeSpan.FromSeconds(15);
+        private readonly TimeSpan ExcessiveInitWaitTime = TimeSpan.FromSeconds(60);
         private const String InitWaitTimeInfo = "Waiting up to {0} milliseconds for LaunchDarkly client to start.";
         private const String ExcessiveInitWaitTimeWarning =
             "LaunchDarkly client created with StartWaitTime of {0} milliseconds.  We recommend a timeout of less than {1} milliseconds.";
