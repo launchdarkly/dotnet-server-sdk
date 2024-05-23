@@ -22,7 +22,7 @@ runs:
 
     - name: Build Contract Tests
       shell: bash
-      run: dotnet build //p:Configuration=Debug ${{ inputs.service_project_file }}
+      run: dotnet build -p:Configuration=Debug ${{ inputs.service_project_file }}
 
     - name: Launch Contract Tests
       id: launch-contract-tests
