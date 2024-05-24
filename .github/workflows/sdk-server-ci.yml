@@ -23,10 +23,7 @@ jobs:
           project_file: pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj
           test_project_file: pkgs/sdk/server/test/LaunchDarkly.ServerSdk.Tests.csproj
 
-      # Running contract tests on windows is currently cumbersome.
-      # Once that has been addressed, then running contract tests on windows should be considered.
       - uses: ./.github/actions/contract-tests
-        if: ${{ matrix.os != 'windows-latest' }}
         with:
           service_project_file: pkgs/sdk/server/contract-tests/TestService.csproj
           service_dll_file: pkgs/sdk/server/contract-tests/bin/debug/net6.0/ContractTestService.dll
