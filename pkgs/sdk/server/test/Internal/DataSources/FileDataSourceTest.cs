@@ -194,7 +194,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                             }
 
                             return segment.Included[0] == "user1";
-                            return false;
                         },
                         "Did not receive expected update from the file data source.",
                         TimeSpan.FromSeconds(30));
