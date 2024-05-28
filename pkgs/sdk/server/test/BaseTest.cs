@@ -3,7 +3,10 @@ using System.Threading;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk.Internal;
 using LaunchDarkly.Sdk.Server.Subsystems;
+using Xunit;
 using Xunit.Abstractions;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace LaunchDarkly.Sdk.Server
 {
@@ -19,7 +22,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <summary>
         /// Using this <see cref="ILogAdapter"/> in an SDK configuration will cause logging to be sent
         /// to the Xunit output buffer for the current test method, if you used the overloaded
-        /// constructor <see cref="BaseTest.BaseTest(ITestOutputHelper)"/>. If you used the empty
+        /// constructor <see cref="BaseTest"/>. If you used the empty
         /// constructor, logging is disabled. Xunit only shows the buffered output for failed tests.
         /// </summary>
         /// <seealso cref="TestLogging"/>
@@ -28,7 +31,7 @@ namespace LaunchDarkly.Sdk.Server
         /// <summary>
         /// Using this <see cref="Logger"/> with an SDK component will cause logging to be sent to the
         /// Xunit output buffer for the current test method, if you used the overloaded constructor
-        /// <see cref="BaseTest.BaseTest(ITestOutputHelper)"/>. If you used the empty constructor,
+        /// <see cref="BaseTest"/>. If you used the empty constructor,
         /// logging is disabled. Xunit only shows the buffered output for failed tests.
         /// </summary>
         /// <seealso cref="TestLogging"/>
