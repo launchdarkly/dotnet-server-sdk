@@ -64,7 +64,6 @@ namespace LaunchDarkly.Sdk.Server
             {
                 var startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-                Console.WriteLine("testing");
                 var value = sink.ExpectValue(timeout);
 
                 if (predicate(value))

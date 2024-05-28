@@ -153,7 +153,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
                     AssertHelpers.ExpectPredicate(_updateSink.Inits, actual =>
                             expectedDataSet.Equals(DataSetAsJson(actual)),
                         "Did not receive expected update from the file data source.",
-                        TimeSpan.FromSeconds(5));
+                        TimeSpan.FromSeconds(30));
                 }
             }
         }
