@@ -1,4 +1,6 @@
-﻿using LaunchDarkly.Logging;
+﻿using System;
+using LaunchDarkly.Logging;
+using LaunchDarkly.TestHelpers;
 using Xunit;
 using Xunit.Sdk;
 
@@ -42,5 +44,24 @@ namespace LaunchDarkly.Sdk.Server
                     text,
                     level,
                     logCapture.ToString()));
+
+        public static void ExpectPredicate<T>(EventSink<T> sink, Predicate<T> predicate, string message, TimeSpan timeout)
+        {
+            while (true)
+            {
+                var startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                var value = sink.ExpectValue();
+                if (predicate(value))
+                {
+                    break;
+                }
+
+                if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - startTime > timeout.TotalMilliseconds)
+                {
+                    // XUnit 2.5+ adds Assert.Fail.
+                    Assert.True(false, message);
+                }
+            }
+        }
     }
 }

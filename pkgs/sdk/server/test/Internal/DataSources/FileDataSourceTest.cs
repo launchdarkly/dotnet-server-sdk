@@ -8,7 +8,6 @@ using LaunchDarkly.TestHelpers;
 using YamlDotNet.Serialization;
 using Xunit;
 using Xunit.Abstractions;
-
 using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.TestUtils;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
@@ -24,7 +23,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly FileDataSourceBuilder factory = FileData.DataSource();
         private readonly Context user = Context.New("key");
 
-        public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput) { }
+        public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput)
+        {
+        }
 
         private IDataSource MakeDataSource() =>
             factory.Build(BasicContext.WithDataSourceUpdates(_updateSink));
@@ -148,9 +149,11 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    var newData = _updateSink.Inits.ExpectValue(TimeSpan.FromSeconds(5));
-
-                    AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
+                    var expectedDataSet = DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2));
+                    AssertHelpers.ExpectPredicate(_updateSink.Inits, actual =>
+                            expectedDataSet.Equals(DataSetAsJson(actual)),
+                        "Did not receive expected update from the file data source.",
+                        TimeSpan.FromSeconds(5));
                 }
             }
         }
