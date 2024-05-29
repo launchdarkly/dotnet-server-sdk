@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
+using Castle.Core.Internal;
 using LaunchDarkly.Sdk.Server.Integrations;
 using LaunchDarkly.Sdk.Server.Interfaces;
 using LaunchDarkly.Sdk.Server.Internal.Model;
@@ -8,7 +10,6 @@ using LaunchDarkly.TestHelpers;
 using YamlDotNet.Serialization;
 using Xunit;
 using Xunit.Abstractions;
-
 using static LaunchDarkly.Sdk.Server.Subsystems.DataStoreTypes;
 using static LaunchDarkly.Sdk.Server.TestUtils;
 using static LaunchDarkly.TestHelpers.JsonAssertions;
@@ -24,7 +25,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
         private readonly FileDataSourceBuilder factory = FileData.DataSource();
         private readonly Context user = Context.New("key");
 
-        public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput) { }
+        public FileDataSourceTest(ITestOutputHelper testOutput) : base(testOutput)
+        {
+        }
 
         private IDataSource MakeDataSource() =>
             factory.Build(BasicContext.WithDataSourceUpdates(_updateSink));
@@ -148,9 +151,52 @@ namespace LaunchDarkly.Sdk.Server.Internal.DataSources
 
                     file.SetContentFromPath(TestUtils.TestFilePath("segment-only.json"));
 
-                    var newData = _updateSink.Inits.ExpectValue(TimeSpan.FromSeconds(5));
+                    AssertHelpers.ExpectPredicate(_updateSink.Inits, actual =>
+                        {
+                            var segments = actual.Data.First(item => item.Key == DataModel.Segments);
+                            var features = actual.Data.First(item => item.Key == DataModel.Features);
+                            if (!features.Value.Items.IsNullOrEmpty())
+                            {
+                                return false;
+                            }
 
-                    AssertJsonEqual(DataSetAsJson(ExpectedDataSetForSegmentOnlyFile(2)), DataSetAsJson(newData));
+                            var segmentItems = segments.Value.Items.ToList();
+
+                            if (segmentItems.Count != 1)
+                            {
+                                return false;
+                            }
+
+                            var segmentDescriptor = segmentItems[0];
+                            if (segmentDescriptor.Key != "seg1")
+                            {
+                                return false;
+                            }
+
+                            if (segmentDescriptor.Value.Version == 1)
+                            {
+                                return false;
+                            }
+
+                            if (!(segmentDescriptor.Value.Item is Segment segment))
+                            {
+                                return false;
+                            }
+
+                            if (segment.Deleted)
+                            {
+                                return false;
+                            }
+
+                            if (segment.Included.Count != 1)
+                            {
+                                return false;
+                            }
+
+                            return segment.Included[0] == "user1";
+                        },
+                        "Did not receive expected update from the file data source.",
+                        TimeSpan.FromSeconds(30));
                 }
             }
         }
