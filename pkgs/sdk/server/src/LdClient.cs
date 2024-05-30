@@ -121,8 +121,11 @@ namespace LaunchDarkly.Sdk.Server
         /// <example>
         /// <code>
         ///     var config = Configuration.Builder("my-sdk-key")
-        ///         .AllAttributesPrivate(true)
-        ///         .EventCapacity(1000)
+        ///         .Events (
+        ///           Components.SendEvents()
+        ///             .Capacity(1000)
+        ///             .AllAttributesPrivate(true)
+        ///         )
         ///         .Build();
         ///     var client = new LDClient(config);
         /// </code>
