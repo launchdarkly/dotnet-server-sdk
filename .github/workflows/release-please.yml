@@ -56,7 +56,7 @@ jobs:
       base64-subjects: "${{ needs.release-sdk-server.outputs.hashes }}"
       upload-assets: true
       upload-tag-name: ${{ needs.release-please.outputs.tag_name }}
-      provenance-name: ${{ format('ldcli_{0}_multiple_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}
+      provenance-name: ${{ format('LaunchDarkly.ServerSdk-{0}_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}
 
   release-telemetry:
     runs-on: ubuntu-latest
@@ -93,4 +93,4 @@ jobs:
       base64-subjects: "${{ needs.release-telemetry.outputs.hashes }}"
       upload-assets: true
       upload-tag-name: ${{ needs.release-please.outputs.tag_name }}
-      provenance-name: ${{ format('ldcli_{0}_multiple_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}
+      provenance-name: ${{ format('LaunchDarkly.ServerSdk.Telemetry-{0}_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}
