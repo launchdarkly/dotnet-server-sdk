@@ -22,8 +22,10 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         private readonly CancellationTokenSource _pollCanceller;
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly Logger _logger;
+        private readonly Task<BigSegmentStoreStatus> _initialPoll;
 
         private BigSegmentStoreStatus? _lastStatus;
+        private int count = 0;
 
         internal event EventHandler<BigSegmentStoreStatus> StatusChanged;
 
@@ -43,8 +45,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             _taskExecutor = taskExecutor;
             _logger = logger;
 
+            _initialPoll = Task.Run(PollStoreAndUpdateStatusAsync);
             _pollCanceller = taskExecutor.StartRepeatingTask(
-                TimeSpan.Zero,
+                config.StatusPollInterval,
                 config.StatusPollInterval,
                 PollStoreAndUpdateStatusAsync
                 );
@@ -119,15 +122,16 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             {
                 _lock.ExitReadLock();
             }
-            if (ret.HasValue)
-            {
-                return ret.Value;
-            }
-            return AsyncUtils.WaitSafely(() => PollStoreAndUpdateStatusAsync());
+            return ret ?? _initialPoll.GetAwaiter().GetResult();
         }
 
         private async Task<BigSegmentStoreStatus> PollStoreAndUpdateStatusAsync()
         {
+            count++;
+            if (count == 2)
+            {
+                Console.WriteLine("POTATO");
+            }
             var newStatus = new BigSegmentStoreStatus();
             _logger.Debug("Querying Big Segment store metadata");
             try
