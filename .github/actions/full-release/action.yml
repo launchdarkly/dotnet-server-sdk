@@ -25,6 +25,10 @@ inputs:
   token:
     description: 'The GitHub token to use for publishing documentation.'
     required: true
+outputs:
+  hashes:
+    description: sha256sum hashes of built artifacts
+    value: ${{ steps.publish.outputs.hashes }}
 
 runs:
   using: composite
@@ -59,6 +63,7 @@ runs:
         dll_name: ${{ inputs.dll_name }}
 
     - name: Publish Nupkg
+      id: publish
       uses: ./.github/actions/publish-package
       with:
         project_file: ${{ inputs.project_file }}
