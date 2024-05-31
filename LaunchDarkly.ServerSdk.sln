@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaunchDarkly.ServerSdk.Tele
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaunchDarkly.ServerSdk.Telemetry.Tests", "pkgs\telemetry\test\LaunchDarkly.ServerSdk.Telemetry.Tests.csproj", "{71299584-BF0D-48A4-B2E1-D6292036D48D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestService", "pkgs\sdk\server\contract-tests\TestService.csproj", "{72D0898F-4CD9-42B7-B3B4-5CFD23796C47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{71299584-BF0D-48A4-B2E1-D6292036D48D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71299584-BF0D-48A4-B2E1-D6292036D48D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71299584-BF0D-48A4-B2E1-D6292036D48D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72D0898F-4CD9-42B7-B3B4-5CFD23796C47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72D0898F-4CD9-42B7-B3B4-5CFD23796C47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72D0898F-4CD9-42B7-B3B4-5CFD23796C47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72D0898F-4CD9-42B7-B3B4-5CFD23796C47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,5 +62,6 @@ Global
 		{7A984A5D-0C83-42FA-8BF7-DCA2441F62DA} = {2E4B6BA2-5003-4461-B138-BF3F98B89AE7}
 		{35014C04-26CE-43B0-933D-35D80CF0E6B8} = {7A984A5D-0C83-42FA-8BF7-DCA2441F62DA}
 		{71299584-BF0D-48A4-B2E1-D6292036D48D} = {7A984A5D-0C83-42FA-8BF7-DCA2441F62DA}
+		{72D0898F-4CD9-42B7-B3B4-5CFD23796C47} = {FDA973CE-26F2-4745-AF19-0873F170C4CF}
 	EndGlobalSection
 EndGlobal
