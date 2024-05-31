@@ -22,6 +22,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         private readonly CancellationTokenSource _pollCanceller;
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly Logger _logger;
+        private readonly Task<BigSegmentStoreStatus> _initialPoll;
 
         private BigSegmentStoreStatus? _lastStatus;
 
@@ -43,8 +44,9 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             _taskExecutor = taskExecutor;
             _logger = logger;
 
+            _initialPoll = Task.Run(PollStoreAndUpdateStatusAsync);
             _pollCanceller = taskExecutor.StartRepeatingTask(
-                TimeSpan.Zero,
+                config.StatusPollInterval,
                 config.StatusPollInterval,
                 PollStoreAndUpdateStatusAsync
                 );
@@ -119,11 +121,7 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
             {
                 _lock.ExitReadLock();
             }
-            if (ret.HasValue)
-            {
-                return ret.Value;
-            }
-            return AsyncUtils.WaitSafely(() => PollStoreAndUpdateStatusAsync());
+            return ret ?? _initialPoll.GetAwaiter().GetResult();
         }
 
         private async Task<BigSegmentStoreStatus> PollStoreAndUpdateStatusAsync()
