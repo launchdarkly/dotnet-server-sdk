@@ -25,7 +25,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
         private readonly Task<BigSegmentStoreStatus> _initialPoll;
 
         private BigSegmentStoreStatus? _lastStatus;
-        private int count = 0;
 
         internal event EventHandler<BigSegmentStoreStatus> StatusChanged;
 
@@ -127,11 +126,6 @@ namespace LaunchDarkly.Sdk.Server.Internal.BigSegments
 
         private async Task<BigSegmentStoreStatus> PollStoreAndUpdateStatusAsync()
         {
-            count++;
-            if (count == 2)
-            {
-                Console.WriteLine("POTATO");
-            }
             var newStatus = new BigSegmentStoreStatus();
             _logger.Debug("Querying Big Segment store metadata");
             try
