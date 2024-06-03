@@ -14,9 +14,12 @@ on:
         type: boolean
         required: true
       generate_provenance:
-        description: 'Whether or not to generate provenance for this manual publish.'
-        type: boolean
-        required: true
+        description: 'Whether or not to generate provenance for this manual publish. Default behavior: generate only on main branch.'
+        type: choice
+        options:
+          - Default
+          - Generate
+          - Do not generate
 
 jobs:
   build:
@@ -62,7 +65,9 @@ jobs:
       id-token: write
       contents: write
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
-    if: ${{ inputs.generate_provenance && inputs.pkg_name == 'LaunchDarkly.ServerSdk' }}
+    if: |
+      (inputs.generate_provenance == 'Generate' || (inputs.generate_provenance == 'Default' && github.ref_name == 'main')) && 
+      inputs.pkg_name == 'LaunchDarkly.ServerSdk'
     with:
       base64-subjects: "${{ needs.build.outputs.server-sdk-hashes }}"
       upload-assets: true
@@ -76,7 +81,9 @@ jobs:
       id-token: write
       contents: write
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
-    if: ${{ inputs.generate_provenance && inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry' }}
+    if: |
+      (inputs.generate_provenance == 'Generate' || (inputs.generate_provenance == 'Default' && github.ref_name == 'main')) && 
+      inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry'
     with:
       base64-subjects: "${{ needs.build.outputs.telemetry-hashes }}"
       upload-assets: true
