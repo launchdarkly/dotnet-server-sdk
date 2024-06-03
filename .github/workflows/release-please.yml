@@ -12,6 +12,7 @@ jobs:
     outputs:
       package-sdk-server-released: ${{ steps.release.outputs['pkgs/sdk/server--release_created'] }}
       package-sdk-server-telemetry-released: ${{ steps.release.outputs['pkgs/telemetry--release_created'] }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
 
     steps:
       - uses: google-github-actions/release-please-action@v4
@@ -28,9 +29,12 @@ jobs:
       contents: write
       pull-requests: write
     if: ${{ needs.release-please.outputs.package-sdk-server-released == 'true'}}
+    outputs:
+      hashes: ${{ steps.full-release.outputs.hashes }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/full-release
+        id: full-release
         with:
           workspace_path: 'pkgs/sdk/server'
           project_file: 'pkgs/sdk/server/src/LaunchDarkly.ServerSdk.csproj'
@@ -41,6 +45,19 @@ jobs:
           aws_role: ${{ vars.AWS_ROLE_ARN }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+  release-sdk-server-provenance:
+    needs: ['release-please', 'release-sdk-server']
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
+    with:
+      base64-subjects: "${{ needs.release-sdk-server.outputs.hashes }}"
+      upload-assets: true
+      upload-tag-name: ${{ needs.release-please.outputs.tag_name }}
+      provenance-name: ${{ format('LaunchDarkly.ServerSdk-{0}_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}
+
   release-telemetry:
     runs-on: ubuntu-latest
     needs: release-please
@@ -49,9 +66,12 @@ jobs:
       contents: write
       pull-requests: write
     if: ${{ needs.release-please.outputs.package-sdk-server-telemetry-released == 'true'}}
+    outputs:
+      hashes: ${{ steps.full-release.outputs.hashes }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/full-release
+        id: full-release
         with:
           workspace_path: 'pkgs/telemetry'
           project_file: 'pkgs/telemetry/src/LaunchDarkly.ServerSdk.Telemetry.csproj'
@@ -61,3 +81,16 @@ jobs:
           dry_run: false
           aws_role: ${{ vars.AWS_ROLE_ARN }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  release-telemetry-provenance:
+    needs: ['release-please', 'release-telemetry']
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
+    with:
+      base64-subjects: "${{ needs.release-telemetry.outputs.hashes }}"
+      upload-assets: true
+      upload-tag-name: ${{ needs.release-please.outputs.tag_name }}
+      provenance-name: ${{ format('LaunchDarkly.ServerSdk.Telemetry-{0}_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}

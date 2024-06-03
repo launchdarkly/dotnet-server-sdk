@@ -13,6 +13,13 @@ on:
         description: 'Is this a dry run. If so no package will be published.'
         type: boolean
         required: true
+      generate_provenance:
+        description: 'Whether or not to generate provenance for this manual publish. Default behavior: generate only on main branch.'
+        type: choice
+        options:
+          - Default
+          - Generate
+          - Do not generate
 
 jobs:
   build:
@@ -20,9 +27,13 @@ jobs:
     permissions:
       id-token: write
       contents: write
+    outputs:
+      server-sdk-hashes: ${{ steps.server-sdk-release.outputs.hashes }}
+      telemetry-hashes: ${{ steps.telemetry-release.outputs.hashes }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/full-release
+        id: server-sdk-release
         if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk' }}
         with:
           workspace_path: 'pkgs/sdk/server'
@@ -35,6 +46,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/full-release
+        id: telemetry-release
         if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry' }}
         with:
           workspace_path: 'pkgs/telemetry'
@@ -45,3 +57,34 @@ jobs:
           dry_run: ${{ inputs.dry_run }}
           aws_role: ${{ vars.AWS_ROLE_ARN }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  release-sdk-server-provenance:
+    needs: ['build']
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
+    if: |
+      (inputs.generate_provenance == 'Generate' || (inputs.generate_provenance == 'Default' && github.ref_name == 'main')) && 
+      inputs.pkg_name == 'LaunchDarkly.ServerSdk'
+    with:
+      base64-subjects: "${{ needs.build.outputs.server-sdk-hashes }}"
+      upload-assets: true
+      provenance-name: ${{ 'LaunchDarkly.ServerSdk_provenance.intoto.jsonl' }}
+
+
+  release-telemetry-server-provenance:
+    needs: ['build']
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
+    if: |
+      (inputs.generate_provenance == 'Generate' || (inputs.generate_provenance == 'Default' && github.ref_name == 'main')) && 
+      inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry'
+    with:
+      base64-subjects: "${{ needs.build.outputs.telemetry-hashes }}"
+      upload-assets: true
+      provenance-name: ${{ 'LaunchDarkly.ServerSdk.Telemetry_provenance.intoto.jsonl' }}
