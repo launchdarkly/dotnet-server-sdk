@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.5.1](https://github.com/launchdarkly/dotnet-server-sdk/compare/8.5.0...8.5.1) (2024-06-03)
+
+
+### Bug Fixes
+
+* Adjust big segments logic to prevent duplicate polls. ([#225](https://github.com/launchdarkly/dotnet-server-sdk/issues/225)) ([4202165](https://github.com/launchdarkly/dotnet-server-sdk/commit/4202165dc60a39f97dbbc1df9730db1bb6f90009))
+
 ## [8.5.0](https://github.com/launchdarkly/dotnet-server-sdk/compare/8.4.0...8.5.0) (2024-05-10)
 
 
