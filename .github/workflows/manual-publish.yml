@@ -13,6 +13,10 @@ on:
         description: 'Is this a dry run. If so no package will be published.'
         type: boolean
         required: true
+      generate_provenance:
+        description: 'Whether or not to generate provenance for this manual publish.'
+        type: boolean
+        required: true
 
 jobs:
   build:
@@ -58,12 +62,11 @@ jobs:
       id-token: write
       contents: write
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
-    if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk' }}
+    if: ${{ inputs.generate_provenance && inputs.pkg_name == 'LaunchDarkly.ServerSdk' }}
     with:
       base64-subjects: "${{ needs.build.outputs.server-sdk-hashes }}"
       upload-assets: true
-      upload-tag-name: ${{ input.tag_name }}
-      provenance-name: ${{ format('LaunchDarkly.ServerSdk-{0}_provenance.intoto.jsonl', input.tag_name) }}
+      provenance-name: ${{ 'LaunchDarkly.ServerSdk_provenance.intoto.jsonl' }}
 
 
   release-telemetry-server-provenance:
@@ -73,9 +76,8 @@ jobs:
       id-token: write
       contents: write
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0
-    if: ${{ inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry' }}
+    if: ${{ inputs.generate_provenance && inputs.pkg_name == 'LaunchDarkly.ServerSdk.Telemetry' }}
     with:
       base64-subjects: "${{ needs.build.outputs.telemetry-hashes }}"
       upload-assets: true
-      upload-tag-name: ${{ input.tag_name }}
-      provenance-name: ${{ format('LaunchDarkly.ServerSdk.Telemetry-{0}_provenance.intoto.jsonl', input.tag_name) }}
+      provenance-name: ${{ 'LaunchDarkly.ServerSdk.Telemetry_provenance.intoto.jsonl' }}
