@@ -11,7 +11,9 @@ jobs:
 
     outputs:
       package-sdk-server-released: ${{ steps.release.outputs['pkgs/sdk/server--release_created'] }}
+      package-sdk-server-tag_name: ${{ steps.release.outputs['pkgs/sdk/server--tag_name'] }}
       package-sdk-server-telemetry-released: ${{ steps.release.outputs['pkgs/telemetry--release_created'] }}
+      package-sdk-server-telemetry-tag_name: ${{ steps.release.outputs['pkgs/telemetry--tag_name'] }}
       tag_name: ${{ steps.release.outputs.tag_name }}
 
     steps:
@@ -55,8 +57,8 @@ jobs:
     with:
       base64-subjects: "${{ needs.release-sdk-server.outputs.hashes }}"
       upload-assets: true
-      upload-tag-name: ${{ needs.release-please.outputs.tag_name }}
-      provenance-name: ${{ format('LaunchDarkly.ServerSdk-{0}_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}
+      upload-tag-name: ${{ needs.release-please.outputs.package-sdk-server-tag_name }}
+      provenance-name: ${{ format('LaunchDarkly.ServerSdk-{0}_provenance.intoto.jsonl', needs.release-please.outputs.package-sdk-server-tag_name) }}
 
   release-telemetry:
     runs-on: ubuntu-latest
@@ -92,5 +94,5 @@ jobs:
     with:
       base64-subjects: "${{ needs.release-telemetry.outputs.hashes }}"
       upload-assets: true
-      upload-tag-name: ${{ needs.release-please.outputs.tag_name }}
-      provenance-name: ${{ format('LaunchDarkly.ServerSdk.Telemetry-{0}_provenance.intoto.jsonl', needs.release-please.outputs.tag_name) }}
+      upload-tag-name: ${{ needs.release-please.outputs.package-sdk-server-telemetry-tag_name }}
+      provenance-name: ${{ format('LaunchDarkly.ServerSdk.Telemetry-{0}_provenance.intoto.jsonl', needs.release-please.outputs.package-sdk-server-telemetry-tag_name) }}
